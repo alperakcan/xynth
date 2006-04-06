@@ -169,15 +169,20 @@ void s_server_putmat (s_window_t *window, int id, s_rect_t *coor, int x, int y, 
 	s_server_surface_matrix_add_this(id, coor, &mcoor, img->mat);
 }
 
-#define s_server_window_form_mat_prepare()\
-	if ((id < 0) || (server->client[id].type & WINDOW_NOFORM) || (s_server_id_pri(id) < 0)) {\
-		return;\
-	}\
-	if ((s_server_id_pri(id) == 0) ||\
-	    ((server->client[s_server_pri_id(0)].type & WINDOW_TEMP) &&\
-	     (s_server_window_is_parent_temp(id, s_server_pri_id(0))))) {\
-		v = 1;\
+int s_server_window_form_mat_verbose (int id)
+{
+	if ((id < 0) ||
+	    (server->client[id].type & WINDOW_NOFORM) ||
+	    (s_server_id_pri(id) < 0)) {
+		return -1;
+	}
+	if ((s_server_id_pri(id) == 0) ||
+	    ((server->client[s_server_pri_id(0)].type & WINDOW_TEMP) &&
+	     (s_server_window_is_parent_temp(id, s_server_pri_id(0))))) {
+		return 1;
         }
+        return 0;
+}
 
 void s_server_window_form_mat (int v, int id, int mi, s_rect_t *coor, void (*func) (s_window_t *, int, s_rect_t *, int, int, s_image_t *))
 {
@@ -249,7 +254,10 @@ void s_server_window_form (int id, s_rect_t *_coor_)
 	s_rect_t coor;
 	s_rect_t coor_ = server->client[id].win;
 
-        s_server_window_form_mat_prepare();
+	v = s_server_window_form_mat_verbose(id);
+	if (v < 0) {
+		return;
+	}
         
 	if (s_rect_intersect(_coor_, &coor_, &coor)) {
 		return;
@@ -292,7 +300,10 @@ void s_server_window_matrix (int id, int mi, s_rect_t *_coor_)
 	s_rect_t coor;
 	s_rect_t coor_ = server->client[id].win;
 
-        s_server_window_form_mat_prepare();
+	v = s_server_window_form_mat_verbose(id);
+	if (v < 0) {
+		return;
+	}
 
 	if (s_rect_intersect(_coor_, &coor_, &coor)) {
 		return;
@@ -308,7 +319,10 @@ void s_server_window_calculate (int id)
 	int title_len;
 	int btns_w;
 
-        s_server_window_form_mat_prepare();
+	v = s_server_window_form_mat_verbose(id);
+	if (v < 0) {
+		return;
+	}
 
         title_len = server->client[id].title.img[v].w;
         btns_w = server->theme.button[v][HIDE].w + server->theme.button[v][CLOSE].w;

@@ -1234,7 +1234,7 @@ diff -U 3 -H -d -r -N SDL-1.2.9/src/video/xynth/SDL_xynthcursor.c SDL-1.2.9-xynt
 + */
 +void sdl_xynth_FreeWMCursor (_THIS, WMcursor *cursor)
 +{
-+	free(cursor);
++	s_free(cursor);
 +	debugf("sdl_xynth_FreeWMCursor\n");
 +}
 +
