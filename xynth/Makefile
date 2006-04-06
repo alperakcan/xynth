@@ -1,10 +1,11 @@
 include Makefile.cfg
 
-all:
+all: Makefile.cfg
 	$(MAKE) -C src
 
 clean:
 	$(MAKE) clean -C src
+	find . \( -name \*.o -o -name \*~ -o -name \#\*\# -o -name \*.a -name \*.so \) -exec rm '{}' \;
 	rm -rf dist
 	rm -rf doc
 
@@ -56,7 +57,7 @@ doxy-doc:
 	SRCDIR='.'\
 	PROJECT='xynth'\
 	DOCDIR='doc'\
-	VERSION='0.8.00'\
+	VERSION='0.8.20'\
 	PERL_PATH='perl'\
 	HAVE_DOT='NO'\
 	GENERATE_MAN='NO'\

@@ -113,7 +113,14 @@ struct s_thread_s {
 
 static int s_thread_pspdev_thread_create (s_thread_t *tid, void * (*f) (void *), void *farg)
 {
-	tid->tid = sceKernelCreateThread("Xynth Thread", ThreadEntry, 0x11, 0x8000, PSP_THREAD_ATTR_USER, NULL);
+	int priority = 32;
+	SceKernelThreadInfo status;
+
+	status.size = sizeof(SceKernelThreadInfo);
+	if (sceKernelReferThreadStatus(sceKernelGetThreadId(), &status) == 0) {
+		priority = status.currentPriority;
+	}
+	tid->tid = sceKernelCreateThread("Xynth Thread", ThreadEntry, priority, 0x8000, PSP_THREAD_ATTR_USER, NULL);
 	if (tid->tid < 0) {
 		goto err;
 	}
