@@ -31,6 +31,8 @@ typedef struct s_handler_s s_handler_t;
 typedef struct s_window_s s_window_t;
 
 typedef struct s_image_s s_image_t;
+typedef struct s_list_s s_list_t;
+typedef struct s_list_node_s s_list_node_t;
 typedef struct s_timer_s s_timer_t;
 typedef struct s_timers_s s_timers_t;
 
@@ -370,16 +372,6 @@ typedef enum {
 	MOUSE_HANDLER	= 0x1,
 	KEYBD_HANDLER	= 0x2
 } S_HANDLER;
-
-typedef struct s_list_node_s {
-        void *next;
-        void *element;
-} s_list_node_t;
-
-typedef struct s_list_s {
-        int nb_elt;
-        s_list_node_t *node;
-} s_list_t;
 
 typedef struct s_rect_s {
 	int x;
@@ -773,9 +765,16 @@ int s_handlers_uninit (s_window_t *window);
   * s_surface_t *surface;
   * char *file = "file.img";
   *
+  * // initialize img struct
   * s_image_init(&img);
+  *
+  * // parse and load file to img struct
   * s_image_img(file, img);
+  *
+  * // paste img to the surface
   * s_putboxrgba(surface, x + img->x, y + img->y, img->w, img->h, img->rgba);
+  *
+  * // when finished, uninitialize img struct
   * s_image_uninit(img);
   * @endcode
   */
@@ -812,92 +811,92 @@ struct s_image_s {
 
 /** @brief convert a hex str to int
   *
-  * @param *str -
+  * @param *str - pointer to a buffer of chars with at least length 2
   * @returns the value.
   */
 int s_image_hex2int (char *str);
 
 /** @brief generates alpha values for given image
   *
-  * @param *img -
+  * @param *img - the image
   * @returns 0 on success, 1 on error.
   */
 int s_image_get_mat (s_image_t *img);
 
 /** @brief generates image buffer using surface, for given image
   *
-  * @param *surface -
-  * @param *img -
+  * @param *surface - pointer to a valid surface.
+  * @param *img     - the image
   * @returns 0 on success, 1 on error.
   */
 int s_image_get_buf (s_surface_t *surface, s_image_t *img);
 
 /** @brief calculates handler for given image
   *
-  * @param *img -
+  * @param *img - the image
   * @returns 0 on success, 1 on error.
   */
 void s_image_get_handler (s_image_t *img);
 
 /** @brief initializes image struct
   *
-  * @param **img -
+  * @param **img - address of the pointer to image struct
   * @returns 0 on success, 1 on error.
   */
 int s_image_init (s_image_t **img);
 
 /** @brief frees memory used for buf, and sets it to NULL.
   *
-  * @param *img -
+  * @param *img - the image
   * @returns 0 on success, 1 on error.
   */
 void s_image_free_buf (s_image_t *img);
 
 /** @brief frees memory used for mat, and sets it to NULL.
   *
-  * @param *img -
+  * @param *img - the image
   * @returns 0 on success, 1 on error.
   */
 void s_image_free_mat (s_image_t *img);
 
 /** @brief frees memory used for rgb, and sets it to NULL.
   *
-  * @param *img -
+  * @param *img - the image
   * @returns 0 on success, 1 on error.
   */
 void s_image_free_rgba (s_image_t *img);
 
 /** @brief uninitializes image struct
   *
-  * @param *img -
+  * @param *img - the image
   * @returns 0 on success, 1 on error.
   */
 int s_image_uninit (s_image_t *img);
 
 /** @brief initializes image struct
   *
-  * @param **lyr -
+  * @param **lyr - address of the pointer to image struct
   * @returns 0 on success, 1 on error.
   */
 int s_image_layer_init (s_image_t **lyr);
 
 /** @brief uninitializes image struct
   *
-  * @param *lyr -
+  * @param *lyr - the layer
   * @returns 0 on success, 1 on error.
   */
 int s_image_layer_uninit (s_image_t *lyr);
 
 /** @brief initializes layer list for given image
   *
-  * @param *img -
+  * @param *img - the image
   * @returns 0 on success, 1 on error.
   */
 int s_image_layers_init (s_image_t *img);
 
 /** @brief uninitializes layer list for given image
   *
-  * @param *img -
+  * @param *img - the image
   * @returns 0 on success, 1 on error.
   */
 int s_image_layers_uninit (s_image_t *img);
@@ -905,8 +904,8 @@ int s_image_layers_uninit (s_image_t *img);
 /** @brief fills image struct by calling the approtiated function,
   *        if the file is a supported format
   *
-  * @param *file -
-  * @param *img -
+  * @param *file - exact path to the file
+  * @param *img  - the image
   * @returns 0 on success, 1 on error.
   */
 int s_image_img (char *file, s_image_t *img);
@@ -915,15 +914,15 @@ int s_image_img (char *file, s_image_t *img);
 
 /** @brief checks if the file is a gif
   *
-  * @param *file -
+  * @param *file - exact path to the file
   * @returns 0 on success, 1 on error.
   */
 int s_image_gif_is (char *file);
 
 /** @brief fills the image struct
   *
-  * @param *file -
-  * @param *img -
+  * @param *file - exact path to the file
+  * @param *img  - the image
   * @returns 0 on success, 1 on error.
   */
 int s_image_gif (char *file, s_image_t *img);
@@ -932,15 +931,15 @@ int s_image_gif (char *file, s_image_t *img);
 
 /** @brief checks if the file is a png
   *
-  * @param *file -
+  * @param *file - exact path to the file
   * @returns 0 on success, 1 on error.
   */
 int s_image_png_is (char *file);
 
 /** @brief fills the image struct
   *
-  * @param *file -
-  * @param *img -
+  * @param *file - exact path to the file
+  * @param *img  - the image
   * @returns 0 on success, 1 on error.
   */
 int s_image_png (char *file, s_image_t *img);
@@ -949,29 +948,169 @@ int s_image_png (char *file, s_image_t *img);
 
 /** @brief checks if the file is a xpm
   *
-  * @param *file -
+  * @param *file - exact path to the file
   * @returns 0 on success, 1 on error.
   */
 int s_image_xpm_is (char *file);
 
 /** @brief fills the image struct
   *
-  * @param *file -
-  * @param *img -
+  * @param *file - exact path to the file
+  * @param *img  - the image
   * @returns 0 on success, 1 on error.
   */
 int s_image_xpm (char *file, s_image_t *img);
 
 /*@}*/
 
+/** @defgroup list list struct, api
+  * @brief detailed description
+  *
+  * @example
+  *
+  * @code
+  * int compare_function (void *p1, void *p2)
+  * {
+  * 	int v1 = (int) p1;
+  * 	int v2 = (int) p2;
+  *	if (v1 < v2) { return -1; }
+  * 	if (v1 > v2) { return  1; }
+  * 	return 0;
+  * }
+  *
+  * int pos;
+  * void *item;
+  * s_list_t *list;
+  *
+  * // initialize the list struct
+  * s_list_init(&list);
+  *
+  * // add an item to the end
+  * item = (void *) 0;
+  * s_list_add(list, item, -1);
+  *
+  * // add an item to the beginning
+  * item = (void *) 1;
+  * s_list_add(list, item, 0);
+  *
+  * // add an item to position 1
+  * item = (void *) 2;
+  * s_list_add(list, item, 1);
+  *
+  * // add an item to the end
+  * item = (void *) 3;
+  * s_list_add(list, item, -1);
+  *
+  * // find the the item with compare function
+  * item = (void *) 2;
+  * item = s_list_find(list, item, compare_function);
+  *
+  * // get the items, and print them
+  * // output: 1 2 0 3
+  * for (pos = 0; !s_list_eol(list, pos); pos++) {
+  *	item = (void *) s_list_get(list, pos);
+  * 	printf("%d ", (int) item;
+  * }
+  *
+  * // remove items
+  * while (!s_list_eol(list, 0)) {
+  *	s_list_remove(list, 0);
+  * }
+  *
+  * // uninitialize the list
+  * s_list_uninit(list);
+  * @endcode
+  */
+
+/** @addtogroup list */
+/*@{*/
+
+/** list node struct
+  */
+struct s_list_node_s {
+	/** next element */
+        void *next;
+        /** element */
+        void *element;
+};
+
+/** list struct
+  */
+struct s_list_s {
+	/** number of elements */
+        int nb_elt;
+        /** list node */
+        s_list_node_t *node;
+};
+
 /* list.c */
-int s_list_init (s_list_t *li);
+
+/** @brief initializes the list struct
+  *
+  * @param **li - address of the pointer to list struct
+  * @returns 0 on success, 1 on error
+  */
+int s_list_init (s_list_t **li);
+
+/** @brief uninitializes the list struct
+  *
+  * @param *li - the list
+  * @returns 0 on success, 1 on error
+  */
+int s_list_uninit (s_list_t *li);
+
+/** @brief query if i'nth element exists
+  *
+  * @param *li - the list
+  * @param i   - position
+  * @returns 0 on success, 1 on error
+  */
 int s_list_eol (s_list_t *li, int i);
+
+/** @brief return the element at position
+  *
+  * @param *li - the list
+  * @param pos - position
+  * @returns pointer to element on success, NULL on error.
+  */
 void * s_list_get (s_list_t *li, int pos);
+
+/** @brief removes the element at position
+  *
+  * @param *li - the list
+  * @param pos - position
+  * @returns - on success, 1 on error
+  */
 int s_list_remove (s_list_t *li, int pos);
+
+/** @brief adds the element at position
+  *
+  * @param *li - the list
+  * @param *el - element
+  * @param pos - position (-1 means the end)
+  * @returns - on success, 1 on error
+  */
 int s_list_add (s_list_t *li, void *el, int pos);
+
+/** @brief search the node at list, with the given compare function
+  *
+  * @param *list    - the list
+  * @param *node    - node to be matched
+  * @param cmp_func - compare function. compare function must return -1, 0, 1
+                      for less than, equal to, and greater than
+  * @returns - on success, 1 on error
+  */
 void * s_list_find (s_list_t *list, void *node, int (*cmp_func) (void *, void *));
+
+/** @brief return the position of node
+  *
+  * @param *list - the list
+  * @param *node - element
+  * @returns - position success, -1 on error
+  */
 int s_list_get_pos (s_list_t *list, void *node);
+
+/*@}*/
 
 /* object.c */
 int s_object_update_to_surface (s_object_t *object, s_surface_t *surface, s_rect_t *coor);
@@ -1066,13 +1205,14 @@ void s_thread_exit (void *ret);
   *
   * @code
   * // this is the timer callback
-  * void tmr_cb (s_window_t *window, s_timer_t *timer)
+  * void timer_cb (s_window_t *window, s_timer_t *timer)
   * {
   *	// do what ever you want
   *
   *	// use s_timer_* functions to change anything on timer,
   *	s_timer_timeval(window, timeval, new_timeval);
   *	s_timer_del(window, timer);
+  *	s_timer_uninit(timer);
   *
   *	// or to work directly on time struct
   *	s_thread_mutex_lock(window->timers->mut);
@@ -1086,7 +1226,7 @@ void s_thread_exit (void *ret);
   * // initialize a timer, and set a callback function
   * s_timer_init(&tmr);
   * timer->timeval = 2000;
-  * timer->cb = tmr_cb;
+  * timer->cb = timer_cb;
   * s_timer_add(window, timer);
   *
   * // timeval timer can be changed any time
@@ -1126,55 +1266,56 @@ struct s_timers_s {
 
 /* timer.c */
 
-/** @brief initialize the timer struct
+/** @brief initialize the timer struct.
   *
-  * @param **timer -
+  * @param **timer - address of the timer pointer.
   * @returns 0 on success, 1 on error.
+  *
   */
 int s_timer_init (s_timer_t **timer);
 
 /** @brief updates/sets the timeval for the given timer
   *
-  * @param *window -
-  * @param *timer -
-  * @param timeval -
+  * @param *window - window that holds the timer
+  * @param *timer  - the timer
+  * @param timeval - timeval to set the timer
   * @returns 0 on success, 1 on error.
   */
 int s_timer_timeval (s_window_t *window, s_timer_t *timer, int timeval);
 
 /** @brief uninitialize the timer struct
   *
-  * @param *timer -
+  * @param *timer - the timer
   * @returns 0 on success, 1 on error.
   */
 int s_timer_uninit (s_timer_t *timer);
 
 /** @brief deletes a timer from windows` timers list
   *
-  * @param *window -
-  * @param *timer -
+  * @param *window - window that holds the timer
+  * @param *timer  - timer
   * @returns 0 on success, 1 on error.
   */
 int s_timer_del (s_window_t *window, s_timer_t *timer);
 
 /** @brief adds a timer to windows` timers list
   *
-  * @param *window -
-  * @param *timer -
+  * @param *window - window to attach the timer
+  * @param *timer  - the timer
   * @returns 0 on success, 1 on error.
   */
 int s_timer_add (s_window_t *window, s_timer_t *timer);
 
 /** @brief initialize the timers struct for given window
   *
-  * @param *window -
+  * @param *window - window
   * @returns 0 on success, 1 on error.
   */
 int s_timers_init (s_window_t *window);
 
 /** @brief uninitialize the timers struct for given window
   *
-  * @param *window -
+  * @param *window - window
   * @returns 0 on success, 1 on error.
   */
 int s_timers_uninit (s_window_t *window);

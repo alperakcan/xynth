@@ -344,12 +344,10 @@ static unsigned char * lxynth_init_driver (unsigned char *param, unsigned char *
 
 	lxynth_root = (lxynth_root_t *) s_malloc(sizeof(lxynth_root_t));
 	lxynth_root->eventq = (lxynth_eventq_t *) s_malloc(sizeof(lxynth_eventq_t));
-	lxynth_root->eventq->list = (s_list_t *) s_malloc(sizeof(s_list_t));
-	s_list_init(lxynth_root->eventq->list);
+	s_list_init(&(lxynth_root->eventq->list));
 	s_thread_mutex_init(&(lxynth_root->eventq->mut));
 	lxynth_root->gd = (lxynth_gd_t *) s_malloc(sizeof(lxynth_gd_t));
-	lxynth_root->gd->list = (s_list_t *) s_malloc(sizeof(s_list_t));
-	s_list_init(lxynth_root->gd->list);
+	s_list_init(&(lxynth_root->gd->list));
 	s_thread_mutex_init(&(lxynth_root->gd->mut));
 	lxynth_root->gd->active = NULL;
 
