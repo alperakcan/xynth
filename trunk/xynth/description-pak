@@ -1,0 +1,9 @@
+Xynth Windowing System
+----------------------
+
+Xynth is a portable embedded windowing system, client/server interface
+between display hardware (mouse, keyboard, video displays) and the
+desktop environment that works on many hardware, including embedded
+devices (handhelds, set-top boxes, etc.).
+
+Alper Akcan <distchx at yahoo dot com>

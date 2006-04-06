@@ -1,4 +1,10 @@
 
+Wed 22 Mar 2006 11:57:23 AM EET
+	* description-pak : added for checkinstall
+
+Fri 17 Mar 2006 14:56:19 AM EET
+	* : released v0.8.20
+
 Tue 28 Feb 2006 11:50:49 PM EET
 	* src/lib/thread_pthread.c : __UCLIBC__ patch to make xynth work
 	with uclibc.
