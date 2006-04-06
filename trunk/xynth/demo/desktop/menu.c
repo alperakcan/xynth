@@ -177,8 +177,7 @@ void start_menu_setup (s_window_t *twindow, s_config_t *cfg)
 			j = 0;
 			while (!s_list_eol(cat->variable, j)) {
 				sprog = (smenu_prog_t *) s_calloc(1, sizeof(smenu_prog_t));
-				sprog->progs = (s_list_t *) s_malloc(sizeof(s_list_t));
-				s_list_init(sprog->progs);
+				s_list_init(&(sprog->progs));
 
 				var = (s_config_var_t *) s_list_get(cat->variable, j++);
 
