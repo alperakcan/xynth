@@ -1,4 +1,7 @@
 
+Mon 03 Apr 2006 07:32:28 PM EEST
+	* lib/rectangle.c, server/surface.c : minor optimizations
+
 Sat 01 Apr 2006 01:15:27 AM EEST
 	* lib/xynth.h : added list struct, api to the doxygen doc.
 

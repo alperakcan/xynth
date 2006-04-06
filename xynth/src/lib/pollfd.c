@@ -28,23 +28,22 @@ int s_pollfd_uninit (s_pollfd_t *pfd)
 	return 0;
 }
 
-int s_pollfd_find_cmp_f (void *p1, void *p2)
-{
-	s_pollfd_t *p1_ = (s_pollfd_t *) p1;
-	s_pollfd_t *p2_ = (s_pollfd_t *) p2;
-	if (p1_->fd == p2_->fd) {
-		return 0;
-	}
-	return -1;
-}
-
 s_pollfd_t * s_pollfd_find (s_window_t *window, int fd)
 {
-	s_pollfd_t pfd;
+	int pos;
+	s_pollfd_t *pfd;
 	s_pollfd_t *ret;
-	pfd.fd = fd;
 	s_thread_mutex_lock(window->pollfds->mut);
-	ret = (s_pollfd_t *) s_list_find(window->pollfds->list, &pfd, s_pollfd_find_cmp_f);
+	pos = 0;
+	ret = NULL;
+	while (!s_list_eol(window->pollfds->list, pos)) {
+		pfd = (s_pollfd_t *) s_list_get(window->pollfds->list, pos);
+		if (pfd->fd == fd) {
+			ret = pfd;
+			break;
+		}
+		pos++;
+	}
 	s_thread_mutex_unlock(window->pollfds->mut);
 	return ret;
 }

@@ -33,6 +33,8 @@ typedef struct s_window_s s_window_t;
 typedef struct s_image_s s_image_t;
 typedef struct s_list_s s_list_t;
 typedef struct s_list_node_s s_list_node_t;
+typedef struct s_pollfd_s s_pollfd_t;
+typedef struct s_pollfds_s s_pollfds_t;
 typedef struct s_timer_s s_timer_t;
 typedef struct s_timers_s s_timers_t;
 
@@ -408,18 +410,6 @@ typedef struct s_font_s {
 	s_font_ft_t *ft;
 } s_font_t;
 
-typedef struct s_pollfd_s {
-	int fd;
-	int (*pf_in) (s_window_t *, int);
-	int (*pf_err) (s_window_t *, int);
-	int (*pf_close) (s_window_t *, int);
-} s_pollfd_t;
-
-typedef struct s_pollfds_s {
-	s_list_t *list;
-	s_thread_mutex_t *mut;
-} s_pollfds_t;
-
 typedef struct s_mouse_s {
 	int x;
 	int y;
@@ -774,6 +764,20 @@ int s_handlers_uninit (s_window_t *window);
   * // paste img to the surface
   * s_putboxrgba(surface, x + img->x, y + img->y, img->w, img->h, img->rgba);
   *
+  * // or
+  * s_image_get_buf(surface, img);
+  * s_putbox(surface, x + img->x, y + img->y, img->w, img->h, img->buf);
+  *
+  * // or
+  * s_image_get_buf(surface, img);
+  * s_image_get_mat(surface, img);
+  * s_putboxmask(surface, x + img->x, y + img->y, img->w, img->h, img->buf, img->mat);
+  *
+  * // or
+  * s_image_get_buf(surface, img);
+  * s_image_get_mat(surface, img);
+  * s_putboxalpha(surface, x + img->x, y + img->y, img->w, img->h, img->buf, img->mat);
+  *
   * // when finished, uninitialize img struct
   * s_image_uninit(img);
   * @endcode
@@ -967,6 +971,7 @@ int s_image_xpm (char *file, s_image_t *img);
   * @brief detailed description
   *
   * @example
+  * typical usage of list api;
   *
   * @code
   * int compare_function (void *p1, void *p2)
@@ -1106,7 +1111,7 @@ void * s_list_find (s_list_t *list, void *node, int (*cmp_func) (void *, void *)
   *
   * @param *list - the list
   * @param *node - element
-  * @returns - position success, -1 on error
+  * @returns - position on success, -1 on error
   */
 int s_list_get_pos (s_list_t *list, void *node);
 
@@ -1121,15 +1126,85 @@ int s_object_show (s_object_t *object);
 int s_object_init (s_window_t *window, s_object_t **object, int w, int h, s_object_t *parent);
 int s_object_uninit (s_object_t *object);
 
+/** @defgroup pollfd pollfd struct, api
+  * @brief detailed description
+  *
+  * @example
+  * typical usage of pollfd api;
+  *
+  * @code
+  * int pollfd_in_cb (s_window_t *window, s_pollfd_t *pfd)
+  * {
+  *	return 0;
+  * }
+  *
+  * int pollfd_in_err (s_window_t *window, s_pollfd_t *pfd)
+  * {
+  *	return 0;
+  * }
+  *
+  * int pollfd_in_close (s_window_t *window, s_pollfd_t *pfd)
+  * {
+  *	return 0;
+  * }
+  *
+  * s_pollfd_t *pfd;
+  *
+  * // initialize pfd struct
+  * s_pollfd_init(&pfd);
+  *
+  * // set fd to poll, and callback functions
+  * pfd->fd = fd;
+  * pfd->pf_in = pollfd_in_cb;
+  * pfd->pf_err = pollfd_err_cb;
+  * pfd->pf_close = pollfd_close_cb;
+  *
+  * // add pfd to the window
+  * s_pollfd_add(window, pfd);
+  *
+  * // del pfd from window
+  * s_pollfd_del(window, pfd);
+  *
+  * // uninitialize pfd struct
+  * s_pollfd_uninit(pfd);
+  * @endcode
+  */
+
+/** @addtogroup pollfd */
+/*@{*/
+
+/** polfd struct
+  */
+struct s_pollfd_s {
+	/** fd to poll */
+	int fd;
+	/** in data call back function */
+	int (*pf_in) (s_window_t *, int);
+	/** error call back function */
+	int (*pf_err) (s_window_t *, int);
+	/** closing call back function */
+	int (*pf_close) (s_window_t *, int);
+};
+
+/** polfds struct
+  */
+struct s_pollfds_s {
+	/** list of fds */
+	s_list_t *list;
+	/** list mutex */
+	s_thread_mutex_t *mut;
+};
+
 /* pollfd.c */
 int s_pollfd_init (s_pollfd_t **pfd);
 int s_pollfd_uninit (s_pollfd_t *pfd);
-int s_pollfd_find_cmp_f (void *p1, void *p2);
 s_pollfd_t * s_pollfd_find (s_window_t *window, int fd);
 int s_pollfd_add (s_window_t *window, s_pollfd_t *pfd);
 int s_pollfd_del (s_window_t *window, s_pollfd_t *pfd);
 int s_pollfds_init (s_window_t *window);
 int s_pollfds_uninit (s_window_t *window);
+
+/*@}*/
 
 /* rect.c */
 int s_rect_intersect (s_rect_t *r1, s_rect_t *r2, s_rect_t *r);
@@ -1241,7 +1316,7 @@ void s_thread_exit (void *ret);
 /** @addtogroup timer */
 /*@{*/
 
-/** @brief timer struct
+/** timer struct
   */
 struct s_timer_s {
 	/** timer value in microseconds */
@@ -1255,7 +1330,7 @@ struct s_timer_s {
 	void *user_data;
 };
 
-/** @brief timers struct
+/** timers struct
   */
 struct s_timers_s {
 	/** list of timers */
