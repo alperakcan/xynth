@@ -5,8 +5,8 @@ make install
 
 after instalation xynth.conf will be located at $(CONFDIR).
 
-xynth& sleep 2; term
+xynth& sleep 3; term
 
 or,
 
-xynth& sleep 2; desktop
+xynth& sleep 3; desktop
