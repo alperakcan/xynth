@@ -412,6 +412,9 @@ int s_socket_listen_wait (s_window_t *window, int timeout)
 		default :
 			for (i = 0; i < len; i++) {
 				pfd = s_pollfd_find(window, polfd[i].fd);
+				if (pfd == NULL) {
+					continue;
+				}
 				if (polfd[i].revents & (POLLHUP | POLLERR | POLLNVAL)) {
 err:					if (pfd->pf_err != NULL) {
 						retval = pfd->pf_err(window, polfd[i].fd);

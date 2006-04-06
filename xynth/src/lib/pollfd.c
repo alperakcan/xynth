@@ -74,13 +74,15 @@ int s_pollfd_del (s_window_t *window, s_pollfd_t *pfd)
 int s_pollfds_init (s_window_t *window)
 {
 	window->pollfds = (s_pollfds_t *) s_calloc(1, sizeof(s_pollfds_t));
-	window->pollfds->list = (s_list_t *) s_calloc(1, sizeof(s_list_t));
-	if (s_thread_mutex_init(&(window->pollfds->mut))) {
+	if (s_list_init(&(window->pollfds->list))) {
 		goto err0;
 	}
-	return s_list_init(window->pollfds->list);
-err0:	s_free(window->pollfds->list);
-	s_free(window->pollfds);
+	if (s_thread_mutex_init(&(window->pollfds->mut))) {
+		goto err1;
+	}
+	return 0;
+err1:	s_free(window->pollfds->list);
+err0:	s_free(window->pollfds);
 	return -1;
 }
 

@@ -113,12 +113,10 @@ err0:	return -1;
 int s_config_init (s_config_t **cfg)
 {
 	(*cfg) = (s_config_t *) s_malloc(sizeof(s_config_t));
-	(*cfg)->category = (s_list_t *) s_malloc(sizeof(s_list_t));
-	if (s_list_init((*cfg)->category)) {
+	if (s_list_init(&((*cfg)->category))) {
 		goto err0;
 	}
 	return 0;
-
 err0:	s_free((*cfg)->category);
 	s_free(*cfg);
 	return -1;
@@ -127,13 +125,11 @@ err0:	s_free((*cfg)->category);
 int s_config_category_init (s_config_cat_t **cat, char *name)
 {
 	(*cat) = (s_config_cat_t *) s_malloc(sizeof(s_config_cat_t));
-	(*cat)->variable = (s_list_t *) s_malloc(sizeof(s_list_t));
 	(*cat)->name = strdup(name);
-	if (s_list_init((*cat)->variable)) {
+	if (s_list_init(&((*cat)->variable))) {
 		goto err0;
 	}
 	return 0;
-
 err0:	s_free((*cat)->variable);
 	s_free(*cat);
 	return -1;

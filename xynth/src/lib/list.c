@@ -16,9 +16,19 @@
 #include <stdlib.h>
 #include "xynth_.h"
 
-int s_list_init (s_list_t *li)
+int s_list_init (s_list_t **li)
 {
-	li->nb_elt = 0;
+	(*li) = (s_list_t *) s_malloc(sizeof(s_list_t));
+	if ((*li) == NULL) {
+		return -1;
+	}
+	(*li)->nb_elt = 0;
+	return 0;
+}
+
+int s_list_uninit (s_list_t *li)
+{
+	s_free(li);
 	return 0;
 }
 

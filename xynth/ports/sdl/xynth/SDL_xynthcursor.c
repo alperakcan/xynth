@@ -26,7 +26,7 @@
  */
 void sdl_xynth_FreeWMCursor (_THIS, WMcursor *cursor)
 {
-	free(cursor);
+	s_free(cursor);
 	debugf("sdl_xynth_FreeWMCursor\n");
 }
 

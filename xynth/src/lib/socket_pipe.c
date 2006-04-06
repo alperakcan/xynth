@@ -354,8 +354,7 @@ static int s_socket_pipe_init (void)
 	}
 	debugf(DSER, "Initializing Socket API Emulation using Pipes");
 	s_soce.ids = MIN_SOCK_E;
-	s_soce.list = (s_list_t *) s_malloc(sizeof(s_list_t));
-	s_list_init(s_soce.list);
+	s_list_init(&(s_soce.list));
 	if (s_thread_mutex_init(&(s_soce.lock))) {
 		goto err1;
 	}

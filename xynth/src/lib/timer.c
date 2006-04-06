@@ -76,12 +76,14 @@ end:	return ret;
 int s_timers_init (s_window_t *window)
 {
 	window->timers = (s_timers_t *) s_malloc(sizeof(s_timers_t));
-	if (s_thread_mutex_init(&(window->timers->mut))) {
+	if (s_list_init(&(window->timers->timers))) {
 		goto err0;
 	}
-	window->timers->timers = (s_list_t *) s_malloc(sizeof(s_list_t));
-	return s_list_init(window->timers->timers);
-
+	if (s_thread_mutex_init(&(window->timers->mut))) {
+		goto err1;
+	}
+	return 0;
+err1:	s_free(window->timers->timers);
 err0:	s_free(window->timers);
 	return -1;
 }
