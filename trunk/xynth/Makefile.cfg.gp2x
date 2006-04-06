@@ -1,0 +1,415 @@
+
+# Target platform
+PLATFORM_LINUX  = N
+PLATFORM_PSPDEV = N
+PLATFORM_MINGW  = N
+PLATFORM_GP2X   = Y
+
+# Video Driver
+# SVGALib	: SVGALib - http://www.svgalib.org
+# FBDev		: linux kernel frame buffer driver - http://www.kernel.org
+# SDL           : SDL Library - http://www.libsdl.org
+# VESA          : LRMI - http://sourceforge.net/projects/lrmi
+# PSPDEV        : Play Station Portable SDK - http://www.pspdev.org
+# GDI         	: GDI - http://msdn.microsoft.com/
+# GP2X          : Gamepark Holdings GP2X - http://wiki.gp2x.org
+# NULL		: NULL
+VIDEO_VESA      = N
+VIDEO_SVGALib   = N
+VIDEO_FBDev     = N
+VIDEO_SDL       = N
+VIDEO_PSPDEV    = N
+VIDEO_GDI       = N
+VIDEO_GP2X      = Y
+VIDEO_NULL      = N
+
+# Thread Support
+THREAD_PTHREADS = Y
+THREAD_PSPDEV   = N
+THREAD_WIN32    = N
+
+# Socket Support
+SOCKET_BSD      = N
+SOCKET_PIPE     = Y
+
+# IPC Type
+IPC_UDS         = N
+IPC_TCP         = N
+IPC_PIPE        = Y
+
+# PIPE Support
+PIPE_POSIX      = Y
+PIPE_MEM        = N
+
+# Poll Support
+HAVE_POLL       = Y
+
+# Image Support
+IMAGE_PNG       = Y
+IMAGE_GIF       = Y
+IMAGE_XPM       = Y
+
+# Theme plugin support
+THEME_PLUGIN    = N
+
+# Debug Options
+DEBUG		= Y
+
+# Link them all
+SINGLE_APP         = Y
+SINGLE_APP_CHILD   = Y
+SINGLE_APP_DESKTOP = Y
+SINGLE_APP_HIDE    = Y
+SINGLE_APP_LOAD    = Y
+SINGLE_APP_SIMPLE  = Y
+SINGLE_APP_OBJECT  = Y
+SINGLE_APP_TEMP    = Y
+SINGLE_APP_TERM    = N
+SINGLE_APP_TIMER   = Y
+SINGLE_APP_LOGOUT  = Y
+
+ifeq ($(PLATFORM_LINUX), Y)
+	CC = gcc
+	CXX = g++
+	AR = ar rcs
+	MAKE = make
+	RANLIB = chmod a+r
+	CFLAGS += -DPLATFORM_LINUX
+	_INSTALLDIR = /usr/local/
+	_SHAREDIR = share/xynth/
+	_FONTDIR = fonts/
+	_CONFDIR = configs/
+	_THEMEDIR = themes/
+else
+ifeq ($(PLATFORM_PSPDEV), Y)
+	CC = psp-gcc
+	CXX = psp-g++
+	AR = psp-ar cru
+	MAKE = make
+	RANLIB = psp-ranlib
+	PSP-CONFIG = psp-config
+#	PSP-VERSION = 1.0
+	PSP-VERSION = 1.5
+	CFLAGS += -DPLATFORM_PSPDEV -DPSP_VERSION=$(PSP-VERSION) -DPSP_DIRECTACCESS -DPSP_BITSPERPIXEL=32
+	_INSTALLDIR = ms0:/psp/game/xynth/
+	_SHAREDIR = share/
+	_FONTDIR = fonts/
+	_CONFDIR = configs/
+	_THEMEDIR = themes/
+else
+ifeq ($(PLATFORM_MINGW), Y)
+	CC = gcc
+	CXX = g++
+	AR = ar rcs
+	MAKE = make
+	RANLIB = chmod a+r
+	CFLAGS += -DPLATFORM_MINGW
+	_INSTALLDIR = ../
+	_SHAREDIR = share/
+	_FONTDIR = fonts/
+	_CONFDIR = configs/
+	_THEMEDIR = themes/
+else
+ifeq ($(PLATFORM_GP2X), Y)
+	CC = gp2x-gcc
+	CXX = gp2x-g++
+	AR = gp2x-ar rcs
+	MAKE = make
+	RANLIB = chmod a+r
+	CFLAGS += -DPLATFORM_GP2X
+	_INSTALLDIR = ../
+	_SHAREDIR = share/
+	_FONTDIR = fonts/
+	_CONFDIR = configs/
+	_THEMEDIR = themes/
+endif
+endif
+endif
+endif
+
+ifeq ($(SINGLE_APP), Y)
+	CFLAGS += -DSINGLE_APP
+	ifeq ($(SINGLE_APP_CHILD), Y)
+		CFLAGS += -DSINGLE_APP_CHILD
+	endif
+	ifeq ($(SINGLE_APP_DESKTOP), Y)
+		CFLAGS += -DSINGLE_APP_DESKTOP
+	endif
+	ifeq ($(SINGLE_APP_HIDE), Y)
+		CFLAGS += -DSINGLE_APP_HIDE
+	endif
+	ifeq ($(SINGLE_APP_LOAD), Y)
+		CFLAGS += -DSINGLE_APP_LOAD
+	endif
+	ifeq ($(SINGLE_APP_SIMPLE), Y)
+		CFLAGS += -DSINGLE_APP_SIMPLE
+	endif
+	ifeq ($(SINGLE_APP_OBJECT), Y)
+		CFLAGS += -DSINGLE_APP_OBJECT
+	endif
+	ifeq ($(SINGLE_APP_TEMP), Y)
+		CFLAGS += -DSINGLE_APP_TEMP
+	endif
+	ifeq ($(SINGLE_APP_TERM), Y)
+		CFLAGS += -DSINGLE_APP_TERM
+	endif
+	ifeq ($(SINGLE_APP_TIMER), Y)
+		CFLAGS += -DSINGLE_APP_TIMER
+	endif
+	ifeq ($(SINGLE_APP_LOGOUT), Y)
+		CFLAGS += -DSINGLE_APP_LOGOUT
+	endif
+endif
+
+ifeq ($(VIDEO_FBDev), Y)
+	VIDEO_HELPER         = Y
+	VIDEO_HELPER_CONSOLE = Y
+	VIDEO_HELPER_KBD     = Y
+	VIDEO_HELPER_MODES   = Y
+	VIDEO_HELPER_MOUSE   = Y
+	VIDEO_HELPER_CURSOR  = Y
+	CFLAGS += -DVIDEO_FBDev
+endif
+ifeq ($(VIDEO_VESA), Y)
+	VIDEO_HELPER         = Y
+	VIDEO_HELPER_CONSOLE = Y
+	VIDEO_HELPER_KBD     = Y
+	VIDEO_HELPER_MODES   = Y
+	VIDEO_HELPER_MOUSE   = Y
+	VIDEO_HELPER_CURSOR  = Y
+	VIDEO_HELPER_MTRR    = Y
+	CFLAGS += -DVIDEO_VESA
+endif
+ifeq ($(VIDEO_SVGALib), Y)
+	VIDEO_HELPER         = Y
+	VIDEO_HELPER_CONSOLE = Y
+	VIDEO_HELPER_KBD     = Y
+	VIDEO_HELPER_MODES   = Y
+	VIDEO_HELPER_MOUSE   = Y
+	VIDEO_HELPER_CURSOR  = Y
+	VIDEO_HELPER_MTRR    = Y
+	CFLAGS += -DVIDEO_SVGALib
+endif
+ifeq ($(VIDEO_SDL), Y)
+	VIDEO_HELPER         = Y
+	VIDEO_HELPER_MODES   = Y
+	VIDEO_HELPER_CURSOR  = Y
+	CFLAGS += -DVIDEO_SDL
+endif
+ifeq ($(VIDEO_GDI), Y)
+	VIDEO_HELPER         = Y
+	VIDEO_HELPER_MODES   = Y
+	VIDEO_HELPER_CURSOR  = Y
+	CFLAGS += -DVIDEO_GDI
+endif
+ifeq ($(VIDEO_PSPDEV), Y)
+	VIDEO_HELPER         = Y
+	VIDEO_HELPER_CURSOR  = Y
+	CFLAGS += -DVIDEO_PSPDEV
+endif
+ifeq ($(VIDEO_GP2X), Y)
+	VIDEO_HELPER         = Y
+	VIDEO_HELPER_CURSOR  = Y
+	CFLAGS += -DVIDEO_GP2X
+endif
+ifeq ($(VIDEO_NULL), Y)
+	CFLAGS += -DVIDEO_NULL
+endif
+ifeq ($(VIDEO_HELPER), Y)
+	CFLAGS += -DVIDEO_HELPER
+	ifeq ($(VIDEO_HELPER_CONSOLE), Y)
+		CFLAGS += -DVIDEO_HELPER_CONSOLE
+	endif
+	ifeq ($(VIDEO_HELPER_KBD), Y)
+		CFLAGS += -DVIDEO_HELPER_KBD
+	endif
+	ifeq ($(VIDEO_HELPER_MODES), Y)
+		CFLAGS += -DVIDEO_HELPER_MODES
+	endif
+	ifeq ($(VIDEO_HELPER_MOUSE), Y)
+		CFLAGS += -DVIDEO_HELPER_MOUSE
+	endif
+	ifeq ($(VIDEO_HELPER_CURSOR), Y)
+		CFLAGS += -DVIDEO_HELPER_CURSOR
+	endif
+	ifeq ($(VIDEO_HELPER_MTRR), Y)
+		CFLAGS += -DVIDEO_HELPER_MTRR
+	endif
+endif
+
+ifeq ($(THREAD_PSPDEV), Y)
+	CFLAGS += -DTHREAD_PSPDEV
+	CFLAGS += -DTHREAD_MUTEX_EMULATION
+else
+ifeq ($(THREAD_PTHREADS), Y)
+	CFLAGS += -DTHREAD_PTHREADS
+#	CFLAGS += -DTHREAD_MUTEX_EMULATION
+else
+ifeq ($(THREAD_WIN32), Y)
+	CFLAGS += -DTHREAD_WIN32
+	CFLAGS += -DTHREAD_MUTEX_EMULATION
+endif
+endif
+endif
+
+ifeq ($(SOCKET_BSD), Y)
+	CFLAGS += -DSOCKET_BSD
+else
+ifeq ($(SOCKET_PIPE), Y)
+	CFLAGS += -DSOCKET_PIPE
+endif
+endif
+
+ifeq ($(SOCKET_BSD), Y)
+	ifeq ($(IPC_UDS), Y)
+		CFLAGS += -DIPC_UDS
+	endif
+	ifeq ($(IPC_TCP), Y)
+		CFLAGS += -DIPC_TCP
+	endif
+	CFLAGS += -DPIPE_POSIX
+	ifeq ($(HAVE_POLL), Y)
+		CFLAGS += -DHAVE_POLL
+	endif
+else
+ifeq ($(SOCKET_PIPE), Y)
+	ifeq ($(IPC_PIPE), Y)
+		CFLAGS += -DIPC_PIPE
+	endif
+	ifeq ($(PIPE_POSIX), Y)
+		CFLAGS += -DPIPE_POSIX
+		ifeq ($(HAVE_POLL), Y)
+			CFLAGS += -DHAVE_POLL
+		endif
+	else
+	ifeq ($(PIPE_MEM), Y)
+		CFLAGS += -DPIPE_MEM
+	endif
+	endif
+endif
+endif
+
+ifeq ($(IMAGE_PNG), Y)
+	CFLAGS += -DIMAGE_PNG
+endif
+ifeq ($(IMAGE_GIF), Y)
+	CFLAGS += -DIMAGE_GIF
+endif
+ifeq ($(IMAGE_XPM), Y)
+	CFLAGS += -DIMAGE_XPM
+endif
+
+ifeq ($(THEME_PLUGIN), Y)
+	ifneq ($(IMAGE_XPM), Y)
+		CFLAGS += -DIMAGE_XPM
+	endif
+	CFLAGS += -DTHEME_PLUGIN
+endif
+
+CFLAGS += -DINSTALLDIR=\"$(_INSTALLDIR)/\"
+CFLAGS += -DSHAREDIR=\"$(_INSTALLDIR)/$(_SHAREDIR)/\"
+CFLAGS += -DFONTDIR=\"$(_INSTALLDIR)/$(_SHAREDIR)/$(_FONTDIR)\"
+CFLAGS += -DCONFDIR=\"$(_INSTALLDIR)/$(_SHAREDIR)/$(_CONFDIR)\"
+CFLAGS += -DTHEMEDIR=\"$(_INSTALLDIR)/$(_SHAREDIR)/$(_THEMEDIR)\"
+
+# Default
+ifeq ($(PLATFORM_LINUX), Y)
+	CFLAGS += -Wall -Wparentheses -pipe -fsigned-char -DREENTRANT
+else
+ifeq ($(PLATFORM_PSPDEV), Y)
+	CFLAGS += -Wall -Wparentheses -pipe -fsigned-char -DREENTRANT -G0 -I$(shell $(PSP-CONFIG) -p)/include
+else
+ifeq ($(PLATFORM_MINGW), Y)
+	CFLAGS += -Wall -Wparentheses -pipe -fsigned-char -DREENTRANT
+else
+ifeq ($(PLATFORM_GP2X), Y)
+	CFLAGS += -Wall -Wparentheses -pipe -fsigned-char -DREENTRANT
+endif
+endif
+endif
+endif
+
+ifeq ($(DEBUG), Y)
+	CFLAGS += -g
+	CFLAGS += -DDEBUG
+endif
+
+# Strip while compiling
+#CFLAGS += -s
+
+# Optimizing
+#CFLAGS += -Os
+CFLAGS += -O2
+#CFLAGS += -O3
+#CFLAGS += -O4
+#CFLAGS += -O99
+
+#CFLAGS += -fno-inline
+#CFLAGS += -ffast-math
+#CFLAGS += -fstrength-reduce
+#CFLAGS += -fexpensive-optimizations
+#CFLAGS += -fomit-frame-pointer
+#CFLAGS += -foptimize-sibling-calls
+#CFLAGS += -finline-functions
+#CFLAGS += -funroll-all-loops
+
+# Arch, cpu
+#CFLAGS += -march=i386 -mcpu=i386
+#CFLAGS += -march=pentium3 -mcpu=pentium3
+#CFLAGS += -march=pentium4 -mcpu=pentium4
+#CFLAGS += -march=athlon-xp -mcpu=athlon-xp
+
+# DIRs
+TOPDIR = ../../dist
+LIBDIR = $(TOPDIR)/lib
+INCDIR = $(TOPDIR)/include
+BINDIR = $(TOPDIR)/bin
+FONTDIR = $(TOPDIR)/$(_SHAREDIR)/$(_FONTDIR)
+CONFDIR = $(TOPDIR)/$(_SHAREDIR)/$(_CONFDIR)
+THEMEDIR = $(TOPDIR)/$(_SHAREDIR)/$(_THEMEDIR)
+INSTALLDIR = $(_INSTALLDIR)
+SHAREDIR = $(_SHAREDIR)
+
+# Targets
+TARGET_S = xynth
+TARGET_L = libxynth
+TARGET_W = libwidget
+TARGET_P = libxynthpy
+
+# Version
+VERSION_M = 1
+VERSION = 1.0.0
+
+# Compile time libs
+ifeq ($(PLATFORM_LINUX), Y)
+	LIBS = -L$(LIBDIR) -lxynth
+#	LIBS +=  ../../src/lib/freetype2/libfreetype.a ../../src/lib/libpng/libpng.a ../../src/lib/libz/libz.a -lm -lpthread -static
+else
+ifeq ($(PLATFORM_PSPDEV), Y)
+	LIBS = -L$(shell $(PSP-CONFIG) -p)/lib -L$(LIBDIR) -lxynth ../../src/lib/freetype2/libfreetype.a ../../src/lib/libpng/libpng.a ../../src/lib/libz/libz.a -lm -lpspdebug -lpspdisplay -lpspge -lpspctrl -lpspsdk -lc -lpsputility -lpspuser -lpspkernel
+else
+ifeq ($(PLATFORM_MINGW), Y)
+	LIBS = -L$(LIBDIR) -lxynth ../../src/lib/freetype2/libfreetype.a ../../src/lib/libpng/libpng.a ../../src/lib/libz/libz.a
+	ifeq ($(THREAD_PTHREADS), Y)
+		CFLAGS += -I../../src/server/video/gdi/pthread_w32
+		LIBS += -L../../src/server/video/gdi/pthread_w32 -lpthreadGC2
+	endif
+else
+ifeq  ($(PLATFORM_GP2X), Y)
+	LIBS = -L$(LIBDIR) -lxynth
+	LIBS +=  ../../src/lib/freetype2/libfreetype.a ../../src/lib/libpng/libpng.a ../../src/lib/libz/libz.a -lm -lpthread -static
+endif
+endif
+endif
+endif
+
+.SUFFIXES: .c .o .tco
+
+.c.o:
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+.cpp.o:
+	$(CXX) $(CPPFLAGS) -c -o $@ $<
+
+.c.tco:
+	$(CC) $(CFLAGS) -c -o $@ $<

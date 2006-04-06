@@ -1,0 +1,39 @@
+Linux Real Mode Interface
+=========================
+
+1, Goal
+
+This library provides a DPMI like interface under Linux and *BSD systems
+using vm86. There is also some VBE (VESA Bios Extension) interface utility
+called vbetest.
+
+2, Supported systems
+
+Only under x86:
+
+* Linux 2.2 and above
+* FreeBSD
+* NetBSD
+* OpenBSD
+
+3, License
+
+Look into the individual source files.
+
+4, Authors
+
+Josh Vanderhoof
+* original author
+
+Dmitry Frolov
+* FreeBSD/NetBSD support
+
+Alex Beregszaszi
+* merged MPlayer, MPlayerXP, svgalib and LRMI versions
+* OpenBSD support
+
+Oleg I. Vdovikin <vdovikin@jscc.ru>
+* pthread fixes
+
+Peter Kosinar <goober@ksp.sk>
+* pthread fixes
