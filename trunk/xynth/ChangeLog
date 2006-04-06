@@ -1,4 +1,7 @@
 
+Tue 04 Apr 2006 09:15:55 PM EEST
+	* ports/links : updated to links-2.1pre21
+
 Mon 03 Apr 2006 07:32:28 PM EEST
 	* lib/rectangle.c, server/surface.c : minor optimizations
 

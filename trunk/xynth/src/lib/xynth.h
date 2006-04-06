@@ -1135,16 +1135,22 @@ int s_object_uninit (s_object_t *object);
   * @code
   * int pollfd_in_cb (s_window_t *window, s_pollfd_t *pfd)
   * {
+  *
+  * 	// do what ever you want with your fd
+  * 	// return -1 on error, 0 on success
   *	return 0;
   * }
   *
   * int pollfd_in_err (s_window_t *window, s_pollfd_t *pfd)
   * {
+  * 	// will be called if something bad happens on poll call
+  *  	// return -1 to stop client, otherwise return 0
   *	return 0;
   * }
   *
   * int pollfd_in_close (s_window_t *window, s_pollfd_t *pfd)
   * {
+  * 	// will be called while uniting the window
   *	return 0;
   * }
   *

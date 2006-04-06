@@ -38,7 +38,7 @@ extern "C" {
 
 #define S_SERVER_SOC_PIPE	"Emulated Sockets (PIPE)"
 
-#define S_CLIENTS_MAX	 250
+#define S_CLIENTS_MAX	 125
 #define S_MATRIX_MRBOX	 252
 #define S_MATRIX_SWMOUSE 253
 #define S_MATRIX_DELETED 254
