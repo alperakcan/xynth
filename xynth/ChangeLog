@@ -1,4 +1,7 @@
 
+Sat 25 Mar 2006 02:49:40 AM EET
+	* lib/thread_pspdev.c : fixed thread priority.
+
 Wed 22 Mar 2006 11:57:23 AM EET
 	* description-pak : added for checkinstall
 

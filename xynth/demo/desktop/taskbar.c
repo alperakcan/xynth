@@ -481,8 +481,7 @@ void taskbar_start (s_window_t *window, s_config_t *cfg)
         tbar_data = (tbar_data_t *) s_malloc(sizeof(tbar_data_t));
         tbar_data->tbar_clock = (tbar_clock_t *) s_malloc(sizeof(tbar_clock_t));
         tbar_data->tbar_smenu = (tbar_smenu_t *) s_malloc(sizeof(tbar_smenu_t));
-	tbar_data->tbar_smenu->progs = (s_list_t *) s_malloc(sizeof(s_list_t));
-	s_list_init(tbar_data->tbar_smenu->progs);
+	s_list_init(&(tbar_data->tbar_smenu->progs));
 	s_image_init(&(tbar_data->tbar_smenu->img));
 	s_image_img(DESKTOPDIR "/img/icons/xynth.png", tbar_data->tbar_smenu->img);
 	s_image_get_handler(tbar_data->tbar_smenu->img);
@@ -490,8 +489,7 @@ void taskbar_start (s_window_t *window, s_config_t *cfg)
 
         tbar_data->tbar_progs = (tbar_progs_t *) s_malloc(sizeof(tbar_progs_t));
 	tbar_data->tbar_progs->desktop = (s_desktop_t *) s_malloc(sizeof(s_desktop_t));
-	tbar_data->tbar_progs->desktop->clients = (s_list_t *) s_malloc(sizeof(s_list_t));
-	s_list_init(tbar_data->tbar_progs->desktop->clients);
+	s_list_init(&(tbar_data->tbar_progs->desktop->clients));
 
 	s_font_init(&(tbar_data->tbar_progs->prog_font), "arial.ttf");
 	

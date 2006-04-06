@@ -185,8 +185,7 @@ void desktop_start (s_window_t *window, s_config_t *cfg)
 	window->surface->vbuf = (char *) s_malloc(window->surface->width * window->surface->height * window->surface->bytesperpixel);
 
 	dtop_data = (dtop_data_t *) s_calloc(1, sizeof(dtop_data_t));
-	dtop_data->progs = (s_list_t *) s_malloc(sizeof(s_list_t));
-	s_list_init(dtop_data->progs);
+	s_list_init(&(dtop_data->progs));
 	
 	i = 0;
 	while (!s_list_eol(cfg->category, i)) {

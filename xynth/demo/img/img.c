@@ -154,8 +154,7 @@ int main (int argc, char *argv[])
         imgd->imgf = 0;
         imgd->imgp = 0;
         imgd->imgs = 0;
-        imgd->imgl = (s_list_t *) s_malloc(sizeof(s_list_t));
-        s_list_init(imgd->imgl);
+        s_list_init(&(imgd->imgl));
 
         for (i = 1; i < argc; i++) {
 		s_list_add(imgd->imgl, strdup(argv[i]), -1);
