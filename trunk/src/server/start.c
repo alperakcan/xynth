@@ -73,13 +73,8 @@ static void s_server_handler_quit (s_window_t *window, s_event_t *event, s_handl
 #include <stdlib.h>
 #include <string.h>
 
-#if 1
-PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER | PSP_THREAD_ATTR_VFPU);
-PSP_MODULE_INFO("Xynth Windowing System", 0, 1, 1);
-#else
-PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER | PSP_THREAD_ATTR_VFPU);
 PSP_MODULE_INFO("Xynth Windowing System", 0x1000, 1, 1);
-#endif
+PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER | PSP_THREAD_ATTR_VFPU);
 
 int s_server_psp_exit_callback (int arg1, int arg2, void *common)
 {
