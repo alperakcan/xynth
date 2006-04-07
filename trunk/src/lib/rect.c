@@ -17,43 +17,28 @@
 
 int s_rect_intersect (s_rect_t *r1, s_rect_t *r2, s_rect_t *r)
 {
-	int x11 = r1->x;
-	int x12 = r1->x + r1->w - 1;
-	int y11 = r1->y;
-	int y13 = r1->y + r1->h - 1;
-	int x21 = r2->x;
-	int x22 = r2->x + r2->w - 1;
-	int y21 = r2->y;
-	int y23 = r2->y + r2->h - 1;
-	int x31, x32;
-	int y31, y32;
+	int x31;
+	int x32;
+	int y31;
+	int y32;
 
-	x31 = MAX(x11, x21);
-	x32 = MIN(x12, x22);
+	x31 = MAX(r1->x, r2->x);
+	x32 = MIN(r1->x + r1->w - 1, r2->x + r2->w - 1);
 
-	y31 = MAX(y11, y21);
-	y32 = MIN(y13, y23);
-	
+	y31 = MAX(r1->y, r2->y);
+	y32 = MIN(r1->y + r1->h - 1, r2->y + r2->h - 1);
+
+	if ((x31 > x32) ||
+	    (y31 > y32)) {
+		return -1;
+	}
+
 	r->x = x31;
 	r->y = y31;
 	r->w = x32 - x31 + 1;
 	r->h = y32 - y31 + 1;
 
-	if ((r->w > 0) &&
-	    (r->h > 0) &&
-	    (r->x >= r1->x) &&
-	    (r->y >= r1->y) &&
-	    ((r->x + r->w) <= (r1->x + r1->w)) &&
-	    ((r->y + r->h) <= (r1->y + r1->h))) {
-		/* r is in r1 */
-		return 0;
-	}
-
-	r->x = 0;
-	r->y = 0;
-	r->w = 0;
-	r->h = 0;
-	return -1;
+	return 0;
 }
 
 int s_rect_clip_virtual (s_surface_t *surface, int x, int y, int w, int h, s_rect_t *coor)

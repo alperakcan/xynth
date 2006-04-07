@@ -18,6 +18,7 @@
 
 void s_server_surface_matrix_find (s_rect_t *coor, int *dm)
 {
+	int i;
 	int h;
 	int w;
 	int w_;
@@ -37,14 +38,15 @@ void s_server_surface_matrix_find (s_rect_t *coor, int *dm)
 
         h = inter.h;
         w = inter.w;
-        w_ = server->window->surface->width - inter.w;
-        tmp += ((inter.y * server->window->surface->width) + inter.x);
+        w_ = clip.w - inter.w;
+        tmp += ((inter.y * clip.w) + inter.x);
 
 	while (h--) {
 		w = inter.w;
 		while (w--) {
-			if (*tmp < S_CLIENTS_MAX) {
-				dm[(int) *tmp] = 1;
+			i = *tmp;
+			if (i < S_CLIENTS_MAX) {
+				dm[i] = 1;
 			}
 			tmp++;
 		}
@@ -62,23 +64,23 @@ void s_server_surface_matrix_add (int id, s_rect_t *coor)
 	s_rect_t inter;
 	unsigned char *tmp;
 
+	if (s_rect_intersect(coor, &server->client[id].buf, &intr_)) {
+		return;
+	}
+
 	clip.x = 0;
 	clip.y = 0;
 	clip.w = server->window->surface->width;
 	clip.h = server->window->surface->height;
-	tmp = server->window->surface->matrix;
 
-	if (s_rect_intersect(coor, &server->client[id].buf, &intr_)) {
-		return;
-	}
 	if (s_rect_intersect(&intr_, &clip, &inter)) {
 		return;
 	}
 
         h = inter.h;
         w = inter.w;
-        w_ = server->window->surface->width - inter.w;
-        tmp += ((inter.y * server->window->surface->width) + inter.x);
+        w_ = clip.w - inter.w;
+        tmp = (server->window->surface->matrix + (inter.y * clip.w) + inter.x);
 
 	while (h--) {
 		w = inter.w;
@@ -110,8 +112,8 @@ void s_server_surface_matrix_add_id (int id, s_rect_t *coor)
 	
         h = inter.h;
         w = inter.w;
-        w_ = server->window->surface->width - inter.w;
-        tmp += ((inter.y * server->window->surface->width) + inter.x);
+        w_ = clip.w - w;
+        tmp += ((inter.y * clip.w) + inter.x);
 
 	while (h--) {
 		w = inter.w;
@@ -133,24 +135,24 @@ void s_server_surface_matrix_add_this (int id, s_rect_t *coor, s_rect_t *mcoor, 
 	s_rect_t inter;
 	unsigned char *tmp;
 
+	if (s_rect_intersect(coor, mcoor, &intr_)) {
+		return;
+	}
+
 	clip.x = 0;
 	clip.y = 0;
 	clip.w = server->window->surface->width;
 	clip.h = server->window->surface->height;
-	tmp = server->window->surface->matrix;
 
-	if (s_rect_intersect(coor, mcoor, &intr_)) {
-		return;
-	}
 	if (s_rect_intersect(&intr_, &clip, &inter)) {
 		return;
 	}
 
         h = inter.h;
         w = inter.w;
-        w_ = server->window->surface->width - inter.w;
-        m_ = mcoor->w - inter.w;
-        tmp += ((inter.y * server->window->surface->width) + inter.x);
+        w_ = clip.w - w;
+        m_ = mcoor->w - w;
+        tmp = (server->window->surface->matrix + (inter.y * clip.w) + inter.x);
         mat += ((inter.y - mcoor->y) * mcoor->w) + (inter.x - mcoor->x);
 
 	while (h--) {
@@ -188,8 +190,8 @@ void s_server_surface_matrix_del (int id)
 
         h = intersect.h;
         w = intersect.w;
-        w_ = server->window->surface->width - intersect.w;
-        tmp += ((intersect.y * server->window->surface->width) + intersect.x);
+        w_ = clip.w - w;
+        tmp += ((intersect.y * clip.w) + intersect.x);
 
 	while (h--) {
 		w = intersect.w;
@@ -221,8 +223,8 @@ void s_server_surface_matrix_del_this (int id, s_rect_t *mcoor, unsigned char *m
 
         h = intersect.h;
         w = intersect.w;
-        w_ = server->window->surface->width - intersect.w;
-        tmp += ((intersect.y * server->window->surface->width) + intersect.x);
+        w_ = clip.w - w;
+        tmp += ((intersect.y * clip.w) + intersect.x);
 
 	while (h--) {
 		w = intersect.w;
@@ -254,8 +256,8 @@ void s_server_surface_matrix_del_coor (s_rect_t *coor)
 
         h = intersect.h;
         w = intersect.w;
-        w_ = server->window->surface->width - intersect.w;
-        tmp += ((intersect.y * server->window->surface->width) + intersect.x);
+        w_ = clip.w - w;
+        tmp += ((intersect.y * clip.w) + intersect.x);
 
 	while (h--) {
 		w = intersect.w;
@@ -279,8 +281,6 @@ void s_server_surface_clean (s_rect_t *coor)
 
 void s_server_surface_background (s_rect_t *coor)
 {
-        int x;
-        int y;
 	int h;
 	int w;
 	int w_;
@@ -296,21 +296,17 @@ void s_server_surface_background (s_rect_t *coor)
 	
 	h = intersect.h;
         w = intersect.w;
-        y = intersect.y;
-        w_ = server->window->surface->width - intersect.w;
+        w_ = server->window->surface->width - w;
         tmp += ((intersect.y * server->window->surface->width) + intersect.x);
 
 	while (h--) {
-		x = intersect.x;
 		w = intersect.w;
 		while (w--) {
 			if (*tmp == S_MATRIX_DELETED) {
 				*tmp = S_MATRIX_FREE;
 			}
-			x++;
 			tmp++;
 		}
-		y++;
 		tmp += w_;
 	}
 }
@@ -319,12 +315,15 @@ void s_server_surface_lock_real (void)
 {
 	int i;
 	s_rect_t coor;
+	unsigned char *mat;
 	coor.x = 0;
 	coor.y = 0;
 	coor.w = server->window->surface->width;
 	coor.h = server->window->surface->height;
-	for (i = 0; i < coor.w * coor.h; i++) {
-		server->window->surface->matrix[i] = S_MATRIX_DELETED;
+	i = coor.w * coor.h;
+	mat = server->window->surface->matrix;
+	while (i--) {
+		*mat++ = S_MATRIX_DELETED;
 	}
 }
 
