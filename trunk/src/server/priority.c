@@ -135,8 +135,7 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 	s_rect_t *rtmp;
 	s_list_t *diff;
 
-	diff = (s_list_t *) s_malloc(sizeof(s_list_t));
-	s_list_init(diff);
+	s_list_init(&diff);
 
 	p = s_server_id_pri(id);
 	p_old = s_server_pri_id(0);
@@ -164,17 +163,18 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 			   window form area of the one`s that will get the priority (pri == 0)
 			 */
 			{
-				s_list_t diff_;
+				s_list_t *diff_;
 				s_list_init(&diff_);
 				if ((i = s_server_pri_id(0)) >= 0) {
-					s_rect_difference(&server->client[i].win, &server->client[i].buf, &diff_);
+					s_rect_difference(&server->client[i].win, &server->client[i].buf, diff_);
 				}
-				while (!s_list_eol(&diff_, 0)) {
-					rtmp = (s_rect_t *) s_list_get(&diff_, 0);
+				while (!s_list_eol(diff_, 0)) {
+					rtmp = (s_rect_t *) s_list_get(diff_, 0);
 					s_rect_difference(rtmp, c0, diff);
-					s_list_remove(&diff_, 0);
+					s_list_remove(diff_, 0);
 					s_free(rtmp);
 				}
+				s_free(diff_);
 				s_rect_difference_add(diff, c0->x, c0->y, c0->w, c0->h);
 			}
 			break;
@@ -184,17 +184,18 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 			   priority gained window`s rectangle (pri == 0)
 			 */
 			{
-				s_list_t diff_;
+				s_list_t *diff_;
 				s_list_init(&diff_);
 				if ((i = s_server_pri_id(1)) >= 0) {
-					s_rect_difference(&server->client[i].win, &server->client[i].buf, &diff_);
+					s_rect_difference(&server->client[i].win, &server->client[i].buf, diff_);
 				}
-				while (!s_list_eol(&diff_, 0)) {
-					rtmp = (s_rect_t *) s_list_get(&diff_, 0);
+				while (!s_list_eol(diff_, 0)) {
+					rtmp = (s_rect_t *) s_list_get(diff_, 0);
 					s_rect_difference(rtmp, &server->client[id].win, diff);
-					s_list_remove(&diff_, 0);
+					s_list_remove(diff_, 0);
 					s_free(rtmp);
 				}
+				s_free(diff_);
 				s_rect_difference_add(diff, server->client[id].win.x, server->client[id].win.y,
 				                            server->client[id].win.w, server->client[id].win.h);
 			}

@@ -1,4 +1,7 @@
 
+Sat 01 Apr 2006 01:15:27 AM EEST
+	* lib/xynth.h : added list struct, api to the doxygen doc.
+
 Sat 25 Mar 2006 02:49:40 AM EET
 	* lib/thread_pspdev.c : fixed thread priority.
 

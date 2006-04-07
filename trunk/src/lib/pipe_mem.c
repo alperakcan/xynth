@@ -49,8 +49,7 @@ static int s_pipe_mem_init (void)
 {
 	DEBUGF(0, "enter");
 	debugf(DSER, "Initializing Pipe API Emulation using Mutex and Condition variables");
-	s_pipe.list = (s_list_t *) s_malloc(sizeof(s_list_t));
-	if (s_list_init(s_pipe.list)) {
+	if (s_list_init(&(s_pipe.list))) {
 		goto err0;
 	}
 	if (s_thread_mutex_init(&(s_pipe.lock))) {
@@ -128,8 +127,7 @@ static int s_pipe_mem_new (s_pipe_t **p)
 	(*p)->type = PIPET_NONE;
 	(*p)->conn = NULL;
 	(*p)->data = NULL;
-	(*p)->wait = (s_list_t *) s_malloc(sizeof(s_list_t));
-	if (s_list_init((*p)->wait)) {
+	if (s_list_init(&((*p)->wait))) {
 		goto err0;
 	}
 	return 0;
@@ -185,8 +183,7 @@ static int s_pipe_mem_pipe (int filedes[2])
 	if (s_pipe_mem_new(&pw)) {
 		goto err1;
 	}
-	pd = (s_list_t *) s_malloc(sizeof(s_list_t));
-	if (s_list_init(pd)) {
+	if (s_list_init(&pd)) {
 		goto err2;
 	}
 	s_thread_mutex_lock(s_pipe.lock);
