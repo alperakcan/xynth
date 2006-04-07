@@ -1135,7 +1135,6 @@ int s_object_uninit (s_object_t *object);
   * @code
   * int pollfd_in_cb (s_window_t *window, s_pollfd_t *pfd)
   * {
-  *
   * 	// do what ever you want with your fd
   * 	// return -1 on error, 0 on success
   *	return 0;
@@ -1202,12 +1201,58 @@ struct s_pollfds_s {
 };
 
 /* pollfd.c */
+
+/** @brief initialize the pollfd struct.
+  *
+  * @param **pfd - address of the pollfd pointer.
+  * @returns 0 on success, 1 on error.
+  *
+  */
 int s_pollfd_init (s_pollfd_t **pfd);
+
+/** @brief uninitialize the pollfd struct
+  *
+  * @param *pfd - the pollfd
+  * @returns 0 on success, 1 on error.
+  */
 int s_pollfd_uninit (s_pollfd_t *pfd);
+
+/** @brief finds the pollfd struct that is associated with fd
+  *
+  * @param window - the window that holds pollfd
+  * @param fd     - file descriptor to find
+  * @returns pointer to pollfd on success, NULL on error.
+  */
 s_pollfd_t * s_pollfd_find (s_window_t *window, int fd);
+
+/** @brief adds a pollfd to windows` pollfds list
+  *
+  * @param *window - window to attach the pollfd
+  * @param *pfd    - the pollfd
+  * @returns 0 on success, 1 on error.
+  */
 int s_pollfd_add (s_window_t *window, s_pollfd_t *pfd);
+
+/** @brief deletes a pollfd from windows` pollfds list
+  *
+  * @param *window - window that holds the pollfd
+  * @param *pfd    - the pollfd
+  * @returns 0 on success, 1 on error.
+  */
 int s_pollfd_del (s_window_t *window, s_pollfd_t *pfd);
+
+/** @brief initialize the pollfds struct for given window
+  *
+  * @param *window - window
+  * @returns 0 on success, 1 on error.
+  */
 int s_pollfds_init (s_window_t *window);
+
+/** @brief uninitialize the pollfds struct for given window
+  *
+  * @param *window - window
+  * @returns 0 on success, 1 on error.
+  */
 int s_pollfds_uninit (s_window_t *window);
 
 /*@}*/
