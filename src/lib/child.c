@@ -53,13 +53,15 @@ int s_child_del (s_window_t *window, s_window_t *child)
 int s_childs_init (s_window_t *window)
 {
         window->childs = (s_childs_t *) s_calloc(1, sizeof(s_childs_t));
-        window->childs->list = (s_list_t *) s_calloc(1, sizeof(s_list_t));
-	if (s_thread_mutex_init(&(window->childs->mut))) {
+        if (s_list_init(&(window->childs->list))) {
 		goto err0;
 	}
-	return s_list_init(window->childs->list);
-err0:	s_free(window->childs->list);
-	s_free(window->childs);
+	if (s_thread_mutex_init(&(window->childs->mut))) {
+		goto err1;
+	}
+	return 0;
+err1:	s_free(window->childs->list);
+err0:	s_free(window->childs);
 	return -1;
 }
 

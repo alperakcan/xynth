@@ -50,13 +50,15 @@ int s_handler_del (s_window_t *window, s_handler_t *handler)
 int s_handlers_init (s_window_t *window)
 {
 	window->handlers = (s_handlers_t *) s_malloc(sizeof(s_handlers_t));
-	window->handlers->list = (s_list_t *) s_malloc(sizeof(s_list_t));
-	if (s_thread_mutex_init(&(window->handlers->mut))) {
+	if (s_list_init(&(window->handlers->list))) {
 		goto err0;
 	}
-	return s_list_init(window->handlers->list);
-err0:	s_free(window->handlers->list);
-	s_free(window->handlers);
+	if (s_thread_mutex_init(&(window->handlers->mut))) {
+		goto err1;
+	}
+	return 0;
+err1:	s_free(window->handlers->list);
+err0:	s_free(window->handlers);
 	return 1;
 }
 

@@ -329,7 +329,7 @@ int s_thread_join (s_thread_t *tid, void **ret)
 		return -1;
 	}
 	r = s_thread_api->thread_join(tid, ret);
-	free(tid);
+	s_free(tid);
 	return r;
 }
 

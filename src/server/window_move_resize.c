@@ -62,8 +62,7 @@ void s_server_window_lines_clear_ (s_rect_t *told, s_rect_t *tnew)
 {
 	s_rect_t *rtmp;
 	s_list_t *diff;
-	diff = (s_list_t *) s_malloc(sizeof(s_list_t));
-	s_list_init(diff);
+	s_list_init(&diff);
 	s_rect_difference(told, tnew, diff);
 	while (!s_list_eol(diff, 0)) {
 		rtmp = (s_rect_t *) s_list_get(diff, 0);

@@ -79,7 +79,7 @@ int s_object_move (s_object_t *object, int x, int y, int w, int h)
         int pos = 0;
         s_rect_t old;
 	s_rect_t *tmp;
-	s_list_t diff;
+	s_list_t *diff;
 
         s_thread_mutex_lock(object->mut);
 
@@ -110,13 +110,14 @@ int s_object_move (s_object_t *object, int x, int y, int w, int h)
 	}
 	
 	s_list_init(&diff);
-	s_rect_difference(&old, &(object->surface->win), &diff);
-	while (!s_list_eol(&diff, 0)) {
-		tmp = (s_rect_t *) s_list_get(&diff, 0);
+	s_rect_difference(&old, &(object->surface->win), diff);
+	while (!s_list_eol(diff, 0)) {
+		tmp = (s_rect_t *) s_list_get(diff, 0);
 		s_object_update(object, tmp);
-		s_list_remove(&diff, 0);
+		s_list_remove(diff, 0);
 		s_free(tmp);
 	}
+	s_free(diff);
 	s_object_update(object, &(object->surface->win));
 
         s_thread_mutex_unlock(object->mut);
@@ -175,12 +176,10 @@ int s_object_init (s_window_t *window, s_object_t **object, int w, int h, s_obje
         char *vbuf;
         
 	(*object) = (s_object_t *) s_malloc(sizeof(s_object_t));
-	(*object)->childs = (s_list_t *) s_malloc(sizeof(s_list_t));
 	(*object)->surface = (s_surface_t *) s_malloc(sizeof(s_surface_t));
 	(*object)->surface->matrix = (unsigned char *) s_malloc(sizeof(char) * w * h + 1);
 	memset((*object)->surface->matrix, 1, sizeof(char) * w * h);
-
-	s_list_init((*object)->childs);
+	s_list_init(&((*object)->childs));
         vbuf = (char *) s_calloc(1, w * h * window->surface->bytesperpixel + 1);
 	s_getsurfacevirtual((*object)->surface, w, h, window->surface->bitsperpixel, vbuf);
 	(*object)->parent = parent;

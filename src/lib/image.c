@@ -200,8 +200,7 @@ int s_image_layer_uninit (s_image_t *lyr)
 
 int s_image_layers_init (s_image_t *img)
 {
-	img->layers = (s_list_t *) s_calloc(1, sizeof(s_list_t));
-	return s_list_init(img->layers);
+	return s_list_init(&(img->layers));
 }
 
 int s_image_layers_uninit (s_image_t *img)

@@ -81,8 +81,7 @@ int s_server_socket_listen_title (int id)
 		}
 		s_server_window_calculate(id);
 
-		diff = (s_list_t *) s_malloc(sizeof(s_list_t));
-		s_list_init(diff);
+		s_list_init(&diff);
 		s_rect_difference(&(server->client[id].win), &(server->client[id].buf), diff);
 		while (!s_list_eol(diff, 0)) {
 			rtmp = (s_rect_t *) s_list_get(diff, 0);

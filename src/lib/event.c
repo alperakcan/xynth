@@ -252,8 +252,7 @@ int s_event_init (s_event_t **event)
 	(*event)->keybd = (s_keybd_t *) s_calloc(1, sizeof(s_keybd_t));
 	(*event)->expose = (s_expose_t *) s_calloc(1, sizeof(s_expose_t));
 	(*event)->desktop = (s_desktop_t *) s_calloc(1, sizeof(s_desktop_t));
-	(*event)->desktop->clients = (s_list_t *) s_calloc(1, sizeof(s_list_t));
-	if (s_list_init((*event)->desktop->clients)) {
+	if (s_list_init(&((*event)->desktop->clients))) {
 		goto err0;
 	}
 	return 0;
