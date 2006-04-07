@@ -157,6 +157,7 @@ int main (int argc, char *argv[])
 
 	while (server->window->running > 0) {
 		if (s_socket_listen_wait(server->window, -1)) {
+			server->window->running = 0;
 			break;
 		}
 	}

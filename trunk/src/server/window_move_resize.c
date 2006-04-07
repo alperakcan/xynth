@@ -154,7 +154,10 @@ void s_server_window_while (s_rect_t *move, int flag)
 	s_rect_t tmp;
 	
 	while ((server->window->running * server->window->event->mouse->buttons * server->mh) > 0) {
-		s_socket_listen_wait(server->window, -1);
+		if (s_socket_listen_wait(server->window, -1)) {
+			server->window->running = 0;
+			break;
+		}
 		if ((mx == s_mouse_getx()) && (my == s_mouse_gety())) {
 			continue;
 		}
