@@ -210,6 +210,11 @@ vr_bad:						debugf(DSER, "Illegal vertrefresh setting. Correct usage: vertrefre
 		s_video_driver_t **vd;
 		for (vd = video_drivers; *vd; vd++) {
 			if (strcmp((*vd)->driver, config->general.driver) == 0) {
+				if ((strlen((*vd)->driver) >= S_FNAME_MAX) ||
+				    (strlen((*vd)->device) >= S_FNAME_MAX)) {
+					debugf(DSER, "driver:%s, or device:%s name is too long (> %d). skipping", (*vd)->driver, (*vd)->device, S_FNAME_MAX);
+					continue;
+				}
 				server->driver = *vd;
 			}
 		}

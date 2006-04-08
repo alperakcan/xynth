@@ -1,4 +1,8 @@
 
+Sat 08 Apr 2006 05:14:25 AM EEST
+	* server/socket.c, lib/socket.c, server/server.c : some changes on data
+	transfer.
+
 Fri 07 Apr 2006 07:54:09 PM EEST
 	* : imported  to svn
 

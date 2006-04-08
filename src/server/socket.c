@@ -105,42 +105,42 @@ int s_server_socket_listen_title (int id)
 
 int s_server_socket_listen_display (int id)
 {
-        int len;
-	unsigned int addr;
+	s_soc_data_display_t *data;
+	data = (s_soc_data_display_t *) s_calloc(1, sizeof(s_soc_data_display_t));
 
-	s_socket_send(server->client[id].soc, &server->window->surface->bytesperpixel, sizeof(int));
-	s_socket_send(server->client[id].soc, &server->window->surface->bitsperpixel, sizeof(int));
-	s_socket_send(server->client[id].soc, &server->window->surface->colors, sizeof(int));
-	s_socket_send(server->client[id].soc, &server->window->surface->blueoffset, sizeof(int));
-	s_socket_send(server->client[id].soc, &server->window->surface->greenoffset, sizeof(int));
-	s_socket_send(server->client[id].soc, &server->window->surface->redoffset, sizeof(int));
-	s_socket_send(server->client[id].soc, &server->window->surface->bluelength, sizeof(int));
-	s_socket_send(server->client[id].soc, &server->window->surface->greenlength, sizeof(int));
-	s_socket_send(server->client[id].soc, &server->window->surface->redlength, sizeof(int));
+	data->bytesperpixel = server->window->surface->bytesperpixel;
+	data->bitsperpixel = server->window->surface->bitsperpixel;
+	data->colors = server->window->surface->colors;
+	data->blueoffset = server->window->surface->blueoffset;
+	data->greenoffset = server->window->surface->greenoffset;
+	data->redoffset = server->window->surface->redoffset;
+	data->bluelength = server->window->surface->bluelength;
+	data->greenlength = server->window->surface->greenlength;
+	data->redlength = server->window->surface->redlength;
 
-	addr = (unsigned int) server->window->surface->linear_buf;
-	s_socket_send(server->client[id].soc, &addr, sizeof(unsigned int));
-	addr = (unsigned int) server->window->surface->matrix;
-	s_socket_send(server->client[id].soc, &addr, sizeof(unsigned int));
+	data->linear_buf = (unsigned int) server->window->surface->linear_buf;
+	data->matrix = (unsigned int) server->window->surface->matrix;
 
-	s_socket_send(server->client[id].soc, &server->window->surface->linear_mem_size, sizeof(unsigned int));
-	s_socket_send(server->client[id].soc, &server->window->surface->linear_mem_base, sizeof(unsigned int));
-	s_socket_send(server->client[id].soc, &server->window->surface->linear_buf_width, sizeof(int));
-	s_socket_send(server->client[id].soc, &server->window->surface->linear_buf_pitch, sizeof(int));
-	s_socket_send(server->client[id].soc, &server->window->surface->linear_buf_height, sizeof(int));
-	s_socket_send(server->client[id].soc, &server->window->surface->shm_mid, sizeof(int));
-	s_socket_send(server->client[id].soc, &id, sizeof(int));
+	data->linear_mem_size = server->window->surface->linear_mem_size;
+	data->linear_mem_base = server->window->surface->linear_mem_base;
+	data->linear_buf_width = server->window->surface->linear_buf_width;
+	data->linear_buf_pitch = server->window->surface->linear_buf_pitch;
+	data->linear_buf_height = server->window->surface->linear_buf_height;
+	data->shm_mid = server->window->surface->shm_mid;
+	data->id = id;
 
-	s_socket_send(server->client[id].soc, &server->window->surface->shm_sid, sizeof(int));
-	s_socket_send(server->client[id].soc, &server->window->surface->need_expose, sizeof(int));
+	data->shm_sid = server->window->surface->shm_sid;
+	data->need_expose = server->window->surface->need_expose;
 
-	len = strlen(server->driver->device);
-	s_socket_send(server->client[id].soc, &len, sizeof(int));
-	s_socket_send(server->client[id].soc, server->driver->device, sizeof(char) * (len + 1));
-	len = strlen(server->driver->driver);
-	s_socket_send(server->client[id].soc, &len, sizeof(int));
-	s_socket_send(server->client[id].soc, server->driver->driver, sizeof(char) * (len + 1));
+	strncpy(data->device, server->driver->device, S_FNAME_MAX);
+	strncpy(data->driver, server->driver->driver, S_FNAME_MAX);
 
+	if (s_socket_api_send(server->client[id].soc, data, sizeof(s_soc_data_display_t)) != sizeof(s_soc_data_display_t)) {
+		s_free(data);
+		return -1;
+	}
+
+	s_free(data);
 	return 0;
 }
 

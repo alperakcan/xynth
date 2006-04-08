@@ -44,6 +44,8 @@ extern "C" {
 #define S_MATRIX_DELETED 254
 #define S_MATRIX_FREE	 255
 
+#define S_FNAME_MAX       255
+
 #define DFAT	1
 #define DSYS	2
 #define DSER	4
@@ -138,6 +140,32 @@ int s_socket_api_listen (int s, int backlog);
 int s_socket_api_accept (int s, s_sockaddr_t *addr, socklen_t *addrlen);
 int s_socket_api_connect (int sockfd, const s_sockaddr_t *serv_addr, socklen_t addrlen);
 int s_socket_api_close (int fd);
+
+typedef struct s_soc_data_display_s {
+	int bytesperpixel;
+	int bitsperpixel;
+	int colors;
+	int blueoffset;
+	int greenoffset;
+	int redoffset;
+	int bluelength;
+	int greenlength;
+	int redlength;
+	unsigned int linear_buf;
+	unsigned int matrix;
+	unsigned int linear_mem_size;
+	unsigned int linear_mem_base;
+	int linear_buf_width;
+	int linear_buf_pitch;
+	int linear_buf_height;
+	int shm_mid;
+	int id;
+	int shm_sid;
+	int need_expose;
+	char device[S_FNAME_MAX];
+	char driver[S_FNAME_MAX];
+} s_soc_data_display_t;
+
 
 #ifdef __cplusplus
 }

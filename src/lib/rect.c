@@ -133,11 +133,6 @@ int s_rect_difference (s_rect_t *r1, s_rect_t *r0, s_list_t *list)
 	int w1 = r2.w;
 	int h1 = r2.h;
 
-	change |= ((x0 != x1) ? (x_c) : (0));
-	change |= ((y0 != y1) ? (y_c) : (0));
-	change |= ((w0 != w1) ? (w_c) : (0));
-	change |= ((h0 != h1) ? (h_c) : (0));
-
 	if (inters) {
 		/* xxxxxxxx
 		   xxxxxxxx
@@ -149,6 +144,11 @@ int s_rect_difference (s_rect_t *r1, s_rect_t *r0, s_list_t *list)
 		s_rect_difference_add(list, r1->x, r1->y, r1->w, r1->h);
 		goto end;
 	}
+
+	change |= ((x0 != x1) ? (x_c) : (0));
+	change |= ((y0 != y1) ? (y_c) : (0));
+	change |= ((w0 != w1) ? (w_c) : (0));
+	change |= ((h0 != h1) ? (h_c) : (0));
 
 	/* r1 and r2 are intersecting, and the intersecting area is set in to r2 */
         if (!(change & x_c) && !(change & y_c) && !(change & w_c) && !(change & h_c)) {
