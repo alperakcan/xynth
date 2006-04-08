@@ -44,42 +44,42 @@ int s_socket_request_title (s_window_t *window, int soc)
 
 int s_socket_request_display (s_window_t *window, int soc)
 {
-        int len;
-	unsigned int addr;
+	s_soc_data_display_t *data;
+	data = (s_soc_data_display_t *) s_calloc(1, sizeof(s_soc_data_display_t));
 
-	s_socket_recv(soc, &window->surface->bytesperpixel, sizeof(int));
-	s_socket_recv(soc, &window->surface->bitsperpixel, sizeof(int));
-	s_socket_recv(soc, &window->surface->colors, sizeof(int));
-	s_socket_recv(soc, &window->surface->blueoffset, sizeof(int));
-	s_socket_recv(soc, &window->surface->greenoffset, sizeof(int));
-	s_socket_recv(soc, &window->surface->redoffset, sizeof(int));
-	s_socket_recv(soc, &window->surface->bluelength, sizeof(int));
-	s_socket_recv(soc, &window->surface->greenlength, sizeof(int));
-	s_socket_recv(soc, &window->surface->redlength, sizeof(int));
+	if (s_socket_api_recv(soc, data, sizeof(s_soc_data_display_t)) != sizeof(s_soc_data_display_t)) {
+		s_free(data);
+		return -1;
+	}
 
-	s_socket_recv(soc, &addr, sizeof(unsigned int));
-	window->surface->linear_buf = (char *) addr;
-	s_socket_recv(soc, &addr, sizeof(unsigned int));
-	window->surface->matrix = (unsigned char *) addr;
+	window->surface->bytesperpixel = data->bytesperpixel;
+	window->surface->bitsperpixel = data->bitsperpixel;
+	window->surface->colors = data->colors;
+	window->surface->blueoffset = data->blueoffset;
+	window->surface->greenoffset = data->greenoffset;
+	window->surface->redoffset = data->redoffset;
+	window->surface->bluelength = data->bluelength;
+	window->surface->greenlength = data->greenlength;
+	window->surface->redlength = data->redlength;
 
-	s_socket_recv(soc, &window->surface->linear_mem_size, sizeof(unsigned int));
-	s_socket_recv(soc, &window->surface->linear_mem_base, sizeof(unsigned int));
-	s_socket_recv(soc, &window->surface->linear_buf_width, sizeof(int));
-	s_socket_recv(soc, &window->surface->linear_buf_pitch, sizeof(int));
-	s_socket_recv(soc, &window->surface->linear_buf_height, sizeof(int));
-	s_socket_recv(soc, &window->surface->shm_mid, sizeof(int));
-	s_socket_recv(soc, &window->client->id, sizeof(int));
+	window->surface->linear_buf = (char *) data->linear_buf;
+	window->surface->matrix = (char *) data->matrix;
 
-	s_socket_recv(soc, &window->surface->shm_sid, sizeof(int));
-	s_socket_recv(soc, &window->surface->need_expose, sizeof(int));
+	window->surface->linear_mem_size = data->linear_mem_size;
+	window->surface->linear_mem_base = data->linear_mem_base;
+	window->surface->linear_buf_width = data->linear_buf_width;
+	window->surface->linear_buf_pitch = data->linear_buf_pitch;
+	window->surface->linear_buf_height = data->linear_buf_height;
+	window->surface->shm_mid = data->shm_mid;
+	window->client->id = data->id;
 
-	s_socket_recv(soc, &len, sizeof(int));
-	window->client->device = (char *) s_malloc(sizeof(char) * (len + 1));
-	s_socket_recv(soc, window->client->device, sizeof(char) * (len + 1));
-	s_socket_recv(soc, &len, sizeof(int));
-	window->client->driver = (char *) s_malloc(sizeof(char) * (len + 1));
-	s_socket_recv(soc, window->client->driver, sizeof(char) * (len + 1));
+	window->surface->shm_sid = data->shm_sid;
+	window->surface->need_expose = data->need_expose;
 
+	window->client->device = strdup(data->device);
+	window->client->driver = strdup(data->driver);
+
+	s_free(data);
 	return 0;
 }
 
