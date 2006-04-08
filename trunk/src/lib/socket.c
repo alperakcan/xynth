@@ -77,7 +77,6 @@ int s_socket_request_display (s_window_t *window, int soc)
 	window->surface->need_expose = data->need_expose;
 
 	window->client->device = strdup(data->device);
-	window->client->driver = strdup(data->driver);
 
 	s_free(data);
 	return 0;
@@ -218,14 +217,21 @@ err0:	s_thread_mutex_unlock(window->socket_mutex);
 
 int s_socket_listen_event (s_window_t *window, int soc)
 {
-	s_socket_recv(soc, &window->event->type, sizeof(S_EVENT));
-	if (window->event->type & MOUSE_EVENT) {
-		s_socket_recv(soc, window->event->mouse, sizeof(s_mouse_t));
+	s_soc_data_event_t *data;
+	data = (s_soc_data_event_t *) s_calloc(1, sizeof(s_soc_data_event_t));
+
+	if (s_socket_api_recv(soc, data, sizeof(s_soc_data_event_t)) != sizeof(s_soc_data_event_t)) {
+		s_free(data);
+		return -1;
 	}
-	if (window->event->type & KEYBD_EVENT) {
-		s_socket_recv(soc, window->event->keybd, sizeof(s_keybd_t));
-	}
+
+	window->event->type = data->type;
+	*(window->event->mouse) = data->mouse;
+	*(window->event->keybd) = data->keybd;
+
 	s_event_changed(window);
+
+	s_free(data);
 	return 0;
 }
 
@@ -238,28 +244,33 @@ int s_socket_listen_close (s_window_t *window, int soc)
 int s_socket_listen_expose (s_window_t *window, int soc)
 {
         int p_old;
-        s_rect_t old;
-	s_rect_t changed;
+        s_rect_t r_old;
+	s_soc_data_expose_t *data;
+	data = (s_soc_data_expose_t *) s_calloc(1, sizeof(s_soc_data_expose_t));
 
-	old = window->surface->win;
+	if (s_socket_api_recv(soc, data, sizeof(s_soc_data_expose_t)) != sizeof(s_soc_data_expose_t)) {
+		s_free(data);
+		return -1;
+	}
+
 	p_old = window->client->pri;
+	r_old = window->surface->win;
 
-	s_socket_recv(soc, &window->surface->buf, sizeof(s_rect_t));
-	s_socket_recv(soc, &window->surface->win, sizeof(s_rect_t));
-	s_socket_recv(soc, &window->client->pri, sizeof(int));
-	s_socket_recv(soc, &changed, sizeof(s_rect_t));
-	s_socket_recv(soc, &window->surface->linear_buf_width, sizeof(int));
-	s_socket_recv(soc, &window->surface->linear_buf_pitch, sizeof(int));
-	s_socket_recv(soc, &window->surface->linear_buf_height, sizeof(int));
+	window->client->pri = data->pri;
+	window->surface->buf = data->buf;
+	window->surface->win = data->win;
+	window->surface->linear_buf_width = data->linear_buf_width;
+	window->surface->linear_buf_pitch = data->linear_buf_pitch;
+	window->surface->linear_buf_height = data->linear_buf_height;
 
 	window->event->type = EXPOSE_EVENT;
 	window->event->expose->change= 0;
-	window->event->expose->rect = changed;
+	window->event->expose->rect = data->changed;
 
-        if (old.x != window->surface->win.x) { window->event->expose->change |= EXPOSE_CHNGX; }
-        if (old.y != window->surface->win.y) { window->event->expose->change |= EXPOSE_CHNGY; }
-        if (old.w != window->surface->win.w) { window->event->expose->change |= EXPOSE_CHNGW; }
-        if (old.h != window->surface->win.h) { window->event->expose->change |= EXPOSE_CHNGH; }
+        if (r_old.x != window->surface->win.x) { window->event->expose->change |= EXPOSE_CHNGX; }
+        if (r_old.y != window->surface->win.y) { window->event->expose->change |= EXPOSE_CHNGY; }
+        if (r_old.w != window->surface->win.w) { window->event->expose->change |= EXPOSE_CHNGW; }
+        if (r_old.h != window->surface->win.h) { window->event->expose->change |= EXPOSE_CHNGH; }
         if ((p_old != window->client->pri) &&
             ((p_old == 0) || (window->client->pri == 0))) {
 		window->event->expose->change |= EXPOSE_CHNGF;
@@ -267,6 +278,7 @@ int s_socket_listen_expose (s_window_t *window, int soc)
 
         s_event_changed(window);
 
+        s_free(data);
 	return 0;
 }
 
