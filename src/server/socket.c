@@ -133,7 +133,6 @@ int s_server_socket_listen_display (int id)
 	data->need_expose = server->window->surface->need_expose;
 
 	strncpy(data->device, server->driver->device, S_FNAME_MAX);
-	strncpy(data->driver, server->driver->driver, S_FNAME_MAX);
 
 	if (s_socket_api_send(server->client[id].soc, data, sizeof(s_soc_data_display_t)) != sizeof(s_soc_data_display_t)) {
 		s_free(data);
@@ -345,15 +344,19 @@ int s_server_socket_listen_accept (int soc)
 
 int s_server_socket_request_event (int id)
 {
-	s_socket_send(server->client[id].soc, &server->window->event->type, sizeof(S_EVENT));
+	s_soc_data_event_t *data;
+	data = (s_soc_data_event_t *) s_calloc(1, sizeof(s_soc_data_event_t));
 
-	if (server->window->event->type & MOUSE_EVENT) {
-		s_socket_send(server->client[id].soc, server->window->event->mouse, sizeof(s_mouse_t));
-	}
-	if (server->window->event->type & KEYBD_EVENT) {
-		s_socket_send(server->client[id].soc, server->window->event->keybd, sizeof(s_keybd_t));
+	data->type = server->window->event->type;
+	data->mouse = *(server->window->event->mouse);
+	data->keybd = *(server->window->event->keybd);
+	
+	if (s_socket_api_send(server->client[id].soc, data, sizeof(s_soc_data_event_t)) != sizeof(s_soc_data_event_t)) {
+		s_free(data);
+		return -1;
 	}
 
+	s_free(data);
 	return 0;
 }
 
@@ -365,16 +368,23 @@ int s_server_socket_request_close (int id)
 
 int s_server_socket_request_expose (int id, s_rect_t *changed)
 {
-	int pri = s_server_id_pri(id);
+	s_soc_data_expose_t *data;
+	data = (s_soc_data_expose_t *) s_calloc(1, sizeof(s_soc_data_expose_t));
 
-	s_socket_send(server->client[id].soc, &server->client[id].buf, sizeof(s_rect_t));
-	s_socket_send(server->client[id].soc, &server->client[id].win, sizeof(s_rect_t));
-	s_socket_send(server->client[id].soc, &pri, sizeof(int));
-	s_socket_send(server->client[id].soc, changed, sizeof(s_rect_t));
-	s_socket_send(server->client[id].soc, &server->window->surface->linear_buf_width, sizeof(int));
-	s_socket_send(server->client[id].soc, &server->window->surface->linear_buf_pitch, sizeof(int));
-	s_socket_send(server->client[id].soc, &server->window->surface->linear_buf_height, sizeof(int));
+	data->pri = s_server_id_pri(id);
+	data->buf = server->client[id].buf;
+	data->win = server->client[id].win;
+	data->changed = *changed;
+	data->linear_buf_width = server->window->surface->linear_buf_width;
+	data->linear_buf_pitch = server->window->surface->linear_buf_pitch;
+	data->linear_buf_height = server->window->surface->linear_buf_height;
 
+	if (s_socket_api_send(server->client[id].soc, data, sizeof(s_soc_data_expose_t)) != sizeof(s_soc_data_expose_t)) {
+		s_free(data);
+		return -1;
+	}
+
+	s_free(data);
 	return 0;
 }
 

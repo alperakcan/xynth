@@ -1,4 +1,7 @@
 
+Sun 09 Apr 2006 01:15:45 AM EEST
+	* : some more changes on data transfer
+
 Sat 08 Apr 2006 05:14:25 AM EEST
 	* server/socket.c, lib/socket.c, server/server.c : some changes on data
 	transfer.

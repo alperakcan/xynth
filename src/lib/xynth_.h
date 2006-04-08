@@ -163,9 +163,23 @@ typedef struct s_soc_data_display_s {
 	int shm_sid;
 	int need_expose;
 	char device[S_FNAME_MAX];
-	char driver[S_FNAME_MAX];
 } s_soc_data_display_t;
 
+typedef struct s_soc_data_expose_s {
+	int pri;
+	s_rect_t buf;
+	s_rect_t win;
+	s_rect_t changed;
+	int linear_buf_width;
+	int linear_buf_pitch;
+	int linear_buf_height;
+} s_soc_data_expose_t;
+
+typedef struct s_soc_data_event_s {
+	S_EVENT type;
+	s_mouse_t mouse;
+	s_keybd_t keybd;
+} s_soc_data_event_t;
 
 #ifdef __cplusplus
 }

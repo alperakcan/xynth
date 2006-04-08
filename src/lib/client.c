@@ -88,7 +88,6 @@ void s_client_uninit (s_window_t *window)
 	s_event_uninit(window->event);
 
         s_free(window->client->device);
-        s_free(window->client->driver);
 	s_free(window->client->title);
 	s_free(window->client);
 	s_free(window);
