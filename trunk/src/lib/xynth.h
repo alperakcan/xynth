@@ -583,7 +583,6 @@ typedef struct s_client_s {
 	int pri;
 	char *title;
 
-	char *driver;
 	char *device;
 
 	int resizeable;
