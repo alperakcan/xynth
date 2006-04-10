@@ -5,9 +5,9 @@ all: Makefile.cfg
 
 clean:
 	$(MAKE) clean -C src
-	find . \( -name \*.o -o -name \*~ -o -name \#\*\# -o -name \*.a -name \*.so \) -exec rm '{}' \;
 	rm -rf dist
 	rm -rf doc
+	find . \( -name \*.o -o -name \*~ -o -name \#\*\# -o -name \*.a -name \*.so \) -exec rm '{}' \;
 
 install: all
 ifeq ($(PLATFORM_LINUX), Y)
