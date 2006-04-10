@@ -35,7 +35,7 @@ void * s_video_sdl_event_parse (void *arg)
 			case SDL_KEYUP:
 			case SDL_KEYDOWN:
 				if (priv->keybd_fd[1] != -1) {
-					s_pipe_api_write(priv->keybd_fd[1], &event.key, sizeof(SDL_KeyboardEvent));
+					s_pipe_api_write(priv->keybd_fd[1], &event.key, sizeof(event.key));
 				}
 				break;
 			case SDL_MOUSEMOTION:
@@ -53,6 +53,7 @@ void * s_video_sdl_event_parse (void *arg)
 				break;
 
 		}
+		memset(&event, 0, sizeof(SDL_Event));
 	}
 
 end:	return NULL;

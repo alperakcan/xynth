@@ -147,17 +147,17 @@ err0:   priv->keybd_fd[0] = -1;
 
 void s_video_sdl_kbd_update (s_keybd_driver_t *keybd)
 {
-        SDL_KeyboardEvent key;
+	SDL_Event event;
 	s_video_sdl_data_t *priv = server->driver->driver_data;
 
-	s_pipe_api_read(priv->keybd_fd[0], &key, sizeof(SDL_KeyboardEvent));
+	s_pipe_api_read(priv->keybd_fd[0], &event.key, sizeof(event.key));
 
-	keybd->ascii = key.keysym.unicode;
-	keybd->scancode = key.keysym.scancode;
-	keybd->keycode = priv->keymap[key.keysym.sym];
-	keybd->button = priv->keymap[key.keysym.sym];
+	keybd->ascii = event.key.keysym.unicode;
+	keybd->scancode = event.key.keysym.scancode;
+	keybd->keycode = priv->keymap[event.key.keysym.sym];
+	keybd->button = priv->keymap[event.key.keysym.sym];
 
-        keybd->state = (key.state == SDL_PRESSED) ? KEYBD_PRESSED : KEYBD_RELEASED;
+        keybd->state = (event.key.state == SDL_PRESSED) ? KEYBD_PRESSED : KEYBD_RELEASED;
 	if ((keybd->keycode == S_KEYCODE_NUM_LOCK) ||
 	    (keybd->keycode == S_KEYCODE_CAPS_LOCK)) {
 		keybd->state = KEYBD_PRESSED;
