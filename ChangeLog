@@ -1,4 +1,8 @@
 
+Mon 10 Apr 2006 10:34:50 PM EEST
+	* : more changed on data transfer. removed useless
+	SOC_DATA_CONFIGURE_NOFORM, SOC_DATA_CONFIGURE has the same feature.
+
 Sun 09 Apr 2006 01:15:45 AM EEST
 	* : some more changes on data transfer, removed client->driver
 
