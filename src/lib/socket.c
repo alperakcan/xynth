@@ -84,10 +84,20 @@ int s_socket_request_display (s_window_t *window, int soc)
 
 int s_socket_request_configure (s_window_t *window, int soc, S_WINDOW form)
 {
-	s_socket_send(soc, &form, sizeof(S_WINDOW));
-	s_socket_send(soc, &window->surface->buf, sizeof(s_rect_t));
-	s_socket_send(soc, &window->client->resizeable, sizeof(int));
-	s_socket_send(soc, &window->client->alwaysontop, sizeof(int));
+	s_soc_data_configure_t *data;
+	data = (s_soc_data_configure_t *) s_calloc(1, sizeof(s_soc_data_configure_t));
+
+	data->form = form;
+	data->rnew = window->surface->buf;
+	data->resizeable = window->client->resizeable;
+	data->alwaysontop = window->client->alwaysontop;
+	
+	if (s_socket_api_send(soc, data, sizeof(s_soc_data_configure_t)) != sizeof(s_soc_data_configure_t)) {
+		s_free(data);
+		return -1;
+	}
+
+	s_free(data);
 	return 0;
 }
 

@@ -145,26 +145,27 @@ int s_server_socket_listen_display (int id)
 
 int s_server_socket_listen_configure (int id)
 {
-        int pri;
-        s_rect_t new;
-        S_WINDOW form;
+        s_soc_data_configure_t *data;
+        data = (s_soc_data_configure_t *) s_calloc(1, sizeof(s_soc_data_configure_t));
 
-	pri = s_server_id_pri(id);
-
-	s_socket_recv(server->client[id].soc, &form, sizeof(S_WINDOW));
-	s_socket_recv(server->client[id].soc, &new, sizeof(s_rect_t));
-	s_socket_recv(server->client[id].soc, &server->client[id].resizeable, sizeof(int));
-	s_socket_recv(server->client[id].soc, &server->client[id].alwaysontop, sizeof(int));
-
-	if (form & WINDOW_NOFORM) {
-		new.x += (server->client[id].win.x - server->client[id].buf.x);
-		new.y += (server->client[id].win.y - server->client[id].buf.y);
-		new.w += (server->client[id].win.w - server->client[id].buf.w);
-		new.h += (server->client[id].win.h - server->client[id].buf.h);
+	if (s_socket_api_recv(server->client[id].soc, data, sizeof(s_soc_data_configure_t)) != sizeof(s_soc_data_configure_t)) {
+		s_free(data);
+		return -1;
 	}
 
-	s_server_window_move_resize(id, &new);
+	server->client[id].resizeable = data->resizeable;
+	server->client[id].alwaysontop = data->alwaysontop;
 
+	if (data->form & WINDOW_NOFORM) {
+		data->rnew.x += (server->client[id].win.x - server->client[id].buf.x);
+		data->rnew.y += (server->client[id].win.y - server->client[id].buf.y);
+		data->rnew.w += (server->client[id].win.w - server->client[id].buf.w);
+		data->rnew.h += (server->client[id].win.h - server->client[id].buf.h);
+	}
+
+	s_server_window_move_resize(id, &(data->rnew));
+
+	s_free(data);
 	return 0;
 }
 

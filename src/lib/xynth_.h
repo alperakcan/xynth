@@ -44,7 +44,8 @@ extern "C" {
 #define S_MATRIX_DELETED 254
 #define S_MATRIX_FREE	 255
 
-#define S_FNAME_MAX       255
+#define S_FNAME_MAX      255
+#define S_TITLE_MAX      255
 
 #define DFAT	1
 #define DSYS	2
@@ -180,6 +181,13 @@ typedef struct s_soc_data_event_s {
 	s_mouse_t mouse;
 	s_keybd_t keybd;
 } s_soc_data_event_t;
+
+typedef struct s_soc_data_configure_s {
+	S_WINDOW form;
+	s_rect_t rnew;
+	int resizeable;
+	int alwaysontop;
+} s_soc_data_configure_t;
 
 #ifdef __cplusplus
 }
