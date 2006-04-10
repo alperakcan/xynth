@@ -157,7 +157,7 @@ void s_video_sdl_kbd_update (s_keybd_driver_t *keybd)
 	keybd->keycode = priv->keymap[event.key.keysym.sym];
 	keybd->button = priv->keymap[event.key.keysym.sym];
 
-        keybd->state = (event.key.state == SDL_PRESSED) ? KEYBD_PRESSED : KEYBD_RELEASED;
+	keybd->state = (event.key.state == SDL_PRESSED) ? KEYBD_PRESSED : KEYBD_RELEASED;
 	if ((keybd->keycode == S_KEYCODE_NUM_LOCK) ||
 	    (keybd->keycode == S_KEYCODE_CAPS_LOCK)) {
 		keybd->state = KEYBD_PRESSED;
