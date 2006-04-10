@@ -58,7 +58,7 @@ static void simple_handler1r (s_window_t *window, s_event_t *event, s_handler_t 
 
 static void simple_handler2p (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
-	s_window_set_coor(window, WINDOW_NOFORM, 0, 0, 300, 300);
+	s_window_set_coor(window, WINDOW_NOFORM, 0, 0, 200, 300);
 }
 
 static void simple_handler3p (s_window_t *window, s_event_t *event, s_handler_t *handler)

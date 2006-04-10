@@ -75,19 +75,19 @@ void s_window_set_coor (s_window_t *window, int form, int x, int y, int w, int h
 	window->surface->buf.y = y;
 	window->surface->buf.w = w;
 	window->surface->buf.h = h;
-	s_socket_request(window, (form & WINDOW_NOFORM) ? SOC_DATA_CONFIGURE_NOFORM : SOC_DATA_CONFIGURE);
+	s_socket_request(window, SOC_DATA_CONFIGURE, form);
 }
 
 void s_window_set_resizeable (s_window_t *window, int resizeable)
 {
 	window->client->resizeable = resizeable;
-	s_socket_request(window, SOC_DATA_CONFIGURE_NOFORM);
+	s_socket_request(window, SOC_DATA_CONFIGURE, WINDOW_NOFORM);
 }
 
 void s_window_set_alwaysontop (s_window_t *window, int alwaysontop)
 {
 	window->client->alwaysontop = alwaysontop;
-	s_socket_request(window, SOC_DATA_CONFIGURE_NOFORM);
+	s_socket_request(window, SOC_DATA_CONFIGURE, WINDOW_NOFORM);
 }
 
 int s_window_new (s_window_t *window, S_WINDOW type, s_window_t *parent)

@@ -276,7 +276,6 @@ int s_server_socket_listen_parse (int soc)
 			s_server_window_form(id, &server->client[id].win);
 			return 0;
 		case SOC_DATA_CONFIGURE:
-		case SOC_DATA_CONFIGURE_NOFORM:
 			return s_server_socket_listen_configure(id);
 		case SOC_DATA_DESKTOP:
 			return s_server_socket_listen_desktop(id);
@@ -482,7 +481,6 @@ err:		debugf(DSER, "Error occured when requesting (%d) from client[%d]. Closing 
 		case SOC_DATA_NOTHING:
 		case SOC_DATA_FORMDRAW:
 		case SOC_DATA_CONFIGURE:
-		case SOC_DATA_CONFIGURE_NOFORM:
 			break;
 	}
 
