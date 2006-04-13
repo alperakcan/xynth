@@ -44,15 +44,14 @@ typedef enum {
 	SOC_DATA_HIDE      = 0x2,
 	SOC_DATA_SHOW      = 0x3,
 	SOC_DATA_CLOSE     = 0x5,
-	SOC_DATA_TITLE     = 0x6,
-	SOC_DATA_EVENT     = 0x7,
-	SOC_DATA_EXPOSE    = 0x8,
-	SOC_DATA_STREAM    = 0x9,
-	SOC_DATA_DISPLAY   = 0xA,
-	SOC_DATA_FORMDRAW  = 0xB,
-	SOC_DATA_CONFIGURE = 0xC,
-	SOC_DATA_DESKTOP   = 0xD,
-	SOC_DATA_CURSOR    = 0xE
+	SOC_DATA_EVENT     = 0x6,
+	SOC_DATA_EXPOSE    = 0x7,
+	SOC_DATA_STREAM    = 0x8,
+	SOC_DATA_DISPLAY   = 0x9,
+	SOC_DATA_FORMDRAW  = 0xA,
+	SOC_DATA_CONFIGURE = 0xB,
+	SOC_DATA_DESKTOP   = 0xC,
+	SOC_DATA_CURSOR    = 0xD
 } S_SOC_DATA;
 
 typedef enum {
@@ -1264,7 +1263,6 @@ int s_rect_difference (s_rect_t *r1, s_rect_t *r0, s_list_t *list);
 
 /* socket.c */
 int s_socket_request_new (s_window_t *window, int soc);
-int s_socket_request_title (s_window_t *window, int soc);
 int s_socket_request_display (s_window_t *window, int soc);
 int s_socket_request_configure (s_window_t *window, int soc, S_WINDOW form);
 int s_socket_request_desktop (s_window_t *window, int soc, int id);

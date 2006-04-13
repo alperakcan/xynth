@@ -34,14 +34,6 @@ int s_socket_request_new (s_window_t *window, int soc)
 	return 0;
 }
 
-int s_socket_request_title (s_window_t *window, int soc)
-{
-	int i = strlen(window->client->title);
-	s_socket_send(soc, &i, sizeof(int));
-	s_socket_send(soc, window->client->title, sizeof(char) * (i + 1));
-	return 0;
-}
-
 int s_socket_request_display (s_window_t *window, int soc)
 {
 	s_soc_data_display_t *data;
@@ -91,6 +83,10 @@ int s_socket_request_configure (s_window_t *window, int soc, S_WINDOW form)
 	data->rnew = window->surface->buf;
 	data->resizeable = window->client->resizeable;
 	data->alwaysontop = window->client->alwaysontop;
+	if (window->client->title != NULL) {
+		strncpy(data->title, window->client->title, S_TITLE_MAX);
+	}
+	data->title[S_TITLE_MAX - 1] = '\0';
 	
 	if (s_socket_api_send(soc, data, sizeof(s_soc_data_configure_t)) != sizeof(s_soc_data_configure_t)) {
 		s_free(data);
@@ -174,9 +170,6 @@ again:	if (window->running <= 0) {
 	switch (req) {
 		case SOC_DATA_NEW:
 			ret = s_socket_request_new(window, pollfd.fd);
-			break;
-		case SOC_DATA_TITLE:
-			ret = s_socket_request_title(window, pollfd.fd);
 			break;
 		case SOC_DATA_DISPLAY:
 			ret = s_socket_request_display(window, pollfd.fd);
@@ -355,7 +348,6 @@ int s_socket_listen_parse (s_window_t *window, int soc)
 		case SOC_DATA_NEW:
                 case SOC_DATA_HIDE:
 		case SOC_DATA_SHOW:
-		case SOC_DATA_TITLE:
 		case SOC_DATA_CURSOR:
 		case SOC_DATA_STREAM:
 		case SOC_DATA_NOTHING:

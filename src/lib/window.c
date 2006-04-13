@@ -46,7 +46,7 @@ void s_window_set_title (s_window_t *window, char *fmt, ...)
 		window->client->title = (char *) s_realloc(window->client->title, size);
 	}
 
-	s_socket_request(window, SOC_DATA_TITLE);
+	s_socket_request(window, SOC_DATA_CONFIGURE, WINDOW_NOFORM);
 }
 
 void s_window_form_draw (s_window_t *window)

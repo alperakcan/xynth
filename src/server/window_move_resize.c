@@ -158,6 +158,9 @@ void s_server_window_while (s_rect_t *move, int flag)
 			server->window->running = 0;
 			break;
 		}
+		if (server->mh == 0) {
+			continue;
+		}
 		if ((mx == s_mouse_getx()) && (my == s_mouse_gety())) {
 			continue;
 		}
