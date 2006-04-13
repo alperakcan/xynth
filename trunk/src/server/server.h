@@ -245,7 +245,6 @@ void s_server_single_stop (void);
 /* socket.c */
 int s_server_socket_listen_new (int id);
 int s_server_socket_listen_show (int id);
-int s_server_socket_listen_title (int id);
 int s_server_socket_listen_display (int id);
 int s_server_socket_listen_configure (int id);
 int s_server_socket_listen_desktop (int id);

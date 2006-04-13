@@ -143,6 +143,7 @@ int s_socket_api_connect (int sockfd, const s_sockaddr_t *serv_addr, socklen_t a
 int s_socket_api_close (int fd);
 
 typedef struct s_soc_data_display_s {
+	 /* 336 bytes */
 	int bytesperpixel;
 	int bitsperpixel;
 	int colors;
@@ -167,6 +168,7 @@ typedef struct s_soc_data_display_s {
 } s_soc_data_display_t;
 
 typedef struct s_soc_data_expose_s {
+	/* 64 bytes */
 	int pri;
 	s_rect_t buf;
 	s_rect_t win;
@@ -177,16 +179,19 @@ typedef struct s_soc_data_expose_s {
 } s_soc_data_expose_t;
 
 typedef struct s_soc_data_event_s {
+	/* 880 bytes */
 	S_EVENT type;
 	s_mouse_t mouse;
 	s_keybd_t keybd;
 } s_soc_data_event_t;
 
 typedef struct s_soc_data_configure_s {
+	/* 284 bytes */
 	S_WINDOW form;
 	s_rect_t rnew;
 	int resizeable;
 	int alwaysontop;
+	char title[S_TITLE_MAX];
 } s_soc_data_configure_t;
 
 #ifdef __cplusplus

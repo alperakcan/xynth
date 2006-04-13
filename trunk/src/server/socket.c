@@ -61,48 +61,6 @@ int s_server_socket_listen_show (int id)
 	return 0;
 }
 
-int s_server_socket_listen_title (int id)
-{
-	int i;
-
-	s_socket_recv(server->client[id].soc, &i, sizeof(int));
-	s_free(server->client[id].title.str);
-	server->client[id].title.str = (char *) s_malloc(sizeof(char) * (i + 1));
-	s_socket_recv(server->client[id].soc, server->client[id].title.str, sizeof(char) * (i + 1));
-
-	s_server_window_title(id, server->client[id].title.str);
-
-	if (s_server_id_pri(id) >= 0) {
-		s_rect_t *rtmp;
-		s_list_t *diff;
-
-		if (server->mh) {
-			server->mh = 0;
-		}
-		s_server_window_calculate(id);
-
-		s_list_init(&diff);
-		s_rect_difference(&(server->client[id].win), &(server->client[id].buf), diff);
-		while (!s_list_eol(diff, 0)) {
-			rtmp = (s_rect_t *) s_list_get(diff, 0);
-			s_server_pri_set(SURFACE_REDRAW, rtmp);
-			s_list_remove(diff, 0);
-			s_free(rtmp);
-		}
-		s_free(diff);
-
-		if (!(server->client[id].type & WINDOW_TEMP)) {
-			for (i = 0; i < S_CLIENTS_MAX; i++) {
-				if (server->client[i].type & WINDOW_DESKTOP) {
-					s_server_socket_request(SOC_DATA_DESKTOP, i);
-				}
-			}
-		}
-	}
-
-	return 0;
-}
-
 int s_server_socket_listen_display (int id)
 {
 	s_soc_data_display_t *data;
@@ -163,6 +121,13 @@ int s_server_socket_listen_configure (int id)
 		data->rnew.h += (server->client[id].win.h - server->client[id].buf.h);
 	}
 
+	if (strlen(data->title) > 0) {
+		s_free(server->client[id].title.str);
+		server->client[id].title.str = strdup(data->title);
+		s_server_window_title(id, server->client[id].title.str);
+		s_server_window_calculate(id);
+	}
+	
 	s_server_window_move_resize(id, &(data->rnew));
 
 	s_free(data);
@@ -268,8 +233,6 @@ int s_server_socket_listen_parse (int soc)
 			return s_server_socket_listen_new(id);
 		case SOC_DATA_SHOW:
 			return s_server_socket_listen_show(id);
-		case SOC_DATA_TITLE:
-			return s_server_socket_listen_title(id);
 		case SOC_DATA_DISPLAY:
 			return s_server_socket_listen_display(id);
 		case SOC_DATA_FORMDRAW:
@@ -474,7 +437,6 @@ err:		debugf(DSER, "Error occured when requesting (%d) from client[%d]. Closing 
                 case SOC_DATA_NEW:
 		case SOC_DATA_HIDE:
 		case SOC_DATA_SHOW:
-		case SOC_DATA_TITLE:
 		case SOC_DATA_CURSOR:
 		case SOC_DATA_STREAM:
 		case SOC_DATA_DISPLAY:
