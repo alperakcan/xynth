@@ -103,6 +103,8 @@ int s_server_socket_listen_display (int id)
 
 int s_server_socket_listen_configure (int id)
 {
+	int i;
+	int j = 0;
         s_soc_data_configure_t *data;
         data = (s_soc_data_configure_t *) s_calloc(1, sizeof(s_soc_data_configure_t));
 
@@ -122,13 +124,25 @@ int s_server_socket_listen_configure (int id)
 	}
 
 	if (strlen(data->title) > 0) {
-		s_free(server->client[id].title.str);
-		server->client[id].title.str = strdup(data->title);
-		s_server_window_title(id, server->client[id].title.str);
-		s_server_window_calculate(id);
+		if ((j = strcmp(server->client[id].title.str, data->title)) != 0) {
+			s_free(server->client[id].title.str);
+			server->client[id].title.str = strdup(data->title);
+			s_server_window_title(id, server->client[id].title.str);
+			s_server_window_calculate(id);
+		}
 	}
 	
 	s_server_window_move_resize(id, &(data->rnew));
+
+	if (j) {
+		if (!(server->client[id].type & WINDOW_TEMP)) {
+			for (i = 0; i < S_CLIENTS_MAX; i++) {
+				if (server->client[i].type & WINDOW_DESKTOP) {
+					s_server_socket_request(SOC_DATA_DESKTOP, i);
+				}
+			}
+		}
+	}
 
 	s_free(data);
 	return 0;
