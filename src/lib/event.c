@@ -211,7 +211,7 @@ int s_event_parse_keybd (s_window_t *window, s_event_t *event)
 
 int s_event_parse_expos (s_window_t *window, s_event_t *event)
 {
-	s_surface_changed(window, &(event->expose->rect));
+	s_surface_changed(window, event->expose->rect);
 	
 	if ((event->expose->change & ~EXPOSE_CHNGF) != 0) {
 		s_window_form_draw(window);
@@ -237,7 +237,8 @@ int s_event_changed (s_window_t *window)
 			event->type = window->event->type;
 			memcpy(event->mouse, window->event->mouse, sizeof(s_mouse_t));
 			memcpy(event->keybd, window->event->keybd, sizeof(s_keybd_t));
-			memcpy(event->expose, window->event->expose, sizeof(s_expose_t));
+			event->expose->change = window->event->expose->change;
+			memcpy(event->expose->rect, window->event->expose->rect, sizeof(s_rect_t));
 			s_eventq_add(window, event);
 		}
 	}
@@ -251,6 +252,7 @@ int s_event_init (s_event_t **event)
 	(*event)->mouse = (s_mouse_t *) s_calloc(1, sizeof(s_mouse_t));
 	(*event)->keybd = (s_keybd_t *) s_calloc(1, sizeof(s_keybd_t));
 	(*event)->expose = (s_expose_t *) s_calloc(1, sizeof(s_expose_t));
+	(*event)->expose->rect = (s_rect_t *) s_calloc(1, sizeof(s_rect_t));
 	(*event)->desktop = (s_desktop_t *) s_calloc(1, sizeof(s_desktop_t));
 	if (s_list_init(&((*event)->desktop->clients))) {
 		goto err0;
@@ -278,9 +280,10 @@ int s_event_uninit (s_event_t *event)
 	}
 	s_free(event->desktop->clients);
 	s_free(event->desktop);
+	s_free(event->expose->rect);
 	s_free(event->expose);
-        s_free(event->mouse);
-        s_free(event->keybd);
+	s_free(event->mouse);
+	s_free(event->keybd);
 	s_free(event);
 	return 0;
 }

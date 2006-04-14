@@ -35,6 +35,7 @@ typedef struct s_list_s s_list_t;
 typedef struct s_list_node_s s_list_node_t;
 typedef struct s_pollfd_s s_pollfd_t;
 typedef struct s_pollfds_s s_pollfds_t;
+typedef struct s_rect_s s_rect_t;
 typedef struct s_timer_s s_timer_t;
 typedef struct s_timers_s s_timers_t;
 
@@ -373,13 +374,6 @@ typedef enum {
 	KEYBD_HANDLER = 0x2
 } S_HANDLER;
 
-typedef struct s_rect_s {
-	int x;
-	int y;
-	int w;
-	int h;
-} s_rect_t;
-
 typedef struct s_config_var_s {
 	char *name;
 	char *value;
@@ -393,6 +387,24 @@ typedef struct s_config_cat_s {
 typedef struct s_config_s {
 	s_list_t *category;
 } s_config_t;
+
+/** @addtogroup rect */
+/*@{*/
+
+/** rect struct
+  */
+struct s_rect_s {
+	/** x coordinate */
+	int x;
+	/** y coordinate */
+	int y;
+	/** width */
+	int w;
+	/** height */
+	int h;
+};
+
+/*@}*/
 
 typedef struct s_font_s {
 	int yMin;
@@ -434,7 +446,7 @@ typedef struct s_keybd_s {
 
 typedef struct s_expose_s {
 	int change;
-	s_rect_t rect;
+	s_rect_t *rect;
 } s_expose_t;
 
 typedef struct s_stream_s {
@@ -799,7 +811,7 @@ struct s_image_s {
 	/** holds only anti-alias (alpha) values */
 	unsigned char *mat;
 	/** image handler area */
-	s_rect_t handler;
+	s_rect_t *handler;
 	/** show delay (microseconds) of the layer. */
 	unsigned int delay;
 	/** rgba data of image RED | GREEN | BLUE | ALPHA*/
@@ -866,6 +878,13 @@ void s_image_free_mat (s_image_t *img);
   * @returns 0 on success, 1 on error.
   */
 void s_image_free_rgba (s_image_t *img);
+
+/** @brief frees memory used for handler, and sets it to NULL.
+  *
+  * @param *img - the image
+  * @returns 0 on success, 1 on error.
+  */
+void s_image_free_handler (s_image_t *img);
 
 /** @brief uninitializes image struct
   *
@@ -1254,12 +1273,109 @@ int s_pollfds_uninit (s_window_t *window);
 
 /*@}*/
 
+/** @defgroup rect rect struct, api
+  * @brief detailed description
+  *
+  * @example
+  * typical usage of rect api;
+  *
+  * @code
+  *
+  * {
+  *	s_rect_t r
+  *	s_rect_t rect r1 = (s_rect_t) {10, 10, 20, 20};
+  *	s_rect_t rect r2 = (s_rect_t) {15, 15, 20, 20};
+  *	if (s_rect_intersect(&r1, &r2, &r)) {
+  *		// no intersection
+  *	}
+  *	// intersectig region is r
+  * }
+  *
+  * {
+  *	s_list_t *diff;
+  *	s_rect_t rect r1 = (s_rect_t) {10, 10, 20, 20};
+  *	s_rect_t rect r2 = (s_rect_t) {15, 15, 20, 20};
+  *
+  *	s_list_init(&diff);
+  *	if (s_rect_difference(&r1, &r2, diff) < 0) {
+  *		// will not happen
+  *	}
+  *
+  *	// walk through the difference list
+  *	for (pos = 0; !s_list_eol(list, pos); pos++) {
+  *		s_rect_t *rtmp = (s_rect_t *) s_list_get(list, pos);
+  *		// do what ever you want with the rectangle
+  *		s_list_remove(list, pos);
+  *		s_free(rtmp);
+  *	}
+  *
+  *	s_list_uninit(list);
+  * }
+  *
+  * @endcode
+  */
+
+/** @addtogroup rect */
+/*@{*/
+
 /* rect.c */
+
+/** @brief calculates the intersection area of r1 and r2.
+  *
+  * @param *r1 - pointer to a rect
+  * @param *r2 - pointer to a rect
+  * @param *r  - on success r will be the intersection area
+  * @returns 0 on success, 1 on error.
+  */
 int s_rect_intersect (s_rect_t *r1, s_rect_t *r2, s_rect_t *r);
+
+/** @brief performs clip on rectangle (x, y, w, h).
+  *        clip region is the surface's virtual buffer area
+  *
+  * @param *surface - surface
+  * @param x        - x
+  * @param y        - y
+  * @param w        - w
+  * @param h        - h
+  * @param *coor    - on success coor will be the clipped area
+  * @returns 0 on success, 1 on error.
+  */
 int s_rect_clip_virtual (s_surface_t *surface, int x, int y, int w, int h, s_rect_t *coor);
+
+/** @brief performs clip on rectangle (x, y, w, h).
+  *        clip region is the surface's virtual buffer area
+  *
+  * @param *surface - surface
+  * @param x        - x
+  * @param y        - y
+  * @param w        - w
+  * @param h        - h
+  * @param *coor    - on success coor will be the clipped area
+  * @returns 0 on success, 1 on error.
+  */
 int s_rect_clip_real (s_surface_t *surface, int x, int y, int w, int h, s_rect_t *coor);
+
+/** @brief adds the rectangle (x, y, w, h) to the list
+  *
+  * @param *list - list to add
+  * @param x     - x
+  * @param y     - y
+  * @param w     - w
+  * @param h     - h
+  * @returns 0 on success, 1 on error.
+  */
 int s_rect_difference_add (s_list_t *list, int x, int y, int w, int h);
+
+/** @brief adds the difference of r1 form r0 to the list
+  *
+  * @param *r1   - rectangle
+  * @param *r0   - rectangle
+  * @param *list - list
+  * @returns number of differences on success, -1 on error.
+  */
 int s_rect_difference (s_rect_t *r1, s_rect_t *r0, s_list_t *list);
+
+/*@}*/
 
 /* socket.c */
 int s_socket_request_new (s_window_t *window, int soc);

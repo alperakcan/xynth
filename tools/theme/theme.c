@@ -114,12 +114,7 @@ void init_buf (char *file, s_image_t *img)
 
 	printf("\t};\n");
 	printf("\n");
-	printf("\ttheme_set(img, rgba, %d, %d, %d, %d, %d, %d);\n", img->w,
-								    img->h,
-								    img->handler.x,
-								    img->handler.y,
-								    img->handler.w,
-								    img->handler.h);
+	printf("\ttheme_set(img, rgba, %d, %d);\n", img->w, img->h);
         printf("}\n");
 }
 
@@ -172,14 +167,10 @@ void print_head (char *name)
 	name);
 	printf("\n");
 	printf(
-	"static void theme_set (s_image_t *img, unsigned int *data, int a, int b, int c, int d, int e, int f)\n"
+	"static void theme_set (s_image_t *img, unsigned int *data, int a, int b)\n"
 	"{\n"
 	"\timg->w = a;\n"
 	"\timg->h = b;\n"
-	"\timg->handler.x = c;\n"
-	"\timg->handler.y = d;\n"
-	"\timg->handler.w = e;\n"
-	"\timg->handler.h = f;\n"
 	"\timg->rgba = (unsigned int *) s_malloc(a * b * sizeof(unsigned int) + 1);\n"
 	"\tmemcpy(img->rgba, data, a * b * sizeof(unsigned int));\n");
 	printf("}\n");

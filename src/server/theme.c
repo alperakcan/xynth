@@ -56,7 +56,8 @@ void s_server_theme_set (char *name)
         for (b = 0; b < BTNS_MAX; b++) {
 		for (v = 0; v < 3; v++) {
 			s_image_get_buf(server->window->surface, &server->theme.button[v][b]);
-        		s_image_get_mat(&server->theme.button[v][b]);
+			s_image_get_mat(&server->theme.button[v][b]);
+			s_image_get_handler(&server->theme.button[v][b]);
 			s_image_free_rgba(&server->theme.button[v][b]);
 		}
 	}
@@ -65,6 +66,7 @@ void s_server_theme_set (char *name)
 		for (v = 0; v < 2; v++) {
 			s_image_get_buf(server->window->surface, &server->theme.form[v][f]);
 			s_image_get_mat(&server->theme.form[v][f]);
+			s_image_get_handler(&server->theme.form[v][f]);
 			s_image_free_rgba(&server->theme.form[v][f]);
 		}
 	}
@@ -100,6 +102,7 @@ void s_server_theme_uninit (void)
 			s_image_free_buf(&server->theme.form[v][f]);
 			s_image_free_mat(&server->theme.form[v][f]);
 			s_image_free_rgba(&server->theme.form[v][f]);
+			s_image_free_handler(&server->theme.form[v][f]);
 			s_image_layers_uninit(&server->theme.form[v][f]);
 		}
 	}
@@ -108,6 +111,7 @@ void s_server_theme_uninit (void)
 			s_image_free_buf(&server->theme.button[v][b]);
 			s_image_free_mat(&server->theme.button[v][b]);
 			s_image_free_rgba(&server->theme.button[v][b]);
+			s_image_free_handler(&server->theme.button[v][b]);
 			s_image_layers_uninit(&server->theme.button[v][b]);
 		}
 	}

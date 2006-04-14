@@ -49,7 +49,7 @@
 	extern s_single_app_t single_xynthlogout;
 #endif /* SINGLE_APP_LOGOUT */
 
-s_single_app_t *s_server_single_apps[] = {
+static s_single_app_t *s_server_single_apps[] = {
 #if defined(SINGLE_APP_DESKTOP)
 	&single_desktop,
 #endif /* SINGLE_APP_DESKTOP */

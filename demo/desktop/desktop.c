@@ -105,10 +105,10 @@ void desktop_icon (s_window_t *window, dtop_prog_t *dtopp, s_font_t *font)
 
 	s_handler_init(&hndl);
 	hndl->type = MOUSE_HANDLER;
-	hndl->mouse.x = dtopp->x + img->handler.x;
-	hndl->mouse.y = dtopp->y + img->handler.y;
-	hndl->mouse.w = img->handler.w;
-	hndl->mouse.h = img->handler.h;
+	hndl->mouse.x = dtopp->x + img->handler->x;
+	hndl->mouse.y = dtopp->y + img->handler->y;
+	hndl->mouse.w = img->handler->w;
+	hndl->mouse.h = img->handler->h;
 	hndl->mouse.c = desktop_icon_handler;
 	hndl->mouse.button = MOUSE_LEFTBUTTON;
 	hndl->user_data = dtopp;

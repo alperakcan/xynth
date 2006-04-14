@@ -107,7 +107,7 @@ void s_server_window_title (int id, char *title)
 
 		if ((i = font->img->w / server->theme.form[v][TOP_3].w) > 0) {
 			while (i--) {
-				yo = server->theme.text_v_off[v] - font->img->handler.y + (server->theme.form[v][TOP_3].handler.h - font->img->handler.h) / 2;
+				yo = server->theme.text_v_off[v] - font->img->handler->y + (server->theme.form[v][TOP_3].handler->h - font->img->handler->h) / 2;
 				if ((font->img->h + yo) > server->theme.form[v][TOP_3].h) {
 					h = server->theme.form[v][TOP_3].h - yo;
 				} else {
@@ -117,7 +117,7 @@ void s_server_window_title (int id, char *title)
 			}
 		}
 		if ((i = font->img->w % server->theme.form[v][TOP_3].w) > 0) {
-				s_putboxpart(srf, font->img->w - server->theme.form[v][TOP_3].w, 0, server->theme.form[v][TOP_3].w, font->img->h, server->theme.form[v][TOP_3].w, server->theme.form[v][TOP_3].h, server->theme.form[v][TOP_3].buf, 0, server->theme.text_v_off[v] - font->img->handler.y + (server->theme.form[v][TOP_3].handler.h - font->img->handler.h) / 2);
+				s_putboxpart(srf, font->img->w - server->theme.form[v][TOP_3].w, 0, server->theme.form[v][TOP_3].w, font->img->h, server->theme.form[v][TOP_3].w, server->theme.form[v][TOP_3].h, server->theme.form[v][TOP_3].buf, 0, server->theme.text_v_off[v] - font->img->handler->y + (server->theme.form[v][TOP_3].handler->h - font->img->handler->h) / 2);
 		}
 		s_putboxrgba(srf, 0, 0, font->img->w, font->img->h, font->img->rgba);
 
@@ -127,8 +127,8 @@ void s_server_window_title (int id, char *title)
 		server->client[id].title.img[v].buf = (char *) s_malloc(font->img->w * font->img->h * server->window->surface->bytesperpixel);
 		server->client[id].title.img[v].w = font->img->w;
 		server->client[id].title.img[v].h = font->img->h;
-		server->client[id].title.hy[v] = font->img->handler.y;
-		server->client[id].title.hh[v] = font->img->handler.h;
+		server->client[id].title.hy[v] = font->img->handler->y;
+		server->client[id].title.hh[v] = font->img->handler->h;
 		memcpy(server->client[id].title.img[v].mat, font->img->mat, font->img->w * font->img->h);
 		memcpy(server->client[id].title.img[v].buf, font->img->buf, font->img->w * font->img->h * server->window->surface->bytesperpixel);
 		s_image_uninit(font->img);
@@ -143,7 +143,7 @@ void s_server_putbox (s_window_t *window, int id, s_rect_t *coor, int x, int y, 
 	s_rect_t to;
 	s_rect_t intr;
 	s_rect_t icoor;
-	
+
 	icoor.x = x;
 	icoor.y = y;
 	icoor.w = img->w;
@@ -258,7 +258,7 @@ void s_server_window_form (int id, s_rect_t *_coor_)
 	if (v < 0) {
 		return;
 	}
-        
+
 	if (s_rect_intersect(_coor_, &coor_, &coor)) {
 		return;
 	}
@@ -266,10 +266,10 @@ void s_server_window_form (int id, s_rect_t *_coor_)
         coort.x = server->client[id].form[TOP_3].x;
         coort.y = server->client[id].form[TOP_3].y;
         coort.w = server->client[id].form[TOP_3].w;
-        coort.h = server->theme.form[v][TOP_3].handler.h;
+        coort.h = server->theme.form[v][TOP_3].handler->h;
 
 	s_server_window_form_mat(v, id, mi, &coor, s_server_putbox);
-	
+
 	/* buttons */
 	s_server_putbox(server->window, id, &coor, server->client[id].button[MENU].x, server->client[id].button[MENU].y, &server->theme.button[v][MENU]);
 	s_server_putbox(server->window, id, &coor, server->client[id].button[HIDE].x, server->client[id].button[HIDE].y, &server->theme.button[v][HIDE]);
@@ -278,9 +278,9 @@ void s_server_window_form (int id, s_rect_t *_coor_)
 		s_server_putbox(server->window, id, &coor, server->client[id].button[MAXIMIZE].x, server->client[id].button[MAXIMIZE].y, &server->theme.button[v][MAXIMIZE]);
 	}
 
-        /* title */
-       	if ((!s_rect_intersect(&coor, &coort, &intersect)) && (server->client[id].win.w > server->theme.form_min.w)) {
-		s_server_putbox(server->window, id, &intersect, coort.x, coort.y + server->theme.text_v_off[v] - server->client[id].title.hy[v] + (server->theme.form[v][TOP_3].handler.h - server->client[id].title.hh[v]) / 2, &server->client[id].title.img[v]);
+	/* title */
+	if ((!s_rect_intersect(&coor, &coort, &intersect)) && (server->client[id].win.w > server->theme.form_min.w)) {
+		s_server_putbox(server->window, id, &intersect, coort.x, coort.y + server->theme.text_v_off[v] - server->client[id].title.hy[v] + (server->theme.form[v][TOP_3].handler->h - server->client[id].title.hh[v]) / 2, &server->client[id].title.img[v]);
 	}
 }
 

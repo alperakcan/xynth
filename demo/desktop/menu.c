@@ -130,7 +130,7 @@ void start_menu_start (s_window_t *pwindow, s_list_t *progs, int wx, int wy)
 		s_handler_init(&hndl);
 		hndl->type = MOUSE_HANDLER;
 		hndl->mouse.x = fx;
-		hndl->mouse.y = fy - font->img->h + font->img->handler.y;
+		hndl->mouse.y = fy - font->img->h + font->img->handler->y;
 		hndl->mouse.w = fw - 50;
 		hndl->mouse.h = font->img->h;
 		hndl->mouse.p = start_menu_handler;

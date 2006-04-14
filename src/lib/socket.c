@@ -269,7 +269,10 @@ int s_socket_listen_expose (s_window_t *window, int soc)
 
 	window->event->type = EXPOSE_EVENT;
 	window->event->expose->change= 0;
-	window->event->expose->rect = data->changed;
+	window->event->expose->rect->x = data->changed.x;
+	window->event->expose->rect->y = data->changed.y;
+	window->event->expose->rect->w = data->changed.w;
+	window->event->expose->rect->h = data->changed.h;
 
         if (r_old.x != window->surface->win.x) { window->event->expose->change |= EXPOSE_CHNGX; }
         if (r_old.y != window->surface->win.y) { window->event->expose->change |= EXPOSE_CHNGY; }
