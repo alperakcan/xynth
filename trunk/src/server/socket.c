@@ -168,9 +168,9 @@ int s_server_socket_listen_expose (int id)
 
 int s_server_socket_listen_stream (int id)
 {
-	s_stream_t stream;
-	s_socket_recv(server->client[id].soc, &stream, sizeof(s_stream_t));
-	stream.buf = (char *) s_malloc(stream.blen);
+	s_soc_data_stream_t stream;
+	s_socket_recv(server->client[id].soc, &stream, sizeof(s_soc_data_stream_t));
+	stream.buf = (char *) s_malloc(stream.blen + 1);
 	s_socket_recv(server->client[id].soc, stream.buf, stream.blen);
 	bpp_putbox_o(server->window->surface, id, stream.rect.x, stream.rect.y, stream.rect.w, stream.rect.h, stream.buf, stream.rect.w);
 	s_free(stream.buf);
@@ -448,11 +448,11 @@ err:		debugf(DSER, "Error occured when requesting (%d) from client[%d]. Closing 
 		case SOC_DATA_DESKTOP:
 			ret = s_server_socket_request_desktop(id);
 			break;
-                case SOC_DATA_NEW:
+		case SOC_DATA_NEW:
 		case SOC_DATA_HIDE:
 		case SOC_DATA_SHOW:
-		case SOC_DATA_CURSOR:
 		case SOC_DATA_STREAM:
+		case SOC_DATA_CURSOR:
 		case SOC_DATA_DISPLAY:
 		case SOC_DATA_NOTHING:
 		case SOC_DATA_FORMDRAW:
