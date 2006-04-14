@@ -449,13 +449,6 @@ typedef struct s_expose_s {
 	s_rect_t *rect;
 } s_expose_t;
 
-typedef struct s_stream_s {
-	int bitspp;
-	s_rect_t rect;
-	int blen;
-	char *buf;
-} s_stream_t;
-
 typedef struct s_desktop_client_s {
 	int id;
 	int pri;
@@ -717,7 +710,6 @@ int s_font_get_glyph (s_font_t *font);
 long long s_gettimeofday (void);
 
 /* grlib.c */
-int s_grlib_stream (s_surface_t *surface, s_rect_t *coor);
 int s_rgbcolor (s_surface_t *surface, int r, int g, int b);
 void s_colorrgb (s_surface_t *surface, int c, int *r, int *g, int *b);
 void s_setpixel (s_surface_t *surface, int x, int y, int c);
@@ -1383,7 +1375,7 @@ int s_socket_request_display (s_window_t *window, int soc);
 int s_socket_request_configure (s_window_t *window, int soc, S_WINDOW form);
 int s_socket_request_desktop (s_window_t *window, int soc, int id);
 int s_socket_request_expose (s_window_t *window, int soc, s_rect_t *coor);
-int s_socket_request_stream (s_window_t *window, int soc, s_stream_t *stream);
+int s_socket_request_stream (s_window_t *window, int soc, s_rect_t *coor);
 int s_socket_request_cursor (s_window_t *window, int soc, S_MOUSE_CURSOR cursor);
 int s_socket_request (s_window_t *window, S_SOC_DATA req, ...);
 int s_socket_listen_event (s_window_t *window, int soc);

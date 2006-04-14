@@ -37,29 +37,13 @@
 
 #define gr_sendstream(fonk)\
 	if (surface->need_expose & SURFACE_NEEDSTREAM) {\
-		s_grlib_stream(surface, &coor);\
+		s_socket_request(surface->window, SOC_DATA_STREAM, &coor);\
 	} else {\
-	    fonk;\
-	    if (surface->need_expose & SURFACE_NEEDEXPOSE) {\
-		    s_socket_request(surface->window, SOC_DATA_EXPOSE, &coor);\
-	    }\
+		fonk;\
+		if (surface->need_expose & SURFACE_NEEDEXPOSE) {\
+			s_socket_request(surface->window, SOC_DATA_EXPOSE, &coor);\
+		}\
 	}
-
-int s_grlib_stream (s_surface_t *surface, s_rect_t *coor)
-{
-	s_stream_t stream;
-	stream.bitspp = surface->bitsperpixel;
-	stream.rect.x = coor->x;
-	stream.rect.y = coor->y;
-	stream.rect.w = coor->w;
-	stream.rect.h = coor->h;
-	stream.blen = surface->bytesperpixel * coor->w * coor->h + 1;
-	stream.buf = (char *) s_malloc(stream.blen);
-	s_getbox(surface, coor->x, coor->y, coor->w, coor->h, stream.buf);
-	s_socket_request(surface->window, SOC_DATA_STREAM, &stream);
-	s_free(stream.buf);
-	return 0;
-}
 
 int s_rgbcolor (s_surface_t *surface, int r, int g, int b)
 {

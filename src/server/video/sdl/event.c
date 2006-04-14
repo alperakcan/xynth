@@ -49,7 +49,7 @@ void * s_video_sdl_event_parse (void *arg)
 				s_server_quit(server->window);
 				goto end;
 			default:
-				debugf(DSER, "Event received : %d", event.type);
+//				debugf(DSER, "Event received : %d", event.type);
 				break;
 
 		}

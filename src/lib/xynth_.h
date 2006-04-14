@@ -194,6 +194,13 @@ typedef struct s_soc_data_configure_s {
 	char title[S_TITLE_MAX];
 } s_soc_data_configure_t;
 
+typedef struct s_soc_data_stream_s {
+	int bitspp;
+	s_rect_t rect;
+	unsigned int blen;
+	char *buf;
+} s_soc_data_stream_t;
+
 #ifdef __cplusplus
 }
 #endif

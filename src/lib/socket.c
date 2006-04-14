@@ -111,12 +111,20 @@ int s_socket_request_expose (s_window_t *window, int soc, s_rect_t *coor)
 	return 0;
 }
 
-int s_socket_request_stream (s_window_t *window, int soc, s_stream_t *stream)
+int s_socket_request_stream (s_window_t *window, int soc, s_rect_t *coor)
 {
-        stream->rect.x += window->surface->buf.x;
-        stream->rect.y += window->surface->buf.y;
-	s_socket_send(soc, stream, sizeof(s_stream_t));
-	s_socket_send(soc, stream->buf, stream->blen);
+	s_soc_data_stream_t stream;
+	stream.bitspp = window->surface->bitsperpixel;
+	stream.rect.x = coor->x + window->surface->buf.x;
+	stream.rect.y = coor->y + window->surface->buf.y;
+	stream.rect.w = coor->w;
+	stream.rect.h = coor->h;
+	stream.blen = (unsigned int) (window->surface->bytesperpixel * coor->w * coor->h);
+	stream.buf = (char *) s_malloc(stream.blen + 1);
+	s_getbox(window->surface, coor->x, coor->y, coor->w, coor->h, stream.buf);
+	s_socket_send(soc, &stream, sizeof(s_soc_data_stream_t));
+	s_socket_send(soc, stream.buf, stream.blen);
+	s_free(stream.buf);
 	return 0;
 }
 
@@ -133,7 +141,6 @@ int s_socket_request (s_window_t *window, S_SOC_DATA req, ...)
 	int ret = 0;
 	S_WINDOW form;
 	s_rect_t *coor;
-	s_stream_t *stream;
 	struct pollfd pollfd;
 	S_MOUSE_CURSOR cursor;
 
@@ -194,8 +201,8 @@ again:	if (window->running <= 0) {
 			break;
 		case SOC_DATA_STREAM:
 			va_start(ap, req);
-			stream = (s_stream_t *) va_arg(ap, s_stream_t *);
-			ret = s_socket_request_stream(window, pollfd.fd, stream);
+			coor = (s_rect_t *) va_arg(ap, s_rect_t *);
+			ret = s_socket_request_stream(window, pollfd.fd, coor);
 			va_end(ap);
 			break;
 		case SOC_DATA_CURSOR:
@@ -204,7 +211,7 @@ again:	if (window->running <= 0) {
 			ret = s_socket_request_cursor(window, pollfd.fd, cursor);
 			va_end(ap);
 			break;
-                case SOC_DATA_HIDE:
+		case SOC_DATA_HIDE:
 		case SOC_DATA_SHOW:
 		case SOC_DATA_EVENT:
 		case SOC_DATA_CLOSE:
@@ -349,10 +356,10 @@ int s_socket_listen_parse (s_window_t *window, int soc)
 			ret = s_socket_listen_desktop(window, soc);
 			break;
 		case SOC_DATA_NEW:
-                case SOC_DATA_HIDE:
+		case SOC_DATA_HIDE:
 		case SOC_DATA_SHOW:
-		case SOC_DATA_CURSOR:
 		case SOC_DATA_STREAM:
+		case SOC_DATA_CURSOR:
 		case SOC_DATA_NOTHING:
 		case SOC_DATA_DISPLAY:
 		case SOC_DATA_FORMDRAW:
