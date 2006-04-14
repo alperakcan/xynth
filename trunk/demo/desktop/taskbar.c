@@ -306,10 +306,10 @@ void taskbar_clock_handler_o (s_window_t *window, s_event_t *event, s_handler_t 
 	s_font_get_glyph(font);
 	s_image_get_handler(font->img);
 
-	s_window_set_coor(temp, 0, event->mouse->x - font->img->handler.w - 8,
-	                           event->mouse->y - font->img->handler.h - 8,
-	                           font->img->handler.w + 8,
-	                           font->img->handler.h + 8);
+	s_window_set_coor(temp, 0, event->mouse->x - font->img->handler->w - 8,
+	                           event->mouse->y - font->img->handler->h - 8,
+	                           font->img->handler->w + 8,
+	                           font->img->handler->h + 8);
 	s_fillbox(temp->surface, 0, 0, temp->surface->buf.w, temp->surface->buf.h, s_rgbcolor(temp->surface, 0, 0, 0));
 	s_fillbox(temp->surface, 1, 1, temp->surface->buf.w - 2, temp->surface->buf.h - 2, s_rgbcolor(temp->surface, 255, 255, 222));
 	s_putboxrgba(temp->surface, 4, 4, font->img->w, font->img->h, font->img->rgba);

@@ -1,3 +1,4 @@
+
 Thu 13 Apr 2006 09:38:09 PM EEST
 	* : some more on data transfer, removed SOC_DATA_TITLE,
 	SOC_DATA_CONFIGURE is enough for everyone.

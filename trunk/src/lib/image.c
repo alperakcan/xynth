@@ -109,6 +109,11 @@ void s_image_get_handler (s_image_t *img)
 	int y;
 	unsigned int *rgba_tmp;
 
+        if (img->handler != NULL) {
+		s_image_free_handler(img);
+	}
+	img->handler = (s_rect_t *) s_malloc(sizeof(s_rect_t));
+
 	j = 1;
 	i = img->w;
 	rgba_tmp = img->rgba;
@@ -116,7 +121,7 @@ void s_image_get_handler (s_image_t *img)
 	for (y = 0; y < img->h; y++) {
 		for (x = 0; x < img->w; x++) {
 			if (j && (~*rgba_tmp & 0xFF)) {
-				img->handler.y = y;
+				img->handler->y = y;
 				j = 0;
 			}
 			if (~*rgba_tmp & 0xFF) {
@@ -127,7 +132,7 @@ void s_image_get_handler (s_image_t *img)
 			rgba_tmp++;
 		}
 	}
-	img->handler.x = i;
+	img->handler->x = i;
 
         j = 1;
         i = img->w;
@@ -135,7 +140,7 @@ void s_image_get_handler (s_image_t *img)
 	for (y = 0; y < img->h; y++) {
 		for (x = 0; x < img->w; x++) {
 			if (j && (~*rgba_tmp & 0xFF)) {
-				img->handler.h = (img->h - y) - img->handler.y;
+				img->handler->h = (img->h - y) - img->handler->y;
 				j = 0;
 			}
 			if (~*rgba_tmp & 0xFF) {
@@ -146,7 +151,7 @@ void s_image_get_handler (s_image_t *img)
 			rgba_tmp--;
 		}
 	}
-	img->handler.w = (img->w - i) - img->handler.x;
+	img->handler->w = (img->w - i) - img->handler->x;
 }
 
 int s_image_init (s_image_t **img)
@@ -174,6 +179,12 @@ void s_image_free_rgba (s_image_t *img)
 	img->rgba = NULL;
 }
 
+void s_image_free_handler (s_image_t *img)
+{
+	s_free(img->handler);
+	img->handler = NULL;
+}
+
 int s_image_uninit (s_image_t *img)
 {
 	if (img == NULL) {
@@ -182,6 +193,7 @@ int s_image_uninit (s_image_t *img)
         s_image_free_buf(img);
         s_image_free_mat(img);
         s_image_free_rgba(img);
+        s_image_free_handler(img);
 	s_image_layers_uninit(img);
 	s_free(img);
 	img = NULL;
