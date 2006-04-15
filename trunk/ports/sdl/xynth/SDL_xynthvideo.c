@@ -185,7 +185,7 @@ SDL_Surface * sdl_xynth_SetVideoMode(_THIS, SDL_Surface *current, int width, int
 
 	s_window_new(this->hidden->window, WINDOW_MAIN, NULL);
 	s_window_set_coor(this->hidden->window, 0, 0, 0, width, height);
-	s_window_set_coor(this->hidden->window, WINDOW_NOFORM, this->hidden->window->surface->buf.x, this->hidden->window->surface->buf.y, width, height);
+	s_window_set_coor(this->hidden->window, WINDOW_NOFORM, this->hidden->window->surface->buf->x, this->hidden->window->surface->buf->y, width, height);
 	s_window_set_title(this->hidden->window, "Xynth - SDL");
 	s_window_show(this->hidden->window);
 

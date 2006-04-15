@@ -76,8 +76,8 @@ int s_rect_clip_real (s_surface_t *surface, int x, int y, int w, int h, s_rect_t
 
 	cliv.x = 0;
 	cliv.y = 0;
-	cliv.w = MIN(surface->buf.w, surface->width);
-	cliv.h = MIN(surface->buf.h, surface->height);
+	cliv.w = MIN(surface->buf->w, surface->width);
+	cliv.h = MIN(surface->buf->h, surface->height);
 
 	clir.x = 0;
 	clir.y = 0;
@@ -87,13 +87,13 @@ int s_rect_clip_real (s_surface_t *surface, int x, int y, int w, int h, s_rect_t
 	if (s_rect_intersect(&thip, &cliv, &that)) {
 		return -1;
 	}
-	that.x += surface->buf.x;
-	that.y += surface->buf.y;
+	that.x += surface->buf->x;
+	that.y += surface->buf->y;
 	if (s_rect_intersect(&clir, &that, coor)) {
 		return -1;
 	}
-	coor->x -= surface->buf.x;
-	coor->y -= surface->buf.y;
+	coor->x -= surface->buf->x;
+	coor->y -= surface->buf->y;
 	return 0;
 }
 

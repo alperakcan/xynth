@@ -83,10 +83,6 @@ int s_video_gp2x_server_init (s_server_conf_t *cfg)
 
 	server->window->surface->width = 320;
 	server->window->surface->height = 240;
-	server->window->surface->buf.x = 0;
-	server->window->surface->buf.y = 0;
-	server->window->surface->buf.w = 320;
-	server->window->surface->buf.h = 240;
 	server->window->surface->bytesperpixel = 2;
 	server->window->surface->bitsperpixel = 16;
 	server->window->surface->blueoffset = 0;

@@ -17,8 +17,8 @@
 
 int s_event_mouse_state (s_window_t *window, s_event_t *event, s_handler_mouse_t *mouse, int over)
 {
-        int x = mouse->x + window->surface->buf.x;
-        int y = mouse->y + window->surface->buf.y;
+        int x = mouse->x + window->surface->buf->x;
+        int y = mouse->y + window->surface->buf->y;
         int w = mouse->w;
         int h = mouse->h;
         int b = mouse->button;

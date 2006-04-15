@@ -19,12 +19,12 @@
 #define OFFSE1	(y * surface->width + x)
 #define OFFSE2	(y1 * surface->width + x)
 #define OFFSE3	(y * surface->width + x1)
-#define OFFSE4	((y + surface->buf.y) * surface->linear_buf_width + x + surface->buf.x)
-#define OFFSE5	((y1 + surface->buf.y) * surface->linear_buf_width + x + surface->buf.x)
-#define OFFSE6	((y + surface->buf.y) * surface->linear_buf_width + x1 + surface->buf.x)
-#define OFFSE4P	((y + surface->buf.y) * surface->linear_buf_pitch + x + surface->buf.x)
-#define OFFSE5P	((y1 + surface->buf.y) * surface->linear_buf_pitch + x + surface->buf.x)
-#define OFFSE6P	((y + surface->buf.y) * surface->linear_buf_pitch + x1 + surface->buf.x)
+#define OFFSE4	((y + surface->buf->y) * surface->linear_buf_width + x + surface->buf->x)
+#define OFFSE5	((y1 + surface->buf->y) * surface->linear_buf_width + x + surface->buf->x)
+#define OFFSE6	((y + surface->buf->y) * surface->linear_buf_width + x1 + surface->buf->x)
+#define OFFSE4P	((y + surface->buf->y) * surface->linear_buf_pitch + x + surface->buf->x)
+#define OFFSE5P	((y1 + surface->buf->y) * surface->linear_buf_pitch + x + surface->buf->x)
+#define OFFSE6P	((y + surface->buf->y) * surface->linear_buf_pitch + x1 + surface->buf->x)
 
 #define prepare(offset)\
 	unsigned char *m = surface->matrix + offset;\

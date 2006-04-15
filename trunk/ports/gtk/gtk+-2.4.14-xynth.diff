@@ -473,10 +473,10 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkevents-fb.c gtk+-2.4.14-xynth/
 -  GDK_THREADS_LEAVE ();
 +	while ((event = _gdk_event_unqueue(gdk_display_get_default()))) {
 +		if (event->type == GDK_CONFIGURE) {
-+			if ((event->configure.x != GDK_DRAWABLE_IMPL_FBDATA(event->configure.window)->xynth_window->surface->buf.x) ||
-+			    (event->configure.y != GDK_DRAWABLE_IMPL_FBDATA(event->configure.window)->xynth_window->surface->buf.y) ||
-+			    (event->configure.width != GDK_DRAWABLE_IMPL_FBDATA(event->configure.window)->xynth_window->surface->buf.w) ||
-+			    (event->configure.height != GDK_DRAWABLE_IMPL_FBDATA(event->configure.window)->xynth_window->surface->buf.h)) {
++			if ((event->configure.x != GDK_DRAWABLE_IMPL_FBDATA(event->configure.window)->xynth_window->surface->buf->x) ||
++			    (event->configure.y != GDK_DRAWABLE_IMPL_FBDATA(event->configure.window)->xynth_window->surface->buf->y) ||
++			    (event->configure.width != GDK_DRAWABLE_IMPL_FBDATA(event->configure.window)->xynth_window->surface->buf->w) ||
++			    (event->configure.height != GDK_DRAWABLE_IMPL_FBDATA(event->configure.window)->xynth_window->surface->buf->h)) {
 +				s_window_set_coor(GDK_DRAWABLE_IMPL_FBDATA(event->configure.window)->xynth_window,
 +				                  WINDOW_NOFORM,
 +				                  event->configure.x,
@@ -3403,13 +3403,13 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkwindow-fb.c gtk+-2.4.14-xynth/
 +GdkWindowObject *private = (GdkWindowObject *) gwindow;
 +
 +	if (event->type & EXPOSE_EVENT) {
-+		if ((((GdkWindowObject *) window->client->user_data)->x != window->surface->buf.x) ||
-+		    (((GdkWindowObject *) window->client->user_data)->y != window->surface->buf.y) ||
-+		    (GDK_DRAWABLE_IMPL_FBDATA((GdkWindowObject *) window->client->user_data)->width != window->surface->buf.w) ||
-+		    (GDK_DRAWABLE_IMPL_FBDATA((GdkWindowObject *) window->client->user_data)->height != window->surface->buf.h)) {
++		if ((((GdkWindowObject *) window->client->user_data)->x != window->surface->buf->x) ||
++		    (((GdkWindowObject *) window->client->user_data)->y != window->surface->buf->y) ||
++		    (GDK_DRAWABLE_IMPL_FBDATA((GdkWindowObject *) window->client->user_data)->width != window->surface->buf->w) ||
++		    (GDK_DRAWABLE_IMPL_FBDATA((GdkWindowObject *) window->client->user_data)->height != window->surface->buf->h)) {
 +			gdk_window_move_resize((GdkWindow *) window->client->user_data,
-+			                       window->surface->buf.x, window->surface->buf.y,
-+			                       window->surface->buf.w, window->surface->buf.h);
++			                       window->surface->buf->x, window->surface->buf->y,
++			                       window->surface->buf->w, window->surface->buf->h);
 +		}
 +	/* Change focus event coming from xynth */
 +	if ((event->expose->change & EXPOSE_CHNGF) && (GDK_WINDOW_TYPE(gwindow)==GDK_WINDOW_TOPLEVEL)){

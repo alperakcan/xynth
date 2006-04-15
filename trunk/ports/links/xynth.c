@@ -94,10 +94,10 @@ static void lxynth_event_parse_mouse (s_event_t *event)
 	int y;
 	int flag = 0;
 
-	x = event->mouse->x - lxynth_root->window->surface->buf.x;
-	y = event->mouse->y - lxynth_root->window->surface->buf.y;
-	if ((x < 0) || (x >  lxynth_root->window->surface->buf.w) ||
-	    (y < 0) || (y >  lxynth_root->window->surface->buf.h)) {
+	x = event->mouse->x - lxynth_root->window->surface->buf->x;
+	y = event->mouse->y - lxynth_root->window->surface->buf->y;
+	if ((x < 0) || (x >  lxynth_root->window->surface->buf->w) ||
+	    (y < 0) || (y >  lxynth_root->window->surface->buf->h)) {
 		return;
 	}
 	switch (event->mouse->b) {
@@ -198,8 +198,8 @@ static void lxynth_event_parse_keybd (s_event_t *event)
 		struct rect r;\
 		r.x1 = 0;\
 		r.y1 = 0;\
-		r.x2 = lxynth_root->window->surface->buf.w;\
-		r.y2 = lxynth_root->window->surface->buf.h;\
+		r.x2 = lxynth_root->window->surface->buf->w;\
+		r.y2 = lxynth_root->window->surface->buf->h;\
 		title = strdup(((lxynth_device_t *) lxynth_root->gd->active->driver_data)->title);\
 		lxynth_set_title(lxynth_root->gd->active, title);\
 		lxynth_root->gd->active->resize_handler(lxynth_root->gd->active);\
@@ -249,10 +249,10 @@ static void lxynth_event_parse_expos (s_event_t *event)
 			struct graphics_device *gd = (struct graphics_device *) s_list_get(lxynth_root->gd->list, pos);
 			lxynth_device_t *wd = gd->driver_data;
 
-			gd->size.x2 = lxynth_root->window->surface->buf.w;
-			gd->size.y2 = lxynth_root->window->surface->buf.h;
-			wd->surface->width = lxynth_root->window->surface->buf.w;
-			wd->surface->height = lxynth_root->window->surface->buf.h;
+			gd->size.x2 = lxynth_root->window->surface->buf->w;
+			gd->size.y2 = lxynth_root->window->surface->buf->h;
+			wd->surface->width = lxynth_root->window->surface->buf->w;
+			wd->surface->height = lxynth_root->window->surface->buf->h;
 			s_free(wd->surface->vbuf);
 			wd->surface->vbuf = (char *) s_malloc(wd->surface->width *
 			                                      wd->surface->height *
@@ -307,7 +307,8 @@ static void lxynth_atevent (s_window_t *window, s_event_t *event)
 				e->type = event->type;
 				memcpy(e->mouse, event->mouse, sizeof(s_mouse_t));
 				memcpy(e->keybd, event->keybd, sizeof(s_keybd_t));
-				memcpy(e->expose, event->expose, sizeof(s_expose_t));
+				e->expose->change = event->expose->change;
+				memcpy(e->expose->rect, event->expose->rect, sizeof(s_rect_t));
 
 				s_thread_mutex_lock(lxynth_root->eventq->mut);
 				s_list_add(lxynth_root->eventq->list, e, -1);
@@ -388,8 +389,8 @@ static struct graphics_device * lxynth_init_device (void)
 
 	wd->title = NULL;
         wd->surface = (s_surface_t *) s_malloc(sizeof(s_surface_t));
-        vbuf = (char *) s_malloc(lxynth_root->window->surface->buf.w * lxynth_root->window->surface->buf.h * lxynth_root->window->surface->bytesperpixel);
-        s_getsurfacevirtual(wd->surface, lxynth_root->window->surface->buf.w , lxynth_root->window->surface->buf.h, lxynth_root->window->surface->bitsperpixel, vbuf);
+        vbuf = (char *) s_malloc(lxynth_root->window->surface->buf->w * lxynth_root->window->surface->buf->h * lxynth_root->window->surface->bytesperpixel);
+        s_getsurfacevirtual(wd->surface, lxynth_root->window->surface->buf->w , lxynth_root->window->surface->buf->h, lxynth_root->window->surface->bitsperpixel, vbuf);
 
 	gd->size.x1 = 0;
 	gd->size.x2 = wd->surface->width;
@@ -450,8 +451,8 @@ static void lxynth_shutdown_device (struct graphics_device *dev)
 		struct rect r;
 		r.x1 = 0;
 		r.y1 = 0;
-		r.x2 = lxynth_root->window->surface->buf.w;
-		r.y2 = lxynth_root->window->surface->buf.h;
+		r.x2 = lxynth_root->window->surface->buf->w;
+		r.y2 = lxynth_root->window->surface->buf->h;
 		title = strdup(((lxynth_device_t *) lxynth_root->gd->active->driver_data)->title);
 		lxynth_set_title(lxynth_root->gd->active, title);
 		lxynth_root->gd->active->resize_handler(lxynth_root->gd->active);

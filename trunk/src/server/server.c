@@ -261,14 +261,18 @@ int s_server_init (void)
 
         server->window = (s_window_t *) s_calloc(1, sizeof(s_window_t));
         server->window->surface = (s_surface_t *) s_calloc(1, sizeof(s_surface_t));
+	server->window->surface->buf = (s_rect_t *) s_calloc(1, sizeof(s_rect_t));
+	server->window->surface->win = (s_rect_t *) s_calloc(1, sizeof(s_rect_t));
 
         if (s_server_cfg(&config)) {
 		debugf(DSER, "Error while loading configuration file");
 		goto err0;
 	}
-        
-	server->window->surface->buf.w = 0;
-	server->window->surface->buf.h = 0;
+
+        server->window->surface->buf->x = 0;
+        server->window->surface->buf->y = 0;
+	server->window->surface->buf->w = 0;
+	server->window->surface->buf->h = 0;
 	server->window->surface->linear_buf_width = 0;
 	server->window->surface->linear_buf_pitch = 0;
 	server->window->surface->linear_buf_height = 0;
@@ -284,8 +288,10 @@ int s_server_init (void)
 		goto err0;
 	}
 
-	server->window->surface->buf.w = server->window->surface->width;
-	server->window->surface->buf.h = server->window->surface->height;
+        server->window->surface->buf->x = 0;
+        server->window->surface->buf->y = 0;
+	server->window->surface->buf->w = server->window->surface->width;
+	server->window->surface->buf->h = server->window->surface->height;
 	server->window->surface->linear_buf_width = server->window->surface->width;
 	if (server->window->surface->linear_buf_pitch == 0) {
 		server->window->surface->linear_buf_pitch = server->window->surface->width;
@@ -341,6 +347,8 @@ err0:	s_free(config.general.driver);
 	s_free(config.general.mode);
 	s_free(config.mouse.type);
 	s_free(config.mouse.device);
+	s_free(server->window->surface->buf);
+	s_free(server->window->surface->win);
 	s_free(server->window->surface);
 	s_free(server->window);
 	return 1;
@@ -383,6 +391,8 @@ void s_server_uninit (void)
 #else
 	shmdt(server->window->surface->matrix);
 #endif
+	s_free(server->window->surface->buf);
+	s_free(server->window->surface->win);
 	s_free(server->window->surface);
 	s_free(server->window);
 //	s_free(server);

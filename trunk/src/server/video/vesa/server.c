@@ -268,10 +268,6 @@ static void s_video_vesa_surface_init (s_video_helper_mode_info_t *gmode)
 
         server->window->surface->width = gmode->xdim;
         server->window->surface->height = gmode->ydim;
-        server->window->surface->buf.x = 0;
-        server->window->surface->buf.y = 0;
-        server->window->surface->buf.w = gmode->xdim;
-        server->window->surface->buf.h = gmode->ydim;
         server->window->surface->bytesperpixel = gmode->bytesperpixel;
         server->window->surface->bitsperpixel = priv->vbe.mode->bits_per_pixel;
 	server->window->surface->blueoffset = priv->vbe.mode->blue_field_position;

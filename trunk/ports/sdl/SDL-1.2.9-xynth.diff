@@ -1303,15 +1303,15 @@ diff -U 3 -H -d -r -N SDL-1.2.9/src/video/xynth/SDL_xynthevent.c SDL-1.2.9-xynth
 +        int button = 0;
 +        
 +	if ((event->type & MOUSE_EVENT) &&
-+	    ((event->mouse->x >= window->surface->buf.x) &&
-+	     (event->mouse->x <= window->surface->buf.x + window->surface->buf.w) &&
-+	     (event->mouse->y >= window->surface->buf.y) &&
-+	     (event->mouse->y <= window->surface->buf.y + window->surface->buf.h))) {
++	    ((event->mouse->x >= window->surface->buf->x) &&
++	     (event->mouse->x <= window->surface->buf->x + window->surface->buf->w) &&
++	     (event->mouse->y >= window->surface->buf->y) &&
++	     (event->mouse->y <= window->surface->buf->y + window->surface->buf->h))) {
 +		if (event->type & MOUSE_OVER) {
 +			if (event->type & MOUSE_HINT) {
 +				state = SDL_PRESSED;
 +			}
-+			SDL_PrivateMouseMotion(state, 0, event->mouse->x - window->surface->buf.x, event->mouse->y - window->surface->buf.y);
++			SDL_PrivateMouseMotion(state, 0, event->mouse->x - window->surface->buf->x, event->mouse->y - window->surface->buf->y);
 +		} else if (event->type & (MOUSE_PRESSED | MOUSE_RELEASED | MOUSE_CLICKED)) {
 +			if (event->type & (MOUSE_PRESSED)) {
 +				state = SDL_PRESSED;
@@ -1325,7 +1325,7 @@ diff -U 3 -H -d -r -N SDL-1.2.9/src/video/xynth/SDL_xynthevent.c SDL-1.2.9-xynth
 +				case MOUSE_LEFTBUTTON:		button = SDL_BUTTON_LEFT;	break;
 +				default:			button = 0;			break;
 +			}
-+			SDL_PrivateMouseButton(state, button, event->mouse->x - window->surface->buf.x, event->mouse->y - window->surface->buf.y);
++			SDL_PrivateMouseButton(state, button, event->mouse->x - window->surface->buf->x, event->mouse->y - window->surface->buf->y);
 +		}
 +	}
 +	if (event->type & KEYBD_EVENT) {
@@ -1767,7 +1767,7 @@ diff -U 3 -H -d -r -N SDL-1.2.9/src/video/xynth/SDL_xynthvideo.c SDL-1.2.9-xynth
 +
 +	s_window_new(this->hidden->window, WINDOW_MAIN, NULL);
 +	s_window_set_coor(this->hidden->window, 0, 0, 0, width, height);
-+	s_window_set_coor(this->hidden->window, WINDOW_NOFORM, this->hidden->window->surface->buf.x, this->hidden->window->surface->buf.y, width, height);
++	s_window_set_coor(this->hidden->window, WINDOW_NOFORM, this->hidden->window->surface->buf->x, this->hidden->window->surface->buf->y, width, height);
 +	s_window_set_title(this->hidden->window, "Xynth - SDL");
 +	s_window_show(this->hidden->window);
 +

@@ -67,10 +67,10 @@ static void child_handler_open (s_window_t *window, s_event_t *event, s_handler_
 
         s_window_new(child, WINDOW_CHILD, window);
 
-	s_window_set_coor(child, WINDOW_NOFORM, window->surface->buf.x + 100,
-						window->surface->buf.y + 100,
-						window->surface->buf.w,
-						window->surface->buf.h);
+	s_window_set_coor(child, WINDOW_NOFORM, window->surface->buf->x + 100,
+						window->surface->buf->y + 100,
+						window->surface->buf->w,
+						window->surface->buf->h);
 	s_window_set_title(child, "Demo - Child ");
 
 	mw = child->surface->width;

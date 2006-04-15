@@ -1079,13 +1079,13 @@ int main (int argc, char *argv[])
 
 	s_window_set_title(window, "Xyntherminal");
 	s_window_set_coor(window, 0, 100, 100, FONTW * SCREENW, FONTH * SCREENH);
-	s_window_set_coor(window, WINDOW_NOFORM, window->surface->buf.x, window->surface->buf.y, FONTW * SCREENW, FONTH * SCREENH);
+	s_window_set_coor(window, WINDOW_NOFORM, window->surface->buf->x, window->surface->buf->y, FONTW * SCREENW, FONTH * SCREENH);
 	s_window_set_resizeable(window, 0);
 
 	s_free(window->surface->vbuf);
-	window->surface->vbuf = (char *) s_malloc(window->surface->buf.w * window->surface->buf.h * window->surface->bytesperpixel);
-	window->surface->width = window->surface->buf.w;
-	window->surface->height = window->surface->buf.h;
+	window->surface->vbuf = (char *) s_malloc(window->surface->buf->w * window->surface->buf->h * window->surface->bytesperpixel);
+	window->surface->width = window->surface->buf->w;
+	window->surface->height = window->surface->buf->h;
 
         s_font_init(&font, "veramono.ttf");
         s_font_set_size(font, FONTH);

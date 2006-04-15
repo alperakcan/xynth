@@ -58,8 +58,8 @@ void start_menu_handler (s_window_t *window, s_event_t *event, s_handler_t *hand
 		desktop_self_system(sprog->exec);
 		return;
 	} else if (sprog->type == SMENU_MENU) {
-		start_menu_start(window, sprog->progs, window->surface->buf.x + window->surface->buf.w - 12,
-		                                       window->surface->buf.y + handler->mouse.y + handler->mouse.h);
+		start_menu_start(window, sprog->progs, window->surface->buf->x + window->surface->buf->w - 12,
+		                                       window->surface->buf->y + handler->mouse.y + handler->mouse.h);
 	}
 }
 
@@ -92,10 +92,10 @@ void start_menu_start (s_window_t *pwindow, s_list_t *progs, int wx, int wy)
 	s_client_init(&temp);
         s_window_new(temp, WINDOW_TEMP | WINDOW_NOFORM, pwindow);
         s_window_set_coor(temp, 0, wx, wy - fh - 1, fw, fh);
-	
-	s_fillbox(temp->surface, 0, 0, temp->surface->buf.w, temp->surface->buf.h, s_rgbcolor(temp->surface, 0, 0, 0));
-	s_fillbox(temp->surface, 1, 1, temp->surface->buf.w - 2, temp->surface->buf.h - 2, s_rgbcolor(temp->surface, 255, 255, 255));
-	s_fillbox(temp->surface, 1, 1, 24, temp->surface->buf.h - 2, s_rgbcolor(temp->surface, 197, 198, 189));
+
+	s_fillbox(temp->surface, 0, 0, temp->surface->buf->w, temp->surface->buf->h, s_rgbcolor(temp->surface, 0, 0, 0));
+	s_fillbox(temp->surface, 1, 1, temp->surface->buf->w - 2, temp->surface->buf->h - 2, s_rgbcolor(temp->surface, 255, 255, 255));
+	s_fillbox(temp->surface, 1, 1, 24, temp->surface->buf->h - 2, s_rgbcolor(temp->surface, 197, 198, 189));
 	
 	
 	s_font_init(&font, "arial.ttf");

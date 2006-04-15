@@ -106,8 +106,8 @@ void SObject::expose (int x, int y, int w, int h)
 
 	if ((objectWindow->surface->mode & SURFACE_REAL) &&
 	    (s_rect_intersect(&rect, &clip, &coor) == 0)) {
-		coor.x += (objectRectBuffer.rectX + objectWindow->surface->buf.x);
-		coor.y += (objectRectBuffer.rectY + objectWindow->surface->buf.y);
+		coor.x += (objectRectBuffer.rectX + objectWindow->surface->buf->x);
+		coor.y += (objectRectBuffer.rectY + objectWindow->surface->buf->y);
 		s_surface_changed(objectWindow, &coor);
 	}
 }

@@ -79,7 +79,7 @@ static void handler3_p (s_window_t *window, s_event_t *event, s_handler_t *handl
 	                                      mdata->objectc[0]->surface->width - 20,
 	                                      mdata->objectc[0]->surface->height - 20,
 	                                      s_rgbcolor(mdata->objectc[0]->surface, rand() % 255, rand() % 255, rand() % 255));
-	s_object_update(mdata->objectc[0], &mdata->objectc[0]->surface->win);
+	s_object_update(mdata->objectc[0], mdata->objectc[0]->surface->win);
 	s_thread_mutex_unlock(mdata->objectc[0]->mut);
 	handler0_p(window, event, handler);
 }
@@ -186,7 +186,7 @@ int main (int argc, char *argv[])
 		}
 	}
 
-	s_window_set_coor(window, WINDOW_NOFORM, window->surface->buf.x, window->surface->buf.y,
+	s_window_set_coor(window, WINDOW_NOFORM, window->surface->buf->x, window->surface->buf->y,
 	                                         mdata->objectp->surface->width + 20, mdata->objectp->surface->height + 60);
         s_fillbox(window->surface, 0, 40, mdata->objectp->surface->width + 20, mdata->objectp->surface->height + 20, s_rgbcolor(window->surface, 222, 222, 222));
 
