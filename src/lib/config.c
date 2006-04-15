@@ -179,36 +179,3 @@ int s_config_uninit (s_config_t *cfg)
 
 	return 0;
 }
-
-#if 0
-
-#include <xynth.h>
-int main (void)
-{
-	int i;
-	int j;
-	s_config_t *cfg;
-	s_config_cat_t *cat;
-	s_config_var_t *var;
-
-	s_config_init(&cfg);
-
-	s_config_parse(cfg, "/usr/local/share/xynth/config/xynth.conf");
-
-	i = 0;
-	while (!s_list_eol(cfg->category, i)) {
-		cat = s_list_get(cfg->category, i++);
-
-		j = 0;
-		while (!s_list_eol(cat->variable, j)) {
-			var = s_list_get(cat->variable, j++);
-			printf("%s->%s = %s\n", cat->name, var->name, var->value);
-		}
-	}
-
-	s_config_uninit(cfg);
-
-	return 0;
-}
-
-#endif

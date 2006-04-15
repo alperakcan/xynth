@@ -1,4 +1,7 @@
 
+Sun 16 Apr 2006 02:25:16 AM EEST
+	* : added s_rect_t, and s_config_*_t struct, api to the doxy-doc
+
 Sat 15 Apr 2006 08:17:13 AM EEST
 	* : so many changes...
 

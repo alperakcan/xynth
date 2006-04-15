@@ -30,6 +30,9 @@ typedef struct s_font_ft_s s_font_ft_t;
 typedef struct s_handler_s s_handler_t;
 typedef struct s_window_s s_window_t;
 
+typedef struct s_config_var_s s_config_var_t;
+typedef struct s_config_cat_s s_config_cat_t;
+typedef struct s_config_s s_config_t;
 typedef struct s_image_s s_image_t;
 typedef struct s_list_s s_list_t;
 typedef struct s_list_node_s s_list_node_t;
@@ -374,20 +377,6 @@ typedef enum {
 	KEYBD_HANDLER = 0x2
 } S_HANDLER;
 
-typedef struct s_config_var_s {
-	char *name;
-	char *value;
-} s_config_var_t;
-
-typedef struct s_config_cat_s {
-	char *name;
-	s_list_t *variable;
-} s_config_cat_t;
-
-typedef struct s_config_s {
-	s_list_t *category;
-} s_config_t;
-
 typedef struct s_font_s {
 	int yMin;
 	int yMax;
@@ -632,15 +621,159 @@ void * s_client_main (void *arg);
 void s_client_atevent (s_window_t *window, void (*f) (s_window_t *, s_event_t *));
 void s_client_atexit (s_window_t *window, void (*f) (s_window_t *));
 
+/** @defgroup config config struct, api
+  * @brief detailed description
+  *
+  * @example
+  *
+  * basic.cfg file;
+  * @code
+  * ; this is a basic configuration file
+  * [category0]
+  * variable0 = value0 ; this is a comment
+  * variable1 = value1
+  *
+  * [category1]
+  * variable0 = value2
+  * variable2 = value3
+  * @endcode
+  *
+  * the code;
+  * @code
+  * int i;
+  * int j;
+  * s_config_t *cfg;
+  * s_config_cat_t *cat;
+  * s_config_var_t *var;
+  *
+  * // initialize cfg struct
+  * s_config_init(&cfg);
+  *
+  * // parse the cfg file
+  * s_config_parse(cfg, "basic.cfg");
+  *
+  * // walk through the categories
+  * i = 0;
+  * while (!s_list_eol(cfg->category, i)) {
+  *	// get category and print
+  * 	cat = s_list_get(cfg->category, i++);
+  *	printf("category: %s\n", cat->name);
+  *
+  *	// walk though the variables in category
+  *	j = 0;
+  *	while (!s_list_eol(cat->variable, j)) {
+  *		// get variable and print
+  *		var = s_list_get(cat->variable, j++);
+  *		printf("\t%s = %s\n", var->name, var->value);
+  *	}
+  * }
+  *
+  * // uninitialize the cfg struct
+  * s_config_uninit(cfg);
+  * @endcode
+  *
+  * print out will be;
+  * @code
+  * category : category0
+  *	variable0 = value0
+  *	variable1 = value1
+  * category : category1
+  *	variable0 = value2
+  *	variable2 = value3
+  * @endcode
+  */
+
+/** @addtogroup config */
+/*@{*/
+
+/** config variable struct
+  */
+struct s_config_var_s {
+	/** variable name */
+	char *name;
+	/** variable value */
+	char *value;
+};
+
+/** config category struct
+  */
+struct s_config_cat_s {
+	/** category name */
+	char *name;
+	/** list of variables in category */
+	s_list_t *variable;
+};
+
+/** config struct
+  */
+struct s_config_s {
+	/** list of categories in config */
+	s_list_t *category;
+};
+
 /* config.c */
+
+/** @brief strips leading and trailing white spaces by modifing buf
+  *
+  * @param buf - buffer to strip white spaces from
+  * @returns a valid pointer
+  */
 char * s_config_strip (char *buf);
+
+/** @brief parses the given configuration file
+  *
+  * @param cfg  - the config struct pointer
+  * @param name - file name to parse
+  * @returns 0 on success, 1 on error.
+  */
 int s_config_parse (s_config_t *cfg, char *name);
+
+/** @brief initialize the config struct
+  *
+  * @param cfg - pointer to the config struct pointer
+  * @returns 0 on success, 1 on error.
+  */
 int s_config_init (s_config_t **cfg);
+
+/** @brief initialize the category struct
+  *
+  * @param cat  - pointer to the category struct pointer
+  * @param name - category name
+  * @returns 0 on success, 1 on error.
+  */
 int s_config_category_init (s_config_cat_t **cat, char *name);
+
+/** @brief initialize the variable struct
+  *
+  * @param var   - pointer to the variable struct pointer
+  * @param name  - variable name
+  * @param value - variable value
+  * @returns 0 on success, 1 on error.
+  */
 int s_config_variable_init (s_config_var_t **var, char *name, char *value);
+
+/** @brief uninitialize the variable struct
+  *
+  * @param var - the variable struct pointer
+  * @returns 0 on success, 1 on error.
+  */
 int s_config_variable_uninit (s_config_var_t *var);
+
+/** @brief uninitialize the category struct
+  *
+  * @param cat - the category struct pointer
+  * @returns 0 on success, 1 on error.
+  */
 int s_config_category_uninit (s_config_cat_t *cat);
+
+/** @brief uninitialize the config struct
+  *
+  * @param cfg - the config struct pointer
+  * @returns 0 on success, 1 on error.
+  */
 int s_config_uninit (s_config_t *cfg);
+
+/*@}*/
 
 /* debugf.c */
 void s_debug_debugf (unsigned short flags, char *file, int line, char *func, char *fmt, ...);
