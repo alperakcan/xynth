@@ -388,24 +388,6 @@ typedef struct s_config_s {
 	s_list_t *category;
 } s_config_t;
 
-/** @addtogroup rect */
-/*@{*/
-
-/** rect struct
-  */
-struct s_rect_s {
-	/** x coordinate */
-	int x;
-	/** y coordinate */
-	int y;
-	/** width */
-	int w;
-	/** height */
-	int h;
-};
-
-/*@}*/
-
 typedef struct s_font_s {
 	int yMin;
 	int yMax;
@@ -1309,6 +1291,19 @@ int s_pollfds_uninit (s_window_t *window);
 
 /** @addtogroup rect */
 /*@{*/
+
+/** rect struct
+  */
+struct s_rect_s {
+	/** x coordinate */
+	int x;
+	/** y coordinate */
+	int y;
+	/** width */
+	int w;
+	/** height */
+	int h;
+};
 
 /* rect.c */
 
