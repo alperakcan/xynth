@@ -139,6 +139,7 @@ int s_font_get_glyph (s_font_t *font)
 		glyph_index = FT_Get_Char_Index(font->ft->face, font->str[n]);
 		if (glyph_index == 0) {
 			debugf(0, "FT_Get_Char_Index");
+			continue;
 		}
 		if (use_kerning && previous && glyph_index) {
 			FT_Vector delta;
