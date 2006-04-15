@@ -51,15 +51,15 @@ static void img_show (s_window_t *window)
 	s_putboxrgba(srf, 0, 0, img->w, img->h, img->rgba);
 
 	if (imgd->imgs) {
-		s_scalebox(srf, img->w, img->h, vbuf, window->surface->buf.w, window->surface->buf.h, sbuf);
+		s_scalebox(srf, img->w, img->h, vbuf, window->surface->buf->w, window->surface->buf->h, sbuf);
 	}
 
 	window->surface->mode = SURFACE_VIRTUAL;
 	s_fillbox(window->surface, 0, 0, window->surface->width, window->surface->height, 0);
 	window->surface->mode |= SURFACE_REAL;
-	
+
 	if (imgd->imgs) {
-		s_putbox(window->surface, 0, 0, window->surface->buf.w, window->surface->buf.h, sbuf);
+		s_putbox(window->surface, 0, 0, window->surface->buf->w, window->surface->buf->h, sbuf);
 	} else {
 		s_putbox(window->surface, img->x, img->y, img->w, img->h, vbuf);
 	}

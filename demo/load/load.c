@@ -500,8 +500,8 @@ int main (int argc, char *argv[])
 	s_window_set_title(window, "Xynth Load");
 
 	s_free(window->surface->vbuf);
-	window->surface->width = window->surface->buf.w;
-	window->surface->height = window->surface->buf.h;
+	window->surface->width = window->surface->buf->w;
+	window->surface->height = window->surface->buf->h;
 	window->surface->vbuf = (char *) s_malloc(window->surface->width * window->surface->height * window->surface->bytesperpixel);
 
 	s_client_atexit(window, load_atexit);

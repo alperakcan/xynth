@@ -31,11 +31,11 @@ void desktop_background (s_window_t *window, char *file)
 	s_image_init(&img);
 	s_image_img(file, img);
 
-	if (img->w < window->surface->buf.w) {
-		imagex = (window->surface->buf.w - img->w) / 2;
+	if (img->w < window->surface->buf->w) {
+		imagex = (window->surface->buf->w - img->w) / 2;
 	}
-	if (img->h < window->surface->buf.h) {
-		imagey = (window->surface->buf.h - img->h) / 2;
+	if (img->h < window->surface->buf->h) {
+		imagey = (window->surface->buf->h - img->h) / 2;
 	}
 
         vbuf = (char *) s_malloc(window->surface->bytesperpixel * img->w * img->h + 1);
@@ -46,10 +46,10 @@ void desktop_background (s_window_t *window, char *file)
         s_putboxrgba(&s, 0, 0, img->w, img->h, img->rgba);
 
 	if (dtop_data->scale_img) {
-		s_scalebox(window->surface, img->w, img->h, vbuf, window->surface->buf.w, window->surface->buf.h, window->surface->vbuf);
+		s_scalebox(window->surface, img->w, img->h, vbuf, window->surface->buf->w, window->surface->buf->h, window->surface->vbuf);
 	} else {
-		x = (window->surface->buf.w - img->w) / 2;
-		y = (window->surface->buf.h - img->h) / 2;
+		x = (window->surface->buf->w - img->w) / 2;
+		y = (window->surface->buf->h - img->h) / 2;
 		s_putbox(window->surface, 0, 0, img->w, img->h, vbuf);
 	}
 
@@ -64,7 +64,7 @@ void desktop_icon_handler (s_window_t *window, s_event_t *event, s_handler_t *ha
 	dtop_prog_t *dtopp;
         dtop_data_t *dtop_data;
         dtop_data = (dtop_data_t *) window->client->user_data;
-        
+
 #if 0
         s_client_quit(window);
         return;
@@ -125,7 +125,7 @@ void desktop_icons (s_window_t *window)
 	dtop_prog_t *dtopp;
         dtop_data_t *dtop_data;
         dtop_data = (dtop_data_t *) window->client->user_data;
-        
+
        	s_font_init(&font, "arial.ttf");
 	s_font_set_size(font, 11);
 	s_font_set_rgb(font, (dtop_data->text_color >> 0x16) & 0xff,
@@ -136,7 +136,7 @@ void desktop_icons (s_window_t *window)
 		dtopp = (dtop_prog_t *) s_list_get(dtop_data->progs, p++);
 		desktop_icon(window, dtopp, font);
 	}
-	
+
 	s_font_uninit(font);
 }
 
@@ -174,14 +174,14 @@ void desktop_start (s_window_t *window, s_config_t *cfg)
 	s_config_cat_t *cat;
 	s_config_var_t *var;
 	dtop_data_t *dtop_data;
-	
+
 	s_window_set_coor(window, WINDOW_NOFORM, 0, 0, window->surface->width, window->surface->height - 30);
 	s_window_set_alwaysontop(window, -1);
 	s_window_set_resizeable(window, 0);
 
 	s_free(window->surface->vbuf);
-	window->surface->width = window->surface->buf.w;
-	window->surface->height = window->surface->buf.h;
+	window->surface->width = window->surface->buf->w;
+	window->surface->height = window->surface->buf->h;
 	window->surface->vbuf = (char *) s_malloc(window->surface->width * window->surface->height * window->surface->bytesperpixel);
 
 	dtop_data = (dtop_data_t *) s_calloc(1, sizeof(dtop_data_t));

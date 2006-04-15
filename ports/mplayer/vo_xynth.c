@@ -32,7 +32,6 @@
 #define XYNTH_DOUBLEBUFFER
 
 static int running;
-static s_rect_t win;
 static s_thread_t *tid;
 static s_window_t *window;
 
@@ -173,9 +172,9 @@ static uint32_t config (uint32_t width, uint32_t height, uint32_t d_width,
 		s_window_new(window, WINDOW_MAIN, NULL);
 		s_window_set_title(window, "Mplayer - %s", filename);
 		x = (window->surface->linear_buf_width - (int) image_width) / 2;
-		if (x <= 5) x = window->surface->buf.x;
+		if (x <= 5) x = window->surface->buf->x;
 		y = (window->surface->linear_buf_height - (int) image_height) / 2;
-		if (y <= 5) y = window->surface->buf.y;
+		if (y <= 5) y = window->surface->buf->y;
 		image_x = x;
 		image_y = y;
 		s_window_set_coor(window, WINDOW_NOFORM, image_x, image_y, image_width, image_height);
@@ -194,8 +193,6 @@ static uint32_t config (uint32_t width, uint32_t height, uint32_t d_width,
 		/* tricky hack for double buffering */
 		window->surface->mode = SURFACE_VIRTUAL;
 #endif
-		
-		win = window->surface->buf;
 	}
 
 	return 0;

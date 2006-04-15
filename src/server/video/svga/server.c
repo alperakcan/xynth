@@ -244,10 +244,6 @@ void s_video_svga_server_surface_init (int mode)
 
         server->window->surface->width = modeinfo->width;
         server->window->surface->height = modeinfo->height;
-        server->window->surface->buf.x = 0;
-        server->window->surface->buf.y = 0;
-        server->window->surface->buf.w = modeinfo->width;
-        server->window->surface->buf.h = modeinfo->height;
         server->window->surface->bytesperpixel = modeinfo->bytesperpixel;
         server->window->surface->bitsperpixel = server->window->surface->bytesperpixel * 8;
 	server->window->surface->blueoffset = 0;

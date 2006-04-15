@@ -95,8 +95,8 @@ void SWindow::windowAtEvent (s_window_t *window, s_event_t *event)
 		case EXPOSE_EVENT:
 			if ((event->expose->change & (EXPOSE_CHNGW | EXPOSE_CHNGH)) ||
 			    (objectWindow->surface->vbuf == NULL)) {
-				objectWindow->surface->width = objectWindow->surface->buf.w;
-				objectWindow->surface->height = objectWindow->surface->buf.h;
+				objectWindow->surface->width = objectWindow->surface->buf->w;
+				objectWindow->surface->height = objectWindow->surface->buf->h;
 				objectWindow->surface->vbuf = (char *) s_realloc(objectWindow->surface->vbuf,
 				                                                 objectWindow->surface->width *
 				                                                 objectWindow->surface->height *
@@ -122,7 +122,7 @@ void SWindow::objectGeometry (int x, int y, int w, int h)
 	objectSetRectContents(x + 1, y + 1, w - 2, h - 2);
 	if ((w != objectWindow->surface->width) ||
 	    (h != objectWindow->surface->height)) {
-		windowSetCoor(objectWindow->surface->buf.x, objectWindow->surface->buf.y, w, h);
+		windowSetCoor(objectWindow->surface->buf->x, objectWindow->surface->buf->y, w, h);
 	}
 }
 

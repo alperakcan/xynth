@@ -81,10 +81,6 @@ int s_video_pspdev_server_init (s_server_conf_t *cfg)
 
 	server->window->surface->width = 480;
 	server->window->surface->height = 272;
-	server->window->surface->buf.x = 0;
-	server->window->surface->buf.y = 0;
-	server->window->surface->buf.w = 480;
-	server->window->surface->buf.h = 272;
 	server->window->surface->bytesperpixel = 4;
 	server->window->surface->bitsperpixel = 32;
 	server->window->surface->blueoffset = 0;

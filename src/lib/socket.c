@@ -28,9 +28,9 @@ int s_socket_request_new (s_window_t *window, int soc)
 	pid = (window->type & (WINDOW_TEMP | WINDOW_CHILD)) ? window->parent->client->id : -1;
 	s_socket_send(soc, &window->type, sizeof(S_WINDOW));
 	s_socket_send(soc, &pid, sizeof(int));
-	s_socket_send(soc, &window->surface->buf, sizeof(s_rect_t));
-	s_socket_recv(soc, &window->surface->buf, sizeof(s_rect_t));
-	s_socket_recv(soc, &window->surface->win, sizeof(s_rect_t));
+	s_socket_send(soc, window->surface->buf, sizeof(s_rect_t));
+	s_socket_recv(soc, window->surface->buf, sizeof(s_rect_t));
+	s_socket_recv(soc, window->surface->win, sizeof(s_rect_t));
 	return 0;
 }
 
@@ -80,7 +80,7 @@ int s_socket_request_configure (s_window_t *window, int soc, S_WINDOW form)
 	data = (s_soc_data_configure_t *) s_calloc(1, sizeof(s_soc_data_configure_t));
 
 	data->form = (form & WINDOW_NOFORM);
-	data->rnew = window->surface->buf;
+	data->rnew = *(window->surface->buf);
 	data->resizeable = window->client->resizeable;
 	data->alwaysontop = window->client->alwaysontop;
 	if (window->client->title != NULL) {
@@ -105,8 +105,8 @@ int s_socket_request_desktop (s_window_t *window, int soc, int id)
 
 int s_socket_request_expose (s_window_t *window, int soc, s_rect_t *coor)
 {
-        coor->x += window->surface->buf.x;
-        coor->y += window->surface->buf.y;
+        coor->x += window->surface->buf->x;
+        coor->y += window->surface->buf->y;
         s_socket_send(soc, coor, sizeof(s_rect_t));
 	return 0;
 }
@@ -115,8 +115,8 @@ int s_socket_request_stream (s_window_t *window, int soc, s_rect_t *coor)
 {
 	s_soc_data_stream_t stream;
 	stream.bitspp = window->surface->bitsperpixel;
-	stream.rect.x = coor->x + window->surface->buf.x;
-	stream.rect.y = coor->y + window->surface->buf.y;
+	stream.rect.x = coor->x + window->surface->buf->x;
+	stream.rect.y = coor->y + window->surface->buf->y;
 	stream.rect.w = coor->w;
 	stream.rect.h = coor->h;
 	stream.blen = (unsigned int) (window->surface->bytesperpixel * coor->w * coor->h);
@@ -265,11 +265,11 @@ int s_socket_listen_expose (s_window_t *window, int soc)
 	}
 
 	p_old = window->client->pri;
-	r_old = window->surface->win;
+	r_old = *(window->surface->win);
 
 	window->client->pri = data->pri;
-	window->surface->buf = data->buf;
-	window->surface->win = data->win;
+	*(window->surface->buf) = data->buf;
+	*(window->surface->win) = data->win;
 	window->surface->linear_buf_width = data->linear_buf_width;
 	window->surface->linear_buf_pitch = data->linear_buf_pitch;
 	window->surface->linear_buf_height = data->linear_buf_height;
@@ -281,10 +281,10 @@ int s_socket_listen_expose (s_window_t *window, int soc)
 	window->event->expose->rect->w = data->changed.w;
 	window->event->expose->rect->h = data->changed.h;
 
-        if (r_old.x != window->surface->win.x) { window->event->expose->change |= EXPOSE_CHNGX; }
-        if (r_old.y != window->surface->win.y) { window->event->expose->change |= EXPOSE_CHNGY; }
-        if (r_old.w != window->surface->win.w) { window->event->expose->change |= EXPOSE_CHNGW; }
-        if (r_old.h != window->surface->win.h) { window->event->expose->change |= EXPOSE_CHNGH; }
+        if (r_old.x != window->surface->win->x) { window->event->expose->change |= EXPOSE_CHNGX; }
+        if (r_old.y != window->surface->win->y) { window->event->expose->change |= EXPOSE_CHNGY; }
+        if (r_old.w != window->surface->win->w) { window->event->expose->change |= EXPOSE_CHNGW; }
+        if (r_old.h != window->surface->win->h) { window->event->expose->change |= EXPOSE_CHNGH; }
         if ((p_old != window->client->pri) &&
             ((p_old == 0) || (window->client->pri == 0))) {
 		window->event->expose->change |= EXPOSE_CHNGF;

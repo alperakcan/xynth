@@ -71,10 +71,10 @@ void s_window_show (s_window_t *window)
 
 void s_window_set_coor (s_window_t *window, int form, int x, int y, int w, int h)
 {
-	window->surface->buf.x = x;
-	window->surface->buf.y = y;
-	window->surface->buf.w = w;
-	window->surface->buf.h = h;
+	window->surface->buf->x = x;
+	window->surface->buf->y = y;
+	window->surface->buf->w = w;
+	window->surface->buf->h = h;
 	s_socket_request(window, SOC_DATA_CONFIGURE, form);
 }
 

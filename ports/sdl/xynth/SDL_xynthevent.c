@@ -34,15 +34,15 @@ void sdl_xynth_atevent (s_window_t *window, s_event_t *event)
         int button = 0;
         
 	if ((event->type & MOUSE_EVENT) &&
-	    ((event->mouse->x >= window->surface->buf.x) &&
-	     (event->mouse->x <= window->surface->buf.x + window->surface->buf.w) &&
-	     (event->mouse->y >= window->surface->buf.y) &&
-	     (event->mouse->y <= window->surface->buf.y + window->surface->buf.h))) {
+	    ((event->mouse->x >= window->surface->buf->x) &&
+	     (event->mouse->x <= window->surface->buf->x + window->surface->buf->w) &&
+	     (event->mouse->y >= window->surface->buf->y) &&
+	     (event->mouse->y <= window->surface->buf->y + window->surface->buf->h))) {
 		if (event->type & MOUSE_OVER) {
 			if (event->type & MOUSE_HINT) {
 				state = SDL_PRESSED;
 			}
-			SDL_PrivateMouseMotion(state, 0, event->mouse->x - window->surface->buf.x, event->mouse->y - window->surface->buf.y);
+			SDL_PrivateMouseMotion(state, 0, event->mouse->x - window->surface->buf->x, event->mouse->y - window->surface->buf->y);
 		} else if (event->type & (MOUSE_PRESSED | MOUSE_RELEASED | MOUSE_CLICKED)) {
 			if (event->type & (MOUSE_PRESSED)) {
 				state = SDL_PRESSED;
@@ -56,7 +56,7 @@ void sdl_xynth_atevent (s_window_t *window, s_event_t *event)
 				case MOUSE_LEFTBUTTON:		button = SDL_BUTTON_LEFT;	break;
 				default:			button = 0;			break;
 			}
-			SDL_PrivateMouseButton(state, button, event->mouse->x - window->surface->buf.x, event->mouse->y - window->surface->buf.y);
+			SDL_PrivateMouseButton(state, button, event->mouse->x - window->surface->buf->x, event->mouse->y - window->surface->buf->y);
 		}
 	}
 	if (event->type & KEYBD_EVENT) {

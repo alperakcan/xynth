@@ -3,30 +3,24 @@
 <KDevPrjSession>
  <LastCompileConfig>(Default)</LastCompileConfig>
  <Mainframe MaximizeMode="1" />
- <DocsAndViews NumberOfDocuments="8" >
-  <Doc0 CursorPosLine="712" Type="KWriteDoc" NumberOfViews="1" CursorPosCol="0" FileName="/home/coding/self/xynth/src/lib/xynth.h" >
+ <DocsAndViews NumberOfDocuments="6" >
+  <Doc0 CursorPosLine="292" Type="KWriteDoc" NumberOfViews="1" CursorPosCol="0" FileName="/home/coding/self/xynth/src/server/server.c" >
    <View0 Top="0" Width="780" Attach="1" Height="609" Left="0" Focus="0" Type="KWriteView" MinMaxMode="0" />
   </Doc0>
-  <Doc1 CursorPosLine="191" Type="KWriteDoc" NumberOfViews="1" CursorPosCol="14" FileName="/home/coding/self/xynth/src/lib/xynth_.h" >
+  <Doc1 CursorPosLine="30" Type="KWriteDoc" NumberOfViews="1" CursorPosCol="20" FileName="/home/coding/self/xynth/src/lib/socket.c" >
    <View0 Top="0" Width="780" Attach="1" Height="609" Left="0" Focus="0" Type="KWriteView" MinMaxMode="0" />
   </Doc1>
-  <Doc2 CursorPosLine="358" Type="KWriteDoc" NumberOfViews="1" CursorPosCol="2" FileName="/home/coding/self/xynth/src/lib/socket.c" >
+  <Doc2 CursorPosLine="248" Type="KWriteDoc" NumberOfViews="1" CursorPosCol="28" FileName="/home/coding/self/xynth/src/lib/object.c" >
    <View0 Top="0" Width="780" Attach="1" Height="609" Left="0" Focus="0" Type="KWriteView" MinMaxMode="0" />
   </Doc2>
-  <Doc3 CursorPosLine="453" Type="KWriteDoc" NumberOfViews="1" CursorPosCol="18" FileName="/home/coding/self/xynth/src/server/socket.c" >
+  <Doc3 CursorPosLine="25" Type="KWriteDoc" NumberOfViews="1" CursorPosCol="2" FileName="/home/coding/self/xynth/ports/links/xynth.c" >
    <View0 Top="0" Width="780" Attach="1" Height="609" Left="0" Focus="0" Type="KWriteView" MinMaxMode="0" />
   </Doc3>
-  <Doc4 CursorPosLine="0" Type="KWriteDoc" NumberOfViews="1" CursorPosCol="0" FileName="/home/coding/self/xynth/src/server/surface.c" >
-   <View0 Top="0" Width="780" Attach="1" Height="609" Left="0" Focus="0" Type="KWriteView" MinMaxMode="0" />
+  <Doc4 CursorPosLine="0" Type="KWriteDoc" NumberOfViews="1" CursorPosCol="0" FileName="/home/coding/self/xynth/src/lib/client.c" >
+   <View0 Top="0" Width="780" Attach="1" Height="609" Left="0" Focus="1" Type="KWriteView" MinMaxMode="0" />
   </Doc4>
-  <Doc5 CursorPosLine="111" Type="KWriteDoc" NumberOfViews="1" CursorPosCol="2" FileName="/home/coding/self/xynth/src/lib/window.c" >
+  <Doc5 CursorPosLine="26" Type="KWriteDoc" NumberOfViews="1" CursorPosCol="32" FileName="/home/coding/self/xynth/src/lib/surface.c" >
    <View0 Top="0" Width="780" Attach="1" Height="609" Left="0" Focus="0" Type="KWriteView" MinMaxMode="0" />
   </Doc5>
-  <Doc6 CursorPosLine="0" Type="KWriteDoc" NumberOfViews="1" CursorPosCol="0" FileName="/home/coding/self/xynth/src/server/start.c" >
-   <View0 Top="0" Width="780" Attach="1" Height="609" Left="0" Focus="0" Type="KWriteView" MinMaxMode="0" />
-  </Doc6>
-  <Doc7 CursorPosLine="51" Type="KWriteDoc" NumberOfViews="1" CursorPosCol="0" FileName="/home/coding/self/xynth/src/server/single.c" >
-   <View0 Top="0" Width="780" Attach="1" Height="609" Left="0" Focus="1" Type="KWriteView" MinMaxMode="0" />
-  </Doc7>
  </DocsAndViews>
 </KDevPrjSession>

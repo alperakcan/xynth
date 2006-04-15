@@ -26,13 +26,13 @@ static void temp_handler (s_window_t *window, s_event_t *event, s_handler_t *han
 	s_window_t *child;
 	s_client_init(&child);
 	s_window_new(child, WINDOW_TEMP | WINDOW_NOFORM, window);
-	s_window_set_coor(child, 0, window->surface->buf.x + 30,
-	                            window->surface->buf.y + 30,
+	s_window_set_coor(child, 0, window->surface->buf->x + 30,
+	                            window->surface->buf->y + 30,
 	                            150,
 	                            150);
 	s_window_set_title(child, "Demo - Temp");
-	mw = child->surface->buf.w;
-	mh = child->surface->buf.h;
+	mw = child->surface->buf->w;
+	mh = child->surface->buf->h;
 
 	s_fillbox(child->surface, 0, 0, mw, mh, s_rgbcolor(child->surface, 255, 255, 255));
 	s_fillbox(child->surface, 1, 1, mw - 2, mh - 2, s_rgbcolor(child->surface, 0, 0, 0));

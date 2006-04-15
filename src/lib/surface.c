@@ -24,6 +24,8 @@
 int s_surface_init (s_window_t *window)
 {
 	window->surface = (s_surface_t *) s_calloc(1, sizeof(s_surface_t));
+	window->surface->buf = (s_rect_t *) s_calloc(1, sizeof(s_rect_t));
+	window->surface->win = (s_rect_t *) s_calloc(1, sizeof(s_rect_t));
 	window->surface->id = &(window->client->id);
 	window->surface->window = window;
 	return 0;
@@ -123,6 +125,8 @@ void s_surface_uninit (s_window_t *window)
 		shmdt(window->surface->matrix);
 	}
 #endif
+	s_free(window->surface->buf);
+	s_free(window->surface->win);
 	s_free(window->surface->vbuf);
 	s_free(window->surface);
 	window->surface = NULL;
@@ -138,8 +142,8 @@ void s_surface_changed (s_window_t *window, s_rect_t *changed)
 		return;
 	}
 	
-	x = changed->x - window->surface->buf.x;
-	y = changed->y - window->surface->buf.y;
+	x = changed->x - window->surface->buf->x;
+	y = changed->y - window->surface->buf->y;
 	if (s_rect_clip_real(window->surface, x, y, changed->w, changed->h, &coor)) {
 		return;
 	}

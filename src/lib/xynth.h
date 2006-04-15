@@ -555,8 +555,8 @@ typedef struct s_surface_s {
 
         char *vbuf;			/* The buffer that holds clients window.			*/
 
-	s_rect_t buf;			/* This is our bufs virtual part				*/
-	s_rect_t win;
+	s_rect_t *buf;			/* This is our bufs virtual part				*/
+	s_rect_t *win;
 
 	char *linear_buf;		/* mapped shared buffer						*/
 	int linear_buf_width;		/* See s_client_surface_linear()				*/

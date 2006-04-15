@@ -174,7 +174,7 @@ void taskbar_start_menu_handler_p (s_window_t *window, s_event_t *event, s_handl
 	s_fillbox(window->surface, tbar_smenu->rect.x + 1, tbar_smenu->rect.y + 1, tbar_smenu->rect.w + 1, tbar_smenu->rect.h + 1, s_rgbcolor(window->surface, 255, 255, 255));
 	s_putbox(window->surface, tbar_smenu->rect.x + 1, tbar_smenu->rect.y + 1, tbar_smenu->rect.w, tbar_smenu->rect.h, box);
 	s_free(box);
-	start_menu_start(window, tbar_data->tbar_smenu->progs, window->surface->buf.x, window->surface->buf.y);
+	start_menu_start(window, tbar_data->tbar_smenu->progs, window->surface->buf->x, window->surface->buf->y);
 }
 
 void taskbar_start_menu_handler_rh (s_window_t *window, s_event_t *event, s_handler_t *handler)
@@ -220,8 +220,8 @@ void taskbar_clock_popup_atevent (s_window_t *window, s_event_t *event)
 	if (event->type & MOUSE_EVENT) {
 	        tbar_data = (tbar_data_t *) window->parent->client->user_data;
 	        tbar_clock = (tbar_clock_t *) tbar_data->tbar_clock;
-		x = event->mouse->x - window->parent->surface->buf.x;
-		y = event->mouse->y - window->parent->surface->buf.y;
+		x = event->mouse->x - window->parent->surface->buf->x;
+		y = event->mouse->y - window->parent->surface->buf->y;
 	        if (!((x >= tbar_clock->rect.x) &&
 	              (y >= tbar_clock->rect.y) &&
 	              (x <= (tbar_clock->rect.x + tbar_clock->rect.w - 1)) &&
@@ -248,11 +248,11 @@ void taskbar_clock_handler_o (s_window_t *window, s_event_t *event, s_handler_t 
 
 	tbar_data = (tbar_data_t *) window->client->user_data;
 	tbar_clock = tbar_data->tbar_clock;
-	
+
 	if (tbar_clock->open == 1) {
 		return;
 	}
-	
+
 	t_ = time(NULL);
         t = localtime(&t_);
 	text = (char *) s_malloc(sizeof(char) * 256);
@@ -310,8 +310,8 @@ void taskbar_clock_handler_o (s_window_t *window, s_event_t *event, s_handler_t 
 	                           event->mouse->y - font->img->handler->h - 8,
 	                           font->img->handler->w + 8,
 	                           font->img->handler->h + 8);
-	s_fillbox(temp->surface, 0, 0, temp->surface->buf.w, temp->surface->buf.h, s_rgbcolor(temp->surface, 0, 0, 0));
-	s_fillbox(temp->surface, 1, 1, temp->surface->buf.w - 2, temp->surface->buf.h - 2, s_rgbcolor(temp->surface, 255, 255, 222));
+	s_fillbox(temp->surface, 0, 0, temp->surface->buf->w, temp->surface->buf->h, s_rgbcolor(temp->surface, 0, 0, 0));
+	s_fillbox(temp->surface, 1, 1, temp->surface->buf->w - 2, temp->surface->buf->h - 2, s_rgbcolor(temp->surface, 255, 255, 222));
 	s_putboxrgba(temp->surface, 4, 4, font->img->w, font->img->h, font->img->rgba);
 	s_font_uninit(font);
 	s_free(text);
@@ -353,7 +353,7 @@ void taskbar_clock_draw (s_window_t *window, s_timer_t *timer)
 	}
 	s_font_set_str(tbar_clock->font, vbuf);
 	s_free(vbuf);
-	
+
 	s_font_get_glyph(tbar_clock->font);
 
         vbuf = (char *) s_malloc(window->surface->bytesperpixel * tbar_clock->rect.w * tbar_clock->rect.h + 1);
@@ -433,7 +433,7 @@ void taskbar_atevent (s_window_t *window, s_event_t *event)
         tbar_data_t *tbar_data;
         tbar_progs_t *tbar_progs;
         s_desktop_client_t *desktopc;
-	
+
 	if (!(event->type & DESKTOP_EVENT)) {
 		return;
 	}
@@ -466,7 +466,7 @@ void taskbar_start (s_window_t *window, s_config_t *cfg)
 	s_timer_t *timer;
 	s_handler_t *hndl;
         tbar_data_t *tbar_data;
-	
+
 	s_window_set_coor(window, WINDOW_NOFORM, 0, window->surface->height - 30, window->surface->width, 30);
 	s_window_set_alwaysontop(window, 1);
 	s_window_set_resizeable(window, 0);
@@ -474,8 +474,8 @@ void taskbar_start (s_window_t *window, s_config_t *cfg)
 	s_client_atexit(window, taskbar_atexit);
 
 	s_free(window->surface->vbuf);
-	window->surface->width = window->surface->buf.w;
-	window->surface->height = window->surface->buf.h;
+	window->surface->width = window->surface->buf->w;
+	window->surface->height = window->surface->buf->h;
 	window->surface->vbuf = (char *) s_malloc(window->surface->width * window->surface->height * window->surface->bytesperpixel);
 
         tbar_data = (tbar_data_t *) s_malloc(sizeof(tbar_data_t));
@@ -492,7 +492,7 @@ void taskbar_start (s_window_t *window, s_config_t *cfg)
 	s_list_init(&(tbar_data->tbar_progs->desktop->clients));
 
 	s_font_init(&(tbar_data->tbar_progs->prog_font), "arial.ttf");
-	
+
 	s_image_init(&(tbar_data->tbar_progs->tbar_img));
 	s_image_img(DESKTOPDIR "/img/widget/taskbar.png", tbar_data->tbar_progs->tbar_img);
 	s_image_get_buf(window->surface, tbar_data->tbar_progs->tbar_img);
@@ -506,12 +506,12 @@ void taskbar_start (s_window_t *window, s_config_t *cfg)
 	s_image_get_buf(window->surface, tbar_data->tbar_progs->prog_img[1]);
 
 	window->client->user_data = (void *) tbar_data;
-	
-	s_fillbox(window->surface, 0, 0, window->surface->buf.w, window->surface->buf.h, s_rgbcolor(window->surface, 255, 255, 255));
-	s_fillbox(window->surface, 1, 1, window->surface->buf.w - 1, window->surface->buf.h - 1, s_rgbcolor(window->surface, 115, 117, 115));
 
-	for (x = 1; x <= window->surface->buf.w; x++) {
-		s_putboxpart(window->surface, x, 1, 1, window->surface->buf.h - 2, 1, 30, tbar_data->tbar_progs->tbar_img->buf, 0, 1);
+	s_fillbox(window->surface, 0, 0, window->surface->buf->w, window->surface->buf->h, s_rgbcolor(window->surface, 255, 255, 255));
+	s_fillbox(window->surface, 1, 1, window->surface->buf->w - 1, window->surface->buf->h - 1, s_rgbcolor(window->surface, 115, 117, 115));
+
+	for (x = 1; x <= window->surface->buf->w; x++) {
+		s_putboxpart(window->surface, x, 1, 1, window->surface->buf->h - 2, 1, 30, tbar_data->tbar_progs->tbar_img->buf, 0, 1);
 	}
 
 	tbar_data->tbar_clock->open = 0;

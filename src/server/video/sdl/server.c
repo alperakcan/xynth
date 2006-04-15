@@ -95,10 +95,6 @@ int s_video_sdl_server_init (s_server_conf_t *cfg)
 	} else {
 		server->window->surface->width = priv->screen->w;
 		server->window->surface->height = priv->screen->h;
-		server->window->surface->buf.x = 0;
-		server->window->surface->buf.y = 0;
-		server->window->surface->buf.w = priv->screen->w;
-		server->window->surface->buf.h = priv->screen->h;
 		server->window->surface->bytesperpixel = priv->screen->format->BytesPerPixel;
 		server->window->surface->bitsperpixel = priv->screen->format->BitsPerPixel;
                 server->window->surface->blueoffset = 0;
