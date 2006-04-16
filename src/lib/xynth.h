@@ -1677,6 +1677,7 @@ int s_timers_init (s_window_t *window);
   * @returns 0 on success, 1 on error.
   */
 int s_timers_uninit (s_window_t *window);
+
 /*@}*/
 
 /* window.c */
