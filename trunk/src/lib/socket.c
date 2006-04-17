@@ -142,9 +142,16 @@ int s_socket_request_cursor (s_window_t *window, int soc, S_MOUSE_CURSOR cursor)
 	return 0;
 }
 
+int s_socket_request_show (s_window_t *window, int soc, int show)
+{
+	s_socket_send(soc, &show, sizeof(int));
+	return 0;
+}
+
 int s_socket_request (s_window_t *window, S_SOC_DATA req, ...)
 {
 	int id;
+	int show;
 	va_list ap;
 	int ret = 0;
 	S_WINDOW form;
@@ -213,8 +220,12 @@ again:	if (window->running <= 0) {
 			ret = s_socket_request_cursor(window, pollfd.fd, cursor);
 			va_end(ap);
 			break;
-		case SOC_DATA_HIDE:
 		case SOC_DATA_SHOW:
+			va_start(ap, req);
+			show = (int) va_arg(ap, int);
+			ret = s_socket_request_show(window, pollfd.fd, show);
+			va_end(ap);
+			break;
 		case SOC_DATA_EVENT:
 		case SOC_DATA_CLOSE:
 		case SOC_DATA_NOTHING:
@@ -358,7 +369,6 @@ int s_socket_listen_parse (s_window_t *window, int soc)
 			ret = s_socket_listen_desktop(window, soc);
 			break;
 		case SOC_DATA_NEW:
-		case SOC_DATA_HIDE:
 		case SOC_DATA_SHOW:
 		case SOC_DATA_CURSOR:
 		case SOC_DATA_NOTHING:

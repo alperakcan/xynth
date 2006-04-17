@@ -55,12 +55,6 @@ int s_server_socket_listen_new (int id)
 	return 0;
 }
 
-int s_server_socket_listen_show (int id)
-{
-	s_server_pri_set(SURFACE_FOCUS, id);
-	return 0;
-}
-
 int s_server_socket_listen_display (int id)
 {
 	s_soc_data_display_t *data;
@@ -189,9 +183,15 @@ int s_server_socket_listen_close (int id)
 	return 0;
 }
 
-int s_server_socket_listen_hide (int id)
+int s_server_socket_listen_show (int id)
 {
-	s_server_window_hide_id(id);
+	int show;
+	s_socket_recv(server->client[id].soc, &show, sizeof(int));
+	if (show == -1) {
+		s_server_window_hide_id(id);
+	} else {
+		s_server_pri_set(SURFACE_FOCUS, id);
+	}
 	return 0;
 }
 
@@ -259,8 +259,6 @@ int s_server_socket_listen_parse (int soc)
 			return s_server_socket_listen_configure(id);
 		case SOC_DATA_DESKTOP:
 			return s_server_socket_listen_desktop(id);
-		case SOC_DATA_HIDE:
-			return s_server_socket_listen_hide(id);
 		case SOC_DATA_EXPOSE:
 			return s_server_socket_listen_stream(id);
 		case SOC_DATA_CLOSE:
@@ -450,7 +448,6 @@ err:		debugf(DSER, "Error occured when requesting (%d) from client[%d]. Closing 
 			ret = s_server_socket_request_desktop(id);
 			break;
 		case SOC_DATA_NEW:
-		case SOC_DATA_HIDE:
 		case SOC_DATA_SHOW:
 		case SOC_DATA_CURSOR:
 		case SOC_DATA_DISPLAY:
