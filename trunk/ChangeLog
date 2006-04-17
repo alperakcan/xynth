@@ -1,4 +1,10 @@
 
+Mon 17 Apr 2006 11:16:15 PM EEST
+	* : removed soc_data_hide, soc_data_show will handle those priority
+	changes from now on. at last focusing on any level is possible.
+	SOC_DATA_STREAM is useless, SOC_DATA_EXPOSE handles streaming (if
+	needed) from now on.
+
 Sun 16 Apr 2006 02:25:16 AM EEST
 	* : added s_rect_t, and s_config_*_t struct, api to the doxy-doc
 
