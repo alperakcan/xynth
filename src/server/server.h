@@ -251,7 +251,6 @@ int s_server_socket_listen_desktop (int id);
 int s_server_socket_listen_stream (int id);
 int s_server_socket_listen_cursor (int id);
 int s_server_socket_listen_close (int id);
-int s_server_socket_listen_hide (int id);
 int s_server_socket_listen_parse (int soc);
 int s_server_socket_listen_accept (int soc);
 int s_server_socket_request_event (int id);

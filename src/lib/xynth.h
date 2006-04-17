@@ -45,16 +45,15 @@ typedef struct s_timers_s s_timers_t;
 typedef enum {
 	SOC_DATA_NOTHING   = 0x0,
 	SOC_DATA_NEW       = 0x1,
-	SOC_DATA_HIDE      = 0x2,
-	SOC_DATA_SHOW      = 0x3,
-	SOC_DATA_CLOSE     = 0x5,
-	SOC_DATA_EVENT     = 0x6,
-	SOC_DATA_EXPOSE    = 0x7,
-	SOC_DATA_DISPLAY   = 0x8,
-	SOC_DATA_FORMDRAW  = 0x9,
-	SOC_DATA_CONFIGURE = 0xA,
-	SOC_DATA_DESKTOP   = 0xB,
-	SOC_DATA_CURSOR    = 0xC
+	SOC_DATA_SHOW      = 0x2,
+	SOC_DATA_CLOSE     = 0x3,
+	SOC_DATA_EVENT     = 0x4,
+	SOC_DATA_EXPOSE    = 0x5,
+	SOC_DATA_DISPLAY   = 0x6,
+	SOC_DATA_FORMDRAW  = 0x7,
+	SOC_DATA_CONFIGURE = 0x8,
+	SOC_DATA_DESKTOP   = 0x9,
+	SOC_DATA_CURSOR    = 0xA
 } S_SOC_DATA;
 
 typedef enum {
@@ -1503,6 +1502,7 @@ int s_socket_request_configure (s_window_t *window, int soc, S_WINDOW form);
 int s_socket_request_desktop (s_window_t *window, int soc, int id);
 int s_socket_request_stream (s_window_t *window, int soc, s_rect_t *coor);
 int s_socket_request_cursor (s_window_t *window, int soc, S_MOUSE_CURSOR cursor);
+int s_socket_request_show (s_window_t *window, int soc, int show);
 int s_socket_request (s_window_t *window, S_SOC_DATA req, ...);
 int s_socket_listen_event (s_window_t *window, int soc);
 int s_socket_listen_expose (s_window_t *window, int soc);
