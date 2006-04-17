@@ -158,14 +158,6 @@ int s_server_socket_listen_desktop (int id)
 	return 0;
 }
 
-int s_server_socket_listen_expose (int id)
-{
-	s_rect_t coor;
-	s_socket_recv(server->client[id].soc, &coor, sizeof(s_rect_t));
-	s_server_surface_update(&coor);
-	return 0;
-}
-
 int s_server_socket_listen_stream (int id)
 {
 	s_soc_data_stream_t *data;
@@ -174,15 +166,17 @@ int s_server_socket_listen_stream (int id)
 		s_free(data);
 		return -1;
 	}
-	data->buf = (char *) s_malloc(data->blen + 1);
-	if (s_socket_api_recv(server->client[id].soc, data->buf, data->blen) != data->blen) {
+	if (data->blen != 0) {
+		data->buf = (char *) s_malloc(data->blen + 1);
+		if (s_socket_api_recv(server->client[id].soc, data->buf, data->blen) != data->blen) {
+			s_free(data->buf);
+			s_free(data);
+			return -1;
+		}
+		bpp_putbox_o(server->window->surface, id, data->rect.x, data->rect.y, data->rect.w, data->rect.h, data->buf, data->rect.w);
 		s_free(data->buf);
-		s_free(data);
-		return -1;
 	}
-	bpp_putbox_o(server->window->surface, id, data->rect.x, data->rect.y, data->rect.w, data->rect.h, data->buf, data->rect.w);
 	s_server_surface_update(&(data->rect));
-	s_free(data->buf);
 	s_free(data);
 	return 0;
 }
@@ -265,11 +259,9 @@ int s_server_socket_listen_parse (int soc)
 			return s_server_socket_listen_configure(id);
 		case SOC_DATA_DESKTOP:
 			return s_server_socket_listen_desktop(id);
-		case SOC_DATA_EXPOSE:
-			return s_server_socket_listen_expose(id);
 		case SOC_DATA_HIDE:
 			return s_server_socket_listen_hide(id);
-		case SOC_DATA_STREAM:
+		case SOC_DATA_EXPOSE:
 			return s_server_socket_listen_stream(id);
 		case SOC_DATA_CLOSE:
 			return s_server_socket_listen_close(id);
@@ -460,7 +452,6 @@ err:		debugf(DSER, "Error occured when requesting (%d) from client[%d]. Closing 
 		case SOC_DATA_NEW:
 		case SOC_DATA_HIDE:
 		case SOC_DATA_SHOW:
-		case SOC_DATA_STREAM:
 		case SOC_DATA_CURSOR:
 		case SOC_DATA_DISPLAY:
 		case SOC_DATA_NOTHING:

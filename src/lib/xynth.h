@@ -50,12 +50,11 @@ typedef enum {
 	SOC_DATA_CLOSE     = 0x5,
 	SOC_DATA_EVENT     = 0x6,
 	SOC_DATA_EXPOSE    = 0x7,
-	SOC_DATA_STREAM    = 0x8,
-	SOC_DATA_DISPLAY   = 0x9,
-	SOC_DATA_FORMDRAW  = 0xA,
-	SOC_DATA_CONFIGURE = 0xB,
-	SOC_DATA_DESKTOP   = 0xC,
-	SOC_DATA_CURSOR    = 0xD
+	SOC_DATA_DISPLAY   = 0x8,
+	SOC_DATA_FORMDRAW  = 0x9,
+	SOC_DATA_CONFIGURE = 0xA,
+	SOC_DATA_DESKTOP   = 0xB,
+	SOC_DATA_CURSOR    = 0xC
 } S_SOC_DATA;
 
 typedef enum {
@@ -1502,7 +1501,6 @@ int s_socket_request_new (s_window_t *window, int soc);
 int s_socket_request_display (s_window_t *window, int soc);
 int s_socket_request_configure (s_window_t *window, int soc, S_WINDOW form);
 int s_socket_request_desktop (s_window_t *window, int soc, int id);
-int s_socket_request_expose (s_window_t *window, int soc, s_rect_t *coor);
 int s_socket_request_stream (s_window_t *window, int soc, s_rect_t *coor);
 int s_socket_request_cursor (s_window_t *window, int soc, S_MOUSE_CURSOR cursor);
 int s_socket_request (s_window_t *window, S_SOC_DATA req, ...);

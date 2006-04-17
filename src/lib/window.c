@@ -109,7 +109,7 @@ int s_window_new (s_window_t *window, S_WINDOW type, s_window_t *parent)
 	}
 
 	s_socket_request(window, SOC_DATA_NEW);
-//	window->surface->need_expose = SURFACE_NEEDSTREAM;
+	window->surface->need_expose = SURFACE_NEEDSTREAM;
 	s_surface_create(window);
 
 	return 0;
