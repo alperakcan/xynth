@@ -168,13 +168,22 @@ int s_server_socket_listen_expose (int id)
 
 int s_server_socket_listen_stream (int id)
 {
-	s_soc_data_stream_t stream;
-	s_socket_recv(server->client[id].soc, &stream, sizeof(s_soc_data_stream_t));
-	stream.buf = (char *) s_malloc(stream.blen + 1);
-	s_socket_recv(server->client[id].soc, stream.buf, stream.blen);
-	bpp_putbox_o(server->window->surface, id, stream.rect.x, stream.rect.y, stream.rect.w, stream.rect.h, stream.buf, stream.rect.w);
-	s_free(stream.buf);
-	s_server_surface_update(&stream.rect);
+	s_soc_data_stream_t *data;
+	data = (s_soc_data_stream_t *) s_calloc(1, sizeof(s_soc_data_stream_t));
+	if (s_socket_api_recv(server->client[id].soc, data, sizeof(s_soc_data_stream_t)) != sizeof(s_soc_data_stream_t)) {
+		s_free(data);
+		return -1;
+	}
+	data->buf = (char *) s_malloc(data->blen + 1);
+	if (s_socket_api_recv(server->client[id].soc, data->buf, data->blen) != data->blen) {
+		s_free(data->buf);
+		s_free(data);
+		return -1;
+	}
+	bpp_putbox_o(server->window->surface, id, data->rect.x, data->rect.y, data->rect.w, data->rect.h, data->buf, data->rect.w);
+	s_server_surface_update(&(data->rect));
+	s_free(data->buf);
+	s_free(data);
 	return 0;
 }
 

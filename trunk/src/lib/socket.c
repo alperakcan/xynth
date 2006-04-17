@@ -113,18 +113,28 @@ int s_socket_request_expose (s_window_t *window, int soc, s_rect_t *coor)
 
 int s_socket_request_stream (s_window_t *window, int soc, s_rect_t *coor)
 {
-	s_soc_data_stream_t stream;
-	stream.bitspp = window->surface->bitsperpixel;
-	stream.rect.x = coor->x + window->surface->buf->x;
-	stream.rect.y = coor->y + window->surface->buf->y;
-	stream.rect.w = coor->w;
-	stream.rect.h = coor->h;
-	stream.blen = (unsigned int) (window->surface->bytesperpixel * coor->w * coor->h);
-	stream.buf = (char *) s_malloc(stream.blen + 1);
-	s_getbox(window->surface, coor->x, coor->y, coor->w, coor->h, stream.buf);
-	s_socket_send(soc, &stream, sizeof(s_soc_data_stream_t));
-	s_socket_send(soc, stream.buf, stream.blen);
-	s_free(stream.buf);
+	s_soc_data_stream_t *data;
+	data = (s_soc_data_stream_t *) s_calloc(1, sizeof(s_soc_data_stream_t));
+	data->bitspp = window->surface->bitsperpixel;
+	data->rect.x = coor->x + window->surface->buf->x;
+	data->rect.y = coor->y + window->surface->buf->y;
+	data->rect.w = coor->w;
+	data->rect.h = coor->h;
+	data->blen = (unsigned int) (window->surface->bytesperpixel * coor->w * coor->h);
+	data->buf = (char *) s_malloc(data->blen + 1);
+	s_getbox(window->surface, coor->x, coor->y, coor->w, coor->h, data->buf);
+	if (s_socket_api_send(soc, data, sizeof(s_soc_data_stream_t)) != sizeof(s_soc_data_stream_t)) {
+		s_free(data->buf);
+		s_free(data);
+		return -1;
+	}
+	if (s_socket_api_send(soc, data->buf, data->blen) != data->blen) {
+		s_free(data->buf);
+		s_free(data);
+		return -1;
+	}
+	s_free(data->buf);
+	s_free(data);
 	return 0;
 }
 
