@@ -248,7 +248,6 @@ int s_server_socket_listen_show (int id);
 int s_server_socket_listen_display (int id);
 int s_server_socket_listen_configure (int id);
 int s_server_socket_listen_desktop (int id);
-int s_server_socket_listen_expose (int id);
 int s_server_socket_listen_stream (int id);
 int s_server_socket_listen_cursor (int id);
 int s_server_socket_listen_close (int id);

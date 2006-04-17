@@ -103,14 +103,6 @@ int s_socket_request_desktop (s_window_t *window, int soc, int id)
 	return 0;
 }
 
-int s_socket_request_expose (s_window_t *window, int soc, s_rect_t *coor)
-{
-        coor->x += window->surface->buf->x;
-        coor->y += window->surface->buf->y;
-        s_socket_send(soc, coor, sizeof(s_rect_t));
-	return 0;
-}
-
 int s_socket_request_stream (s_window_t *window, int soc, s_rect_t *coor)
 {
 	s_soc_data_stream_t *data;
@@ -120,20 +112,26 @@ int s_socket_request_stream (s_window_t *window, int soc, s_rect_t *coor)
 	data->rect.y = coor->y + window->surface->buf->y;
 	data->rect.w = coor->w;
 	data->rect.h = coor->h;
-	data->blen = (unsigned int) (window->surface->bytesperpixel * coor->w * coor->h);
-	data->buf = (char *) s_malloc(data->blen + 1);
-	s_getbox(window->surface, coor->x, coor->y, coor->w, coor->h, data->buf);
+	if (window->surface->need_expose & SURFACE_NEEDSTREAM) {
+		data->blen = (unsigned int) (window->surface->bytesperpixel * coor->w * coor->h);
+		data->buf = (char *) s_malloc(data->blen + 1);
+		s_getbox(window->surface, coor->x, coor->y, coor->w, coor->h, data->buf);
+	} else {
+		data->blen = 0;
+	}
 	if (s_socket_api_send(soc, data, sizeof(s_soc_data_stream_t)) != sizeof(s_soc_data_stream_t)) {
 		s_free(data->buf);
 		s_free(data);
 		return -1;
 	}
-	if (s_socket_api_send(soc, data->buf, data->blen) != data->blen) {
+	if (data->blen != 0) {
+		if (s_socket_api_send(soc, data->buf, data->blen) != data->blen) {
+			s_free(data->buf);
+			s_free(data);
+			return -1;
+		}
 		s_free(data->buf);
-		s_free(data);
-		return -1;
 	}
-	s_free(data->buf);
 	s_free(data);
 	return 0;
 }
@@ -204,12 +202,6 @@ again:	if (window->running <= 0) {
 			va_end(ap);
 			break;
 		case SOC_DATA_EXPOSE:
-			va_start(ap, req);
-			coor = (s_rect_t *) va_arg(ap, s_rect_t *);
-			ret = s_socket_request_expose(window, pollfd.fd, coor);
-			va_end(ap);
-			break;
-		case SOC_DATA_STREAM:
 			va_start(ap, req);
 			coor = (s_rect_t *) va_arg(ap, s_rect_t *);
 			ret = s_socket_request_stream(window, pollfd.fd, coor);
@@ -368,7 +360,6 @@ int s_socket_listen_parse (s_window_t *window, int soc)
 		case SOC_DATA_NEW:
 		case SOC_DATA_HIDE:
 		case SOC_DATA_SHOW:
-		case SOC_DATA_STREAM:
 		case SOC_DATA_CURSOR:
 		case SOC_DATA_NOTHING:
 		case SOC_DATA_DISPLAY:

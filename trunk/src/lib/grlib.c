@@ -37,7 +37,7 @@
 
 #define gr_sendstream(fonk)\
 	if (surface->need_expose & SURFACE_NEEDSTREAM) {\
-		s_socket_request(surface->window, SOC_DATA_STREAM, &coor);\
+		s_socket_request(surface->window, SOC_DATA_EXPOSE, &coor);\
 	} else {\
 		fonk;\
 		if (surface->need_expose & SURFACE_NEEDEXPOSE) {\
