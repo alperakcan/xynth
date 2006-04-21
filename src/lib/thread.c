@@ -55,6 +55,9 @@ typedef struct s_thread_api_s {
 	struct s_thread_s {
 		char foo;
 	};
+	struct s_thread_sem_s {
+		char foo;
+	};
 	struct s_thread_cond_s {
 		char foo;
 	};
@@ -73,22 +76,27 @@ typedef struct s_thread_arg_s {
 	s_thread_mutex_t *mut;
 } s_thread_arg_t;
 
-int s_thread_sem_create (s_thread_sem_t *sem, int initial)
+int s_thread_sem_create (s_thread_sem_t **sem, int initial)
 {
 	if ((s_thread_api == NULL) ||
 	    (s_thread_api->sem_create == NULL)) {
 		return -1;
 	}
-	return s_thread_api->sem_create(sem, initial);
+        (*sem) = (s_thread_sem_t *) s_malloc(sizeof(s_thread_sem_t));
+	return s_thread_api->sem_create(*sem, initial);
 }
 
 int s_thread_sem_destroy (s_thread_sem_t *sem)
 {
+	int ret;
 	if ((s_thread_api == NULL) ||
 	    (s_thread_api->sem_destroy == NULL)) {
 		return -1;
 	}
-	return s_thread_api->sem_destroy(sem);
+	ret = s_thread_api->sem_destroy(sem);
+	s_free(sem);
+	sem = NULL;
+	return ret;
 }
 
 int s_thread_sem_wait (s_thread_sem_t *sem)

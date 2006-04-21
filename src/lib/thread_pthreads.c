@@ -102,6 +102,10 @@ err:	return -1;
 
 #else /* THREAD_MUTEX_EMULATION */
 
+struct s_thread_sem_s {
+	char foo;
+};
+
 struct s_thread_cond_s {
 	pthread_cond_t cond;
 };

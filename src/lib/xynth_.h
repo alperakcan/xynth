@@ -72,7 +72,7 @@ extern "C" {
 
 #if defined(PLATFORM_LINUX)
 	#include <sys/time.h>
-#elif defined(PLAFORM_GP2X)
+#elif defined(PLATFORM_GP2X)
 	#include <sys/time.h>
 #elif defined(PLATFORM_PSPDEV)
 	#include <sys/time.h>

@@ -1528,7 +1528,7 @@ void s_surface_uninit (s_window_t *window);
 void s_surface_changed (s_window_t *window, s_rect_t *changed);
 
 /* thread.c */
-int s_thread_sem_create (s_thread_sem_t *sem, int initial);
+int s_thread_sem_create (s_thread_sem_t **sem, int initial);
 int s_thread_sem_destroy (s_thread_sem_t *sem);
 int s_thread_sem_wait (s_thread_sem_t *sem);
 int s_thread_sem_wait_timeout (s_thread_sem_t *sem, int msec);

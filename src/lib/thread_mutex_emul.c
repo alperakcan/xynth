@@ -35,8 +35,7 @@ struct s_thread_cond_s {
 
 static int s_thread_emul_mutex_init (s_thread_mutex_t *mut)
 {
-        mut->sem = (s_thread_sem_t *) s_malloc(sizeof(s_thread_sem_t));
-	if (s_thread_sem_create(mut->sem, 1)) {
+	if (s_thread_sem_create(&(mut->sem), 1)) {
 		goto err0;
 	}
 	mut->recursive = 0;
@@ -52,7 +51,6 @@ static int s_thread_emul_mutex_destroy (s_thread_mutex_t *mut)
 	int ret = -1;
 	if (mut->sem) {
 		ret = s_thread_sem_destroy(mut->sem);
-		s_free(mut->sem);
 		mut->sem = NULL;
 	}
 	return ret;
@@ -110,23 +108,19 @@ static int s_thread_emul_cond_init (s_thread_cond_t *cond)
 	if (s_thread_mutex_init(&(cond->lock))) {
 		goto err0;
 	}
-	cond->wait_sem = (s_thread_sem_t *) s_malloc(sizeof(s_thread_sem_t));
-	if (s_thread_sem_create(cond->wait_sem, 0)) {
+	if (s_thread_sem_create(&(cond->wait_sem), 0)) {
 		goto err1;
 	}
-	cond->wait_done = (s_thread_sem_t *) s_malloc(sizeof(s_thread_sem_t));
-	if (s_thread_sem_create(cond->wait_done, 0)) {
+	if (s_thread_sem_create(&(cond->wait_done), 0)) {
 		goto err2;
 	}
 	cond->waiting = 0;
 	cond->signals = 0;
 	return 0;
 
-err2:	s_free(cond->wait_done);
-	cond->wait_done = NULL;
+err2:	cond->wait_done = NULL;
 	s_thread_sem_destroy(cond->wait_sem);
-err1:	s_free(cond->wait_sem);
-	cond->wait_sem = NULL;
+err1:	cond->wait_sem = NULL;
 	s_thread_mutex_destroy(cond->lock);
 err0:	return -1;
 }
@@ -136,16 +130,15 @@ static int s_thread_emul_cond_destroy (s_thread_cond_t *cond)
 	int ret = 0;
 	if (cond->wait_done) {
 		ret |= s_thread_sem_destroy(cond->wait_done);
-		s_free(cond->wait_done);
 		cond->wait_done = NULL;
 	}
 	if (cond->wait_sem) {
 		ret |= s_thread_sem_destroy(cond->wait_sem);
-		s_free(cond->wait_sem);
 		cond->wait_sem = NULL;
 	}
 	if (cond->lock) {
 		ret |= s_thread_mutex_destroy(cond->lock);
+		cond->lock = NULL;
 	}
 	return ret;
 }
