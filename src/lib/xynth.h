@@ -421,7 +421,6 @@ typedef struct s_expose_s {
 typedef struct s_desktop_client_s {
 	int id;
 	int pri;
-	int title_l;
 	char *title;
 } s_desktop_client_t;
 

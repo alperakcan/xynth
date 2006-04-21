@@ -311,25 +311,29 @@ int s_socket_listen_expose (s_window_t *window, int soc)
 
 int s_socket_listen_desktop (s_window_t *window, int soc)
 {
-	int count;
+	int i;
         s_event_t *event;
+	s_soc_data_desktop_t *data;
         s_desktop_client_t *desktopc;
+
+	data = (s_soc_data_desktop_t *) s_calloc(1, sizeof(s_soc_data_desktop_t));
+	if (s_socket_api_recv(soc, data, sizeof(s_soc_data_desktop_t)) != sizeof(s_soc_data_desktop_t)) {
+		s_free(data);
+		return -1;
+	}
 
         s_event_init(&event);
 	event->type = DESKTOP_EVENT;
 
-        s_socket_recv(soc, &count, sizeof(int));
-	while (count--) {
+	for (i = 0; i < data->count; i++) {
 		desktopc = (s_desktop_client_t *) s_malloc(sizeof(s_desktop_client_t));
-		s_socket_recv(soc, &desktopc->id, sizeof(int));
-		s_socket_recv(soc, &desktopc->pri, sizeof(int));
-		s_socket_recv(soc, &desktopc->title_l, sizeof(int));
-		desktopc->title = (char *) s_malloc((desktopc->title_l + 1) * sizeof(char));
-		s_socket_recv(soc, desktopc->title, desktopc->title_l);
-		desktopc->title[desktopc->title_l] = '\0';
+		desktopc->id = data->client[i].id;
+		desktopc->pri = data->client[i].pri;
+		desktopc->title = strdup(data->client[i].title);
 		s_list_add(event->desktop->clients, desktopc, -1);
 	}
 	s_eventq_add(window, event);
+	free(data);
 
 	return 0;
 }
