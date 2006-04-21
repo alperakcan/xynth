@@ -1,4 +1,9 @@
 
+Fri 21 Apr 2006 04:42:38 PM EEST
+	* : some fixes for platform GP2X. fixed theme_static.h, some
+	portability changes for sem_crate in threads.c. some more change
+	in socket data transfer for desktop data.
+
 Mon 17 Apr 2006 11:16:15 PM EEST
 	* : removed soc_data_hide, soc_data_show will handle those priority
 	changes from now on. at last focusing on any level is possible.
