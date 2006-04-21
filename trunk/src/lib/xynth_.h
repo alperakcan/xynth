@@ -201,6 +201,15 @@ typedef struct s_soc_data_stream_s {
 	char *buf;
 } s_soc_data_stream_t;
 
+typedef struct s_soc_data_desktop_s {
+	int count;
+	struct {
+		int id;
+		int pri;
+		char title[S_TITLE_MAX];
+	} client[S_CLIENTS_MAX];
+} s_soc_data_desktop_t;
+
 #ifdef __cplusplus
 }
 #endif

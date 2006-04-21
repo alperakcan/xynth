@@ -366,31 +366,27 @@ int s_server_socket_request_expose (int id, s_rect_t *changed)
 
 int s_server_socket_request_desktop (int id)
 {
-        int i;
-        int l;
-        int p;
-	int count = 0;
-
-	for (i = 0; i < S_CLIENTS_MAX; i++) {
-		if (s_server_id_pri(i) >= 0) {
-			if (!(server->client[i].type & WINDOW_TEMP)) {
-				count++;
-			}
-		}
-	}
-	s_socket_send(server->client[id].soc, &count, sizeof(int));
+	int i;
+	int p;
+	s_soc_data_desktop_t *data;
+	
+	data = (s_soc_data_desktop_t *) s_calloc(1, sizeof(s_soc_data_desktop_t));
 
 	for (i = 0; i < S_CLIENTS_MAX; i++) {
 		if ((p = s_server_id_pri(i)) >= 0) {
 			if (!(server->client[i].type & WINDOW_TEMP)) {
-				l = strlen(server->client[i].title.str);
-				s_socket_send(server->client[id].soc, &i, sizeof(int));
-				s_socket_send(server->client[id].soc, &p, sizeof(int));
-				s_socket_send(server->client[id].soc, &l, sizeof(int));
-				s_socket_send(server->client[id].soc, server->client[i].title.str, l);
+				data->client[data->count].id = i;
+				data->client[data->count].pri = p;
+				strcpy(data->client[data->count].title, server->client[i].title.str);
+				data->count++;
 			}
 		}
 	}
+	if (s_socket_api_send(server->client[id].soc, data, sizeof(s_soc_data_desktop_t)) != sizeof(s_soc_data_desktop_t)) {
+		s_free(data);
+		return -1;
+	}
+	free(data);
 
 	return 0;
 }
