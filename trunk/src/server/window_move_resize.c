@@ -66,7 +66,6 @@ void s_server_window_lines_clear_ (s_rect_t *told, s_rect_t *tnew)
 	s_rect_difference(told, tnew, diff);
 	while (!s_list_eol(diff, 0)) {
 		rtmp = (s_rect_t *) s_list_get(diff, 0);
-    		s_server_surface_matrix_del_this(S_MATRIX_MRBOX, rtmp, NULL);
 		s_server_pri_set(SURFACE_REDRAW, rtmp);
 		s_list_remove(diff, 0);
 		s_free(rtmp);
