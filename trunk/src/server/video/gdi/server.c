@@ -63,10 +63,6 @@ int s_video_gdi_server_init (s_server_conf_t *cfg)
 	}else {
 		server->window->surface->width = gmode->xdim;
 		server->window->surface->height = gmode->ydim;
-		server->window->surface->buf.x = 0;
-		server->window->surface->buf.y = 0;
-		server->window->surface->buf.w = gmode->xdim;
-		server->window->surface->buf.h = gmode->ydim;
 		server->window->surface->bytesperpixel = gmode->bytesperpixel;
 		server->window->surface->bitsperpixel = gmode->bytesperpixel * 8;
 		server->window->surface->blueoffset = 0;

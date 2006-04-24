@@ -1,7 +1,7 @@
 [Project]
 FileName=xynth.dev
 Name=xynth
-UnitCount=101
+UnitCount=117
 Type=1
 Ver=1
 ObjFiles=
@@ -20,7 +20,7 @@ ObjectOutput=
 OverrideOutput=0
 OverrideOutputName=
 HostApplication=
-Folders=demo,demo/desktop,demo/timer,src,src/configs,src/lib,src/server,src/server/video,src/server/video/gdi,src/server/video/helper
+Folders=demo,demo/child,demo/desktop,demo/mines,demo/timer,demo/xynthlogout,src,src/configs,src/lib,src/server,src/server/video,src/server/video/gdi,src/server/video/helper,src/server/video/sdl,src/widget
 CommandLine=
 UseCustomMakefile=0
 CustomMakefile=
@@ -241,7 +241,7 @@ BuildCmd=
 
 [Unit22]
 FileName=AUTHORS
-Folder=xynth
+Folder=
 Compile=0
 Link=0
 Priority=1000
@@ -250,7 +250,7 @@ BuildCmd=
 
 [Unit23]
 FileName=BUGS
-Folder=xynth
+Folder=
 Compile=0
 Link=0
 Priority=1000
@@ -259,7 +259,7 @@ BuildCmd=
 
 [Unit24]
 FileName=ChangeLog
-Folder=xynth
+Folder=
 Compile=0
 Link=0
 Priority=1000
@@ -268,7 +268,7 @@ BuildCmd=
 
 [Unit25]
 FileName=COPYING
-Folder=xynth
+Folder=
 Compile=0
 Link=0
 Priority=1000
@@ -277,7 +277,7 @@ BuildCmd=
 
 [Unit26]
 FileName=FAQ
-Folder=xynth
+Folder=
 Compile=0
 Link=0
 Priority=1000
@@ -286,7 +286,7 @@ BuildCmd=
 
 [Unit27]
 FileName=INSTALL
-Folder=xynth
+Folder=
 Compile=0
 Link=0
 Priority=1000
@@ -295,7 +295,7 @@ BuildCmd=
 
 [Unit28]
 FileName=Makefile
-Folder=xynth
+Folder=
 Compile=0
 Link=0
 Priority=1000
@@ -304,7 +304,7 @@ BuildCmd=
 
 [Unit29]
 FileName=Makefile.cfg
-Folder=xynth
+Folder=
 Compile=0
 Link=0
 Priority=1000
@@ -313,7 +313,7 @@ BuildCmd=
 
 [Unit30]
 FileName=Makefile.cfg.linux
-Folder=xynth
+Folder=
 Compile=0
 Link=0
 Priority=1000
@@ -322,7 +322,7 @@ BuildCmd=
 
 [Unit31]
 FileName=Makefile.cfg.linux.single
-Folder=xynth
+Folder=
 Compile=0
 Link=0
 Priority=1000
@@ -331,7 +331,7 @@ BuildCmd=
 
 [Unit32]
 FileName=Makefile.cfg.mingw
-Folder=xynth
+Folder=
 Compile=0
 Link=0
 Priority=1000
@@ -340,7 +340,7 @@ BuildCmd=
 
 [Unit33]
 FileName=Makefile.cfg.pspdev
-Folder=xynth
+Folder=
 Compile=0
 Link=0
 Priority=1000
@@ -349,7 +349,7 @@ BuildCmd=
 
 [Unit34]
 FileName=README
-Folder=xynth
+Folder=
 Compile=0
 Link=0
 Priority=1000
@@ -358,7 +358,7 @@ BuildCmd=
 
 [Unit35]
 FileName=TODO
-Folder=xynth
+Folder=
 Compile=0
 Link=0
 Priority=1000
@@ -367,7 +367,7 @@ BuildCmd=
 
 [Unit36]
 FileName=xynth.kdevprj
-Folder=xynth
+Folder=
 Compile=0
 Link=0
 Priority=1000
@@ -376,7 +376,7 @@ BuildCmd=
 
 [Unit37]
 FileName=xynth.kdevses
-Folder=xynth
+Folder=
 Compile=0
 Link=0
 Priority=1000
@@ -828,7 +828,7 @@ AutoIncBuildNr=0
 
 [Unit81]
 FileName=xynth.dev
-Folder=xynth
+Folder=
 Compile=0
 Link=0
 Priority=1000
@@ -1027,6 +1027,166 @@ BuildCmd=
 FileName=src\server\video\helper\mouse_1.c
 CompileCpp=0
 Folder=src/server/video/helper
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit102]
+FileName=src\server\video\sdl\event.c
+CompileCpp=0
+Folder=src/server/video/sdl
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit103]
+FileName=src\server\video\sdl\kbd.c
+CompileCpp=0
+Folder=src/server/video/sdl
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit104]
+FileName=src\server\video\sdl\mouse.c
+CompileCpp=0
+Folder=src/server/video/sdl
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit105]
+FileName=src\server\video\sdl\sdl.h
+CompileCpp=0
+Folder=src/server/video/sdl
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit106]
+FileName=src\server\video\sdl\server.c
+CompileCpp=0
+Folder=src/server/video/sdl
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit107]
+FileName=demo\xynthlogout\xynthlogout.c
+CompileCpp=0
+Folder=demo/xynthlogout
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit108]
+FileName=demo\child\child.c
+CompileCpp=0
+Folder=demo/child
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit109]
+FileName=src\widget\button.cpp
+CompileCpp=0
+Folder=src/widget
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit110]
+FileName=src\widget\frame.cpp
+CompileCpp=0
+Folder=src/widget
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit111]
+FileName=src\widget\handler.cpp
+CompileCpp=0
+Folder=src/widget
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit112]
+FileName=src\widget\layout.cpp
+CompileCpp=0
+Folder=src/widget
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit113]
+FileName=src\widget\object.cpp
+CompileCpp=0
+Folder=src/widget
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit114]
+FileName=src\widget\rect.cpp
+CompileCpp=0
+Folder=src/widget
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit115]
+FileName=src\widget\widget.h
+CompileCpp=0
+Folder=src/widget
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit116]
+FileName=src\widget\window.cpp
+CompileCpp=0
+Folder=src/widget
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit117]
+FileName=demo\mines\mines.cpp
+CompileCpp=0
+Folder=demo/mines
 Compile=1
 Link=1
 Priority=1000
