@@ -76,11 +76,11 @@ void s_client_uninit (s_window_t *window)
 		s_child_del(window->parent, window);
 	}
 
-	debugf(DCLI, "[%d] Exiting (%s%s))", window->client->id, (window->type & WINDOW_MAIN) ? "WINDOW_MAIN" :
-	                                                          ((window->type & WINDOW_CHILD) ? "WINDOW_CHILD" :
-	                                                          ((window->type & WINDOW_TEMP) ? "WINDOW_TEMP" :
-	                                                          ((window->type & WINDOW_DESKTOP) ? "WINDOW_DESKTOP" : "WINDOW_UNKNOWN"))),
-	                                                         (window->type & WINDOW_NOFORM) ? " | WINDOW_NOFORM" : "");
+	debugf(DCLI, "[%d] Exiting (%s%s)", window->client->id, (window->type & WINDOW_MAIN) ? "WINDOW_MAIN" :
+	                                                         ((window->type & WINDOW_CHILD) ? "WINDOW_CHILD" :
+	                                                         ((window->type & WINDOW_TEMP) ? "WINDOW_TEMP" :
+	                                                         ((window->type & WINDOW_DESKTOP) ? "WINDOW_DESKTOP" : "WINDOW_UNKNOWN"))),
+	                                                        (window->type & WINDOW_NOFORM) ? " | WINDOW_NOFORM" : "");
 
 	s_eventq_uninit(window);
 
