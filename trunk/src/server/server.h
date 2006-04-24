@@ -244,14 +244,17 @@ void s_server_single_stop (void);
 
 /* socket.c */
 int s_server_socket_listen_new (int id);
-int s_server_socket_listen_show (int id);
 int s_server_socket_listen_display (int id);
 int s_server_socket_listen_configure (int id);
 int s_server_socket_listen_desktop (int id);
 int s_server_socket_listen_stream (int id);
-int s_server_socket_listen_cursor (int id);
 int s_server_socket_listen_close (int id);
+int s_server_socket_listen_show (int id);
+int s_server_socket_listen_cursor (int id);
+int s_server_socket_listen_window_close (int soc);
 int s_server_socket_listen_parse (int soc);
+int s_server_socket_client_in_f (s_window_t *window, int soc);
+int s_server_socket_client_ierr_f (s_window_t *window, int soc);
 int s_server_socket_listen_accept (int soc);
 int s_server_socket_request_event (int id);
 int s_server_socket_request_close (int id);
@@ -259,8 +262,11 @@ int s_server_socket_request_expose (int id, s_rect_t *changed);
 int s_server_socket_request_desktop (int id);
 int s_server_socket_request (S_SOC_DATA req, int id, ...);
 int s_server_socket_uninit (s_window_t *window, int soc);
+int s_server_socket_in_f (s_window_t *window, int soc);
+int s_server_socket_ierr_f (s_window_t *window, int soc);
 int s_server_socket_init_uds (void);
 int s_server_socket_init_tcp (void);
+int s_server_socket_init_pipe (void);
 void s_server_socket_init (void);
 
 /* surface.c */
