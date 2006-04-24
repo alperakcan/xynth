@@ -171,35 +171,7 @@ void s_server_surface_matrix_add_this (int id, s_rect_t *coor, s_rect_t *mcoor, 
 
 void s_server_surface_matrix_del (int id)
 {
-	int h;
-	int w;
-	int w_;
-	s_rect_t clip;
-	s_rect_t intersect;
-	unsigned char *tmp;
-
-	clip.x = 0;
-	clip.y = 0;
-	clip.w = server->window->surface->width;
-	clip.h = server->window->surface->height;
-	tmp = server->window->surface->matrix;
-
-	if (s_rect_intersect(&clip, &server->client[id].buf, &intersect)) {
-		return;
-	}
-
-        h = intersect.h;
-        w = intersect.w;
-        w_ = clip.w - w;
-        tmp += ((intersect.y * clip.w) + intersect.x);
-
-	while (h--) {
-		w = intersect.w;
-		while (w--) {
-			*tmp++ = S_MATRIX_DELETED;
-		}
-		tmp += w_;
-	}
+	s_server_surface_matrix_add_id(S_MATRIX_DELETED, &server->client[id].buf);
 }
 
 void s_server_surface_matrix_del_coor (s_rect_t *coor)
