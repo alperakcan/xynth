@@ -118,22 +118,6 @@ void s_server_cursor_matrix_add (void)
 	s_server_surface_matrix_add_this(S_MATRIX_SWMOUSE, &mcoor, &mcoor, server->cursor.img->mat);
 }
 
-void s_server_cursor_matrix_del (void)
-{
-        s_rect_t mcoor;
-
-	if (server->cursor.sw == 0) {
-		return;
-	}
-
-	mcoor.x = server->cursor.x;
-	mcoor.y = server->cursor.y;
-	mcoor.w = server->cursor.img->w;
-	mcoor.h = server->cursor.img->h;
-
-	s_server_surface_matrix_del_this(S_MATRIX_SWMOUSE, &mcoor, server->cursor.img->mat);
-}
-
 void s_server_cursor_draw (void)
 {
         s_rect_t mcoor;
@@ -193,8 +177,6 @@ void s_server_cursor_position (int x, int y)
 		return;
 	}
 
-	s_server_cursor_matrix_del();
-		
 	server->cursor.x = x;
 	server->cursor.y = y;
 
