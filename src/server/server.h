@@ -270,9 +270,9 @@ void s_server_socket_init (void);
 
 /* surface.c */
 void s_server_surface_matrix_find (s_rect_t *coor, int *dm);
-void s_server_surface_matrix_add (int id, s_rect_t *coor);
-void s_server_surface_matrix_add_id (int id, s_rect_t *coor);
 void s_server_surface_matrix_add_this (int id, s_rect_t *coor, s_rect_t *mcoor, unsigned char *mat);
+void s_server_surface_matrix_add_id (int id, s_rect_t *coor);
+void s_server_surface_matrix_add (int id, s_rect_t *coor);
 void s_server_surface_matrix_del (int id);
 void s_server_surface_matrix_del_coor (s_rect_t *coor);
 void s_server_surface_clean (s_rect_t *coor);
