@@ -196,18 +196,12 @@ void s_server_surface_background (s_rect_t *coor)
 
 void s_server_surface_lock_real (void)
 {
-	int i;
 	s_rect_t coor;
-	unsigned char *mat;
 	coor.x = 0;
 	coor.y = 0;
 	coor.w = server->window->surface->width;
 	coor.h = server->window->surface->height;
-	i = coor.w * coor.h;
-	mat = server->window->surface->matrix;
-	while (i--) {
-		*mat++ = S_MATRIX_DELETED;
-	}
+	s_server_surface_matrix_add_id(S_MATRIX_DELETED, &coor);
 }
 
 void s_server_surface_refresh (void)
@@ -217,6 +211,5 @@ void s_server_surface_refresh (void)
 	coor.y = 0;
 	coor.w = server->window->surface->width;
 	coor.h = server->window->surface->height;
-        s_server_surface_lock_real();
 	s_server_pri_set(SURFACE_REFRESH, &coor);
 }
