@@ -1,4 +1,11 @@
 
+Tue 25 Apr 2006 03:11:01 PM EEST
+	* video/gdi : minor fix
+	* server/window_move_resize.c, server/mouse.c : no need to delete
+	before calling SURFACE_REDRAW, thus it  will delete and update.
+	* server/surface.c : cleaned up.
+	* lib/client.c : cosmetic.
+
 Fri 21 Apr 2006 04:42:38 PM EEST
 	* : some fixes for platform GP2X. fixed theme_static.h, some
 	portability changes for sem_crate in threads.c. some more change
