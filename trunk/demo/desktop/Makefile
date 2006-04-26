@@ -30,7 +30,15 @@ endif
 
 $(TARGET_P) : cfg/desktop.cfg
 	mkdir -p $(TOPDIR)/$(TARGET_P)
-	cp -R ./img ./cfg $(TOPDIR)/$(TARGET_P)
+	mkdir -p $(TOPDIR)/$(TARGET_P)/cfg
+	mkdir -p $(TOPDIR)/$(TARGET_P)/img
+	mkdir -p $(TOPDIR)/$(TARGET_P)/img/icons
+	mkdir -p $(TOPDIR)/$(TARGET_P)/img/widget
+	mkdir -p $(TOPDIR)/$(TARGET_P)/img/wpaper
+	cp cfg/*.cfg $(TOPDIR)/$(TARGET_P)/cfg
+	cp img/icons/*.png $(TOPDIR)/$(TARGET_P)/img/icons
+	cp img/widget/*.png $(TOPDIR)/$(TARGET_P)/img/widget
+	cp img/wpaper/*.png $(TOPDIR)/$(TARGET_P)/img/wpaper
 
 clean :
 	rm -f $(TARGET_D) $(TARGET_S) $(obj)
