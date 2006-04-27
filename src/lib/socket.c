@@ -97,12 +97,6 @@ int s_socket_request_configure (s_window_t *window, int soc, S_WINDOW form)
 	return 0;
 }
 
-int s_socket_request_desktop (s_window_t *window, int soc, int id)
-{
-	s_socket_send(soc, &id, sizeof(int));
-	return 0;
-}
-
 int s_socket_request_stream (s_window_t *window, int soc, s_rect_t *coor)
 {
 	s_soc_data_stream_t *data;
@@ -142,8 +136,9 @@ int s_socket_request_cursor (s_window_t *window, int soc, S_MOUSE_CURSOR cursor)
 	return 0;
 }
 
-int s_socket_request_show (s_window_t *window, int soc, int show)
+int s_socket_request_show (s_window_t *window, int soc, int id, int show)
 {
+	s_socket_send(soc, &id, sizeof(int));
 	s_socket_send(soc, &show, sizeof(int));
 	return 0;
 }
@@ -202,12 +197,6 @@ again:	if (window->running <= 0) {
 			ret = s_socket_request_configure(window, pollfd.fd, form);
 			va_end(ap);
 			break;
-		case SOC_DATA_DESKTOP:
-			va_start(ap, req);
-			id = (int) va_arg(ap, int);
-			ret = s_socket_request_desktop(window, pollfd.fd, id);
-			va_end(ap);
-			break;
 		case SOC_DATA_EXPOSE:
 			va_start(ap, req);
 			coor = (s_rect_t *) va_arg(ap, s_rect_t *);
@@ -222,12 +211,14 @@ again:	if (window->running <= 0) {
 			break;
 		case SOC_DATA_SHOW:
 			va_start(ap, req);
+			id = (int) va_arg(ap, int);
 			show = (int) va_arg(ap, int);
-			ret = s_socket_request_show(window, pollfd.fd, show);
+			ret = s_socket_request_show(window, pollfd.fd, id, show);
 			va_end(ap);
 			break;
 		case SOC_DATA_EVENT:
 		case SOC_DATA_CLOSE:
+		case SOC_DATA_DESKTOP:
 		case SOC_DATA_NOTHING:
 		case SOC_DATA_FORMDRAW:
 			break;
