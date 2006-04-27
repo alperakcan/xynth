@@ -142,16 +142,6 @@ int s_server_socket_listen_configure (int id)
 	return 0;
 }
 
-int s_server_socket_listen_desktop (int id)
-{
-	int id_;
-	s_socket_recv(server->client[id].soc, &id_, sizeof(int));
-	if (s_server_id_pri(id_) > 0) {
-		s_server_pri_set(SURFACE_FOCUS, id_);
-	}
-	return 0;
-}
-
 int s_server_socket_listen_stream (int id)
 {
 	s_soc_data_stream_t *data;
@@ -185,12 +175,14 @@ int s_server_socket_listen_close (int id)
 
 int s_server_socket_listen_show (int id)
 {
+	int sid;
 	int show;
+	s_socket_recv(server->client[id].soc, &sid, sizeof(int));
 	s_socket_recv(server->client[id].soc, &show, sizeof(int));
 	if (show == -1) {
-		s_server_window_hide_id(id);
+		s_server_window_hide_id(sid);
 	} else {
-		s_server_pri_set(SURFACE_FOCUS, id);
+		s_server_pri_set(SURFACE_FOCUS, sid);
 	}
 	return 0;
 }
@@ -257,8 +249,6 @@ int s_server_socket_listen_parse (int soc)
 			return 0;
 		case SOC_DATA_CONFIGURE:
 			return s_server_socket_listen_configure(id);
-		case SOC_DATA_DESKTOP:
-			return s_server_socket_listen_desktop(id);
 		case SOC_DATA_EXPOSE:
 			return s_server_socket_listen_stream(id);
 		case SOC_DATA_CLOSE:
@@ -266,6 +256,7 @@ int s_server_socket_listen_parse (int soc)
 		case SOC_DATA_CURSOR:
 			return s_server_socket_listen_cursor(id);
 		case SOC_DATA_EVENT:
+		case SOC_DATA_DESKTOP:
 		case SOC_DATA_NOTHING:
 			break;
 	}
