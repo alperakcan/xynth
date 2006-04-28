@@ -3,15 +3,21 @@
 <KDevPrjSession>
  <LastCompileConfig>(Default)</LastCompileConfig>
  <Mainframe MaximizeMode="1" />
- <DocsAndViews NumberOfDocuments="3" >
-  <Doc0 CursorPosLine="0" Type="KWriteDoc" NumberOfViews="1" CursorPosCol="0" FileName="/home/coding/self/xynth/src/server/mouse.c" >
+ <DocsAndViews NumberOfDocuments="5" >
+  <Doc0 CursorPosLine="0" Type="KWriteDoc" NumberOfViews="1" CursorPosCol="0" FileName="/home/coding/self/xynth/ChangeLog" >
    <View0 Top="0" Width="780" Attach="1" Height="609" Left="0" Focus="0" Type="KWriteView" MinMaxMode="0" />
   </Doc0>
-  <Doc1 CursorPosLine="0" Type="KWriteDoc" NumberOfViews="1" CursorPosCol="0" FileName="/home/coding/self/xynth/src/server/window.c" >
+  <Doc1 CursorPosLine="0" Type="KWriteDoc" NumberOfViews="1" CursorPosCol="0" FileName="/home/coding/self/xynth/src/lib/xynth.h" >
    <View0 Top="0" Width="780" Attach="1" Height="609" Left="0" Focus="0" Type="KWriteView" MinMaxMode="0" />
   </Doc1>
-  <Doc2 CursorPosLine="0" Type="KWriteDoc" NumberOfViews="1" CursorPosCol="0" FileName="/home/coding/self/xynth/src/lib/gettime.c" >
-   <View0 Top="0" Width="780" Attach="1" Height="609" Left="0" Focus="1" Type="KWriteView" MinMaxMode="0" />
+  <Doc2 CursorPosLine="0" Type="KWriteDoc" NumberOfViews="1" CursorPosCol="0" FileName="/home/coding/self/xynth/src/lib/xynth_.h" >
+   <View0 Top="0" Width="780" Attach="1" Height="609" Left="0" Focus="0" Type="KWriteView" MinMaxMode="0" />
   </Doc2>
+  <Doc3 CursorPosLine="0" Type="KWriteDoc" NumberOfViews="1" CursorPosCol="0" FileName="/home/coding/self/xynth/src/lib/timer.c" >
+   <View0 Top="0" Width="780" Attach="1" Height="609" Left="0" Focus="0" Type="KWriteView" MinMaxMode="0" />
+  </Doc3>
+  <Doc4 CursorPosLine="0" Type="KWriteDoc" NumberOfViews="1" CursorPosCol="0" FileName="/home/coding/self/xynth/src/server/start.c" >
+   <View0 Top="0" Width="780" Attach="1" Height="609" Left="0" Focus="1" Type="KWriteView" MinMaxMode="0" />
+  </Doc4>
  </DocsAndViews>
 </KDevPrjSession>
