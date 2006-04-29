@@ -556,9 +556,9 @@ static void xterm_sequence (s_window_t *window, int fd, int op)
 
 	switch (op) {
 		case 2:
-			buf_ = (unsigned char *) s_malloc(strlen(buf) + strlen("Xyntherminal - "));
-			sprintf(buf_, "Xyntherminal - %s", buf);
-			s_window_set_title(window, buf_);
+			buf_ = (unsigned char *) s_malloc(strlen((char *) buf) + strlen("Xyntherminal - "));
+			sprintf((char *) buf_, "Xyntherminal - %s", buf);
+			s_window_set_title(window, (char *) buf_);
 			s_free(buf_);
 			break;
 	}

@@ -29,13 +29,13 @@ THREAD_PSPDEV   = N
 THREAD_WIN32    = N
 
 # Socket Support
-SOCKET_BSD      = N
-SOCKET_PIPE     = Y
+SOCKET_BSD      = Y
+SOCKET_PIPE     = N
 
 # IPC Type
-IPC_UDS         = N
+IPC_UDS         = Y
 IPC_TCP         = N
-IPC_PIPE        = Y
+IPC_PIPE        = N
 
 # PIPE Support
 PIPE_POSIX      = Y
@@ -56,7 +56,7 @@ THEME_PLUGIN    = N
 DEBUG		= Y
 
 # Link them all
-SINGLE_APP         = Y
+SINGLE_APP         = N
 SINGLE_APP_CHILD   = Y
 SINGLE_APP_DESKTOP = Y
 SINGLE_APP_HIDE    = Y
