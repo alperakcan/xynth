@@ -131,9 +131,8 @@ ifeq ($(PLATFORM_GP2X), Y)
 	echo "sync"                            >> $(TOPDIR)/$(TARGET_S).gpe
 	echo "mount /mnt/sd -o remount,sync"   >> $(TOPDIR)/$(TARGET_S).gpe
 	echo "cd bin"                          >> $(TOPDIR)/$(TARGET_S).gpe
-	echo "export PATH=/mnt/sd/dist/bin:\$$PATH"                 >> $(TOPDIR)/$(TARGET_S).gpe
+	echo "export PATH=/mnt/sd/dist/bin:\$$PATH"                >> $(TOPDIR)/$(TARGET_S).gpe
 	echo "./xynth& sleep 4; ./desktop &> ../xynth_desktop.log" >> $(TOPDIR)/$(TARGET_S).gpe
-	echo "./xynth &> ../xynth.log"         >> $(TOPDIR)/$(TARGET_S).gpe
 	echo "sync"                            >> $(TOPDIR)/$(TARGET_S).gpe
 	echo "mount /mnt/sd -o remount,async"  >> $(TOPDIR)/$(TARGET_S).gpe
 	echo "cd /usr/gp2x"                    >> $(TOPDIR)/$(TARGET_S).gpe
