@@ -11,7 +11,11 @@ else
 ifeq ($(PLATFORM_PSPDEV), Y)
 all: $(LIBDIR) $(INCDIR) $(INCDIR)/widget.h $(LIBDIR)/$(TARGET_W).a
 else
+ifeq ($(PLATFORM_GP2X), Y)
+all: $(LIBDIR) $(INCDIR) $(INCDIR)/widget.h $(LIBDIR)/$(TARGET_W).a
+else
 all:
+endif
 endif
 endif
 

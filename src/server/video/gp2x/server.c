@@ -25,7 +25,7 @@
 
 s_video_driver_t s_video_gp2x = {
 	"gp2x",
-	"/dev/gp2x",
+	"/dev/mem",
 	s_video_gp2x_kbd_init,
 	s_video_gp2x_kbd_update,
 	s_video_gp2x_kbd_uninit,
@@ -117,8 +117,8 @@ int s_video_gp2x_server_init (s_server_conf_t *cfg)
 
 	server->window->surface->linear_buf_pitch = server->window->surface->width;
 
-	server->window->surface->linear_mem_base = (unsigned int) v_addr;
-	server->window->surface->linear_mem_size = (unsigned int) (sizeof(char) * server->window->surface->width * server->window->surface->height * server->window->surface->bytesperpixel);
+	server->window->surface->linear_mem_base = (unsigned int) 0x03101000;
+	server->window->surface->linear_mem_size = (unsigned int) (5 * 1024 * 1024);
 	server->window->surface->vbuf = (char *) v_addr;
 	server->window->surface->linear_buf = (char *) v_addr;
 
