@@ -18,7 +18,6 @@ ifeq ($(PLATFORM_LINUX), Y)
 else
 ifeq ($(PLATFORM_GP2X), Y)
 	$(MAKE) -C load
-	$(MAKE) -C mines
 	$(MAKE) -C term
 endif
 endif
