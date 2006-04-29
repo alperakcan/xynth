@@ -210,6 +210,11 @@ typedef struct s_soc_data_desktop_s {
 	} client[S_CLIENTS_MAX];
 } s_soc_data_desktop_t;
 
+typedef struct s_soc_data_show_s {
+	int id;
+	int show;
+} s_soc_data_show_t;
+
 #ifdef __cplusplus
 }
 #endif

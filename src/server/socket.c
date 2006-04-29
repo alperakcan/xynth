@@ -175,15 +175,18 @@ int s_server_socket_listen_close (int id)
 
 int s_server_socket_listen_show (int id)
 {
-	int sid;
-	int show;
-	s_socket_recv(server->client[id].soc, &sid, sizeof(int));
-	s_socket_recv(server->client[id].soc, &show, sizeof(int));
-	if (show == -1) {
-		s_server_window_hide_id(sid);
-	} else {
-		s_server_pri_set(SURFACE_FOCUS, sid);
+	s_soc_data_show_t *data;
+	data = (s_soc_data_show_t *) s_calloc(1, sizeof(s_soc_data_show_t));
+	if (s_socket_api_recv(server->client[id].soc, data, sizeof(s_soc_data_show_t)) != sizeof(s_soc_data_show_t)) {
+		s_free(data);
+		return -1;
 	}
+	if (data->show == -1) {
+		s_server_window_hide_id(data->id);
+	} else {
+		s_server_pri_set(SURFACE_FOCUS, data->id);
+	}
+	s_free(data);
 	return 0;
 }
 

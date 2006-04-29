@@ -138,8 +138,15 @@ int s_socket_request_cursor (s_window_t *window, int soc, S_MOUSE_CURSOR cursor)
 
 int s_socket_request_show (s_window_t *window, int soc, int id, int show)
 {
-	s_socket_send(soc, &id, sizeof(int));
-	s_socket_send(soc, &show, sizeof(int));
+	s_soc_data_show_t *data;
+	data = (s_soc_data_show_t *) s_calloc(1, sizeof(s_soc_data_show_t));
+	data->id = id;
+	data->show = show;
+	if (s_socket_api_send(soc, data, sizeof(s_soc_data_show_t)) != sizeof(s_soc_data_show_t)) {
+		s_free(data);
+		return -1;
+	}
+	s_free(data);
 	return 0;
 }
 
