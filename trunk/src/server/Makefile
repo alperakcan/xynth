@@ -127,16 +127,20 @@ endif
 else
 ifeq ($(PLATFORM_GP2X), Y)
 	$(CC) -o $(BINDIR)/$(TARGET_S) $(obj) $(objl) $(LIBS)
-	echo "#!/bin/bash"                     >  $(TOPDIR)/$(TARGET_S).gpe
-	echo "sync"                            >> $(TOPDIR)/$(TARGET_S).gpe
-	echo "mount /mnt/sd -o remount,sync"   >> $(TOPDIR)/$(TARGET_S).gpe
-	echo "cd bin"                          >> $(TOPDIR)/$(TARGET_S).gpe
-	echo "export PATH=/mnt/sd/dist/bin:\$$PATH"                >> $(TOPDIR)/$(TARGET_S).gpe
-	echo "./xynth& sleep 4; ./desktop &> ../xynth_desktop.log" >> $(TOPDIR)/$(TARGET_S).gpe
-	echo "sync"                            >> $(TOPDIR)/$(TARGET_S).gpe
-	echo "mount /mnt/sd -o remount,async"  >> $(TOPDIR)/$(TARGET_S).gpe
-	echo "cd /usr/gp2x"                    >> $(TOPDIR)/$(TARGET_S).gpe
-	echo "exec ./gp2xmenu"                 >> $(TOPDIR)/$(TARGET_S).gpe
+	echo "#!/bin/bash"                          >  $(TOPDIR)/$(TARGET_S).gpe
+	echo "sync"                                 >> $(TOPDIR)/$(TARGET_S).gpe
+	echo "mount /mnt/sd -o remount,sync"        >> $(TOPDIR)/$(TARGET_S).gpe
+	echo "cd bin"                               >> $(TOPDIR)/$(TARGET_S).gpe
+	echo "export PATH=/mnt/sd/dist/bin:\$$PATH" >> $(TOPDIR)/$(TARGET_S).gpe
+ifeq ($(SINGLE_APP), Y)
+	echo "./xynth &> ../xynth.log"              >> $(TOPDIR)/$(TARGET_S).gpe
+else
+	echo "./xynth &> ../xynth.log& sleep 2; ./desktop &> ../xynth_desktop.log" >> $(TOPDIR)/$(TARGET_S).gpe
+endif
+	echo "sync"                                 >> $(TOPDIR)/$(TARGET_S).gpe
+	echo "mount /mnt/sd -o remount,async"       >> $(TOPDIR)/$(TARGET_S).gpe
+	echo "cd /usr/gp2x"                         >> $(TOPDIR)/$(TARGET_S).gpe
+	echo "exec ./gp2xmenu"                      >> $(TOPDIR)/$(TARGET_S).gpe
 	chmod +x $(TOPDIR)/$(TARGET_S).gpe
 	cp ../../tools/gp2x/xynth.png $(TOPDIR)
 endif
