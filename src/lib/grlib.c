@@ -321,6 +321,11 @@ void s_getsurfacevirtual (s_surface_t *s, int w, int h, int bitspp, char *vbuf)
 			s->blueoffset = 0;
 			s->greenoffset = 3;
 			s->redoffset = 6;
+#if defined(VIDEO_PSPDEV)
+			s->blueoffset = 6;
+			s->greenoffset = 3;
+			s->redoffset = 0;
+#endif
 			s->bluelength = 3;
 			s->greenlength = 3;
 			s->redlength = 2;
@@ -331,6 +336,11 @@ void s_getsurfacevirtual (s_surface_t *s, int w, int h, int bitspp, char *vbuf)
 			s->blueoffset = 0;
 			s->greenoffset = 5;
 			s->redoffset = 10;
+#if defined(VIDEO_PSPDEV)
+			s->blueoffset = 10;
+			s->greenoffset = 5;
+			s->redoffset = 0;
+#endif
 			s->bluelength = 5;
 			s->greenlength = 5;
 			s->redlength = 5;
