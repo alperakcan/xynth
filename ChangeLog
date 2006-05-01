@@ -1,4 +1,11 @@
 
+Sun 30 Apr 2006 12:59:16 AM EEST
+	* video/gp2x : some fixes.
+	* server/surface.c : much more cleaning.
+	* lib/socket.c, server/socket.c : removed soc_data_desktop request from
+	clients, soc_data_show will handle this feature from now on. prepared
+	a brand new s_soc_data_show_t struct, too.
+
 Tue 25 Apr 2006 03:11:01 PM EEST
 	* video/gdi : minor fix
 	* server/window_move_resize.c, server/mouse.c : no need to delete
