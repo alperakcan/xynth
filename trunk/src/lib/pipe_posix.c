@@ -40,6 +40,7 @@ static int s_pipe_posix_poll (struct pollfd *ufds, nfds_t nfds, int timeout)
 
 	#include <fcntl.h>
 	#include <sys/time.h>
+	#include <sys/select.h>
 
 	nfds_t i;
 	int rval;
