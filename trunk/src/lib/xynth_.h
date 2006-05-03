@@ -195,6 +195,7 @@ typedef struct s_soc_data_configure_s {
 } s_soc_data_configure_t;
 
 typedef struct s_soc_data_stream_s {
+	/* 28 bytes */
 	int bitspp;
 	s_rect_t rect;
 	unsigned int blen;
@@ -202,6 +203,7 @@ typedef struct s_soc_data_stream_s {
 } s_soc_data_stream_t;
 
 typedef struct s_soc_data_desktop_s {
+	/* 33004 bytes */
 	int count;
 	struct {
 		int id;
@@ -211,6 +213,7 @@ typedef struct s_soc_data_desktop_s {
 } s_soc_data_desktop_t;
 
 typedef struct s_soc_data_show_s {
+	/* 8 bytes */
 	int id;
 	int show;
 } s_soc_data_show_t;
