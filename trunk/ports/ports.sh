@@ -61,6 +61,16 @@
 		-prefix | --prefix)
 		    PREFIX="$2"
 		    shift 2;;
+		-help | --help)
+		    echo "-d : download"
+		    echo "-g : build $GTK"
+		    echo "-m : build $MPLAYER"
+		    echo "-l : build $LINKS"
+		    echo "-s : build $SDL"
+		    echo "-a : build all"
+		    echo "-prefix path : prefix"
+		    echo "-help : this text"
+		    exit
 	    esac
 	done
     fi
