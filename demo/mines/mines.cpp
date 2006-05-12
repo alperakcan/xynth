@@ -463,7 +463,7 @@ Mines::Mines (int argc, char *argv[])
 	s_image_get_mat(minesMine);
 	s_image_get_buf(minesWindow->objectWindow->surface, minesMine);
 	
-	topLayout = new SLayout(minesWindow, 2, 1);
+	topLayout = new SLayout(minesWindow, 1, 1);
 	topLayout->layoutSetColSpacing(10);
 	topLayout->layoutSetRowSpacing(10);
 	
@@ -475,8 +475,8 @@ Mines::Mines (int argc, char *argv[])
 	minesLayout->layoutSetColSpacing(1);
 	minesLayout->layoutSetRowSpacing(1);
 
-	topLayout->layoutInsertObject(btnsLayout, 0, 0);
-	topLayout->layoutInsertObject(minesLayout, 1, 0);
+//	topLayout->layoutInsertObject(btnsLayout, 0, 0);
+	topLayout->layoutInsertObject(minesLayout, 0, 0);
 	
 	sbutton = new SButton(NULL, SFrame::Panel);
 	btnsLayout->layoutInsertObject(sbutton, 0, 1);

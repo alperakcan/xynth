@@ -3,15 +3,21 @@
 <KDevPrjSession>
  <LastCompileConfig>(Default)</LastCompileConfig>
  <Mainframe MaximizeMode="1" />
- <DocsAndViews NumberOfDocuments="3" >
-  <Doc0 CursorPosLine="44" Type="KWriteDoc" NumberOfViews="1" CursorPosCol="21" FileName="/home/coding/self/xynth/src/lib/xynth.h" >
+ <DocsAndViews NumberOfDocuments="5" >
+  <Doc0 CursorPosLine="62" Type="KWriteDoc" NumberOfViews="1" CursorPosCol="18" FileName="/home/coding/self/xynth/src/lib/xynth.h" >
    <View0 Top="0" Width="780" Attach="1" Height="609" Left="0" Focus="0" Type="KWriteView" MinMaxMode="0" />
   </Doc0>
-  <Doc1 CursorPosLine="210" Type="KWriteDoc" NumberOfViews="1" CursorPosCol="16" FileName="/home/coding/self/xynth/src/lib/xynth_.h" >
-   <View0 Top="0" Width="780" Attach="1" Height="609" Left="0" Focus="0" Type="KWriteView" MinMaxMode="0" />
-  </Doc1>
-  <Doc2 CursorPosLine="316" Type="KWriteDoc" NumberOfViews="1" CursorPosCol="0" FileName="/home/coding/self/xynth/src/lib/socket.c" >
+  <Doc1 CursorPosLine="0" Type="KWriteDoc" NumberOfViews="1" CursorPosCol="0" FileName="/home/coding/self/xynth/src/lib/socket_api.c" >
    <View0 Top="0" Width="780" Attach="1" Height="609" Left="0" Focus="1" Type="KWriteView" MinMaxMode="0" />
+  </Doc1>
+  <Doc2 CursorPosLine="0" Type="KWriteDoc" NumberOfViews="1" CursorPosCol="0" FileName="/home/coding/self/xynth/src/lib/socket_bsd.c" >
+   <View0 Top="0" Width="780" Attach="1" Height="609" Left="0" Focus="0" Type="KWriteView" MinMaxMode="0" />
   </Doc2>
+  <Doc3 CursorPosLine="332" Type="KWriteDoc" NumberOfViews="1" CursorPosCol="0" FileName="/home/coding/self/xynth/src/lib/socket_pipe.c" >
+   <View0 Top="0" Width="780" Attach="1" Height="609" Left="0" Focus="0" Type="KWriteView" MinMaxMode="0" />
+  </Doc3>
+  <Doc4 CursorPosLine="38" Type="KWriteDoc" NumberOfViews="1" CursorPosCol="16" FileName="/home/coding/self/xynth/src/lib/pipe_api.c" >
+   <View0 Top="0" Width="780" Attach="1" Height="609" Left="0" Focus="0" Type="KWriteView" MinMaxMode="0" />
+  </Doc4>
  </DocsAndViews>
 </KDevPrjSession>
