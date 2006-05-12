@@ -75,6 +75,8 @@ int main (int argc, char *argv[])
 	s_window_t *desktop;
 	s_window_t *taskbar;
 
+	setenv("SDL_VIDEODRIVER", "xynth", 1);
+
 	s_config_init(&cfg);
 	s_config_parse(cfg, DESKTOPDIR "/cfg/desktop.cfg");
 
