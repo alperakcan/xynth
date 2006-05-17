@@ -262,7 +262,7 @@ int s_thread_cond_timedwait (s_thread_cond_t *cond, s_thread_mutex_t *mut, int m
 	return s_thread_api->cond_timedwait(cond, mut, msec);
 }
 
-void * s_thread_run (void *farg)
+static void * s_thread_run (void *farg)
 {
 	s_thread_arg_t *arg = (s_thread_arg_t *) farg;
 	void *p = arg->arg;
