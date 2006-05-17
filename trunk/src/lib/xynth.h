@@ -1643,6 +1643,7 @@ int s_thread_cond_broadcast (s_thread_cond_t *cond);
 /** @brief waits on condition variable
   *
   * @param *cond - address of the condition variable pointer.
+  * @param *mut  - address of the mutex pointer.
   * @returns 0 on success, 1 on error.
   */
 int s_thread_cond_wait (s_thread_cond_t *cond, s_thread_mutex_t *mut);
@@ -1661,7 +1662,7 @@ int s_thread_cond_timedwait (s_thread_cond_t *cond, s_thread_mutex_t *mut, int m
   *        passing it as first argument. 
   *
   * @param *f   - pointer to the function.
-  * @param *arg - argument to pass to function.
+  * @param *farg - argument to pass to function.
   * @returns NULL on error, otherwise address of the thread id.
   */
 s_thread_t * s_thread_create (void * (*f) (void *), void *farg);
