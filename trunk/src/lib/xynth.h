@@ -1532,6 +1532,77 @@ void s_surface_changed (s_window_t *window, s_rect_t *changed);
   * @example
   *
   * @code
+  *
+  * s_thread_mutex_t *mut;
+  * s_thread_cond_t *cond;
+  *
+  * void * thread_function (void *arg)
+  * {
+  *	int quit = 0;
+  *	int *val = (int *) arg;
+  *	while (!quit) {
+  *		s_thread_mutex_lock(mut);
+  *		if (*val == 0) {
+  *			quit = 1;
+  *		} else {
+  *			*val = *val + 1;
+  *		}
+  *		s_thread_cond_signal(cond);
+  *		s_thread_mutex_unlock(mut);
+  *		sleep(3);
+  *	}
+  *	return NULL;
+  * }
+  *
+  * {
+  *	int arg;
+  *	int barg;
+  *	int quit = 0;
+  *	s_thread_t *tid;
+  *
+  *	arg = 1;
+  *	if (s_thread_mutex_init(&mut)) {
+  *		// error
+  *	}
+  *	if (s_thread_cond_init(&cond)) {
+  *		// error
+  *	}
+  *	if (s_thread_mutex_lock(mut)) {
+  *		// error
+  *	}
+  *	tid = s_thread_create(&thread_function, &arg);
+  *	if (tid == NULL) {
+  *		// error
+  *	}
+  *	barg = arg;
+  *	if (s_thread_mutex_unlock(mut)) {
+  *		// error
+  *	}
+  *	while (!quit) {
+  *		if (s_thread_mutex_lock(mut)) {
+  *			// error
+  *		}
+  *		while (barg == arg) {
+  *			if (s_thread_cond_wait(cond, mut)) {
+  *				// error
+  *			}
+  *		}
+  *		if (arg == 10) {
+  *			arg = 0;
+  *			quit = 1;
+  *		}
+  *		barg = arg;
+  *		if (s_thread_mutex_unlock(mut)) {
+  *			// error
+  *		}
+  *	}
+  *	if (s_thread_mutex_(&mut)) {
+  *		// error
+  *	}
+  *	if (s_thread_cond_init(&cond)) {
+  *		// error
+  *	}
+  * }
   * @endcode
   */
 
