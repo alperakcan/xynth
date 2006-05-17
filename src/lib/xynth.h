@@ -1526,29 +1526,174 @@ void s_surface_linear (s_window_t *window);
 void s_surface_uninit (s_window_t *window);
 void s_surface_changed (s_window_t *window, s_rect_t *changed);
 
+/** @defgroup thread thread struct, api
+  * @brief detailed description
+  *
+  * @example
+  *
+  * @code
+  * @endcode
+  */
+
+/** @addtogroup thread */
+/*@{*/
+
 /* thread.c */
+
+/** @brief initialize the semaphore struct with an initial value
+  *
+  * @param **sem   - address of the semaphore pointer.
+  * @param initial - initial value.
+  * @returns 0 on success, 1 on error.
+  */
 int s_thread_sem_create (s_thread_sem_t **sem, int initial);
+
+/** @brief destroys the given semaphore
+  *
+  * @param *sem - address of the semaphore pointer.
+  * @returns 0 on success, 1 on error.
+  */
 int s_thread_sem_destroy (s_thread_sem_t *sem);
+
+/** @brief waits on given semaphore
+  *
+  * @param *sem - address of the semaphore pointer.
+  * @returns 0 on success, 1 on error.
+  */
 int s_thread_sem_wait (s_thread_sem_t *sem);
+
+/** @brief waits on given semaphore with timeout
+  *
+  * @param *sem - address of the semaphore pointer.
+  * @param msec - timeout in mili seconds.
+  * @returns 0 on success, 1 on timeout, -1 on error.
+  */
 int s_thread_sem_wait_timeout (s_thread_sem_t *sem, int msec);
+
+/** @brief unlocks given semaphore
+  *
+  * @param *sem - address of the semaphore pointer.
+  * @returns 0 on success, 1 on error.
+  */
 int s_thread_sem_post (s_thread_sem_t *sem);
+
+/** @brief initialize the mutex struct
+  *
+  * @param **mut - address of the mutex pointer.
+  * @returns 0 on success, 1 on error.
+  */
 int s_thread_mutex_init (s_thread_mutex_t **mut);
+
+/** @brief destroys the given mutex
+  *
+  * @param *mut - address of the mutex pointer.
+  * @returns 0 on success, 1 on error.
+  */
 int s_thread_mutex_destroy (s_thread_mutex_t *mut);
+
+/** @brief locks the given mutex
+  *
+  * @param *mut - address of the mutex pointer.
+  * @returns 0 on success, 1 on error.
+  */
 int s_thread_mutex_lock (s_thread_mutex_t *mut);
+
+/** @brief tries to lock the given mutex
+  *
+  * @param *mut - address of the mutex pointer.
+  * @returns 0 on success, 1 on error.
+  */
 int s_thread_mutex_trylock (s_thread_mutex_t *mut);
+
+/** @brief unlocks the given mutex
+  *
+  * @param *mut - address of the mutex pointer.
+  * @returns 0 on success, 1 on error.
+  */
 int s_thread_mutex_unlock (s_thread_mutex_t *mut);
+
+/** @brief initialize the condition variable struct
+  *
+  * @param **cond - address of the condition variable pointer.
+  * @returns 0 on success, 1 on error.
+  */
 int s_thread_cond_init (s_thread_cond_t **cond);
+
+/** @brief destroys the given condition variable
+  *
+  * @param *cond - address of the condition variable pointer.
+  * @returns 0 on success, 1 on error.
+  */
 int s_thread_cond_destroy (s_thread_cond_t *cond);
+
+/** @brief signals waiter on given condition variable
+  *
+  * @param *cond - address of the condition variable pointer.
+  * @returns 0 on success, 1 on error.
+  */
 int s_thread_cond_signal (s_thread_cond_t *cond);
+
+/** @brief signals all waiters on given condition variable
+  *
+  * @param *cond - address of the condition variable pointer.
+  * @returns 0 on success, 1 on error.
+  */
 int s_thread_cond_broadcast (s_thread_cond_t *cond);
+
+/** @brief waits on condition variable
+  *
+  * @param *cond - address of the condition variable pointer.
+  * @returns 0 on success, 1 on error.
+  */
 int s_thread_cond_wait (s_thread_cond_t *cond, s_thread_mutex_t *mut);
+
+/** @brief waits on condition variable, with timeout
+  *
+  * @param *cond - address of the condition variable pointer.
+  * @param *mut  - address of the mutex pointer.
+  * @param *msec - timeout value in mili seconds.
+  * @returns 0 on success, 1 on error.
+  */
 int s_thread_cond_timedwait (s_thread_cond_t *cond, s_thread_mutex_t *mut, int msec);
-void * s_thread_run (void *farg);
+
+/** @brief creates a new thread of control that executes concurrently
+  *        with the calling thread. The new thread applies the function
+  *        passing it as first argument. 
+  *
+  * @param *f   - pointer to the function.
+  * @param *arg - argument to pass to function.
+  * @returns NULL on error, otherwise address of the thread id.
+  */
 s_thread_t * s_thread_create (void * (*f) (void *), void *farg);
+
+/** @brief cancels the thread.
+  *
+  * @param *tid - thread id of the thread to cancel.
+  * @returns 0 on success, 1 on error.
+  */
 int s_thread_cancel (s_thread_t *tid);
+
+/** @brief suspends the execution of the calling thread until the
+  *        thread identified by tid terminates, either by calling
+  *        s_thread_exit or by being cancelled.
+  *
+  * @param *tid  - thread id of the thread to cancel.
+  * @param **ret - return value of the thread.
+  * @returns 0 on success, 1 on error.
+  */
 int s_thread_join (s_thread_t *tid, void **ret);
+
+/** @brief returns the thread identifier for the calling thread.
+  *
+  * @returns th thread id.
+  */
 int s_thread_self (void);
+
+/** @brief terminates the execution of the calling thread.
+  */
 void s_thread_exit (void *ret);
+
+/*@}*/
 
 /** @defgroup timer timer struct, api
   * @brief detailed description
