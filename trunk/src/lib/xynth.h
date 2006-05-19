@@ -1378,7 +1378,7 @@ int s_pollfds_uninit (s_window_t *window);
 /*@}*/
 
 /** @defgroup rect rect struct, api
-  * @brief detailed description
+  * @brief s_rect_* api is designed for rectangular operations.
   *
   * @example
   * typical usage of rect api;
@@ -1527,7 +1527,11 @@ void s_surface_uninit (s_window_t *window);
 void s_surface_changed (s_window_t *window, s_rect_t *changed);
 
 /** @defgroup thread thread struct, api
-  * @brief detailed description
+  * @brief s_thread_* api is an abstract layer for system calls.
+  *        programmer should not use s_thread_sem_* calls, becouse
+  *        they are designed to be used internally - especially for
+  *        mutex and condition variable emulation -, and not supported
+  *        for every operating system.
   *
   * @example
   *
@@ -1768,7 +1772,11 @@ void s_thread_exit (void *ret);
 /*@}*/
 
 /** @defgroup timer timer struct, api
-  * @brief detailed description
+  * @brief s_timer_* api calls is designed for setting timers,
+  *        and timer callbacks for any window.
+  *        programmers should use these timers rather than using signals
+  *        or looping threads to be thread safe. and do not forget that
+  *        these timers are not real-time.
   *
   * @example
   *
