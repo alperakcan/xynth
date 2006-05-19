@@ -1599,7 +1599,7 @@ void s_surface_changed (s_window_t *window, s_rect_t *changed);
   *	if (s_thread_mutex_destroy(mut)) {
   *		// error
   *	}
-  *	if (s_thread_cond_desroy(cond)) {
+  *	if (s_thread_cond_destroy(cond)) {
   *		// error
   *	}
   * }
