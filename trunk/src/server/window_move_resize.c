@@ -188,8 +188,8 @@ void s_server_window_while (s_rect_t *move, int flag)
 void s_server_window_finish (int id, s_rect_t *move)
 {
 	s_rect_t tmp = {0, 0, 0, 0};
-	s_server_window_lines_clear(move, &tmp);
 	s_server_window_move_resize(id, move);
+	s_server_window_lines_clear(move, &tmp);
 	s_mouse_setxrange(server->window, 0, server->window->surface->width - 1);
 	s_mouse_setyrange(server->window, 0, server->window->surface->height - 1);
 	server->mh = 0;
