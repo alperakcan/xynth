@@ -31,7 +31,7 @@ static pid_t pid;
 static char *ptydev;
 static int slave;
 static int cmd_fd;
-struct passwd *pw;
+static struct passwd *pw;
 
 static s_font_t *font;
 
@@ -465,25 +465,33 @@ static void set_charset (int g, unsigned char which)
 static void insert_lines (s_window_t *window, int lines)
 {
 	int i = lines;
-	char box[FONTW * SCREENW * (scroll_reg.y1 - scroll_reg.y0) * FONTH * window->surface->bytesperpixel];
+	char *box;
+
+	box = (char *) s_malloc(FONTW * SCREENW * (scroll_reg.y1 - scroll_reg.y0) * FONTH * window->surface->bytesperpixel + 1);
 
         while (i--) {
 		s_getbox(window->surface, 0, (scroll_reg.y0 - 1) * FONTH, FONTW * SCREENW, (scroll_reg.y1 - scroll_reg.y0) * FONTH, box);
 		s_fillbox(window->surface, 0, (scroll_reg.y0 - 1) * FONTH, FONTW * SCREENW, FONTH, chr_attr.bg_color);
 		s_putbox(window->surface, 0, (scroll_reg.y0) * FONTH, FONTW * SCREENW, (scroll_reg.y1 - scroll_reg.y0) * FONTH, box);
 	}
+
+	s_free(box);
 }
 
 static void delete_lines (s_window_t *window, int lines)
 {
         int i = lines;
-	char box[FONTW * SCREENW * (scroll_reg.y1 - scroll_reg.y0) * FONTH * window->surface->bytesperpixel];
+	char *box;
+
+	box = (char *) s_malloc(FONTW * SCREENW * (scroll_reg.y1 - scroll_reg.y0) * FONTH * window->surface->bytesperpixel + 1);
 
         while (i--) {
 		s_getbox(window->surface, 0, (scroll_reg.y0) * FONTH, FONTW * SCREENW, (scroll_reg.y1 - scroll_reg.y0) * FONTH, box);
 		s_fillbox(window->surface, 0, (scroll_reg.y1 - 1) * FONTH, FONTW * SCREENW, FONTH, chr_attr.bg_color);
 		s_putbox(window->surface, 0, (scroll_reg.y0 - 1) * FONTH, FONTW * SCREENW, (scroll_reg.y1 - scroll_reg.y0) * FONTH, box);
 	}
+
+	s_free(box);
 }
 
 static void scroll_region (int y0, int y1)
@@ -886,7 +894,9 @@ static int pfd_in (s_window_t *window, int fd)
         int x;
         char chr;
         char chr_ = 0;
-	char box[FONTW * SCREENW * FONTH * SCREENH * window->surface->bytesperpixel];
+	char *box;
+
+	box = (char *) s_malloc(FONTW * SCREENW * FONTH * SCREENH * window->surface->bytesperpixel + 1);
 
         chr = get_char(fd);
 
@@ -960,6 +970,8 @@ pdf_in_g0:
 		chr_ = 0;
 		goto pdf_in_g0;
 	}
+
+	s_free(box);
 
 	return 0;
 }
