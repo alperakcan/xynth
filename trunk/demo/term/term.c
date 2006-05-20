@@ -1098,6 +1098,7 @@ int main (int argc, char *argv[])
 	window->surface->vbuf = (char *) s_malloc(window->surface->buf->w * window->surface->buf->h * window->surface->bytesperpixel);
 	window->surface->width = window->surface->buf->w;
 	window->surface->height = window->surface->buf->h;
+	s_fillbox(window->surface, 0, 0, window->surface->width, window->surface->height, s_rgbcolor(window->surface, 0, 0, 0));
 
         s_font_init(&font, "veramono.ttf");
         s_font_set_size(font, FONTH);
