@@ -16,7 +16,7 @@
     GTK="gtk+-2.4.14"
     MPLAYER="MPlayer-1.0pre7try2"
     LINKS="links-2.1pre21"
-    SDL="SDL-1.2.9"
+    SDL="SDL-1.2.10"
     
 #########################
 ## PARSE THE ARGUMENTS ##
