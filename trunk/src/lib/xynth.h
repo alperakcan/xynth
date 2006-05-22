@@ -20,11 +20,6 @@
 	extern "C" {
 #endif
 
-typedef struct s_thread_s s_thread_t;
-typedef struct s_thread_sem_s s_thread_sem_t;
-typedef struct s_thread_cond_s s_thread_cond_t;
-typedef struct s_thread_mutex_s s_thread_mutex_t;
-
 typedef struct s_font_ft_s s_font_ft_t;
 
 typedef struct s_handler_s s_handler_t;
@@ -39,6 +34,10 @@ typedef struct s_list_node_s s_list_node_t;
 typedef struct s_pollfd_s s_pollfd_t;
 typedef struct s_pollfds_s s_pollfds_t;
 typedef struct s_rect_s s_rect_t;
+typedef struct s_thread_s s_thread_t;
+typedef struct s_thread_sem_s s_thread_sem_t;
+typedef struct s_thread_cond_s s_thread_cond_t;
+typedef struct s_thread_mutex_s s_thread_mutex_t;
 typedef struct s_timer_s s_timer_t;
 typedef struct s_timers_s s_timers_t;
 
