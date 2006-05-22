@@ -199,7 +199,7 @@
 	## Enter the source directory.
 	cd $MPLAYER
 	## Configure the source.
-	./configure --prefix=$PREFIX || { echo "ERROR CONFIGURING MPLAYER"; exit; }
+	./configure --prefix=$PREFIX --disable-unrarlib || { echo "ERROR CONFIGURING MPLAYER"; exit; }
 	## Build the source.
 	$MAKE clean; $MAKE || { echo "ERROR BUILDING MPLAYER"; exit; }
 	## Install the result.
