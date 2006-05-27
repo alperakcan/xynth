@@ -100,6 +100,10 @@ int s_rect_clip_real (s_surface_t *surface, int x, int y, int w, int h, s_rect_t
 int s_rect_difference_add (s_list_t *list, int x, int y, int w, int h)
 {
 	s_rect_t *rect;
+	if (w <= 0 ||
+	    h <= 0) {
+		return -1;
+	}
 	rect = (s_rect_t *) s_malloc(sizeof(s_rect_t));
 	rect->x = x;
 	rect->y = y;
@@ -113,27 +117,19 @@ int s_rect_difference_add (s_list_t *list, int x, int y, int w, int h)
 */
 int s_rect_difference (s_rect_t *r1, s_rect_t *r0, s_list_t *list)
 {
-        #define x_c 0x1
-        #define y_c 0x2
-        #define w_c 0x4
-        #define h_c 0x8
-
-        s_rect_t r2;
-        int inters = s_rect_intersect(r1, r0, &r2);
-
-	int change = 0;
 	/* big one */
-	int x0 = r1->x;
-	int y0 = r1->y;
-	int w0 = r1->w;
-	int h0 = r1->h;
+	int x0;
+	int y0;
+	int w0;
+	int h0;
 	/* small one */
-	int x1 = r2.x;
-	int y1 = r2.y;
-	int w1 = r2.w;
-	int h1 = r2.h;
+	int x1;
+	int y1;
+	int w1;
+	int h1;
+        s_rect_t r2;
 
-	if (inters) {
+	if (s_rect_intersect(r1, r0, &r2)) {
 		/* xxxxxxxx
 		   xxxxxxxx
 		   xxxxxxxx  ........
@@ -145,176 +141,25 @@ int s_rect_difference (s_rect_t *r1, s_rect_t *r0, s_list_t *list)
 		goto end;
 	}
 
-	change |= ((x0 != x1) ? (x_c) : (0));
-	change |= ((y0 != y1) ? (y_c) : (0));
-	change |= ((w0 != w1) ? (w_c) : (0));
-	change |= ((h0 != h1) ? (h_c) : (0));
+	x0 = r1->x;
+	y0 = r1->y;
+	w0 = r1->w;
+	h0 = r1->h;
+	/* small one */
+	x1 = r2.x;
+	y1 = r2.y;
+	w1 = r2.w;
+	h1 = r2.h;
 
-	/* r1 and r2 are intersecting, and the intersecting area is set in to r2 */
-        if (!(change & x_c) && !(change & y_c) && !(change & w_c) && !(change & h_c)) {
-		/* .........
-		   .........
-		   .........
-		   .........
-		 */
-		goto end;
-	}
-	if (!(change & x_c) && (change & y_c) && !(change & w_c) && (change & h_c)) {
-		if ((y0 + h0) == (y1 + h1)) {
-			/* xxxxxxxx
-			   xxxxxxxx
-			   ........
-			   ........
-			 */
-			s_rect_difference_add(list, x0, y0, w0, h0 - h1);
-			goto end;
-		}
-		/* xxxxxxxx
-		   ........
-		   ........
-		   xxxxxxxx
-		 */
-		s_rect_difference_add(list, x0, y0, w0, y1 - y0);
-		s_rect_difference_add(list, x1, y1 + h1, w1, y0 + h0 - y1 - h1);
-		goto end;
-	}
-	if (!(change & x_c) && !(change & y_c) && !(change & w_c) && (change & h_c)) {
-		/* ........
-		   ........
-		   xxxxxxxx
-		   xxxxxxxx
-		 */
-		s_rect_difference_add(list, x0, y1 + h1, w0, h0 - h1);
-		goto end;
-	}
-	if ((change & x_c) && !(change & y_c) && (change & w_c) && !(change & h_c)) {
-		if ((x0 + w0) == (x1 + w1)) {
-			/* xxxx....
-			   xxxx....
-			   xxxx....
-			   xxxx....
-			 */
-			s_rect_difference_add(list, x0, y0, w0 - w1, h0);
-			goto end;
-		}
-		/* xx....xx
-		   xx....xx
-		   xx....xx
-		   xx....xx
-		 */
-		s_rect_difference_add(list, x0, y0, x1 - x0, h0);
-		s_rect_difference_add(list, x1 + w1, y0, x0 + w0 - x1 - w1, h0);
-		goto end;
-	}
-	
-	if (!(change & x_c) && !(change & y_c) && (change & w_c) && !(change & h_c)) {
-		/* ....xxxx
-		   ....xxxx
-		   ....xxxx
-		   ....xxxx
-		 */
-		s_rect_difference_add(list, x1 + w1, y0, w0 - w1, h0);
-		goto end;
-	}
-	if (!(change & x_c) && !(change & y_c) && (change & w_c) && (change & h_c)) {
-		/* ....xxxx
-		   ....xxxx
-		   xxxxxxxx
-		   xxxxxxxx
-		 */
-		s_rect_difference_add(list, x0, y1 + h1, w1, h0 - h1);
-		s_rect_difference_add(list, x1 + w1, y0, w0 - w1, h0);
-		goto end;
-	}
-	if (!(change & x_c) && (change & y_c) && (change & w_c) && (change & h_c)) {
-		if ((y0 + h0) == (y1 + h1)) {
-			/* xxxxxxxx
-			   xxxxxxxx
-			   ....xxxx
-			   ....xxxx
-			 */
-			s_rect_difference_add(list, x0, y0, w1, h0 - h1);
-			s_rect_difference_add(list, x1 + w1, y0, w0 - w1, h0);
-			goto end;
-		}
-		/* xxxxxxxx
-		   ....xxxx
-		   ....xxxx
-		   xxxxxxxx
-		 */
-		s_rect_difference_add(list, x0, y0, w0, y1 - y0);
-		s_rect_difference_add(list, x1 + w1, y1, w0 - w1, h1);
-		s_rect_difference_add(list, x0, y1 + h1, w0, (y0 + h0) - (y1 + h1));
-		goto end;
-	}
-	if ((change & x_c) && !(change & y_c) && (change & w_c) && (change & h_c)) {
-		if ((x0 + w0) == (x1 + w1)) {
-			/* xxxx....
-			   xxxx....
-			   xxxxxxxx
-			   xxxxxxxx
-			 */
-			s_rect_difference_add(list, x0, y0, w0 - w1, h0);
-			s_rect_difference_add(list, x1, y1 + h1, w1, h0 - h1);
-			goto end;
-		}
-		/* xx....xx
-		   xx....xx
-		   xxxxxxxx
-		   xxxxxxxx
-		 */
-		s_rect_difference_add(list, x0, y0, x1 - x0, h0);
-		s_rect_difference_add(list, x1, y1 + h1, w1, h0 - h1);
-		s_rect_difference_add(list, x1 + w1, y0, (x0 + w0) - (x1 + w1), h0);
-		goto end;
-	}
-	if ((change & x_c) && (change & y_c) && (change & w_c) && (change & h_c)) {
-		if (((x0 + w0) == (x1 + w1)) &&
-		    ((y0 + h0) == (y1 + h1))) {
-			/* xxxxxxxx
-			   xxxxxxxx
-			   xxxx....
-			   xxxx....
-			 */
-			s_rect_difference_add(list, x0, y0, w0 - w1, h0);
-			s_rect_difference_add(list, x1, y0, w1, h0 - h1);
-			goto end;
-		}
-		if ((y0 + h0) == (y1 + h1)) {
-			/* xxxxxxxx
-			   xxxxxxxx
-			   xx....xx
-			   xx....xx
-			 */
-			s_rect_difference_add(list, x0, y0, x1 - x0, h0);
-			s_rect_difference_add(list, x1, y0, w1, h0 - h1);
-			s_rect_difference_add(list, x1 + w1, y0, (x0 + w0) - (x1 + w1), h0);
-			goto end;
-		}
-		if ((x0 + w0) == (x1 + w1)) {
-			/* xxxxxxxx
-			   xxxx....
-			   xxxx....
-			   xxxxxxxx
-			 */
-			s_rect_difference_add(list, x0, y0, w0, y1 - y0);
-			s_rect_difference_add(list, x0, y1, w0 - w1, h1);
-			s_rect_difference_add(list, x0, y1 + h1, w0, (y0 + h0) - (y1 + h1));
-			goto end;
-		}
-		/* xxxxxxxx
-		   xx....xx
-		   xx....xx
-		   xxxxxxxx
-		 */
-		s_rect_difference_add(list, x0, y0, x1 - x0, h0);
-		s_rect_difference_add(list, x1, y0, w1, y1 - y0);
-		s_rect_difference_add(list, x1 + w1, y0, (x0 + w0) - (x1 + w1), h0);
-		s_rect_difference_add(list, x1, y1 + h1, w1, (y0 + h0) - (y1 + h1));
-		goto end;
-	}
-	/* this should not happen */
-	debugf(DFAT, "Could not get difference!");
-	return -1;
+	/* xxxxxxxx
+	   xx....xx
+	   xx....xx
+	   xxxxxxxx
+	 */
+	s_rect_difference_add(list, x0, y0, x1 - x0, h0);
+	s_rect_difference_add(list, x1, y0, w1, y1 - y0);
+	s_rect_difference_add(list, x1 + w1, y0, (x0 + w0) - (x1 + w1), h0);
+	s_rect_difference_add(list, x1, y1 + h1, w1, (y0 + h0) - (y1 + h1));
+
 end:	return list->nb_elt;
 }
