@@ -145,7 +145,7 @@ int s_rect_difference (s_rect_t *r1, s_rect_t *r0, s_list_t *list)
 	y0 = r1->y;
 	w0 = r1->w;
 	h0 = r1->h;
-	/* small one */
+
 	x1 = r2.x;
 	y1 = r2.y;
 	w1 = r2.w;
