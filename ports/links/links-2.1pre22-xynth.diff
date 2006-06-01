@@ -1,6 +1,6 @@
-diff -Naur links-2.1pre21/Makefile.am links-2.1pre21-xynth/Makefile.am
---- links-2.1pre21/Makefile.am	2006-02-05 18:31:49.000000000 +0200
-+++ links-2.1pre21-xynth/Makefile.am	2006-04-15 08:13:07.000000000 +0300
+diff -Naur links-2.1pre22/Makefile.am links-2.1pre22-xynth/Makefile.am
+--- links-2.1pre22/Makefile.am	2006-02-05 18:31:49.000000000 +0200
++++ links-2.1pre22-xynth/Makefile.am	2006-04-15 08:13:07.000000000 +0300
 @@ -13,7 +13,7 @@
  else
  endif
@@ -10,9 +10,9 @@ diff -Naur links-2.1pre21/Makefile.am links-2.1pre21-xynth/Makefile.am
  
  dist-hook:
  #remove the symlinka:
-diff -Naur links-2.1pre21/Makefile.in links-2.1pre21-xynth/Makefile.in
---- links-2.1pre21/Makefile.in	2006-04-02 19:13:02.000000000 +0300
-+++ links-2.1pre21-xynth/Makefile.in	2006-04-15 08:13:07.000000000 +0300
+diff -Naur links-2.1pre22/Makefile.in links-2.1pre22-xynth/Makefile.in
+--- links-2.1pre22/Makefile.in	2006-04-02 19:13:02.000000000 +0300
++++ links-2.1pre22-xynth/Makefile.in	2006-04-15 08:13:07.000000000 +0300
 @@ -77,7 +77,7 @@
  
  @ATHEOS_GR_TRUE@links_LDADD = atheos.o
@@ -31,9 +31,9 @@ diff -Naur links-2.1pre21/Makefile.in links-2.1pre21-xynth/Makefile.in
  @ATHEOS_GR_TRUE@links_DEPENDENCIES =  atheos.o
  links_LDFLAGS = 
  CFLAGS = @CFLAGS@
-diff -Naur links-2.1pre21/acconfig.h links-2.1pre21-xynth/acconfig.h
---- links-2.1pre21/acconfig.h	2006-02-11 03:22:21.000000000 +0200
-+++ links-2.1pre21-xynth/acconfig.h	2006-04-15 08:13:07.000000000 +0300
+diff -Naur links-2.1pre22/acconfig.h links-2.1pre22-xynth/acconfig.h
+--- links-2.1pre22/acconfig.h	2006-02-11 03:22:21.000000000 +0200
++++ links-2.1pre22-xynth/acconfig.h	2006-04-15 08:13:07.000000000 +0300
 @@ -89,6 +89,9 @@
  #undef GRDRV_SVGALIB
  
@@ -44,9 +44,9 @@ diff -Naur links-2.1pre21/acconfig.h links-2.1pre21-xynth/acconfig.h
  #undef GRDRV_FB
  
  /* */
-diff -Naur links-2.1pre21/config.h.in links-2.1pre21-xynth/config.h.in
---- links-2.1pre21/config.h.in	2006-04-02 19:12:58.000000000 +0300
-+++ links-2.1pre21-xynth/config.h.in	2006-04-15 08:13:07.000000000 +0300
+diff -Naur links-2.1pre22/config.h.in links-2.1pre22-xynth/config.h.in
+--- links-2.1pre22/config.h.in	2006-04-02 19:12:58.000000000 +0300
++++ links-2.1pre22-xynth/config.h.in	2006-04-15 08:13:07.000000000 +0300
 @@ -472,6 +472,9 @@
  #undef GRDRV_SVGALIB
  
@@ -57,9 +57,9 @@ diff -Naur links-2.1pre21/config.h.in links-2.1pre21-xynth/config.h.in
  #undef GRDRV_FB
  
  /* */
-diff -Naur links-2.1pre21/configure links-2.1pre21-xynth/configure
---- links-2.1pre21/configure	2006-04-02 19:13:02.000000000 +0300
-+++ links-2.1pre21-xynth/configure	2006-04-15 08:13:07.000000000 +0300
+diff -Naur links-2.1pre22/configure links-2.1pre22-xynth/configure
+--- links-2.1pre22/configure	2006-04-02 19:13:02.000000000 +0300
++++ links-2.1pre22-xynth/configure	2006-04-15 08:13:07.000000000 +0300
 @@ -30,6 +30,8 @@
  ac_help="$ac_help
    --without-svgalib       compile without svgalib graphics driver"
@@ -131,9 +131,9 @@ diff -Naur links-2.1pre21/configure links-2.1pre21-xynth/configure
  
  if test "$disable_fb" != yes ; then
  	for ac_hdr in linux/fb.h
-diff -Naur links-2.1pre21/configure.in links-2.1pre21-xynth/configure.in
---- links-2.1pre21/configure.in	2006-04-02 19:04:12.000000000 +0300
-+++ links-2.1pre21-xynth/configure.in	2006-04-15 08:13:07.000000000 +0300
+diff -Naur links-2.1pre22/configure.in links-2.1pre22-xynth/configure.in
+--- links-2.1pre22/configure.in	2006-04-02 19:04:12.000000000 +0300
++++ links-2.1pre22-xynth/configure.in	2006-04-15 08:13:07.000000000 +0300
 @@ -385,6 +385,7 @@
  #	CPPFLAGS="$CPPFLAGS -I/usr/local/include"
  #	LDFLAGS="$LDFLAGS -L/usr/local/lib"
@@ -168,9 +168,9 @@ diff -Naur links-2.1pre21/configure.in links-2.1pre21-xynth/configure.in
  dnl		braine, tohle jsem predelal
  dnl 	AC_CACHE_CHECK([for framebuffer], ac_cv_have_fb,
  dnl 		AC_TRY_RUN([#include <stdio.h>
-diff -Naur links-2.1pre21/drivers.c links-2.1pre21-xynth/drivers.c
---- links-2.1pre21/drivers.c	2005-01-02 21:03:34.000000000 +0200
-+++ links-2.1pre21-xynth/drivers.c	2006-04-15 08:13:07.000000000 +0300
+diff -Naur links-2.1pre22/drivers.c links-2.1pre22-xynth/drivers.c
+--- links-2.1pre22/drivers.c	2005-01-02 21:03:34.000000000 +0200
++++ links-2.1pre22-xynth/drivers.c	2006-04-15 08:13:07.000000000 +0300
 @@ -19,6 +19,9 @@
  #ifdef GRDRV_SVGALIB
  extern struct graphics_driver svga_driver;
@@ -191,9 +191,9 @@ diff -Naur links-2.1pre21/drivers.c links-2.1pre21-xynth/drivers.c
  #ifdef GRDRV_SDL
  	&sdl_driver,
  #endif
-diff -Naur links-2.1pre21/xynth.c links-2.1pre21-xynth/xynth.c
---- links-2.1pre21/xynth.c	1970-01-01 02:00:00.000000000 +0200
-+++ links-2.1pre21-xynth/xynth.c	2006-04-15 08:12:26.000000000 +0300
+diff -Naur links-2.1pre22/xynth.c links-2.1pre22-xynth/xynth.c
+--- links-2.1pre22/xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ links-2.1pre22-xynth/xynth.c	2006-04-15 08:12:26.000000000 +0300
 @@ -0,0 +1,853 @@
 +/***************************************************************************
 +    begin                : Thu Jan 22 2004
