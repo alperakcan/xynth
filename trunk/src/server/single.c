@@ -36,6 +36,9 @@
 #if defined(SINGLE_APP_OBJECT)
 	extern s_single_app_t single_object;
 #endif /* SINGLE_APP_OBJECT */
+#if defined(SINGLE_APP_ONSCREENKEYBOARD)
+	extern s_single_app_t single_onscreenkeyboard;
+#endif /* SINGLE_APP_ONSCREENKEYBOARD */
 #if defined(SINGLE_APP_TEMP)
 	extern s_single_app_t single_temp;
 #endif /* SINGLE_APP_TEMP */
@@ -68,6 +71,9 @@ s_single_app_t *s_server_single_apps[] = {
 #if defined(SINGLE_APP_OBJECT)
 	&single_object,
 #endif /* SINGLE_APP_OBJECT */
+#if defined(SINGLE_APP_ONSCREENKEYBOARD)
+	&single_onscreenkeyboard,
+#endif /* SINGLE_APP_ONSCREENKEYBOARD */
 #if defined(SINGLE_APP_TEMP)
 	&single_temp,
 #endif /* SINGLE_APP_TEMP */

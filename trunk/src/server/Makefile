@@ -57,6 +57,9 @@ ifeq ($(SINGLE_APP), Y)
 	ifeq ($(SINGLE_APP_OBJECT), Y)
 		objl += ../../demo/single_object.a
 	endif
+	ifeq ($(SINGLE_APP_ONSCREENKEYBOARD), Y)
+		objl += ../../demo/single_onscreenkeyboard.a
+	endif
 	ifeq ($(SINGLE_APP_TEMP), Y)
 		objl += ../../demo/single_temp.a
 	endif
