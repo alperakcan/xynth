@@ -9,6 +9,7 @@ all:
 	$(MAKE) -C object
 	$(MAKE) -C timer
 	$(MAKE) -C xynthlogout
+	$(MAKE) -C onscreenkeyboard
 ifeq ($(PLATFORM_LINUX), Y)
 	$(MAKE) -C load
 	$(MAKE) -C img
@@ -36,3 +37,4 @@ clean:
 	$(MAKE) clean -C timer
 	$(MAKE) clean -C img
 	$(MAKE) clean -C xynthlogout
+	$(MAKE) clean -C onscreenkeyboard
