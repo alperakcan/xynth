@@ -19,9 +19,44 @@
 #define BOX_H	(BOX_W)
 #define FONT_H  ((BOX_H * 5) / 12)
 
+typedef enum {
+	CHARS_NORMAL,
+	CHARS_SHIFT,
+	CHARS_MAX
+} CHARS;
+
+static int chars_x = 0;
+static int chars_y = 0;
+static int chars_char = 0;
+static CHARS chars_type = CHARS_NORMAL;
+
+static char *chars[][9][4] = {
+	{{"a", ",", "c", "b"},
+	 {"d", ".", "f", "e"},
+	 {"g", "!", "i", "h"},
+	 {"j", "-", "k", "l"},
+	 {"m", "del", "n", "space"},
+	 {"o", "?", "q", "p"},
+	 {"r", "(", "t", "s"},
+	 {"u", ":", "w", "v"},
+	 {"x", ")", "z", "y"}},
+	{{"A", ",", "C", "B"},
+	 {"D", ".", "F", "E"},
+	 {"G", "!", "I", "H"},
+	 {"J", "-", "K", "L"},
+	 {"M", "del", "N", "space"},
+	 {"O", "?", "Q", "P"},
+	 {"R", "(", "T", "S"},
+	 {"U", ":", "W", "V"},
+	 {"X", ")", "Z", "Y"}}
+};
+
 static int draw_single_box (s_window_t *window, s_rect_t *rect, char *c[4], int colors[3])
 {
 	int i;
+	int r;
+	int g;
+	int b;
 	int x = 0;
 	int y = 0;
 	char *vbuf;
@@ -38,8 +73,10 @@ static int draw_single_box (s_window_t *window, s_rect_t *rect, char *c[4], int 
 	for (i = 0; i < 4; i++) {
 		s_font_init(&font, "arial.ttf");
 		s_font_set_str(font, c[i]);
+		s_colorrgb(window->surface, colors[2], &r, &g, &b);
+		s_font_set_rgb(font, r, g, b);
 		if (strlen(c[i]) > 1) {
-			s_font_set_size(font, FONT_H - 5);
+			s_font_set_size(font, FONT_H - 7);
 		} else {
 			s_font_set_size(font, FONT_H);
 		}
@@ -60,7 +97,7 @@ static int draw_single_box (s_window_t *window, s_rect_t *rect, char *c[4], int 
 				y = (BOX_H - font->img->handler->h) / 2;
 				break;
 			case 3:
-				y = BOX_H - font->img->handler->h - 5;
+				y = BOX_H - font->img->handler->h - 4;
 				x = (BOX_W - font->img->handler->w) / 2;
 				break;
 		}
@@ -83,33 +120,34 @@ static int draw_boxes (s_window_t *window)
 	int colors[3];
 	s_rect_t rect;
 	
-	char *chars[][4] = {
-		{"a", ",", "c", "d"},
-		{"d", ".", "f", "e"},
-		{"g", "!", "i", "h"},
-		{"j", "-", "k", "l"},
-		{"m", "del", "n", "space"},
-		{"o", "?", "q", "p"},
-		{"r", "(", "t", "s"},
-		{"u", ":", "w", "v"},
-		{"x", ")", "z", "y"}
-	};
-	
-	colors[0] = s_rgbcolor(window->surface, 0, 0, 0);
-	colors[1] = s_rgbcolor(window->surface, 222, 222, 222);
-	colors[2] = s_rgbcolor(window->surface, 0, 0, 0);
-	
 	for (y = 0; y < 3; y++) {
 		for (x = 0; x < 3; x++) {
 			rect.x = x * BOX_W;
 			rect.y = y * BOX_H;
 			rect.w = BOX_W;
 			rect.h = BOX_H;
-			draw_single_box(window, &rect, chars[y * 3 + x], colors);
+			if (chars_x == x &&
+			    chars_y == y) {
+				colors[0] = s_rgbcolor(window->surface, 0, 0, 0);
+				colors[1] = s_rgbcolor(window->surface, 255, 140, 100);
+				colors[2] = s_rgbcolor(window->surface, 255, 255, 255);
+			} else {
+				colors[0] = s_rgbcolor(window->surface, 0, 0, 0);
+				colors[1] = s_rgbcolor(window->surface, 222, 222, 222);
+				colors[2] = s_rgbcolor(window->surface, 0, 0, 0);
+			}
+			draw_single_box(window, &rect, chars[chars_type][y * 3 + x], colors);
 		}
 	}
 	
 	return 0;
+}
+
+static void handler_shift (s_window_t *window, s_event_t *event, s_handler_t *handler)
+{
+	chars_type++;
+	chars_type %= CHARS_MAX;
+	draw_boxes(window);
 }
 
 int main (int argc, char *argv[])
@@ -118,6 +156,7 @@ int main (int argc, char *argv[])
 	int y;
 	int w;
 	int h;
+	s_handler_t *hndl;
 	s_window_t *window;
 
 	s_client_init(&window);
@@ -132,6 +171,20 @@ int main (int argc, char *argv[])
 	
 	draw_boxes(window);
 	
+	s_handler_init(&hndl);
+	hndl->type = KEYBD_HANDLER;
+	hndl->keybd.flag = 0;
+	hndl->keybd.button = S_KEYCODE_RIGHTSHIFT;
+	hndl->keybd.r = handler_shift;
+	s_handler_add(window, hndl);
+
+	s_handler_init(&hndl);
+	hndl->type = KEYBD_HANDLER;
+	hndl->keybd.flag = 0;
+	hndl->keybd.button = S_KEYCODE_LEFTSHIFT;
+	hndl->keybd.r = handler_shift;
+	s_handler_add(window, hndl);
+
 	s_window_show(window);
 	s_client_main(window);
 	
@@ -140,7 +193,7 @@ int main (int argc, char *argv[])
 
 #if defined(SINGLE_APP)
 s_single_app_t single_onscreenkeyboard = {
-	onscreenkeyboard_main,
+	main,
 	1,
 	{"onscreenkeyboard"}
 };
