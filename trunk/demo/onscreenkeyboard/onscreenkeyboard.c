@@ -17,13 +17,14 @@
 
 #define HIGHLIGHT
 
-#define BOX_W	(50)
+#define BOX_W	(45)
 #define BOX_H	(BOX_W)
 
 typedef enum {
 	CHARS_NORMAL,
 	CHARS_SHIFT,
 	CHARS_EXTRA,
+	CHARS_NUMBER,
 	CHARS_MAX
 } CHARS;
 
@@ -41,24 +42,33 @@ static char *chars[][9][4] = {
 	 {"r", "(", "t", "s"},
 	 {"u", ":", "w", "v"},
 	 {"x", ")", "z", "y"}},
-	{{"A", "~", "C", "B"},
-	 {"D", "/", "F", "E"},
-	 {"G", "\\", "I", "H"},
-	 {"J", "+", "K", "L"},
+	{{"A", "^", "C", "B"},
+	 {"D", "@", "F", "E"},
+	 {"G", "*", "I", "H"},
+	 {"J", "-", "K", "L"},
 	 {"M", "del", "N", "space"},
-	 {"O", "'", "Q", "P"},
-	 {"R", "[", "T", "S"},
+	 {"O", "\"", "Q", "P"},
+	 {"R", "=", "T", "S"},
 	 {"U", ";", "W", "V"},
-	 {"X", "]", "Z", "Y"}},
-	{{"1", "", "2", "3"},
-	 {"4", "", "5", "6"},
-	 {"7", "", "8", "9"},
-	 {"0", "", "", ""},
-	 {"", "", "", ""},
-	 {"", "", "", ""},
-	 {"", "", "", ""},
-	 {"", "", "", ""},
-	 {"", "", "", ""}}
+	 {"X", "/", "Z", "Y"}},
+	{{"(", ",", ")", "."},
+	 {"<", "\"", ">", "'"},
+	 {"[", "-", "]", "_"},
+	 {"{", "!", "}", "?"},
+	 {"", "del", "", "space"},
+	 {"\\", "+", "/", "="},
+	 {"@", ":", "#", ";"},
+	 {"$", "~", "%", "`"},
+	 {"^", "*", "&", "|"}},
+	{{"", "", "1", ""},
+	 {"", "", "2", ""},
+	 {"", "", "3", ""},
+	 {"", "", "4", ""},
+	 {"", "del", "5", "space"},
+	 {"", "", "6", ""},
+	 {"", "", "7", ""},
+	 {"", "", "8", ""},
+	 {"", "", "9", "0"}}
 };
 
 static int draw_single_box (s_surface_t *wsurface, s_rect_t *rect, char *c[4], int colors[3])
@@ -188,10 +198,18 @@ static int draw_boxes (s_window_t *window)
 	return 0;
 }
 
-static void handler_shift (s_window_t *window, s_event_t *event, s_handler_t *handler)
+static void handler_shift_up (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
 	chars_type++;
 	chars_type %= CHARS_MAX;
+	draw_boxes(window);
+}
+
+static void handler_shift_down (s_window_t *window, s_event_t *event, s_handler_t *handler)
+{
+	chars_type--;
+	chars_type = MAX(0, chars_type);
+	chars_type = MIN(CHARS_MAX - 1, chars_type);
 	draw_boxes(window);
 }
 
@@ -251,14 +269,15 @@ static void handler_set_down (s_window_t *window, s_event_t *event, s_handler_t 
 	printf("%s\n", chars[chars_type][chars_y * 3 + chars_x][3]);
 }
 
-#define handler_set(key, func) {\
-	s_handler_t *hndl;\
-	s_handler_init(&hndl);\
-	hndl->type = KEYBD_HANDLER;\
-	hndl->keybd.flag = 0;\
-	hndl->keybd.button = key;\
-	hndl->keybd.r = func;\
-	s_handler_add(window, hndl);\
+static void handler_set (s_window_t *window, S_KEYCODE_CODE key, void (*func) (s_window_t *, s_event_t *, s_handler_t *))
+{
+	s_handler_t *hndl;
+	s_handler_init(&hndl);
+	hndl->type = KEYBD_HANDLER;
+	hndl->keybd.flag = 0;
+	hndl->keybd.button = key;
+	hndl->keybd.r = func;
+	s_handler_add(window, hndl);
 }
 
 int main (int argc, char *argv[])
@@ -273,24 +292,24 @@ int main (int argc, char *argv[])
 	s_window_new(window, WINDOW_MAIN | WINDOW_NOFORM, NULL);
 	s_window_set_title(window, "Demo - %s ", argv[0]);
 	
-	x = 100;
-	y = 100;
 	w = BOX_W * 3;
 	h = BOX_H * 3;
+	x = (window->surface->linear_buf_width - w) / 2;
+	y = (window->surface->linear_buf_height - h) / 2;
 	s_window_set_coor(window, 0, x, y, w, h);
 	
 	draw_boxes(window);
 
-	handler_set(S_KEYCODE_RIGHTSHIFT, handler_shift);
-	handler_set(S_KEYCODE_LEFTSHIFT, handler_shift);
-	handler_set(S_KEYCODE_LEFT, handler_left);
-	handler_set(S_KEYCODE_RIGHT, handler_right);
-	handler_set(S_KEYCODE_UP, handler_up);
-	handler_set(S_KEYCODE_DOWN, handler_down);
-	handler_set(S_KEYCODE_i, handler_set_up);
-	handler_set(S_KEYCODE_j, handler_set_left);
-	handler_set(S_KEYCODE_k, handler_set_down);
-	handler_set(S_KEYCODE_l, handler_set_right);
+	handler_set(window, S_KEYCODE_RIGHTSHIFT, handler_shift_up);
+	handler_set(window, S_KEYCODE_LEFTSHIFT, handler_shift_down);
+	handler_set(window, S_KEYCODE_LEFT, handler_left);
+	handler_set(window, S_KEYCODE_RIGHT, handler_right);
+	handler_set(window, S_KEYCODE_UP, handler_up);
+	handler_set(window, S_KEYCODE_DOWN, handler_down);
+	handler_set(window, S_KEYCODE_i, handler_set_up);
+	handler_set(window, S_KEYCODE_j, handler_set_left);
+	handler_set(window, S_KEYCODE_k, handler_set_down);
+	handler_set(window, S_KEYCODE_l, handler_set_right);
 
 	s_window_show(window);
 	s_client_main(window);
