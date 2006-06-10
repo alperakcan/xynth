@@ -4,22 +4,8 @@
  <LastCompileConfig>(Default)</LastCompileConfig>
  <Mainframe MaximizeMode="1" />
  <DocsAndViews NumberOfDocuments="1" >
-  <Doc0 NumberOfViews="1" URL="file:///home/coding/self/xynth/src/lib/window.c" >
-   <View0 line="10" Type="Source" />
+  <Doc0 CursorPosLine="170" Type="KWriteDoc" NumberOfViews="1" CursorPosCol="22" FileName="/home/coding/self/xynth/demo/onscreenkeyboard/onscreenkeyboard.c" >
+   <View0 Top="0" Width="784" Attach="1" Height="641" Left="0" Focus="1" Type="KWriteView" MinMaxMode="0" />
   </Doc0>
  </DocsAndViews>
- <pluginList>
-  <kdevdebugger>
-   <breakpointList/>
-  </kdevdebugger>
-  <kdevbookmarks>
-   <bookmarks/>
-  </kdevbookmarks>
-  <kdevvalgrind>
-   <executable path="" params="" />
-   <valgrind path="" params="" />
-   <calltree path="" params="" />
-   <kcachegrind path="" />
-  </kdevvalgrind>
- </pluginList>
 </KDevPrjSession>

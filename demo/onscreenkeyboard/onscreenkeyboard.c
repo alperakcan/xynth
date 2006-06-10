@@ -150,6 +150,42 @@ static void handler_shift (s_window_t *window, s_event_t *event, s_handler_t *ha
 	draw_boxes(window);
 }
 
+static void handler_left (s_window_t *window, s_event_t *event, s_handler_t *handler)
+{
+	chars_x--;
+	if (chars_x < 0) {
+		chars_x = 2;
+	}
+	draw_boxes(window);
+}
+
+static void handler_right (s_window_t *window, s_event_t *event, s_handler_t *handler)
+{
+	chars_x++;
+	if (chars_x > 2) {
+		chars_x = 0;
+	}
+	draw_boxes(window);
+}
+
+static void handler_up (s_window_t *window, s_event_t *event, s_handler_t *handler)
+{
+	chars_y--;
+	if (chars_y < 0) {
+		chars_y = 2;
+	}
+	draw_boxes(window);
+}
+
+static void handler_down (s_window_t *window, s_event_t *event, s_handler_t *handler)
+{
+	chars_y++;
+	if (chars_y > 2) {
+		chars_y = 0;
+	}
+	draw_boxes(window);
+}
+
 int main (int argc, char *argv[])
 {
 	int x;
@@ -183,6 +219,34 @@ int main (int argc, char *argv[])
 	hndl->keybd.flag = 0;
 	hndl->keybd.button = S_KEYCODE_LEFTSHIFT;
 	hndl->keybd.r = handler_shift;
+	s_handler_add(window, hndl);
+
+	s_handler_init(&hndl);
+	hndl->type = KEYBD_HANDLER;
+	hndl->keybd.flag = 0;
+	hndl->keybd.button = S_KEYCODE_LEFT;
+	hndl->keybd.r = handler_left;
+	s_handler_add(window, hndl);
+
+	s_handler_init(&hndl);
+	hndl->type = KEYBD_HANDLER;
+	hndl->keybd.flag = 0;
+	hndl->keybd.button = S_KEYCODE_RIGHT;
+	hndl->keybd.r = handler_right;
+	s_handler_add(window, hndl);
+
+	s_handler_init(&hndl);
+	hndl->type = KEYBD_HANDLER;
+	hndl->keybd.flag = 0;
+	hndl->keybd.button = S_KEYCODE_UP;
+	hndl->keybd.r = handler_up;
+	s_handler_add(window, hndl);
+
+	s_handler_init(&hndl);
+	hndl->type = KEYBD_HANDLER;
+	hndl->keybd.flag = 0;
+	hndl->keybd.button = S_KEYCODE_DOWN;
+	hndl->keybd.r = handler_down;
 	s_handler_add(window, hndl);
 
 	s_window_show(window);
