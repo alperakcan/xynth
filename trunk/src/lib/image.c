@@ -112,7 +112,12 @@ void s_image_get_handler (s_image_t *img)
         if (img->handler != NULL) {
 		s_image_free_handler(img);
 	}
+
 	img->handler = (s_rect_t *) s_malloc(sizeof(s_rect_t));
+	img->handler->x = 0;
+	img->handler->y = 0;
+	img->handler->w = 0;
+	img->handler->h = 0;
 
 	j = 1;
 	i = img->w;
