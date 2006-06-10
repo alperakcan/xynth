@@ -84,7 +84,7 @@ int s_font_set_size (s_font_t *font, int size)
 	font->height = font->ft->face->size->metrics.height / 64;
 	font->max_advance = font->ft->face->size->metrics.max_advance / 64;
 
-#if 0	
+#if 0
 	printf("%d\n", size);
 	printf("%d\n", font->ft->face->size->metrics.x_ppem);
 	printf("%d\n", font->ft->face->size->metrics.y_ppem);
