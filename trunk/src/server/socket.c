@@ -200,11 +200,25 @@ int s_server_socket_listen_cursor (int id)
 
 int s_server_socket_listen_event (int id)
 {
+	s_keybd_driver_t keybd;
 	s_soc_data_event_t *data;
 	data = (s_soc_data_event_t *) s_calloc(1, sizeof(s_soc_data_event_t));
 	if (s_socket_api_recv(server->client[id].soc, data, sizeof(s_soc_data_event_t)) != sizeof(s_soc_data_event_t)) {
 		s_free(data);
 		return -1;
+	}
+	server->window->event->type = 0;
+	switch (data->type & (KEYBD_EVENT | MOUSE_EVENT)) {
+		case KEYBD_EVENT:
+			memset(&keybd, 0, sizeof(s_keybd_driver_t));
+			keybd.ascii = data->keybd.ascii;
+			keybd.button = data->keybd.button;
+			keybd.keycode = data->keybd.keycode;
+			keybd.scancode = data->keybd.keycode;
+			keybd.state = data->type & (KEYBD_PRESSED | KEYBD_RELEASED);
+			s_server_event_parse_keyboard(&keybd);
+			s_server_event_changed();
+			break;
 	}
 	s_free(data);
 	return 0;

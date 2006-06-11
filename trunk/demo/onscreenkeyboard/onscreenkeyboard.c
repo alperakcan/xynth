@@ -422,6 +422,8 @@ int main (int argc, char *argv[])
 	s_client_init(&window);
 	s_window_new(window, WINDOW_MAIN | WINDOW_NOFORM, NULL);
 	s_window_set_title(window, "Demo - %s ", argv[0]);
+	s_window_set_resizeable(window, 0);
+	s_window_set_alwaysontop(window, 1);
 	
 	w = BOX_W * 3;
 	h = BOX_H * 3;
