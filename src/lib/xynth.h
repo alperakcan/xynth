@@ -1500,6 +1500,7 @@ int s_socket_request_configure (s_window_t *window, int soc, S_WINDOW form);
 int s_socket_request_stream (s_window_t *window, int soc, s_rect_t *coor);
 int s_socket_request_cursor (s_window_t *window, int soc, S_MOUSE_CURSOR cursor);
 int s_socket_request_show (s_window_t *window, int soc, int id, int show);
+int s_socket_request_event (s_window_t *window, int soc, s_event_t *event);
 int s_socket_request (s_window_t *window, S_SOC_DATA req, ...);
 int s_socket_listen_event (s_window_t *window, int soc);
 int s_socket_listen_expose (s_window_t *window, int soc);

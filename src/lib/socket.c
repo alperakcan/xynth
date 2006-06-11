@@ -150,6 +150,23 @@ int s_socket_request_show (s_window_t *window, int soc, int id, int show)
 	return 0;
 }
 
+int s_socket_request_event (s_window_t *window, int soc, s_event_t *event)
+{
+	s_soc_data_event_t *data;
+	data = (s_soc_data_event_t *) s_calloc(1, sizeof(s_soc_data_event_t));
+	data->type = event->type;
+	data->keybd.ascii = event->keybd->ascii;
+	data->keybd.button = event->keybd->button;
+	data->keybd.keycode = event->keybd->keycode;
+	data->keybd.scancode = event->keybd->scancode;
+	if (s_socket_api_send(soc, data, sizeof(s_soc_data_event_t)) != sizeof(s_soc_data_event_t)) {
+		s_free(data);
+		return -1;
+	}
+	s_free(data);
+	return 0;
+}
+
 int s_socket_request (s_window_t *window, S_SOC_DATA req, ...)
 {
 	int id;
@@ -158,6 +175,7 @@ int s_socket_request (s_window_t *window, S_SOC_DATA req, ...)
 	int ret = 0;
 	S_WINDOW form;
 	s_rect_t *coor;
+	s_event_t *event;
 	struct pollfd pollfd;
 	S_MOUSE_CURSOR cursor;
 
@@ -224,6 +242,11 @@ again:	if (window->running <= 0) {
 			va_end(ap);
 			break;
 		case SOC_DATA_EVENT:
+			va_start(ap, req);
+			event = (s_event_t *) va_arg(ap, s_event_t *);
+			ret = s_socket_request_event(window, pollfd.fd, event);
+			va_end(ap);
+			break;
 		case SOC_DATA_CLOSE:
 		case SOC_DATA_DESKTOP:
 		case SOC_DATA_NOTHING:
