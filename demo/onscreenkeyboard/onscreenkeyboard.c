@@ -367,12 +367,10 @@ static void handler_down (s_window_t *window, s_event_t *event, s_handler_t *han
 	draw_boxes(window);
 }
 
-static void handler_set_left (s_window_t *window, s_event_t *event, s_handler_t *handler)
+static void handler_set_char (s_window_t *window, osk_char_t *chr)
 {
 	s_event_t *evt;
-	osk_char_t *chr;
 	s_event_init(&evt);
-	chr = &chars[chars_type][chars_y * 3 + chars_x][0];
 	evt->type = KEYBD_EVENT | KEYBD_PRESSED;
 	evt->keybd->ascii = chr->ascii;
 	evt->keybd->button = chr->button;
@@ -382,22 +380,35 @@ static void handler_set_left (s_window_t *window, s_event_t *event, s_handler_t 
 	evt->type = KEYBD_EVENT | KEYBD_RELEASED;
 	s_socket_request(window, SOC_DATA_EVENT, evt);
 	s_event_uninit(evt);
-	printf("%s\n", chars[chars_type][chars_y * 3 + chars_x][0].name);
+	printf("name: %s, ascii: %c, button: %d, scancode: %d\n", chr->name, chr->ascii, chr->button, chr->scancode);
+}
+
+static void handler_set_left (s_window_t *window, s_event_t *event, s_handler_t *handler)
+{
+	osk_char_t *chr;
+	chr = &chars[chars_type][chars_y * 3 + chars_x][0];
+	handler_set_char(window, chr);
 }
 
 static void handler_set_right (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
-	printf("%s\n", chars[chars_type][chars_y * 3 + chars_x][2].name);
+	osk_char_t *chr;
+	chr = &chars[chars_type][chars_y * 3 + chars_x][2];
+	handler_set_char(window, chr);
 }
 
 static void handler_set_up (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
-	printf("%s\n", chars[chars_type][chars_y * 3 + chars_x][1].name);
+	osk_char_t *chr;
+	chr = &chars[chars_type][chars_y * 3 + chars_x][1];
+	handler_set_char(window, chr);
 }
 
 static void handler_set_down (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
-	printf("%s\n", chars[chars_type][chars_y * 3 + chars_x][3].name);
+	osk_char_t *chr;
+	chr = &chars[chars_type][chars_y * 3 + chars_x][3];
+	handler_set_char(window, chr);
 }
 
 static void handler_set (s_window_t *window, S_KEYCODE_CODE key, void (*func) (s_window_t *, s_event_t *, s_handler_t *))
@@ -420,7 +431,7 @@ int main (int argc, char *argv[])
 	s_window_t *window;
 
 	s_client_init(&window);
-	s_window_new(window, WINDOW_MAIN | WINDOW_NOFORM, NULL);
+	s_window_new(window, WINDOW_MAIN /*| WINDOW_NOFORM*/, NULL);
 	s_window_set_title(window, "Demo - %s ", argv[0]);
 	s_window_set_resizeable(window, 0);
 	s_window_set_alwaysontop(window, 1);
@@ -429,7 +440,7 @@ int main (int argc, char *argv[])
 	h = BOX_H * 3;
 	x = (window->surface->linear_buf_width - w) / 2;
 	y = (window->surface->linear_buf_height - h) / 2;
-	s_window_set_coor(window, 0, x, y, w, h);
+	s_window_set_coor(window, WINDOW_NOFORM, x, y, w, h);
 	
 	draw_boxes(window);
 

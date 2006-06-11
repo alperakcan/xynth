@@ -207,7 +207,7 @@ int s_server_socket_listen_event (int id)
 		s_free(data);
 		return -1;
 	}
-	server->window->event->type = 0;
+	server->window->event->type = REMOTE_EVENT;
 	switch (data->type & (KEYBD_EVENT | MOUSE_EVENT)) {
 		case KEYBD_EVENT:
 			memset(&keybd, 0, sizeof(s_keybd_driver_t));
