@@ -16,19 +16,14 @@
 #include "../lib/xynth_.h"
 #include "server.h"
 
-void s_server_event_parse_keyboard (void)
+void s_server_event_parse_keyboard (s_keybd_driver_t *keybd)
 {
-	s_keybd_driver_t keybd;
 	S_KEYCODE_FLAG keycode_flag;
 	
-        memset(&keybd, 0, sizeof(s_keybd_driver_t));
+	keycode_flag = server->window->event->keybd->flag;
         
-	s_server_kbd_update(&keybd);
-
-        keycode_flag = server->window->event->keybd->flag;
-        
-	if (keybd.state == KEYBD_PRESSED) {
-		switch (keybd.keycode) {
+	if (keybd->state == KEYBD_PRESSED) {
+		switch (keybd->keycode) {
 			case S_KEYCODE_NUM_LOCK:
 				keycode_flag ^= KEYCODE_NMLCKF;
 				break;
@@ -55,7 +50,7 @@ void s_server_event_parse_keyboard (void)
 				break;
 		}
 	} else {
-		switch (keybd.keycode) {
+		switch (keybd->keycode) {
 			case S_KEYCODE_NUM_LOCK:
 			case S_KEYCODE_CAPS_LOCK:
 				break;
@@ -80,13 +75,13 @@ void s_server_event_parse_keyboard (void)
 		}
 	}
 
-	server->window->event->type |= (KEYBD_EVENT | keybd.state);
+	server->window->event->type |= (KEYBD_EVENT | keybd->state);
 	server->window->event->keybd->flag = keycode_flag;
-	server->window->event->keybd->scancode = keybd.scancode;
-	server->window->event->keybd->button = keybd.button;
-	server->window->event->keybd->keycode = keybd.keycode;
-	server->window->event->keybd->ascii = keybd.ascii;
-	server->window->event->keybd->state[keybd.keycode] = keybd.state;
+	server->window->event->keybd->scancode = keybd->scancode;
+	server->window->event->keybd->button = keybd->button;
+	server->window->event->keybd->keycode = keybd->keycode;
+	server->window->event->keybd->ascii = keybd->ascii;
+	server->window->event->keybd->state[keybd->keycode] = keybd->state;
 }
 
 int s_server_event_parse_mouse (void)
@@ -229,11 +224,14 @@ void s_server_event_changed (void)
 
 void s_server_event_parse (S_EVENT event)
 {
+	s_keybd_driver_t keybd;
 	server->window->event->type = 0;
 
 	switch (event) {
 		case KEYBD_EVENT:
-			s_server_event_parse_keyboard();
+			memset(&keybd, 0, sizeof(s_keybd_driver_t));
+			s_server_kbd_update(&keybd);
+			s_server_event_parse_keyboard(&keybd);
 			break;
 		case MOUSE_EVENT:
 			if (s_server_event_parse_mouse()) {

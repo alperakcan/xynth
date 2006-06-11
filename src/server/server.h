@@ -178,7 +178,7 @@ typedef struct s_server_s {
 s_server_t *server;
 
 /* event.c */
-void s_server_event_parse_keyboard (void);
+void s_server_event_parse_keyboard (s_keybd_driver_t *keybd);
 int s_server_event_parse_mouse (void);
 void s_server_event_changed (void);
 void s_server_event_parse (S_EVENT event);
