@@ -186,8 +186,12 @@ int s_event_changed_ (s_window_t *window)
 void s_server_event_changed (void)
 {
 	int id;
+	int remote;
 
 	id = server->cursor.xyid;
+	remote = server->window->event->type & REMOTE_EVENT;
+	server->window->event->type &= ~REMOTE_EVENT;
+	
 	if (server->window->event->type & MOUSE_EVENT) {
 		server->window->event->type &= MOUSE_MASK;
 		if (server->window->event->type & MOUSE_PRESSED) {
@@ -218,7 +222,11 @@ void s_server_event_changed (void)
 				}
 			}
 		}
-		s_server_socket_request(SOC_DATA_EVENT, s_server_pri_id(0));
+		if (remote) {
+			s_server_socket_request(SOC_DATA_EVENT, s_server_pri_id(1));
+		} else {
+			s_server_socket_request(SOC_DATA_EVENT, s_server_pri_id(0));
+		}
 	}
 }
 
