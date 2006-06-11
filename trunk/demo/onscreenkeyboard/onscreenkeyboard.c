@@ -441,6 +441,11 @@ int main (int argc, char *argv[])
 	x = (window->surface->linear_buf_width - w) / 2;
 	y = (window->surface->linear_buf_height - h) / 2;
 	s_window_set_coor(window, WINDOW_NOFORM, x, y, w, h);
+
+	window->surface->width = window->surface->buf->w;
+	window->surface->height = window->surface->buf->h;
+	s_free(window->surface->vbuf);
+	window->surface->vbuf = s_malloc(window->surface->width * window->surface->height * window->surface->bytesperpixel);
 	
 	draw_boxes(window);
 
