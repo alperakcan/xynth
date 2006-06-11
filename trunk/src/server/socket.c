@@ -198,6 +198,18 @@ int s_server_socket_listen_cursor (int id)
 	return 0;
 }
 
+int s_server_socket_listen_event (int id)
+{
+	s_soc_data_event_t *data;
+	data = (s_soc_data_event_t *) s_calloc(1, sizeof(s_soc_data_event_t));
+	if (s_socket_api_recv(server->client[id].soc, data, sizeof(s_soc_data_event_t)) != sizeof(s_soc_data_event_t)) {
+		s_free(data);
+		return -1;
+	}
+	s_free(data);
+	return 0;
+}
+
 int s_server_socket_listen_window_close (int soc)
 {
         s_pollfd_t *pfd;
@@ -259,6 +271,7 @@ int s_server_socket_listen_parse (int soc)
 		case SOC_DATA_CURSOR:
 			return s_server_socket_listen_cursor(id);
 		case SOC_DATA_EVENT:
+			return s_server_socket_listen_event(id);
 		case SOC_DATA_DESKTOP:
 		case SOC_DATA_NOTHING:
 			break;

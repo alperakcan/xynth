@@ -32,46 +32,164 @@ static int chars_x = 0;
 static int chars_y = 0;
 static CHARS chars_type = CHARS_NORMAL;
 
-static char *chars[][9][4] = {
-	{{"a", ",", "c", "b"},
-	 {"d", ".", "f", "e"},
-	 {"g", "!", "i", "h"},
-	 {"j", "-", "k", "l"},
-	 {"m", "del", "n", "space"},
-	 {"o", "?", "q", "p"},
-	 {"r", "(", "t", "s"},
-	 {"u", ":", "w", "v"},
-	 {"x", ")", "z", "y"}},
-	{{"A", "^", "C", "B"},
-	 {"D", "@", "F", "E"},
-	 {"G", "*", "I", "H"},
-	 {"J", "-", "K", "L"},
-	 {"M", "del", "N", "space"},
-	 {"O", "\"", "Q", "P"},
-	 {"R", "=", "T", "S"},
-	 {"U", ";", "W", "V"},
-	 {"X", "/", "Z", "Y"}},
-	{{"(", ",", ")", "."},
-	 {"<", "\"", ">", "'"},
-	 {"[", "-", "]", "_"},
-	 {"{", "!", "}", "?"},
-	 {"", "del", "", "space"},
-	 {"\\", "+", "/", "="},
-	 {"@", ":", "#", ";"},
-	 {"$", "~", "%", "`"},
-	 {"^", "*", "&", "|"}},
-	{{"", "", "1", ""},
-	 {"", "", "2", ""},
-	 {"", "", "3", ""},
-	 {"", "", "4", ""},
-	 {"", "del", "5", "space"},
-	 {"", "", "6", ""},
-	 {"", "", "7", ""},
-	 {"", "", "8", ""},
-	 {"", "", "9", "0"}}
+typedef struct osk_char_s {
+	char ascii;
+	int button;
+	int scancode;
+	char *name;
+} osk_char_t;
+
+static osk_char_t chars[][9][4] = {
+	{{{'a', S_KEYCODE_a, 0, "a"},
+	  {',', S_KEYCODE_COMMA, 0, ","},
+	  {'c', S_KEYCODE_c, 0, "c"},
+	  {'b', S_KEYCODE_b, 0, "b"}},
+	 {{'d', S_KEYCODE_d, 0, "d"},
+	  {'.', S_KEYCODE_PERIOD, 0, "."},
+	  {'f', S_KEYCODE_f, 0, "f"},
+	  {'e', S_KEYCODE_e, 0, "e"}},
+	 {{'g', S_KEYCODE_g, 0, "g"},
+	  {'!', S_KEYCODE_EXCLAM, 0, "!"},
+	  {'i', S_KEYCODE_i, 0, "i"},
+	  {'h', S_KEYCODE_h, 0, "h"}},
+	 {{'j', S_KEYCODE_j, 0, "j"},
+	  {'-', S_KEYCODE_MINUS, 0, "-"},
+	  {'l', S_KEYCODE_l, 0, "l"},
+	  {'k', S_KEYCODE_k, 0, "k"}},
+	 {{'m', S_KEYCODE_m, 0, "m"},
+	  {0, S_KEYCODE_DELETE, 0, "del"},
+	  {'n', S_KEYCODE_n, 0, "n"},
+	  {' ', S_KEYCODE_SPACE, 0, "space"}},
+	 {{'o', S_KEYCODE_o, 0, "o"},
+	  {'?', S_KEYCODE_QUESTION, 0, "?"},
+	  {'q', S_KEYCODE_q, 0, "q"},
+	  {'p', S_KEYCODE_p, 0, "p"}},
+	 {{'r', S_KEYCODE_r, 0, "r"},
+	  {'(', S_KEYCODE_PARENLEFT, 0, "("},
+	  {'t', S_KEYCODE_t, 0, "t"},
+	  {'s', S_KEYCODE_s, 0, "s"}},
+	 {{'u', S_KEYCODE_u, 0, "u"},
+	  {':', S_KEYCODE_COLON, 0, ":"},
+	  {'w', S_KEYCODE_w, 0, "w"},
+	  {'v', S_KEYCODE_v, 0, "v"}},
+	 {{'x', S_KEYCODE_u, 0, "x"},
+	  {')', S_KEYCODE_PARENRIGHT, 0, ")"},
+	  {'z', S_KEYCODE_w, 0, "z"},
+	  {'y', S_KEYCODE_v, 0, "y"}}},
+
+	{{{'A', S_KEYCODE_A, 0, "A"},
+	  {'^', S_KEYCODE_ASCIICIRCUM, 0, "^"},
+	  {'C', S_KEYCODE_C, 0, "C"},
+	  {'B', S_KEYCODE_B, 0, "B"}},
+	 {{'D', S_KEYCODE_D, 0, "D"},
+	  {'@', S_KEYCODE_AT, 0, "@"},
+	  {'F', S_KEYCODE_F, 0, "F"},
+	  {'E', S_KEYCODE_E, 0, "E"}},
+	 {{'G', S_KEYCODE_G, 0, "G"},
+	  {'*', S_KEYCODE_ASTERISK, 0, "*"},
+	  {'I', S_KEYCODE_I, 0, "I"},
+	  {'H', S_KEYCODE_H, 0, "H"}},
+	 {{'J', S_KEYCODE_J, 0, "J"},
+	  {'_', S_KEYCODE_UNDERSCORE, 0, "_"},
+	  {'L', S_KEYCODE_L, 0, "L"},
+	  {'K', S_KEYCODE_K, 0, "K"}},
+	 {{'M', S_KEYCODE_M, 0, "M"},
+	  {0, S_KEYCODE_DELETE, 0, "del"},
+	  {'N', S_KEYCODE_N, 0, "N"},
+	  {' ', S_KEYCODE_SPACE, 0, "space"}},
+	 {{'O', S_KEYCODE_O, 0, "O"},
+	  {'\"', S_KEYCODE_QUOTEDBL, 0, "\""},
+	  {'Q', S_KEYCODE_Q, 0, "Q"},
+	  {'P', S_KEYCODE_P, 0, "P"}},
+	 {{'R', S_KEYCODE_R, 0, "R"},
+	  {'=', S_KEYCODE_EQUAL, 0, "="},
+	  {'T', S_KEYCODE_T, 0, "T"},
+	  {'S', S_KEYCODE_S, 0, "S"}},
+	 {{'U', S_KEYCODE_U, 0, "U"},
+	  {';', S_KEYCODE_SEMICOLON, 0, ";"},
+	  {'W', S_KEYCODE_W, 0, "W"},
+	  {'V', S_KEYCODE_V, 0, "V"}},
+	 {{'X', S_KEYCODE_U, 0, "X"},
+	  {'/', S_KEYCODE_SLASH, 0, "/"},
+	  {'Z', S_KEYCODE_W, 0, "Z"},
+	  {'Y', S_KEYCODE_V, 0, "Y"}}},
+
+	{{{'(', S_KEYCODE_PARENLEFT, 0, "("},
+	  {',', S_KEYCODE_COMMA, 0, ","},
+	  {')', S_KEYCODE_PARENRIGHT, 0, ")"},
+	  {'.', S_KEYCODE_PERIOD, 0, "."}},
+	 {{'<', S_KEYCODE_LESS, 0, "<"},
+	  {'\"', S_KEYCODE_QUOTEDBL, 0, "\""},
+	  {'>', S_KEYCODE_GREATER, 0, ">"},
+	  {'\'', S_KEYCODE_APOSTROPHE, 0, "\'"}},
+	 {{'[', S_KEYCODE_BRACKETLEFT, 0, "["},
+	  {'-', S_KEYCODE_MINUS, 0, "-"},
+	  {']', S_KEYCODE_BRACKETRIGHT, 0, "]"},
+	  {'_', S_KEYCODE_UNDERSCORE, 0, "_"}},
+	 {{'{', S_KEYCODE_BRACELEFT, 0, "{"},
+	  {'!', S_KEYCODE_EXCLAM, 0, "!"},
+	  {'}', S_KEYCODE_BRACERIGHT, 0, "}"},
+	  {'?', S_KEYCODE_QUESTION, 0, "?"}},
+	 {{0, 0, 0, ""},
+	  {0, S_KEYCODE_DELETE, 0, "del"},
+	  {0, 0, 0, ""},
+	  {' ', S_KEYCODE_SPACE, 0, "space"}},
+	 {{'\\', S_KEYCODE_BACKSLASH, 0, "\\"},
+	  {'+', S_KEYCODE_PLUS, 0, "+"},
+	  {'/', S_KEYCODE_SLASH, 0, "/"},
+	  {'=', S_KEYCODE_EQUAL, 0, "="}},
+	 {{'@', S_KEYCODE_AT, 0, "@"},
+	  {':', S_KEYCODE_COLON, 0, ":"},
+	  {'#', S_KEYCODE_NUMBERSIGN, 0, "#"},
+	  {';', S_KEYCODE_SEMICOLON, 0, ";"}},
+	 {{'$', S_KEYCODE_DOLLAR, 0, "$"},
+	  {'~', S_KEYCODE_ASCIITILDE, 0, "~"},
+	  {'%', S_KEYCODE_PERCENT, 0, "%"},
+	  {'`', S_KEYCODE_GRAVE, 0, "`"}},
+	 {{'^', S_KEYCODE_ASCIICIRCUM, 0, "^"},
+	  {'*', S_KEYCODE_ASTERISK, 0, "*"},
+	  {'&', S_KEYCODE_AMPERSAND, 0, "&"},
+	  {'|', S_KEYCODE_BAR, 0, "|"}}},
+
+	{{{0, 0, 0, ""},
+	  {0, 0, 0, ""},
+	  {'1', S_KEYCODE_ONE, 0, "1"},
+	  {0, 0, 0, ""}},
+	 {{0, 0, 0, ""},
+	  {0, 0, 0, ""},
+	  {'2', S_KEYCODE_TWO, 0, "2"},
+	  {0, 0, 0, ""}},
+	 {{0, 0, 0, ""},
+	  {0, 0, 0, ""},
+	  {'3', S_KEYCODE_THREE, 0, "3"},
+	  {0, 0, 0, ""}},
+	 {{0, 0, 0, ""},
+	  {0, 0, 0, ""},
+	  {'4', S_KEYCODE_FOUR, 0, "4"},
+	  {0, 0, 0, ""}},
+	 {{0, 0, 0, ""},
+	  {0, 0, 0, ""},
+	  {'5', S_KEYCODE_FIVE, 0, "5"},
+	  {0, 0, 0, ""}},
+	 {{0, 0, 0, ""},
+	  {0, 0, 0, ""},
+	  {'6', S_KEYCODE_SIX, 0, "6"},
+	  {0, 0, 0, ""}},
+	 {{0, 0, 0, ""},
+	  {0, 0, 0, ""},
+	  {'7', S_KEYCODE_SEVEN, 0, "7"},
+	  {0, 0, 0, ""}},
+	 {{0, 0, 0, ""},
+	  {0, 0, 0, ""},
+	  {'8', S_KEYCODE_EIGHT, 0, "8"},
+	  {0, 0, 0, ""}},
+	 {{0, 0, 0, ""},
+	  {0, 0, 0, ""},
+	  {'9', S_KEYCODE_NINE, 0, "9"},
+	  {'0', S_KEYCODE_ZERO, 0, "0"}}}
 };
 
-static int draw_single_box (s_surface_t *wsurface, s_rect_t *rect, char *c[4], int colors[3])
+static int draw_single_box (s_surface_t *wsurface, s_rect_t *rect, osk_char_t c[4], int colors[3])
 {
 	int i;
 	int r;
@@ -95,10 +213,10 @@ static int draw_single_box (s_surface_t *wsurface, s_rect_t *rect, char *c[4], i
 	
 	for (i = 0; i < 4; i++) {
 		s_font_init(&font, "veramono.ttf");
-		s_font_set_str(font, c[i]);
+		s_font_set_str(font, c[i].name);
 		s_colorrgb(wsurface, colors[2], &r, &g, &b);
 		s_font_set_rgb(font, r, g, b);
-		if (strlen(c[i]) > 1) {
+		if (strlen(c[i].name) > 1) {
 			s_font_set_size(font, fh - 5);
 		} else {
 			s_font_set_size(font, fh);
@@ -125,7 +243,7 @@ static int draw_single_box (s_surface_t *wsurface, s_rect_t *rect, char *c[4], i
 				y = (rect->h - fh) / 2;
 				break;
 			case 3:
-				y = rect->h - fh + font->yMin - 6;
+				y = rect->h - fh - 7;
 				x = (rect->w - font->img->handler->w) / 2;
 				break;
 		}
@@ -251,22 +369,35 @@ static void handler_down (s_window_t *window, s_event_t *event, s_handler_t *han
 
 static void handler_set_left (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
-	printf("%s\n", chars[chars_type][chars_y * 3 + chars_x][0]);
+	s_event_t *evt;
+	osk_char_t *chr;
+	s_event_init(&evt);
+	chr = &chars[chars_type][chars_y * 3 + chars_x][0];
+	evt->type = KEYBD_EVENT | KEYBD_PRESSED;
+	evt->keybd->ascii = chr->ascii;
+	evt->keybd->button = chr->button;
+	evt->keybd->keycode = chr->button;
+	evt->keybd->scancode = chr->scancode;
+	s_socket_request(window, SOC_DATA_EVENT, evt);
+	evt->type = KEYBD_EVENT | KEYBD_RELEASED;
+	s_socket_request(window, SOC_DATA_EVENT, evt);
+	s_event_uninit(evt);
+	printf("%s\n", chars[chars_type][chars_y * 3 + chars_x][0].name);
 }
 
 static void handler_set_right (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
-	printf("%s\n", chars[chars_type][chars_y * 3 + chars_x][2]);
+	printf("%s\n", chars[chars_type][chars_y * 3 + chars_x][2].name);
 }
 
 static void handler_set_up (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
-	printf("%s\n", chars[chars_type][chars_y * 3 + chars_x][1]);
+	printf("%s\n", chars[chars_type][chars_y * 3 + chars_x][1].name);
 }
 
 static void handler_set_down (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
-	printf("%s\n", chars[chars_type][chars_y * 3 + chars_x][3]);
+	printf("%s\n", chars[chars_type][chars_y * 3 + chars_x][3].name);
 }
 
 static void handler_set (s_window_t *window, S_KEYCODE_CODE key, void (*func) (s_window_t *, s_event_t *, s_handler_t *))

@@ -249,6 +249,7 @@ int s_server_socket_listen_stream (int id);
 int s_server_socket_listen_close (int id);
 int s_server_socket_listen_show (int id);
 int s_server_socket_listen_cursor (int id);
+int s_server_socket_listen_event (int id);
 int s_server_socket_listen_window_close (int soc);
 int s_server_socket_listen_parse (int soc);
 int s_server_socket_client_in_f (s_window_t *window, int soc);
