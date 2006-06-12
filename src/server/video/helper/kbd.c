@@ -220,12 +220,24 @@ void s_video_helper_kbd_update (s_keybd_driver_t *keybd)
 
                 keybd->state = pressed;
 		keybd->scancode = scancode;
-		keybd->button = s_video_helper_keybd_keycode_[scancode][KEYCODE_PLAIN];;
-		keybd->keycode = s_video_helper_keybd_keycode_[scancode][KEYCODE_PLAIN];;
+		keybd->button = s_video_helper_keybd_keycode_[scancode][KEYCODE_PLAIN];
+		keybd->keycode = s_video_helper_keybd_keycode_[scancode][KEYCODE_PLAIN];
 
 		keycode_flag = server->window->event->keybd->flag;
+		switch (keybd->button) {
+			case S_KEYCODE_LEFTSHIFT:
+			case S_KEYCODE_RIGHTSHIFT:
+			case S_KEYCODE_LEFTCONTROL:
+			case S_KEYCODE_RIGHTCONTROL:
+			case S_KEYCODE_ALT:
+			case S_KEYCODE_ALTGR:
+			case S_KEYCODE_CAPS_LOCK:
+				goto keycode_plain;
+			default:
+				break;
+		}
 		if (keycode_flag & KEYCODE_SHIFTF) {
-			keybd->button = s_video_helper_keybd_keycode_[scancode][KEYCODE_SHIFT];;
+			keybd->button = s_video_helper_keybd_keycode_[scancode][KEYCODE_SHIFT];
 			map |= (1 << KG_SHIFT);
 		}
 		if (keycode_flag & KEYCODE_CTRLF) {
@@ -235,9 +247,10 @@ void s_video_helper_kbd_update (s_keybd_driver_t *keybd)
 			map |= (1 << KG_ALT);
 		}
 		if (keycode_flag & KEYCODE_ALTGRF) {
-			keybd->button = s_video_helper_keybd_keycode_[scancode][KEYCODE_ALTGR];;
+			keybd->button = s_video_helper_keybd_keycode_[scancode][KEYCODE_ALTGR];
 			map |= (1 << KG_ALTGR);
 		}
+keycode_plain:
 		if (KTYP(s_video_helper_keybd_keymap[map][scancode]) == KT_LETTER) {
 			if (keycode_flag & KEYCODE_CPLCKF) {
 				map ^= (1 << KG_SHIFT);
