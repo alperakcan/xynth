@@ -65,11 +65,11 @@ void start_menu_handler (s_window_t *window, s_event_t *event, s_handler_t *hand
 
 void start_menu_start (s_window_t *pwindow, s_list_t *progs, int wx, int wy)
 {
+	int p;
 	int fy;
 	int fx;
 	int fw;
 	int fh;
-	int p = 0;
 	char *file;
 	char *vbuf;
 	char *tbuf;
@@ -83,7 +83,7 @@ void start_menu_start (s_window_t *pwindow, s_list_t *progs, int wx, int wy)
 
 	fx = 30;
 	fy = 22;
-	fw = 150;
+	fw = 160;
 	fh = progs->nb_elt * fy + 13;
         tbar_data = (tbar_data_t *) pwindow->client->user_data;
 
@@ -97,12 +97,12 @@ void start_menu_start (s_window_t *pwindow, s_list_t *progs, int wx, int wy)
 	s_fillbox(temp->surface, 1, 1, temp->surface->buf->w - 2, temp->surface->buf->h - 2, s_rgbcolor(temp->surface, 255, 255, 255));
 	s_fillbox(temp->surface, 1, 1, 24, temp->surface->buf->h - 2, s_rgbcolor(temp->surface, 197, 198, 189));
 	
-	
 	s_font_init(&font, "arial.ttf");
 	s_font_set_size(font, 13);
+
+	p = 0;
 	while (!s_list_eol(progs, p)) {
 		sprog = (smenu_prog_t *) s_list_get(progs, p++);
-
 		if ((sprog->icon != NULL) && (*(sprog->icon) != '\0')) {
 			s_image_init(&img);
 			file = (char *) s_malloc(sizeof(char) * (strlen(DESKTOPDIR "/img/icons/") + strlen(sprog->icon) + 1));
@@ -147,6 +147,7 @@ void start_menu_start (s_window_t *pwindow, s_list_t *progs, int wx, int wy)
 
 		fy += 22;
 	}
+
 	s_font_uninit(font);
 
 	s_client_atexit(temp, start_menu_atexit);
