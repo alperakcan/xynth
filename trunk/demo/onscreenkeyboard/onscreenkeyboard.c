@@ -20,15 +20,22 @@
  * Left        : move left
  * Up          : move up
  * Down        : move down
- * j           : char select / left
- * k           : char select / down
- * l           : char select / right
- * i           : char select / up
+ *
+ * Mode 1;
+ *     j       : char select / left
+ *     k       : char select / down
+ *     l       : char select / right
+ *     i       : char select / up
+ *
+ * Mode 2;
+ *     return  : switch select char, move
+ *     left    : char select / left
+ *     down    : char select / down
+ *     right   : char select / right
+ *     up      : char select / up
  */
 
 #include "xynth_.h"
-
-#define HIGHLIGHT
 
 #define BOX_W	(45)
 #define BOX_H	(BOX_W)
@@ -41,8 +48,15 @@ typedef enum {
 	CHARS_MAX
 } CHARS;
 
+typedef enum {
+	SELECT_MAP,
+	SELECT_CHAR
+} CHARS_SELECT;
+
 static int chars_x = 0;
 static int chars_y = 0;
+static int chars_highlight = 0;
+static int chars_select = SELECT_MAP;
 static CHARS chars_type = CHARS_NORMAL;
 
 typedef struct osk_char_s {
@@ -51,6 +65,34 @@ typedef struct osk_char_s {
 	int scancode;
 	char *name;
 } osk_char_t;
+
+typedef struct image_bin_s {
+	 unsigned int width;
+	 unsigned int height;
+	 unsigned int bytes_per_pixel;
+	 unsigned char *pixel_data;
+} image_bin_t;
+
+static image_bin_t image_gray = {
+	1, 45, 3,
+	"\276\276\276\274\274\274\271\271\271\267\267\267\264\264\264\262\262\262"
+	"\260\257\257\255\255\255\253\252\252\250\250\250\246\245\245\244\243\243"
+	"\241\241\241\237\236\236\234\233\233\231\231\231\227\227\227\225\224\224"
+	"\222\222\222\220\217\217\215\214\214\213\212\212\211\210\210\206\205\205"
+	"\204\203\203\201\200\200\200\177\177~||{zzywwvuutrrqppommlkkjhhhffeddcaa"
+	"`^^^\\\\[YYYWWWUUTRR",
+};
+
+static image_bin_t image_orange = {
+	1, 45, 3,
+	"\361\337\257\361\336\254\362\334\250\362\333\244\362\331\240\362\330\234"
+	"\363\326\230\363\325\224\363\323\221\363\322\215\364\320\211\364\317\205"
+	"\364\315\201\365\314~\365\313{\365\311w\365\310s\366\306o\366\305l\366\303"
+	"h\366\302d\367\300`\367\277\\\367\275Y\367\274U\370\272Q\370\271M\370\267"
+	"I\371\266E\371\264A\371\263=\371\2619\372\2606\372\2572\372\255.\373\254"
+	"*\373\252'\373\251#\373\247\37\374\246\33\374\244\27\374\243\24\374\241\20"
+	"\375\240\14\375\236\10",
+};
 
 static osk_char_t chars[][9][4] = {
 	{{{'a', S_KEYCODE_a, 0, "a"},
@@ -202,7 +244,23 @@ static osk_char_t chars[][9][4] = {
 	  {'0', S_KEYCODE_ZERO, 0, "0"}}}
 };
 
-static int draw_single_box (s_surface_t *wsurface, s_rect_t *rect, osk_char_t c[4], int colors[3])
+static int image_load (s_image_t *img, int w, int h, unsigned char *rgb)
+{
+	int i;
+	unsigned int *tmp;
+	img->w = w;
+	img->h = h;
+	img->rgba = (unsigned int *) s_malloc(sizeof(unsigned int) * w * h);
+	tmp = img->rgba;
+	for (i = 0; i < w * h; i++) {
+		*tmp = (*(rgb + 0) << 24) | (*(rgb + 1) << 16) | (*(rgb + 2) << 8) | 0x00;
+		rgb += 3;
+		tmp++;
+	}
+	return 0;
+}
+
+static int draw_single_box (s_surface_t *wsurface, s_rect_t *rect, osk_char_t c[4], int colors[2], image_bin_t *image_bin)
 {
 	int i;
 	int r;
@@ -211,7 +269,9 @@ static int draw_single_box (s_surface_t *wsurface, s_rect_t *rect, osk_char_t c[
 	int fh;
 	int x = 0;
 	int y = 0;
+	char *tbuf;
 	char *vbuf;
+	s_image_t *img;
 	s_font_t *font;
 	s_surface_t *surface;
 	
@@ -220,14 +280,22 @@ static int draw_single_box (s_surface_t *wsurface, s_rect_t *rect, osk_char_t c[
 	s_getsurfacevirtual(surface, rect->w, rect->h, wsurface->bitsperpixel, vbuf);
 	
 	s_fillbox(surface, 0, 0, rect->w, rect->h, colors[0]);
-	s_fillbox(surface, 1, 1, rect->w - 2, rect->h - 2, colors[1]);
-
+	
+	s_image_init(&img);
+	image_load(img, image_bin->width, image_bin->height, (unsigned char *) image_bin->pixel_data);
+	s_image_get_buf(surface, img);
+	tbuf = (char *) s_malloc(sizeof(char) * (rect->w - 2) * (rect->h - 2) * surface->bytesperpixel);
+	s_scalebox(surface, img->w, img->h, img->buf, rect->w - 2, rect->h - 2, tbuf);
+	s_putbox(surface, 1, 1, rect->w - 2, rect->h - 2, tbuf);
+	s_free(tbuf);
+	s_image_uninit(img);
+	
 	fh = rect->h / 3;
 	
 	for (i = 0; i < 4; i++) {
 		s_font_init(&font, "veramono.ttf");
 		s_font_set_str(font, c[i].name);
-		s_colorrgb(wsurface, colors[2], &r, &g, &b);
+		s_colorrgb(wsurface, colors[1], &r, &g, &b);
 		s_font_set_rgb(font, r, g, b);
 		if (strlen(c[i].name) > 1) {
 			s_font_set_size(font, fh - 5);
@@ -295,31 +363,32 @@ static int draw_boxes (s_window_t *window)
 				continue;
 			} else {
 				colors[0] = s_rgbcolor(window->surface, 0, 0, 0);
-				colors[1] = s_rgbcolor(window->surface, 222, 222, 222);
-				colors[2] = s_rgbcolor(window->surface, 0, 0, 0);
+				colors[1] = s_rgbcolor(window->surface, 0, 0, 0);
 			}
-			draw_single_box(surface, &rect, chars[chars_type][y * 3 + x], colors);
+			draw_single_box(surface, &rect, chars[chars_type][y * 3 + x], colors, &image_gray);
 		}
 	}
 	{
 		colors[0] = s_rgbcolor(window->surface, 0, 0, 0);
-		colors[1] = s_rgbcolor(window->surface, 255, 140, 100);
-		colors[2] = s_rgbcolor(window->surface, 255, 255, 255);
+		colors[1] = s_rgbcolor(window->surface, 255, 255, 255);
 		rect.x = chars_x * BOX_W;
 		rect.y = chars_y * BOX_H;
 		rect.w = BOX_W;
 		rect.h = BOX_H;
-#if defined HIGHLIGHT
-		rect.x -= 4;
-		rect.y -= 4;
-		rect.w += 8;
-		rect.h += 8;
-		rect.x = MAX(0, rect.x);
-		rect.y = MAX(0, rect.y);
-		rect.x = MIN(window->surface->buf->w - rect.w, rect.x);
-		rect.y = MIN(window->surface->buf->h - rect.h, rect.y);
-#endif
-		draw_single_box(surface, &rect, chars[chars_type][chars_y * 3 + chars_x], colors);
+		
+		if (chars_select == SELECT_CHAR ||
+		    chars_highlight == 1) {
+			rect.x -= 5;
+        		rect.y -= 5;
+			rect.w += 10;
+			rect.h += 10;
+			rect.x = MAX(0, rect.x);
+			rect.y = MAX(0, rect.y);
+			rect.x = MIN(window->surface->buf->w - rect.w, rect.x);
+			rect.y = MIN(window->surface->buf->h - rect.h, rect.y);
+		}
+		
+		draw_single_box(surface, &rect, chars[chars_type][chars_y * 3 + chars_x], colors, &image_orange);
 	}
 
         s_putbox(window->surface, 0, 0, surface->width, surface->height, surface->vbuf);
@@ -327,57 +396,6 @@ static int draw_boxes (s_window_t *window)
 	free(vbuf);
 
 	return 0;
-}
-
-static void handler_shift_up (s_window_t *window, s_event_t *event, s_handler_t *handler)
-{
-	chars_type++;
-	chars_type %= CHARS_MAX;
-	draw_boxes(window);
-}
-
-static void handler_shift_down (s_window_t *window, s_event_t *event, s_handler_t *handler)
-{
-	chars_type--;
-	chars_type = MAX(0, chars_type);
-	chars_type = MIN(CHARS_MAX - 1, chars_type);
-	draw_boxes(window);
-}
-
-static void handler_left (s_window_t *window, s_event_t *event, s_handler_t *handler)
-{
-	chars_x--;
-	if (chars_x < 0) {
-		chars_x = 2;
-	}
-	draw_boxes(window);
-}
-
-static void handler_right (s_window_t *window, s_event_t *event, s_handler_t *handler)
-{
-	chars_x++;
-	if (chars_x > 2) {
-		chars_x = 0;
-	}
-	draw_boxes(window);
-}
-
-static void handler_up (s_window_t *window, s_event_t *event, s_handler_t *handler)
-{
-	chars_y--;
-	if (chars_y < 0) {
-		chars_y = 2;
-	}
-	draw_boxes(window);
-}
-
-static void handler_down (s_window_t *window, s_event_t *event, s_handler_t *handler)
-{
-	chars_y++;
-	if (chars_y > 2) {
-		chars_y = 0;
-	}
-	draw_boxes(window);
 }
 
 static void handler_set_char (s_window_t *window, osk_char_t *chr)
@@ -435,6 +453,80 @@ static void handler_set (s_window_t *window, S_KEYCODE_CODE key, void (*func) (s
 	s_handler_add(window, hndl);
 }
 
+static void handler_shift_up (s_window_t *window, s_event_t *event, s_handler_t *handler)
+{
+	chars_type++;
+	chars_type %= CHARS_MAX;
+	draw_boxes(window);
+}
+
+static void handler_shift_down (s_window_t *window, s_event_t *event, s_handler_t *handler)
+{
+	chars_type--;
+	chars_type = MAX(0, chars_type);
+	chars_type = MIN(CHARS_MAX - 1, chars_type);
+	draw_boxes(window);
+}
+
+static void handler_left (s_window_t *window, s_event_t *event, s_handler_t *handler)
+{
+	if (chars_select == SELECT_MAP) {
+		chars_x--;
+		if (chars_x < 0) {
+			chars_x = 2;
+		}
+		draw_boxes(window);
+	} else if (chars_select == SELECT_CHAR) {
+		handler_set_left(window, event, handler);
+	}
+}
+
+static void handler_right (s_window_t *window, s_event_t *event, s_handler_t *handler)
+{
+	if (chars_select == SELECT_MAP) {
+		chars_x++;
+		if (chars_x > 2) {
+			chars_x = 0;
+		}
+		draw_boxes(window);
+	} else if (chars_select == SELECT_CHAR) {
+		handler_set_right(window, event, handler);
+	}
+}
+
+static void handler_up (s_window_t *window, s_event_t *event, s_handler_t *handler)
+{
+	if (chars_select == SELECT_MAP) {
+		chars_y--;
+		if (chars_y < 0) {
+			chars_y = 2;
+		}
+		draw_boxes(window);
+	} else if (chars_select == SELECT_CHAR) {
+		handler_set_up(window, event, handler);
+	}
+}
+
+static void handler_down (s_window_t *window, s_event_t *event, s_handler_t *handler)
+{
+	if (chars_select == SELECT_MAP) {
+		chars_y++;
+		if (chars_y > 2) {
+			chars_y = 0;
+		}
+		draw_boxes(window);
+	} else if (chars_select == SELECT_CHAR) {
+		handler_set_down(window, event, handler);
+	}
+}
+
+static void handler_set_map (s_window_t *window, s_event_t *event, s_handler_t *handler)
+{
+	chars_select++;
+	chars_select %= 2;
+	draw_boxes(window);
+}
+
 int main (int argc, char *argv[])
 {
 	int x;
@@ -468,6 +560,7 @@ int main (int argc, char *argv[])
 	handler_set(window, S_KEYCODE_RIGHT, handler_right);
 	handler_set(window, S_KEYCODE_UP, handler_up);
 	handler_set(window, S_KEYCODE_DOWN, handler_down);
+	handler_set(window, S_KEYCODE_RETURN, handler_set_map);
 	handler_set(window, S_KEYCODE_i, handler_set_up);
 	handler_set(window, S_KEYCODE_j, handler_set_left);
 	handler_set(window, S_KEYCODE_k, handler_set_down);
