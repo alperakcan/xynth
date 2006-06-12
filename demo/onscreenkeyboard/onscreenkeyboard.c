@@ -13,6 +13,19 @@
  *                                                                         *
  ***************************************************************************/
 
+/*
+ * Left Shift  : shift layout down
+ * Right Shift : shift layout up
+ * Right       : move right
+ * Left        : move left
+ * Up          : move up
+ * Down        : move down
+ * j           : char select / left
+ * k           : char select / down
+ * l           : char select / right
+ * i           : char select / up
+ */
+
 #include "xynth_.h"
 
 #define HIGHLIGHT
