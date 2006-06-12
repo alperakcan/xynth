@@ -21,14 +21,14 @@
  * Up          : move up
  * Down        : move down
  *
- * Mode 1;
+ * Mode 1; (chars_highlight == 1)
  *     j       : char select / left
  *     k       : char select / down
  *     l       : char select / right
  *     i       : char select / up
  *
- * Mode 2;
- *     return  : switch select char, move
+ * Mode 2; (chars_highlight == 0)
+ *     space   : switch select char, move
  *     left    : char select / left
  *     down    : char select / down
  *     right   : char select / right
@@ -411,7 +411,6 @@ static void handler_set_char (s_window_t *window, osk_char_t *chr)
 	evt->type = KEYBD_EVENT | KEYBD_RELEASED;
 	s_socket_request(window, SOC_DATA_EVENT, evt);
 	s_event_uninit(evt);
-	printf("name: %s, ascii: %c, button: %d, scancode: %d\n", chr->name, chr->ascii, chr->button, chr->scancode);
 }
 
 static void handler_set_left (s_window_t *window, s_event_t *event, s_handler_t *handler)
@@ -440,17 +439,6 @@ static void handler_set_down (s_window_t *window, s_event_t *event, s_handler_t 
 	osk_char_t *chr;
 	chr = &chars[chars_type][chars_y * 3 + chars_x][3];
 	handler_set_char(window, chr);
-}
-
-static void handler_set (s_window_t *window, S_KEYCODE_CODE key, void (*func) (s_window_t *, s_event_t *, s_handler_t *))
-{
-	s_handler_t *hndl;
-	s_handler_init(&hndl);
-	hndl->type = KEYBD_HANDLER;
-	hndl->keybd.flag = 0;
-	hndl->keybd.button = key;
-	hndl->keybd.r = func;
-	s_handler_add(window, hndl);
 }
 
 static void handler_shift_up (s_window_t *window, s_event_t *event, s_handler_t *handler)
@@ -527,6 +515,17 @@ static void handler_set_map (s_window_t *window, s_event_t *event, s_handler_t *
 	draw_boxes(window);
 }
 
+static void handler_set (s_window_t *window, S_KEYCODE_CODE key, void (*func) (s_window_t *, s_event_t *, s_handler_t *))
+{
+	s_handler_t *hndl;
+	s_handler_init(&hndl);
+	hndl->type = KEYBD_HANDLER;
+	hndl->keybd.flag = 0;
+	hndl->keybd.button = key;
+	hndl->keybd.r = func;
+	s_handler_add(window, hndl);
+}
+
 int main (int argc, char *argv[])
 {
 	int x;
@@ -560,7 +559,7 @@ int main (int argc, char *argv[])
 	handler_set(window, S_KEYCODE_RIGHT, handler_right);
 	handler_set(window, S_KEYCODE_UP, handler_up);
 	handler_set(window, S_KEYCODE_DOWN, handler_down);
-	handler_set(window, S_KEYCODE_RETURN, handler_set_map);
+	handler_set(window, S_KEYCODE_SPACE, handler_set_map);
 	handler_set(window, S_KEYCODE_i, handler_set_up);
 	handler_set(window, S_KEYCODE_j, handler_set_left);
 	handler_set(window, S_KEYCODE_k, handler_set_down);
