@@ -53,8 +53,8 @@ typedef enum {
 	SELECT_CHAR
 } CHARS_SELECT;
 
-static int chars_x = 0;
-static int chars_y = 0;
+static int chars_x = 1;
+static int chars_y = 1;
 static int chars_highlight = 0;
 static int chars_select = SELECT_MAP;
 static CHARS chars_type = CHARS_NORMAL;
