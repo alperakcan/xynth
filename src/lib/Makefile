@@ -53,10 +53,6 @@ $(LIBDIR)/$(TARGET_L).a: $(obj)
 	$(AR) $(LIBDIR)/$(TARGET_L).a $(obj)
 	$(RANLIB) $(LIBDIR)/$(TARGET_L).a
 
-$(LIBDIR)/$(TARGET_L).lib: $(obj)
-	$(AR) rcs $(LIBDIR)/$(TARGET_L).lib $(obj)
-	chmod a+r $(LIBDIR)/$(TARGET_L).lib
-
 $(LIBDIR)/$(TARGET_L).so: $(obj)
 	$(CC) -g -shared -Wl,-soname,$(TARGET_L).so.$(VERSION_M) -o $(LIBDIR)/$(TARGET_L).so.$(VERSION) $(obj) $(lib)
 	ln -sf $(TARGET_L).so.$(VERSION) $(LIBDIR)/$(TARGET_L).so.$(VERSION_M)
