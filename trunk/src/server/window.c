@@ -171,14 +171,16 @@ void s_server_putmat (s_window_t *window, int id, s_rect_t *coor, int x, int y, 
 
 int s_server_window_form_mat_verbose (int id)
 {
+	int i = s_server_pri_id(0);
 	if ((id < 0) ||
 	    (server->client[id].type & WINDOW_NOFORM) ||
 	    (s_server_id_pri(id) < 0)) {
 		return -1;
 	}
 	if ((s_server_id_pri(id) == 0) ||
-	    ((server->client[s_server_pri_id(0)].type & WINDOW_TEMP) &&
-	     (s_server_window_is_parent_temp(id, s_server_pri_id(0))))) {
+	    ((i >= 0) &&
+	     (server->client[i].type & WINDOW_TEMP) &&
+	     (s_server_window_is_parent_temp(id, i)))) {
 		return 1;
         }
         return 0;

@@ -422,7 +422,7 @@ int s_server_socket_request (S_SOC_DATA req, int id, ...)
 	if (server->window->running <= 0) {
 		return -1;
 	}
-	if (id == -1) {
+	if (id < 0) {
 		return -1;
 	}
         if (server->client[id].soc < 0) {
