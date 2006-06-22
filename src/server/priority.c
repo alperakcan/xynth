@@ -60,15 +60,17 @@ void s_server_pri_set (S_SURFACE_CHNGF flag, ...)
 	if (flag != SURFACE_REDRAW) {
 		s_server_window_handlers_del_mouse();
 	}
-
-        if (server->client[s_server_pri_id(0)].type & WINDOW_TEMP) {
-		int ptmp = s_server_window_temp_parent(s_server_pri_id(0));
+	
+	i = s_server_pri_id(0);
+	if ((i >= 0) &&
+	    (server->client[i].type & WINDOW_TEMP)) {
+		int ptmp = s_server_window_temp_parent(i);
 		if (flag == SURFACE_FOCUS) {
-			if (s_server_window_is_parent_temp(id, s_server_pri_id(0))) {
+			if (s_server_window_is_parent_temp(id, i)) {
 				s_server_window_close_temps(id);
 			} else {
 				if ((server->client[id].type & WINDOW_TEMP) &&
-				    (server->client[id].pid == s_server_pri_id(0))) {
+				    (server->client[id].pid == i)) {
 				} else {
 					if (ptmp >= 0) {
 						s_server_pri_set(SURFACE_FOCUS, ptmp);
@@ -320,7 +322,6 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 	}
 	
 	dpos = 0;
-	p = s_server_pri_id(0);
 	while (!s_list_eol(diff, dpos)) {
 		rtmp = (s_rect_t *) s_list_get(diff, dpos);
 		for (i = S_CLIENTS_MAX - 1; i >= 0; i--) {

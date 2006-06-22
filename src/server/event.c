@@ -195,7 +195,7 @@ void s_server_event_changed (void)
 	if (server->window->event->type & MOUSE_EVENT) {
 		server->window->event->type &= MOUSE_MASK;
 		if (server->window->event->type & MOUSE_PRESSED) {
-			if ((id != s_server_pri_id(0)) && (id < S_CLIENTS_MAX) && (!server->mh)) {
+			if ((id != s_server_pri_id(0)) && (id >= 0) && (id < S_CLIENTS_MAX) && (!server->mh)) {
 				if (server->window->event->mouse->b == server->window->event->mouse->buttons) {
 					server->ph = 1;
 					s_server_pri_set(SURFACE_FOCUS, id);
