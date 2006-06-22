@@ -1,19 +1,18 @@
-diff -Naur MPlayer-1.0pre7try2/Makefile MPlayer-1.0pre7try2-xynth/Makefile
---- MPlayer-1.0pre7try2/Makefile	2005-04-16 23:18:12.000000000 +0300
-+++ MPlayer-1.0pre7try2-xynth/Makefile	2006-04-15 07:58:15.000000000 +0300
-@@ -30,7 +30,7 @@
- OBJS_MENCODER = $(SRCS_MENCODER:.c=.o)
- OBJS_MPLAYER = $(SRCS_MPLAYER:.c=.o)
+diff -Naur MPlayer-1.0pre8/Makefile MPlayer-1.0pre8-xynth/Makefile
+--- MPlayer-1.0pre8/Makefile	2006-06-11 21:35:47.000000000 +0300
++++ MPlayer-1.0pre8-xynth/Makefile	2006-06-22 17:01:00.000000000 +0300
+@@ -74,6 +74,7 @@
+           $(DIRECTFB_LIB) \
+           $(CACA_LIB) \
+ 	  $(VESA_LIB) \
++	  $(XYNTH_LIB) \
  
--VO_LIBS = $(AA_LIB) $(X_LIB) $(SDL_LIB) $(GGI_LIB) $(MP1E_LIB) $(MLIB_LIB) $(SVGA_LIB) $(DIRECTFB_LIB) $(CACA_LIB)
-+VO_LIBS = $(AA_LIB) $(X_LIB) $(SDL_LIB) $(GGI_LIB) $(MP1E_LIB) $(MLIB_LIB) $(SVGA_LIB) $(DIRECTFB_LIB) $(XYNTH_LIB) $(CACA_LIB)
- AO_LIBS = $(ARTS_LIB) $(ESD_LIB) $(JACK_LIB) $(NAS_LIB) $(SGIAUDIO_LIB) $(POLYP_LIB)
- CODEC_LIBS = $(AV_LIB) $(FAME_LIB) $(MAD_LIB) $(VORBIS_LIB) $(THEORA_LIB) $(FAAD_LIB) $(LIBLZO_LIB) $(DECORE_LIB) $(XVID_LIB) $(DTS_LIB) $(PNG_LIB) $(Z_LIB) $(JPEG_LIB) $(ALSA_LIB) $(XMMS_LIB) $(X264_LIB)
- COMMON_LIBS = libmpcodecs/libmpcodecs.a $(W32_LIB) $(DS_LIB) libaf/libaf.a libmpdemux/libmpdemux.a input/libinput.a postproc/libswscale.a osdep/libosdep.a $(DVDREAD_LIB) $(CODEC_LIBS) $(FREETYPE_LIB) $(TERMCAP_LIB) $(CDPARANOIA_LIB) $(MPLAYER_NETWORK_LIB) $(WIN32_LIB) $(GIF_LIB) $(MACOSX_FRAMEWORKS) $(SMBSUPPORT_LIB) $(FRIBIDI_LIB) $(FONTCONFIG_LIB) $(ENCA_LIB)
-diff -Naur MPlayer-1.0pre7try2/configure MPlayer-1.0pre7try2-xynth/configure
---- MPlayer-1.0pre7try2/configure	2005-04-13 14:46:35.000000000 +0300
-+++ MPlayer-1.0pre7try2-xynth/configure	2006-04-15 07:58:15.000000000 +0300
-@@ -236,6 +236,7 @@
+ ifeq ($(EXTERNAL_VIDIX),yes)
+ VO_LIBS += $(EXTERNAL_VIDIX_LIB)
+diff -Naur MPlayer-1.0pre8/configure MPlayer-1.0pre8-xynth/configure
+--- MPlayer-1.0pre8/configure	2006-06-11 21:35:47.000000000 +0300
++++ MPlayer-1.0pre8-xynth/configure	2006-06-22 17:03:21.000000000 +0300
+@@ -307,6 +307,7 @@
    --enable-dga[=n]       build with DGA [n in {1, 2} ] support [autodetect]
    --enable-vesa          build with VESA support [autodetect]
    --enable-svga          build with SVGAlib support [autodetect]
@@ -21,7 +20,7 @@ diff -Naur MPlayer-1.0pre7try2/configure MPlayer-1.0pre7try2-xynth/configure
    --enable-sdl           build with SDL render support [autodetect]
    --enable-aa            build with AAlib render support [autodetect]
    --enable-caca          build with CACA render support [autodetect]
-@@ -1304,6 +1305,7 @@
+@@ -1578,6 +1579,7 @@
  _aa=auto
  _caca=auto
  _svga=auto
@@ -29,7 +28,7 @@ diff -Naur MPlayer-1.0pre7try2/configure MPlayer-1.0pre7try2-xynth/configure
  _vesa=auto
  _fbdev=auto
  _dvb=auto
-@@ -1470,6 +1472,8 @@
+@@ -1759,6 +1761,8 @@
    --disable-caca)	_caca=no	;;
    --enable-svga)	_svga=yes	;;
    --disable-svga)	_svga=no	;;
@@ -38,7 +37,7 @@ diff -Naur MPlayer-1.0pre7try2/configure MPlayer-1.0pre7try2-xynth/configure
    --enable-vesa)	_vesa=yes	;;
    --disable-vesa)	_vesa=no	;;
    --enable-fbdev)	_fbdev=yes	;;
-@@ -3845,6 +3849,27 @@
+@@ -4192,6 +4196,27 @@
  echores "$_svga"
  
  
@@ -66,15 +65,15 @@ diff -Naur MPlayer-1.0pre7try2/configure MPlayer-1.0pre7try2-xynth/configure
  echocheck "FBDev"
  if test "$_fbdev" = auto ; then
    _fbdev=no
-@@ -6768,6 +6793,7 @@
+@@ -7445,6 +7470,7 @@
  GIF_LIB = $_ld_gif
  SDL_LIB = $_ld_sdl
  SVGA_LIB = $_ld_svga
 +XYNTH_LIB = $_ld_xynth
+ VESA_LIB = $_ld_vesa
  AA_LIB = $_ld_aa
  CACA_INC = $_inc_caca
- CACA_LIB = $_ld_caca
-@@ -7481,6 +7507,7 @@
+@@ -8251,6 +8277,7 @@
  $_def_dvb
  $_def_dvb_in
  $_def_svga
@@ -82,10 +81,10 @@ diff -Naur MPlayer-1.0pre7try2/configure MPlayer-1.0pre7try2-xynth/configure
  $_def_vesa
  $_def_xdpms
  $_def_aa
-diff -Naur MPlayer-1.0pre7try2/libvo/video_out.c MPlayer-1.0pre7try2-xynth/libvo/video_out.c
---- MPlayer-1.0pre7try2/libvo/video_out.c	2004-12-21 22:33:51.000000000 +0200
-+++ MPlayer-1.0pre7try2-xynth/libvo/video_out.c	2006-04-15 07:58:15.000000000 +0300
-@@ -81,6 +81,7 @@
+diff -Naur MPlayer-1.0pre8/libvo/video_out.c MPlayer-1.0pre8-xynth/libvo/video_out.c
+--- MPlayer-1.0pre8/libvo/video_out.c	2006-06-11 21:35:43.000000000 +0300
++++ MPlayer-1.0pre8-xynth/libvo/video_out.c	2006-06-22 16:58:40.000000000 +0300
+@@ -87,6 +87,7 @@
  extern vo_functions_t video_out_fbdev;
  extern vo_functions_t video_out_fbdev2;
  extern vo_functions_t video_out_svga;
@@ -93,7 +92,7 @@ diff -Naur MPlayer-1.0pre7try2/libvo/video_out.c MPlayer-1.0pre7try2-xynth/libvo
  extern vo_functions_t video_out_png;
  extern vo_functions_t video_out_ggi;
  extern vo_functions_t video_out_aa;
-@@ -189,6 +190,9 @@
+@@ -199,6 +200,9 @@
  #ifdef HAVE_SVGALIB
  	&video_out_svga,
  #endif
@@ -103,13 +102,13 @@ diff -Naur MPlayer-1.0pre7try2/libvo/video_out.c MPlayer-1.0pre7try2-xynth/libvo
  #ifdef HAVE_AA
  	&video_out_aa,
  #endif
-diff -Naur MPlayer-1.0pre7try2/libvo/vo_xynth.c MPlayer-1.0pre7try2-xynth/libvo/vo_xynth.c
---- MPlayer-1.0pre7try2/libvo/vo_xynth.c	1970-01-01 02:00:00.000000000 +0200
-+++ MPlayer-1.0pre7try2-xynth/libvo/vo_xynth.c	2006-04-15 07:56:14.000000000 +0300
+diff -Naur MPlayer-1.0pre8/libvo/vo_xynth.c MPlayer-1.0pre8-xynth/libvo/vo_xynth.c
+--- MPlayer-1.0pre8/libvo/vo_xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ MPlayer-1.0pre8-xynth/libvo/vo_xynth.c	2006-06-22 17:07:01.000000000 +0300
 @@ -0,0 +1,495 @@
 +/***************************************************************************
 +    begin                : Thu Jan 22 2004
-+    copyright            : (C) 2004 - 2005 by Alper Akcan
++    copyright            : (C) 2004 - 2006 by Alper Akcan
 +    email                : distchx@yahoo.com
 + ***************************************************************************/
 +
