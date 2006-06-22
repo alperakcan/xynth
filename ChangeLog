@@ -1,4 +1,11 @@
 
+Thu 22 Jun 2006 04:39:43 PM EEST
+	* demo/onscreenkeyboard : some improvements
+	* video/helper/kbd.c : keycode flag fixes for special keys
+	* demo/desktop : added osk
+	* server/event.c, server/priority.c, server/window.c, server/socket.c :
+	possible buffer overflow fix.
+
 Sun 11 Jun 2006 05:10:12 AM EEST
 	* demo/onscreenkeyboard, Makefile.cfg.*, server/single.c : new on screen
 	keyboard demo.
