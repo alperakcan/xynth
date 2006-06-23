@@ -52,7 +52,6 @@ typedef enum {
 	SOC_DATA_FORMDRAW  = 0x7,
 	SOC_DATA_CONFIGURE = 0x8,
 	SOC_DATA_DESKTOP   = 0x9,
-	SOC_DATA_CURSOR    = 0xA
 } S_SOC_DATA;
 
 typedef enum {
@@ -558,6 +557,7 @@ typedef struct s_client_s {
 
 	int resizeable;
 	int alwaysontop;
+	S_MOUSE_CURSOR cursor;
 
 	void (*atevent) (s_window_t *, s_event_t *);
 	void (*atexit) (s_window_t *);
@@ -1499,7 +1499,6 @@ int s_socket_request_new (s_window_t *window, int soc);
 int s_socket_request_display (s_window_t *window, int soc);
 int s_socket_request_configure (s_window_t *window, int soc, S_WINDOW form);
 int s_socket_request_stream (s_window_t *window, int soc, s_rect_t *coor);
-int s_socket_request_cursor (s_window_t *window, int soc, S_MOUSE_CURSOR cursor);
 int s_socket_request_show (s_window_t *window, int soc, int id, int show);
 int s_socket_request_event (s_window_t *window, int soc, s_event_t *event);
 int s_socket_request (s_window_t *window, S_SOC_DATA req, ...);

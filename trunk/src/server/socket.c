@@ -109,6 +109,7 @@ int s_server_socket_listen_configure (int id)
 
 	server->client[id].resizeable = data->resizeable;
 	server->client[id].alwaysontop = data->alwaysontop;
+	server->client[id].cursor = data->cursor;
 
 	if (data->form & WINDOW_NOFORM) {
 		data->rnew.x += (server->client[id].win.x - server->client[id].buf.x);
@@ -187,14 +188,6 @@ int s_server_socket_listen_show (int id)
 		s_server_pri_set(SURFACE_FOCUS, data->id);
 	}
 	s_free(data);
-	return 0;
-}
-
-int s_server_socket_listen_cursor (int id)
-{
-	S_MOUSE_CURSOR cursor;
-	s_socket_recv(server->client[id].soc, &cursor, sizeof(S_MOUSE_CURSOR));
-	s_server_mouse_setcursor(cursor);
 	return 0;
 }
 
@@ -282,8 +275,6 @@ int s_server_socket_listen_parse (int soc)
 			return s_server_socket_listen_stream(id);
 		case SOC_DATA_CLOSE:
 			return s_server_socket_listen_close(id);
-		case SOC_DATA_CURSOR:
-			return s_server_socket_listen_cursor(id);
 		case SOC_DATA_EVENT:
 			return s_server_socket_listen_event(id);
 		case SOC_DATA_DESKTOP:
@@ -466,7 +457,6 @@ err:		debugf(DSER, "Error occured when requesting (%d) from client[%d]. Closing 
 			break;
 		case SOC_DATA_NEW:
 		case SOC_DATA_SHOW:
-		case SOC_DATA_CURSOR:
 		case SOC_DATA_DISPLAY:
 		case SOC_DATA_NOTHING:
 		case SOC_DATA_FORMDRAW:

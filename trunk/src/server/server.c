@@ -253,6 +253,8 @@ int s_server_init (void)
 		server->client[i].soc = -1;
 		server->client[i].type = 0;
 		server->client[i].resizeable = 1;
+		server->client[i].alwaysontop = 0;
+		server->client[i].cursor = MOUSE_CURSOR_ARROW;
 	}
 	config.general.driver = NULL;
 	config.general.mode = NULL;

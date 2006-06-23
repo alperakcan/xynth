@@ -31,9 +31,11 @@ int s_client_init (s_window_t **window)
 	if (s_event_init(&w->event)) { goto err7; }
 
 	w->running = 1;
-        w->client->id = -1;
-        w->client->pri = -1;
-        w->client->resizeable = 1;
+	w->client->id = -1;
+	w->client->pri = -1;
+	w->client->resizeable = 1;
+	w->client->alwaysontop = 0;
+	w->client->cursor = MOUSE_CURSOR_ARROW;
 	*window = w;
 
         if (s_socket_request(w, SOC_DATA_DISPLAY)) { goto err8; }
