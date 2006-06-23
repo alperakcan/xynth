@@ -17,7 +17,11 @@
 
 void s_window_set_cursor (s_window_t *window, S_MOUSE_CURSOR cursor)
 {
-	s_socket_request(window, SOC_DATA_CURSOR, cursor);
+	if ((cursor >= 0) &&
+	    (cursor < MOUSE_CURSOR_MAX)) {
+		window->client->cursor = cursor;
+		s_socket_request(window, SOC_DATA_CONFIGURE, WINDOW_NOFORM);
+	}
 }
 
 void s_window_set_title (s_window_t *window, char *fmt, ...)

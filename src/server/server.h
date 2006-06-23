@@ -73,6 +73,7 @@ typedef struct s_clients_s {
 	int pid; /* parent id */
 	int resizeable;
 	int alwaysontop;
+	S_MOUSE_CURSOR cursor;
 	S_WINDOW type;
 	s_rect_t buf;
 	s_rect_t win;
@@ -248,7 +249,6 @@ int s_server_socket_listen_configure (int id);
 int s_server_socket_listen_stream (int id);
 int s_server_socket_listen_close (int id);
 int s_server_socket_listen_show (int id);
-int s_server_socket_listen_cursor (int id);
 int s_server_socket_listen_event (int id);
 int s_server_socket_listen_window_close (int soc);
 int s_server_socket_listen_parse (int soc);

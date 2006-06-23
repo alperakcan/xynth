@@ -90,8 +90,9 @@ void s_server_pri_set (S_SURFACE_CHNGF flag, ...)
 			if (server->mh) {
 				server->mh = 0;
 			}
-			if (server->window->event->mouse->cursor != MOUSE_CURSOR_NONE) {
-				s_server_mouse_setcursor(MOUSE_CURSOR_ARROW);
+			i = s_server_pri_id(0);
+			if (i >= 0) {
+				s_server_mouse_setcursor(server->client[i].cursor);
 			}
 			break;
 		case SURFACE_REDRAW:
@@ -219,12 +220,12 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 	}
 	
 #if 0
-//	if ((flag == SURFACE_FOCUS) ||
-//	    (flag == SURFACE_REFRESH)||
-//	    (flag == SURFACE_REDRAW) ||
-//	    (flag == SURFACE_CLOSE) ||
-//	    (flag == SURFACE_CHANGED)) {
-	if (flag == SURFACE_REDRAW) {
+	if ((flag == SURFACE_FOCUS) ||
+	    (flag == SURFACE_REFRESH)||
+	    (flag == SURFACE_REDRAW) ||
+	    (flag == SURFACE_CLOSE) ||
+	    (flag == SURFACE_CHANGED)) {
+//	if (flag == SURFACE_REDRAW) {
 		if (flag == SURFACE_CHANGED) {
 			debugf(DSER, "SURFACE_CHANGED %d %d %d %d -> %d %d %d %d", c0->x, c0->y, c0->w, c0->h,
 										   c1->x, c1->y, c1->w, c1->h);

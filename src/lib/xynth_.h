@@ -186,11 +186,12 @@ typedef struct s_soc_data_event_s {
 } s_soc_data_event_t;
 
 typedef struct s_soc_data_configure_s {
-	/* 284 bytes */
+	/* 288 bytes */
 	S_WINDOW form;
 	s_rect_t rnew;
 	int resizeable;
 	int alwaysontop;
+	S_MOUSE_CURSOR cursor;
 	char title[S_TITLE_MAX];
 } s_soc_data_configure_t;
 

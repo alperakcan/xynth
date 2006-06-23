@@ -552,7 +552,6 @@ void s_server_window_hide_id (int id)
 void s_server_window_close (s_window_t *window)
 {
 	int id = s_server_pri_id(0);
-
 	if (id < 0) {
 		return;
 	}

@@ -83,6 +83,7 @@ int s_socket_request_configure (s_window_t *window, int soc, S_WINDOW form)
 	data->rnew = *(window->surface->buf);
 	data->resizeable = window->client->resizeable;
 	data->alwaysontop = window->client->alwaysontop;
+	data->cursor = window->client->cursor;
 	if (window->client->title != NULL) {
 		strncpy(data->title, window->client->title, S_TITLE_MAX);
 	}
@@ -130,12 +131,6 @@ int s_socket_request_stream (s_window_t *window, int soc, s_rect_t *coor)
 	return 0;
 }
 
-int s_socket_request_cursor (s_window_t *window, int soc, S_MOUSE_CURSOR cursor)
-{
-	s_socket_send(soc, &cursor, sizeof(S_MOUSE_CURSOR));
-	return 0;
-}
-
 int s_socket_request_show (s_window_t *window, int soc, int id, int show)
 {
 	s_soc_data_show_t *data;
@@ -177,7 +172,6 @@ int s_socket_request (s_window_t *window, S_SOC_DATA req, ...)
 	s_rect_t *coor;
 	s_event_t *event;
 	struct pollfd pollfd;
-	S_MOUSE_CURSOR cursor;
 
 again:	if (window->running <= 0) {
 		return -1;
@@ -226,12 +220,6 @@ again:	if (window->running <= 0) {
 			va_start(ap, req);
 			coor = (s_rect_t *) va_arg(ap, s_rect_t *);
 			ret = s_socket_request_stream(window, pollfd.fd, coor);
-			va_end(ap);
-			break;
-		case SOC_DATA_CURSOR:
-			va_start(ap, req);
-			cursor = (S_MOUSE_CURSOR) va_arg(ap, S_MOUSE_CURSOR);
-			ret = s_socket_request_cursor(window, pollfd.fd, cursor);
 			va_end(ap);
 			break;
 		case SOC_DATA_SHOW:
@@ -395,7 +383,6 @@ int s_socket_listen_parse (s_window_t *window, int soc)
 			break;
 		case SOC_DATA_NEW:
 		case SOC_DATA_SHOW:
-		case SOC_DATA_CURSOR:
 		case SOC_DATA_NOTHING:
 		case SOC_DATA_DISPLAY:
 		case SOC_DATA_FORMDRAW:
