@@ -258,7 +258,9 @@ int s_server_socket_listen_parse (int soc)
 		goto end;
 	}
 
-	s_socket_recv(soc, &soc_data, sizeof(soc_data));
+	if (s_socket_api_recv(soc, &soc_data, sizeof(soc_data)) != sizeof(soc_data)) {
+		return -1;
+	}
 	switch (soc_data) {
 		case SOC_DATA_NEW:
 			return s_server_socket_listen_new(id);
@@ -438,7 +440,9 @@ err:		debugf(DSER, "Error occured when requesting (%d) from client[%d]. Closing 
 		return -1;
 	}
 
-	s_socket_send(server->client[id].soc, &req, sizeof(req));
+	if (s_socket_api_send(server->client[id].soc, &req, sizeof(req)) != sizeof(req)) {
+		return -1;
+	}
 	switch (req) {
 		case SOC_DATA_EVENT:
 			ret = s_server_socket_request_event(id);
