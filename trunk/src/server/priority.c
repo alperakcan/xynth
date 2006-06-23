@@ -93,6 +93,8 @@ void s_server_pri_set (S_SURFACE_CHNGF flag, ...)
 			i = s_server_pri_id(0);
 			if (i >= 0) {
 				s_server_mouse_setcursor(server->client[i].cursor);
+			} else {
+				s_server_mouse_setcursor(MOUSE_CURSOR_ARROW);
 			}
 			break;
 		case SURFACE_REDRAW:
