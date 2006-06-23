@@ -24,12 +24,17 @@
 	if (id == server->cursor.xyid) {\
 		s_server_mouse_setcursor(a);\
 	} else {\
-		s_server_mouse_setcursor(MOUSE_CURSOR_ARROW);\
+		s_server_mouse_setcursor(server->client[id].cursor);\
 	}
 
 void s_server_window_btn_resize_oh (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
-	s_server_mouse_setcursor(MOUSE_CURSOR_ARROW);
+	int id = s_server_pri_id(0);
+	if (id < 0) {
+		s_server_mouse_setcursor(MOUSE_CURSOR_ARROW);
+	} else {
+		s_server_mouse_setcursor(server->client[id].cursor);
+	}
 }
 void s_server_window_btn_resize_u_o (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
