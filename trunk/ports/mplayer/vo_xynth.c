@@ -41,7 +41,7 @@ static void handler_set (void);
 static void atexit_handler (s_window_t *w);
 static void atexpose_handler (s_window_t *w);
 static uint32_t draw_image (mp_image_t *mpi);
-static uint32_t query_format(uint32_t format);
+static int query_format(uint32_t format);
 static void draw_alpha(int x0, int y0, int w, int h, unsigned char *src, unsigned char *srca, int stride);
 
 static int image_x;
@@ -68,7 +68,7 @@ static vo_info_t info = {
 
 LIBVO_EXTERN(xynth);
 
-static uint32_t preinit(const char *arg)
+static int preinit(const char *arg)
 {
 	getch2_disable();
 	
@@ -82,7 +82,7 @@ static uint32_t preinit(const char *arg)
 	return 0;
 }
 
-static uint32_t control (uint32_t request, void *data, ...)
+static int control (uint32_t request, void *data, ...)
 {
 	switch (request) {
 		case VOCTRL_QUERY_FORMAT:
@@ -119,9 +119,9 @@ static uint32_t control (uint32_t request, void *data, ...)
 	return VO_NOTIMPL;
 }
 
-static uint32_t config (uint32_t width, uint32_t height, uint32_t d_width,
-                        uint32_t d_height, uint32_t flags, char *title,
-                        uint32_t format)
+static int config (uint32_t width, uint32_t height, uint32_t d_width,
+                   uint32_t d_height, uint32_t flags, char *title,
+                   uint32_t format)
 {
         int x;
         int y;
@@ -198,7 +198,7 @@ static uint32_t config (uint32_t width, uint32_t height, uint32_t d_width,
 	return 0;
 }
 
-static uint32_t draw_slice (uint8_t *src[], int stride[], int w, int h, int x, int y)
+static int draw_slice (uint8_t *src[], int stride[], int w, int h, int x, int y)
 {
 	int src_stride[3];
 	int dst_stride[3];
@@ -245,7 +245,7 @@ static uint32_t draw_slice (uint8_t *src[], int stride[], int w, int h, int x, i
 	return VO_TRUE;
 }
 
-static uint32_t draw_frame (uint8_t *src[])
+static int draw_frame (uint8_t *src[])
 {
 	assert(0);
 	UNUSED(src);
@@ -285,7 +285,7 @@ static void uninit (void)
 
 /*****************************************************************************/
 
-static uint32_t query_format (uint32_t format)
+static int query_format (uint32_t format)
 {
 	int32_t req_bpp;
 	int32_t flags;
