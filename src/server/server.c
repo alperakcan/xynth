@@ -320,7 +320,6 @@ int s_server_init (void)
 #endif
         server->window->surface->matrix = (unsigned char *) addr;
 
-
 	server->window->surface->mode = SURFACE_REAL;
 	server->mode = mode;
 
