@@ -408,6 +408,28 @@ int s_copybuffer (char *sb, int sbitspp, char **db, int dbitspp, int w, int h)
 	return 0;
 }
 
+void s_rotatebox (s_surface_t *surface, int sw, int sh, void *sbuf, int *dw, int *dh, void *dbuf)
+{
+	switch (surface->bytesperpixel) {
+		case 2:
+			/* 90 degrees */
+			{
+				int x;
+				int y;
+				unsigned short *stmp = (unsigned short *) sbuf;
+				unsigned short *dtmp = (unsigned short *) dbuf;
+				*dw = sh;
+				*dh = sw;
+				for (y = 0; y < sh; y++) {
+					for (x = 0; x < sw; x++) {
+						dtmp[((x + 1) * sh) - (y + 1)] = stmp[(y * sw) + x];
+					}
+				}
+			}
+			break;
+	}
+}
+
 void s_scalebox (s_surface_t *surface, int w1, int h1, void *_dp1, int w2, int h2, void *_dp2)
 {
 	unsigned char *dp1 = _dp1;
