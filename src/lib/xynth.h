@@ -844,7 +844,7 @@ void s_putboxpartalpha (s_surface_t *surface, int x, int y, int w, int h, int bw
 void s_copybox (s_surface_t *surface, int x1, int y1, int w, int h, int x2, int y2);
 void s_getsurfacevirtual (s_surface_t *s, int w, int h, int bitspp, char *vbuf);
 int s_copybuffer (char *sb, int sbitspp, char **db, int dbitspp, int w, int h);
-void s_rotatebox (s_surface_t *surface, int sw, int sh, void *sbuf, int *dw, int *dh, void *dbuf, int rotate);
+void s_rotatebox (s_surface_t *surface, s_rect_t *srect, void *sbuf, s_rect_t *drect, void *dbuf, int rotate);
 void s_scalebox (s_surface_t *surface, int w1, int h1, void *_dp1, int w2, int h2, void *_dp2);
 
 /* handler.c */
