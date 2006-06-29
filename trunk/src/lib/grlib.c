@@ -433,6 +433,11 @@ void s_rotatebox (s_surface_t *surface, int sw, int sh, void *sbuf, int *dw, int
 					case -180:
 						*dw = sw;
 						*dh = sh;
+						for (y = 0; y < sh; y++) {
+							for (x = 0; x < sw; x++) {
+								dtmp[((sh - 1) - y) * sw + ((sw - 1) - x)] = stmp[(y * sw) + x];
+							}
+						}
 						break;
 					case 270:
 					case -90:
