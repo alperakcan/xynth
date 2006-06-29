@@ -101,6 +101,7 @@ typedef struct s_server_conf_s {
 	struct {
 		char *driver;
 		char *mode;
+		int rotate;
 	} general;
 	struct {
 		char *type;

@@ -147,6 +147,8 @@ int s_server_cfg (s_server_conf_t *config)
 					config->general.driver = strdup(var->value);
 				} else if (strcasecmp(var->name, "mode") == 0) {
 					config->general.mode = strdup(var->value);
+				} else if (strcasecmp(var->name, "rotate") == 0) {
+					config->general.rotate = atoi(var->value);
 				}
 			} else if (strcasecmp(cat->name, "mouse") == 0) {
 				if (strcasecmp(var->name, "type") == 0) {
@@ -256,16 +258,13 @@ int s_server_init (void)
 		server->client[i].alwaysontop = 0;
 		server->client[i].cursor = MOUSE_CURSOR_ARROW;
 	}
-	config.general.driver = NULL;
-	config.general.mode = NULL;
-	config.mouse.type = NULL;
-	config.mouse.device = NULL;
-
+	
         server->window = (s_window_t *) s_calloc(1, sizeof(s_window_t));
         server->window->surface = (s_surface_t *) s_calloc(1, sizeof(s_surface_t));
 	server->window->surface->buf = (s_rect_t *) s_calloc(1, sizeof(s_rect_t));
 	server->window->surface->win = (s_rect_t *) s_calloc(1, sizeof(s_rect_t));
 
+	memset(&config, 0, sizeof(s_server_conf_t));
         if (s_server_cfg(&config)) {
 		debugf(DSER, "Error while loading configuration file");
 		goto err0;

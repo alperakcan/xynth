@@ -74,6 +74,8 @@ int s_video_sdl_server_init (s_server_conf_t *cfg)
 	
 	priv = (s_video_sdl_data_t *) s_malloc(sizeof(s_video_sdl_data_t));
 	server->driver->driver_data = (void *) priv;
+	
+	priv->rotate = cfg->general.rotate;
 
         priv->mouse_fd[0] = -1;
         priv->mouse_fd[1] = -1;
@@ -95,6 +97,13 @@ int s_video_sdl_server_init (s_server_conf_t *cfg)
 	} else {
 		server->window->surface->width = priv->screen->w;
 		server->window->surface->height = priv->screen->h;
+		priv->orig_w = priv->screen->w;
+		priv->orig_h = priv->screen->h;
+		if (priv->rotate == 90 ||
+		    priv->rotate == 270) {
+			server->window->surface->width = priv->screen->h;
+			server->window->surface->height = priv->screen->w;
+		}
 		server->window->surface->bytesperpixel = priv->screen->format->BytesPerPixel;
 		server->window->surface->bitsperpixel = priv->screen->format->BitsPerPixel;
                 server->window->surface->blueoffset = 0;
@@ -167,6 +176,10 @@ int s_video_sdl_server_init (s_server_conf_t *cfg)
 		server->window->surface->vbuf = (char *) addr;
 		server->window->surface->linear_buf = (char *) addr;
 
+		if (priv->rotate) {
+			priv->screen->pixels = (void *) s_malloc(sizeof(char) * server->window->surface->width * server->window->surface->height * server->window->surface->bytesperpixel);
+		}
+
 		server->window->surface->need_expose = SURFACE_NEEDEXPOSE;
 
 		SDL_WM_SetCaption("Xynth Windowing system (video driver = sdl)", NULL);
@@ -181,13 +194,44 @@ err0:	s_free(priv);
 
 void s_video_sdl_server_surface_update (s_rect_t *coor)
 {
-	s_rect_t inter;
-	s_rect_t clip = {0, 0, server->window->surface->width, server->window->surface->height};
 	s_video_sdl_data_t *priv = server->driver->driver_data;
-	if (s_rect_intersect(&clip, coor, &inter)) {
-		return;
+	
+	if (priv->rotate == 0) {
+		s_rect_t inter;
+		s_rect_t clip = {0, 0, server->window->surface->width, server->window->surface->height};
+		if (s_rect_intersect(&clip, coor, &inter)) {
+			return;
+		}
+		SDL_UpdateRect(priv->screen, inter.x, inter.y, inter.w, inter.h);
+	} else if (priv->rotate) {
+		char *src;
+		char *dst;
+		s_rect_t clip;
+		s_rect_t inter;
+		s_rect_t rotate;
+		s_surface_t surface;
+		
+		clip.x = 0;
+		clip.y = 0;
+		clip.w = server->window->surface->width;
+		clip.h = server->window->surface->height;
+		if (s_rect_intersect(&clip, coor, &inter)) {
+			return;
+		}
+
+		src = s_malloc(inter.w * inter.h * server->window->surface->bytesperpixel);
+		dst = s_malloc(inter.w * inter.h * server->window->surface->bytesperpixel);
+
+		s_getbox(server->window->surface, inter.x, inter.y, inter.w, inter.h, src);
+		s_getsurfacevirtual(&surface, priv->orig_w, priv->orig_h,
+					      server->window->surface->bitsperpixel, priv->screen->pixels);
+		s_rotatebox(&surface, &inter, src, &rotate, dst, priv->rotate);
+		s_putbox(&surface, rotate.x, rotate.y, rotate.w, rotate.h, dst);
+		SDL_UpdateRect(priv->screen, rotate.x, rotate.y, rotate.w, rotate.h);
+
+		s_free(src);
+		s_free(dst);
 	}
-	SDL_UpdateRect(priv->screen, inter.x, inter.y, inter.w, inter.h);
 }
 
 void s_video_sdl_server_fullscreen (void)
