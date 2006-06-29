@@ -408,56 +408,58 @@ int s_copybuffer (char *sb, int sbitspp, char **db, int dbitspp, int w, int h)
 	return 0;
 }
 
+#define s_rotatebox_macro(type, angle) {\
+	int x;\
+	int y;\
+	unsigned type *stmp = (unsigned type *) sbuf;\
+	unsigned type *dtmp = (unsigned type *) dbuf;\
+	switch (angle) {\
+		case 90:\
+		case -270:\
+			drect->x = surface->width - srect->y - srect->h;\
+			drect->y = srect->x;\
+			drect->w = srect->h;\
+			drect->h = srect->w;\
+			for (y = 0; y < srect->h; y++) {\
+				for (x = 0; x < srect->w; x++) {\
+					dtmp[((x + 1) * srect->h) - (y + 1)] = stmp[(y * srect->w) + x];\
+				}\
+			}\
+			break;\
+		case 180:\
+		case -180:\
+			drect->x = surface->width - srect->x - srect->w;\
+			drect->y = surface->height - srect->y - srect->h;\
+			drect->w = srect->w;\
+			drect->h = srect->h;\
+			for (y = 0; y < srect->h; y++) {\
+				for (x = 0; x < srect->w; x++) {\
+					dtmp[((srect->h - 1) - y) * srect->w + ((srect->w - 1) - x)] = stmp[(y * srect->w) + x];\
+				}\
+			}\
+			break;\
+		case 270:\
+		case -90:\
+			drect->x = srect->y;\
+			drect->y = surface->height - srect->x - srect->w;\
+			drect->w = srect->h;\
+			drect->h = srect->w;\
+			for (y = 0; y < srect->h; y++) {\
+				for (x = 0; x < srect->w; x++) {\
+					dtmp[((srect->w - 1) - x) * srect->h + y] = stmp[(y * srect->w) + x];\
+				}\
+			}\
+			break;\
+	}\
+}
+
 void s_rotatebox (s_surface_t *surface, s_rect_t *srect, void *sbuf, s_rect_t *drect, void *dbuf, int rotate)
 {
-	int x;
-	int y;
-	rotate %= 360;
+	int atmp = rotate % 360;
 	switch (surface->bytesperpixel) {
-		case 2:
-			{
-				unsigned short *stmp = (unsigned short *) sbuf;
-				unsigned short *dtmp = (unsigned short *) dbuf;
-				switch (rotate) {
-					case 90:
-					case -270:
-						drect->x = surface->width - srect->y - srect->h;
-						drect->y = srect->x;
-						drect->w = srect->h;
-						drect->h = srect->w;
-						for (y = 0; y < srect->h; y++) {
-							for (x = 0; x < srect->w; x++) {
-								dtmp[((x + 1) * srect->h) - (y + 1)] = stmp[(y * srect->w) + x];
-							}
-						}
-						break;
-					case 180:
-					case -180:
-						drect->x = surface->width - srect->x - srect->w;
-						drect->y = surface->height - srect->y - srect->h;
-						drect->w = srect->w;
-						drect->h = srect->h;
-						for (y = 0; y < srect->h; y++) {
-							for (x = 0; x < srect->w; x++) {
-								dtmp[((srect->h - 1) - y) * srect->w + ((srect->w - 1) - x)] = stmp[(y * srect->w) + x];
-							}
-						}
-						break;
-					case 270:
-					case -90:
-						drect->x = srect->y;
-						drect->y = surface->height - srect->x - srect->w;
-						drect->w = srect->h;
-						drect->h = srect->w;
-						for (y = 0; y < srect->h; y++) {
-							for (x = 0; x < srect->w; x++) {
-								dtmp[((srect->w - 1) - x) * srect->h + y] = stmp[(y * srect->w) + x];
-							}
-						}
-						break;
-				}
-			}
-			break;
+		case 1: s_rotatebox_macro(char, atmp); break;
+		case 2: s_rotatebox_macro(short, atmp); break;
+		case 4: s_rotatebox_macro(int, atmp); break;
 	}
 }
 
