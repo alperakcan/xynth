@@ -24,9 +24,6 @@ typedef struct s_video_sdl_data_s {
 	S_KEYCODE_CODE keymap[SDLK_LAST];
 	int rx[2];
 	int ry[2];
-	int rotate;
-	int orig_w;
-	int orig_h;
 } s_video_sdl_data_t;
 
 int SDL_PrivateQuit(void);

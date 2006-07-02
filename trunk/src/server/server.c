@@ -289,6 +289,39 @@ int s_server_init (void)
 		goto err0;
 	}
 
+	if (config.general.rotate) {
+		server->rotate = config.general.rotate;
+		server->origin_w = server->window->surface->width;
+		server->origin_h = server->window->surface->height;
+		server->origin_vbuf = server->window->surface->linear_buf;
+		if (server->rotate == 90 ||
+		    server->rotate == -90 ||
+		    server->rotate == 270 ||
+		    server->rotate == -270) {
+			server->window->surface->width = server->origin_h;
+			server->window->surface->height = server->origin_w;
+		}
+		server->window->surface->need_expose = SURFACE_NEEDEXPOSE;
+#if defined(SINGLE_APP)
+		addr = (void *) s_malloc(sizeof(char) * server->window->surface->width * server->window->surface->height * server->window->surface->bytesperpixel);
+#else
+		if ((server->rotate_shm_id = shmget(IPC_PRIVATE, sizeof(char) * server->window->surface->width * server->window->surface->height * server->window->surface->bytesperpixel, IPC_CREAT | 0644)) < 0) {
+			debugf(DSER | DSYS, "Can not get id for shared memory");
+			goto err0;
+		}
+		if ((addr = (void *) shmat(server->rotate_shm_id, NULL, 0)) < 0) {
+			debugf(DSER | DSYS, "Can not attach the shared memory");
+			goto err0;
+		}
+		server->window->surface->shm_sid = server->rotate_shm_id;
+                shmctl(server->rotate_shm_id, IPC_RMID, 0);
+#endif
+		server->window->surface->vbuf = addr;
+		server->window->surface->linear_buf = addr;
+	} else {
+		server->rotate = 0;
+	}
+
         server->window->surface->buf->x = 0;
         server->window->surface->buf->y = 0;
 	server->window->surface->buf->w = server->window->surface->width;
@@ -429,11 +462,43 @@ void s_server_fullscreen (void)
 
 void s_server_surface_update (s_rect_t *coor)
 {
-	s_rect_t clip;
-	if (server->driver->server_surface_update != NULL) {
-		if (s_rect_clip_virtual(server->window->surface, coor->x, coor->y, coor->w, coor->h, &clip)) {
+	if (server->rotate) {
+		char *src;
+		char *dst;
+		s_rect_t clip;
+		s_rect_t inter;
+		s_rect_t rotate;
+		s_surface_t surface;
+
+		clip.x = 0;
+		clip.y = 0;
+		clip.w = server->window->surface->width;
+		clip.h = server->window->surface->height;
+		if (s_rect_intersect(&clip, coor, &inter)) {
 			return;
 		}
-		server->driver->server_surface_update(&clip);
+
+		src = s_malloc(inter.w * inter.h * server->window->surface->bytesperpixel);
+		dst = s_malloc(inter.w * inter.h * server->window->surface->bytesperpixel);
+
+		s_getbox(server->window->surface, inter.x, inter.y, inter.w, inter.h, src);
+		s_getsurfacevirtual(&surface, server->origin_w, server->origin_h,
+					      server->window->surface->bitsperpixel, server->origin_vbuf);
+		s_rotatebox(&surface, &inter, src, &rotate, dst, server->rotate);
+		s_putbox(&surface, rotate.x, rotate.y, rotate.w, rotate.h, dst);
+		if (server->driver->server_surface_update != NULL) {
+			server->driver->server_surface_update(&rotate);
+		}
+
+		s_free(src);
+		s_free(dst);
+	} else {
+		s_rect_t clip;
+		if (server->driver->server_surface_update != NULL) {
+			if (s_rect_clip_virtual(server->window->surface, coor->x, coor->y, coor->w, coor->h, &clip)) {
+				return;
+			}
+			server->driver->server_surface_update(&clip);
+		}
 	}
 }

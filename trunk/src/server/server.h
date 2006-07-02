@@ -175,6 +175,11 @@ typedef struct s_server_s {
 	s_handler_t *whndl[20]; /* window move & resize handlers        */
 	int mh;                 /* mouse hint (search for server->mh)   */
 	int ph;			/* priority hint (search for server->ph */
+	int rotate;
+	int origin_w;
+	int origin_h;
+	char *origin_vbuf;
+	int rotate_shm_id;
 } s_server_t;
 
 s_server_t *server;

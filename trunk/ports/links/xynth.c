@@ -354,8 +354,9 @@ static unsigned char * lxynth_init_driver (unsigned char *param, unsigned char *
 
 	s_client_init(&(lxynth_root->window));
 	s_window_new(lxynth_root->window, WINDOW_MAIN, NULL);
-	s_window_set_coor(lxynth_root->window, WINDOW_NOFORM, 50, 50, 600, 500);
-
+	s_window_set_coor(lxynth_root->window, WINDOW_NOFORM, 50, 50,
+	                                                      (lxynth_root->window->surface->width * 2) / 3,
+	                                                      (lxynth_root->window->surface->height * 2) / 3);
         bpp = lxynth_root->window->surface->bitsperpixel;
         Bpp = lxynth_root->window->surface->bytesperpixel;
 
