@@ -1,4 +1,16 @@
 
+Sun 02 Jul 2006 06:30:56 PM EEST
+	* ports/mplayer: patch upgrade for MPlayer-1.0pre8
+	* : more work on socket data transfer, removed SOC_DATA_CURSOR, cursor
+	changes will be handled in SOC_DATA_CONFIGURE.
+	* : every window has its own cursor attributes, switching among clients
+	will switch the cursor if needed.
+	* helper/modes.c : added mode 240x320
+	* lib/grlib.c : s_rotatebox ;) rotates a box with the degrees of 90,
+	180, 270, -90, -180, -270
+	* server/server.c : rotating the screen is possible with xynth.conf from
+	now on.
+
 Thu 22 Jun 2006 04:39:43 PM EEST
 	* demo/onscreenkeyboard : some improvements
 	* video/helper/kbd.c : keycode flag fixes for special keys
