@@ -24,8 +24,18 @@ int SObject::objectRGBColor (int r, int g, int b)
 void SObject::objectFillBox (int x, int y, int w, int h, int color)
 {
 	s_rect_t coor;
-	s_rect_t rect = (s_rect_t) {x, y, w, h};
-	s_rect_t clip = (s_rect_t) {0, 0, objectRectBuffer.rectW, objectRectBuffer.rectH};
+	s_rect_t rect;
+	s_rect_t clip;
+
+	rect.x = x;
+	rect.y = y;
+	rect.w = w;
+	rect.h = h;
+	clip.x = 0;
+	clip.y = 0;
+	clip.w = objectRectBuffer.rectW;
+	clip.h = objectRectBuffer.rectH;
+
 	if (s_rect_intersect(&rect, &clip, &coor) == 0) {
 		s_fillbox(objectWindow->surface, objectRectBuffer.rectX + coor.x, objectRectBuffer.rectY + coor.y, coor.w, coor.h, color);
 	}
@@ -101,8 +111,17 @@ void SObject::draw (void)
 void SObject::expose (int x, int y, int w, int h)
 {
 	s_rect_t coor;
-	s_rect_t rect = (s_rect_t) {x, y, w, h};
-	s_rect_t clip = (s_rect_t) {0, 0, objectRectBuffer.rectW, objectRectBuffer.rectH};
+	s_rect_t rect;
+	s_rect_t clip;
+
+	rect.x = x;
+	rect.y = y;
+	rect.w = w;
+	rect.h = h;
+	clip.x = 0;
+	clip.y = 0;
+	clip.w = objectRectBuffer.rectW;
+	clip.h = objectRectBuffer.rectH;
 
 	if ((objectWindow->surface->mode & SURFACE_REAL) &&
 	    (s_rect_intersect(&rect, &clip, &coor) == 0)) {
