@@ -163,6 +163,10 @@ int s_server_cfg (s_server_conf_t *config)
 						config->mouse.scale = 1;
 					}
 				}
+			} else if (strcasecmp(cat->name, "keyboard") == 0) {
+				if (strcasecmp(var->name, "keyboard") == 0) {
+					config->keyboard.keyboard = strdup(var->value);
+				}
 			} else if (strcasecmp(cat->name, "monitor") == 0) {
 				char *ptr;
 				char *nptr;
@@ -371,6 +375,7 @@ int s_server_init (void)
 	s_free(config.general.mode);
 	s_free(config.mouse.type);
 	s_free(config.mouse.device);
+	s_free(config.keyboard.keyboard);
 
 	server->window->running = 1;
 
@@ -380,6 +385,7 @@ err0:	s_free(config.general.driver);
 	s_free(config.general.mode);
 	s_free(config.mouse.type);
 	s_free(config.mouse.device);
+	s_free(config.keyboard.keyboard);
 	s_free(server->window->surface->buf);
 	s_free(server->window->surface->win);
 	s_free(server->window->surface);
