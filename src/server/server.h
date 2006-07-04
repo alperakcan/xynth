@@ -110,6 +110,9 @@ typedef struct s_server_conf_s {
 		int scale;
 	} mouse;
 	struct {
+		char *keyboard;
+	} keyboard;
+	struct {
 		float horizsync_min;
 		float horizsync_max;
 		float vertrefresh_min;
