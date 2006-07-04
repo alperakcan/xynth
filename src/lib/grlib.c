@@ -422,7 +422,7 @@ int s_copybuffer (char *sb, int sbitspp, char **db, int dbitspp, int w, int h)
 			drect->h = srect->w;\
 			for (y = 0; y < srect->h; y++) {\
 				for (x = 0; x < srect->w; x++) {\
-					dtmp[((x + 1) * srect->h) - (y + 1)] = stmp[(y * srect->w) + x];\
+					dtmp[(x * srect->h) + srect->h - 1 - y] = stmp[(y * srect->w) + x];\
 				}\
 			}\
 			break;\
