@@ -46,7 +46,6 @@ void fb_setpalette (int index, int red, int green, int blue)
 	ioctl(fb.fd, FBIOPUTCMAP, &cmap);
 }
 
-
 void fb_getvaro (void)
 {
 	if (ioctl(fb.fd, FBIOGET_VSCREENINFO, &fb.v_scro) == -1) {
