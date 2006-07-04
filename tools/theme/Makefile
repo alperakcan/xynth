@@ -23,4 +23,3 @@ server.h:
 
 clean:
 	rm -rf $(obj) *.h $(THEME_EXEC)
-
