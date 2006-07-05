@@ -67,10 +67,10 @@ typedef struct osk_char_s {
 } osk_char_t;
 
 typedef struct image_bin_s {
-	 unsigned int width;
-	 unsigned int height;
-	 unsigned int bytes_per_pixel;
-	 unsigned char *pixel_data;
+	unsigned int width;
+	unsigned int height;
+	unsigned int bytes_per_pixel;
+	char *pixel_data;
 } image_bin_t;
 
 static image_bin_t image_gray = {
