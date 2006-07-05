@@ -103,7 +103,9 @@ err:	return -1;
 
 static int ThreadEntry (SceSize args, void *argp)
 {
-	s_thread_run(*(void **) argp);
+	s_thread_arg_t *targs;
+	targs = (s_thread_arg_t *) (*(void **) argp);
+	targs->r(*(void **) argp);
 	return 0;
 }
 
@@ -111,7 +113,7 @@ struct s_thread_s {
 	SceUID tid;
 };
 
-static int s_thread_pspdev_thread_create (s_thread_t *tid, void * (*f) (void *), void *farg)
+static int s_thread_pspdev_thread_create (s_thread_t *tid, s_thread_arg_t *targs)
 {
 	int priority = 32;
 	SceKernelThreadInfo status;
@@ -124,7 +126,7 @@ static int s_thread_pspdev_thread_create (s_thread_t *tid, void * (*f) (void *),
 	if (tid->tid < 0) {
 		goto err;
 	}
-	sceKernelStartThread(tid->tid, 4, &farg);
+	sceKernelStartThread(tid->tid, 4, &targs);
 	return 0;
 err:	return -1;
 }

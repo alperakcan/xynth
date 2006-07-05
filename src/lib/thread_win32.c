@@ -103,15 +103,17 @@ struct s_thread_s {
 
 static DWORD WINAPI ThreadEntry (LPVOID argp)
 {
-	s_thread_run(argp);
+	s_thread_arg_t *targs;
+	targs = (s_thread_arg_t *) argp;
+	trags->r(argp);
 	return 0;
 }
 
-static int s_thread_win32_thread_create (s_thread_t *tid, void * (*f) (void *), void *farg)
+static int s_thread_win32_thread_create (s_thread_t *tid, s_thread_arg_t *targs)
 {
 	DWORD threadnum;
     
-	tid->tid = CreateThread(NULL, 0, ThreadEntry, farg, 0, &threadnum);
+	tid->tid = CreateThread(NULL, 0, ThreadEntry, targs, 0, &threadnum);
 	if (tid->tid == NULL) {
 		goto err;
 	}

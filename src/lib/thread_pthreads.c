@@ -207,17 +207,17 @@ struct s_thread_s {
 	pthread_t tid;
 };
 
-static int s_thread_pthreads_thread_create (s_thread_t *tid, void * (*f) (void *), void *farg)
+static int s_thread_pthreads_thread_create (s_thread_t *tid, s_thread_arg_t *targs)
 {
         int ret;
 
 #ifdef __UCLIBC__
-	ret = pthread_create(&(tid->tid),  NULL, f, farg);
+	ret = pthread_create(&(tid->tid),  NULL, targs->r, targs);
 #else
 	pthread_attr_t attr;
 	pthread_attr_init(&attr);
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
-	ret = pthread_create(&(tid->tid), &attr, f, farg);
+	ret = pthread_create(&(tid->tid), &attr, targs->r, targs);
 	pthread_attr_destroy(&attr);
 #endif
 
