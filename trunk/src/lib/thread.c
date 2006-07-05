@@ -15,6 +15,15 @@
 
 #include "xynth_.h"
 
+typedef struct s_thread_arg_s {
+	int flag;
+	void *arg;
+	void * (*r) (void *);
+	void * (*f) (void *);
+	s_thread_cond_t *cond;
+	s_thread_mutex_t *mut;
+} s_thread_arg_t;
+
 typedef struct s_thread_api_s {
 	int (*sem_create) (s_thread_sem_t *sem, int initial);
 	int (*sem_destroy) (s_thread_sem_t *sem);
@@ -35,7 +44,7 @@ typedef struct s_thread_api_s {
 	int (*cond_wait) (s_thread_cond_t *cond, s_thread_mutex_t *mut);
 	int (*cond_timedwait) (s_thread_cond_t *cond, s_thread_mutex_t *mut, int msec);
 
-	int (*thread_create) (s_thread_t *tid, void * (*f) (void *), void *farg);
+	int (*thread_create) (s_thread_t *tid, s_thread_arg_t *targ);
 	int (*thread_cancel) (s_thread_t *tid);
 	int (*thread_join) (s_thread_t *tid, void **ret);
 	int (*thread_self) (void);
@@ -67,14 +76,6 @@ typedef struct s_thread_api_s {
 	#error "I do need threads support"
 	#error "Check Makefile.cfg"
 #endif
-
-typedef struct s_thread_arg_s {
-	int flag;
-	void *arg;
-	void * (*f) (void *);
-	s_thread_cond_t *cond;
-	s_thread_mutex_t *mut;
-} s_thread_arg_t;
 
 int s_thread_sem_create (s_thread_sem_t **sem, int initial)
 {
@@ -291,6 +292,7 @@ s_thread_t * s_thread_create (void * (*f) (void *), void *farg)
 	tid = (s_thread_t *) s_malloc(sizeof(s_thread_t));
 	arg = (s_thread_arg_t *) s_malloc(sizeof(s_thread_arg_t));
 
+	arg->r = &s_thread_run;
 	arg->f = f;
 	arg->arg = farg;
 	s_thread_cond_init(&arg->cond);
@@ -301,7 +303,7 @@ s_thread_t * s_thread_create (void * (*f) (void *), void *farg)
 	s_thread_cond_signal(arg->cond);
 	s_thread_mutex_unlock(arg->mut);
 
-	s_thread_api->thread_create(tid, &s_thread_run, (void *) arg);
+	s_thread_api->thread_create(tid, arg);
 
 	s_thread_mutex_lock(arg->mut);
 	while (arg->flag != 1) {

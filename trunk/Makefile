@@ -72,6 +72,6 @@ doxy-doc:
 test: clean all install
 
 pspdev:
-	mount /mnt/sdb1
-	cp -Rf dist/psp/game/xynth* /mnt/sdb1/psp/game/
-	umount /mnt/sdb1
+	mount /mnt/sda1
+	cp -Rf dist/psp/game/xynth* /mnt/sda1/psp/game/
+	umount /mnt/sda1
