@@ -821,31 +821,353 @@ int s_font_get_glyph (s_font_t *font);
 /* gettime.c */
 long long s_gettimeofday (void);
 
+/** @defgroup grlib graphics api
+  * @brief detailed description
+  *
+  * @example
+  *
+  * these are simple low-level graphics api functions, for further information you may
+  * look in demo, and the server source codes.
+  *
+  * @code
+  * // simple example code will be in here
+  * @endcode
+  */
+
+/** @addtogroup grlib */
+/*@{*/
+
 /* grlib.c */
+
+/** @brief returns the color value, which is calculated from Red, Green, and Blue values
+  *
+  * @param *surface - the surface
+  * @param r        - red
+  * @param g        - green
+  * @param b        - blue
+  * @returns the calulated color value
+  */
 int s_rgbcolor (s_surface_t *surface, int r, int g, int b);
+
+/** @brief return the red, green, and blue values for the given color
+  *
+  * @param *surface - the surface
+  * @param c        - the color
+  * @param *r       - red (output)
+  * @param *g       - green (output)
+  * @param *b       - blue (output)
+  * @returns no return
+  */
 void s_colorrgb (s_surface_t *surface, int c, int *r, int *g, int *b);
+
+/** @brief puts one pixel color to the x, y coordinate on the surface
+  *
+  * @param *surface - the surface
+  * @param x        - x coordinate
+  * @param y        - y coordinate
+  * @param c        - the color
+  * @returns no return
+  */
 void s_setpixel (s_surface_t *surface, int x, int y, int c);
+
+/** @brief puts one pixel color to the x, y coordinate on the surface
+  *
+  * @param *surface - the surface
+  * @param x        - x coordinate
+  * @param y        - y coordinate
+  * @param r        - red value
+  * @param g        - green value
+  * @param b        - blue value
+  * @returns no return
+  */
 void s_setpixelrgb (s_surface_t *surface, int x, int y, int r, int g, int b);
+
+/** @brief puts one pixel color to the x, y coordinate on the surface (with alpha)
+  *
+  * @param *surface - the surface
+  * @param x        - x coordinate
+  * @param y        - y coordinate
+  * @param r        - red value
+  * @param g        - green value
+  * @param b        - blue value
+  * @param a        - alpha value
+  * @returns no return
+  */
 void s_setpixelrgba (s_surface_t *surface, int x, int y, int r, int g, int b, int a);
+
+/** @brief gets the color value of the pixel form x, y coordinates of the surface
+  *
+  * @param *surface - the surface
+  * @param x        - x coordinate
+  * @param y        - y coordinate
+  * @returns the color value
+  */
 int s_getpixel (s_surface_t *surface, int x, int y);
+
+/** @brief gets the red, green, blue values of the pixel form x, y coordinates of the surface
+  *
+  * @param *surface - the surface
+  * @param x        - x coordinate
+  * @param y        - y coordinate
+  * @param *r       - red value (output)
+  * @param *g       - green value (output)
+  * @param *b       - blue value (output)
+  * @returns no return
+  */
 void s_getpixelrgb (s_surface_t *surface, int x, int y, int *r, int *g, int *b);
+
+/** @brief draw a horizontal line from point (x1, y) to (x2, y) in color c on to the surface
+  *
+  * @param *surface - the surface
+  * @param x1       - start coordinate
+  * @param y        - y coordinate
+  * @param x2       - end coordinate
+  * @param c        - color value
+  * @returns no return
+  */
 void s_hline (s_surface_t *surface, int x1, int y, int x2, int c);
+
+/** @brief draw a vertical line from point (x, y1) to (x, y2) in color c on to the surface
+  *
+  * @param *surface - the surface
+  * @param x        - x coordinate
+  * @param y1       - start coordinate
+  * @param y2       - end coordinate
+  * @param c        - color value
+  * @returns no return
+  */
 void s_vline (s_surface_t *surface, int x, int y1, int y2, int c);
+
+/** @brief fill a rectangular area at position (x, y) with size (w, h) of the screen with a
+  *        single color c on to the surface
+  *
+  * @param *surface - the surface
+  * @param x        - x coordinate
+  * @param y        - y coordinate
+  * @param w        - width
+  * @param h        - height
+  * @param c        - color value
+  * @returns no return
+  */
 void s_fillbox (s_surface_t *surface, int x, int y, int w, int h, int c);
+
+/** @brief copy the contents of a memory buffer sp to a rectangular bitmap at position (x, y) with
+  *        size (w, h) on to the surface. Pixmaps are in row-major order. the source pixmap memory
+  *        has the size w * h * surface->bytesperpixel
+  *
+  * @param *surface - the surface
+  * @param x        - x coordinate
+  * @param y        - y coordinate
+  * @param w        - width
+  * @param h        - height
+  * @param *sp      - source pixmap
+  * @returns no return
+  */
 void s_putbox (s_surface_t *surface, int x, int y, int w, int h, char *sp);
+
+/** @brief copy the contents of a memory buffer sp to a rectangular bitmap at position (x, y) with
+  *        size (w, h) on to the surface. pixmaps are in row-major order. the source pixmap memory
+  *        has the size w * h * surface->bytesperpixel. this function works like s_putbox, but uses
+  *        sm for mask operations and does not write pixmap pixels if sm[y * w + x] == 0
+  *
+  * @param *surface - the surface
+  * @param x        - x coordinate
+  * @param y        - y coordinate
+  * @param w        - width
+  * @param h        - height
+  * @param *sp      - source pixmap
+  * @param *sm      - source mask
+  * @returns no return
+  */
 void s_putboxmask (s_surface_t *surface, int x, int y, int w, int h, char *sp, unsigned char *sm);
+
+/** @brief copy the contents of a memory buffer sp to a rectangular bitmap at position (x, y) with
+  *        size (w, h) on to the surface. pixmaps are in row-major order. the source pixmap memory
+  *        has the size w * h * surface->bytesperpixel. this function works like s_putbox, but uses
+  *        sm for alpha mask operations, sm[y * w + x] is the alpha value for corresponding pixel.
+  *
+  * @param *surface - the surface
+  * @param x        - x coordinate
+  * @param y        - y coordinate
+  * @param w        - width
+  * @param h        - height
+  * @param *sp      - source pixmap
+  * @param *sm      - source mask
+  * @returns no return
+  */
 void s_putboxalpha (s_surface_t *surface, int x, int y, int w, int h, char *sp, unsigned char *sm);
-void s_putboxrgba (s_surface_t *surfacem, int x, int y, int w, int h, unsigned int *rgba);
+
+/** @brief copy the contents of a rgba buffer rgba to a rectangular bitmap at position (x, y) with
+  *        size (w, h) on to the surface.
+  *
+  * @param *surface - the surface
+  * @param x        - x coordinate
+  * @param y        - y coordinate
+  * @param w        - width
+  * @param h        - height
+  * @param *rgba    - source pixmap rgba values
+  * @returns no return
+  */
+void s_putboxrgba (s_surface_t *surface, int x, int y, int w, int h, unsigned int *rgba);
+
+/** @brief copy a rectangular bitmap at position (x, y) with size (w, h) from the surface to a buffer
+  *        dp. pixmaps are in row-major order. the destination pixmap has the size w * h * surface->bytesperpixel
+  *
+  * @param *surface - the surface
+  * @param x        - x coordinate
+  * @param y        - y coordinate
+  * @param w        - width
+  * @param h        - height
+  * @param *dp      - destination pixmap
+  * @returns no return
+  */
 void s_getbox (s_surface_t *surface, int x, int y, int w, int h, char *dp);
+
+/** @brief copy the contents of a memory buffer sp to a rectangular bitmap at position (x, y) with
+  *        size (w, h) on to the surface. however, only a part of size (bw, bh) starting at offset
+  *        (xo, yo) in the pixmap is copied. pixmaps are in row-major order. the source pixmap memory
+  *        has the size w * h * surface->bytesperpixel
+  *
+  * @param *surface - the surface
+  * @param x        - x coordinate
+  * @param y        - y coordinate
+  * @param w        - width
+  * @param h        - height
+  * @param bw       - bitmap width
+  * @param bh       - bitmap heihgt
+  * @param *sp      - source pixmap
+  * @param xo       - x offset
+  * @param yo       - y offset
+  * @returns no return
+  */
 void s_putboxpart (s_surface_t *surface, int x, int y, int w, int h, int bw, int bh, char *sp, int xo, int yo);
+
+/** @brief copy the contents of a memory buffer sp to a rectangular bitmap at position (x, y) with
+  *        size (w, h) on to the surface. however, only a part of size (bw, bh) starting at offset
+  *        (xo, yo) in the pixmap is copied. pixmaps are in row-major order. the source pixmap memory
+  *        has the size w * h * surface->bytesperpixel. this function works like s_putbox, but uses
+  *        sm for alpha mask operations, sm[y * w + x] is the alpha value for corresponding pixel.
+  *
+  * @param *surface - the surface
+  * @param x        - x coordinate
+  * @param y        - y coordinate
+  * @param w        - width
+  * @param h        - height
+  * @param bw       - bitmap width
+  * @param bh       - bitmap heihgt
+  * @param *sp      - source pixmap
+  * @param *sm      - source mask
+  * @param xo       - x offset
+  * @param yo       - y offset
+  * @returns no return
+  */
 void s_putboxpartmask (s_surface_t *surface, int x, int y, int w, int h, int bw, int bh, char *sp, unsigned char *sm, int xo, int yo);
+
+/** @brief copy the contents of a rgba buffer rgba to a rectangular bitmap at position (x, y) with
+  *        size (w, h) on to the surface. however, only a part of size (bw, bh) starting at offset
+  *        (xo, yo) in the pixmap is copied.
+  *
+  * @param *surface - the surface
+  * @param x        - x coordinate
+  * @param y        - y coordinate
+  * @param w        - width
+  * @param h        - height
+  * @param bw       - bitmap width
+  * @param bh       - bitmap heihgt
+  * @param *rgba    - source pixmap rgba values
+  * @param xo       - x offset
+  * @param yo       - y offset
+  * @returns no return
+  */
 void s_putboxpartrgba (s_surface_t *surface, int x, int y, int w, int h, int bw, int bh, unsigned int *rgba, int xo, int yo);
+
+/** @brief copy the contents of a memory buffer sp to a rectangular bitmap at position (x, y) with
+  *        size (w, h) on to the surface. however, only a part of size (bw, bh) starting at offset
+  *        (xo, yo) in the pixmap is copied. pixmaps are in row-major order. the source pixmap memory
+  *        has the size w * h * surface->bytesperpixel. this function works like s_putbox, but uses
+  *        sm for alpha mask operations, sm[y * w + x] is the alpha value for corresponding pixel.
+  *
+  * @param *surface - the surface
+  * @param x        - x coordinate
+  * @param y        - y coordinate
+  * @param w        - width
+  * @param h        - height
+  * @param bw       - bitmap width
+  * @param bh       - bitmap heihgt
+  * @param *sp      - source pixmap
+  * @param *sm      - source mask
+  * @param xo       - x offset
+  * @param yo       - y offset
+  * @returns no return
+  */
 void s_putboxpartalpha (s_surface_t *surface, int x, int y, int w, int h, int bw, int bh, char *sp, unsigned char *sm, int xo, int yo);
+
+/** @brief copy the rectangular area at (x1, y1) of size (w, h), to (x2, y2) (surface copy).
+  *
+  * @param *surface - the surface
+  * @param x1       - source x coordinate
+  * @param y1       - source y coordinate
+  * @param w        - width
+  * @param h        - height
+  * @param x2       - destination x coordinate
+  * @param y2       - destination y coordinate
+  * @returns no return
+  */
 void s_copybox (s_surface_t *surface, int x1, int y1, int w, int h, int x2, int y2);
+
+/** @brief sets surface (s), as virtual with the bitsperpixel of bitspp, width of w, and hight of h.
+  *        vbuf will be the virtual buffer of the surface. the source pixmap memory (vbuf) has the
+  *        size w * h * bytesperpixel.
+  *
+  * @param *s     - the surface
+  * @param w      - width
+  * @param h      - height
+  * @param bitspp - bitsperpixel
+  * @param vbuf   - virtual buffer
+  * @return no return
+  */
 void s_getsurfacevirtual (s_surface_t *s, int w, int h, int bitspp, char *vbuf);
+
+/** @brief copies and converts the source buffer (sb) which is sbitspp bitsperpixel, to destination
+  *        buffer (db) which is dbitspp bitsperpixel. db will be alocated internally.
+  *
+  * @param *sb     - source buffer
+  * @param sbitspp - source bitsperpixel
+  * @param **db    - destination buffer
+  * @param dbitspp - destination bitsperpixel
+  * @param w       - width
+  * @param h       - height
+  * @returns 0 on success
+  */
 int s_copybuffer (char *sb, int sbitspp, char **db, int dbitspp, int w, int h);
+
+/** @brief rotate the bitmap of size (srect) at sbuf to size (drect) and store it at dbuf, which must be
+  *        a large enough buffer, with the angle of rotate.
+  *
+  * @param *surface - the surface
+  * @param *srect   - source rectangle
+  * @param *sbuf    - source buffer
+  * @param *drect   - destination rectangle
+  * @param *dbuf    - destination buffer
+  * @param rotate   - rotate angle
+  * @returns no return
+  */
 void s_rotatebox (s_surface_t *surface, s_rect_t *srect, void *sbuf, s_rect_t *drect, void *dbuf, int rotate);
+
+/** @brief scale the bitmap of size (w1, h1) at _dp1 to size (w2, h2) and store it at _dp2, which must be
+  *        a large enough buffer.
+  *
+  * @param *surface - the surface
+  * @param w1       - source width
+  * @param h1       - source height
+  * @param *_dp1    - source pixmap
+  * @param w2       - destination width
+  * @param h2       - destination height
+  * @param *_dp2    - destination pixmap
+  * @returns no return
+  */
 void s_scalebox (s_surface_t *surface, int w1, int h1, void *_dp1, int w2, int h2, void *_dp2);
+/*@}*/
 
 /* handler.c */
 int s_handler_init (s_handler_t **handler);
