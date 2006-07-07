@@ -822,13 +822,10 @@ int s_font_get_glyph (s_font_t *font);
 long long s_gettimeofday (void);
 
 /** @defgroup grlib graphics api
-  * @brief detailed description
+  * @brief these are simple low-level graphics api functions, for further information
+  *        you may look in demo, and the server source codes.
   *
   * @example
-  *
-  * these are simple low-level graphics api functions, for further information you may
-  * look in demo, and the server source codes.
-  *
   * @code
   * // simple example code will be in here
   * @endcode
@@ -1167,6 +1164,7 @@ void s_rotatebox (s_surface_t *surface, s_rect_t *srect, void *sbuf, s_rect_t *d
   * @returns no return
   */
 void s_scalebox (s_surface_t *surface, int w1, int h1, void *_dp1, int w2, int h2, void *_dp2);
+
 /*@}*/
 
 /* handler.c */
