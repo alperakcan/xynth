@@ -39,12 +39,12 @@ int desktop_self_system (char *command)
 	}
 #if defined(SINGLE_APP)
 	{
-		void * s_server_single_app (void *arg);
+		void * s_server_single_app_start (void *arg);
 		extern s_single_app_t *s_server_single_apps[];
 		s_single_app_t **sa;
 		for (sa = s_server_single_apps; *sa; sa++) {
 			if (strcmp(arg[0], (*sa)->argv[0]) == 0) {
-				s_thread_create(s_server_single_app, *sa);
+				s_thread_create(s_server_single_app_start, *sa);
 				goto end;
 			}
 		}

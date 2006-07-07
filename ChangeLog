@@ -1,4 +1,11 @@
 
+Fri 07 Jul 2006 04:30:09 PM EEST
+	* lib/grlib.c : minor correction for rotate
+	* widget/object.cpp : notation fix for old compilers
+	* lib/thread*.c : minor changes for thread layer
+	* ports/ports.sh, ports/sdl/SDl-1.2.10.diff: minor corrections
+	* server/single.c : name correction
+
 Sun 02 Jul 2006 06:30:56 PM EEST
 	* ports/mplayer: patch upgrade for MPlayer-1.0pre8
 	* : more work on socket data transfer, removed SOC_DATA_CURSOR, cursor

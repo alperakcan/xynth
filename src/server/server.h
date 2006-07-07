@@ -246,7 +246,7 @@ void s_server_surface_update (s_rect_t *coor);
 
 /* single.c */
 #if defined(SINGLE_APP)
-void * s_server_single_app (void *arg);
+void * s_server_single_app_start (void *arg);
 void s_server_single_start (void);
 void s_server_single_stop (void);
 #endif
