@@ -232,6 +232,8 @@
     if test "$BUILD_SDL" = "1" ; then
 	## Enter the source directory.
 	cd $SDL
+	## Rebuild configure script
+	./autogen.sh
 	## Create and enter the build directory.
 	mkdir build-xynth; cd build-xynth
 	## Configure the source.

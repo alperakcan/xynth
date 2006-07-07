@@ -89,7 +89,7 @@ s_single_app_t *s_server_single_apps[] = {
 	NULL
 };
 
-void * s_server_single_app (void *arg)
+void * s_server_single_app_start (void *arg)
 {
 	s_single_app_t *sapp = (s_single_app_t *) arg;
 	debugf(DSER, "started application %s", sapp->argv[0]);
@@ -104,13 +104,13 @@ void s_server_single_start (void)
 #if defined(SINGLE_APP_DESKTOP)
 	for (sa = s_server_single_apps; *sa; sa++) {
 		if (strcmp((*sa)->argv[0], "desktop") == 0) {
-			s_thread_create(s_server_single_app, *sa);
+			s_thread_create(s_server_single_app_start, *sa);
 		}
 	}
 #else
 	for (sa = s_server_single_apps; *sa; sa++) {
 		if (strcmp((*sa)->argv[0], "xynthlogout") != 0) {
-			s_thread_create(s_server_single_app, *sa);
+			s_thread_create(s_server_single_app_start, *sa);
 		}
 	}
 #endif
