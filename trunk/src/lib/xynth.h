@@ -836,7 +836,7 @@ long long s_gettimeofday (void);
 
 /* grlib.c */
 
-/** @brief returns the color value, which is calculated from Red, Green, and Blue values
+/** @brief returns pixel value used in the current surface that corresponds with the given color components.
   *
   * @param *surface - the surface
   * @param r        - red
