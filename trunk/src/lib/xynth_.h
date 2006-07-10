@@ -93,7 +93,7 @@ extern "C" {
 #elif defined(SOCKET_PIPE)
 	#define AF_PIPE		0x0001
 	#define SOCK_STREAM	0x0001
-	typedef unsigned int	socklen_t;
+	#define socklen_t	unsigned int
 	struct s_sockaddr_s {
 		short sa_family;
 		char sa_addr[40];
