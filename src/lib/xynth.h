@@ -502,16 +502,26 @@ typedef struct s_handler_mouse_s {
 	/** internal private value */
 	S_EVENT hstate;
 } s_handler_mouse_t;
-                                     
+
+/** handler struct
+  */
 struct s_handler_s {
+	/** handler type */
 	S_HANDLER type;
+	/** mouse handler */
 	s_handler_mouse_t mouse;
+	/** keyboard handler */
 	s_handler_keybd_t keybd;
+	/** user data which will be passed through callback functions */
 	void *user_data;
 };
 
+/** handlers struct
+  */
 typedef struct s_handlers_s {
+	/** handlers list */
 	s_list_t *list;
+	/** handlers list mutex */
 	s_thread_mutex_t *mut;
 } s_handlers_t;
 
