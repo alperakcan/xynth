@@ -22,12 +22,15 @@
 
 typedef struct s_font_ft_s s_font_ft_t;
 
-typedef struct s_handler_s s_handler_t;
 typedef struct s_window_s s_window_t;
 
 typedef struct s_config_var_s s_config_var_t;
 typedef struct s_config_cat_s s_config_cat_t;
 typedef struct s_config_s s_config_t;
+typedef struct s_handler_s s_handler_t;
+typedef struct s_handlers_s s_handlers_t;
+typedef struct s_handler_keybd_s s_handler_keybd_t;
+typedef struct s_handler_mouse_s s_handler_mouse_t;
 typedef struct s_image_s s_image_t;
 typedef struct s_list_s s_list_t;
 typedef struct s_list_node_s s_list_node_t;
@@ -454,76 +457,6 @@ typedef struct s_eventq {
         /** queue mutex */
 	s_thread_mutex_t *mut;
 } s_eventq_t;
-
-/** keyboard handler struct
-  */
-typedef struct s_handler_keybd_s {
-	/** handler flags bitwise ored */
-	int flag;
-	/** handler button */
-	int button;
-	/** key pressed callback function */
-	void (*p) (s_window_t *, s_event_t *, s_handler_t *);
-	/** key released callback function */
-	void (*r) (s_window_t *, s_event_t *, s_handler_t *);
-} s_handler_keybd_t;
-
-/** mouse handler struct
-  */
-typedef struct s_handler_mouse_s {
-	/** mouse handler x */
-	int x;
-	/** mouse handler y */
-	int y;
-	/** mouse handler width */
-	int w;
-	/** mouse handler height */
-	int h;
-	/** mouse handler button */
-	int button;
-	/** button pressed callback function */
-	void (*p) (s_window_t *, s_event_t *, s_handler_t *);
-	/** button released callback function */
-	void (*r) (s_window_t *, s_event_t *, s_handler_t *);
-	/** button clicked callback function */
-	void (*c) (s_window_t *, s_event_t *, s_handler_t *);
-	/** pointer is on over callback function */
-	void (*o) (s_window_t *, s_event_t *, s_handler_t *);
-	/** pointer is on over and button is still pressed callback function */
-	void (*ho) (s_window_t *, s_event_t *, s_handler_t *);
-	/** mouse button released, but the previous press was not on us */
-	void (*hr) (s_window_t *, s_event_t *, s_handler_t *);
-	/** pointer is not on over, but was on over */
-	void (*oh) (s_window_t *, s_event_t *, s_handler_t *);
-	/** pointer is not on over, but was on over and button is still pressed */
-	void (*hoh) (s_window_t *, s_event_t *, s_handler_t *);
-	/** mouse button is released outside, but the previous press was on us */
-	void (*rh) (s_window_t *, s_event_t *, s_handler_t *);
-	/** internal private value */
-	S_EVENT hstate;
-} s_handler_mouse_t;
-
-/** handler struct
-  */
-struct s_handler_s {
-	/** handler type */
-	S_HANDLER type;
-	/** mouse handler */
-	s_handler_mouse_t mouse;
-	/** keyboard handler */
-	s_handler_keybd_t keybd;
-	/** user data which will be passed through callback functions */
-	void *user_data;
-};
-
-/** handlers struct
-  */
-typedef struct s_handlers_s {
-	/** handlers list */
-	s_list_t *list;
-	/** handlers list mutex */
-	s_thread_mutex_t *mut;
-} s_handlers_t;
 
 typedef struct s_childs_s {
 	s_list_t *list;
@@ -1215,13 +1148,136 @@ void s_scalebox (s_surface_t *surface, int w1, int h1, void *_dp1, int w2, int h
 
 /*@}*/
 
+/** @defgroup handler handlers api
+  * @brief this api is used for setting and processing handlers, and callback for input events.
+  *
+  * @example
+  * @code
+  * // simple example code will be in here
+  * @endcode
+  */
+
+/** @addtogroup handler */
+/*@{*/
+
+/** keyboard handler struct
+  */
+struct s_handler_keybd_s {
+	/** handler flags bitwise ored */
+	int flag;
+	/** handler button */
+	int button;
+	/** key pressed callback function */
+	void (*p) (s_window_t *, s_event_t *, s_handler_t *);
+	/** key released callback function */
+	void (*r) (s_window_t *, s_event_t *, s_handler_t *);
+};
+
+/** mouse handler struct
+  */
+struct s_handler_mouse_s {
+	/** mouse handler x */
+	int x;
+	/** mouse handler y */
+	int y;
+	/** mouse handler width */
+	int w;
+	/** mouse handler height */
+	int h;
+	/** mouse handler button */
+	int button;
+	/** button pressed callback function */
+	void (*p) (s_window_t *, s_event_t *, s_handler_t *);
+	/** button released callback function */
+	void (*r) (s_window_t *, s_event_t *, s_handler_t *);
+	/** button clicked callback function */
+	void (*c) (s_window_t *, s_event_t *, s_handler_t *);
+	/** pointer is on over callback function */
+	void (*o) (s_window_t *, s_event_t *, s_handler_t *);
+	/** pointer is on over and button is still pressed callback function */
+	void (*ho) (s_window_t *, s_event_t *, s_handler_t *);
+	/** mouse button released, but the previous press was not on us */
+	void (*hr) (s_window_t *, s_event_t *, s_handler_t *);
+	/** pointer is not on over, but was on over */
+	void (*oh) (s_window_t *, s_event_t *, s_handler_t *);
+	/** pointer is not on over, but was on over and button is still pressed */
+	void (*hoh) (s_window_t *, s_event_t *, s_handler_t *);
+	/** mouse button is released outside, but the previous press was on us */
+	void (*rh) (s_window_t *, s_event_t *, s_handler_t *);
+	/** internal private value */
+	S_EVENT hstate;
+};
+
+/** handler struct
+  */
+struct s_handler_s {
+	/** handler type */
+	S_HANDLER type;
+	/** mouse handler */
+	s_handler_mouse_t mouse;
+	/** keyboard handler */
+	s_handler_keybd_t keybd;
+	/** user data which will be passed through callback functions */
+	void *user_data;
+};
+
+/** handlers struct
+  */
+struct s_handlers_s {
+	/** handlers list */
+	s_list_t *list;
+	/** handlers list mutex */
+	s_thread_mutex_t *mut;
+};
 /* handler.c */
+
+/** @brief initialize the thandler struct.
+  *
+  * @param **handler - address of the handler pointer.
+  * @returns 0 on success, 1 on error.
+  *
+  */
 int s_handler_init (s_handler_t **handler);
+
+/** @brief uninitialize the thandler struct.
+  *
+  * @param *handler - poniter to the handler, that was returned from s_handler_init.
+  * @returns 0 on success, 1 on error.
+  *
+  */
 int s_handler_uninit (s_handler_t *handler);
+
+/** @brief adds a handler to windows` handlers list
+  *
+  * @param *window - window to attach the timer
+  * @param *handler  - the handler
+  * @returns 0 on success, 1 on error.
+  */
 int s_handler_add (s_window_t *window, s_handler_t *handler);
+
+/** @brief deletes a handler from windows` handlers list
+  *
+  * @param *window - window that holds the handler
+  * @param *handler  - handler
+  * @returns 0 on success, 1 on error.
+  */
 int s_handler_del (s_window_t *window, s_handler_t *handler);
+
+/** @brief initialize the handlers struct for given window
+  *
+  * @param *window - window
+  * @returns 0 on success, 1 on error.
+  */
 int s_handlers_init (s_window_t *window);
+
+/** @brief uninitialize the handlers struct for given window
+  *
+  * @param *window - window
+  * @returns 0 on success, 1 on error.
+  */
 int s_handlers_uninit (s_window_t *window);
+
+/*@}*/
 
 /** @defgroup image image api
   * @brief detailed description
