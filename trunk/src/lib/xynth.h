@@ -503,42 +503,63 @@ typedef struct s_childs_s {
 	s_thread_mutex_t *mut;
 } s_childs_t;
 
+/** surface struct
+  */
 typedef struct s_surface_s {
+	/** bitwise ored SURFACE_REAL, SURFACE_VIRTUAL */
        	S_SURFACE_MODE mode;
-
-	int bytesperpixel;		/* We need to get them from server, to be able to draw right	*/
-	int bitsperpixel;		/* thing on linear buffer.					*/
-
-	int colors;			/* These are for future compability				*/
+	/** surface buytes per pixel */
+	int bytesperpixel;
+	/** surface bits per pixel */
+	int bitsperpixel;
+	/** number of colors */
+	int colors;
+	/** blue color offset */
 	int blueoffset;
+	/** green color offset */
 	int greenoffset;
+	/** red color offset */
 	int redoffset;
+	/** blue color length */
 	int bluelength;
+	/** green color length */
 	int greenlength;
+	/** red color length */
 	int redlength;
-
-	int width;			/* These are the real sizes of our buffer			*/
+	/** surface virtual buffer width */
+	int width;
+	/** surface virtual buffer height */
 	int height;
-
-        char *vbuf;			/* The buffer that holds clients window.			*/
-
-	s_rect_t *buf;			/* This is our bufs virtual part				*/
+	/** surface's virtual buffer */
+        char *vbuf;
+	/** virtual buffers' seen part on screen */
+	s_rect_t *buf;
+	/** window coordinated that hold surface on screen (if any) */
 	s_rect_t *win;
-
-	char *linear_buf;		/* mapped shared buffer						*/
-	int linear_buf_width;		/* See s_client_surface_linear()				*/
+	/** memory mapped shared buffer, this is the readl video buffer (usually) */
+	char *linear_buf;
+	/** video buffer width */
+	int linear_buf_width;
+	/** video buffer pitch */
 	int linear_buf_pitch;
+	/** video buffer height */
 	int linear_buf_height;
-	unsigned int linear_mem_base;	/* We have to get the properties and the address of linear	*/
-	unsigned int linear_mem_size;	/* buffer to be able to draw on it.				*/
-
-        int *id;			/* ugly hack, window->surface->id = &(window->client->id);	*/
-	int shm_mid;			/* shared screen matrix						*/
+	/** video buffer linear mem base */
+	unsigned int linear_mem_base;
+	/** video buffer linear mem size */
+	unsigned int linear_mem_size;
+	/** shared memory id for screen matrix */
+	int shm_mid;
+	/** shared memory buffer for screen matrix */
 	unsigned char *matrix;
-
-        int shm_sid;			/* shared linear buffer						*/
-	int need_expose;
-        s_window_t *window;		/* ugly hack, window->surface->window = window;			*/
+	/** shared video memory id */
+        int shm_sid;
+	/** this is either, 0, SURFACE_NEEDSTREAM, or SURFACE_NEEDEXPOSE */
+	S_SURFACE_MODE need_expose;
+	/** ugly hack for overlay operations, window->surface->id = &(window->client->id) */
+        int *id;
+	/** ugly hack, window->surface->window = window */
+        s_window_t *window;
 } s_surface_t;
 
 typedef struct s_object_s {
