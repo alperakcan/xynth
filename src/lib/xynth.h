@@ -455,10 +455,16 @@ typedef struct s_eventq {
 	s_thread_mutex_t *mut;
 } s_eventq_t;
 
+/** keyboard handler struct
+  */
 typedef struct s_handler_keybd_s {
+	/** handler flags bitwise ored */
 	int flag;
+	/** handler button */
 	int button;
+	/** key pressed callback function */
 	void (*p) (s_window_t *, s_event_t *, s_handler_t *);
+	/** key released callback function */
 	void (*r) (s_window_t *, s_event_t *, s_handler_t *);
 } s_handler_keybd_t;
 
