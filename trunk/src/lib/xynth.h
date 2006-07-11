@@ -462,27 +462,38 @@ typedef struct s_handler_keybd_s {
 	void (*r) (s_window_t *, s_event_t *, s_handler_t *);
 } s_handler_keybd_t;
 
+/** mouse handler struct
+  */
 typedef struct s_handler_mouse_s {
+	/** mouse handler x */
 	int x;
+	/** mouse handler y */
 	int y;
+	/** mouse handler width */
 	int w;
+	/** mouse handler height */
 	int h;
+	/** mouse handler button */
 	int button;
-	void (*p) (s_window_t *, s_event_t *, s_handler_t *);	/* button pressed   		                                */
-	void (*r) (s_window_t *, s_event_t *, s_handler_t *);	/* button released,          			                */
-	void (*c) (s_window_t *, s_event_t *, s_handler_t *);	/* button clicked,                     			        */
-	void (*o) (s_window_t *, s_event_t *, s_handler_t *);	/* on over 				                        */
-	void (*ho) (s_window_t *, s_event_t *, s_handler_t *);	/* on over && hint,                                             */
-								/* on over, but mouse button is still pressed		        */
-	void (*hr) (s_window_t *, s_event_t *, s_handler_t *);	/* button realesed && hint	                                */
-								/* mouse button released, but the prev. press was not on us	*/
-	void (*oh) (s_window_t *, s_event_t *, s_handler_t *);	/* button over && hint2		                                */
-								/* not on over, but was on over                                 */
-	void (*hoh) (s_window_t *, s_event_t *, s_handler_t *); /* button over && hint && hint2	                                */
-								/* not on over, but was on over. and button is still pressed    */
-	void (*rh) (s_window_t *, s_event_t *, s_handler_t *);	/* button realesed && hint2	                                */
-								/* mouse button released outside, but the prev. press was on us */
-			                                        /* wheel buttons has no realesed event                          */
+	/** button pressed callback function */
+	void (*p) (s_window_t *, s_event_t *, s_handler_t *);
+	/** button released callback function */
+	void (*r) (s_window_t *, s_event_t *, s_handler_t *);
+	/** button clicked callback function */
+	void (*c) (s_window_t *, s_event_t *, s_handler_t *);
+	/** pointer is on over callback function */
+	void (*o) (s_window_t *, s_event_t *, s_handler_t *);
+	/** pointer is on over and button is still pressed callback function */
+	void (*ho) (s_window_t *, s_event_t *, s_handler_t *);
+	/** mouse button released, but the previous press was not on us */
+	void (*hr) (s_window_t *, s_event_t *, s_handler_t *);
+	/** pointer is not on over, but was on over */
+	void (*oh) (s_window_t *, s_event_t *, s_handler_t *);
+	/** pointer is not on over, but was on over and button is still pressed */
+	void (*hoh) (s_window_t *, s_event_t *, s_handler_t *);
+	/** mouse button is released outside, but the previous press was on us */
+	void (*rh) (s_window_t *, s_event_t *, s_handler_t *);
+	/** internal private value */
 	S_EVENT hstate;
 } s_handler_mouse_t;
                                      
@@ -639,7 +650,7 @@ void * s_client_main (void *arg);
 void s_client_atevent (s_window_t *window, void (*f) (s_window_t *, s_event_t *));
 void s_client_atexit (s_window_t *window, void (*f) (s_window_t *));
 
-/** @defgroup config config struct, api
+/** @defgroup config config api
   * @brief detailed description
   *
   * @example
@@ -1196,7 +1207,7 @@ int s_handler_del (s_window_t *window, s_handler_t *handler);
 int s_handlers_init (s_window_t *window);
 int s_handlers_uninit (s_window_t *window);
 
-/** @defgroup image image struct, api
+/** @defgroup image image api
   * @brief detailed description
   *
   * @example
@@ -1429,7 +1440,7 @@ int s_image_xpm (char *file, s_image_t *img);
 
 /*@}*/
 
-/** @defgroup list list struct, api
+/** @defgroup list list api
   * @brief detailed description
   *
   * @example
@@ -1588,7 +1599,7 @@ int s_object_show (s_object_t *object);
 int s_object_init (s_window_t *window, s_object_t **object, int w, int h, s_object_t *parent);
 int s_object_uninit (s_object_t *object);
 
-/** @defgroup pollfd pollfd struct, api
+/** @defgroup pollfd pollfd api
   * @brief detailed description
   *
   * @example
@@ -1719,7 +1730,7 @@ int s_pollfds_uninit (s_window_t *window);
 
 /*@}*/
 
-/** @defgroup rect rect struct, api
+/** @defgroup rect rect api
   * @brief s_rect_* api is designed for rectangular operations.
   *
   * @example
@@ -1868,7 +1879,7 @@ void s_surface_linear (s_window_t *window);
 void s_surface_uninit (s_window_t *window);
 void s_surface_changed (s_window_t *window, s_rect_t *changed);
 
-/** @defgroup thread thread struct, api
+/** @defgroup thread thread api
   * @brief s_thread_* api is an abstract layer for system calls.
   *        programmer should not use s_thread_sem_* calls, becouse
   *        they are designed to be used internally - especially for
@@ -2113,7 +2124,7 @@ void s_thread_exit (void *ret);
 
 /*@}*/
 
-/** @defgroup timer timer struct, api
+/** @defgroup timer timer api
   * @brief s_timer_* api calls is designed for setting timers,
   *        and timer callbacks for any window.
   *        programmers should use these timers rather than using signals
