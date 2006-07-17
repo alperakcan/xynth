@@ -84,6 +84,7 @@ let passes=0;
 let removed=0;
 let progress=0;
 
+echo "collecting objects";
 objs=`cat syms.args`;
 echo "collecting symbols";
 all=`read_all $objs`;
