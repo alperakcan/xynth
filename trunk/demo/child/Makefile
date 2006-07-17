@@ -1,29 +1,25 @@
+
 include ../../Makefile.cfg
+include ../../Makefile.parse
 
-CFLAGS += -I$(INCDIR) -I../../src/lib
+INCDIR  = ../../src/lib
+LIBDIR  = ../../src/lib
+LDFLAGS = -lxynth
 
-TARGET_S = ../single_child.a
-TARGET_D = $(BINDIR)/child
+OBJS = child.o
 
 ifeq ($(SINGLE_APP), Y)
-	CFLAGS += -Dmain=child_main
-	TARGET = $(TARGET_S)
+TARGET_A = single_child.a
+CFLAGS  += -Dmain=child_main
 else
-	TARGET = $(TARGET_D)
+TARGET = child
 endif
 
+EXTRA_CLEAN = child single_child.a
 
-obj = child.o
+include ../../Makefile.rules
 
-all : $(TARGET)
-
-$(TARGET) : $(obj)
-ifeq ($(SINGLE_APP), Y)
-	$(AR) $(TARGET) $(obj)
-	$(RANLIB) $(TARGET)
-else
-	$(CC) -o $(TARGET) $(obj) $(LIBS)
+dist: all
+ifneq ($(TARGET),)
+	cp -a $(TARGET) ../../$(DISTBINDIR)
 endif
-
-clean :
-	rm -f $(TARGET_D) $(TARGET_S) $(obj)

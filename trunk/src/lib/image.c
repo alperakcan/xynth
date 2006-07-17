@@ -229,7 +229,7 @@ int s_image_layers_uninit (s_image_t *img)
 		s_list_remove(img->layers, 0);
 		s_image_layer_uninit(img_);
 	}
-	s_free(img->layers);
+	s_list_uninit(img->layers);
 	img->layers = NULL;
 
 	return 0;

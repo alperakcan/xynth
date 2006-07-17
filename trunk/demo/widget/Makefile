@@ -1,15 +1,26 @@
+
 include ../../Makefile.cfg
+include ../../Makefile.parse
 
-CPPFLAGS = $(CFLAGS) -I$(INCDIR)
+INCDIR  = ../../src/lib ../../src/widget
+LIBDIR  = ../../src/widget ../../src/lib
+LDFLAGS = -lwidget -lxynth
+CC      = $(CXX)
 
-TARGET_D = $(BINDIR)/widget
+OBJS = widget.o
 
-obj = widget.o
+ifeq ($(SINGLE_APP), Y)
+TARGET_A = single_widget.a
+CFLAGS  += -Dmain=widget_main
+else
+TARGET = widget
+endif
 
-all : $(TARGET_D)
+EXTRA_CLEAN = widget single_widget.a
 
-$(TARGET_D) : $(obj)
-	$(CXX) -o $(TARGET_D) $(obj) -lwidget $(LIBS)
+include ../../Makefile.rules
 
-clean :
-	rm -f $(TARGET_D) $(obj)
+dist: all
+ifneq ($(TARGET),)
+	cp -a $(TARGET) ../../$(DISTBINDIR)
+endif

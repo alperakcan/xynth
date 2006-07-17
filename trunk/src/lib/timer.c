@@ -83,7 +83,7 @@ int s_timers_init (s_window_t *window)
 		goto err1;
 	}
 	return 0;
-err1:	s_free(window->timers->timers);
+err1:	s_list_uninit(window->timers->timers);
 err0:	s_free(window->timers);
 	return -1;
 }
@@ -101,7 +101,7 @@ int s_timers_uninit (s_window_t *window)
 	}
 	s_thread_mutex_unlock(window->timers->mut);
 	s_thread_mutex_destroy(window->timers->mut);
-	s_free(window->timers->timers);
+	s_list_uninit(window->timers->timers);
 	s_free(window->timers);
 
 	return 0;

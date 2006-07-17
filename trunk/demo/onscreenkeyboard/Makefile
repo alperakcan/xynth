@@ -1,29 +1,25 @@
+
 include ../../Makefile.cfg
+include ../../Makefile.parse
 
-CFLAGS += -I$(INCDIR) -I../../src/lib
+INCDIR  = ../../src/lib
+LIBDIR  = ../../src/lib
+LDFLAGS = -lxynth
 
-TARGET_S = ../single_onscreenkeyboard.a
-TARGET_D = $(BINDIR)/onscreenkeyboard
+OBJS = onscreenkeyboard.o
 
 ifeq ($(SINGLE_APP), Y)
-	CFLAGS += -Dmain=onscreenkeyboard_main
-	TARGET = $(TARGET_S)
+TARGET_A = single_onscreenkeyboard.a
+CFLAGS  += -Dmain=onscreenkeyboard_main
 else
-	TARGET = $(TARGET_D)
+TARGET = onscreenkeyboard
 endif
 
+EXTRA_CLEAN = onscreenkeyboard single_onscreenkeyboard.a
 
-obj = onscreenkeyboard.o
+include ../../Makefile.rules
 
-all : $(TARGET)
-
-$(TARGET) : $(obj)
-ifeq ($(SINGLE_APP), Y)
-	$(AR) $(TARGET) $(obj)
-	$(RANLIB) $(TARGET)
-else
-	$(CC) -o $(TARGET) $(obj) $(LIBS)
+dist: all
+ifneq ($(TARGET),)
+	cp -a $(TARGET) ../../$(DISTBINDIR)
 endif
-
-clean :
-	rm -f $(TARGET_D) $(TARGET_S) $(obj)

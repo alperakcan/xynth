@@ -1,28 +1,25 @@
+
 include ../../Makefile.cfg
+include ../../Makefile.parse
 
-CFLAGS += -I$(INCDIR) -I../../src/lib
+INCDIR  = ../../src/lib
+LIBDIR  = ../../src/lib
+LDFLAGS = -lxynth
 
-TARGET_S = ../single_xynthlogout.a
-TARGET_D = $(BINDIR)/xynthlogout
+OBJS = xynthlogout.o
 
 ifeq ($(SINGLE_APP), Y)
-	CFLAGS += -Dmain=xynthlogout_main
-	TARGET = $(TARGET_S)
+TARGET_A = single_xynthlogout.a
+CFLAGS  += -Dmain=xynthlogout_main
 else
-	TARGET = $(TARGET_D)
+TARGET = xynthlogout
 endif
 
-obj = xynthlogout.o
+EXTRA_CLEAN = xynthlogout single_xynthlogout.a
 
-all : $(TARGET)
+include ../../Makefile.rules
 
-$(TARGET) : $(obj)
-ifeq ($(SINGLE_APP), Y)
-	$(AR) $(TARGET) $(obj)
-	$(RANLIB) $(TARGET)
-else
-	$(CC) -o $(TARGET) $(obj) $(LIBS)
+dist: all
+ifneq ($(TARGET),)
+	cp -a $(TARGET) ../../$(DISTBINDIR)
 endif
-
-clean :
-	rm -f $(TARGET_D) $(TARGET_S) $(obj)

@@ -36,9 +36,11 @@ char * s_config_strip (char *buf)
 int s_config_parse (s_config_t *cfg, char *name)
 {
         FILE *fp;
-        char buf[8192];
+        char *buf;
         s_config_cat_t *category;
         s_config_var_t *variable;
+
+	buf = (char *) s_malloc(sizeof(char) * (8192 + 1));
 	
         fp = fopen(name, "r");
         if (fp == NULL) {
@@ -47,7 +49,7 @@ int s_config_parse (s_config_t *cfg, char *name)
 	}
 
 	while (!feof(fp)) {
-		if (fgets(buf, sizeof(buf), fp)) {
+		if (fgets(buf, 8192, fp)) {
 			char *c;
 			char *cur;
 
@@ -102,12 +104,14 @@ int s_config_parse (s_config_t *cfg, char *name)
 			}
 		}
 	}
-
-	fclose(fp);
 	
+	s_free(buf);
+	fclose(fp);
 	return 0;
+
 err1:	fclose(fp);
-err0:	return -1;
+err0:	s_free(buf);
+	return -1;
 }
 
 int s_config_init (s_config_t **cfg)
@@ -117,8 +121,7 @@ int s_config_init (s_config_t **cfg)
 		goto err0;
 	}
 	return 0;
-err0:	s_free((*cfg)->category);
-	s_free(*cfg);
+err0:	s_free(*cfg);
 	return -1;
 }
 
@@ -130,7 +133,7 @@ int s_config_category_init (s_config_cat_t **cat, char *name)
 		goto err0;
 	}
 	return 0;
-err0:	s_free((*cat)->variable);
+err0:	s_free((*cat)->name);
 	s_free(*cat);
 	return -1;
 }
@@ -158,11 +161,9 @@ int s_config_category_uninit (s_config_cat_t *cat)
 		s_list_remove(cat->variable, 0);
 		s_config_variable_uninit(var);
 	}
-
-        s_free(cat->variable);
+        s_list_uninit(cat->variable);
         s_free(cat->name);
 	s_free(cat);
-
 	return 0;
 }
 
@@ -173,9 +174,7 @@ int s_config_uninit (s_config_t *cfg)
 		s_list_remove(cfg->category, 0);
 		s_config_category_uninit(cat);
 	}
-
-        s_free(cfg->category);
+        s_list_uninit(cfg->category);
 	s_free(cfg);
-
 	return 0;
 }

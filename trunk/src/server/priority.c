@@ -179,7 +179,7 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 					s_list_remove(diff_, 0);
 					s_free(rtmp);
 				}
-				s_free(diff_);
+				s_list_uninit(diff_);
 				s_rect_difference_add(diff, c0->x, c0->y, c0->w, c0->h);
 			}
 			break;
@@ -200,7 +200,7 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 					s_list_remove(diff_, 0);
 					s_free(rtmp);
 				}
-				s_free(diff_);
+				s_list_uninit(diff_);
 				s_rect_difference_add(diff, server->client[id].win.x, server->client[id].win.y,
 				                            server->client[id].win.w, server->client[id].win.h);
 			}
@@ -378,7 +378,7 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 		s_list_remove(diff, 0);
 		s_free(rtmp);
 	}
-	s_free(diff);
+	s_list_uninit(diff);
 }
 
 int s_server_id_pri (int id)

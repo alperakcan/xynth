@@ -1,28 +1,25 @@
+
 include ../../Makefile.cfg
+include ../../Makefile.parse
 
-CFLAGS += -I$(INCDIR) -I../../src/lib
+INCDIR  = ../../src/lib
+LIBDIR  = ../../src/lib
+LDFLAGS = -lxynth
 
-TARGET_S = ../single_simple.a
-TARGET_D = $(BINDIR)/simple
+OBJS = simple.o
 
 ifeq ($(SINGLE_APP), Y)
-	CFLAGS += -Dmain=simple_main
-	TARGET = $(TARGET_S)
+TARGET_A = single_simple.a
+CFLAGS  += -Dmain=simple_main
 else
-	TARGET = $(TARGET_D)
+TARGET = simple
 endif
 
-obj = simple.o
+EXTRA_CLEAN = simple single_simple.a
 
-all : $(TARGET)
+include ../../Makefile.rules
 
-$(TARGET) : $(obj)
-ifeq ($(SINGLE_APP), Y)
-	$(AR) $(TARGET) $(obj)
-	$(RANLIB) $(TARGET)
-else
-	$(CC) -o $(TARGET) $(obj) $(LIBS)
+dist: all
+ifneq ($(TARGET),)
+	cp -a $(TARGET) ../../$(DISTBINDIR)
 endif
-
-clean :
-	rm -f $(TARGET_D) $(TARGET_S) $(obj)

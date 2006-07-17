@@ -53,13 +53,13 @@ static int s_pipe_mem_init (void)
 		goto err0;
 	}
 	if (s_thread_mutex_init(&(s_pipe.lock))) {
-		goto err0;
+		goto err1;
 	}
 	s_pipe.fds = MIN_PIPE_E;
 	DEBUGF(0, "leave");
 	return 0;
-err0:	s_free(s_pipe.list);
-	s_pipe.list = NULL;
+err1:	s_list_uninit(s_pipe.list);
+err0:	s_pipe.list = NULL;
 	DEBUGF(0, "leave error");
 	return -1;
 }
@@ -74,7 +74,7 @@ static int s_pipe_mem_uninit (void)
 		s_list_remove(s_pipe.list, 0);
 		s_free(tmp);
 	}
-	s_free(s_pipe.list);
+	s_list_uninit(s_pipe.list);
 	s_pipe.list = NULL;
 	s_thread_mutex_unlock(s_pipe.lock);
 	s_thread_mutex_destroy(s_pipe.lock);
@@ -131,8 +131,7 @@ static int s_pipe_mem_new (s_pipe_t **p)
 		goto err0;
 	}
 	return 0;
-err0:	s_free((*p)->wait);
-	s_free(*p);
+err0:	s_free(*p);
 	*p = NULL;
 	return -1;
 }
@@ -205,8 +204,7 @@ static int s_pipe_mem_pipe (int filedes[2])
 	s_thread_mutex_unlock(s_pipe.lock);
 	DEBUGF(0, "leave");
 	return 0;
-err2:	s_free(pd);
-	s_pipe_mem_del(pw);
+err2:	s_pipe_mem_del(pw);
 err1:	s_pipe_mem_del(pr);
 err0:	DEBUGF(0, "leave error");
 	return -1;

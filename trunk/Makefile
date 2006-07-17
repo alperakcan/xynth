@@ -1,46 +1,66 @@
-include Makefile.cfg
 
-all: Makefile.cfg
+include Makefile.cfg
+include Makefile.parse
+
+all:
 	$(MAKE) -C src
 
 clean:
 	$(MAKE) clean -C src
+	$(MAKE) clean -C tools/theme
+	$(MAKE) clean -C tools/optimize
 	rm -rf dist
 	rm -rf doc
-	find . \( -name \*.o -o -name \*~ -o -name \#\*\# -o -name \*.a -name \*.so \) -exec rm '{}' \;
+	find . \( -name \*~ -o -name \#\*\# \) -exec rm '{}' \;
 
-install: all
+dist: all
+	rm -rf dist
+	mkdir -p $(DISTTOPDIR)
+	mkdir -p $(DISTINCDIR)
+	mkdir -p $(DISTLIBDIR)
+	mkdir -p $(DISTBINDIR)
+	mkdir -p $(DISTCONFDIR)
+	mkdir -p $(DISTFONTDIR)
+ifeq ($(THEME_PLUGIN), Y)
+	mkdir -p $(DISTTHEMEDIR)
+endif
+	$(MAKE) dist -C src
+
+install: dist
 ifeq ($(PLATFORM_LINUX), Y)
 	mkdir -p $(INSTALLDIR)
-	cp -Rf dist/* $(INSTALLDIR)
+	cp -af dist/* $(INSTALLDIR)
 	ldconfig
 else
 ifeq ($(PLATFORM_MINGW), Y)
 	mkdir -p c:/xynth
-	cp -Rf dist/* c:/xynth
+	cp -af dist/* c:/xynth
 else
 ifeq ($(PLATFORM_PSPDEV), Y)
 	rm -rf dist/include
 	rm -rf dist/lib
 	rm -rf dist/$(_SHAREDIR)/$(_CONFDIR)
 	mkdir -p dist/psp/game
-	cp -Rf dist/bin/xynth dist/psp/game
+	cp -af dist/bin/xynth dist/psp/game
 ifeq ($(PSP-VERSION), 1.5)
-	cp -Rf dist/bin/xynth% dist/psp/game
+	cp -af dist/bin/xynth% dist/psp/game
 endif
-	cp -Rf dist/share dist/psp/game/xynth
+	cp -af dist/share dist/psp/game/xynth
 	rm -rf dist/share
 	rm -rf dist/bin
 else
 ifeq ($(PLATFORM_GP2X), Y)
 	rm -rf dist/include
 	rm -rf dist/lib
-	rm -rf dist/share/configs
+	rm -rf dist/$(_SHAREDIR)/$(_CONFDIR)
 	gp2x-strip -xsR .note -R .comment dist/bin/xynth
 endif
 endif
 endif
 endif
+
+optimize:
+	make -C tools/optimize
 
 doxy-doc:
 	rm -rf doc
@@ -69,7 +89,7 @@ doxy-doc:
 	GENERATE_LATEX='NO'\
 	doxygen ./doxygen.cfg
 
-test: clean all install
+test: clean all dist install
 
 pspdev:
 	mount /mnt/sda1

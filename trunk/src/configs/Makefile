@@ -1,12 +1,10 @@
+
 include ../../Makefile.cfg
+include ../../Makefile.parse
 
-all: $(CONFDIR) $(CONFDIR)/xynth.conf
-
-$(CONFDIR):
-	mkdir -p $(CONFDIR)
-
-$(CONFDIR)/xynth.conf: xynth.conf
-	cp xynth.conf $(CONFDIR)
+all:
 
 clean:
-	rm -rf $(CONFDIR)
+
+dist:
+	cp -a *.conf ../../$(DISTCONFDIR)

@@ -75,7 +75,9 @@ void s_client_uninit (s_window_t *window)
 	s_childs_uninit(window);
 
         if (window->type & (WINDOW_TEMP | WINDOW_CHILD)) {
-		s_child_del(window->parent, window);
+		if (s_child_del(window->parent, window) == 0) {
+			s_free(window->tid);
+		}
 	}
 
 	debugf(DCLI, "[%d] Exiting (%s%s)", window->client->id, (window->type & WINDOW_MAIN) ? "WINDOW_MAIN" :

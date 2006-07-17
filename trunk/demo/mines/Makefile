@@ -1,15 +1,26 @@
+
 include ../../Makefile.cfg
+include ../../Makefile.parse
 
-CPPFLAGS = $(CFLAGS) -I$(INCDIR) -I../../src/lib
+INCDIR  = ../../src/lib ../../src/widget
+LIBDIR  = ../../src/widget ../../src/lib
+LDFLAGS = -lwidget -lxynth
+CC      = $(CXX)
 
-TARGET_D = $(BINDIR)/mines
+OBJS = mines.o
 
-obj = mines.o
+ifeq ($(SINGLE_APP), Y)
+TARGET_A = single_mines.a
+CFLAGS  += -Dmain=mines_main
+else
+TARGET = mines
+endif
 
-all : $(TARGET_D)
+EXTRA_CLEAN = mines single_mines.a
 
-$(TARGET_D) : $(obj)
-	$(CXX) -o $(TARGET_D) $(obj) -lwidget $(LIBS)
+include ../../Makefile.rules
 
-clean :
-	rm -f $(TARGET_D) $(obj)
+dist: all
+ifneq ($(TARGET),)
+	cp -a $(TARGET) ../../$(DISTBINDIR)
+endif
