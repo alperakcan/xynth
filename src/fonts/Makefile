@@ -1,10 +1,10 @@
+
 include ../../Makefile.cfg
+include ../../Makefile.parse
 
-all: $(FONTDIR)
-
-$(FONTDIR):
-	mkdir -p $(FONTDIR)
-	cp *.ttf $(FONTDIR)
+all:
 
 clean:
-	rm -rf $(FONTDIR)
+
+dist:
+	cp -a *.ttf ../../$(DISTFONTDIR)

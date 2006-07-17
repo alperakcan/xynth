@@ -1,156 +1,155 @@
+
 include ../../Makefile.cfg
+include ../../Makefile.parse
 
-obj = event.o id.o kbd.o mouse.o priority.o single.o server.o socket.o start.o\
-      surface.o theme.o window.o window_handler.o window_move_resize.o
+INCDIR += ../lib
+LIBDIR += ../lib
+TARGET = xynth
 
-ifeq ($(THEME_PLUGIN), Y)
-	LIBS += -ldl
-endif
+VLDFLAGS :=
+OBJS = event.o id.o kbd.o mouse.o priority.o single.o server.o socket.o start.o \
+       surface.o theme.o window.o window_handler.o window_move_resize.o
 
-ifeq ($(VIDEO_VESA), Y)
-	objl += video/vesa/libdriver_vesa.a
-endif
-ifeq ($(VIDEO_SVGALib), Y)
-	LIBS += -lvga -lm
-	objl += video/svga/libdriver_svga.a
-endif
 ifeq ($(VIDEO_FBDev), Y)
-	LIBS += -lm
-	objl += video/fb/libdriver_fb.a
+OBJS     += video/fb/fb.o video/fb/kbd.o video/fb/server.o video/fb/timing.o
+VLDFLAGS += -lm
 endif
 ifeq ($(VIDEO_SDL), Y)
-	LIBS += $(shell sdl-config --libs)
-	objl += video/sdl/libdriver_sdl.a
+OBJS     += video/sdl/event.o video/sdl/kbd.o video/sdl/mouse.o video/sdl/server.o
+CFLAGS   += $(shell sdl-config --cflags)
+VLDFLAGS += $(shell sdl-config --libs)
 endif
-ifeq ($(VIDEO_GDI), Y)
-	LIBS += -lgdi32
-	objl += video/gdi/libdriver_gdi.a
+ifeq ($(VIDEO_SVGALib), Y)
+OBJS     += video/svga/kbd.o video/svga/server.o
+VLDFLAGS += -lvga -lm
+endif
+ifeq ($(VIDEO_VESA), Y)
+OBJS     += video/vesa/kbd.o video/vesa/server.o video/vesa/lrmi-0.10/lrmi.o
 endif
 ifeq ($(VIDEO_PSPDEV), Y)
-	objl += video/pspdev/libdriver_pspdev.a
+TARGET    = xynth.elf
+OBJS     += video/pspdev/event.o video/pspdev/kbd.o video/pspdev/mouse.o video/pspdev/server.o
+VLDFLAGS += -lm -lpspdebug -lpspdisplay -lpspge -lpspctrl -lpspsdk -lc -lpsputility -lpspuser -lpspkernel
+endif
+ifeq ($(VIDEO_GDI), Y)
+OBJS     += video/gdi/event.o video/gdi/kbd.o video/gdi/mouse.o video/gdi/server.o
+LIBDIR   += video/gdi/pthread_w32
+VLDFLAGS += -lpthreadGC2 -lgdi32
+TARGET    = xynth.exe
 endif
 ifeq ($(VIDEO_GP2X), Y)
-	objl += video/gp2x/libdriver_gp2x.a
+OBJS     += video/gp2x/event.o video/gp2x/kbd.o video/gp2x/mouse.o video/gp2x/server.o
+VLDFLAGS += -lpthread -lm
 endif
 ifeq ($(VIDEO_NULL), Y)
-	objl += video/null/libdriver_null.a
+OBJS     += video/null/kbd.o video/null/mouse.o video/null/server.o
 endif
 ifeq ($(VIDEO_HELPER), Y)
-	objl += video/helper/libdriver_helper.a
+OBJS     += video/helper/console.o video/helper/cursor.o video/helper/kbd.o video/helper/modes.o video/helper/mouse.o video/helper/mtrr.o
 endif
+
 ifeq ($(SINGLE_APP), Y)
 	ifeq ($(SINGLE_APP_CHILD), Y)
-		objl += ../../demo/single_child.a
+		LDFLAGS += ../../demo/child/single_child.a
 	endif
 	ifeq ($(SINGLE_APP_DESKTOP), Y)
-		objl += ../../demo/single_desktop.a
+		LDFLAGS += ../../demo/desktop/single_desktop.a
 	endif
 	ifeq ($(SINGLE_APP_HIDE), Y)
-		objl += ../../demo/single_hide.a
+		LDFLAGS += ../../demo/hide/single_hide.a
 	endif
 	ifeq ($(SINGLE_APP_LOAD), Y)
-		objl += ../../demo/single_load.a
+		LDFLAGS += ../../demo/load/single_load.a
 	endif
 	ifeq ($(SINGLE_APP_SIMPLE), Y)
-		objl += ../../demo/single_simple.a
+		LDFLAGS += ../../demo/simple/single_simple.a
 	endif
 	ifeq ($(SINGLE_APP_OBJECT), Y)
-		objl += ../../demo/single_object.a
+		LDFLAGS += ../../demo/object/single_object.a
 	endif
 	ifeq ($(SINGLE_APP_ONSCREENKEYBOARD), Y)
-		objl += ../../demo/single_onscreenkeyboard.a
+		LDFLAGS += ../../demo/onscreenkeyboard/single_onscreenkeyboard.a
 	endif
 	ifeq ($(SINGLE_APP_TEMP), Y)
-		objl += ../../demo/single_temp.a
+		LDFLAGS += ../../demo/temp/single_temp.a
 	endif
 	ifeq ($(SINGLE_APP_TERM), Y)
-		objl += ../../demo/single_term.a
+		LDFLAGS += ../../demo/term/single_term.a
 	endif
 	ifeq ($(SINGLE_APP_TIMER), Y)
-		objl += ../../demo/single_timer.a
+		LDFLAGS += ../../demo/timer/single_timer.a
 	endif
 	ifeq ($(SINGLE_APP_LOGOUT), Y)
-		objl += ../../demo/single_xynthlogout.a
+		LDFLAGS += ../../demo/xynthlogout/single_xynthlogout.a
 	endif
 endif
 
-all: video_lib $(BINDIR) $(obj) $(objl) $(BINDIR)/$(TARGET_S)
+ifeq ($(THEME_PLUGIN), Y)
+LDFLAGS += -ldl
+endif
+LDFLAGS += -lxynth $(VLDFLAGS)
 
-video_lib: ../../Makefile.cfg
-	$(MAKE) -C video
+EXTRA_CLEAN = xynth xynth.elf xynth.exe video/*/*.o
 
-$(obj): ../lib/xynth_.h ../lib/xynth.h server.h ../../Makefile.cfg
+include ../../Makefile.rules
 
-$(BINDIR):
-	mkdir -p $(BINDIR)
-
-$(BINDIR)/$(TARGET_S): $(obj) $(objl)
-ifeq ($(PLATFORM_LINUX), Y)
-	$(CC) -rdynamic -o $(BINDIR)/$(TARGET_S) $(obj) $(objl) $(LIBS)
-else
+dist: all
+	cp -a $(TARGET) ../../$(DISTBINDIR)
 ifeq ($(PLATFORM_MINGW), Y)
-	$(CC) -o $(BINDIR)/$(TARGET_S) $(obj) $(objl) $(LIBS)
 ifeq ($(THREAD_PTHREADS), Y)
-	cp ../../src/server/video/gdi/pthread_w32/pthreadGC2.dll $(BINDIR)
+	cp -a video/gdi/pthread_w32/pthreadGC2.dll ../../$(DISTBINDIR)
 endif
 else
 ifeq ($(PLATFORM_PSPDEV), Y)
-	$(CC) -o $(BINDIR)/$(TARGET_S).elf $(obj) $(objl) $(LIBS)
-	psp-fixup-imports $(BINDIR)/$(TARGET_S).elf
-	mksfo 'Xynth Windowing System' $(BINDIR)/param.sfo
+	psp-fixup-imports ../../$(DISTBINDIR)/$(TARGET)
+	mksfo 'Xynth Windowing System' ../../$(DISTBINDIR)/param.sfo
 ifeq ($(PSP-VERSION), 1.5)
-	mkdir -p $(BINDIR)/xynth
-	psp-strip $(BINDIR)/$(TARGET_S).elf -o $(BINDIR)/xynth/eboot.pbp
-	mkdir -p $(BINDIR)/xynth%
-	pack-pbp $(BINDIR)/xynth%/eboot.pbp \
-	         $(BINDIR)/param.sfo \
-		 ../../tools/pspdev/icon0.png \
-		 NULL \
-		 NULL \
-		 ../../tools/pspdev/pic1.png \
-		 NULL \
-		 NULL \
-		 NULL
+	mkdir -p ../../$(DISTBINDIR)/xynth
+	psp-strip ../../$(DISTBINDIR)/$(TARGET) -o ../../$(DISTBINDIR)/xynth/eboot.pbp
+	mkdir -p ../../$(DISTBINDIR)/xynth%
+	pack-pbp ../../$(DISTBINDIR)/xynth%/eboot.pbp \
+	         ../../$(DISTBINDIR)/param.sfo \
+	         ../../tools/pspdev/icon0.png \
+	         NULL \
+	         NULL \
+	         ../../tools/pspdev/pic1.png \
+	         NULL \
+	         NULL \
+	         NULL
 else
 ifeq ($(PSP-VERSION), 1.0)
 	mkdir -p $(BINDIR)/xynth
-	psp-strip $(BINDIR)/$(TARGET_S).elf -o $(BINDIR)/$(TARGET_S)_strip.elf
-	pack-pbp $(BINDIR)/xynth/eboot.pbp \
-                 $(BINDIR)/param.sfo \
-		 ../../tools/pspdev/icon0.png \
-		 NULL \
-		 NULL \
-		 ../../tools/pspdev/pic1.png \
-		 NULL \
-		 $(BINDIR)/$(TARGET_S)_strip.elf \
-		 NULL
-	rm $(BINDIR)/$(TARGET_S)_strip.elf
+	psp-strip ../../$(DISTBINDIR)/$(TARGET) -o ../../$(DISTBINDIR)/$(TARGET).strip
+	pack-pbp ../../$(DISTBINDIR)/xynth/eboot.pbp \
+	         ../../$(DISTBINDIR)/param.sfo \
+	         ../../tools/pspdev/icon0.png \
+	         NULL \
+	         NULL \
+	         ../../tools/pspdev/pic1.png \
+	         NULL \
+	         ../../$(DISTBINDIR)/$(TARGET).strip \
+	         NULL
+	rm ../../$(DISTBINDIR)/$(TARGET).strip
 endif
 endif
 else
 ifeq ($(PLATFORM_GP2X), Y)
-	$(CC) -o $(BINDIR)/$(TARGET_S) $(obj) $(objl) $(LIBS)
-	echo "#!/bin/bash"                          >  $(TOPDIR)/$(TARGET_S).gpe
-	echo "sync"                                 >> $(TOPDIR)/$(TARGET_S).gpe
-	echo "mount /mnt/sd -o remount,sync"        >> $(TOPDIR)/$(TARGET_S).gpe
-	echo "cd bin"                               >> $(TOPDIR)/$(TARGET_S).gpe
-	echo "export PATH=\`pwd\`:\$$PATH"          >> $(TOPDIR)/$(TARGET_S).gpe
+	echo "#!/bin/bash"                          >  ../../$(DISTTOPDIR)/$(TARGET).gpe
+	echo "sync"                                 >> ../../$(DISTTOPDIR)/$(TARGET).gpe
+	echo "mount /mnt/sd -o remount,sync"        >> ../../$(DISTTOPDIR)/$(TARGET).gpe
+	echo "cd bin"                               >> ../../$(DISTTOPDIR)/$(TARGET).gpe
+	echo "export PATH=\`pwd\`:\$$PATH"          >> ../../$(DISTTOPDIR)/$(TARGET).gpe
 ifeq ($(SINGLE_APP), Y)
-	echo "./xynth &> ../xynth.log"              >> $(TOPDIR)/$(TARGET_S).gpe
+	echo "./xynth &> ../xynth.log"              >> ../../$(DISTTOPDIR)/$(TARGET).gpe
 else
-	echo "./xynth &> ../xynth.log& sleep 2; ./desktop &> ../xynth_desktop.log" >> $(TOPDIR)/$(TARGET_S).gpe
+	echo "./xynth &> ../xynth.log& sleep 2; ./desktop &> ../xynth_desktop.log" >> ../../$(DISTTOPDIR)/$(TARGET).gpe
 endif
-	echo "sync"                                 >> $(TOPDIR)/$(TARGET_S).gpe
-	echo "mount /mnt/sd -o remount,async"       >> $(TOPDIR)/$(TARGET_S).gpe
-	echo "cd /usr/gp2x"                         >> $(TOPDIR)/$(TARGET_S).gpe
-	echo "exec ./gp2xmenu"                      >> $(TOPDIR)/$(TARGET_S).gpe
-	chmod +x $(TOPDIR)/$(TARGET_S).gpe
-	cp ../../tools/gp2x/xynth.png $(TOPDIR)
-endif
-endif
+	echo "sync"                                 >> ../../$(DISTTOPDIR)/$(TARGET).gpe
+	echo "mount /mnt/sd -o remount,async"       >> ../../$(DISTTOPDIR)/$(TARGET).gpe
+	echo "cd /usr/gp2x"                         >> ../../$(DISTTOPDIR)/$(TARGET).gpe
+	echo "exec ./gp2xmenu"                      >> ../../$(DISTTOPDIR)/$(TARGET).gpe
+	chmod +x ../../$(DISTTOPDIR)/$(TARGET).gpe
+	cp ../../tools/gp2x/xynth.png ../../$(DISTTOPDIR)
 endif
 endif
-
-clean:
-	$(MAKE) clean -C video
-	rm -rf $(BINDIR)/$(TARGET_S) *.o *.tco $(obj)
+endif

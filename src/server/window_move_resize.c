@@ -70,7 +70,7 @@ void s_server_window_lines_clear_ (s_rect_t *told, s_rect_t *tnew)
 		s_list_remove(diff, 0);
 		s_free(rtmp);
 	}
-	s_free(diff);
+	s_list_uninit(diff);
 }
 	
 void s_server_window_lines_clear (s_rect_t *bold, s_rect_t *bnew)

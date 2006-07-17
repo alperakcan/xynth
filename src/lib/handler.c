@@ -57,7 +57,7 @@ int s_handlers_init (s_window_t *window)
 		goto err1;
 	}
 	return 0;
-err1:	s_free(window->handlers->list);
+err1:	s_list_uninit(window->handlers->list);
 err0:	s_free(window->handlers);
 	return 1;
 }
@@ -74,7 +74,7 @@ int s_handlers_uninit (s_window_t *window)
 	}
 	s_thread_mutex_unlock(window->handlers->mut);
 	s_thread_mutex_destroy(window->handlers->mut);
-	s_free(window->handlers->list);
+	s_list_uninit(window->handlers->list);
 	s_free(window->handlers);
 
 	return 0;

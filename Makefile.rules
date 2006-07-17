@@ -1,0 +1,39 @@
+
+INCDIR := $(INCDIR)
+LIBDIR := $(LIBDIR)
+
+CFLAGS   := $(addprefix -I,$(INCDIR)) $(CFLAGS)
+CXXFLAGS := $(CFLAGS) $(CXXFLAGS)
+CPPFLAGS := $(CXXFLAGS)
+ASFLAGS  := $(CFLAGS) $(ASFLAGS)
+LDFLAGS  := $(addprefix -L,$(LIBDIR)) $(LDFLAGS)
+
+all: $(EXTRA_TARGETS) $(TARGET) $(TARGET_A) $(TARGET_SO)
+
+ifdef TARGET
+$(TARGET): $(OBJS) $(EXPORT_OBJ)
+	rm -rf $@
+	$(CC) $^ $(LDFLAGS) -o $@
+endif
+
+ifdef TARGET_A
+$(TARGET_A): $(OBJS)
+	rm -rf $@
+	$(AR) $@ $(OBJS)
+	$(RANLIB) $@
+endif
+
+ifdef TARGET_SO
+$(TARGET_SO): $(OBJS)
+	rm -rf $@
+	$(CC) -g -shared -o $@ $^ $(LDFLAGS)
+endif
+
+clean:
+	-rm -f $(TARGET) $(TARGET_A) $(TARGET_SO) $(EXTRA_CLEAN) $(OBJS) $(EXTRA_TARGETS)
+
+.c.o:
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+.cpp.o:
+	$(CXX) $(CXXFLAGS) -c -o $@ $<

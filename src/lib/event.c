@@ -258,9 +258,7 @@ int s_event_init (s_event_t **event)
 		goto err0;
 	}
 	return 0;
-
-err0:	s_free((*event)->desktop->clients);
-	s_free((*event)->desktop);
+err0:	s_free((*event)->desktop);
 	s_free((*event)->expose);
 	s_free((*event)->keybd);
 	s_free((*event)->mouse);
@@ -278,7 +276,7 @@ int s_event_uninit (s_event_t *event)
 		s_free(desktopc->title);
 		s_free(desktopc);
 	}
-	s_free(event->desktop->clients);
+	s_list_uninit(event->desktop->clients);
 	s_free(event->desktop);
 	s_free(event->expose->rect);
 	s_free(event->expose);

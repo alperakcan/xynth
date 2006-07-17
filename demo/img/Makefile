@@ -1,15 +1,25 @@
+
 include ../../Makefile.cfg
+include ../../Makefile.parse
 
-CFLAGS += -I$(INCDIR) -I../../src/lib/
+INCDIR  = ../../src/lib
+LIBDIR  = ../../src/lib
+LDFLAGS = -lxynth
 
-TARGET_D = $(BINDIR)/img
+OBJS = img.o
 
-obj = img.o
+ifeq ($(SINGLE_APP), Y)
+TARGET_A = single_img.a
+CFLAGS  += -Dmain=img_main
+else
+TARGET = img
+endif
 
-all : $(TARGET_D)
+EXTRA_CLEAN = img single_img.a
 
-$(TARGET_D) : $(obj)
-	$(CC) -o $(TARGET_D) $(obj) $(LIBS)
+include ../../Makefile.rules
 
-clean :
-	rm -f $(TARGET_D) $(obj)
+dist: all
+ifneq ($(TARGET),)
+	cp -a $(TARGET) ../../$(DISTBINDIR)
+endif

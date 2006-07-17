@@ -117,7 +117,7 @@ int s_object_move (s_object_t *object, int x, int y, int w, int h)
 		s_list_remove(diff, 0);
 		s_free(tmp);
 	}
-	s_free(diff);
+	s_list_uninit(diff);
 	s_object_update(object, object->surface->win);
 
         s_thread_mutex_unlock(object->mut);
@@ -251,7 +251,7 @@ int s_object_uninit (s_object_t *object)
 	s_free(object->surface->vbuf);
 	s_free(object->surface->matrix);
 	s_free(object->surface);
-	s_free(object->childs);
+	s_list_uninit(object->childs);
 	s_free(object);
 	return 0;
 }

@@ -1,4 +1,6 @@
+
 include ../Makefile.cfg
+include ../Makefile.parse
 
 all:
 	$(MAKE) -C child
@@ -20,6 +22,29 @@ else
 ifeq ($(PLATFORM_GP2X), Y)
 	$(MAKE) -C load
 	$(MAKE) -C term
+endif
+endif
+
+dist:
+	$(MAKE) dist -C child
+	$(MAKE) dist -C desktop
+	$(MAKE) dist -C simple
+	$(MAKE) dist -C temp
+	$(MAKE) dist -C hide
+	$(MAKE) dist -C object
+	$(MAKE) dist -C timer
+	$(MAKE) dist -C xynthlogout
+	$(MAKE) dist -C onscreenkeyboard
+ifeq ($(PLATFORM_LINUX), Y)
+	$(MAKE) dist -C load
+	$(MAKE) dist -C img
+	$(MAKE) dist -C mines
+	$(MAKE) dist -C widget
+	$(MAKE) dist -C term
+else
+ifeq ($(PLATFORM_GP2X), Y)
+	$(MAKE) dist -C load
+	$(MAKE) dist -C term
 endif
 endif
 

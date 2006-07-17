@@ -354,14 +354,17 @@ static int s_socket_pipe_init (void)
 	}
 	debugf(DSER, "Initializing Socket API Emulation using Pipes");
 	s_soce.ids = MIN_SOCK_E;
-	s_list_init(&(s_soce.list));
-	if (s_thread_mutex_init(&(s_soce.lock))) {
+	if (s_list_init(&(s_soce.list))) {
 		goto err1;
+	}
+	if (s_thread_mutex_init(&(s_soce.lock))) {
+		goto err2;
 	}
 	DEBUGF(0, "leave");
 	return 0;
-err1:	s_free(s_soce.list);
+err2:	s_list_uninit(s_soce.list);
 	s_soce.list = NULL;
+err1:	s_pipe_api_uninit();
 err0:	DEBUGF(0, "leave error");
 	return -1;
 }
@@ -376,7 +379,7 @@ static int s_socket_pipe_uninit (void)
 		s_list_remove(s_soce.list, 0);
 		s_free(tmp);
 	}
-	s_free(s_soce.list);
+	s_list_uninit(s_soce.list);
 	s_soce.list = NULL;
 	s_pipe_api_uninit();
 	s_thread_mutex_unlock(s_soce.lock);

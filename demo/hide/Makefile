@@ -1,28 +1,25 @@
+
 include ../../Makefile.cfg
+include ../../Makefile.parse
 
-CFLAGS += -I$(INCDIR) -I../../src/lib
+INCDIR  = ../../src/lib
+LIBDIR  = ../../src/lib
+LDFLAGS = -lxynth
 
-TARGET_S = ../single_hide.a
-TARGET_D = $(BINDIR)/hide
+OBJS = hide.o
 
 ifeq ($(SINGLE_APP), Y)
-	CFLAGS += -Dmain=hide_main
-	TARGET = $(TARGET_S)
+TARGET_A = single_hide.a
+CFLAGS  += -Dmain=hide_main
 else
-	TARGET = $(TARGET_D)
+TARGET = hide
 endif
 
-obj = hide.o
+EXTRA_CLEAN = hide single_hide.a
 
-all : $(TARGET)
+include ../../Makefile.rules
 
-$(TARGET) : $(obj)
-ifeq ($(SINGLE_APP), Y)
-	$(AR) $(TARGET) $(obj)
-	$(RANLIB) $(TARGET)
-else
-	$(CC) -o $(TARGET) $(obj) $(LIBS)
+dist: all
+ifneq ($(TARGET),)
+	cp -a $(TARGET) ../../$(DISTBINDIR)
 endif
-
-clean :
-	rm -f $(TARGET_D) $(TARGET_S) $(obj)

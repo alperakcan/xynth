@@ -1,44 +1,37 @@
+
 include ../../Makefile.cfg
+include ../../Makefile.parse
 
-TARGET_S = ../single_desktop.a
-TARGET_D = $(BINDIR)/desktop
-TARGET_P = $(SHAREDIR)/desktop
+DESKTOPDIR = $(INSTALLDIR)/$(SHAREDIR)/desktop
+CFLAGS += -DDESKTOPDIR=\"$(DESKTOPDIR)\"
+INCDIR  = ../../src/lib
+LIBDIR  = ../../src/lib
+LDFLAGS = -lxynth
 
-CFLAGS += -I$(INCDIR) -I../../src/lib -DDESKTOPDIR=\"$(INSTALLDIR)/$(TARGET_P)\"
-
+OBJS = desktop.o main.o menu.o taskbar.o
 
 ifeq ($(SINGLE_APP), Y)
-	CFLAGS += -Dmain=desktop_main
-	TARGET = $(TARGET_S)
+TARGET_A = single_desktop.a
+CFLAGS  += -Dmain=desktop_main
 else
-	TARGET = $(TARGET_D)
+TARGET = desktop
 endif
 
-obj = desktop.o main.o menu.o taskbar.o
+EXTRA_CLEAN = desktop single_desktop.a
 
-all : $(TARGET) $(TARGET_P)
+include ../../Makefile.rules
 
-$(obj) : desktop.h
-
-$(TARGET) : $(obj)
-ifeq ($(SINGLE_APP), Y)
-	$(AR) $(TARGET) $(obj)
-	$(RANLIB) $(TARGET)
-else
-	$(CC) -o $(TARGET) $(obj) $(LIBS)
+dist: all
+ifneq ($(TARGET),)
+	cp -a $(TARGET) ../../$(DISTBINDIR)
 endif
-
-$(TARGET_P) : cfg/desktop.cfg
-	mkdir -p $(TOPDIR)/$(TARGET_P)
-	mkdir -p $(TOPDIR)/$(TARGET_P)/cfg
-	mkdir -p $(TOPDIR)/$(TARGET_P)/img
-	mkdir -p $(TOPDIR)/$(TARGET_P)/img/icons
-	mkdir -p $(TOPDIR)/$(TARGET_P)/img/widget
-	mkdir -p $(TOPDIR)/$(TARGET_P)/img/wpaper
-	cp cfg/*.cfg $(TOPDIR)/$(TARGET_P)/cfg
-	cp img/icons/*.png $(TOPDIR)/$(TARGET_P)/img/icons
-	cp img/widget/*.png $(TOPDIR)/$(TARGET_P)/img/widget
-	cp img/wpaper/*.png $(TOPDIR)/$(TARGET_P)/img/wpaper
-
-clean :
-	rm -f $(TARGET_D) $(TARGET_S) $(obj)
+	mkdir -p ../../$(DISTTOPDIR)/$(SHAREDIR)/desktop
+	mkdir -p ../../$(DISTTOPDIR)/$(SHAREDIR)/desktop/cfg/
+	mkdir -p ../../$(DISTTOPDIR)/$(SHAREDIR)/desktop/img/
+	mkdir -p ../../$(DISTTOPDIR)/$(SHAREDIR)/desktop/img/icons
+	mkdir -p ../../$(DISTTOPDIR)/$(SHAREDIR)/desktop/img/widget
+	mkdir -p ../../$(DISTTOPDIR)/$(SHAREDIR)/desktop/img/wpaper
+	cp cfg/*.cfg ../../$(DISTTOPDIR)/$(SHAREDIR)/desktop/cfg
+	cp img/icons/*.png ../../$(DISTTOPDIR)/$(SHAREDIR)/desktop/img/icons
+	cp img/widget/*.png ../../$(DISTTOPDIR)/$(SHAREDIR)/desktop/img/widget
+	cp img/wpaper/*.png ../../$(DISTTOPDIR)/$(SHAREDIR)/desktop/img/wpaper

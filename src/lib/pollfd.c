@@ -80,7 +80,7 @@ int s_pollfds_init (s_window_t *window)
 		goto err1;
 	}
 	return 0;
-err1:	s_free(window->pollfds->list);
+err1:	s_list_uninit(window->pollfds->list);
 err0:	s_free(window->pollfds);
 	return -1;
 }
@@ -100,7 +100,7 @@ int s_pollfds_uninit (s_window_t *window)
 	}
 	s_thread_mutex_unlock(window->pollfds->mut);
 	s_thread_mutex_destroy(window->pollfds->mut);
-	s_free(window->pollfds->list);
+	s_list_uninit(window->pollfds->list);
 	s_free(window->pollfds);
 
 	return 0;

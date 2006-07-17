@@ -40,6 +40,7 @@ int s_child_del (s_window_t *window, s_window_t *child)
 		w = (s_window_t *) s_list_get(chl->list, p);
 		if (w->tid == child->tid) {
 			s_list_remove(chl->list, p);
+			ret = 0;
 			break;
 		}
 		p++;
@@ -60,7 +61,7 @@ int s_childs_init (s_window_t *window)
 		goto err1;
 	}
 	return 0;
-err1:	s_free(window->childs->list);
+err1:	s_list_uninit(window->childs->list);
 err0:	s_free(window->childs);
 	return -1;
 }
@@ -86,7 +87,7 @@ int s_childs_uninit (s_window_t *window)
 	}
 
 	s_thread_mutex_destroy(chl->mut);
-	s_free(chl->list);
+	s_list_uninit(chl->list);
 	s_free(chl);
 
 	return 0;

@@ -1,43 +1,32 @@
+
 include ../../Makefile.cfg
+include ../../Makefile.parse
 
-CFLAGS += -fPIC
-CPPFLAGS = $(CFLAGS)
-
-obj = button.o frame.o handler.o layout.o object.o rect.o window.o
+OBJS = button.o frame.o handler.o layout.o object.o rect.o window.o
 
 ifeq ($(PLATFORM_LINUX), Y)
-all: $(LIBDIR) $(INCDIR) $(INCDIR)/widget.h $(LIBDIR)/$(TARGET_W).a $(LIBDIR)/$(TARGET_W).so
+TARGET_A  = libwidget.a
+TARGET_SO = libwidget.so
+LIBDIR    = ../lib
+LDFLAGS   = -lxynth
 else
 ifeq ($(PLATFORM_PSPDEV), Y)
-all: $(LIBDIR) $(INCDIR) $(INCDIR)/widget.h $(LIBDIR)/$(TARGET_W).a
+TARGET_A  = libwidget.a
+else
+ifeq ($(PLATFORM_MINGW), Y)
+TARGET_A  = libwidget.a
 else
 ifeq ($(PLATFORM_GP2X), Y)
-all: $(LIBDIR) $(INCDIR) $(INCDIR)/widget.h $(LIBDIR)/$(TARGET_W).a
-else
-all:
+TARGET_A  = libwidget.a
 endif
 endif
 endif
+endif
 
-$(obj): widget.h
+EXTRA_CLEAN = libwidget.a libwidget.so
 
-$(LIBDIR):
-	mkdir -p $(LIBDIR)
+include ../../Makefile.rules
 
-$(INCDIR):
-	mkdir -p $(INCDIR)
-
-$(INCDIR)/widget.h: widget.h
-	cp -f widget.h $(INCDIR)/widget.h
-
-$(LIBDIR)/$(TARGET_W).a: $(obj)
-	$(AR) $(LIBDIR)/$(TARGET_W).a $(obj)
-	$(RANLIB) $(LIBDIR)/$(TARGET_W).a
-
-$(LIBDIR)/$(TARGET_W).so: $(obj)
-	$(CXX) -g -shared -Wl,-soname,$(TARGET_W).so.$(VERSION_M) -o $(LIBDIR)/$(TARGET_W).so.$(VERSION) $(obj) $(LIBS)
-	ln -sf $(TARGET_W).so.$(VERSION) $(LIBDIR)/$(TARGET_W).so.$(VERSION_M)
-	ln -sf $(TARGET_W).so.$(VERSION) $(LIBDIR)/$(TARGET_W).so
-
-clean:
-	rm -f $(LIBDIR)/$(TARGET_W).* $(obj)
+dist: all
+	cp -a widget.h ../../$(DISTINCDIR)
+	cp -a $(TARGET_A) $(TARGET_SO) $(TARGET) ../../$(DISTLIBDIR)

@@ -1,4 +1,6 @@
+
 include ../Makefile.cfg
+include ../Makefile.parse
 
 all :
 	$(MAKE) -C lib
@@ -11,6 +13,18 @@ endif
 	$(MAKE) -C configs
 #	$(MAKE) -C python
 	$(MAKE) -C server
+
+dist:
+	$(MAKE) dist -C lib
+	$(MAKE) dist -C widget
+	$(MAKE) dist -C ../demo
+ifeq ($(THEME_PLUGIN), Y)
+	$(MAKE) dist -C themes
+endif
+	$(MAKE) dist -C fonts
+	$(MAKE) dist -C configs
+#	$(MAKE) dist -C python
+	$(MAKE) dist -C server
 
 clean :
 	$(MAKE) clean -C lib

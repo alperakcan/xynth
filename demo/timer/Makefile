@@ -1,28 +1,25 @@
+
 include ../../Makefile.cfg
+include ../../Makefile.parse
 
-CFLAGS += -I$(INCDIR) -I../../src/lib
+INCDIR  = ../../src/lib
+LIBDIR  = ../../src/lib
+LDFLAGS = -lxynth
 
-TARGET_S = ../single_timer.a
-TARGET_D = $(BINDIR)/timer
+OBJS = timer.o
 
 ifeq ($(SINGLE_APP), Y)
-	CFLAGS += -Dmain=timer_main
-	TARGET = $(TARGET_S)
+TARGET_A = single_timer.a
+CFLAGS  += -Dmain=timer_main
 else
-	TARGET = $(TARGET_D)
+TARGET = timer
 endif
 
-obj = timer.o
+EXTRA_CLEAN = timer single_timer.a
 
-all : $(TARGET)
+include ../../Makefile.rules
 
-$(TARGET) : $(obj)
-ifeq ($(SINGLE_APP), Y)
-	$(AR) $(TARGET) $(obj)
-	$(RANLIB) $(TARGET)
-else
-	$(CC) -o $(TARGET) $(obj) $(LIBS)
+dist: all
+ifneq ($(TARGET),)
+	cp -a $(TARGET) ../../$(DISTBINDIR)
 endif
-
-clean :
-	rm -f $(TARGET_D) $(TARGET_S) $(obj)

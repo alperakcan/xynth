@@ -1,5 +1,6 @@
 
 Fri 07 Jul 2006 04:30:09 PM EEST
+        * rev: 173
 	* lib/grlib.c : minor correction for rotate
 	* widget/object.cpp : notation fix for old compilers
 	* lib/thread*.c : minor changes for thread layer
