@@ -1,6 +1,13 @@
 
+Mon 17 Jul 2006 04:08:02 PM EEST
+	* rev : 184
+	* Makefiles : brand new build system
+	* ~*.c : minor api fixes (not important)
+	* doxygen : added some more api doc
+	* client.c : fixed a small leak
+
 Fri 07 Jul 2006 04:30:09 PM EEST
-        * rev: 173
+	* rev: 173
 	* lib/grlib.c : minor correction for rotate
 	* widget/object.cpp : notation fix for old compilers
 	* lib/thread*.c : minor changes for thread layer
