@@ -14,26 +14,33 @@ if [ "$STRIP" == "" ]; then
 	STRIP=strip;
 fi
 
-echo $STRIP $NM
+echo "strip command: $STRIP, nm command:$NM";
 
 echo $* > syms.args
 
 read_all()
 {
-	$NM `cat syms.args` |
-	awk '/[^:]$/ {print $NF}' |
-	sort |
-	uniq |
-	grep -v '^$' |
-	grep -v '^main$' |
-	grep -v '__gnu_compiled_c' |
-	grep -v 'gcc2_compiled' > syms.all
-	echo `cat syms.all`;
+	echo > syms.all;
+	objs=$*;
+	for file in $objs; do
+		for sym in `$NM -o $file |
+			    awk '/[^:]$/ {print $NF}' |
+			    sort |
+			    uniq |
+			    grep -v '^$' |
+			    grep -v '^main$' |
+			    grep -v '__gnu_compiled_c' |
+			    grep -v 'gcc2_compiled'`; do
+			echo "$file:$sym" >> syms.all;
+		done
+		echo `cat syms.all`;
+	done;
 }
 
 read_defined()
 {
-	$NM --defined-only `cat syms.args` |
+	objs=$*;
+	$NM -o --defined-only $objs |
 	grep " T " |
 	awk '/[^:]$/ {print $NF}' |
 	sort |
@@ -41,13 +48,14 @@ read_defined()
 	grep -v '^$' |
 	grep -v '^main$' |
 	grep -v '__gnu_compiled_c' |
-	grep -v 'gcc2_compiled' > syms.def
+	grep -v 'gcc2_compiled' > syms.def;
 	echo `cat syms.def`;
 }
 
 read_undefined()
 {
-	$NM --undefined-only `cat syms.args` |
+	objs=$*;
+	$NM -o --undefined-only $objs |
 	grep " U " |
 	awk '/[^:]$/ {print $NF}' |
 	sort |
@@ -55,44 +63,34 @@ read_undefined()
 	grep -v '^$' |
 	grep -v '^main$' |
 	grep -v '__gnu_compiled_c' |
-	grep -v 'gcc2_compiled' > syms.undef
+	grep -v 'gcc2_compiled' > syms.undef;
 	echo `cat syms.undef`;
 }
 
-let passes=0;
-let removed=0;
 
 remove_sym()
 {
 	sym=$1;
-	removed="";
-	for file in `cat syms.args`; do
-		for found in `$NM --defined-only $file | awk '/[^:]$/ {print $NF}' | grep $sym | grep -v grep`; do
-			if [ "$found" == "$sym" ]; then
-				$STRIP -N $sym -R .text.$sym -R .data.$sym $file &> /dev/null
-				if [ $? != 0 ] ; then
-					removed="_U_N_K_N_O_W_N_";
-				else
-					removed=$file
-				fi
-				break;
-			fi
-		done
-		if [ "$removed" != "" ]; then
-			break;
-		fi
-	done
-	echo $removed;
+	file=$2;
+	$STRIP -N $sym -R .text.$sym -R .data.$sym $file &> /dev/null
+	if [ $? != 0 ] ; then
+		echo "";
+	else
+		echo "OK";
+	fi
 }
 
-progress=0;
+let passes=0;
+let removed=0;
+let progress=0;
 
+objs=`cat syms.args`;
 echo "collecting symbols";
-all=`read_all`;
+all=`read_all $objs`;
 echo "collecting defined symbols";
-defined=`read_defined`;
+defined=`read_defined $objs`;
 echo "collecting undefined (used) symbols";
-undefined=`read_undefined`;
+undefined=`read_undefined $objs`;
 
 for def in $defined; do
 	found=0;
@@ -108,19 +106,25 @@ for def in $defined; do
 			echo -e '\033[0Gprocessing cross references... /\c';
 		fi
 		let passes=$passes+1;
-		if [ $def == $undef ]; then
+		
+		if [ "$def" == "$undef" ]; then
 			found=1;
 			break;
 		fi
 	done
 	if [ $found == 0 ]; then
-		file=`remove_sym $def`;
-		if [ "$file" == "_U_N_K_N_O_W_N_" ]; then
-			foo=bar;
-		else
-			echo -e "\033[0Gremoved $def from $file             ";
-			let removed=$removed+1;
-		fi
+		files=`grep $def syms.all`;
+		for file in $files; do
+			sym=`echo $file | cut -d : -f 2`;
+			if [ "$sym" == "$def" ]; then
+				file=`echo $file | cut -d : -f 1`;
+				removed_ok=`remove_sym $sym $file`;
+				if [ "$removed_ok" == "OK" ]; then
+					echo -e "\033[0Gremoved $sym from $file             ";
+					let removed=$removed+1;
+				fi
+			fi
+		done
 	fi
 done
 
