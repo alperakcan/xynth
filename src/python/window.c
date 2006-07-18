@@ -171,7 +171,6 @@ PyObject * p_window_set_alwaysontop (PyObject *self, PyObject *args)
 PyObject * p_window_atevent (PyObject *self, PyObject *args)
 {
 	PyObject *temp;
-	PyObject *res = NULL;
 	p_window_t *window = (p_window_t *) self;
 
 	if (PyArg_ParseTuple(args, "O:p_window_atevent", &temp)) {
@@ -191,7 +190,6 @@ PyObject * p_window_atevent (PyObject *self, PyObject *args)
 PyObject * p_window_atexit (PyObject *self, PyObject *args)
 {
 	PyObject *temp;
-	PyObject *res = NULL;
 	p_window_t *window = (p_window_t *) self;
 
 	if (PyArg_ParseTuple(args, "O:p_window_atexit", &temp)) {
