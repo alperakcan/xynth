@@ -8,7 +8,7 @@ LIBDIR += ../lib
 OBJS = window.o xynthpy.o
 
 ifeq ($(PLATFORM_LINUX), Y)
-TARGET_SO = libxynthpy.so
+TARGET_SO = xynth.so
 LDFLAGS   = -lpython2.4 -lxynth
 else
 ifeq ($(PLATFORM_PSPDEV), Y)
