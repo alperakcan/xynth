@@ -7,6 +7,7 @@ CXXFLAGS := $(CFLAGS) $(CXXFLAGS)
 CPPFLAGS := $(CXXFLAGS)
 ASFLAGS  := $(CFLAGS) $(ASFLAGS)
 LDFLAGS  := $(addprefix -L,$(LIBDIR)) $(LDFLAGS)
+DEPEND   := Makefile.depend
 
 all: $(EXTRA_TARGETS) $(TARGET) $(TARGET_A) $(TARGET_SO)
 
@@ -29,11 +30,18 @@ $(TARGET_SO): $(OBJS)
 	$(CC) -g -shared -o $@ $^ $(LDFLAGS)
 endif
 
-clean:
-	-rm -f $(TARGET) $(TARGET_A) $(TARGET_SO) $(EXTRA_CLEAN) $(OBJS) $(EXTRA_TARGETS)
-
 .c.o:
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 .cpp.o:
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
+$(OBJS): $(DEPEND)
+
+$(DEPEND): $(DEPEND_FILES) $(EXTRA_DEPEND_FILES)
+	@>$@
+	@$(foreach F, $(DEPEND_FILES), $(CC) $(CFLAGS) -MM $(F) >> $@;)
+-include $(DEPEND)
+
+clean:
+	rm -f $(TARGET) $(TARGET_A) $(TARGET_SO) $(EXTRA_CLEAN) $(OBJS) $(EXTRA_TARGETS) $(DEPEND)

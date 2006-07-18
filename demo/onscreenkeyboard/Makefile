@@ -17,6 +17,8 @@ endif
 
 EXTRA_CLEAN = onscreenkeyboard single_onscreenkeyboard.a
 
+DEPEND_FILES       = *.c
+
 include ../../Makefile.rules
 
 dist: all

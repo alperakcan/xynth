@@ -17,6 +17,8 @@ endif
 
 EXTRA_CLEAN = hide single_hide.a
 
+DEPEND_FILES       = *.c
+
 include ../../Makefile.rules
 
 dist: all

@@ -17,6 +17,8 @@ endif
 
 EXTRA_CLEAN = child single_child.a
 
+DEPEND_FILES       = *.c
+
 include ../../Makefile.rules
 
 dist: all

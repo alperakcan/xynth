@@ -18,6 +18,8 @@ endif
 
 EXTRA_CLEAN = widget single_widget.a
 
+DEPEND_FILES       = *.cpp
+
 include ../../Makefile.rules
 
 dist: all

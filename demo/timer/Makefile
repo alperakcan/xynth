@@ -17,6 +17,8 @@ endif
 
 EXTRA_CLEAN = timer single_timer.a
 
+DEPEND_FILES       = *.c
+
 include ../../Makefile.rules
 
 dist: all

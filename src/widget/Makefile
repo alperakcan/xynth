@@ -25,6 +25,9 @@ endif
 
 EXTRA_CLEAN = libwidget.a libwidget.so
 
+DEPEND_FILES       = *.cpp
+EXTRA_DEPEND_FILES = *.h
+
 include ../../Makefile.rules
 
 dist: all

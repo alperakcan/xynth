@@ -17,6 +17,8 @@ endif
 
 EXTRA_CLEAN = term single_term.a
 
+DEPEND_FILES       = *.c
+
 include ../../Makefile.rules
 
 dist: all
