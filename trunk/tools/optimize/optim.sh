@@ -67,7 +67,6 @@ read_undefined()
 	echo `cat syms.undef`;
 }
 
-
 remove_sym()
 {
 	sym=$1;
