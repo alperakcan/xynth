@@ -91,6 +91,9 @@ LDFLAGS += -lxynth $(VLDFLAGS)
 
 EXTRA_CLEAN = xynth xynth.elf xynth.exe video/*/*.o
 
+DEPEND_FILES       = *.c video/*/*.c
+EXTRA_DEPEND_FILES = *.h
+
 include ../../Makefile.rules
 
 dist: all

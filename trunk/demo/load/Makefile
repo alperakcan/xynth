@@ -17,6 +17,8 @@ endif
 
 EXTRA_CLEAN = load single_load.a
 
+DEPEND_FILES       = *.c
+
 include ../../Makefile.rules
 
 dist: all

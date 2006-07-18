@@ -19,6 +19,9 @@ endif
 
 EXTRA_CLEAN = desktop single_desktop.a
 
+DEPEND_FILES       = *.c
+EXTRA_DEPEND_FILES = *.h
+
 include ../../Makefile.rules
 
 dist: all
