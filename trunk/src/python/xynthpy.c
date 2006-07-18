@@ -36,6 +36,6 @@ void initxynth (void)
 	PyModule_AddIntConstant(m, "WINDOW_NOFORM", WINDOW_NOFORM);
 	PyModule_AddIntConstant(m, "WINDOW_MAIN", WINDOW_MAIN);
 	Py_INCREF(&p_window_type);
-	PyModule_AddObject(m, "window", (PyObject *) &p_window_type);
-//	PyModule_AddObject(m, "event", (PyObject *) &p_event_type);
+	PyModule_AddObject(m, "window", (PyObject *) ((void *) (&p_window_type)));
+//	PyModule_AddObject(m, "event", (PyObject *) ((void *) (&p_event_type)));
 }
