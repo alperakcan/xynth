@@ -77,5 +77,8 @@ static inline char * java2CString (JNIEnv *env, jstring jstr)
 	return buf;
 }
 
-#define KAFFE_FONT_FUNC_DECL( ret, name, args... ) ret name(JNIEnv* env, jclass clazz, jobject jfont, ##args)
+#define KAFFE_FONT_FUNC_DECL(ret, name, args...) ret name(JNIEnv *env, jclass clazz, jobject jfont, ##args)
 #define UNVEIL_FONT(jfont) ((s_font_t *) JCL_GetRawData(env, jfont))
+
+#define KAFFE_IMG_FUNC_DECL(ret, name, args...) ret name(JNIEnv *env, jclass clazz, jobject jimg, ##args)
+#define UNVEIL_IMG(jimg) ((s_image_t *) JCL_GetRawData(env, jimg))
