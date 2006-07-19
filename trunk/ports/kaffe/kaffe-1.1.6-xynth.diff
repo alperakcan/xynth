@@ -386,5 +386,5 @@ diff -Naur kaffe-1.1.6/test/awt/WidgetsDemo/WidgetsDemo.sh kaffe-1.1.6-xynth/tes
 @@ -1,2 +1,3 @@
  #! /bin/sh
 -kaffe WidgetsDemo
-+jikes +Pno-switchcheck +Pno-shadow +E -g -classpath .:../../../libraries/javalib/rt.jar -d . ./WidgetsDemo.java 
++jikes +Pno-switchcheck +Pno-shadow +E -g -classpath .:../../../build/libraries/javalib/rt.jar -d . ./WidgetsDemo.java 
 +kaffe -Xkaffe-xynth-awt WidgetsDemo
