@@ -1,8 +1,7 @@
 
 #include "toolkit.h"
 
-
-jobject Java_java_awt_Toolkit_imgCreateFromFile (JNIEnv* env, jclass clazz, jstring fileName)
+jobject Java_java_awt_Toolkit_imgCreateFromFile (JNIEnv *env, jclass clazz, jstring fileName)
 {
 	char *fname;
 	s_image_t *img;
@@ -11,9 +10,24 @@ jobject Java_java_awt_Toolkit_imgCreateFromFile (JNIEnv* env, jclass clazz, jstr
 	s_image_init(&img);
 	if (s_image_img(fname, img)) {
 		s_image_uninit(img);
-		AWT_FREE(gname);
+		AWT_FREE(fname);
 		return NULL;
 	}
 	AWT_FREE(fname);
 	return JCL_NewRawDataObject(env, img);
+}
+
+KAFFE_IMG_FUNC_DECL(jint, Java_java_awt_Toolkit_imgGetWidth)
+{
+	return UNVEIL_IMG(jimg)->w;
+}
+
+KAFFE_IMG_FUNC_DECL(jint, Java_java_awt_Toolkit_imgGetHeight)
+{
+	return UNVEIL_IMG(jimg)->h;
+}
+
+KAFFE_IMG_FUNC_DECL(jboolean, Java_java_awt_Toolkit_imgIsMultiFrame)
+{
+	return (UNVEIL_IMG(jimg)->layers->nb_elt != 0);
 }
