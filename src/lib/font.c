@@ -71,6 +71,8 @@ int s_font_uninit (s_font_t *font)
 
 int s_font_set_size (s_font_t *font, int size)
 {
+	FT_Fixed scale;
+	
 	if (font->size == size) {
 		goto end;
 	}
@@ -78,20 +80,26 @@ int s_font_set_size (s_font_t *font, int size)
 		debugf(0, "FT_Set_Pixel_Sizes");
 		return -1;
 	}
+	#define FT_FLOOR(X) ((X & -64) / 64)
+	#define FT_CEIL(X)  (((X + 63) & -64) / 64)
+	scale = font->ft->face->size->metrics.y_scale;
 	font->size = size;
-	font->ascender = font->ft->face->size->metrics.ascender / 64;
-	font->descender = font->ft->face->size->metrics.descender / 64;
-	font->height = font->ft->face->size->metrics.height / 64;
-	font->max_advance = font->ft->face->size->metrics.max_advance / 64;
+	font->ascent  = FT_CEIL(FT_MulFix(font->ft->face->ascender, scale));
+	font->descent = FT_CEIL(FT_MulFix(font->ft->face->descender, scale));
+	font->height  = font->ascent - font->descent + /* baseline */ 1;
+	font->lineskip = FT_CEIL(FT_MulFix(font->ft->face->height, scale));
+	font->underline_offset = FT_FLOOR(FT_MulFix(font->ft->face->underline_position, scale));
+	font->underline_height = FT_FLOOR(FT_MulFix(font->ft->face->underline_thickness, scale));
 
 #if 0
-	printf("%d\n", size);
-	printf("%d\n", font->ft->face->size->metrics.x_ppem);
-	printf("%d\n", font->ft->face->size->metrics.y_ppem);
-	printf("%ld\n", font->ft->face->size->metrics.ascender / 64);
-	printf("%ld\n", font->ft->face->size->metrics.descender / 64);
-	printf("%ld\n", font->ft->face->size->metrics.height / 64);
-	printf("%ld\n", font->ft->face->size->metrics.max_advance / 64);
+	printf("\nfont:\n");
+	printf("scale   : %d\n", (int) scale);
+	printf("size    : %d\n", font->size);
+	printf("ascent  : %d\n", font->ascent);
+	printf("descent : %d\n", font->descent);
+	printf("height  : %d\n", font->height);
+	printf("underline_offset: %d\n", font->underline_offset);
+	printf("underline_height: %d\n", font->underline_height);
 #endif
 
 end:	return 0;
@@ -138,13 +146,13 @@ int s_font_get_glyph (s_font_t *font)
 	for (n = 0; n < num_chars; n++) {
 		glyph_index = FT_Get_Char_Index(font->ft->face, font->str[n]);
 		if (glyph_index == 0) {
-			debugf(0, "FT_Get_Char_Index");
+			debugf(0, "Couldnt get glyph index for char: %c[%d]", font->str[n], font->str[n]);
 			continue;
 		}
 		if (use_kerning && previous && glyph_index) {
 			FT_Vector delta;
 			if (FT_Get_Kerning(font->ft->face, previous, glyph_index, FT_KERNING_DEFAULT, &delta)) {
-				debugf(0, "FT_Get_Kerning");
+				debugf(0, "Couldnt get kerning data for char: %c[%d]", font->str[n], font->str[n]);
 			}
 			pen_x += delta.x >> 6;
 		}

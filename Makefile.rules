@@ -20,7 +20,7 @@ endif
 ifdef TARGET_A
 $(TARGET_A): $(OBJS)
 	rm -rf $@
-	$(AR) $@ $(OBJS)
+	$(AR) $@ $^
 	$(RANLIB) $@
 endif
 
