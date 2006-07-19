@@ -27,6 +27,7 @@ libxynthawt_la_LIBADD = \
 	$(top_builddir)/libraries/clib/classpath/libclasspath.la
 
 libxynthawt_la_SOURCES = \
+	color.c \
 	image.c \
 	font.c \
 	toolkit.c \
