@@ -28,7 +28,8 @@ libxynthawt_la_LIBADD = \
 
 libxynthawt_la_SOURCES = \
 	font.c \
-	toolkit.c
+	toolkit.c \
+	window.c
 
 noinst_HEADERS = \
 	toolkit.h

@@ -9,6 +9,7 @@
 #include <xynth.h>
 
 typedef struct xynth_toolkit_s {
+	DecoInset frameInsets;
 	s_window_t *root;
 } xynth_toolkit_t;
 
