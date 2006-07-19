@@ -23,7 +23,7 @@ jint Java_java_awt_Toolkit_tlkGetScreenWidth (JNIEnv *env UNUSED, jclass clazz U
 {
 	DEBUGF("Enter");
 	DEBUGF("Leave");
-	return 600;
+	return xynth->root->surface->linear_buf_width;
 }
 
 jint Java_java_awt_Toolkit_tlkGetScreenHeight (JNIEnv *env UNUSED, jclass clazz UNUSED)
