@@ -1,7 +1,7 @@
 
 #include "toolkit.h"
 
-#define JRGB(_r,_g,_b)  (_r<<16 | _g<<8 | (_b))
+#define JRGB(_r,_g,_b)  (_r << 16 | _g << 8 | (_b))
 #define JRED(_rgb)      (((_rgb) & 0xff0000) >> 16)
 #define JGREEN(_rgb)    (((_rgb) & 0x00ff00) >> 8)
 #define JBLUE(_rgb)     ((_rgb) & 0x0000ff)
