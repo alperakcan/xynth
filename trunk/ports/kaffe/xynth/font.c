@@ -99,3 +99,17 @@ KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntIsWideFont)
 	DEBUGF("Leave");
 	return 0;
 }
+
+KAFFE_FONT_FUNC_DECL(jint, Java_java_awt_Toolkit_fntStringWidth, jstring jStr)
+{
+	char *str;
+	s_font_t *font;
+	DEBUGF("Enter");
+	font = UNVEIL_FONT(jfont);
+	str = java2CString(env, jStr);
+	s_font_set_str(font, str);
+	s_font_get_glyph(font);
+	AWT_FREE(str);
+	DEBUGF("Leave");
+	return font->img->w;
+}
