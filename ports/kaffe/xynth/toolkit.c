@@ -50,4 +50,6 @@ jstring Java_java_awt_Toolkit_tlkVersion (JNIEnv *env, jclass clazz UNUSED)
 
 void Java_java_awt_Toolkit_tlkDisplayBanner (JNIEnv* env UNUSED, jclass clazz UNUSED, jstring banner UNUSED)
 {
+	DEBUGF("Enter");
+	DEBUGF("Leave");
 }
