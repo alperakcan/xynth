@@ -8,8 +8,16 @@
 
 #include <xynth.h>
 
+typedef struct deco_inset_s {
+	int left;
+	int top;
+	int right;
+	int bottom;
+	char guess;
+} deco_inset_t;
+
 typedef struct xynth_toolkit_s {
-	DecoInset frameInsets;
+	deco_inset_t frame_insets;
 	s_window_t *root;
 } xynth_toolkit_t;
 
