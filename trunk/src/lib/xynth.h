@@ -382,10 +382,12 @@ typedef struct s_font_s {
 	int yMax;
 	char *str;
 	int size;
-	int ascender;
-	int descender;
+	int ascent;
+	int descent;
 	int height;
-	int max_advance;
+	int lineskip;
+	int underline_offset;
+	int underline_height;
 	unsigned int rgb;
 	s_image_t *img;
 	s_font_ft_t *ft;
