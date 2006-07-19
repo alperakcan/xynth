@@ -85,3 +85,17 @@ KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntGetMaxAdvance)
 	DEBUGF("Leave");
 	return UNVEIL_FONT(jfont)->height;
 }
+
+KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntGetFixedWidth)
+{
+	DEBUGF("Enter");
+	DEBUGF("Leave");
+	return UNVEIL_FONT(jfont)->height;
+}
+
+KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntIsWideFont)
+{
+	DEBUGF("Enter");
+	DEBUGF("Leave");
+	return 0;
+}

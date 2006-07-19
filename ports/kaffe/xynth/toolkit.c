@@ -10,7 +10,7 @@ jint Java_java_awt_Toolkit_tlkProperties (JNIEnv *env UNUSED, jclass clazz UNUSE
 	return props;
 }
 
-jboolean Java_java_awt_Toolkit_tlkInit (JNIEnv *env UNUSED, jclass clazz UNUSED, jstring name)
+jboolean Java_java_awt_Toolkit_tlkInit (JNIEnv *env UNUSED, jclass clazz UNUSED, jstring name UNUSED)
 {
 	DEBUGF("Enter");
 	xynth = AWT_MALLOC(sizeof(xynth_toolkit_t));
@@ -41,9 +41,13 @@ jint Java_java_awt_Toolkit_tlkGetResolution (JNIEnv *env UNUSED, jclass clazz UN
 	return 0;
 }
 
-jstring Java_java_awt_Toolkit_tlkVersion (JNIEnv *env UNUSED, jclass clazz UNUSED)
+jstring Java_java_awt_Toolkit_tlkVersion (JNIEnv *env, jclass clazz UNUSED)
 {
 	DEBUGF("Enter");
 	DEBUGF("Leave");
 	return (*env)->NewStringUTF(env, "Xynth Windowing System");
+}
+
+void Java_java_awt_Toolkit_tlkDisplayBanner (JNIEnv* env UNUSED, jclass clazz UNUSED, jstring banner UNUSED)
+{
 }
