@@ -28,8 +28,10 @@ libxynthawt_la_LIBADD = \
 
 libxynthawt_la_SOURCES = \
 	color.c \
+	event.c \
 	image.c \
 	font.c \
+	graphic.c \
 	toolkit.c \
 	window.c
 

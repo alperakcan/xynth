@@ -15,6 +15,8 @@ jboolean Java_java_awt_Toolkit_tlkInit (JNIEnv *env UNUSED, jclass clazz UNUSED,
 	DEBUGF("Enter");
 	xynth = AWT_MALLOC(sizeof(xynth_toolkit_t));
 	s_client_init(&(xynth->root));
+	xynth->nwindows = XYNTH_NWINDOWS;
+	xynth->windows = AWT_CALLOC(xynth->nwindows, sizeof(window_rec_t));
 	DEBUGF("Leave");
 	return JNI_TRUE;
 }

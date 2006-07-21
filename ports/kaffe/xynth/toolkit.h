@@ -8,6 +8,23 @@
 
 #include <xynth.h>
 
+#define XYNTH_NWINDOWS 100
+
+typedef struct graphics_s {
+	s_surface_t *surface;
+	int fg;
+	int bg;
+	char xor;
+	int xclr;
+	int x0;
+	int y0;
+} graphics_t;
+
+typedef struct window_rec_s {
+	s_window_t *window;
+	s_window_t *owner;
+} window_rec_t;
+
 typedef struct deco_inset_s {
 	int left;
 	int top;
@@ -18,6 +35,10 @@ typedef struct deco_inset_s {
 
 typedef struct xynth_toolkit_s {
 	deco_inset_t frame_insets;
+	unsigned int nwindows;
+	window_rec_t *windows;
+	window_rec_t *last_window;
+	unsigned int last_idx;
 	s_window_t *root;
 } xynth_toolkit_t;
 
@@ -82,3 +103,53 @@ static inline char * java2CString (JNIEnv *env, jstring jstr)
 
 #define KAFFE_IMG_FUNC_DECL(ret, name, args...) ret name(JNIEnv *env, jclass clazz, jobject jimg, ##args)
 #define UNVEIL_IMG(jimg) ((s_image_t *) JCL_GetRawData(env, jimg))
+
+#define UNVEIL_WINDOW(jwin) ((s_window_t *) JCL_GetRawData(env, jwin))
+
+#define UNVEIL_GRAP(jgraphics) ((graphics_t *) JCL_GetRawData(env, jgraphics));
+
+static inline int source_idx_free (xynth_toolkit_t *tk, s_window_t *win)
+{
+	register int n;
+	for (n = 0; n < tk->nwindows; n++) {
+		if (tk->windows[n].window <= 0 ) {
+			tk->last_idx = n;
+			tk->last_window = win;
+			return n;
+		}
+	}
+	return -1;
+}
+
+static inline int source_idx_register (xynth_toolkit_t *tk, s_window_t *window, s_window_t *owner)
+{
+	int i;
+	i = source_idx_free(tk, window);
+	if (i >= 0) {
+		tk->windows[i].window = window;
+		tk->windows[i].owner = owner;
+		return i;
+	} else {
+		DEBUGF("window table out of spafe: %d", tk->nwindows);
+		return -1;
+	}
+}
+
+static inline int source_idx_get (xynth_toolkit_t *tk, s_window_t *win)
+{
+	register int n;
+	if (win == tk->last_window) {
+		return tk->last_idx;
+	} else {
+		for (n = 0; n < tk->nwindows; n++) {
+			if (tk->windows[n].window == win) {
+				tk->last_idx = n;
+				tk->last_window = win;
+				return tk->last_idx;
+			} else if (tk->windows[n].window == 0) {
+				return -1;
+			}
+		}
+		return -1;
+	}
+}
