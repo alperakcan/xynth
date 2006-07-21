@@ -26,7 +26,7 @@ jobject Java_java_awt_Toolkit_wndCreateFrame (JNIEnv *env, jclass clazz, jstring
 	s_window_set_coor(window, WINDOW_NOFORM, x, y, width, height);
 	s_window_set_title(window, str);
 	s_fillbox(window->surface, 0, 0, window->surface->width, window->surface->height, clrBack);
-	s_window_show(window);
+	s_fillbox(window->surface, 0, 0, window->surface->width, window->surface->height, s_rgbcolor(window->surface, 255, 255, 255));
 	s_client_main(window);
 	jwindow = JCL_NewRawDataObject(env, window);
 	source_idx_register(xynth, UNVEIL_WINDOW(jwindow), xynth->root);
@@ -34,4 +34,30 @@ jobject Java_java_awt_Toolkit_wndCreateFrame (JNIEnv *env, jclass clazz, jstring
 	AWT_FREE(str);
 	DEBUGF("Leave");
 	return jwindow;
+}
+
+void Java_java_awt_Toolkit_wndSetVisible (JNIEnv* env UNUSED, jclass clazz UNUSED, jobject nwnd, jboolean showIt)
+{
+	int i;
+	s_window_t *window;
+	
+	DEBUGF("Enter");
+	
+	window = UNVEIL_WINDOW(nwnd);
+	i = source_idx_get(xynth, window);
+	if (i < 0) {
+		DEBUGF("Could not find idx for window");
+		return;
+	}
+	
+	DEBUGF("window->client->id: %d", window->client->id);
+
+	if (showIt) {
+		s_window_show(window);
+	} else {
+		s_window_hide(window);
+	}
+	
+	DEBUGF("Leave");
+	return;
 }

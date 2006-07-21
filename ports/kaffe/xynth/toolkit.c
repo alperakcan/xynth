@@ -55,3 +55,9 @@ void Java_java_awt_Toolkit_tlkDisplayBanner (JNIEnv* env UNUSED, jclass clazz UN
 	DEBUGF("Enter");
 	DEBUGF("Leave");
 }
+
+void Java_java_awt_Toolkit_tlkBeep (JNIEnv *env UNUSED, jclass clazz UNUSED)
+{
+	DEBUGF("Enter");
+	DEBUGF("Leave");
+}
