@@ -61,8 +61,20 @@ jobject Java_java_awt_Toolkit_evtInit (JNIEnv* env, jclass clazz UNUSED)
 jint Java_java_awt_Toolkit_evtRegisterSource (JNIEnv* env UNUSED, jclass clazz UNUSED, jobject nativeWnd)
 {
 	int id;
+	DEBUGF("Enter");
 	s_window_t *window;
 	window = UNVEIL_WINDOW(nativeWnd);
 	id = source_idx_get(xynth, window);
+	DEBUGF("Leave");
 	return id;
+}
+
+jobject Java_java_awt_Toolkit_evtGetNextEvent (JNIEnv* env, jclass clazz)
+{
+	DEBUGF("Enter");
+//	while (1) {
+//		sleep(1);
+//	}
+	DEBUGF("Leave");
+	return NULL;
 }
