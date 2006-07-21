@@ -1,7 +1,7 @@
 
 #include "toolkit.h"
 
-void Java_java_awt_Toolkit_wndSetFrameInsets (JNIEnv* env UNUSED, jclass clazz UNUSED, jint top, jint left, jint bottom, jint right)
+void Java_java_awt_Toolkit_wndSetFrameInsets (JNIEnv *env UNUSED, jclass clazz UNUSED, jint top, jint left, jint bottom, jint right)
 {
 	DEBUGF("Enter");
 	xynth->frame_insets.top  = top;
@@ -10,4 +10,28 @@ void Java_java_awt_Toolkit_wndSetFrameInsets (JNIEnv* env UNUSED, jclass clazz U
 	xynth->frame_insets.right = right;
 	xynth->frame_insets.guess = 1;
 	DEBUGF("Leave");
+}
+
+jobject Java_java_awt_Toolkit_wndCreateFrame (JNIEnv *env, jclass clazz, jstring jTitle,
+                                              jint x, jint y, jint width, jint height,
+					      jint jCursor, jint clrBack, jboolean isResizable)
+{
+	char *str;
+	s_window_t *window;
+	jobject jwindow;
+	DEBUGF("Enter");
+	str = java2CString(env, jTitle);
+	s_client_init(&window);
+	s_window_new(window, WINDOW_CHILD, xynth->root);
+	s_window_set_coor(window, WINDOW_NOFORM, x, y, width, height);
+	s_window_set_title(window, str);
+	s_fillbox(window->surface, 0, 0, window->surface->width, window->surface->height, clrBack);
+	s_window_show(window);
+	s_client_main(window);
+	jwindow = JCL_NewRawDataObject(env, window);
+	source_idx_register(xynth, UNVEIL_WINDOW(jwindow), xynth->root);
+	DEBUGF("title: %s, x: %d, y: %d, w: %d, h: %d, cursor: %d, clrback: %d, resize: %d", str, x, y, width, height, clrBack, isResizable);
+	AWT_FREE(str);
+	DEBUGF("Leave");
+	return jwindow;
 }
