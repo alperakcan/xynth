@@ -39,24 +39,19 @@ void Java_java_awt_Toolkit_wndSetVisible (JNIEnv* env UNUSED, jclass clazz UNUSE
 {
 	int i;
 	s_window_t *window;
-	
 	DEBUGF("Enter");
-	
 	window = UNVEIL_WINDOW(nwnd);
 	i = source_idx_get(xynth, window);
 	if (i < 0) {
 		DEBUGF("Could not find idx for window");
 		return;
 	}
-	
 	DEBUGF("window->client->id: %d", window->client->id);
-
 	if (showIt) {
 		s_window_show(window);
 	} else {
 		s_window_hide(window);
 	}
-	
 	DEBUGF("Leave");
 	return;
 }

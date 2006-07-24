@@ -95,7 +95,7 @@ jobject Java_java_awt_Toolkit_graInitGraphics (JNIEnv* env, jclass clazz UNUSED,
 						jobject fnt, jint fg, jint bg, jboolean blank)
 {
 	graphics_t *gr = NULL;
-
+	DEBUGF("Enter");
 	if (ngr != NULL) {
 		gr = UNVEIL_GRAP(ngr);
 	}
@@ -106,5 +106,6 @@ jobject Java_java_awt_Toolkit_graInitGraphics (JNIEnv* env, jclass clazz UNUSED,
 		                      (tgtType == 1) ? "Image" :
 				      (tgtType == 2) ? "graphics" : "unknown");
 	}
+	DEBUGF("Leave");
 	return 0;
 }
