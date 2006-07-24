@@ -26,7 +26,6 @@ jobject Java_java_awt_Toolkit_wndCreateFrame (JNIEnv *env, jclass clazz, jstring
 	s_window_set_coor(window, WINDOW_NOFORM, x, y, width, height);
 	s_window_set_title(window, str);
 	s_fillbox(window->surface, 0, 0, window->surface->width, window->surface->height, clrBack);
-	s_fillbox(window->surface, 0, 0, window->surface->width, window->surface->height, s_rgbcolor(window->surface, 255, 255, 255));
 	s_client_main(window);
 	jwindow = JCL_NewRawDataObject(env, window);
 	source_idx_register(xynth, UNVEIL_WINDOW(jwindow), xynth->root);
