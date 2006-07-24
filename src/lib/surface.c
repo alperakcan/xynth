@@ -134,8 +134,8 @@ void s_surface_uninit (s_window_t *window)
 
 void s_surface_changed (s_window_t *window, s_rect_t *changed)
 {
-        int x;
-        int y;
+	int x;
+	int y;
 	s_rect_t coor;
 
 	if (!(window->surface->mode & SURFACE_REAL)) {
