@@ -71,10 +71,11 @@ jint Java_java_awt_Toolkit_evtRegisterSource (JNIEnv* env UNUSED, jclass clazz U
 
 jobject Java_java_awt_Toolkit_evtGetNextEvent (JNIEnv* env, jclass clazz)
 {
-	DEBUGF("Enter");
+	sleep(1);
+//	DEBUGF("Enter");
 //	while (1) {
 //		sleep(1);
 //	}
-	DEBUGF("Leave");
+//	DEBUGF("Leave");
 	return NULL;
 }
