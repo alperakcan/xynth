@@ -5,7 +5,6 @@ jobject Java_java_awt_Toolkit_imgCreateFromFile (JNIEnv *env, jclass clazz, jstr
 {
 	char *fname;
 	s_image_t *img;
-	
 	DEBUGF("Enter");
 	fname = java2CString(env, fileName);
 	s_image_init(&img);
