@@ -99,12 +99,13 @@ jobject Java_java_awt_Toolkit_graInitGraphics (JNIEnv* env, jclass clazz UNUSED,
 	if (ngr != NULL) {
 		gr = UNVEIL_GRAP(ngr);
 	}
-	
 	if (tgt) {
 		void *tgtPtr = JCL_GetRawData(env, tgt);
 		DEBUGF("tgttype: %s", (tgtType == 0) ? "window" :
 		                      (tgtType == 1) ? "Image" :
 				      (tgtType == 2) ? "graphics" : "unknown");
+	} else {
+		DEBUGF("tgt == 0");
 	}
 	DEBUGF("Leave");
 	return 0;
