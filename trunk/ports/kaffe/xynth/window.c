@@ -1,6 +1,8 @@
 
 #include "toolkit.h"
 
+void xynth_kaffe_atevent (s_window_t *window, s_event_t *event);
+
 void Java_java_awt_Toolkit_wndSetFrameInsets (JNIEnv *env UNUSED, jclass clazz UNUSED, jint top, jint left, jint bottom, jint right)
 {
 	DEBUGF("Enter");
@@ -26,6 +28,7 @@ jobject Java_java_awt_Toolkit_wndCreateFrame (JNIEnv *env, jclass clazz, jstring
 	s_window_set_coor(window, WINDOW_NOFORM, x, y, width, height);
 	s_window_set_title(window, str);
 	s_fillbox(window->surface, 0, 0, window->surface->width, window->surface->height, clrBack);
+	s_client_atevent(window, xynth_kaffe_atevent);
 	s_client_main(window);
 	jwindow = JCL_NewRawDataObject(env, window);
 	source_idx_register(xynth, UNVEIL_WINDOW(jwindow), xynth->root);

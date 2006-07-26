@@ -31,6 +31,11 @@ typedef struct deco_inset_s {
 	char guess;
 } deco_inset_t;
 
+typedef struct xynth_eventq_s {
+	s_list_t *list;
+	s_thread_mutex_t *mut;
+} xynth_eventq_t;
+
 typedef struct xynth_toolkit_s {
 	deco_inset_t frame_insets;
 	unsigned int nwindows;
@@ -38,6 +43,7 @@ typedef struct xynth_toolkit_s {
 	window_rec_t *last_window;
 	unsigned int last_idx;
 	s_window_t *root;
+	xynth_eventq_t *eventq;
 } xynth_toolkit_t;
 
 xynth_toolkit_t *xynth;
