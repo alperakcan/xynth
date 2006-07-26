@@ -17,6 +17,76 @@ jmethodID  getKeyEvent;
 jmethodID  getPaintEvent;
 jmethodID  getWMEvent;
 
+typedef jobject (*event_handler) (JNIEnv *, s_event_t *);
+
+typedef enum {
+	JNONE_EVENT   = 0x0,
+	JQUIT_EVENT   = 0x1,
+	JKEYBD_EVENT  = 0x2,
+	JMOUSE_EVENT  = 0x3,
+	JEXPOSE_EVENT = 0x4
+} S_JEVENT;
+
+S_JEVENT event_handler_number (s_event_t *event)
+{
+	S_EVENT event_type;
+	event_type = event->type & (QUIT_EVENT |
+	                            KEYBD_EVENT |
+				    MOUSE_EVENT |
+				    EXPOSE_EVENT);
+	switch (event_type) {
+		case QUIT_EVENT:  return JQUIT_EVENT;
+		case KEYBD_EVENT: return JKEYBD_EVENT;
+		case MOUSE_EVENT: return JMOUSE_EVENT;
+		case EXPOSE_EVENT:return JEXPOSE_EVENT;
+	}
+	DEBUGF("unknown event: 0x08x", event->type); 
+	return JNONE_EVENT;
+}
+
+jobject event_handler_none (JNIEnv *env, s_event_t *event)
+{
+	DEBUGF("Enter");
+	DEBUGF("Leave");
+	return NULL;
+}
+
+jobject event_handler_quit (JNIEnv *env, s_event_t *event)
+{
+	DEBUGF("Enter");
+	DEBUGF("Leave");
+	return NULL;
+}
+
+jobject event_handler_keybd (JNIEnv *env, s_event_t *event)
+{
+	DEBUGF("Enter");
+	DEBUGF("Leave");
+	return NULL;
+}
+
+jobject event_handler_mouse (JNIEnv *env, s_event_t *event)
+{
+	DEBUGF("Enter");
+	DEBUGF("Leave");
+	return NULL;
+}
+
+jobject event_handler_expose (JNIEnv *env, s_event_t *event)
+{
+	DEBUGF("Enter");
+	DEBUGF("Leave");
+	return NULL;
+}
+
+event_handler process_event[] = {
+	event_handler_none,
+	event_handler_quit,
+	event_handler_keybd,
+	event_handler_mouse,
+	event_handler_expose
+};
+
 jobject Java_java_awt_Toolkit_evtInit (JNIEnv* env, jclass clazz UNUSED)
 {
 	jclass Component;
