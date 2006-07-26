@@ -75,6 +75,8 @@ jobject event_handler_mouse (JNIEnv *env, s_event_t *event)
 jobject event_handler_expose (JNIEnv *env, s_event_t *event)
 {
 	DEBUGF("Enter");
+	printf("0x%08x\n", event->expose->change);
+	printf("x: %d, y: %d, w: %d, h: %d\n", event->expose->rect->x, event->expose->rect->y, event->expose->rect->w, event->expose->rect->h);
 	DEBUGF("Leave");
 	return NULL;
 }
@@ -174,13 +176,13 @@ jobject Java_java_awt_Toolkit_evtGetNextEvent (JNIEnv* env, jclass clazz)
 	s_thread_mutex_lock(xynth->eventq->mut);
         while (!s_list_eol(xynth->eventq->list, 0)) {
 		event = (s_event_t *) s_list_get(xynth->eventq->list, 0);
-		s_list_remove(xynth->eventq->list, 0);
 		jevent_type = event_handler_number(event);
 		jevent = process_event[jevent_type](env, event);
+		s_list_remove(xynth->eventq->list, 0);
+		s_event_uninit(event);
 		if (jevent != NULL) {
 			break;
 		}
-		s_event_uninit(event);
 	}
 	s_thread_mutex_unlock(xynth->eventq->mut);
 	return jevent;
