@@ -53,5 +53,4 @@ void Java_java_awt_Toolkit_wndSetVisible (JNIEnv* env UNUSED, jclass clazz UNUSE
 		s_window_hide(window);
 	}
 	DEBUGF("Leave");
-	return;
 }
