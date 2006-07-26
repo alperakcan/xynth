@@ -139,13 +139,49 @@ jint Java_java_awt_Toolkit_evtRegisterSource (JNIEnv* env UNUSED, jclass clazz U
 	return id;
 }
 
+void xynth_kaffe_atevent (s_window_t *window, s_event_t *event)
+{
+        s_event_t *jevent;
+	DEBUGF("Enter id: %d", window->client->id);
+	switch (event->type & EVENT_MASK) {
+		case QUIT_EVENT:
+		case MOUSE_EVENT:
+		case KEYBD_EVENT:
+		case EXPOSE_EVENT:
+			if (!s_event_init(&jevent)) {
+				jevent->type = event->type;
+				memcpy(jevent->mouse, event->mouse, sizeof(s_mouse_t));
+				memcpy(jevent->keybd, event->keybd, sizeof(s_keybd_t));
+				jevent->expose->change = event->expose->change;
+				memcpy(jevent->expose->rect, event->expose->rect, sizeof(s_rect_t));
+				s_thread_mutex_lock(xynth->eventq->mut);
+				s_list_add(xynth->eventq->list, jevent, -1);
+				s_thread_mutex_unlock(xynth->eventq->mut);
+			}
+			break;
+		default:
+			break;
+	}
+	DEBUGF("Leave");
+}
+
 jobject Java_java_awt_Toolkit_evtGetNextEvent (JNIEnv* env, jclass clazz)
 {
-//	sleep(1);
-//	DEBUGF("Enter");
-//	while (1) {
-//		sleep(1);
-//	}
-//	DEBUGF("Leave");
-	return NULL;
+	jobject jevent;
+	s_event_t *event;
+	S_JEVENT jevent_type;
+	jevent = NULL;
+	s_thread_mutex_lock(xynth->eventq->mut);
+        while (!s_list_eol(xynth->eventq->list, 0)) {
+		event = (s_event_t *) s_list_get(xynth->eventq->list, 0);
+		s_list_remove(xynth->eventq->list, 0);
+		jevent_type = event_handler_number(event);
+		jevent = process_event[jevent_type](env, event);
+		if (jevent != NULL) {
+			break;
+		}
+		s_event_uninit(event);
+	}
+	s_thread_mutex_unlock(xynth->eventq->mut);
+	return jevent;
 }
