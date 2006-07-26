@@ -211,12 +211,12 @@ int s_event_parse_keybd (s_window_t *window, s_event_t *event)
 
 int s_event_parse_expos (s_window_t *window, s_event_t *event)
 {
-	s_surface_changed(window, event->expose->rect);
-	
+	if (event->expose->change == 0) {
+		s_surface_changed(window, event->expose->rect);
+	}
 	if ((event->expose->change & ~EXPOSE_CHNGF) != 0) {
 		s_window_form_draw(window);
 	}
-
 	return 0;
 }
 
