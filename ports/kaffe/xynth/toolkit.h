@@ -14,8 +14,6 @@ typedef struct graphics_s {
 	s_surface_t *surface;
 	int fg;
 	int bg;
-	char xor;
-	int xclr;
 	int x0;
 	int y0;
 } graphics_t;
