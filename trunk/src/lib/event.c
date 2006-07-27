@@ -211,12 +211,13 @@ int s_event_parse_keybd (s_window_t *window, s_event_t *event)
 
 int s_event_parse_expos (s_window_t *window, s_event_t *event)
 {
-	if (event->expose->change == 0) {
-		s_surface_changed(window, event->expose->rect);
-	}
-	if ((event->expose->change & ~EXPOSE_CHNGF) != 0) {
-		s_window_form_draw(window);
-	}
+	s_surface_changed(window, event->expose->rect);
+	return 0;
+}
+
+int s_event_parse_config (s_window_t *window, s_event_t *event)
+{
+	s_window_form_draw(window);
 	return 0;
 }
 
@@ -237,7 +238,6 @@ int s_event_changed (s_window_t *window)
 			event->type = window->event->type;
 			memcpy(event->mouse, window->event->mouse, sizeof(s_mouse_t));
 			memcpy(event->keybd, window->event->keybd, sizeof(s_keybd_t));
-			event->expose->change = window->event->expose->change;
 			memcpy(event->expose->rect, window->event->expose->rect, sizeof(s_rect_t));
 			s_eventq_add(window, event);
 		}

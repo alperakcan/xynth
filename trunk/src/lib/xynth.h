@@ -349,27 +349,28 @@ typedef enum {
 } S_MOUSECODE_CODE;
 
 typedef enum {
-	QUIT_EVENT     = 0x00001,
-	KEYBD_EVENT    = 0x00002,
-	KEYBD_RELEASED = 0x00004,
-	KEYBD_PRESSED  = 0x00008,
-	MOUSE_EVENT    = 0x00010,
-	MOUSE_OVER     = 0x00020,
-	MOUSE_RELEASED = 0x00040,
-	MOUSE_PRESSED  = 0x00080,
-	MOUSE_CLICKED  = 0x00100,
-	MOUSE_HINT     = 0x00200,
-	MOUSE_HINT2    = 0x00400,
-	EXPOSE_EVENT   = 0x00800,
-	EXPOSE_CHNGX   = 0x01000,
-	EXPOSE_CHNGY   = 0x02000,
-	EXPOSE_CHNGW   = 0x04000,
-	EXPOSE_CHNGH   = 0X08000,
-	EXPOSE_CHNGF   = 0X10000,
-	DESKTOP_EVENT  = 0x20000,
-	TIMER_EVENT    = 0x40000,
-	REMOTE_EVENT   = 0x80000,
-	EVENT_MASK     = (QUIT_EVENT | EXPOSE_EVENT | KEYBD_EVENT | MOUSE_EVENT | DESKTOP_EVENT | TIMER_EVENT)
+	QUIT_EVENT     = 0x000001,
+	KEYBD_EVENT    = 0x000002,
+	KEYBD_RELEASED = 0x000004,
+	KEYBD_PRESSED  = 0x000008,
+	MOUSE_EVENT    = 0x000010,
+	MOUSE_OVER     = 0x000020,
+	MOUSE_RELEASED = 0x000040,
+	MOUSE_PRESSED  = 0x000080,
+	MOUSE_CLICKED  = 0x000100,
+	MOUSE_HINT     = 0x000200,
+	MOUSE_HINT2    = 0x000400,
+	EXPOSE_EVENT   = 0x000800,
+	CONFIG_EVENT   = 0x001000,
+	CONFIG_CHNGX   = 0x002000,
+	CONFIG_CHNGY   = 0x004000,
+	CONFIG_CHNGW   = 0x008000,
+	CONFIG_CHNGH   = 0x010000,
+	FOCUS_EVENT    = 0x020000,
+	DESKTOP_EVENT  = 0x040000,
+	TIMER_EVENT    = 0x080000,
+	REMOTE_EVENT   = 0x100000,
+	EVENT_MASK     = (QUIT_EVENT | KEYBD_EVENT | MOUSE_EVENT | EXPOSE_EVENT | CONFIG_EVENT | FOCUS_EVENT | DESKTOP_EVENT | TIMER_EVENT)
 } S_EVENT;
 
 typedef enum {
@@ -418,7 +419,6 @@ typedef struct s_keybd_s {
 } s_keybd_t;
 
 typedef struct s_expose_s {
-	int change;
 	s_rect_t *rect;
 } s_expose_t;
 
@@ -781,6 +781,7 @@ int s_event_mouse_state (s_window_t *window, s_event_t *event, s_handler_mouse_t
 void s_event_parse_mouse (s_window_t *window, s_event_t *event);
 int s_event_parse_keybd (s_window_t *window, s_event_t *event);
 int s_event_parse_expos (s_window_t *window, s_event_t *event);
+int s_event_parse_config (s_window_t *window, s_event_t *event);
 int s_event_parse_timer (s_window_t *window, s_event_t *event);
 int s_event_changed (s_window_t *window);
 int s_event_init (s_event_t **event);

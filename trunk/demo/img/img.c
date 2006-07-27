@@ -75,8 +75,8 @@ static void img_atevent (s_window_t *window, s_event_t *event)
 	img_data_t *imgd;
 	imgd = window->client->user_data;
 
-	if (event->type & EXPOSE_EVENT) {
-		if (event->expose->change & (EXPOSE_CHNGW | EXPOSE_CHNGH)) {
+	if (event->type & CONFIG_EVENT) {
+		if (event->type & (CONFIG_CHNGW |  CONFIG_CHNGH)) {
 			img_show(window);
 		}
 	}
