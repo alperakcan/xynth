@@ -309,9 +309,7 @@ static void lxynth_atevent (s_window_t *window, s_event_t *event)
 				e->type = event->type;
 				memcpy(e->mouse, event->mouse, sizeof(s_mouse_t));
 				memcpy(e->keybd, event->keybd, sizeof(s_keybd_t));
-				e->expose->change = event->expose->change;
 				memcpy(e->expose->rect, event->expose->rect, sizeof(s_rect_t));
-
 				s_thread_mutex_lock(lxynth_root->eventq->mut);
 				s_list_add(lxynth_root->eventq->list, e, -1);
 				s_thread_mutex_unlock(lxynth_root->eventq->mut);
