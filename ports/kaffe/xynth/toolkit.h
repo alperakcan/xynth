@@ -31,6 +31,11 @@ typedef struct deco_inset_s {
 	char guess;
 } deco_inset_t;
 
+typedef struct xynth_event_s {
+	s_event_t *event;
+	s_window_t *window;
+} xynth_event_t;
+
 typedef struct xynth_eventq_s {
 	s_list_t *list;
 	s_thread_mutex_t *mut;
@@ -56,6 +61,11 @@ xynth_toolkit_t *xynth;
 #define TLK_NEEDS_FLUSH			4
 #define TLK_NATIVE_DISPATCHER_LOOP	8
 #define TLK_EXTERNAL_DECO		16
+
+#define COMPONENT_RESIZED 101
+#define FOCUS_GAINED      1004
+#define FOCUS_LOST        1005
+#define UPDATE            801
 
 static inline void * _awt_malloc_wrapper (size_t size)
 {
