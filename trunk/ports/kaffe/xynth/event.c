@@ -17,7 +17,7 @@ jmethodID  getKeyEvent;
 jmethodID  getPaintEvent;
 jmethodID  getWMEvent;
 
-typedef jobject (*event_handler) (JNIEnv *, s_event_t *);
+typedef jobject (*event_handler) (JNIEnv *, xynth_event_t *);
 
 typedef enum {
 	JNONE_EVENT   = 0x0,
@@ -45,61 +45,91 @@ S_JEVENT event_handler_number (s_event_t *event)
 		case EXPOSE_EVENT:return JEXPOSE_EVENT;
 		case CONFIG_EVENT:return JCONFIG_EVENT;
 		case FOCUS_EVENT: return JFOCUS_EVENT;
+		default:          break;
 	}
-	DEBUGF("unknown event: 0x08x", event->type); 
+	DEBUGF("unknown event: 0x%08x", event->type); 
 	return JNONE_EVENT;
 }
 
-jobject event_handler_none (JNIEnv *env, s_event_t *event)
+jobject event_handler_none (JNIEnv *env, xynth_event_t *xevent)
 {
 	DEBUGF("Enter");
 	DEBUGF("Leave");
 	return NULL;
 }
 
-jobject event_handler_quit (JNIEnv *env, s_event_t *event)
+jobject event_handler_quit (JNIEnv *env, xynth_event_t *xevent)
 {
 	DEBUGF("Enter");
 	DEBUGF("Leave");
 	return NULL;
 }
 
-jobject event_handler_keybd (JNIEnv *env, s_event_t *event)
+jobject event_handler_keybd (JNIEnv *env, xynth_event_t *xevent)
 {
 	DEBUGF("Enter");
 	DEBUGF("Leave");
 	return NULL;
 }
 
-jobject event_handler_mouse (JNIEnv *env, s_event_t *event)
+jobject event_handler_mouse (JNIEnv *env, xynth_event_t *xevent)
 {
 	DEBUGF("Enter");
 	DEBUGF("Leave");
 	return NULL;
 }
 
-jobject event_handler_expose (JNIEnv *env, s_event_t *event)
+jobject event_handler_expose (JNIEnv *env, xynth_event_t *xevent)
 {
+	int idx;
+	jobject jevent;
+	s_event_t *event;
 	DEBUGF("Enter");
-	printf("x: %d, y: %d, w: %d, h: %d\n", event->expose->rect->x, event->expose->rect->y, event->expose->rect->w, event->expose->rect->h);
+	idx = source_idx_get(xynth, xevent->window);
+	if (idx < 0) {
+		return NULL;
+	}
+	event = xevent->event;
+	jevent = (*env)->CallStaticObjectMethod( env, PaintEvent, getPaintEvent, idx, UPDATE, event->expose->rect->x, event->expose->rect->y, event->expose->rect->w, event->expose->rect->h);
 	DEBUGF("Leave");
-	return NULL;
+	return jevent;
 }
 
-jobject event_handler_config (JNIEnv *env, s_event_t *event)
+jobject event_handler_config (JNIEnv *env, xynth_event_t *xevent)
 {
+	int idx;
+	jobject jevent;
+	s_event_t *event;
 	DEBUGF("Enter");
-	printf("x: %d, y: %d, w: %d, h: %d\n", event->expose->rect->x, event->expose->rect->y, event->expose->rect->w, event->expose->rect->h);
+	idx = source_idx_get(xynth, xevent->window);
+	if (idx < 0) {
+		return NULL;
+	}
+	event = xevent->event;
+	jevent = (*env)->CallStaticObjectMethod(env, ComponentEvent, getComponentEvent, idx, COMPONENT_RESIZED, event->expose->rect->x, event->expose->rect->y, event->expose->rect->w, event->expose->rect->h);
+	printf("idx: %d, x: %d, y: %d, w: %d, h: %d\n", idx, event->expose->rect->x, event->expose->rect->y, event->expose->rect->w, event->expose->rect->h);
 	DEBUGF("Leave");
-	return NULL;
+	return jevent;
 }
 
-jobject event_handler_focus (JNIEnv *env, s_event_t *event)
+jobject event_handler_focus (JNIEnv *env, xynth_event_t *xevent)
 {
+	int idx;
+	jobject jevent;
+	s_event_t *event;
 	DEBUGF("Enter");
-	printf("x: %d, y: %d, w: %d, h: %d\n", event->expose->rect->x, event->expose->rect->y, event->expose->rect->w, event->expose->rect->h);
+	idx = source_idx_get(xynth, xevent->window);
+	if (idx < 0) {
+		return NULL;
+	}
+	event = xevent->event;
+	if (xevent->window->client->pri == 0) {
+		jevent = (*env)->CallStaticObjectMethod(env, FocusEvent, getFocusEvent, idx, FOCUS_GAINED, JNI_FALSE);
+	} else {
+		jevent = (*env)->CallStaticObjectMethod(env, FocusEvent, getFocusEvent, idx, FOCUS_LOST, JNI_FALSE);
+	}
 	DEBUGF("Leave");
-	return NULL;
+	return jevent;
 }
 
 event_handler process_event[] = {
@@ -166,7 +196,7 @@ jint Java_java_awt_Toolkit_evtRegisterSource (JNIEnv* env UNUSED, jclass clazz U
 
 void xynth_kaffe_atevent (s_window_t *window, s_event_t *event)
 {
-        s_event_t *jevent;
+	xynth_event_t *xevent;
 	DEBUGF("Enter id: %d", window->client->id);
 	switch (event->type & EVENT_MASK) {
 		case QUIT_EVENT:
@@ -175,14 +205,20 @@ void xynth_kaffe_atevent (s_window_t *window, s_event_t *event)
 		case EXPOSE_EVENT:
 		case CONFIG_EVENT:
 		case FOCUS_EVENT:
-			if (!s_event_init(&jevent)) {
-				jevent->type = event->type;
-				memcpy(jevent->mouse, event->mouse, sizeof(s_mouse_t));
-				memcpy(jevent->keybd, event->keybd, sizeof(s_keybd_t));
-				memcpy(jevent->expose->rect, event->expose->rect, sizeof(s_rect_t));
-				s_thread_mutex_lock(xynth->eventq->mut);
-				s_list_add(xynth->eventq->list, jevent, -1);
-				s_thread_mutex_unlock(xynth->eventq->mut);
+			xevent = (xynth_event_t *) AWT_MALLOC(sizeof(xynth_event_t));
+			if (xevent != NULL) {
+				if (!s_event_init(&(xevent->event))) {
+					xevent->window = window;
+					xevent->event->type = event->type;
+					memcpy(xevent->event->mouse, event->mouse, sizeof(s_mouse_t));
+					memcpy(xevent->event->keybd, event->keybd, sizeof(s_keybd_t));
+					memcpy(xevent->event->expose->rect, event->expose->rect, sizeof(s_rect_t));
+					s_thread_mutex_lock(xynth->eventq->mut);
+					s_list_add(xynth->eventq->list, xevent, -1);
+					s_thread_mutex_unlock(xynth->eventq->mut);
+				} else {
+					AWT_FREE(xevent);
+				}
 			}
 			break;
 		default:
@@ -194,18 +230,21 @@ void xynth_kaffe_atevent (s_window_t *window, s_event_t *event)
 jobject Java_java_awt_Toolkit_evtGetNextEvent (JNIEnv* env, jclass clazz)
 {
 	jobject jevent;
-	s_event_t *event;
+	xynth_event_t *xevent;
 	S_JEVENT jevent_type;
 	jevent = NULL;
 	s_thread_mutex_lock(xynth->eventq->mut);
         while (!s_list_eol(xynth->eventq->list, 0)) {
-		event = (s_event_t *) s_list_get(xynth->eventq->list, 0);
-		jevent_type = event_handler_number(event);
-		jevent = process_event[jevent_type](env, event);
+		xevent = (xynth_event_t *) s_list_get(xynth->eventq->list, 0);
+		jevent_type = event_handler_number(xevent->event);
+		jevent = process_event[jevent_type](env, xevent);
 		s_list_remove(xynth->eventq->list, 0);
-		s_event_uninit(event);
+		s_event_uninit(xevent->event);
+		AWT_FREE(xevent);
 		if (jevent != NULL) {
 			break;
+		} else {
+			DEBUGF("Error !!!");
 		}
 	}
 	s_thread_mutex_unlock(xynth->eventq->mut);
