@@ -23,8 +23,7 @@ static int i = 0;
 
 static void child_atevent (s_window_t *window, s_event_t *event)
 {
-	if ((event->type & EXPOSE_EVENT) &&
-	    (event->expose->change & EXPOSE_CHNGF)) {
+	if (event->type & FOCUS_EVENT) {
 		debugf(DCLI, "[%d] %s focus", window->client->id, (window->client->pri == 0) ? "gained" : "lost");
 	}
 }

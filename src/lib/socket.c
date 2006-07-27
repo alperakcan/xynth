@@ -277,7 +277,7 @@ int s_socket_listen_close (s_window_t *window, int soc)
 int s_socket_listen_expose (s_window_t *window, int soc)
 {
 	int p_old;
-	int change;
+	S_EVENT change;
 	s_rect_t r_old;
 	s_soc_data_expose_t *data;
 	data = (s_soc_data_expose_t *) s_calloc(1, sizeof(s_soc_data_expose_t));
@@ -299,13 +299,12 @@ int s_socket_listen_expose (s_window_t *window, int soc)
 	
 	/* configure event */
 	change = 0;
-	if (r_old.x != window->surface->win->x) { change |= EXPOSE_CHNGX; }
-	if (r_old.y != window->surface->win->y) { change |= EXPOSE_CHNGY; }
-	if (r_old.w != window->surface->win->w) { change |= EXPOSE_CHNGW; }
-	if (r_old.h != window->surface->win->h) { change |= EXPOSE_CHNGH; }
+	if (r_old.x != window->surface->win->x) { change |= CONFIG_CHNGX; }
+	if (r_old.y != window->surface->win->y) { change |= CONFIG_CHNGY; }
+	if (r_old.w != window->surface->win->w) { change |= CONFIG_CHNGW; }
+	if (r_old.h != window->surface->win->h) { change |= CONFIG_CHNGH; }
 	if (change != 0) {
-		window->event->type = EXPOSE_EVENT;
-		window->event->expose->change = change;
+		window->event->type = CONFIG_EVENT | change;
 		window->event->expose->rect->x = window->surface->win->x;
 		window->event->expose->rect->y = window->surface->win->y;
 		window->event->expose->rect->w = window->surface->win->w;
@@ -313,14 +312,9 @@ int s_socket_listen_expose (s_window_t *window, int soc)
 		s_event_changed(window);
 	}
 	/* focus event */
-	change = 0;
 	if ((p_old != window->client->pri) &&
 	    ((p_old == 0) || (window->client->pri == 0))) {
-		change |= EXPOSE_CHNGF;
-	}
-	if (change != 0) {
-		window->event->type = EXPOSE_EVENT;
-		window->event->expose->change = change;
+		window->event->type = FOCUS_EVENT;
 		window->event->expose->rect->x = window->surface->win->x;
 		window->event->expose->rect->y = window->surface->win->y;
 		window->event->expose->rect->w = window->surface->win->w;
@@ -329,7 +323,6 @@ int s_socket_listen_expose (s_window_t *window, int soc)
 	}
 	/* expose event */
 	window->event->type = EXPOSE_EVENT;
-	window->event->expose->change = 0;
 	window->event->expose->rect->x = data->changed.x;
 	window->event->expose->rect->y = data->changed.y;
 	window->event->expose->rect->w = data->changed.w;

@@ -24,7 +24,9 @@ typedef enum {
 	JQUIT_EVENT   = 0x1,
 	JKEYBD_EVENT  = 0x2,
 	JMOUSE_EVENT  = 0x3,
-	JEXPOSE_EVENT = 0x4
+	JEXPOSE_EVENT = 0x4,
+	JCONFIG_EVENT = 0x5,
+	JFOCUS_EVENT  = 0x6
 } S_JEVENT;
 
 S_JEVENT event_handler_number (s_event_t *event)
@@ -33,12 +35,16 @@ S_JEVENT event_handler_number (s_event_t *event)
 	event_type = event->type & (QUIT_EVENT |
 	                            KEYBD_EVENT |
 				    MOUSE_EVENT |
-				    EXPOSE_EVENT);
+				    EXPOSE_EVENT |
+				    CONFIG_EVENT |
+				    FOCUS_EVENT);
 	switch (event_type) {
 		case QUIT_EVENT:  return JQUIT_EVENT;
 		case KEYBD_EVENT: return JKEYBD_EVENT;
 		case MOUSE_EVENT: return JMOUSE_EVENT;
 		case EXPOSE_EVENT:return JEXPOSE_EVENT;
+		case CONFIG_EVENT:return JCONFIG_EVENT;
+		case FOCUS_EVENT: return JFOCUS_EVENT;
 	}
 	DEBUGF("unknown event: 0x08x", event->type); 
 	return JNONE_EVENT;
@@ -75,7 +81,22 @@ jobject event_handler_mouse (JNIEnv *env, s_event_t *event)
 jobject event_handler_expose (JNIEnv *env, s_event_t *event)
 {
 	DEBUGF("Enter");
-	printf("0x%08x\n", event->expose->change);
+	printf("x: %d, y: %d, w: %d, h: %d\n", event->expose->rect->x, event->expose->rect->y, event->expose->rect->w, event->expose->rect->h);
+	DEBUGF("Leave");
+	return NULL;
+}
+
+jobject event_handler_config (JNIEnv *env, s_event_t *event)
+{
+	DEBUGF("Enter");
+	printf("x: %d, y: %d, w: %d, h: %d\n", event->expose->rect->x, event->expose->rect->y, event->expose->rect->w, event->expose->rect->h);
+	DEBUGF("Leave");
+	return NULL;
+}
+
+jobject event_handler_focus (JNIEnv *env, s_event_t *event)
+{
+	DEBUGF("Enter");
 	printf("x: %d, y: %d, w: %d, h: %d\n", event->expose->rect->x, event->expose->rect->y, event->expose->rect->w, event->expose->rect->h);
 	DEBUGF("Leave");
 	return NULL;
@@ -86,7 +107,9 @@ event_handler process_event[] = {
 	event_handler_quit,
 	event_handler_keybd,
 	event_handler_mouse,
-	event_handler_expose
+	event_handler_expose,
+	event_handler_config,
+	event_handler_focus
 };
 
 jobject Java_java_awt_Toolkit_evtInit (JNIEnv* env, jclass clazz UNUSED)
@@ -150,11 +173,12 @@ void xynth_kaffe_atevent (s_window_t *window, s_event_t *event)
 		case MOUSE_EVENT:
 		case KEYBD_EVENT:
 		case EXPOSE_EVENT:
+		case CONFIG_EVENT:
+		case FOCUS_EVENT:
 			if (!s_event_init(&jevent)) {
 				jevent->type = event->type;
 				memcpy(jevent->mouse, event->mouse, sizeof(s_mouse_t));
 				memcpy(jevent->keybd, event->keybd, sizeof(s_keybd_t));
-				jevent->expose->change = event->expose->change;
 				memcpy(jevent->expose->rect, event->expose->rect, sizeof(s_rect_t));
 				s_thread_mutex_lock(xynth->eventq->mut);
 				s_list_add(xynth->eventq->list, jevent, -1);

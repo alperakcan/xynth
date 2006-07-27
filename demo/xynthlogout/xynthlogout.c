@@ -20,8 +20,7 @@
 static void xynthlogout_atevent (s_window_t *window, s_event_t *event)
 {
 	/* never loose focus */
-	if ((event->type & EXPOSE_EVENT) &&
-	    (event->expose->change & EXPOSE_CHNGF)) {
+	if (event->type & FOCUS_EVENT) {
 		if (window->client->pri > 0) {
 			s_window_show(window);
 		}

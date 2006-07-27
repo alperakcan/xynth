@@ -240,9 +240,9 @@ static void lxynth_event_parse_keybd (s_event_t *event)
 	}
 }
 
-static void lxynth_event_parse_expos (s_event_t *event)
+static void lxynth_event_parse_config (s_event_t *event)
 {
-	if (event->expose->change & (EXPOSE_CHNGW | EXPOSE_CHNGH)) {
+	if (event->type & (CONFIG_CHNGW | CONFIG_CHNGH)) {
 		int pos = 0;
 		s_thread_mutex_lock(lxynth_root->gd->mut);
 		while (!s_list_eol(lxynth_root->gd->list, pos)) {
@@ -280,7 +280,7 @@ static void lxynth_timer (void *arg)
 			case QUIT_EVENT:	break;
 			case MOUSE_EVENT:	lxynth_event_parse_mouse(event);	break;
 			case KEYBD_EVENT:	lxynth_event_parse_keybd(event);	break;
-			case EXPOSE_EVENT:	lxynth_event_parse_expos(event);	break;
+			case CONFIG_EVENT:	lxynth_event_parse_config(event);	break;
 		}
 		s_event_uninit(event);
 	}
@@ -303,6 +303,8 @@ static void lxynth_atevent (s_window_t *window, s_event_t *event)
 		case MOUSE_EVENT:
 		case KEYBD_EVENT:
 		case EXPOSE_EVENT:
+		case CONFIG_EVENT:
+		case FOCUS_EVENT:
 			if (!s_event_init(&e)) {
 				e->type = event->type;
 				memcpy(e->mouse, event->mouse, sizeof(s_mouse_t));

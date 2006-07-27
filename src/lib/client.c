@@ -133,12 +133,14 @@ void * s_client_loop_event (void *arg)
 			window->client->atevent(window, event);
 		}
 		switch (event->type & EVENT_MASK) {
-			case QUIT_EVENT:   window->running = 0;                break;
-			case MOUSE_EVENT:  s_event_parse_mouse(window, event); break;
-			case KEYBD_EVENT:  s_event_parse_keybd(window, event); break;
-			case EXPOSE_EVENT: s_event_parse_expos(window, event); break;
-			case DESKTOP_EVENT:				       break;
-			case TIMER_EVENT:  s_event_parse_timer(window, event); break;
+			case QUIT_EVENT:   window->running = 0;                 break;
+			case MOUSE_EVENT:  s_event_parse_mouse(window, event);  break;
+			case KEYBD_EVENT:  s_event_parse_keybd(window, event);  break;
+			case EXPOSE_EVENT: s_event_parse_expos(window, event);  break;
+			case CONFIG_EVENT: s_event_parse_config(window, event); break;
+			case TIMER_EVENT:  s_event_parse_timer(window, event);  break;
+			case FOCUS_EVENT:                                       break;
+			case DESKTOP_EVENT:				        break;
 		}
 		s_event_uninit(event);
 	}

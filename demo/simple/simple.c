@@ -28,13 +28,6 @@ static void simple_atevent (s_window_t *window, s_event_t *event)
 	if (event->type & MOUSE_EVENT) {
 		debugf(DCLI, "[%d] event->type : 0x%08X, button : 0x%08X, buttons : 0x%08X", window->client->id, event->type, event->mouse->b, event->mouse->buttons);
 	}
-	if ((event->type & EXPOSE_EVENT) &&
-	    (event->expose->change & EXPOSE_CHNGF)) {
-//		debugf(DCLI, "[%d] %s focus", window->client->id, (window->client->pri == 0) ? "gained" : "lost");
-	}
-	if (event->type & EXPOSE_EVENT) {
-//		debugf(DCLI, "[%d] EXPOSE EVENT (%d %d %d %d)", window->client->id, event->expose->rect.x, event->expose->rect.y, event->expose->rect.w, event->expose->rect.h);
-	}
 }
 
 static void simple_handler1o (s_window_t *window, s_event_t *event, s_handler_t *handler)

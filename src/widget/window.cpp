@@ -92,8 +92,8 @@ void SWindow::windowAtExit (s_window_t *window)
 void SWindow::windowAtEvent (s_window_t *window, s_event_t *event)
 {
 	switch (event->type & EVENT_MASK) {
-		case EXPOSE_EVENT:
-			if ((event->expose->change & (EXPOSE_CHNGW | EXPOSE_CHNGH)) ||
+		case CONFIG_EVENT:
+			if ((event->type & (CONFIG_CHNGW | CONFIG_CHNGH)) ||
 			    (objectWindow->surface->vbuf == NULL)) {
 				objectWindow->surface->width = objectWindow->surface->buf->w;
 				objectWindow->surface->height = objectWindow->surface->buf->h;
