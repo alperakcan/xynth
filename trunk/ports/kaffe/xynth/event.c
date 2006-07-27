@@ -91,6 +91,7 @@ jobject event_handler_expose (JNIEnv *env, xynth_event_t *xevent)
 	}
 	event = xevent->event;
 	jevent = (*env)->CallStaticObjectMethod( env, PaintEvent, getPaintEvent, idx, UPDATE, event->expose->rect->x, event->expose->rect->y, event->expose->rect->w, event->expose->rect->h);
+	printf("idx: %d, x: %d, y: %d, w: %d, h: %d\n", idx, event->expose->rect->x, event->expose->rect->y, event->expose->rect->w, event->expose->rect->h);
 	DEBUGF("Leave");
 	return jevent;
 }
@@ -128,6 +129,7 @@ jobject event_handler_focus (JNIEnv *env, xynth_event_t *xevent)
 	} else {
 		jevent = (*env)->CallStaticObjectMethod(env, FocusEvent, getFocusEvent, idx, FOCUS_LOST, JNI_FALSE);
 	}
+	printf("idx: %d, focus: %s\n", idx, (xevent->window->client->pri == 0) ? "gained" : "lost");
 	DEBUGF("Leave");
 	return jevent;
 }
