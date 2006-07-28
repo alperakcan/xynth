@@ -7,8 +7,10 @@ jobject Java_java_awt_Toolkit_graInitGraphics (JNIEnv *env, jclass clazz UNUSED,
 					       jint xClip, jint yClip, jint wClip, jint hClip,
 					       jobject fnt, jint fg, jint bg, jboolean blank)
 {
-	graphics_t *gr = NULL;
+	s_rect_t coor;
+	s_rect_t inter;
 	s_surface_t *srf;
+	graphics_t *gr = NULL;
 	DEBUGF("Enter");
 	if (ngr != NULL) {
 		gr = UNVEIL_GRAP(ngr);
@@ -39,19 +41,30 @@ jobject Java_java_awt_Toolkit_graInitGraphics (JNIEnv *env, jclass clazz UNUSED,
 		}
 	}
 	if (gr != NULL) {
-		DEBUGF("gr != NULL");
 		srf = gr->surface;
 	} else {
 		gr = (graphics_t *) AWT_MALLOC(sizeof(graphics_t));
 		ngr = JCL_NewRawDataObject(env, gr);
 	}
+	wClip = (wClip > 0) ? wClip : 0;
+	hClip = (hClip > 0) ? hClip : 0;
 	gr->surface = srf;
 	gr->fg = fg;
 	gr->bg = bg;
 	gr->x0 = xOff;
 	gr->y0 = yOff;
+	gr->clip.x = gr->x0 + xClip - gr->surface->buf->x;
+	gr->clip.y = gr->y0 + yClip - gr->surface->buf->y;
+	gr->clip.w = wClip;
+	gr->clip.h = hClip;
 	if (blank) {
-		s_fillbox(gr->surface, xOff + xClip, yOff + yClip, wClip, hClip, bg);
+		coor.x = gr->x0 + xClip;
+		coor.y = gr->y0 + yClip;
+		coor.w = wClip;
+		coor.h = hClip;
+		if (s_rect_intersect(&(gr->clip), &coor, &inter) == 0) {
+			s_fillbox(gr->surface, inter.x, inter.y, inter.w, inter.h, bg);
+		}
 	}
 	DEBUGF("Leave");
 	return ngr;
@@ -64,10 +77,10 @@ void Java_java_awt_Toolkit_graSetClip (JNIEnv *env, jclass clazz UNUSED, jobject
 	DEBUGF("Enter");
 	gr = UNVEIL_GRAP(ngr);
 	DEBUGF("set clip; xClip: %d, yClip: %d, wClip: %d, hClip: %d", xClip, yClip, wClip, hClip);
-	rect.x = xClip;
-	rect.y = yClip;
-	rect.w = (wClip > 0) ? wClip : 0;
-	rect.h = (hClip > 0) ? hClip : 0;
+	gr->clip.x = gr->x0 + xClip - gr->surface->buf->x;
+	gr->clip.y = gr->y0 + yClip - gr->surface->buf->y;
+	gr->clip.w = (wClip > 0) ? wClip : 0;
+	gr->clip.h = (hClip > 0) ? hClip : 0;
 	DEBUGF("Leave");
 }
 
@@ -82,12 +95,20 @@ void Java_java_awt_Toolkit_graSetColor (JNIEnv *env, jclass clazz UNUSED, jobjec
 
 void Java_java_awt_Toolkit_graFillRect (JNIEnv *env UNUSED, jclass clazz UNUSED, jobject ngr, jint x, jint y, jint width, jint height)
 {
+	s_rect_t coor;
+	s_rect_t inter;
 	graphics_t *gr;
 	DEBUGF("Enter");
 	gr = UNVEIL_GRAP(ngr);
 	if ((width >= 0) && (height >= 0)) {
 		DEBUGF("fill rect; x: %d, y: %d, w: %d, h: %d", x + gr->x0, y + gr->y0, width, height);
-		s_fillbox(gr->surface, x + gr->x0, y + gr->y0, width, height, gr->fg);
+		coor.x = gr->x0 + x;
+		coor.y = gr->y0 + y;
+		coor.w = width;
+		coor.h = height;
+		if (s_rect_intersect(&(gr->clip), &coor, &inter) == 0) {
+			s_fillbox(gr->surface, inter.x, inter.y, inter.w, inter.h, gr->fg);
+		}
 	}
 	DEBUGF("Leave");
 }
@@ -112,10 +133,18 @@ void Java_java_awt_Toolkit_graSetVisible (JNIEnv *env, jclass clazz UNUSED, jobj
 
 void Java_java_awt_Toolkit_graClearRect (JNIEnv *env UNUSED, jclass clazz UNUSED, jobject ngr, jint x, jint y, jint width, jint height)
 {
+	s_rect_t coor;
+	s_rect_t inter;
 	graphics_t *gr;
 	DEBUGF("Enter");
 	gr = UNVEIL_GRAP(ngr);
-	s_fillbox(gr->surface, x + gr->x0, y + gr->y0, width, height, gr->bg);
+	coor.x = gr->x0 + x;
+	coor.y = gr->y0 + y;
+	coor.w = width;
+	coor.h = height;
+	if (s_rect_intersect(&(gr->clip), &coor, &inter) == 0) {
+		s_fillbox(gr->surface, inter.x, inter.y, inter.w, inter.h, gr->bg);
+	}
 	DEBUGF("Leave");
 }
 
@@ -130,6 +159,8 @@ void Java_java_awt_Toolkit_graDrawImageScaled (JNIEnv *env, jclass clazz, jobjec
 	int iw;
 	char *vbufs;
 	char *vbufi;
+	s_rect_t coor;
+	s_rect_t inter;
 	graphics_t *gr;
 	s_image_t *img;
 	s_surface_t *srfs;
@@ -157,7 +188,15 @@ void Java_java_awt_Toolkit_graDrawImageScaled (JNIEnv *env, jclass clazz, jobjec
 	s_fillbox(srfi, 0, 0, img->w, img->h, gr->bg);
 	s_putboxrgba(srfi, 0, 0, img->w, img->h, img->rgba);
 	s_scalebox(gr->surface, srfi->width, srfi->height, srfi->vbuf, srfs->width, srfs->height, srfs->vbuf);
-	s_putbox(gr->surface, x0 + gr->x0, y0 + gr->y0, srfs->width, srfs->height, srfs->vbuf);
+
+	coor.x = gr->x0 + x0;
+	coor.y = gr->y0 + y0;
+	coor.w = srfs->width;
+	coor.h = srfs->height;
+	if (s_rect_intersect(&(gr->clip), &coor, &inter) == 0) {
+//		s_putbox(gr->surface, x0 + gr->x0, y0 + gr->y0, srfs->width, srfs->height, srfs->vbuf);
+		s_putboxpart(gr->surface, inter.x, inter.y, inter.w, inter.h, srfs->width, srfs->height, srfs->vbuf, inter.x - coor.x, inter.y - coor.y);
+	}
 	AWT_FREE(vbufs);
 	AWT_FREE(vbufi);
 	AWT_FREE(srfs);

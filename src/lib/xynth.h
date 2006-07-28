@@ -349,6 +349,7 @@ typedef enum {
 } S_MOUSECODE_CODE;
 
 typedef enum {
+	NONE_EVENT     = 0x000000,
 	QUIT_EVENT     = 0x000001,
 	KEYBD_EVENT    = 0x000002,
 	KEYBD_RELEASED = 0x000004,

@@ -16,6 +16,7 @@ typedef struct graphics_s {
 	int bg;
 	int x0;
 	int y0;
+	s_rect_t clip;
 } graphics_t;
 
 typedef struct window_rec_s {

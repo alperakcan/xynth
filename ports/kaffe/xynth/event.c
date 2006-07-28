@@ -226,6 +226,13 @@ void xynth_kaffe_atevent (s_window_t *window, s_event_t *event)
 		default:
 			break;
 	}
+	switch (event->type & EVENT_MASK) {
+		case EXPOSE_EVENT:
+			event->type = NONE_EVENT;
+			break;
+		default:
+			break;
+	}
 	DEBUGF("Leave");
 }
 
