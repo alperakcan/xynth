@@ -227,3 +227,23 @@ void Java_java_awt_Toolkit_graDraw3DRect (JNIEnv *env, jclass clazz, jobject ngr
 	s_vline(gr->surface, xw, y, yh, (raised) ? dark : bright);
 	DEBUGF("Leave");
 }
+
+void Java_java_awt_Toolkit_graFill3DRect (JNIEnv *env, jclass clazz, jobject ngr,
+                                          jint x, jint y, jint width, jint height,
+					  jboolean raised, jint rgb)
+{
+	s_rect_t coor;
+	s_rect_t inter;
+	graphics_t *gr;
+	DEBUGF("Enter");
+	gr = UNVEIL_GRAP(ngr);
+	coor.x = gr->x0 + x + 1;
+	coor.y = gr->y0 + y + 1;
+	coor.w = width - 2;
+	coor.h = height - 2;
+	if (s_rect_intersect(&(gr->clip), &coor, &inter) == 0) {
+		s_fillbox(gr->surface, inter.x, inter.y, inter.w, inter.h, gr->fg);
+	}
+	Java_java_awt_Toolkit_graDraw3DRect(env, clazz, ngr, x, y, width - 1, height - 1, raised, rgb);
+	DEBUGF("Leave");
+}

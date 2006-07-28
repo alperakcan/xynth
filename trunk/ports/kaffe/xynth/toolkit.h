@@ -56,6 +56,8 @@ xynth_toolkit_t *xynth;
 
 #define DEBUGF(a...)	printf(a); printf(" (%s [%s:%d])\n", __FUNCTION__, __FILE__, __LINE__);
 #define NYI()           DEBUGF("Not Yet Implemented !");
+//#define DEBUGF(a...)
+//#define NYI()
 
 #define TLK_IS_BLOCKING			1
 #define TLK_IS_DISPATCH_EXCLUSIVE	2
