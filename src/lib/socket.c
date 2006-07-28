@@ -305,10 +305,10 @@ int s_socket_listen_expose (s_window_t *window, int soc)
 	if (r_old.h != window->surface->win->h) { change |= CONFIG_CHNGH; }
 	if (change != 0) {
 		window->event->type = CONFIG_EVENT | change;
-		window->event->expose->rect->x = window->surface->win->x;
-		window->event->expose->rect->y = window->surface->win->y;
-		window->event->expose->rect->w = window->surface->win->w;
-		window->event->expose->rect->h = window->surface->win->h;
+		window->event->expose->rect->x = window->surface->buf->x;
+		window->event->expose->rect->y = window->surface->buf->y;
+		window->event->expose->rect->w = window->surface->buf->w;
+		window->event->expose->rect->h = window->surface->buf->h;
 		s_event_changed(window);
 	}
 	/* focus event */

@@ -1,11 +1,11 @@
 
 #include "toolkit.h"
 
-jobject Java_java_awt_Toolkit_graInitGraphics (JNIEnv* env, jclass clazz UNUSED,
+jobject Java_java_awt_Toolkit_graInitGraphics (JNIEnv *env, jclass clazz UNUSED,
                                                jobject ngr, jobject tgt, jint tgtType,
-					       	jint xOff, jint yOff,
-						jint xClip, jint yClip, jint wClip, jint hClip,
-						jobject fnt, jint fg, jint bg, jboolean blank)
+					       jint xOff, jint yOff,
+					       jint xClip, jint yClip, jint wClip, jint hClip,
+					       jobject fnt, jint fg, jint bg, jboolean blank)
 {
 	graphics_t *gr = NULL;
 	s_surface_t *srf;
@@ -92,7 +92,7 @@ void Java_java_awt_Toolkit_graFillRect (JNIEnv *env UNUSED, jclass clazz UNUSED,
 	DEBUGF("Leave");
 }
 
-void Java_java_awt_Toolkit_graFreeGraphics (JNIEnv* env UNUSED, jclass clazz UNUSED, jobject ngr)
+void Java_java_awt_Toolkit_graFreeGraphics (JNIEnv *env UNUSED, jclass clazz UNUSED, jobject ngr)
 {
 	graphics_t *gr;
 	DEBUGF("Enter");
@@ -101,11 +101,90 @@ void Java_java_awt_Toolkit_graFreeGraphics (JNIEnv* env UNUSED, jclass clazz UNU
 	DEBUGF("Leave");
 }
 
-void Java_java_awt_Toolkit_graSetVisible (JNIEnv* env, jclass clazz UNUSED, jobject ngr, jint isVisible)
+void Java_java_awt_Toolkit_graSetVisible (JNIEnv *env, jclass clazz UNUSED, jobject ngr, jint isVisible)
 {
 	graphics_t *gr;
 	DEBUGF("Enter");
 	gr = UNVEIL_GRAP(ngr);
 	DEBUGF("setvisible: %d", isVisible);
+	DEBUGF("Leave");
+}
+
+void Java_java_awt_Toolkit_graClearRect (JNIEnv *env UNUSED, jclass clazz UNUSED, jobject ngr, jint x, jint y, jint width, jint height)
+{
+	graphics_t *gr;
+	DEBUGF("Enter");
+	gr = UNVEIL_GRAP(ngr);
+	s_fillbox(gr->surface, x + gr->x0, y + gr->y0, width, height, gr->bg);
+	DEBUGF("Leave");
+}
+
+void Java_java_awt_Toolkit_graDrawImageScaled (JNIEnv *env, jclass clazz, jobject ngr, jobject nimg,
+                                               jint dx0, jint dy0, jint dx1, jint dy1,
+					       jint sx0, jint sy0, jint sx1, jint sy1, jint bgval)
+{
+	int x0;
+	int y0;
+	int x1;
+	int y1;
+	int iw;
+	char *vbufs;
+	char *vbufi;
+	graphics_t *gr;
+	s_image_t *img;
+	s_surface_t *srfs;
+	s_surface_t *srfi;
+	DEBUGF("Enter");
+	gr = UNVEIL_GRAP(ngr);
+	img = UNVEIL_IMG(nimg);
+	if (dx1 > dx0) { x0 = dx0; x1 = dx1;
+	} else {         x0 = dx1; x1 = dx0;
+	}
+	if (dy1 > dy0) { y0 = dy0; y1 = dy1;
+	} else {         y0 = dy1; y1 = dy0;
+	}
+	iw = img->w;
+	if (sx0 < 0) sx0 = 0;
+	if (sx1 < 0) sx1 = 0;
+	if (sx0 >= iw) sx0 = iw - 1;
+	if (sx1 >= iw) sx1 = iw - 1;
+	srfs = (s_surface_t *) AWT_MALLOC(sizeof(s_surface_t));
+	vbufs = (char *) AWT_MALLOC((x1 - x0 + 1) * (y1 - y0 + 1) * gr->surface->bytesperpixel);
+	s_getsurfacevirtual(srfs, x1 - x0 + 1, y1 - y0 + 1, gr->surface->bitsperpixel, vbufs);
+	srfi = (s_surface_t *) AWT_MALLOC(sizeof(s_surface_t));
+	vbufi = (char *) AWT_MALLOC(img->w * img->h * gr->surface->bytesperpixel);
+	s_getsurfacevirtual(srfi, img->w, img->h, gr->surface->bitsperpixel, vbufi);
+	s_fillbox(srfi, 0, 0, img->w, img->h, gr->bg);
+	s_putboxrgba(srfi, 0, 0, img->w, img->h, img->rgba);
+	s_scalebox(gr->surface, srfi->width, srfi->height, srfi->vbuf, srfs->width, srfs->height, srfs->vbuf);
+	s_putbox(gr->surface, x0 + gr->x0, y0 + gr->y0, srfs->width, srfs->height, srfs->vbuf);
+	AWT_FREE(vbufs);
+	AWT_FREE(vbufi);
+	AWT_FREE(srfs);
+	AWT_FREE(srfi);
+	DEBUGF("Leave");
+}
+
+void Java_java_awt_Toolkit_graDraw3DRect (JNIEnv *env, jclass clazz, jobject ngr,
+                                          jint x, jint y, jint width, jint height,
+					  jboolean raised, jint rgb)
+{
+	int xw;
+	int yh;
+	int dark;
+	int bright;
+	graphics_t *gr;
+	DEBUGF("Enter");
+	gr = UNVEIL_GRAP(ngr);
+	dark = (int) (Java_java_awt_Toolkit_clrDark(env, clazz, rgb) >> 32);
+	bright = (int) (Java_java_awt_Toolkit_clrBright(env, clazz, rgb) >> 32);
+	x += gr->x0;
+	y += gr->y0;
+	xw = x + width;
+	yh = y + height;
+	s_hline(gr->surface, x, y, xw - 1, (raised) ? bright : dark);
+	s_vline(gr->surface, x, y, yh, (raised) ? bright : dark);
+	s_hline(gr->surface, x + 1, yh, xw, (raised) ? dark : bright);
+	s_vline(gr->surface, xw, y, yh, (raised) ? dark : bright);
 	DEBUGF("Leave");
 }
