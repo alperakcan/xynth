@@ -247,3 +247,15 @@ void Java_java_awt_Toolkit_graFill3DRect (JNIEnv *env, jclass clazz, jobject ngr
 	Java_java_awt_Toolkit_graDraw3DRect(env, clazz, ngr, x, y, width - 1, height - 1, raised, rgb);
 	DEBUGF("Leave");
 }
+
+void Java_java_awt_Toolkit_graDrawString (JNIEnv *env, jclass clazz UNUSED, jobject ngr, jstring jstr, jint x, jint y)
+{
+	char *str;
+	graphics_t *gr;
+	DEBUGF("Enter");
+	gr = UNVEIL_GRAP(ngr);
+	str = java2CString(env, jstr);
+	DEBUGF("string: %s", str);
+	AWT_FREE(str);
+	DEBUGF("Leave");
+}
