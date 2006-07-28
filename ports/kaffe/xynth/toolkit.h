@@ -12,6 +12,7 @@
 
 typedef struct graphics_s {
 	s_surface_t *surface;
+	s_font_t *font;
 	int fg;
 	int bg;
 	int x0;

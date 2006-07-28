@@ -48,6 +48,7 @@ jobject Java_java_awt_Toolkit_graInitGraphics (JNIEnv *env, jclass clazz UNUSED,
 	}
 	wClip = (wClip > 0) ? wClip : 0;
 	hClip = (hClip > 0) ? hClip : 0;
+	gr->font = UNVEIL_FONT(fnt);
 	gr->surface = srf;
 	gr->fg = fg;
 	gr->bg = bg;
@@ -250,12 +251,23 @@ void Java_java_awt_Toolkit_graFill3DRect (JNIEnv *env, jclass clazz, jobject ngr
 
 void Java_java_awt_Toolkit_graDrawString (JNIEnv *env, jclass clazz UNUSED, jobject ngr, jstring jstr, jint x, jint y)
 {
+	int r;
+	int g;
+	int b;
 	char *str;
+	char *vbuf;
 	graphics_t *gr;
+	s_surface_t *fs;
 	DEBUGF("Enter");
 	gr = UNVEIL_GRAP(ngr);
 	str = java2CString(env, jstr);
 	DEBUGF("string: %s", str);
+	s_font_set_str(gr->font, str);
+	s_colorrgb(gr->surface, gr->fg, &r, &g, &b);
+	s_font_set_rgb(gr->font, r, g, b);
+	s_font_get_glyph(gr->font);
+	s_putboxrgba(gr->surface, gr->x0 + x, gr->y0 + y - gr->font->yMax, gr->font->img->w, gr->font->img->h, gr->font->img->rgba);
+	sleep(2);
 	AWT_FREE(str);
 	DEBUGF("Leave");
 }
