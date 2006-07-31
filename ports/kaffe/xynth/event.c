@@ -90,6 +90,8 @@ jobject event_handler_expose (JNIEnv *env, xynth_event_t *xevent)
 		return NULL;
 	}
 	event = xevent->event;
+	event->expose->rect->x = event->expose->rect->x - xevent->window->surface->buf->x;
+	event->expose->rect->y = event->expose->rect->y - xevent->window->surface->buf->y;
 	jevent = (*env)->CallStaticObjectMethod( env, PaintEvent, getPaintEvent, idx, UPDATE, event->expose->rect->x, event->expose->rect->y, event->expose->rect->w, event->expose->rect->h);
 	printf("idx: %d, x: %d, y: %d, w: %d, h: %d\n", idx, event->expose->rect->x, event->expose->rect->y, event->expose->rect->w, event->expose->rect->h);
 	DEBUGF("Leave");
