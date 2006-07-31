@@ -1,6 +1,6 @@
 diff -Naur kaffe-1.1.6/Makefile.am kaffe-1.1.6-xynth/Makefile.am
 --- kaffe-1.1.6/Makefile.am	2005-09-20 02:45:54.000000000 +0300
-+++ kaffe-1.1.6-xynth/Makefile.am	2006-07-19 15:28:56.000000000 +0300
++++ kaffe-1.1.6-xynth/Makefile.am	2006-07-29 14:16:28.000000000 +0300
 @@ -247,6 +247,9 @@
  if COND_KAFFE_X_AWT
  DIRECTORIES_AFTER_RTJAR += libraries/clib/awt/X
@@ -13,7 +13,7 @@ diff -Naur kaffe-1.1.6/Makefile.am kaffe-1.1.6-xynth/Makefile.am
  endif
 diff -Naur kaffe-1.1.6/README.xynth kaffe-1.1.6-xynth/README.xynth
 --- kaffe-1.1.6/README.xynth	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-1.1.6-xynth/README.xynth	2006-07-19 15:28:56.000000000 +0300
++++ kaffe-1.1.6-xynth/README.xynth	2006-07-29 14:16:28.000000000 +0300
 @@ -0,0 +1,8 @@
 +
 +# developers/autogen.sh
@@ -25,7 +25,7 @@ diff -Naur kaffe-1.1.6/README.xynth kaffe-1.1.6-xynth/README.xynth
 +
 diff -Naur kaffe-1.1.6/configure.ac kaffe-1.1.6-xynth/configure.ac
 --- kaffe-1.1.6/configure.ac	2005-09-20 03:04:17.000000000 +0300
-+++ kaffe-1.1.6-xynth/configure.ac	2006-07-19 15:28:56.000000000 +0300
++++ kaffe-1.1.6-xynth/configure.ac	2006-07-29 14:16:28.000000000 +0300
 @@ -1807,6 +1807,30 @@
     fi
  fi
@@ -65,21 +65,9 @@ diff -Naur kaffe-1.1.6/configure.ac kaffe-1.1.6-xynth/configure.ac
  AC_CONFIG_FILES([libraries/clib/sound/Makefile])
  AC_CONFIG_FILES([libraries/clib/sound/alsa/Makefile])
  AC_CONFIG_FILES([libraries/clib/sound/common/Makefile])
-diff -Naur kaffe-1.1.6/developers/autogen.sh kaffe-1.1.6-xynth/developers/autogen.sh
---- kaffe-1.1.6/developers/autogen.sh	2005-08-25 23:29:01.000000000 +0300
-+++ kaffe-1.1.6-xynth/developers/autogen.sh	2006-07-19 15:29:09.000000000 +0300
-@@ -18,7 +18,7 @@
- 
- WANTED_AUTOMAKE_VERS="1.9.6"
- WANTED_AUTOCONF_VERS="2.59"
--WANTED_LIBTOOL_VERS="1.5.18"
-+WANTED_LIBTOOL_VERS="1.5.20"
- WANTED_AUTOPOINT_VERS="0.14.5"
- 
- ACLOCAL_VERS=`aclocal --version | 
 diff -Naur kaffe-1.1.6/kaffe/kaffe/Makefile.am kaffe-1.1.6-xynth/kaffe/kaffe/Makefile.am
 --- kaffe-1.1.6/kaffe/kaffe/Makefile.am	2005-05-20 23:10:16.000000000 +0300
-+++ kaffe-1.1.6-xynth/kaffe/kaffe/Makefile.am	2006-07-19 15:28:56.000000000 +0300
++++ kaffe-1.1.6-xynth/kaffe/kaffe/Makefile.am	2006-07-29 14:16:28.000000000 +0300
 @@ -20,6 +20,10 @@
  INCLUDE_KAFFE_X_AWT = -DKAFFE_X_AWT_INCLUDED
  endif
@@ -103,7 +91,7 @@ diff -Naur kaffe-1.1.6/kaffe/kaffe/Makefile.am kaffe-1.1.6-xynth/kaffe/kaffe/Mak
  	main.c \
 diff -Naur kaffe-1.1.6/kaffe/kaffe/main.c kaffe-1.1.6-xynth/kaffe/kaffe/main.c
 --- kaffe-1.1.6/kaffe/kaffe/main.c	2005-09-16 03:59:05.000000000 +0300
-+++ kaffe-1.1.6-xynth/kaffe/kaffe/main.c	2006-07-19 15:28:56.000000000 +0300
++++ kaffe-1.1.6-xynth/kaffe/kaffe/main.c	2006-07-29 14:16:28.000000000 +0300
 @@ -365,7 +365,7 @@
   */
  
@@ -139,7 +127,7 @@ diff -Naur kaffe-1.1.6/kaffe/kaffe/main.c kaffe-1.1.6-xynth/kaffe/kaffe/main.c
  			  "\n"
 diff -Naur kaffe-1.1.6/libraries/clib/awt/Makefile.am kaffe-1.1.6-xynth/libraries/clib/awt/Makefile.am
 --- kaffe-1.1.6/libraries/clib/awt/Makefile.am	2005-08-13 23:10:08.000000000 +0300
-+++ kaffe-1.1.6-xynth/libraries/clib/awt/Makefile.am	2006-07-19 15:28:56.000000000 +0300
++++ kaffe-1.1.6-xynth/libraries/clib/awt/Makefile.am	2006-07-29 14:16:28.000000000 +0300
 @@ -28,6 +28,10 @@
  MAYBE_KAFFE_NANOX_AWT = nano-X
  endif
@@ -161,8 +149,8 @@ diff -Naur kaffe-1.1.6/libraries/clib/awt/Makefile.am kaffe-1.1.6-xynth/librarie
  
 diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/Makefile.am kaffe-1.1.6-xynth/libraries/clib/awt/xynth/Makefile.am
 --- kaffe-1.1.6/libraries/clib/awt/xynth/Makefile.am	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-1.1.6-xynth/libraries/clib/awt/xynth/Makefile.am	2006-07-19 15:28:56.000000000 +0300
-@@ -0,0 +1,36 @@
++++ kaffe-1.1.6-xynth/libraries/clib/awt/xynth/Makefile.am	2006-07-21 15:27:06.000000000 +0300
+@@ -0,0 +1,41 @@
 +# Xynth-based AWT support for standard Java libraries
 +#
 +# Copyright (c) 2005
@@ -192,17 +180,357 @@ diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/Makefile.am kaffe-1.1.6-xynth/li
 +	$(top_builddir)/libraries/clib/classpath/libclasspath.la
 +
 +libxynthawt_la_SOURCES = \
++	color.c \
++	event.c \
++	image.c \
 +	font.c \
-+	toolkit.c
++	graphic.c \
++	toolkit.c \
++	window.c
 +
 +noinst_HEADERS = \
 +	toolkit.h
 +
 +CLEANFILES = so_locations
+diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/color.c kaffe-1.1.6-xynth/libraries/clib/awt/xynth/color.c
+--- kaffe-1.1.6/libraries/clib/awt/xynth/color.c	1970-01-01 02:00:00.000000000 +0200
++++ kaffe-1.1.6-xynth/libraries/clib/awt/xynth/color.c	2006-07-28 13:02:00.000000000 +0300
+@@ -0,0 +1,64 @@
++
++#include "toolkit.h"
++
++#define JRGB(_r, _g, _b) (((_r) << 16) | ((_g) << 8) | (_b))
++#define JRED(_rgb)       (((_rgb) & 0xff0000) >> 16)
++#define JGREEN(_rgb)     (((_rgb) & 0x00ff00) >> 8)
++#define JBLUE(_rgb)      ((_rgb) & 0x0000ff)
++
++jint Java_java_awt_Toolkit_clrGetPixelValue (JNIEnv *env, jclass clazz, jint rgb)
++{
++	jint pix;
++	DEBUGF("Enter");
++	pix = s_rgbcolor(xynth->root->surface, JRED(rgb), JGREEN(rgb), JBLUE(rgb));
++	DEBUGF("Leave");
++	return pix;
++}
++
++jlong Java_java_awt_Toolkit_clrBright (JNIEnv *env UNUSED, jclass clazz UNUSED, jint rgb)
++{
++	unsigned int r;
++	unsigned int g;
++	unsigned int b;
++	jint modRgb;
++	jint modPix;
++	
++	r = JRED(rgb);
++	g = JGREEN(rgb);
++	b = JBLUE(rgb);
++	
++	r = (r * 4) / 3;
++	g = (g * 4) / 3;
++	b = (b * 4) / 3;
++	
++	if (r > 0xff) r = 0xff;
++	if (g > 0xff) g = 0xff;
++	if (b > 0xff) b = 0xff;
++	
++	modRgb = JRGB(r, g, b);
++	modPix = s_rgbcolor(xynth->root->surface, r, g, b);
++	
++	return (((jlong) modPix << 32) | modRgb);
++}
++
++jlong Java_java_awt_Toolkit_clrDark (JNIEnv *env UNUSED, jclass clazz UNUSED, jint rgb)
++{
++	unsigned int r;
++	unsigned int g;
++	unsigned int b;
++	jint modRgb;
++	jint modPix;
++	
++	r = JRED(rgb);
++	g = JGREEN(rgb);
++	b = JBLUE(rgb);
++	
++	r = (r * 2) / 3;
++	g = (g * 2) / 3;
++	b = (b * 2) / 3;
++	
++	modRgb = JRGB(r, g, b);
++	modPix = s_rgbcolor(xynth->root->surface, r, g, b);
++	
++	return (((jlong) modPix << 32) | modRgb);
++}
+diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/event.c kaffe-1.1.6-xynth/libraries/clib/awt/xynth/event.c
+--- kaffe-1.1.6/libraries/clib/awt/xynth/event.c	1970-01-01 02:00:00.000000000 +0200
++++ kaffe-1.1.6-xynth/libraries/clib/awt/xynth/event.c	2006-07-29 12:50:56.000000000 +0300
+@@ -0,0 +1,263 @@
++
++#include "toolkit.h"
++
++jclass     ComponentEvent;
++jclass     MouseEvent;
++jclass     FocusEvent;
++jclass     WindowEvent;
++jclass     KeyEvent;
++jclass     PaintEvent;
++jclass     WMEvent;
++
++jmethodID  getComponentEvent;
++jmethodID  getMouseEvent;
++jmethodID  getFocusEvent;
++jmethodID  getWindowEvent;
++jmethodID  getKeyEvent;
++jmethodID  getPaintEvent;
++jmethodID  getWMEvent;
++
++typedef jobject (*event_handler) (JNIEnv *, xynth_event_t *);
++
++typedef enum {
++	JNONE_EVENT   = 0x0,
++	JQUIT_EVENT   = 0x1,
++	JKEYBD_EVENT  = 0x2,
++	JMOUSE_EVENT  = 0x3,
++	JEXPOSE_EVENT = 0x4,
++	JCONFIG_EVENT = 0x5,
++	JFOCUS_EVENT  = 0x6
++} S_JEVENT;
++
++S_JEVENT event_handler_number (s_event_t *event)
++{
++	S_EVENT event_type;
++	event_type = event->type & (QUIT_EVENT |
++	                            KEYBD_EVENT |
++				    MOUSE_EVENT |
++				    EXPOSE_EVENT |
++				    CONFIG_EVENT |
++				    FOCUS_EVENT);
++	switch (event_type) {
++		case QUIT_EVENT:  return JQUIT_EVENT;
++		case KEYBD_EVENT: return JKEYBD_EVENT;
++		case MOUSE_EVENT: return JMOUSE_EVENT;
++		case EXPOSE_EVENT:return JEXPOSE_EVENT;
++		case CONFIG_EVENT:return JCONFIG_EVENT;
++		case FOCUS_EVENT: return JFOCUS_EVENT;
++		default:          break;
++	}
++	DEBUGF("unknown event: 0x%08x", event->type); 
++	return JNONE_EVENT;
++}
++
++jobject event_handler_none (JNIEnv *env, xynth_event_t *xevent)
++{
++	DEBUGF("Enter");
++	DEBUGF("Leave");
++	return NULL;
++}
++
++jobject event_handler_quit (JNIEnv *env, xynth_event_t *xevent)
++{
++	DEBUGF("Enter");
++	DEBUGF("Leave");
++	return NULL;
++}
++
++jobject event_handler_keybd (JNIEnv *env, xynth_event_t *xevent)
++{
++	DEBUGF("Enter");
++	DEBUGF("Leave");
++	return NULL;
++}
++
++jobject event_handler_mouse (JNIEnv *env, xynth_event_t *xevent)
++{
++	DEBUGF("Enter");
++	DEBUGF("Leave");
++	return NULL;
++}
++
++jobject event_handler_expose (JNIEnv *env, xynth_event_t *xevent)
++{
++	int idx;
++	jobject jevent;
++	s_event_t *event;
++	DEBUGF("Enter");
++	idx = source_idx_get(xynth, xevent->window);
++	if (idx < 0) {
++		return NULL;
++	}
++	event = xevent->event;
++	event->expose->rect->x = event->expose->rect->x - xevent->window->surface->buf->x;
++	event->expose->rect->y = event->expose->rect->y - xevent->window->surface->buf->y;
++	jevent = (*env)->CallStaticObjectMethod( env, PaintEvent, getPaintEvent, idx, UPDATE, event->expose->rect->x, event->expose->rect->y, event->expose->rect->w, event->expose->rect->h);
++	printf("idx: %d, x: %d, y: %d, w: %d, h: %d\n", idx, event->expose->rect->x, event->expose->rect->y, event->expose->rect->w, event->expose->rect->h);
++	DEBUGF("Leave");
++	return jevent;
++}
++
++jobject event_handler_config (JNIEnv *env, xynth_event_t *xevent)
++{
++	int idx;
++	jobject jevent;
++	s_event_t *event;
++	DEBUGF("Enter");
++	idx = source_idx_get(xynth, xevent->window);
++	if (idx < 0) {
++		return NULL;
++	}
++	event = xevent->event;
++	jevent = (*env)->CallStaticObjectMethod(env, ComponentEvent, getComponentEvent, idx, COMPONENT_RESIZED, event->expose->rect->x, event->expose->rect->y, event->expose->rect->w, event->expose->rect->h);
++	printf("idx: %d, x: %d, y: %d, w: %d, h: %d\n", idx, event->expose->rect->x, event->expose->rect->y, event->expose->rect->w, event->expose->rect->h);
++	DEBUGF("Leave");
++	return jevent;
++}
++
++jobject event_handler_focus (JNIEnv *env, xynth_event_t *xevent)
++{
++	int idx;
++	jobject jevent;
++	s_event_t *event;
++	DEBUGF("Enter");
++	idx = source_idx_get(xynth, xevent->window);
++	if (idx < 0) {
++		return NULL;
++	}
++	event = xevent->event;
++	if (xevent->window->client->pri == 0) {
++		jevent = (*env)->CallStaticObjectMethod(env, FocusEvent, getFocusEvent, idx, FOCUS_GAINED, JNI_FALSE);
++	} else {
++		jevent = (*env)->CallStaticObjectMethod(env, FocusEvent, getFocusEvent, idx, FOCUS_LOST, JNI_FALSE);
++	}
++	printf("idx: %d, focus: %s\n", idx, (xevent->window->client->pri == 0) ? "gained" : "lost");
++	DEBUGF("Leave");
++	return jevent;
++}
++
++event_handler process_event[] = {
++	event_handler_none,
++	event_handler_quit,
++	event_handler_keybd,
++	event_handler_mouse,
++	event_handler_expose,
++	event_handler_config,
++	event_handler_focus
++};
++
++jobject Java_java_awt_Toolkit_evtInit (JNIEnv* env, jclass clazz UNUSED)
++{
++	jclass Component;
++	
++	DEBUGF("Enter");
++	
++	if (ComponentEvent != NULL) {
++		DEBUGF("evtInit called twice");
++		return NULL;
++	}
++	
++	ComponentEvent = (*env)->FindClass( env, "java/awt/ComponentEvt");
++	assert(ComponentEvent != NULL);
++	MouseEvent     = (*env)->FindClass( env, "java/awt/MouseEvt");
++	assert(MouseEvent != NULL);
++	FocusEvent     = (*env)->FindClass( env, "java/awt/FocusEvt");
++	assert(FocusEvent != NULL);
++	WindowEvent    = (*env)->FindClass( env, "java/awt/WindowEvt");
++	assert(WindowEvent != NULL);  
++	KeyEvent       = (*env)->FindClass( env, "java/awt/KeyEvt");
++	assert(KeyEvent != NULL);
++	PaintEvent     = (*env)->FindClass( env, "java/awt/PaintEvt");
++	assert(PaintEvent != NULL);
++	WMEvent        = (*env)->FindClass( env, "java/awt/WMEvent");
++	assert(WMEvent != NULL);
++	
++	getComponentEvent = (*env)->GetStaticMethodID( env, ComponentEvent, "getEvent", "(IIIIII)Ljava/awt/ComponentEvt;");
++	getMouseEvent     = (*env)->GetStaticMethodID( env, MouseEvent, "getEvent", "(IIIII)Ljava/awt/MouseEvt;");
++	getFocusEvent     = (*env)->GetStaticMethodID( env, FocusEvent, "getEvent", "(IIZ)Ljava/awt/FocusEvt;");
++	getWindowEvent    = (*env)->GetStaticMethodID( env, WindowEvent, "getEvent", "(II)Ljava/awt/WindowEvt;");
++	getKeyEvent       = (*env)->GetStaticMethodID( env, KeyEvent, "getEvent", "(IIIII)Ljava/awt/KeyEvt;");
++	getPaintEvent     = (*env)->GetStaticMethodID( env, PaintEvent, "getEvent", "(IIIIII)Ljava/awt/PaintEvt;");
++	getWMEvent        = (*env)->GetStaticMethodID( env, WMEvent, "getEvent", "(II)Ljava/awt/WMEvent;");
++	
++	Component = (*env)->FindClass( env, "java/awt/Component");
++
++	DEBUGF("Leave");
++
++	return (*env)->NewObjectArray( env, xynth->nwindows, Component, NULL);
++}
++
++jint Java_java_awt_Toolkit_evtRegisterSource (JNIEnv* env UNUSED, jclass clazz UNUSED, jobject nativeWnd)
++{
++	int id;
++	DEBUGF("Enter");
++	s_window_t *window;
++	window = UNVEIL_WINDOW(nativeWnd);
++	id = source_idx_get(xynth, window);
++	DEBUGF("Leave");
++	return id;
++}
++
++void xynth_kaffe_atevent (s_window_t *window, s_event_t *event)
++{
++	xynth_event_t *xevent;
++	DEBUGF("Enter id: %d", window->client->id);
++	switch (event->type & EVENT_MASK) {
++		case QUIT_EVENT:
++		case MOUSE_EVENT:
++		case KEYBD_EVENT:
++		case EXPOSE_EVENT:
++		case CONFIG_EVENT:
++		case FOCUS_EVENT:
++			xevent = (xynth_event_t *) AWT_MALLOC(sizeof(xynth_event_t));
++			if (xevent != NULL) {
++				if (!s_event_init(&(xevent->event))) {
++					xevent->window = window;
++					xevent->event->type = event->type;
++					memcpy(xevent->event->mouse, event->mouse, sizeof(s_mouse_t));
++					memcpy(xevent->event->keybd, event->keybd, sizeof(s_keybd_t));
++					memcpy(xevent->event->expose->rect, event->expose->rect, sizeof(s_rect_t));
++					s_thread_mutex_lock(xynth->eventq->mut);
++					s_list_add(xynth->eventq->list, xevent, -1);
++					s_thread_mutex_unlock(xynth->eventq->mut);
++				} else {
++					AWT_FREE(xevent);
++				}
++			}
++			break;
++		default:
++			break;
++	}
++	switch (event->type & EVENT_MASK) {
++		case EXPOSE_EVENT:
++			event->type = NONE_EVENT;
++			break;
++		default:
++			break;
++	}
++	DEBUGF("Leave");
++}
++
++jobject Java_java_awt_Toolkit_evtGetNextEvent (JNIEnv* env, jclass clazz)
++{
++	jobject jevent;
++	xynth_event_t *xevent;
++	S_JEVENT jevent_type;
++	jevent = NULL;
++	s_thread_mutex_lock(xynth->eventq->mut);
++        while (!s_list_eol(xynth->eventq->list, 0)) {
++		xevent = (xynth_event_t *) s_list_get(xynth->eventq->list, 0);
++		jevent_type = event_handler_number(xevent->event);
++		jevent = process_event[jevent_type](env, xevent);
++		s_list_remove(xynth->eventq->list, 0);
++		s_event_uninit(xevent->event);
++		AWT_FREE(xevent);
++		if (jevent != NULL) {
++			break;
++		} else {
++			DEBUGF("Error !!!");
++		}
++	}
++	s_thread_mutex_unlock(xynth->eventq->mut);
++	return jevent;
++}
 diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/font.c kaffe-1.1.6-xynth/libraries/clib/awt/xynth/font.c
 --- kaffe-1.1.6/libraries/clib/awt/xynth/font.c	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-1.1.6-xynth/libraries/clib/awt/xynth/font.c	2006-07-19 15:28:56.000000000 +0300
-@@ -0,0 +1,37 @@
++++ kaffe-1.1.6-xynth/libraries/clib/awt/xynth/font.c	2006-07-19 20:34:29.000000000 +0300
+@@ -0,0 +1,115 @@
 +
 +#include "toolkit.h"
 +
@@ -215,7 +543,7 @@ diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/font.c kaffe-1.1.6-xynth/librari
 +	
 +	DEBUGF("Enter");
 +	
-+	spec  = java2CString(env, jSpec);
++	spec = java2CString(env, jSpec);
 +	if (style & 1) {
 +		weight = 1;
 +	}
@@ -231,19 +559,493 @@ diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/font.c kaffe-1.1.6-xynth/librari
 +
 +	DEBUGF("Leave");
 +
-+	return (void *) font;
++	return JCL_NewRawDataObject(env, font);
 +}
 +
 +KAFFE_FONT_FUNC_DECL (jobject, Java_java_awt_Toolkit_fntInitFontMetrics)
 +{
 +	DEBUGF("Enter");
 +	DEBUGF("Leave");
-+	return font;
++	return jfont;
++}
++
++KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntGetHeight)
++{
++	s_font_t *font = UNVEIL_FONT(jfont);
++	DEBUGF("Enter");
++	DEBUGF("Leave");
++	return font->ascent - font->descent + 1;
++}
++
++KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntGetDescent)
++{
++	DEBUGF("Enter");
++	DEBUGF("Leave");
++	return -(UNVEIL_FONT(jfont)->descent);
++}
++
++KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntGetMaxDescent)
++{
++	DEBUGF("Enter");
++	DEBUGF("Leave");
++	return -(UNVEIL_FONT(jfont)->descent);
++}
++
++KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntGetLeading)
++{
++	DEBUGF("Enter");
++	DEBUGF("Leave");
++	return 0;
++}
++
++KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntGetAscent)
++{
++	DEBUGF("Enter");
++	DEBUGF("Leave");
++	return UNVEIL_FONT(jfont)->ascent;
++}
++
++KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntGetMaxAscent)
++{
++	DEBUGF("Enter");
++	DEBUGF("Leave");
++	return UNVEIL_FONT(jfont)->ascent;
++}
++
++KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntGetMaxAdvance)
++{
++	DEBUGF("Enter");
++	DEBUGF("Leave");
++	return UNVEIL_FONT(jfont)->height;
++}
++
++KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntGetFixedWidth)
++{
++	DEBUGF("Enter");
++	DEBUGF("Leave");
++	return UNVEIL_FONT(jfont)->height;
++}
++
++KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntIsWideFont)
++{
++	DEBUGF("Enter");
++	DEBUGF("Leave");
++	return 0;
++}
++
++KAFFE_FONT_FUNC_DECL(jint, Java_java_awt_Toolkit_fntStringWidth, jstring jStr)
++{
++	char *str;
++	s_font_t *font;
++	DEBUGF("Enter");
++	font = UNVEIL_FONT(jfont);
++	str = java2CString(env, jStr);
++	s_font_set_str(font, str);
++	s_font_get_glyph(font);
++	AWT_FREE(str);
++	DEBUGF("Leave");
++	return font->img->w;
++}
+diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/graphic.c kaffe-1.1.6-xynth/libraries/clib/awt/xynth/graphic.c
+--- kaffe-1.1.6/libraries/clib/awt/xynth/graphic.c	1970-01-01 02:00:00.000000000 +0200
++++ kaffe-1.1.6-xynth/libraries/clib/awt/xynth/graphic.c	2006-07-29 14:08:58.000000000 +0300
+@@ -0,0 +1,348 @@
++
++#include "toolkit.h"
++
++jobject Java_java_awt_Toolkit_graInitGraphics (JNIEnv *env, jclass clazz UNUSED,
++                                               jobject ngr, jobject tgt, jint tgtType,
++					       jint xOff, jint yOff,
++					       jint xClip, jint yClip, jint wClip, jint hClip,
++					       jobject fnt, jint fg, jint bg, jboolean blank)
++{
++	s_rect_t coor;
++	s_rect_t inter;
++	s_surface_t *srf;
++	graphics_t *gr = NULL;
++	DEBUGF("Enter");
++	if (ngr != NULL) {
++		gr = UNVEIL_GRAP(ngr);
++	}
++	DEBUGF("xoff: %d, yoff: %d, xclip: %d, yclip: %d, wclip: %d, hclip: %d", xOff, yOff, xClip, yClip, wClip, hClip);
++	if (tgt) {
++		void *tgtPtr = JCL_GetRawData(env, tgt);
++		DEBUGF("tgttype: %s", (tgtType == 0) ? "window" :
++		                      (tgtType == 1) ? "Image" :
++				      (tgtType == 2) ? "graphics" : "unknown");
++		switch (tgtType) {
++			case 0: /* window */
++				srf = ((s_window_t *) tgtPtr)->surface;
++				break;
++			case 2: /* graphics */
++				srf = ((graphics_t *) tgtPtr)->surface;
++				break;
++			case 1: /* image */
++			default:
++				exit(1);
++				break;
++		}
++	} else {
++		DEBUGF("tgt == 0");
++		if (gr) {
++			srf = gr->surface;
++		} else {
++			DEBUGF("attempt to set an uninitialized graphics");
++			exit(1);
++		}
++	}
++	if (gr != NULL) {
++		srf = gr->surface;
++	} else {
++		gr = (graphics_t *) AWT_MALLOC(sizeof(graphics_t));
++		ngr = JCL_NewRawDataObject(env, gr);
++	}
++	wClip = (wClip > 0) ? wClip : 0;
++	hClip = (hClip > 0) ? hClip : 0;
++	gr->font = UNVEIL_FONT(fnt);
++	gr->surface = srf;
++	gr->fg = fg;
++	gr->bg = bg;
++	gr->x0 = xOff;
++	gr->y0 = yOff;
++	gr->clip.x = gr->x0 + xClip;
++	gr->clip.y = gr->y0 + yClip;
++	gr->clip.w = wClip;
++	gr->clip.h = hClip;
++	if (blank) {
++		coor.x = gr->x0 + xClip;
++		coor.y = gr->y0 + yClip;
++		coor.w = wClip;
++		coor.h = hClip;
++		if (s_rect_intersect(&(gr->clip), &coor, &inter) == 0) {
++			s_fillbox(gr->surface, inter.x, inter.y, inter.w, inter.h, bg);
++		}
++	}
++	DEBUGF("Leave");
++	return ngr;
++}
++
++void Java_java_awt_Toolkit_graSetClip (JNIEnv *env, jclass clazz UNUSED, jobject ngr, jint xClip, jint yClip, jint wClip, jint hClip)
++{
++	graphics_t *gr;
++	s_rect_t rect;
++	DEBUGF("Enter");
++	gr = UNVEIL_GRAP(ngr);
++	DEBUGF("set clip; xClip: %d, yClip: %d, wClip: %d, hClip: %d", xClip, yClip, wClip, hClip);
++	gr->clip.x = gr->x0 + xClip;
++	gr->clip.y = gr->y0 + yClip;
++	gr->clip.w = (wClip > 0) ? wClip : 0;
++	gr->clip.h = (hClip > 0) ? hClip : 0;
++	DEBUGF("Leave");
++}
++
++void Java_java_awt_Toolkit_graSetColor (JNIEnv *env, jclass clazz UNUSED, jobject ngr, jint clr)
++{
++	graphics_t *gr;
++	DEBUGF("Enter");
++	gr = UNVEIL_GRAP(ngr);
++	gr->fg = clr;
++	DEBUGF("Leave");
++}
++
++void Java_java_awt_Toolkit_graFillRect (JNIEnv *env UNUSED, jclass clazz UNUSED, jobject ngr, jint x, jint y, jint width, jint height)
++{
++	s_rect_t coor;
++	s_rect_t inter;
++	graphics_t *gr;
++	DEBUGF("Enter");
++	gr = UNVEIL_GRAP(ngr);
++	if ((width >= 0) && (height >= 0)) {
++		coor.x = gr->x0 + x;
++		coor.y = gr->y0 + y;
++		coor.w = width;
++		coor.h = height;
++		if (s_rect_intersect(&(gr->clip), &coor, &inter) == 0) {
++			s_fillbox(gr->surface, inter.x, inter.y, inter.w, inter.h, gr->fg);
++		}
++	}
++	DEBUGF("Leave");
++}
++
++void Java_java_awt_Toolkit_graFreeGraphics (JNIEnv *env UNUSED, jclass clazz UNUSED, jobject ngr)
++{
++	graphics_t *gr;
++	DEBUGF("Enter");
++	gr = UNVEIL_GRAP(ngr);
++	AWT_FREE(gr);
++	DEBUGF("Leave");
++}
++
++void Java_java_awt_Toolkit_graSetVisible (JNIEnv *env, jclass clazz UNUSED, jobject ngr, jint isVisible)
++{
++	graphics_t *gr;
++	DEBUGF("Enter");
++	gr = UNVEIL_GRAP(ngr);
++	DEBUGF("setvisible: %d", isVisible);
++	DEBUGF("Leave");
++}
++
++void Java_java_awt_Toolkit_graClearRect (JNIEnv *env UNUSED, jclass clazz UNUSED, jobject ngr, jint x, jint y, jint width, jint height)
++{
++	s_rect_t coor;
++	s_rect_t inter;
++	graphics_t *gr;
++	DEBUGF("Enter");
++	gr = UNVEIL_GRAP(ngr);
++	coor.x = gr->x0 + x;
++	coor.y = gr->y0 + y;
++	coor.w = width;
++	coor.h = height;
++	if (s_rect_intersect(&(gr->clip), &coor, &inter) == 0) {
++		s_fillbox(gr->surface, inter.x, inter.y, inter.w, inter.h, gr->bg);
++	}
++	DEBUGF("Leave");
++}
++
++void Java_java_awt_Toolkit_graDrawImageScaled (JNIEnv *env, jclass clazz, jobject ngr, jobject nimg,
++                                               jint dx0, jint dy0, jint dx1, jint dy1,
++					       jint sx0, jint sy0, jint sx1, jint sy1, jint bgval)
++{
++	int x0;
++	int y0;
++	int x1;
++	int y1;
++	int iw;
++	char *vbufs;
++	char *vbufi;
++	s_rect_t coor;
++	s_rect_t inter;
++	graphics_t *gr;
++	s_image_t *img;
++	s_surface_t *srfs;
++	s_surface_t *srfi;
++	DEBUGF("Enter");
++	gr = UNVEIL_GRAP(ngr);
++	img = UNVEIL_IMG(nimg);
++	if (dx1 > dx0) { x0 = dx0; x1 = dx1;
++	} else {         x0 = dx1; x1 = dx0;
++	}
++	if (dy1 > dy0) { y0 = dy0; y1 = dy1;
++	} else {         y0 = dy1; y1 = dy0;
++	}
++	iw = img->w;
++	if (sx0 < 0) sx0 = 0;
++	if (sx1 < 0) sx1 = 0;
++	if (sx0 >= iw) sx0 = iw - 1;
++	if (sx1 >= iw) sx1 = iw - 1;
++	srfs = (s_surface_t *) AWT_MALLOC(sizeof(s_surface_t));
++	vbufs = (char *) AWT_MALLOC((x1 - x0 + 1) * (y1 - y0 + 1) * gr->surface->bytesperpixel);
++	s_getsurfacevirtual(srfs, x1 - x0 + 1, y1 - y0 + 1, gr->surface->bitsperpixel, vbufs);
++	srfi = (s_surface_t *) AWT_MALLOC(sizeof(s_surface_t));
++	vbufi = (char *) AWT_MALLOC(img->w * img->h * gr->surface->bytesperpixel);
++	s_getsurfacevirtual(srfi, img->w, img->h, gr->surface->bitsperpixel, vbufi);
++	s_fillbox(srfi, 0, 0, img->w, img->h, gr->bg);
++	s_putboxrgba(srfi, 0, 0, img->w, img->h, img->rgba);
++	s_scalebox(gr->surface, srfi->width, srfi->height, srfi->vbuf, srfs->width, srfs->height, srfs->vbuf);
++
++	coor.x = gr->x0 + x0;
++	coor.y = gr->y0 + y0;
++	coor.w = srfs->width;
++	coor.h = srfs->height;
++	if (s_rect_intersect(&(gr->clip), &coor, &inter) == 0) {
++		s_putboxpart(gr->surface, inter.x, inter.y, inter.w, inter.h, srfs->width, srfs->height, srfs->vbuf, inter.x - coor.x, inter.y - coor.y);
++	}
++	AWT_FREE(vbufs);
++	AWT_FREE(vbufi);
++	AWT_FREE(srfs);
++	AWT_FREE(srfi);
++	DEBUGF("Leave");
++}
++
++void Java_java_awt_Toolkit_graDraw3DRect (JNIEnv *env, jclass clazz, jobject ngr,
++                                          jint x, jint y, jint width, jint height,
++					  jboolean raised, jint rgb)
++{
++	int xw;
++	int yh;
++	int dark;
++	int bright;
++	graphics_t *gr;
++	DEBUGF("Enter");
++	gr = UNVEIL_GRAP(ngr);
++	dark = (int) (Java_java_awt_Toolkit_clrDark(env, clazz, rgb) >> 32);
++	bright = (int) (Java_java_awt_Toolkit_clrBright(env, clazz, rgb) >> 32);
++	x += gr->x0;
++	y += gr->y0;
++	xw = x + width;
++	yh = y + height;
++	s_hline(gr->surface, x, y, xw - 1, (raised) ? bright : dark);
++	s_vline(gr->surface, x, y, yh, (raised) ? bright : dark);
++	s_hline(gr->surface, x + 1, yh, xw, (raised) ? dark : bright);
++	s_vline(gr->surface, xw, y, yh, (raised) ? dark : bright);
++	DEBUGF("Leave");
++}
++
++void Java_java_awt_Toolkit_graFill3DRect (JNIEnv *env, jclass clazz, jobject ngr,
++                                          jint x, jint y, jint width, jint height,
++					  jboolean raised, jint rgb)
++{
++	s_rect_t coor;
++	s_rect_t inter;
++	graphics_t *gr;
++	DEBUGF("Enter");
++	gr = UNVEIL_GRAP(ngr);
++	coor.x = gr->x0 + x + 1;
++	coor.y = gr->y0 + y + 1;
++	coor.w = width - 2;
++	coor.h = height - 2;
++	if (s_rect_intersect(&(gr->clip), &coor, &inter) == 0) {
++		s_fillbox(gr->surface, inter.x, inter.y, inter.w, inter.h, gr->fg);
++	}
++	Java_java_awt_Toolkit_graDraw3DRect(env, clazz, ngr, x, y, width - 1, height - 1, raised, rgb);
++	DEBUGF("Leave");
++}
++
++void Java_java_awt_Toolkit_graDrawString (JNIEnv *env, jclass clazz UNUSED, jobject ngr, jstring jstr, jint x, jint y)
++{
++	int r;
++	int g;
++	int b;
++	char *str;
++	s_rect_t coor;
++	s_rect_t inter;
++	graphics_t *gr;
++	DEBUGF("Enter");
++	gr = UNVEIL_GRAP(ngr);
++	str = java2CString(env, jstr);
++	DEBUGF("string: %s", str);
++	s_font_set_str(gr->font, str);
++	s_colorrgb(gr->surface, gr->fg, &r, &g, &b);
++	s_font_set_rgb(gr->font, r, g, b);
++	s_font_get_glyph(gr->font);
++	coor.x = gr->x0 + x;
++	coor.y = gr->y0 + y - gr->font->yMax;
++	coor.w = gr->font->img->w;
++	coor.h = gr->font->img->h;
++	if (s_rect_intersect(&(gr->clip), &coor, &inter) == 0) {
++		s_putboxpartrgba(gr->surface, inter.x, inter.y, inter.w, inter.h, coor.w, coor.h, gr->font->img->rgba, inter.x - coor.x, inter.y - coor.y);
++	}
++	AWT_FREE(str);
++	DEBUGF("Leave");
++}
++
++void Java_java_awt_Toolkit_graDrawLine (JNIEnv *env UNUSED, jclass clazz UNUSED, jobject ngr, jint x1, jint y1, jint x2, jint y2)
++{
++	graphics_t *gr;
++	DEBUGF("Enter");
++	gr = UNVEIL_GRAP(ngr);
++	if ((x1 == x2) && (y1 == y2)) {
++		s_setpixel(gr->surface, gr->x0 + x1, gr->y0 + y1, gr->fg);
++	} else if (x1 == x2) {
++		s_vline(gr->surface, gr->x0 + x1, gr->y0 + y1, gr->y0 + y2, gr->fg);
++	} else if (y1 == y2) {
++		s_hline(gr->surface, gr->x0 + x1, gr->y0 + y1, gr->x0 + x2, gr->fg);
++	} else {
++		printf("%d %d %d %d\n", x1, x2, y1, y2);
++		NYI();
++//		exit(1);
++	}
++	DEBUGF("Leave");
++}
++
++void Java_java_awt_Toolkit_graDrawChars (JNIEnv *env, jclass clazz UNUSED, jobject ngr, jcharArray jChars, jint offset, jint len, jint x, jint y)
++{
++	int i;
++	int n;
++	int r;
++	int g;
++	int b;
++	char *str;
++	jchar *jc;
++	jchar *jco;
++	jint isCopy;
++	s_rect_t coor;
++	s_rect_t inter;
++	graphics_t *gr;
++	DEBUGF("Enter");
++	if (!jChars) {
++		return;
++	}
++	gr = UNVEIL_GRAP(ngr);
++	n = (*env)->GetArrayLength(env, jChars);
++	jc = (*env)->GetCharArrayElements(env, jChars, &isCopy);
++	jco = jc + offset;
++	if (offset + len > n) {
++		n = n - offset;
++	} else {
++		n = len;
++	}
++	if (n <= 0) {
++		return;
++	}
++	str = (char *) AWT_MALLOC(sizeof(char) * (n + 1));
++	for (i = 0; i < n; i++) {
++		*(str + i) = *(jco + i);
++	}
++	*(str + i) = '\0';
++	DEBUGF("string: %s", str);
++	s_font_set_str(gr->font, str);
++	s_colorrgb(gr->surface, gr->fg, &r, &g, &b);
++	s_font_set_rgb(gr->font, r, g, b);
++	s_font_get_glyph(gr->font);
++	coor.x = gr->x0 + x;
++	coor.y = gr->y0 + y - gr->font->yMax;
++	coor.w = gr->font->img->w;
++	coor.h = gr->font->img->h;
++	if (s_rect_intersect(&(gr->clip), &coor, &inter) == 0) {
++		s_putboxpartrgba(gr->surface, inter.x, inter.y, inter.w, inter.h, coor.w, coor.h, gr->font->img->rgba, inter.x - coor.x, inter.y - coor.y);
++	}
++	AWT_FREE(str);
++	(*env)->ReleaseCharArrayElements(env, jChars, jc, JNI_ABORT);
++}
+diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/image.c kaffe-1.1.6-xynth/libraries/clib/awt/xynth/image.c
+--- kaffe-1.1.6/libraries/clib/awt/xynth/image.c	1970-01-01 02:00:00.000000000 +0200
++++ kaffe-1.1.6-xynth/libraries/clib/awt/xynth/image.c	2006-07-24 17:32:13.000000000 +0300
+@@ -0,0 +1,40 @@
++
++#include "toolkit.h"
++
++jobject Java_java_awt_Toolkit_imgCreateFromFile (JNIEnv *env, jclass clazz, jstring fileName)
++{
++	char *fname;
++	s_image_t *img;
++	DEBUGF("Enter");
++	fname = java2CString(env, fileName);
++	s_image_init(&img);
++	if (s_image_img(fname, img)) {
++		s_image_uninit(img);
++		AWT_FREE(fname);
++		return NULL;
++	}
++	AWT_FREE(fname);
++	DEBUGF("Leave");
++	return JCL_NewRawDataObject(env, img);
++}
++
++KAFFE_IMG_FUNC_DECL(jint, Java_java_awt_Toolkit_imgGetWidth)
++{
++	DEBUGF("Enter");
++	DEBUGF("Leave");
++	return UNVEIL_IMG(jimg)->w;
++}
++
++KAFFE_IMG_FUNC_DECL(jint, Java_java_awt_Toolkit_imgGetHeight)
++{
++	DEBUGF("Enter");
++	DEBUGF("Leave");
++	return UNVEIL_IMG(jimg)->h;
++}
++
++KAFFE_IMG_FUNC_DECL(jboolean, Java_java_awt_Toolkit_imgIsMultiFrame)
++{
++	DEBUGF("Enter");
++	DEBUGF("Leave");
++	return (UNVEIL_IMG(jimg)->layers->nb_elt != 0);
 +}
 diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/toolkit.c kaffe-1.1.6-xynth/libraries/clib/awt/xynth/toolkit.c
 --- kaffe-1.1.6/libraries/clib/awt/xynth/toolkit.c	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-1.1.6-xynth/libraries/clib/awt/xynth/toolkit.c	2006-07-19 15:28:56.000000000 +0300
-@@ -0,0 +1,49 @@
++++ kaffe-1.1.6-xynth/libraries/clib/awt/xynth/toolkit.c	2006-07-26 17:28:07.000000000 +0300
+@@ -0,0 +1,67 @@
 +
 +#include "toolkit.h"
 +
@@ -256,11 +1058,17 @@ diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/toolkit.c kaffe-1.1.6-xynth/libr
 +	return props;
 +}
 +
-+jboolean Java_java_awt_Toolkit_tlkInit (JNIEnv *env UNUSED, jclass clazz UNUSED, jstring name)
++jboolean Java_java_awt_Toolkit_tlkInit (JNIEnv *env UNUSED, jclass clazz UNUSED, jstring name UNUSED)
 +{
 +	DEBUGF("Enter");
 +	xynth = AWT_MALLOC(sizeof(xynth_toolkit_t));
++	xynth->eventq = (xynth_eventq_t *) AWT_MALLOC(sizeof(xynth_eventq_t));
++	s_list_init(&(xynth->eventq->list));
++	s_thread_mutex_init(&(xynth->eventq->mut));
 +	s_client_init(&(xynth->root));
++	s_window_new(xynth->root, WINDOW_MAIN, NULL);
++	xynth->nwindows = XYNTH_NWINDOWS;
++	xynth->windows = AWT_CALLOC(xynth->nwindows, sizeof(window_rec_t));
 +	DEBUGF("Leave");
 +	return JNI_TRUE;
 +}
@@ -269,7 +1077,7 @@ diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/toolkit.c kaffe-1.1.6-xynth/libr
 +{
 +	DEBUGF("Enter");
 +	DEBUGF("Leave");
-+	return 600;
++	return xynth->root->surface->linear_buf_width;
 +}
 +
 +jint Java_java_awt_Toolkit_tlkGetScreenHeight (JNIEnv *env UNUSED, jclass clazz UNUSED)
@@ -287,16 +1095,28 @@ diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/toolkit.c kaffe-1.1.6-xynth/libr
 +	return 0;
 +}
 +
-+jstring Java_java_awt_Toolkit_tlkVersion (JNIEnv *env UNUSED, jclass clazz UNUSED)
++jstring Java_java_awt_Toolkit_tlkVersion (JNIEnv *env, jclass clazz UNUSED)
 +{
 +	DEBUGF("Enter");
 +	DEBUGF("Leave");
 +	return (*env)->NewStringUTF(env, "Xynth Windowing System");
 +}
++
++void Java_java_awt_Toolkit_tlkDisplayBanner (JNIEnv* env UNUSED, jclass clazz UNUSED, jstring banner UNUSED)
++{
++	DEBUGF("Enter");
++	DEBUGF("Leave");
++}
++
++void Java_java_awt_Toolkit_tlkBeep (JNIEnv *env UNUSED, jclass clazz UNUSED)
++{
++	DEBUGF("Enter");
++	DEBUGF("Leave");
++}
 diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/toolkit.h kaffe-1.1.6-xynth/libraries/clib/awt/xynth/toolkit.h
 --- kaffe-1.1.6/libraries/clib/awt/xynth/toolkit.h	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-1.1.6-xynth/libraries/clib/awt/xynth/toolkit.h	2006-07-19 15:28:56.000000000 +0300
-@@ -0,0 +1,72 @@
++++ kaffe-1.1.6-xynth/libraries/clib/awt/xynth/toolkit.h	2006-07-29 13:42:35.000000000 +0300
+@@ -0,0 +1,173 @@
 +
 +#include "config.h"
 +#include "config-std.h"
@@ -307,20 +1127,68 @@ diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/toolkit.h kaffe-1.1.6-xynth/libr
 +
 +#include <xynth.h>
 +
++#define XYNTH_NWINDOWS 100
++
++typedef struct graphics_s {
++	s_surface_t *surface;
++	s_font_t *font;
++	int fg;
++	int bg;
++	int x0;
++	int y0;
++	s_rect_t clip;
++} graphics_t;
++
++typedef struct window_rec_s {
++	s_window_t *window;
++	s_window_t *owner;
++} window_rec_t;
++
++typedef struct deco_inset_s {
++	int left;
++	int top;
++	int right;
++	int bottom;
++	char guess;
++} deco_inset_t;
++
++typedef struct xynth_event_s {
++	s_event_t *event;
++	s_window_t *window;
++} xynth_event_t;
++
++typedef struct xynth_eventq_s {
++	s_list_t *list;
++	s_thread_mutex_t *mut;
++} xynth_eventq_t;
++
 +typedef struct xynth_toolkit_s {
++	deco_inset_t frame_insets;
++	unsigned int nwindows;
++	window_rec_t *windows;
++	window_rec_t *last_window;
++	unsigned int last_idx;
 +	s_window_t *root;
++	xynth_eventq_t *eventq;
 +} xynth_toolkit_t;
 +
 +xynth_toolkit_t *xynth;
 +
-+#define DEBUGF(a...)	printf(a); printf(" (%s [%s:%d])\n", __FUNCTION__, __FILE__, __LINE__);
-+#define NYI()           DEBUGF("Not Yet Implemented !");
++//#define DEBUGF(a...)	printf(a); printf(" (%s [%s:%d])\n", __FUNCTION__, __FILE__, __LINE__);
++//#define NYI()           DEBUGF("Not Yet Implemented !");
++#define DEBUGF(a...)
++#define NYI()
 +
 +#define TLK_IS_BLOCKING			1
 +#define TLK_IS_DISPATCH_EXCLUSIVE	2
 +#define TLK_NEEDS_FLUSH			4
 +#define TLK_NATIVE_DISPATCHER_LOOP	8
 +#define TLK_EXTERNAL_DECO		16
++
++#define COMPONENT_RESIZED 101
++#define FOCUS_GAINED      1004
++#define FOCUS_LOST        1005
++#define UPDATE            801
 +
 +static inline void * _awt_malloc_wrapper (size_t size)
 +{
@@ -367,11 +1235,127 @@ diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/toolkit.h kaffe-1.1.6-xynth/libr
 +	return buf;
 +}
 +
-+#define KAFFE_FONT_FUNC_DECL( ret, name, args... ) ret name(JNIEnv* env, jclass clazz, jobject  font, ##args)
-+#define UNVEIL_FS(font) ((s_font_t *) JCL_GetRawData(env, font))
++#define KAFFE_FONT_FUNC_DECL(ret, name, args...) ret name(JNIEnv *env, jclass clazz, jobject jfont, ##args)
++#define UNVEIL_FONT(jfont) ((s_font_t *) JCL_GetRawData(env, jfont))
++
++#define KAFFE_IMG_FUNC_DECL(ret, name, args...) ret name(JNIEnv *env, jclass clazz, jobject jimg, ##args)
++#define UNVEIL_IMG(jimg) ((s_image_t *) JCL_GetRawData(env, jimg))
++
++#define UNVEIL_WINDOW(jwin) ((s_window_t *) JCL_GetRawData(env, jwin))
++
++#define UNVEIL_GRAP(jgraphics) ((graphics_t *) JCL_GetRawData(env, jgraphics));
++
++static inline int source_idx_free (xynth_toolkit_t *tk, s_window_t *win)
++{
++	register int n;
++	for (n = 0; n < tk->nwindows; n++) {
++		if (tk->windows[n].window <= 0 ) {
++			tk->last_idx = n;
++			tk->last_window = win;
++			return n;
++		}
++	}
++	return -1;
++}
++
++static inline int source_idx_register (xynth_toolkit_t *tk, s_window_t *window, s_window_t *owner)
++{
++	int i;
++	i = source_idx_free(tk, window);
++	if (i >= 0) {
++		tk->windows[i].window = window;
++		tk->windows[i].owner = owner;
++		return i;
++	} else {
++		DEBUGF("window table out of spafe: %d", tk->nwindows);
++		return -1;
++	}
++}
++
++static inline int source_idx_get (xynth_toolkit_t *tk, s_window_t *win)
++{
++	register int n;
++	if (win == tk->last_window) {
++		return tk->last_idx;
++	} else {
++		for (n = 0; n < tk->nwindows; n++) {
++			if (tk->windows[n].window == win) {
++				tk->last_idx = n;
++				tk->last_window = win;
++				return tk->last_idx;
++			} else if (tk->windows[n].window == 0) {
++				return -1;
++			}
++		}
++		return -1;
++	}
++}
+diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/window.c kaffe-1.1.6-xynth/libraries/clib/awt/xynth/window.c
+--- kaffe-1.1.6/libraries/clib/awt/xynth/window.c	1970-01-01 02:00:00.000000000 +0200
++++ kaffe-1.1.6-xynth/libraries/clib/awt/xynth/window.c	2006-07-29 12:47:46.000000000 +0300
+@@ -0,0 +1,59 @@
++
++#include "toolkit.h"
++
++void xynth_kaffe_atevent (s_window_t *window, s_event_t *event);
++
++void Java_java_awt_Toolkit_wndSetFrameInsets (JNIEnv *env UNUSED, jclass clazz UNUSED, jint top, jint left, jint bottom, jint right)
++{
++	DEBUGF("Enter");
++	xynth->frame_insets.top  = top;
++	xynth->frame_insets.left = left;
++	xynth->frame_insets.bottom = bottom;
++	xynth->frame_insets.right = right;
++	xynth->frame_insets.guess = 1;
++	DEBUGF("Leave");
++}
++
++jobject Java_java_awt_Toolkit_wndCreateFrame (JNIEnv *env, jclass clazz, jstring jTitle,
++                                              jint x, jint y, jint width, jint height,
++					      jint jCursor, jint clrBack, jboolean isResizable)
++{
++	char *str;
++	s_window_t *window;
++	jobject jwindow;
++	DEBUGF("Enter");
++	str = java2CString(env, jTitle);
++	s_client_init(&window);
++	s_window_new(window, WINDOW_CHILD, xynth->root);
++	s_window_set_coor(window, WINDOW_NOFORM, x, y, width, height);
++	s_window_set_title(window, str);
++	s_fillbox(window->surface, 0, 0, window->surface->width, window->surface->height, clrBack);
++	s_client_atevent(window, xynth_kaffe_atevent);
++	s_client_main(window);
++	jwindow = JCL_NewRawDataObject(env, window);
++	source_idx_register(xynth, UNVEIL_WINDOW(jwindow), xynth->root);
++	DEBUGF("title: %s, x: %d, y: %d, w: %d, h: %d, cursor: %d, clrback: %d, resize: %d", str, x, y, width, height, clrBack, isResizable);
++	AWT_FREE(str);
++	DEBUGF("Leave");
++	return jwindow;
++}
++
++void Java_java_awt_Toolkit_wndSetVisible (JNIEnv* env UNUSED, jclass clazz UNUSED, jobject nwnd, jboolean showIt)
++{
++	int i;
++	s_window_t *window;
++	DEBUGF("Enter");
++	window = UNVEIL_WINDOW(nwnd);
++	i = source_idx_get(xynth, window);
++	if (i < 0) {
++		DEBUGF("Could not find idx for window");
++		return;
++	}
++	DEBUGF("window->client->id: %d", window->client->id);
++	if (showIt) {
++		s_window_show(window);
++	} else {
++		s_window_hide(window);
++	}
++	DEBUGF("Leave");
++}
 diff -Naur kaffe-1.1.6/libraries/javalib/Makefile.am kaffe-1.1.6-xynth/libraries/javalib/Makefile.am
 --- kaffe-1.1.6/libraries/javalib/Makefile.am	2005-09-20 03:29:45.000000000 +0300
-+++ kaffe-1.1.6-xynth/libraries/javalib/Makefile.am	2006-07-19 15:28:56.000000000 +0300
++++ kaffe-1.1.6-xynth/libraries/javalib/Makefile.am	2006-07-29 14:16:28.000000000 +0300
 @@ -609,6 +609,7 @@
  	gnu/bytecode/dump.java
  gnu_classpath_SRCS = \
@@ -382,7 +1366,7 @@ diff -Naur kaffe-1.1.6/libraries/javalib/Makefile.am kaffe-1.1.6-xynth/libraries
  	gnu/classpath/Pointer64.java \
 diff -Naur kaffe-1.1.6/test/awt/WidgetsDemo/WidgetsDemo.sh kaffe-1.1.6-xynth/test/awt/WidgetsDemo/WidgetsDemo.sh
 --- kaffe-1.1.6/test/awt/WidgetsDemo/WidgetsDemo.sh	2005-07-04 01:03:21.000000000 +0300
-+++ kaffe-1.1.6-xynth/test/awt/WidgetsDemo/WidgetsDemo.sh	2006-07-19 15:28:56.000000000 +0300
++++ kaffe-1.1.6-xynth/test/awt/WidgetsDemo/WidgetsDemo.sh	2006-07-29 14:16:28.000000000 +0300
 @@ -1,2 +1,3 @@
  #! /bin/sh
 -kaffe WidgetsDemo

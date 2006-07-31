@@ -269,8 +269,8 @@ void s_putboxpartalpha (s_surface_t *surface, int x, int y, int w, int h, int bw
 	s_surface_t *tsrf;
 	tsrf = (s_surface_t *) s_malloc(sizeof(s_surface_t));
 	s_getsurfacevirtual(tsrf, bw, bh, surface->bitsperpixel, sp);
-	for (tyd = y, tys = yo; (tys < h) && (tys < bh); tyd++, tys++) {
-		for (txd = x, txs = xo; (txs < w) && (txs < bw); txd++, txs++) {
+	for (tyd = y, tys = yo; ((tyd - y) < h) && (tys < bh); tyd++, tys++) {
+		for (txd = x, txs = xo; ((txd - x) < w) && (txs < bw); txd++, txs++) {
 			a = ~*(sm + (tys * bw + txs));
 			if (a == 0xFF) {
 				continue;
@@ -289,8 +289,8 @@ void s_putboxpartrgba (s_surface_t *surface, int x, int y, int w, int h, int bw,
 	int txs;
 	int tys;
 	unsigned char alpha;
-	for (tyd = y, tys = yo; (tys < h) && (tys < bh); tyd++, tys++) {
-		for (txd = x, txs = xo; (txs < w) && (txs < bw); txd++, txs++) {
+	for (tyd = y, tys = yo; ((tyd - y) < h) && (tys < bh); tyd++, tys++) {
+		for (txd = x, txs = xo; ((txd - x) < w) && (txs < bw); txd++, txs++) {
 			alpha = (*(rgba + (tys * bw + txs)) >> 0x00) & 0xFF;
 			if (alpha == 0xFF) {
 				continue;
