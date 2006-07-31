@@ -108,6 +108,12 @@ jobject event_handler_config (JNIEnv *env, xynth_event_t *xevent)
 	if (idx < 0) {
 		return NULL;
 	}
+	if (xevent->event->type & (CONFIG_CHNGW | CONFIG_CHNGH)) {
+		free(xevent->window->surface->vbuf);
+		xevent->window->surface->width = xevent->event->expose->rect->w;
+		xevent->window->surface->height = xevent->event->expose->rect->h;
+		xevent->window->surface->vbuf = (char *) malloc(xevent->window->surface->width * xevent->window->surface->height * xevent->window->surface->bytesperpixel);
+	}
 	event = xevent->event;
 	jevent = (*env)->CallStaticObjectMethod(env, ComponentEvent, getComponentEvent, idx, COMPONENT_RESIZED, event->expose->rect->x, event->expose->rect->y, event->expose->rect->w, event->expose->rect->h);
 	printf("idx: %d, x: %d, y: %d, w: %d, h: %d\n", idx, event->expose->rect->x, event->expose->rect->y, event->expose->rect->w, event->expose->rect->h);
