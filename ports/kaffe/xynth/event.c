@@ -74,9 +74,32 @@ jobject event_handler_keybd (JNIEnv *env, xynth_event_t *xevent)
 
 jobject event_handler_mouse (JNIEnv *env, xynth_event_t *xevent)
 {
+	int idx;
+	jobject jevent;
+	s_event_t *event;
 	DEBUGF("Enter");
+	idx = source_idx_get(xynth, xevent->window);
+	if (idx < 0) {
+		return NULL;
+	}
+	jevent = NULL;
+	event = xevent->event;
+	if ((event->mouse->x >= xevent->window->surface->buf->x) &&
+	    (event->mouse->y >= xevent->window->surface->buf->y) &&
+	    (event->mouse->x <= (xevent->window->surface->buf->x + xevent->window->surface->buf->w - 1)) &&
+	    (event->mouse->y <= (xevent->window->surface->buf->y + xevent->window->surface->buf->h - 1))) {
+		event->mouse->x -= xevent->window->surface->buf->x;
+		event->mouse->y -= xevent->window->surface->buf->y;
+		if (event->type & MOUSE_RELEASED) {
+			jevent = (*env)->CallStaticObjectMethod(env, MouseEvent, getMouseEvent, idx, JMOUSE_RELEASED, event->mouse->b, event->mouse->x, event->mouse->y);
+		} else if (event->type & MOUSE_PRESSED) {
+			jevent = (*env)->CallStaticObjectMethod(env, MouseEvent, getMouseEvent, idx, JMOUSE_PRESSED, event->mouse->b, event->mouse->x, event->mouse->y);
+		} else {
+			jevent = (*env)->CallStaticObjectMethod(env, MouseEvent, getMouseEvent, idx, JMOUSE_MOVED, 0, event->mouse->x, event->mouse->y);
+		}
+	}
 	DEBUGF("Leave");
-	return NULL;
+	return jevent;
 }
 
 jobject event_handler_expose (JNIEnv *env, xynth_event_t *xevent)

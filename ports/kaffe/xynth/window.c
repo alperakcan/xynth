@@ -57,3 +57,9 @@ void Java_java_awt_Toolkit_wndSetVisible (JNIEnv* env UNUSED, jclass clazz UNUSE
 	}
 	DEBUGF("Leave");
 }
+
+void Java_java_awt_Toolkit_wndSetCursor (JNIEnv *env UNUSED, jclass clazz UNUSED, jobject nwnd, jint jCursor)
+{
+	DEBUGF("Enter");
+	DEBUGF("Leave");
+}
