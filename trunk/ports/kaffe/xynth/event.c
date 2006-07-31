@@ -206,7 +206,6 @@ void xynth_kaffe_atevent (s_window_t *window, s_event_t *event)
 		case QUIT_EVENT:
 		case MOUSE_EVENT:
 		case KEYBD_EVENT:
-		case EXPOSE_EVENT:
 		case CONFIG_EVENT:
 		case FOCUS_EVENT:
 			xevent = (xynth_event_t *) AWT_MALLOC(sizeof(xynth_event_t));
@@ -225,15 +224,26 @@ void xynth_kaffe_atevent (s_window_t *window, s_event_t *event)
 				}
 			}
 			break;
+		case EXPOSE_EVENT: /* nothing */
 		default:
 			break;
 	}
-	switch (event->type & EVENT_MASK) {
-		case EXPOSE_EVENT:
-			event->type = NONE_EVENT;
-			break;
-		default:
-			break;
+	if (event->type & (CONFIG_CHNGW | CONFIG_CHNGH)) {
+		xevent = (xynth_event_t *) AWT_MALLOC(sizeof(xynth_event_t));
+		if (xevent != NULL) {
+			if (!s_event_init(&(xevent->event))) {
+				xevent->window = window;
+				xevent->event->type = EXPOSE_EVENT;
+				memcpy(xevent->event->mouse, event->mouse, sizeof(s_mouse_t));
+				memcpy(xevent->event->keybd, event->keybd, sizeof(s_keybd_t));
+				memcpy(xevent->event->expose->rect, event->expose->rect, sizeof(s_rect_t));
+				s_thread_mutex_lock(xynth->eventq->mut);
+				s_list_add(xynth->eventq->list, xevent, -1);
+				s_thread_mutex_unlock(xynth->eventq->mut);
+			} else {
+				AWT_FREE(xevent);
+			}
+		}
 	}
 	DEBUGF("Leave");
 }
