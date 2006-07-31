@@ -289,9 +289,7 @@ void Java_java_awt_Toolkit_graDrawLine (JNIEnv *env UNUSED, jclass clazz UNUSED,
 	} else if (y1 == y2) {
 		s_hline(gr->surface, gr->x0 + x1, gr->y0 + y1, gr->x0 + x2, gr->fg);
 	} else {
-		printf("%d %d %d %d\n", x1, x2, y1, y2);
-		NYI();
-//		exit(1);
+		DEBUGF("NYI: %d %d %d %d\n", x1, x2, y1, y2);
 	}
 	DEBUGF("Leave");
 }
