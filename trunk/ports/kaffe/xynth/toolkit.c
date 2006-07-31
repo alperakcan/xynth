@@ -42,7 +42,6 @@ jint Java_java_awt_Toolkit_tlkGetScreenHeight (JNIEnv *env UNUSED, jclass clazz 
 jint Java_java_awt_Toolkit_tlkGetResolution (JNIEnv *env UNUSED, jclass clazz UNUSED)
 {
 	DEBUGF("Enter");
-	NYI();
 	DEBUGF("Leave");
 	return 0;
 }
