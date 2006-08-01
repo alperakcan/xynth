@@ -344,3 +344,24 @@ void Java_java_awt_Toolkit_graDrawChars (JNIEnv *env, jclass clazz UNUSED, jobje
 	AWT_FREE(str);
 	(*env)->ReleaseCharArrayElements(env, jChars, jc, JNI_ABORT);
 }
+
+void Java_java_awt_Toolkit_graCopyArea (JNIEnv *env UNUSED, jclass clazz UNUSED, jobject ngr, jint x, jint y, jint width, jint height, jint xDelta, jint yDelta)
+{
+	char *vbuf;
+	s_rect_t coor;
+	s_rect_t inter;
+	graphics_t *gr;
+	DEBUGF("Enter");
+	gr = UNVEIL_GRAP(ngr);
+	vbuf = (char *) AWT_MALLOC(width * height * gr->surface->bytesperpixel);
+	s_getbox(gr->surface, gr->x0 + x, gr->y0 + y, width, height, vbuf);
+	coor.x = gr->x0 + x + xDelta;
+	coor.y = gr->y0 + y + yDelta;
+	coor.w = width;
+	coor.h = height;
+	if (s_rect_intersect(&(gr->clip), &coor, &inter) == 0) {
+		s_putboxpart(gr->surface, inter.x, inter.y, inter.w, inter.h, coor.w, coor.h, vbuf, inter.x - coor.x, inter.y - coor.y);
+	}
+	AWT_FREE(vbuf);
+	DEBUGF("Leave");
+}
