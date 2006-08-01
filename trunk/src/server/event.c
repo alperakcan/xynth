@@ -222,10 +222,14 @@ void s_server_event_changed (void)
 				}
 			}
 		}
-		if (remote) {
-			s_server_socket_request(SOC_DATA_EVENT, s_server_pri_id(1));
-		} else {
-			s_server_socket_request(SOC_DATA_EVENT, s_server_pri_id(0));
+		if (server->window->event->type & MOUSE_EVENT) {
+			s_server_socket_request(SOC_DATA_EVENT, id);
+		} else if (server->window->event->type & KEYBD_EVENT) {
+			if (remote) {
+				s_server_socket_request(SOC_DATA_EVENT, s_server_pri_id(1));
+			} else {
+				s_server_socket_request(SOC_DATA_EVENT, s_server_pri_id(0));
+			}
 		}
 	}
 }
@@ -247,7 +251,8 @@ void s_server_event_parse (S_EVENT event)
 			}
 			break;
 		default:
-			break;
+			debugf(DSER, "this should not happen");
+			return;
 	}
 
 	s_server_event_changed();
