@@ -45,6 +45,7 @@ typedef struct xynth_eventq_s {
 
 typedef struct xynth_toolkit_s {
 	deco_inset_t frame_insets;
+	deco_inset_t dialog_insets;
 	unsigned int nwindows;
 	window_rec_t *windows;
 	window_rec_t *last_window;
