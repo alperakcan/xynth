@@ -920,6 +920,18 @@ void s_hline (s_surface_t *surface, int x1, int y, int x2, int c);
   */
 void s_vline (s_surface_t *surface, int x, int y1, int y2, int c);
 
+/** @brief draw a line from point (x1, y1) to (x2, y2) inclusively in color c
+  *
+  * @param *surface - the surface
+  * @param x1       - x start point
+  * @param x2       - x end point
+  * @param y1       - y start point
+  * @param y2       - y end point
+  * @param c        - color value
+  * @returns no return
+  */
+void s_line (s_surface_t *surface, int x1, int y1, int x2, int y2, int c);
+
 /** @brief fill a rectangular area at position (x, y) with size (w, h) of the screen with a
   *        single color c on to the surface
   *

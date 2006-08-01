@@ -169,6 +169,67 @@ void s_vline (s_surface_t *surface, int x, int y1, int y2, int c)
 	}
 }
 
+void s_line (s_surface_t *surface, int x1, int y1, int x2, int y2, int c)
+{
+	int x;
+	int y;
+	int num;
+	int den;
+	int xinc1;
+	int xinc2;
+	int yinc1;
+	int yinc2;
+	int numadd;
+	int deltax;
+	int deltay;
+	int curpixel;
+	int numpixels;
+	x = x1;
+	y = y1;
+	deltax = abs(x2 - x1);
+	deltay = abs(y2 - y1);
+	if (x2 >= x1) {
+		xinc1 = 1;
+		xinc2 = 1;
+	} else {
+		xinc1 = -1;
+		xinc2 = -1;
+	}
+	if (y2 >= y1) {
+		yinc1 = 1;
+		yinc2 = 1;
+	} else {
+		yinc1 = -1;
+		yinc2 = -1;
+	}
+	if (deltax >= deltay) {
+		xinc1 = 0;
+		yinc2 = 0;
+		den = deltax;
+		num = deltax / 2;
+		numadd = deltay;
+		numpixels = deltax;
+	} else {
+		xinc2 = 0;
+		yinc1 = 0;
+		den = deltay;
+		num = deltay / 2;
+		numadd = deltax;
+		numpixels = deltay;
+	}
+	for (curpixel = 0; curpixel <= numpixels; curpixel++) {
+		s_setpixel(surface, x, y, c);
+		num += numadd;
+		if (num >= den) {
+			num -= den;
+			x += xinc1;
+			y += yinc1;
+		}
+		x += xinc2;
+		y += yinc2;
+	}
+}
+
 void s_fillbox (s_surface_t *surface, int x, int y, int w, int h, int c)
 {
 	if (surface->mode & SURFACE_VIRTUAL) {
