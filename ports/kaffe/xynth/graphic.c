@@ -365,3 +365,24 @@ void Java_java_awt_Toolkit_graCopyArea (JNIEnv *env UNUSED, jclass clazz UNUSED,
 	AWT_FREE(vbuf);
 	DEBUGF("Leave");
 }
+
+void Java_java_awt_Toolkit_graSetFont (JNIEnv *env, jclass clazz UNUSED, jobject ngr, jobject jfnt)
+{
+	s_font_t *fnt;
+	graphics_t *gr;
+	DEBUGF("Enter");
+	gr = UNVEIL_GRAP(ngr);
+	fnt = UNVEIL_FONT(jfnt);
+	gr->font = fnt;
+	DEBUGF("Leave");
+}
+
+void Java_java_awt_Toolkit_graDrawRect (JNIEnv *env UNUSED, jclass clazz UNUSED, jobject ngr, jint x, jint y, jint width, jint height)
+{
+	DEBUGF("Enter");
+	Java_java_awt_Toolkit_graDrawLine(env, clazz, ngr, x, y, x + width - 1, y);
+	Java_java_awt_Toolkit_graDrawLine(env, clazz, ngr, x, y + height - 1, x + width - 1, y + height - 1);
+	Java_java_awt_Toolkit_graDrawLine(env, clazz, ngr, x, y, x, y + height - 1);
+	Java_java_awt_Toolkit_graDrawLine(env, clazz, ngr, x + width - 1, y, x + width - 1, y);
+	DEBUGF("Leave");
+}
