@@ -14,9 +14,18 @@ void Java_java_awt_Toolkit_wndSetFrameInsets (JNIEnv *env UNUSED, jclass clazz U
 	DEBUGF("Leave");
 }
 
-jobject Java_java_awt_Toolkit_wndCreateFrame (JNIEnv *env, jclass clazz, jstring jTitle,
-                                              jint x, jint y, jint width, jint height,
-					      jint jCursor, jint clrBack, jboolean isResizable)
+void Java_java_awt_Toolkit_wndSetDialogInsets (JNIEnv *env UNUSED, jclass clazz UNUSED, jint top, jint left, jint bottom, jint right)
+{
+	DEBUGF("Enter");
+	xynth->dialog_insets.top  = top;
+	xynth->dialog_insets.left = left;
+	xynth->dialog_insets.bottom = bottom;
+	xynth->dialog_insets.right = right;
+	xynth->dialog_insets.guess = 1;
+	DEBUGF("Leave");
+}
+
+jobject Java_java_awt_Toolkit_wndCreateFrame (JNIEnv *env, jclass clazz, jstring jTitle, jint x, jint y, jint width, jint height, jint jCursor, jint clrBack, jboolean isResizable)
 {
 	char *str;
 	s_window_t *window;
@@ -53,6 +62,29 @@ jobject Java_java_awt_Toolkit_wndCreateWindow (JNIEnv *env, jclass clazz, jobjec
 	s_client_main(window);
 	jwindow = JCL_NewRawDataObject(env, window);
 	source_idx_register(xynth, UNVEIL_WINDOW(jwindow), owner);
+	DEBUGF("Leave");
+	return jwindow;
+}
+
+jobject Java_java_awt_Toolkit_wndCreateDialog (JNIEnv *env, jclass clazz, jobject nowner, jstring jTitle, jint x, jint y, jint width, jint height, jint jCursor, jint clrBack, jboolean isResizable)
+{
+	char *str;
+	jobject jwindow;
+	s_window_t *owner;
+	s_window_t *window;
+	DEBUGF("Enter");
+	str = java2CString(env, jTitle);
+	owner = UNVEIL_WINDOW(nowner);
+	s_client_init(&window);
+	s_window_new(window, WINDOW_CHILD, owner);
+	s_window_set_coor(window, WINDOW_NOFORM, x, y, width, height);
+	s_window_set_title(window, str);
+	s_fillbox(window->surface, 0, 0, window->surface->width, window->surface->height, clrBack);
+	s_client_atevent(window, xynth_kaffe_atevent);
+	s_client_main(window);
+	jwindow = JCL_NewRawDataObject(env, window);
+	source_idx_register(xynth, UNVEIL_WINDOW(jwindow), owner);
+	AWT_FREE(str);
 	DEBUGF("Leave");
 	return jwindow;
 }
