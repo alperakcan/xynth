@@ -274,7 +274,7 @@ void xynth_kaffe_atevent (s_window_t *window, s_event_t *event)
 	DEBUGF("Leave");
 }
 
-jobject Java_java_awt_Toolkit_evtGetNextEvent (JNIEnv* env, jclass clazz)
+jobject Java_java_awt_Toolkit_evtGetNextEvent (JNIEnv *env, jclass clazz)
 {
 	jobject jevent;
 	xynth_event_t *xevent;
@@ -294,4 +294,22 @@ jobject Java_java_awt_Toolkit_evtGetNextEvent (JNIEnv* env, jclass clazz)
 	}
 	s_thread_mutex_unlock(xynth->eventq->mut);
 	return jevent;
+}
+
+jint Java_java_awt_Toolkit_evtUnregisterSource (JNIEnv *env UNUSED, jclass clazz UNUSED, jobject nwnd)
+{
+	int i;
+	s_window_t *window;
+	DEBUGF("Enter");
+	window = UNVEIL_WINDOW(nwnd);
+	i = source_idx_get(xynth, window);
+	if (i >= 0) {
+		xynth->windows[i].window = 0;
+		xynth->windows[i].owner = 0;
+	}
+	if (xynth->last_window == window) {
+		xynth->last_window = 0;
+	}
+	DEBUGF("Leave");
+	return i;
 }
