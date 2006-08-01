@@ -98,7 +98,7 @@ jobject event_handler_mouse (JNIEnv *env, xynth_event_t *xevent)
 			jevent = (*env)->CallStaticObjectMethod(env, MouseEvent, getMouseEvent, idx, JMOUSE_MOVED, 0, event->mouse->x, event->mouse->y);
 		}
 	}
-	DEBUGF("Leave");
+	DEBUGF("Leave %d", xevent->window->client->id);
 	return jevent;
 }
 
@@ -290,6 +290,8 @@ jobject Java_java_awt_Toolkit_evtGetNextEvent (JNIEnv *env, jclass clazz)
 		AWT_FREE(xevent);
 		if (jevent != NULL) {
 			break;
+		} else {
+			DEBUGF("ERROR");
 		}
 	}
 	s_thread_mutex_unlock(xynth->eventq->mut);
