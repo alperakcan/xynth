@@ -207,7 +207,7 @@ void taskbar_clock_popup_atexit (s_window_t *window)
         tbar_clock_t *tbar_clock;
         tbar_data = (tbar_data_t *) window->parent->client->user_data;
         tbar_clock = (tbar_clock_t *) tbar_data->tbar_clock;
-	tbar_clock->open = 0;
+	tbar_clock->clock = NULL;
 }
 
 void taskbar_clock_popup_atevent (s_window_t *window, s_event_t *event)
@@ -232,19 +232,14 @@ void taskbar_clock_popup_atevent (s_window_t *window, s_event_t *event)
 
 void taskbar_clock_handler_oh (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
-	s_window_t *popup;
         tbar_data_t *tbar_data;
         tbar_clock_t *tbar_clock;
 	tbar_data = (tbar_data_t *) window->client->user_data;
 	tbar_clock = tbar_data->tbar_clock;
-	if (tbar_clock->open != 1) {
+	if (tbar_clock->clock == NULL) {
 		return;
 	}
-	popup = handler->user_data;
-	if (popup != NULL) {
-		s_client_quit(popup);
-	}
-	handler->user_data = NULL;
+	s_client_quit(tbar_clock->clock);
 }
 
 void taskbar_clock_handler_o (s_window_t *window, s_event_t *event, s_handler_t *handler)
@@ -265,7 +260,7 @@ void taskbar_clock_handler_o (s_window_t *window, s_event_t *event, s_handler_t 
 	tbar_data = (tbar_data_t *) window->client->user_data;
 	tbar_clock = tbar_data->tbar_clock;
 
-	if (tbar_clock->open == 1) {
+	if (tbar_clock->clock != NULL) {
 		return;
 	}
 
@@ -338,8 +333,7 @@ void taskbar_clock_handler_o (s_window_t *window, s_event_t *event, s_handler_t 
 	s_window_show(temp);
 	s_client_main(temp);
 
-	handler->user_data = temp;
-	tbar_clock->open = 1;
+	tbar_clock->clock = temp;
 }
 
 void taskbar_clock_draw (s_window_t *window, s_timer_t *timer)
@@ -450,6 +444,9 @@ void taskbar_atevent (s_window_t *window, s_event_t *event)
         tbar_data_t *tbar_data;
         tbar_progs_t *tbar_progs;
         s_desktop_client_t *desktopc;
+	
+	if (event->type & MOUSE_EXITED) {
+	}
 
 	if (!(event->type & DESKTOP_EVENT)) {
 		return;
@@ -531,7 +528,7 @@ void taskbar_start (s_window_t *window, s_config_t *cfg)
 		s_putboxpart(window->surface, x, 1, 1, window->surface->buf->h - 2, 1, 30, tbar_data->tbar_progs->tbar_img->buf, 0, 1);
 	}
 
-	tbar_data->tbar_clock->open = 0;
+	tbar_data->tbar_clock->clock = NULL;
         tbar_data->tbar_clock->rect.x = window->surface->width - 3 - 75;
         tbar_data->tbar_clock->rect.y = 3;
         tbar_data->tbar_clock->rect.w = 75;

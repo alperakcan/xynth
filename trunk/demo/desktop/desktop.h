@@ -33,9 +33,9 @@ typedef enum {
 } SMENU_TYPE;
 
 typedef struct tbar_clock_s {
-	int open;
 	s_rect_t rect;
 	s_font_t *font;
+	s_window_t *clock;
 } tbar_clock_t;
 
 typedef struct smenu_prog_s {
