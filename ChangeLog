@@ -1,4 +1,12 @@
 
+Wed 02 Aug 2006 04:52:41 PM EEST
+	* rev : 250
+	* lib/grlib.c : minor fixes, and new s_line(...) function
+	* lib/socket.c, lib/event.c server/socket.c, server/event.c : new events
+	CONFIG_EVENT, FOCUS_EVENT, MOUSE_ENTERED, MOUSE_EXITED
+	* demo/taskbar : minor fixes
+	* ports/kaffe : works! (kaffe-1.1.6)
+
 Mon 17 Jul 2006 04:08:02 PM EEST
 	* rev : 184
 	* Makefiles : brand new build system
