@@ -250,6 +250,7 @@ err0:	s_thread_mutex_unlock(window->socket_mutex);
 
 int s_socket_listen_event (s_window_t *window, int soc)
 {
+	S_EVENT dtype;
 	s_soc_data_event_t *data;
 	data = (s_soc_data_event_t *) s_calloc(1, sizeof(s_soc_data_event_t));
 
@@ -257,12 +258,17 @@ int s_socket_listen_event (s_window_t *window, int soc)
 		s_free(data);
 		return -1;
 	}
-
-	window->event->type = data->type;
-	*(window->event->mouse) = data->mouse;
-	*(window->event->keybd) = data->keybd;
-
-	s_event_changed(window);
+	
+	dtype = data->type & (MOUSE_ENTERED | MOUSE_EXITED);
+	if ((dtype == 0) ||
+	    ((dtype != 0) &&
+	     (dtype != window->client->mouse_entered))) {
+		window->client->mouse_entered = dtype;
+		window->event->type = data->type;
+		*(window->event->mouse) = data->mouse;
+		*(window->event->keybd) = data->keybd;
+		s_event_changed(window);
+	}
 
 	s_free(data);
 	return 0;

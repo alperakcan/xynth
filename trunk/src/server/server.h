@@ -93,6 +93,7 @@ typedef struct s_cursor_s {
 	int x;
 	int y;
 	int xyid;
+	int xyid_old;
 	s_image_t *img;
 	s_image_t images[MOUSE_CURSOR_MAX];
 } s_cursor_t;

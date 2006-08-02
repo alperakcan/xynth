@@ -36,6 +36,7 @@ int s_client_init (s_window_t **window)
 	w->client->resizeable = 1;
 	w->client->alwaysontop = 0;
 	w->client->cursor = MOUSE_CURSOR_ARROW;
+	w->client->mouse_entered = 0;
 	*window = w;
 
         if (s_socket_request(w, SOC_DATA_DISPLAY)) { goto err8; }

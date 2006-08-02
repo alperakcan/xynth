@@ -39,6 +39,8 @@ void s_server_cursor_init (void)
 
 	server->cursor.x = 0;
 	server->cursor.y = 0;
+	server->cursor.xyid = -1;
+	server->cursor.xyid_old = -1;
 
 	for (i = 0; i < MOUSE_CURSOR_MAX; i++) {
 		server->cursor.images[i].mat = NULL;
@@ -113,7 +115,8 @@ void s_server_cursor_matrix_add (void)
 	mcoor.y = server->cursor.y;
 	mcoor.w = server->cursor.img->w;
 	mcoor.h = server->cursor.img->h;
-	
+
+	server->cursor.xyid_old = server->cursor.xyid;
 	server->cursor.xyid = *(server->window->surface->matrix + (server->window->event->mouse->y * server->window->surface->width) + server->window->event->mouse->x);
 	s_server_surface_matrix_add_this(S_MATRIX_SWMOUSE, &mcoor, &mcoor, server->cursor.img->mat);
 }
