@@ -94,6 +94,10 @@ jobject event_handler_mouse (JNIEnv *env, xynth_event_t *xevent)
 			jevent = (*env)->CallStaticObjectMethod(env, MouseEvent, getMouseEvent, idx, JMOUSE_RELEASED, event->mouse->b, event->mouse->x, event->mouse->y);
 		} else if (event->type & MOUSE_PRESSED) {
 			jevent = (*env)->CallStaticObjectMethod(env, MouseEvent, getMouseEvent, idx, JMOUSE_PRESSED, event->mouse->b, event->mouse->x, event->mouse->y);
+		} else if (event->type & MOUSE_ENTERED) {
+			jevent = (*env)->CallStaticObjectMethod(env, MouseEvent, getMouseEvent, idx, JMOUSE_ENTERED, 0, event->mouse->x, event->mouse->y);
+		} else if (event->type & MOUSE_EXITED) {
+			jevent = (*env)->CallStaticObjectMethod(env, MouseEvent, getMouseEvent, idx, JMOUSE_EXITED, 0, event->mouse->x, event->mouse->y);
 		} else {
 			jevent = (*env)->CallStaticObjectMethod(env, MouseEvent, getMouseEvent, idx, JMOUSE_MOVED, 0, event->mouse->x, event->mouse->y);
 		}
