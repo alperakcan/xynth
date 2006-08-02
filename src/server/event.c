@@ -186,9 +186,11 @@ int s_event_changed_ (s_window_t *window)
 void s_server_event_changed (void)
 {
 	int id;
+	int oid;
 	int remote;
 
 	id = server->cursor.xyid;
+	oid = server->cursor.xyid_old;
 	remote = server->window->event->type & REMOTE_EVENT;
 	server->window->event->type &= ~REMOTE_EVENT;
 	
@@ -223,7 +225,16 @@ void s_server_event_changed (void)
 			}
 		}
 		if (server->window->event->type & MOUSE_EVENT) {
+			if (id != oid) {
+				server->window->event->type |= MOUSE_ENTERED;
+				server->window->event->type &= ~MOUSE_EXITED;
+			}
 			s_server_socket_request(SOC_DATA_EVENT, id);
+			if (id != oid) {
+				server->window->event->type &= ~MOUSE_ENTERED;
+				server->window->event->type |= MOUSE_EXITED;
+				s_server_socket_request(SOC_DATA_EVENT, oid);
+			}
 		} else if (server->window->event->type & KEYBD_EVENT) {
 			if (remote) {
 				s_server_socket_request(SOC_DATA_EVENT, s_server_pri_id(1));

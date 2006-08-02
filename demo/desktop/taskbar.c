@@ -212,23 +212,39 @@ void taskbar_clock_popup_atexit (s_window_t *window)
 
 void taskbar_clock_popup_atevent (s_window_t *window, s_event_t *event)
 {
-        int x;
-        int y;
-        tbar_data_t *tbar_data;
-        tbar_clock_t *tbar_clock;
-
+	int x;
+	int y;
+	tbar_data_t *tbar_data;
+	tbar_clock_t *tbar_clock;
 	if (event->type & MOUSE_EVENT) {
-	        tbar_data = (tbar_data_t *) window->parent->client->user_data;
-	        tbar_clock = (tbar_clock_t *) tbar_data->tbar_clock;
+		tbar_data = (tbar_data_t *) window->parent->client->user_data;
+		tbar_clock = (tbar_clock_t *) tbar_data->tbar_clock;
 		x = event->mouse->x - window->parent->surface->buf->x;
 		y = event->mouse->y - window->parent->surface->buf->y;
-	        if (!((x >= tbar_clock->rect.x) &&
-	              (y >= tbar_clock->rect.y) &&
-	              (x <= (tbar_clock->rect.x + tbar_clock->rect.w - 1)) &&
-	              (y <= (tbar_clock->rect.y + tbar_clock->rect.h - 1)))) {
+		if (!((x >= tbar_clock->rect.x) &&
+		      (y >= tbar_clock->rect.y) &&
+		      (x <= (tbar_clock->rect.x + tbar_clock->rect.w - 1)) &&
+		      (y <= (tbar_clock->rect.y + tbar_clock->rect.h - 1)))) {
 			s_client_quit(window);
 		}
 	}
+}
+
+void taskbar_clock_handler_oh (s_window_t *window, s_event_t *event, s_handler_t *handler)
+{
+	s_window_t *popup;
+        tbar_data_t *tbar_data;
+        tbar_clock_t *tbar_clock;
+	tbar_data = (tbar_data_t *) window->client->user_data;
+	tbar_clock = tbar_data->tbar_clock;
+	if (tbar_clock->open != 1) {
+		return;
+	}
+	popup = handler->user_data;
+	if (popup != NULL) {
+		s_client_quit(popup);
+	}
+	handler->user_data = NULL;
 }
 
 void taskbar_clock_handler_o (s_window_t *window, s_event_t *event, s_handler_t *handler)
@@ -322,6 +338,7 @@ void taskbar_clock_handler_o (s_window_t *window, s_event_t *event, s_handler_t 
 	s_window_show(temp);
 	s_client_main(temp);
 
+	handler->user_data = temp;
 	tbar_clock->open = 1;
 }
 
@@ -560,6 +577,8 @@ void taskbar_start (s_window_t *window, s_config_t *cfg)
 	hndl->mouse.w = tbar_data->tbar_clock->rect.w;
 	hndl->mouse.h = tbar_data->tbar_clock->rect.h;
 	hndl->mouse.o = taskbar_clock_handler_o;
+	hndl->mouse.oh = taskbar_clock_handler_oh;
+	hndl->user_data = NULL;
 	s_handler_add(window, hndl);
 	
 	start_menu_setup(window, cfg);
