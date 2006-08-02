@@ -69,11 +69,11 @@ xynth_toolkit_t *xynth;
 #define FOCUS_GAINED      1004
 #define FOCUS_LOST        1005
 #define UPDATE            801
-#define JMOUSE_PRESSED        501
-#define JMOUSE_RELEASED       502
-#define JMOUSE_MOVED          503
-#define JMOUSE_ENTERED        504
-#define JMOUSE_EXITED         505
+#define JMOUSE_PRESSED    501
+#define JMOUSE_RELEASED   502
+#define JMOUSE_MOVED      503
+#define JMOUSE_ENTERED    504
+#define JMOUSE_EXITED     505
 
 static inline void * _awt_malloc_wrapper (size_t size)
 {
