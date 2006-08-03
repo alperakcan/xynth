@@ -25,7 +25,7 @@ void Java_java_awt_Toolkit_wndSetDialogInsets (JNIEnv *env UNUSED, jclass clazz 
 	DEBUGF("Leave");
 }
 
-jobject Java_java_awt_Toolkit_wndCreateFrame (JNIEnv *env, jclass clazz, jstring jTitle, jint x, jint y, jint width, jint height, jint jCursor, jint clrBack, jboolean isResizable)
+jobject Java_java_awt_Toolkit_wndCreateFrame (JNIEnv *env, jclass clazz UNUSED, jstring jTitle, jint x, jint y, jint width, jint height, jint jCursor, jint clrBack, jboolean isResizable)
 {
 	char *str;
 	s_window_t *window;
@@ -47,7 +47,7 @@ jobject Java_java_awt_Toolkit_wndCreateFrame (JNIEnv *env, jclass clazz, jstring
 	return jwindow;
 }
 
-jobject Java_java_awt_Toolkit_wndCreateWindow (JNIEnv *env, jclass clazz, jobject nowner, jint x, jint y, jint width, jint height, jint jCursor, jint clrBack)
+jobject Java_java_awt_Toolkit_wndCreateWindow (JNIEnv *env, jclass clazz UNUSED, jobject nowner, jint x, jint y, jint width, jint height, jint jCursor, jint clrBack)
 {
 	jobject jwindow;
 	s_window_t *owner;
@@ -66,7 +66,7 @@ jobject Java_java_awt_Toolkit_wndCreateWindow (JNIEnv *env, jclass clazz, jobjec
 	return jwindow;
 }
 
-jobject Java_java_awt_Toolkit_wndCreateDialog (JNIEnv *env, jclass clazz, jobject nowner, jstring jTitle, jint x, jint y, jint width, jint height, jint jCursor, jint clrBack, jboolean isResizable)
+jobject Java_java_awt_Toolkit_wndCreateDialog (JNIEnv *env, jclass clazz UNUSED, jobject nowner, jstring jTitle, jint x, jint y, jint width, jint height, jint jCursor, jint clrBack, jboolean isResizable)
 {
 	char *str;
 	jobject jwindow;
@@ -126,7 +126,9 @@ void Java_java_awt_Toolkit_wndRequestFocus (JNIEnv *env UNUSED, jclass clazz UNU
 
 void Java_java_awt_Toolkit_wndSetCursor (JNIEnv *env UNUSED, jclass clazz UNUSED, jobject nwnd, jint jCursor)
 {
+	s_window_t *window;
 	DEBUGF("Enter");
+	window = UNVEIL_WINDOW(nwnd);
 	DEBUGF("Leave");
 }
 

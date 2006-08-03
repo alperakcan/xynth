@@ -5,6 +5,7 @@
 #include "config-setjmp.h"
 
 #include "jcl.h"
+#include "native.h"
 
 #include <xynth.h>
 
@@ -48,7 +49,7 @@ typedef struct xynth_toolkit_s {
 	deco_inset_t dialog_insets;
 	unsigned int nwindows;
 	window_rec_t *windows;
-	window_rec_t *last_window;
+	s_window_t *last_window;
 	unsigned int last_idx;
 	s_window_t *root;
 	xynth_eventq_t *eventq;
@@ -108,7 +109,7 @@ static inline char * java2CString (JNIEnv *env, jstring jstr)
 {
 	char *buf;
 	jboolean isCopy;
-	register unsigned int i;
+	register int i;
 	jsize n = (*env)->GetStringLength(env, jstr);
 	const jchar *jc = (*env)->GetStringChars(env, jstr, &isCopy);
 	buf = AWT_MALLOC(n + 1);
@@ -120,10 +121,10 @@ static inline char * java2CString (JNIEnv *env, jstring jstr)
 	return buf;
 }
 
-#define KAFFE_FONT_FUNC_DECL(ret, name, args...) ret name(JNIEnv *env, jclass clazz, jobject jfont, ##args)
+#define KAFFE_FONT_FUNC_DECL(ret, name, args...) ret name(JNIEnv *env, jclass clazz UNUSED, jobject jfont, ##args)
 #define UNVEIL_FONT(jfont) ((s_font_t *) JCL_GetRawData(env, jfont))
 
-#define KAFFE_IMG_FUNC_DECL(ret, name, args...) ret name(JNIEnv *env, jclass clazz, jobject jimg, ##args)
+#define KAFFE_IMG_FUNC_DECL(ret, name, args...) ret name(JNIEnv *env, jclass clazz UNUSED, jobject jimg, ##args)
 #define UNVEIL_IMG(jimg) ((s_image_t *) JCL_GetRawData(env, jimg))
 
 #define UNVEIL_WINDOW(jwin) ((s_window_t *) JCL_GetRawData(env, jwin))
@@ -132,9 +133,9 @@ static inline char * java2CString (JNIEnv *env, jstring jstr)
 
 static inline int source_idx_free (xynth_toolkit_t *tk, s_window_t *win)
 {
-	register int n;
+	register unsigned int n;
 	for (n = 0; n < tk->nwindows; n++) {
-		if (tk->windows[n].window <= 0 ) {
+		if (tk->windows[n].window == NULL) {
 			tk->last_idx = n;
 			tk->last_window = win;
 			return n;
@@ -159,7 +160,7 @@ static inline int source_idx_register (xynth_toolkit_t *tk, s_window_t *window, 
 
 static inline int source_idx_get (xynth_toolkit_t *tk, s_window_t *win)
 {
-	register int n;
+	register unsigned int n;
 	if (win == tk->last_window) {
 		return tk->last_idx;
 	} else {

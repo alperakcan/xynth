@@ -76,7 +76,6 @@ jobject Java_java_awt_Toolkit_graInitGraphics (JNIEnv *env, jclass clazz UNUSED,
 void Java_java_awt_Toolkit_graSetClip (JNIEnv *env, jclass clazz UNUSED, jobject ngr, jint xClip, jint yClip, jint wClip, jint hClip)
 {
 	graphics_t *gr;
-	s_rect_t rect;
 	DEBUGF("Enter");
 	gr = UNVEIL_GRAP(ngr);
 	DEBUGF("set clip; xClip: %d, yClip: %d, wClip: %d, hClip: %d", xClip, yClip, wClip, hClip);
@@ -150,7 +149,7 @@ void Java_java_awt_Toolkit_graClearRect (JNIEnv *env UNUSED, jclass clazz UNUSED
 	DEBUGF("Leave");
 }
 
-void Java_java_awt_Toolkit_graDrawImageScaled (JNIEnv *env, jclass clazz, jobject ngr, jobject nimg,
+void Java_java_awt_Toolkit_graDrawImageScaled (JNIEnv *env, jclass clazz UNUSED, jobject ngr, jobject nimg,
                                                jint dx0, jint dy0, jint dx1, jint dy1,
 					       jint sx0, jint sy0, jint sx1, jint sy1, jint bgval)
 {
@@ -190,7 +189,6 @@ void Java_java_awt_Toolkit_graDrawImageScaled (JNIEnv *env, jclass clazz, jobjec
 	s_fillbox(srfi, 0, 0, img->w, img->h, gr->bg);
 	s_putboxrgba(srfi, 0, 0, img->w, img->h, img->rgba);
 	s_scalebox(gr->surface, srfi->width, srfi->height, srfi->vbuf, srfs->width, srfs->height, srfs->vbuf);
-
 	coor.x = gr->x0 + x0;
 	coor.y = gr->y0 + y0;
 	coor.w = srfs->width;
