@@ -121,21 +121,29 @@ int s_font_set_rgb (s_font_t *font, int r, int g, int b)
 int s_font_get_glyph (s_font_t *font)
 {
         int n;
+	int x;
+	int y;
 	int pen_x;
 	int pen_y;
 	int error;
-        int num_chars;
+	int num_chars;
+	int xmin;
+	int xmax;
 	FT_Bool use_kerning;
 	FT_UInt glyph_index;
 	FT_UInt num_glyphs;
 	FT_UInt previous;
 	FT_Vector *pos;
         FT_Glyph *glyphs;
+        FT_Glyph *images;
+	FT_Vector *pens;
 	FT_BBox bbox;
 	
 	num_chars = strlen(font->str);	
 	pos = (FT_Vector *) s_malloc(sizeof(FT_Vector) * num_chars);
 	glyphs = (FT_Glyph *) s_malloc(sizeof(FT_Glyph) * num_chars);
+	images = (FT_Glyph *) s_malloc(sizeof(FT_Glyph) * num_chars);
+	pens = (FT_Vector *) s_malloc(sizeof(FT_Vector) * num_chars);
 
 	pen_x = 0;
 	pen_y = 0;
@@ -172,6 +180,7 @@ int s_font_get_glyph (s_font_t *font)
 		previous = glyph_index;
 		num_glyphs++;
 	}
+
 	bbox.xMin = bbox.yMin =  32000;
 	bbox.xMax = bbox.yMax = -32000;
 	for (n = 0; n < num_glyphs; n++) {
@@ -194,20 +203,37 @@ int s_font_get_glyph (s_font_t *font)
 			bbox.yMax = glyph_bbox.yMax;
 		}
 	}
+	xmin =  3200;
+	xmax = -3200;
+	for (n = 0; n < num_glyphs; n++) {
+		images[n] = glyphs[n];
+		pens[n].x = 0 + pos[n].x;
+		pens[n].y = 0 + pos[n].y;
+		error = FT_Glyph_To_Bitmap(&images[n], ft_render_mode_normal, &pens[n], 1);
+		if (!error) {
+			FT_BitmapGlyph bit = (FT_BitmapGlyph) images[n];
+			x = pens[n].x;
+			xmin = MIN(xmin, x);
+			xmax = MAX(xmax, x + bit->bitmap.width);
+		}
+	}
+	if (xmin > xmax) {
+		xmin = 0;
+		xmax = 0;
+	}
 	if (bbox.xMin > bbox.xMax) {                                  
 		bbox.xMin = 0;
 		bbox.yMin = 0;
 		bbox.xMax = 0;
 		bbox.yMax = 0;
 	}
-
-	font->img->w = bbox.xMax - bbox.xMin + 3;
-	font->img->h = bbox.yMax - bbox.yMin + 3;
+	font->img->w = xmax - xmin;
+	font->img->h = bbox.yMax - bbox.yMin;
 	font->yMin = bbox.yMin;
 	font->yMax = bbox.yMax;
-
+	
 	s_free(font->img->rgba);
-	font->img->rgba  = (unsigned int *) s_calloc(1, font->img->w * font->img->h * sizeof(unsigned int *));
+	font->img->rgba  = (unsigned int *) s_calloc(font->img->w * font->img->h, sizeof(unsigned int *));
 
 	n = font->img->w * font->img->h;
 	while (n--) {
@@ -215,34 +241,24 @@ int s_font_get_glyph (s_font_t *font)
 	}
 	
 	for (n = 0; n < num_glyphs; n++) {
-		FT_Glyph image;
-		FT_Vector pen;
-		image = glyphs[n];
-		pen.x = 0 + pos[n].x;
-		pen.y = 0 + pos[n].y;
-		error = FT_Glyph_To_Bitmap(&image, ft_render_mode_normal, &pen, 1);
-		if (!error) {
-			int i;
-			int j;
-			int x;
-			int y;
-			FT_BitmapGlyph bit = (FT_BitmapGlyph) image;
-			x = pen.x;
-			y = (pen.y - (bit->top - font->img->h)) - (font->img->h - font->yMax);
-			for (i = 0; i < bit->bitmap.rows; i++) {
-				for (j = 0; j < bit->bitmap.width; j++) {
-					if (*(bit->bitmap.buffer + i * bit->bitmap.pitch + j)) {
-						*(font->img->rgba + j + x + ((i + y) * font->img->w)) = ((font->rgb << 8) & 0xFFFFFF00) | (~*(bit->bitmap.buffer + i * bit->bitmap.pitch + j) & 0xFF);
-					}
+		int i;
+		int j;
+		FT_BitmapGlyph bit = (FT_BitmapGlyph) images[n];
+		x = pens[n].x;
+		y = (pens[n].y - bit->top + font->img->h) - (font->img->h - font->yMax);
+		for (i = 0; i < bit->bitmap.rows; i++) {
+			for (j = 0; j < bit->bitmap.width; j++) {
+				if (*(bit->bitmap.buffer + i * bit->bitmap.pitch + j)) {
+					*(font->img->rgba + j + x + ((i + y) * font->img->w)) = ((font->rgb << 8) & 0xFFFFFF00) | (~*(bit->bitmap.buffer + i * bit->bitmap.pitch + j) & 0xFF);
 				}
 			}
-			FT_Done_Glyph(image);
-		} else {
-			debugf(0, "FT_Glyph_To_Bitmap (%d, 0x%x)", error, error);
 		}
+		FT_Done_Glyph(images[n]);
 	}
 
 	s_free(pos);
+	s_free(pens);
 	s_free(glyphs);
+	s_free(images);
 	return 0;
 }
