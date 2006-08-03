@@ -1,32 +1,34 @@
-diff -Naur kaffe-1.1.6/Makefile.am kaffe-1.1.6-xynth/Makefile.am
---- kaffe-1.1.6/Makefile.am	2005-09-20 02:45:54.000000000 +0300
-+++ kaffe-1.1.6-xynth/Makefile.am	2006-08-01 19:18:30.000000000 +0300
-@@ -247,6 +247,9 @@
+diff -Naur kaffe-1.1.7/Makefile.am kaffe-1.1.7-xynth/Makefile.am
+--- kaffe-1.1.7/Makefile.am	2006-03-26 05:59:06.000000000 +0300
++++ kaffe-1.1.7-xynth/Makefile.am	2006-08-03 12:03:09.000000000 +0300
+@@ -242,6 +242,9 @@
  if COND_KAFFE_X_AWT
  DIRECTORIES_AFTER_RTJAR += libraries/clib/awt/X
  endif
 +if COND_KAFFE_XYNTH_AWT
 +DIRECTORIES_AFTER_RTJAR += libraries/clib/awt/xynth
 +endif
- if COND_KAFFE_QT_AWT
- DIRECTORIES_AFTER_RTJAR += libraries/clib/awt/qt
  endif
-diff -Naur kaffe-1.1.6/README.xynth kaffe-1.1.6-xynth/README.xynth
---- kaffe-1.1.6/README.xynth	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-1.1.6-xynth/README.xynth	2006-08-01 19:18:30.000000000 +0300
-@@ -0,0 +1,8 @@
+ 
+ check-local:
+diff -Naur kaffe-1.1.7/README.xynth kaffe-1.1.7-xynth/README.xynth
+--- kaffe-1.1.7/README.xynth	1970-01-01 02:00:00.000000000 +0200
++++ kaffe-1.1.7-xynth/README.xynth	2006-08-03 12:03:09.000000000 +0300
+@@ -0,0 +1,10 @@
 +
 +# developers/autogen.sh
-+# ./configure --with-kaffe-xynth-awt
++# mkdir build
++# cd build
++# ../configure --with-kaffe-xynth-awt --disable-gtk-peer
 +# make
 +# make install
 +
 + Alper Akcan <distchx@yahoo.com>
 +
-diff -Naur kaffe-1.1.6/configure.ac kaffe-1.1.6-xynth/configure.ac
---- kaffe-1.1.6/configure.ac	2005-09-20 03:04:17.000000000 +0300
-+++ kaffe-1.1.6-xynth/configure.ac	2006-08-01 19:18:30.000000000 +0300
-@@ -1807,6 +1807,30 @@
+diff -Naur kaffe-1.1.7/configure.ac kaffe-1.1.7-xynth/configure.ac
+--- kaffe-1.1.7/configure.ac	2006-03-27 01:56:01.000000000 +0300
++++ kaffe-1.1.7-xynth/configure.ac	2006-08-03 12:03:09.000000000 +0300
+@@ -1994,6 +1994,30 @@
     fi
  fi
  
@@ -46,7 +48,7 @@ diff -Naur kaffe-1.1.6/configure.ac kaffe-1.1.6-xynth/configure.ac
 +	dnl 	Xynth AWT support
 +	dnl -----------------------------------------------------------------------
 +
-+        AWT_LIBS="-lxynth"
++	AWT_LIBS="-lxynth"
 +	AWT_LIBS="$CTLIBS $AWT_LIBS"
 +	AC_SUBST(AWT_LIBS)
 +			
@@ -54,10 +56,10 @@ diff -Naur kaffe-1.1.6/configure.ac kaffe-1.1.6-xynth/configure.ac
 +   fi
 +fi
 +
- AC_ARG_WITH([classpath-gtk-awt],
-             AS_HELP_STRING([--without-classpath-gtk-awt],
-                            [disable build of GNU Classpath's Gtk+-based AWT engine (built by default)]),
-@@ -2366,6 +2390,7 @@
+ dnl -------------------------------------------------------------------------
+ dnl Configure sound backend
+ dnl -------------------------------------------------------------------------
+@@ -2534,6 +2558,7 @@
  AC_CONFIG_FILES([libraries/clib/awt/X/Makefile])
  AC_CONFIG_FILES([libraries/clib/awt/qt/Makefile])
  AC_CONFIG_FILES([libraries/clib/awt/nano-X/Makefile])
@@ -65,20 +67,104 @@ diff -Naur kaffe-1.1.6/configure.ac kaffe-1.1.6-xynth/configure.ac
  AC_CONFIG_FILES([libraries/clib/sound/Makefile])
  AC_CONFIG_FILES([libraries/clib/sound/alsa/Makefile])
  AC_CONFIG_FILES([libraries/clib/sound/common/Makefile])
-diff -Naur kaffe-1.1.6/kaffe/kaffe/Makefile.am kaffe-1.1.6-xynth/kaffe/kaffe/Makefile.am
---- kaffe-1.1.6/kaffe/kaffe/Makefile.am	2005-05-20 23:10:16.000000000 +0300
-+++ kaffe-1.1.6-xynth/kaffe/kaffe/Makefile.am	2006-08-01 19:18:30.000000000 +0300
-@@ -20,6 +20,10 @@
- INCLUDE_KAFFE_X_AWT = -DKAFFE_X_AWT_INCLUDED
+diff -Naur kaffe-1.1.7/developers/config1.patch kaffe-1.1.7-xynth/developers/config1.patch
+--- kaffe-1.1.7/developers/config1.patch	1970-01-01 02:00:00.000000000 +0200
++++ kaffe-1.1.7-xynth/developers/config1.patch	2005-12-02 01:51:05.000000000 +0200
+@@ -0,0 +1,17 @@
++Index: config.sub
++===================================================================
++RCS file: /cvs/kaffe/kaffe/scripts/config.sub,v
++retrieving revision 1.12
++diff -u -r1.12 config.sub
++--- config.sub	25 Oct 2005 15:44:00 -0000	1.12
+++++ config.sub	1 Dec 2005 21:55:38 -0000
++@@ -1315,6 +1315,9 @@
++ 	-kaos*)
++ 		os=-kaos
++ 		;;
+++	-*drops)
+++		os=-drops
+++		;;
++ 	-zvmoe)
++ 		os=-zvmoe
++ 		;;
+diff -Naur kaffe-1.1.7/developers/config2.patch kaffe-1.1.7-xynth/developers/config2.patch
+--- kaffe-1.1.7/developers/config2.patch	1970-01-01 02:00:00.000000000 +0200
++++ kaffe-1.1.7-xynth/developers/config2.patch	2005-12-02 01:51:05.000000000 +0200
+@@ -0,0 +1,17 @@
++Index: config.sub
++===================================================================
++RCS file: /cvs/kaffe/kaffe/libltdl/config.sub,v
++retrieving revision 1.17
++diff -u -r1.17 config.sub
++--- config.sub	25 Oct 2005 15:43:20 -0000	1.17
+++++ config.sub	1 Dec 2005 23:06:41 -0000
++@@ -1309,6 +1309,9 @@
++ 	-kaos*)
++ 		os=-kaos
++ 		;;
+++	-*drops)
+++		os=-drops
+++		;;
++ 	-zvmoe)
++ 		os=-zvmoe
++ 		;;
+diff -Naur kaffe-1.1.7/developers/config3.patch kaffe-1.1.7-xynth/developers/config3.patch
+--- kaffe-1.1.7/developers/config3.patch	1970-01-01 02:00:00.000000000 +0200
++++ kaffe-1.1.7-xynth/developers/config3.patch	2005-12-02 01:51:05.000000000 +0200
+@@ -0,0 +1,17 @@
++Index: config.sub
++===================================================================
++RCS file: /cvs/kaffe/kaffe/libraries/javalib/external/classpath/config.sub,v
++retrieving revision 1.3
++diff -u -r1.3 config.sub
++--- config.sub	25 Oct 2005 15:43:48 -0000	1.3
+++++ config.sub	1 Dec 2005 21:18:58 -0000
++@@ -1309,6 +1309,9 @@
++ 	-kaos*)
++ 		os=-kaos
++ 		;;
+++	-*drops)
+++		os=-drops
+++		;;
++ 	-zvmoe)
++ 		os=-zvmoe
++ 		;;
+diff -Naur kaffe-1.1.7/developers/config4.patch kaffe-1.1.7-xynth/developers/config4.patch
+--- kaffe-1.1.7/developers/config4.patch	1970-01-01 02:00:00.000000000 +0200
++++ kaffe-1.1.7-xynth/developers/config4.patch	2006-03-25 20:05:12.000000000 +0200
+@@ -0,0 +1,17 @@
++Index: config.sub
++===================================================================
++RCS file: /cvs/kaffe/kaffe/external/gcc/fastjar/scripts/config.sub,v
++retrieving revision 1.1
++diff -u -r1.1 config.sub
++--- config.sub	9 Jan 2006 03:19:30 -0000	1.1
+++++ config.sub	25 Mar 2006 17:13:51 -0000
++@@ -1315,6 +1315,9 @@
++ 	-kaos*)
++ 		os=-kaos
++ 		;;
+++	-*drops)
+++		os=-drops
+++		;;
++ 	-zvmoe)
++ 		os=-zvmoe
++ 		;;
+diff -Naur kaffe-1.1.7/kaffe/kaffe/Makefile.am kaffe-1.1.7-xynth/kaffe/kaffe/Makefile.am
+--- kaffe-1.1.7/kaffe/kaffe/Makefile.am	2005-05-20 23:10:16.000000000 +0300
++++ kaffe-1.1.7-xynth/kaffe/kaffe/Makefile.am	2006-08-03 12:03:09.000000000 +0300
+@@ -28,6 +28,10 @@
+ INCLUDE_KAFFE_NANOX_AWT = -DKAFFE_NANOX_AWT_INCLUDED
  endif
  
 +if COND_KAFFE_XYNTH_AWT
 +INCLUDE_KAFFE_XYNTH_AWT = -DKAFFE_XYNTH_AWT_INCLUDED
 +endif
 +
- if COND_KAFFE_QT_AWT
- INCLUDE_KAFFE_QT_AWT = -DKAFFE_QT_AWT_INCLUDED
- endif
+ AM_CPPFLAGS = \
+ 	-I../kaffevm \
+ 	-I$(srcdir)/../kaffevm \
 @@ -38,7 +42,8 @@
  	-I$(top_builddir)/include \
  	$(INCLUDE_KAFFE_X_AWT) \
@@ -89,10 +175,10 @@ diff -Naur kaffe-1.1.6/kaffe/kaffe/Makefile.am kaffe-1.1.6-xynth/kaffe/kaffe/Mak
  
  kaffe_bin_SOURCES = \
  	main.c \
-diff -Naur kaffe-1.1.6/kaffe/kaffe/main.c kaffe-1.1.6-xynth/kaffe/kaffe/main.c
---- kaffe-1.1.6/kaffe/kaffe/main.c	2005-09-16 03:59:05.000000000 +0300
-+++ kaffe-1.1.6-xynth/kaffe/kaffe/main.c	2006-08-01 19:18:30.000000000 +0300
-@@ -365,7 +365,7 @@
+diff -Naur kaffe-1.1.7/kaffe/kaffe/main.c kaffe-1.1.7-xynth/kaffe/kaffe/main.c
+--- kaffe-1.1.7/kaffe/kaffe/main.c	2006-03-26 00:18:45.000000000 +0200
++++ kaffe-1.1.7-xynth/kaffe/kaffe/main.c	2006-08-03 12:03:09.000000000 +0300
+@@ -373,7 +373,7 @@
   */
  
  #if defined (KAFFE_X_AWT_INCLUDED) || defined (KAFFE_QT_AWT_INCLUDED)	\
@@ -101,7 +187,7 @@ diff -Naur kaffe-1.1.6/kaffe/kaffe/main.c kaffe-1.1.6-xynth/kaffe/kaffe/main.c
  static 
  userProperty*
  setKaffeAWT(const char * propStr)
-@@ -520,6 +520,13 @@
+@@ -532,6 +532,13 @@
  			prop = setKaffeAWT("kaffe.awt.nativelib=nanoxawt");
  		}
  #endif
@@ -115,7 +201,7 @@ diff -Naur kaffe-1.1.6/kaffe/kaffe/main.c kaffe-1.1.6-xynth/kaffe/kaffe/main.c
  #if defined(USE_GMP)
  		/* Extra option to use gmp for native, fast bignums.
  		 * Only available with binreloc, since binreloc is used to
-@@ -990,6 +997,9 @@
+@@ -1005,6 +1012,9 @@
  #ifdef KAFFE_NANOX_AWT_INCLUDED
  	fprintf(stderr, _("	-Xkaffe-nanox-awt	 Use Kaffe's Nano-X AWT backend\n"));
  #endif
@@ -125,10 +211,10 @@ diff -Naur kaffe-1.1.6/kaffe/kaffe/main.c kaffe-1.1.6-xynth/kaffe/kaffe/main.c
  
  	fprintf(stderr, _("  * Option currently ignored.\n"
  			  "\n"
-diff -Naur kaffe-1.1.6/libraries/clib/awt/Makefile.am kaffe-1.1.6-xynth/libraries/clib/awt/Makefile.am
---- kaffe-1.1.6/libraries/clib/awt/Makefile.am	2005-08-13 23:10:08.000000000 +0300
-+++ kaffe-1.1.6-xynth/libraries/clib/awt/Makefile.am	2006-08-01 19:18:30.000000000 +0300
-@@ -28,6 +28,10 @@
+diff -Naur kaffe-1.1.7/libraries/clib/awt/Makefile.am kaffe-1.1.7-xynth/libraries/clib/awt/Makefile.am
+--- kaffe-1.1.7/libraries/clib/awt/Makefile.am	2005-10-24 22:41:07.000000000 +0300
++++ kaffe-1.1.7-xynth/libraries/clib/awt/Makefile.am	2006-08-03 12:03:09.000000000 +0300
+@@ -28,10 +28,15 @@
  MAYBE_KAFFE_NANOX_AWT = nano-X
  endif
  
@@ -136,21 +222,19 @@ diff -Naur kaffe-1.1.6/libraries/clib/awt/Makefile.am kaffe-1.1.6-xynth/librarie
 +MAYBE_KAFFE_XYNTH_AWT = xynth
 +endif
 +
- if COND_CLASSPATH_GTK_AWT
- MAYBE_CLASSPATH_GTK_AWT = classpath-gtk
- endif
-@@ -40,6 +44,7 @@
+ SUBDIRS = \
  	$(MAYBE_KAFFE_X_AWT) \
  	$(MAYBE_KAFFE_QT_AWT) \
- 	$(MAYBE_KAFFE_NANOX_AWT) \
-+	$(MAYBE_KAFFE_XYNTH_AWT) \
- 	$(MAYBE_CLASSPATH_GTK_AWT) \
- 	$(MAYBE_CLASSPATH_QT_AWT)
+-	$(MAYBE_KAFFE_NANOX_AWT) 
++	$(MAYBE_KAFFE_NANOX_AWT) \
++	$(MAYBE_KAFFE_XYNTH_AWT)
  
-diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/Makefile.am kaffe-1.1.6-xynth/libraries/clib/awt/xynth/Makefile.am
---- kaffe-1.1.6/libraries/clib/awt/xynth/Makefile.am	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-1.1.6-xynth/libraries/clib/awt/xynth/Makefile.am	2006-08-01 19:18:30.000000000 +0300
-@@ -0,0 +1,41 @@
+ EXTRA_DIST = \
+ 	win32/btn.cpp \
+diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/Makefile.am kaffe-1.1.7-xynth/libraries/clib/awt/xynth/Makefile.am
+--- kaffe-1.1.7/libraries/clib/awt/xynth/Makefile.am	1970-01-01 02:00:00.000000000 +0200
++++ kaffe-1.1.7-xynth/libraries/clib/awt/xynth/Makefile.am	2006-08-03 12:03:09.000000000 +0300
+@@ -0,0 +1,42 @@
 +# Xynth-based AWT support for standard Java libraries
 +#
 +# Copyright (c) 2005
@@ -162,7 +246,7 @@ diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/Makefile.am kaffe-1.1.6-xynth/li
 +AM_CPPFLAGS = \
 +	-I$(top_builddir)/include \
 +	-I$(top_srcdir)/kaffe/kaffevm/jni \
-+	-I$(top_srcdir)/libraries/clib/classpath
++	-I$(top_srcdir)/libraries/javalib/external/classpath/native/jni/classpath
 +
 +libxynthawt_la_CFLAGS = \
 +	$(CFLAGS_PG) \
@@ -176,8 +260,9 @@ diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/Makefile.am kaffe-1.1.6-xynth/li
 +	-export-symbols-regex "^([Jj]ava|kaffe)_"
 +
 +libxynthawt_la_LIBADD = \
-+	$(top_builddir)/kaffe/kaffevm/libkaffevm.la $(AWT_LIBS) \
-+	$(top_builddir)/libraries/clib/classpath/libclasspath.la
++	$(top_builddir)/kaffe/kaffevm/libkaffevm.la \
++	$(top_builddir)/libraries/javalib/external/classpath/native/jni/classpath/libclasspath.la \
++	$(AWT_LIBS)
 +
 +libxynthawt_la_SOURCES = \
 +	color.c \
@@ -192,9 +277,9 @@ diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/Makefile.am kaffe-1.1.6-xynth/li
 +	toolkit.h
 +
 +CLEANFILES = so_locations
-diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/color.c kaffe-1.1.6-xynth/libraries/clib/awt/xynth/color.c
---- kaffe-1.1.6/libraries/clib/awt/xynth/color.c	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-1.1.6-xynth/libraries/clib/awt/xynth/color.c	2006-07-31 20:13:46.000000000 +0300
+diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/color.c kaffe-1.1.7-xynth/libraries/clib/awt/xynth/color.c
+--- kaffe-1.1.7/libraries/clib/awt/xynth/color.c	1970-01-01 02:00:00.000000000 +0200
++++ kaffe-1.1.7-xynth/libraries/clib/awt/xynth/color.c	2006-08-03 12:03:09.000000000 +0300
 @@ -0,0 +1,64 @@
 +
 +#include "toolkit.h"
@@ -260,10 +345,10 @@ diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/color.c kaffe-1.1.6-xynth/librar
 +	
 +	return (((jlong) modPix << 32) | modRgb);
 +}
-diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/event.c kaffe-1.1.6-xynth/libraries/clib/awt/xynth/event.c
---- kaffe-1.1.6/libraries/clib/awt/xynth/event.c	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-1.1.6-xynth/libraries/clib/awt/xynth/event.c	2006-08-01 17:41:16.000000000 +0300
-@@ -0,0 +1,317 @@
+diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/event.c kaffe-1.1.7-xynth/libraries/clib/awt/xynth/event.c
+--- kaffe-1.1.7/libraries/clib/awt/xynth/event.c	1970-01-01 02:00:00.000000000 +0200
++++ kaffe-1.1.7-xynth/libraries/clib/awt/xynth/event.c	2006-08-03 12:03:09.000000000 +0300
+@@ -0,0 +1,321 @@
 +
 +#include "toolkit.h"
 +
@@ -360,6 +445,10 @@ diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/event.c kaffe-1.1.6-xynth/librar
 +			jevent = (*env)->CallStaticObjectMethod(env, MouseEvent, getMouseEvent, idx, JMOUSE_RELEASED, event->mouse->b, event->mouse->x, event->mouse->y);
 +		} else if (event->type & MOUSE_PRESSED) {
 +			jevent = (*env)->CallStaticObjectMethod(env, MouseEvent, getMouseEvent, idx, JMOUSE_PRESSED, event->mouse->b, event->mouse->x, event->mouse->y);
++		} else if (event->type & MOUSE_ENTERED) {
++			jevent = (*env)->CallStaticObjectMethod(env, MouseEvent, getMouseEvent, idx, JMOUSE_ENTERED, 0, event->mouse->x, event->mouse->y);
++		} else if (event->type & MOUSE_EXITED) {
++			jevent = (*env)->CallStaticObjectMethod(env, MouseEvent, getMouseEvent, idx, JMOUSE_EXITED, 0, event->mouse->x, event->mouse->y);
 +		} else {
 +			jevent = (*env)->CallStaticObjectMethod(env, MouseEvent, getMouseEvent, idx, JMOUSE_MOVED, 0, event->mouse->x, event->mouse->y);
 +		}
@@ -581,9 +670,9 @@ diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/event.c kaffe-1.1.6-xynth/librar
 +	DEBUGF("Leave");
 +	return i;
 +}
-diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/font.c kaffe-1.1.6-xynth/libraries/clib/awt/xynth/font.c
---- kaffe-1.1.6/libraries/clib/awt/xynth/font.c	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-1.1.6-xynth/libraries/clib/awt/xynth/font.c	2006-07-31 20:13:46.000000000 +0300
+diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/font.c kaffe-1.1.7-xynth/libraries/clib/awt/xynth/font.c
+--- kaffe-1.1.7/libraries/clib/awt/xynth/font.c	1970-01-01 02:00:00.000000000 +0200
++++ kaffe-1.1.7-xynth/libraries/clib/awt/xynth/font.c	2006-08-03 12:03:09.000000000 +0300
 @@ -0,0 +1,115 @@
 +
 +#include "toolkit.h"
@@ -700,9 +789,9 @@ diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/font.c kaffe-1.1.6-xynth/librari
 +	DEBUGF("Leave");
 +	return font->img->w;
 +}
-diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/graphic.c kaffe-1.1.6-xynth/libraries/clib/awt/xynth/graphic.c
---- kaffe-1.1.6/libraries/clib/awt/xynth/graphic.c	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-1.1.6-xynth/libraries/clib/awt/xynth/graphic.c	2006-08-01 18:29:09.000000000 +0300
+diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/graphic.c kaffe-1.1.7-xynth/libraries/clib/awt/xynth/graphic.c
+--- kaffe-1.1.7/libraries/clib/awt/xynth/graphic.c	1970-01-01 02:00:00.000000000 +0200
++++ kaffe-1.1.7-xynth/libraries/clib/awt/xynth/graphic.c	2006-08-03 12:03:09.000000000 +0300
 @@ -0,0 +1,388 @@
 +
 +#include "toolkit.h"
@@ -1092,9 +1181,9 @@ diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/graphic.c kaffe-1.1.6-xynth/libr
 +	Java_java_awt_Toolkit_graDrawLine(env, clazz, ngr, x + width - 1, y, x + width - 1, y);
 +	DEBUGF("Leave");
 +}
-diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/image.c kaffe-1.1.6-xynth/libraries/clib/awt/xynth/image.c
---- kaffe-1.1.6/libraries/clib/awt/xynth/image.c	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-1.1.6-xynth/libraries/clib/awt/xynth/image.c	2006-07-31 20:13:46.000000000 +0300
+diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/image.c kaffe-1.1.7-xynth/libraries/clib/awt/xynth/image.c
+--- kaffe-1.1.7/libraries/clib/awt/xynth/image.c	1970-01-01 02:00:00.000000000 +0200
++++ kaffe-1.1.7-xynth/libraries/clib/awt/xynth/image.c	2006-08-03 12:03:09.000000000 +0300
 @@ -0,0 +1,40 @@
 +
 +#include "toolkit.h"
@@ -1136,9 +1225,9 @@ diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/image.c kaffe-1.1.6-xynth/librar
 +	DEBUGF("Leave");
 +	return (UNVEIL_IMG(jimg)->layers->nb_elt != 0);
 +}
-diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/toolkit.c kaffe-1.1.6-xynth/libraries/clib/awt/xynth/toolkit.c
---- kaffe-1.1.6/libraries/clib/awt/xynth/toolkit.c	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-1.1.6-xynth/libraries/clib/awt/xynth/toolkit.c	2006-08-01 19:13:37.000000000 +0300
+diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/toolkit.c kaffe-1.1.7-xynth/libraries/clib/awt/xynth/toolkit.c
+--- kaffe-1.1.7/libraries/clib/awt/xynth/toolkit.c	1970-01-01 02:00:00.000000000 +0200
++++ kaffe-1.1.7-xynth/libraries/clib/awt/xynth/toolkit.c	2006-08-03 12:03:09.000000000 +0300
 @@ -0,0 +1,67 @@
 +
 +#include "toolkit.h"
@@ -1207,9 +1296,9 @@ diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/toolkit.c kaffe-1.1.6-xynth/libr
 +	DEBUGF("Enter");
 +	DEBUGF("Leave");
 +}
-diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/toolkit.h kaffe-1.1.6-xynth/libraries/clib/awt/xynth/toolkit.h
---- kaffe-1.1.6/libraries/clib/awt/xynth/toolkit.h	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-1.1.6-xynth/libraries/clib/awt/xynth/toolkit.h	2006-08-01 18:57:03.000000000 +0300
+diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/toolkit.h kaffe-1.1.7-xynth/libraries/clib/awt/xynth/toolkit.h
+--- kaffe-1.1.7/libraries/clib/awt/xynth/toolkit.h	1970-01-01 02:00:00.000000000 +0200
++++ kaffe-1.1.7-xynth/libraries/clib/awt/xynth/toolkit.h	2006-08-03 12:03:09.000000000 +0300
 @@ -0,0 +1,177 @@
 +
 +#include "config.h"
@@ -1282,11 +1371,11 @@ diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/toolkit.h kaffe-1.1.6-xynth/libr
 +#define FOCUS_GAINED      1004
 +#define FOCUS_LOST        1005
 +#define UPDATE            801
-+#define JMOUSE_PRESSED        501
-+#define JMOUSE_RELEASED       502
-+#define JMOUSE_MOVED          503
-+#define JMOUSE_ENTERED        504
-+#define JMOUSE_EXITED         505
++#define JMOUSE_PRESSED    501
++#define JMOUSE_RELEASED   502
++#define JMOUSE_MOVED      503
++#define JMOUSE_ENTERED    504
++#define JMOUSE_EXITED     505
 +
 +static inline void * _awt_malloc_wrapper (size_t size)
 +{
@@ -1388,9 +1477,9 @@ diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/toolkit.h kaffe-1.1.6-xynth/libr
 +		return -1;
 +	}
 +}
-diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/window.c kaffe-1.1.6-xynth/libraries/clib/awt/xynth/window.c
---- kaffe-1.1.6/libraries/clib/awt/xynth/window.c	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-1.1.6-xynth/libraries/clib/awt/xynth/window.c	2006-08-01 19:05:29.000000000 +0300
+diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/window.c kaffe-1.1.7-xynth/libraries/clib/awt/xynth/window.c
+--- kaffe-1.1.7/libraries/clib/awt/xynth/window.c	1970-01-01 02:00:00.000000000 +0200
++++ kaffe-1.1.7-xynth/libraries/clib/awt/xynth/window.c	2006-08-03 12:03:09.000000000 +0300
 @@ -0,0 +1,146 @@
 +
 +#include "toolkit.h"
@@ -1538,12 +1627,12 @@ diff -Naur kaffe-1.1.6/libraries/clib/awt/xynth/window.c kaffe-1.1.6-xynth/libra
 +	s_client_quit(window);
 +	DEBUGF("Leave");
 +}
-diff -Naur kaffe-1.1.6/libraries/javalib/Makefile.am.in kaffe-1.1.6-xynth/libraries/javalib/Makefile.am.in
---- kaffe-1.1.6/libraries/javalib/Makefile.am.in	2005-08-27 17:20:53.000000000 +0300
-+++ kaffe-1.1.6-xynth/libraries/javalib/Makefile.am.in	2006-08-01 19:18:30.000000000 +0300
-@@ -28,6 +28,10 @@
+diff -Naur kaffe-1.1.7/libraries/javalib/Makefile.am.in kaffe-1.1.7-xynth/libraries/javalib/Makefile.am.in
+--- kaffe-1.1.7/libraries/javalib/Makefile.am.in	2006-03-23 01:43:26.000000000 +0200
++++ kaffe-1.1.7-xynth/libraries/javalib/Makefile.am.in	2006-08-03 12:03:09.000000000 +0300
+@@ -8,6 +8,10 @@
  else
- if COND_KAFFE_X_AWT
+ if COND_KAFFE_NANOX_AWT
  MAYBE_PEERLESS_KAFFE_AWT=awt-implementations
 +else
 +if COND_KAFFE_XYNTH_AWT
@@ -1551,12 +1640,12 @@ diff -Naur kaffe-1.1.6/libraries/javalib/Makefile.am.in kaffe-1.1.6-xynth/librar
 +endif
  endif
  endif
- 
-diff -Naur kaffe-1.1.6/test/awt/WidgetsDemo/WidgetsDemo.sh kaffe-1.1.6-xynth/test/awt/WidgetsDemo/WidgetsDemo.sh
---- kaffe-1.1.6/test/awt/WidgetsDemo/WidgetsDemo.sh	2005-07-04 01:03:21.000000000 +0300
-+++ kaffe-1.1.6-xynth/test/awt/WidgetsDemo/WidgetsDemo.sh	2006-08-01 19:18:30.000000000 +0300
+ endif
+diff -Naur kaffe-1.1.7/test/awt/WidgetsDemo/WidgetsDemo.sh kaffe-1.1.7-xynth/test/awt/WidgetsDemo/WidgetsDemo.sh
+--- kaffe-1.1.7/test/awt/WidgetsDemo/WidgetsDemo.sh	1998-07-14 17:20:05.000000000 +0300
++++ kaffe-1.1.7-xynth/test/awt/WidgetsDemo/WidgetsDemo.sh	2006-08-03 12:03:09.000000000 +0300
 @@ -1,2 +1,3 @@
  #! /bin/sh
 -kaffe WidgetsDemo
-+jikes +Pno-switchcheck +Pno-shadow +E -g -classpath .:../../../build/libraries/javalib/rt.jar -d . ./WidgetsDemo.java 
++jikes +Pno-switchcheck +Pno-shadow +E -g -classpath .:../../../build/libraries/javalib/external/classpath/lib/glibj.zip -d . ./WidgetsDemo.java 
 +kaffe -Xkaffe-xynth-awt WidgetsDemo
