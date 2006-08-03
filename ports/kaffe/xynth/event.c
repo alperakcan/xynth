@@ -60,9 +60,17 @@ jobject event_handler_none (JNIEnv *env, xynth_event_t *xevent)
 
 jobject event_handler_quit (JNIEnv *env, xynth_event_t *xevent)
 {
+	int idx;
+	jobject jevent;
+	s_event_t *event;
 	DEBUGF("Enter");
+	idx = source_idx_get(xynth, xevent->window);
+	if (idx < 0) {
+		return NULL;
+	}
+	jevent = (*env)->CallStaticObjectMethod(env, WMEvent, getWMEvent, idx, JQUIT);
 	DEBUGF("Leave");
-	return NULL;
+	return jevent;
 }
 
 jobject event_handler_keybd (JNIEnv *env, xynth_event_t *xevent)
@@ -119,7 +127,7 @@ jobject event_handler_expose (JNIEnv *env, xynth_event_t *xevent)
 	event = xevent->event;
 	event->expose->rect->x = event->expose->rect->x - xevent->window->surface->buf->x;
 	event->expose->rect->y = event->expose->rect->y - xevent->window->surface->buf->y;
-	jevent = (*env)->CallStaticObjectMethod( env, PaintEvent, getPaintEvent, idx, UPDATE, event->expose->rect->x, event->expose->rect->y, event->expose->rect->w, event->expose->rect->h);
+	jevent = (*env)->CallStaticObjectMethod( env, PaintEvent, getPaintEvent, idx, JUPDATE, event->expose->rect->x, event->expose->rect->y, event->expose->rect->w, event->expose->rect->h);
 	DEBUGF("Leave");
 	return jevent;
 }
@@ -141,7 +149,7 @@ jobject event_handler_config (JNIEnv *env, xynth_event_t *xevent)
 		xevent->window->surface->vbuf = (char *) malloc(xevent->window->surface->width * xevent->window->surface->height * xevent->window->surface->bytesperpixel);
 	}
 	event = xevent->event;
-	jevent = (*env)->CallStaticObjectMethod(env, ComponentEvent, getComponentEvent, idx, COMPONENT_RESIZED, event->expose->rect->x, event->expose->rect->y, event->expose->rect->w, event->expose->rect->h);
+	jevent = (*env)->CallStaticObjectMethod(env, ComponentEvent, getComponentEvent, idx, JCOMPONENT_RESIZED, event->expose->rect->x, event->expose->rect->y, event->expose->rect->w, event->expose->rect->h);
 	DEBUGF("Leave");
 	return jevent;
 }
@@ -158,9 +166,9 @@ jobject event_handler_focus (JNIEnv *env, xynth_event_t *xevent)
 	}
 	event = xevent->event;
 	if (xevent->window->client->pri == 0) {
-		jevent = (*env)->CallStaticObjectMethod(env, FocusEvent, getFocusEvent, idx, FOCUS_GAINED, JNI_FALSE);
+		jevent = (*env)->CallStaticObjectMethod(env, FocusEvent, getFocusEvent, idx, JFOCUS_GAINED, JNI_FALSE);
 	} else {
-		jevent = (*env)->CallStaticObjectMethod(env, FocusEvent, getFocusEvent, idx, FOCUS_LOST, JNI_FALSE);
+		jevent = (*env)->CallStaticObjectMethod(env, FocusEvent, getFocusEvent, idx, JFOCUS_LOST, JNI_FALSE);
 	}
 	DEBUGF("Leave");
 	return jevent;
