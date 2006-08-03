@@ -90,7 +90,7 @@ KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntGetFixedWidth)
 {
 	DEBUGF("Enter");
 	DEBUGF("Leave");
-	return UNVEIL_FONT(jfont)->height;
+	return 0;
 }
 
 KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntIsWideFont)
@@ -100,7 +100,7 @@ KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntIsWideFont)
 	return 0;
 }
 
-KAFFE_FONT_FUNC_DECL(jint, Java_java_awt_Toolkit_fntStringWidth, jstring jStr)
+KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntStringWidth, jstring jStr)
 {
 	char *str;
 	s_font_t *font;
@@ -112,4 +112,27 @@ KAFFE_FONT_FUNC_DECL(jint, Java_java_awt_Toolkit_fntStringWidth, jstring jStr)
 	AWT_FREE(str);
 	DEBUGF("Leave");
 	return font->img->w;
+}
+
+KAFFE_FONT_FUNC_DECL (jobject, Java_java_awt_Toolkit_fntGetWidths)
+{
+	int n;
+	jint *jw;
+	char str[3];
+	s_font_t *font;
+	jboolean isCopy;
+	jintArray widths;
+	DEBUGF("Enter");
+	font = UNVEIL_FONT(jfont);
+	widths = (*env)->NewIntArray(env, 256);
+	jw = (*env)->GetIntArrayElements(env, widths, &isCopy);
+	for (n = 0; n < 256; n++) {
+		sprintf(str, "%c", n);
+		s_font_set_str(font, str);
+		s_font_get_glyph(font);
+		jw[n] = font->img->w;
+		jw[n] = (jw[n] < 0) ? 0 : jw[n];
+	}
+	(*env)->ReleaseIntArrayElements(env, widths, jw, 0);
+	return widths;
 }
