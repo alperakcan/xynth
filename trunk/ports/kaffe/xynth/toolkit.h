@@ -57,8 +57,8 @@ typedef struct xynth_toolkit_s {
 
 xynth_toolkit_t *xynth;
 
-//#define DEBUGF(a...)	printf(a); printf(" (%s [%s:%d])\n", __FUNCTION__, __FILE__, __LINE__);
-#define DEBUGF(a...)
+#define DEBUGF(a...)	printf(a); printf(" (%s [%s:%d])\n", __FUNCTION__, __FILE__, __LINE__);
+//#define DEBUGF(a...)
 
 #define TLK_IS_BLOCKING			1
 #define TLK_IS_DISPATCH_EXCLUSIVE	2
@@ -66,10 +66,11 @@ xynth_toolkit_t *xynth;
 #define TLK_NATIVE_DISPATCHER_LOOP	8
 #define TLK_EXTERNAL_DECO		16
 
-#define COMPONENT_RESIZED 101
-#define FOCUS_GAINED      1004
-#define FOCUS_LOST        1005
-#define UPDATE            801
+#define JCOMPONENT_RESIZED 101
+#define JFOCUS_GAINED      1004
+#define JFOCUS_LOST        1005
+#define JUPDATE            801
+#define JQUIT             202
 #define JMOUSE_PRESSED    501
 #define JMOUSE_RELEASED   502
 #define JMOUSE_MOVED      503
