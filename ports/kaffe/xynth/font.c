@@ -1,7 +1,7 @@
 
 #include "toolkit.h"
 
-void * Java_java_awt_Toolkit_fntInitFont (JNIEnv *env, jclass clazz, jstring jSpec, jint style, jint size)
+void * Java_java_awt_Toolkit_fntInitFont (JNIEnv *env, jclass clazz UNUSED, jstring jSpec, jint style, jint size)
 {
 	char *spec;
 	int italic = 0;

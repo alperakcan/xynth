@@ -1,7 +1,7 @@
 
 #include "toolkit.h"
 
-jobject Java_java_awt_Toolkit_imgCreateFromFile (JNIEnv *env, jclass clazz, jstring fileName)
+jobject Java_java_awt_Toolkit_imgCreateFromFile (JNIEnv *env, jclass clazz UNUSED, jstring fileName)
 {
 	char *fname;
 	s_image_t *img;
