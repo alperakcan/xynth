@@ -17,6 +17,7 @@
     MPLAYER="MPlayer-1.0pre8"
     LINKS="links-2.1pre22"
     SDL="SDL-1.2.10"
+    KAFFE="kaffe-1.1.7"
     
 #########################
 ## PARSE THE ARGUMENTS ##
@@ -31,6 +32,7 @@
 	BUILD_MPLAYER=1
 	BUILD_LINKS=1
 	BUILD_SDL=1
+	BUILD_KAFFE=1
     ## Else...
     else
 	## Parse the arguments.
@@ -51,12 +53,16 @@
 		-s | -sdl | --sdl)
 		    BUILD_SDL=1
 		    shift;;
+		-k | -kaffe | --kaffe)
+		    BUILD_KAFFE=1
+		    shift;;
 		-a | -all | --all)
 		    DO_DOWNLOAD=1
 		    BUILD_GTK=1
 		    BUILD_MPLAYER=1
 		    BUILD_SDL=1
 		    BUILD_LINKS=1
+		    BUILD_KAFFE=1
 		    shift;;
 		-prefix | --prefix)
 		    PREFIX="$2"
@@ -67,6 +73,7 @@
 		    echo "-m : build $MPLAYER"
 		    echo "-l : build $LINKS"
 		    echo "-s : build $SDL"
+		    echo "-k : build $KAFFE"
 		    echo "-a : build all"
 		    echo "-prefix path : prefix"
 		    echo "-help : this text"
@@ -121,31 +128,29 @@
     if test "$DO_DOWNLOAD" = "1" ; then
 	## Download the gtk source.
 	if test "$BUILD_GTK" = "1" ; then
-	    if test ! -f "$GTK.tar.bz2" ; then
-		$WGET ftp://ftp.gtk.org/pub/gtk/v2.4/$GTK.tar.bz2 || { echo "ERROR DOWNLOADING GTK"; exit; }
-	    fi
+	    $WGET ftp://ftp.gtk.org/pub/gtk/v2.4/$GTK.tar.bz2 || { echo "ERROR DOWNLOADING GTK"; exit; }
 	fi
 	## Download the mplayer source.
 	if test "$BUILD_MPLAYER" = "1" ; then
-	    if test ! -f "$MPLAYER.tar.bz2" ; then
-		$WGET ftp://ftp.mplayerhq.hu/MPlayer/releases/$MPLAYER.tar.bz2 || { echo "ERROR DOWNLOADING MPLAYER"; exit; }
-	    fi
+	    $WGET ftp://ftp.mplayerhq.hu/MPlayer/releases/$MPLAYER.tar.bz2 || { echo "ERROR DOWNLOADING MPLAYER"; exit; }
 	fi
 	## Download the newlib source.
 	if test "$BUILD_SDL" = "1" ; then
-	    if test ! -f "$SDL.tar.gz" ; then
-		$WGET http://www.libsdl.org/release/$SDL.tar.gz || { echo "ERROR DOWNLOADING SDL"; exit; }
-	    fi
+	    $WGET http://www.libsdl.org/release/$SDL.tar.gz || { echo "ERROR DOWNLOADING SDL"; exit; }
 	fi
 	if test "$BUILD_LINKS" = "1" ; then
-	    if test ! -f "$LINKS.tar.bz2" ; then
-		$WGET http://links.twibright.com/download/$LINKS.tar.bz2 || { echo "ERROR DOWNLOADING LINKS"; exit; }
-	    fi
+	    $WGET http://links.twibright.com/download/$LINKS.tar.bz2 || { echo "ERROR DOWNLOADING LINKS"; exit; }
+	fi
+	if test "$BUILD_KAFFE" = "1" ; then
+	    $WGET ftp://ftp.kaffe.org/pub/kaffe/v1.1.x-development/$KAFFE.tar.bz2 || { echo "ERROR DOWNLOADING KAFFE"; exit; }
 	fi
     fi
     
     ## Unpack and patch the gtk source.
     if test "$BUILD_GTK" = "1" ; then
+        if test ! -f "$GTK.tar.bz2" ; then
+	    $WGET ftp://ftp.gtk.org/pub/gtk/v2.4/$GTK.tar.bz2 || { echo "ERROR DOWNLOADING GTK"; exit; }
+        fi
 	rm -Rf $GTK; bzip2 -cd "$GTK.tar.bz2" | tar xvf -
 	cd $GTK; cat "$PTCDIR/gtk/$GTK-xynth.diff" | $PATCH || { echo "ERROR PATCHING GTK"; exit; }
 	cd ..
@@ -153,6 +158,9 @@
     
     ## Unpack and patch the mplayer source.
     if test "$BUILD_MPLAYER" = "1" ; then
+        if test ! -f "$MPLAYER.tar.bz2" ; then
+	    $WGET ftp://ftp.mplayerhq.hu/MPlayer/releases/$MPLAYER.tar.bz2 || { echo "ERROR DOWNLOADING MPLAYER"; exit; }
+	fi
 	rm -Rf $MPLAYER; bzip2 -cd "$MPLAYER.tar.bz2" | tar xvf -
 	cd $MPLAYER; cat "$PTCDIR/mplayer/$MPLAYER-xynth.diff" | $PATCH || { echo "ERROR PATCHING MPLAYER"; exit; }
 	cd ..
@@ -160,6 +168,9 @@
 
     ## Unpack and patch the links source.
     if test "$BUILD_LINKS" = "1" ; then
+	if test ! -f "$LINKS.tar.bz2" ; then
+	    $WGET http://links.twibright.com/download/$LINKS.tar.bz2 || { echo "ERROR DOWNLOADING LINKS"; exit; }
+	fi
 	rm -Rf $LINKS; bzip2 -cd "$LINKS.tar.bz2" | tar xvf -
 	cd $LINKS; cat "$PTCDIR/links/$LINKS-xynth.diff" | $PATCH || { echo "ERROR PATCHING LINKS"; exit; }
 	cd ..
@@ -167,8 +178,21 @@
 
     ## Unpack and patch the sdl source.
     if test "$BUILD_SDL" = "1" ; then
+	if test ! -f "$SDL.tar.gz" ; then
+	    $WGET http://www.libsdl.org/release/$SDL.tar.gz || { echo "ERROR DOWNLOADING SDL"; exit; }
+	fi
 	rm -Rf $SDL; gzip -cd "$SDL.tar.gz" | tar xvf -
 	cd $SDL; cat "$PTCDIR/sdl/$SDL-xynth.diff" | $PATCH || { echo "ERROR PATCHING SDL"; exit; }
+	cd ..
+    fi
+
+    ## Unpack and patch the kaffe source.
+    if test "$BUILD_KAFFE" = "1" ; then
+	if test ! -f "$KAFFE.tar.bz2" ; then
+	    $WGET ftp://ftp.kaffe.org/pub/kaffe/v1.1.x-development/$KAFFE.tar.bz2 || { echo "ERROR DOWNLOADING KAFFE"; exit; }
+	fi
+	rm -Rf $KAFFE; bzip2 -cd "$KAFFE.tar.bz2" | tar xvf -
+	cd $KAFFE; cat "$PTCDIR/kaffe/$KAFFE-xynth.diff" | $PATCH || { echo "ERROR PATCHING KAFFE"; exit; }
 	cd ..
     fi
 
@@ -210,7 +234,7 @@
 	cd ..
     fi
     
-    ## If we've been told to build mplayer...
+    ## If we've been told to build links...
     if test "$BUILD_LINKS" = "1" ; then
 	## Enter the source directory.
 	cd $LINKS
@@ -228,7 +252,7 @@
 	cd ..; cd ..
     fi
     
-    ## If we've been told to build mplayer...
+    ## If we've been told to build sdl...
     if test "$BUILD_SDL" = "1" ; then
 	## Enter the source directory.
 	cd $SDL
@@ -242,6 +266,26 @@
 	$MAKE clean; $MAKE || { echo "ERROR BUILDING SDL"; exit; }
 	## Install the result.
 	$MAKE install || { echo "ERROR INSTALLING SDL"; exit; }
+	## Clean up the result.
+#	$MAKE clean
+	## Exit the build and source directories.
+	cd ..; cd ..
+    fi
+
+    ## If we've been told to build kaffe...
+    if test "$BUILD_KAFFE" = "1" ; then
+	## Enter the source directory.
+	cd $KAFFE
+	## Rebuild configure script
+	./developers/autogen.sh
+	## Create and enter the build directory.
+	mkdir build-xynth; cd build-xynth
+	## Configure the source.
+	../configure --prefix=$PREFIX --with-kaffe-xynth-awt --disable-gtk-peer || { echo "ERROR CONFIGURING KAFFE"; exit; }
+	## Build the source.
+	$MAKE clean; $MAKE || { echo "ERROR BUILDING KAFFE"; exit; }
+	## Install the result.
+	$MAKE install || { echo "ERROR INSTALLING KAFFE"; exit; }
 	## Clean up the result.
 #	$MAKE clean
 	## Exit the build and source directories.
