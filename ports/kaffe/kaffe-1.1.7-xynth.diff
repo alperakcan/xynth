@@ -1,6 +1,6 @@
 diff -Naur kaffe-1.1.7/Makefile.am kaffe-1.1.7-xynth/Makefile.am
 --- kaffe-1.1.7/Makefile.am	2006-03-26 05:59:06.000000000 +0300
-+++ kaffe-1.1.7-xynth/Makefile.am	2006-08-03 12:03:09.000000000 +0300
++++ kaffe-1.1.7-xynth/Makefile.am	2006-08-04 12:41:39.000000000 +0300
 @@ -242,6 +242,9 @@
  if COND_KAFFE_X_AWT
  DIRECTORIES_AFTER_RTJAR += libraries/clib/awt/X
@@ -13,12 +13,12 @@ diff -Naur kaffe-1.1.7/Makefile.am kaffe-1.1.7-xynth/Makefile.am
  check-local:
 diff -Naur kaffe-1.1.7/README.xynth kaffe-1.1.7-xynth/README.xynth
 --- kaffe-1.1.7/README.xynth	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-1.1.7-xynth/README.xynth	2006-08-03 12:03:09.000000000 +0300
++++ kaffe-1.1.7-xynth/README.xynth	2006-08-04 12:49:11.000000000 +0300
 @@ -0,0 +1,10 @@
 +
 +# developers/autogen.sh
-+# mkdir build
-+# cd build
++# mkdir build-xynth
++# cd build-xynth
 +# ../configure --with-kaffe-xynth-awt --disable-gtk-peer
 +# make
 +# make install
@@ -27,7 +27,7 @@ diff -Naur kaffe-1.1.7/README.xynth kaffe-1.1.7-xynth/README.xynth
 +
 diff -Naur kaffe-1.1.7/configure.ac kaffe-1.1.7-xynth/configure.ac
 --- kaffe-1.1.7/configure.ac	2006-03-27 01:56:01.000000000 +0300
-+++ kaffe-1.1.7-xynth/configure.ac	2006-08-03 12:03:09.000000000 +0300
++++ kaffe-1.1.7-xynth/configure.ac	2006-08-04 12:41:39.000000000 +0300
 @@ -1994,6 +1994,30 @@
     fi
  fi
@@ -67,9 +67,21 @@ diff -Naur kaffe-1.1.7/configure.ac kaffe-1.1.7-xynth/configure.ac
  AC_CONFIG_FILES([libraries/clib/sound/Makefile])
  AC_CONFIG_FILES([libraries/clib/sound/alsa/Makefile])
  AC_CONFIG_FILES([libraries/clib/sound/common/Makefile])
+diff -Naur kaffe-1.1.7/developers/autogen.sh kaffe-1.1.7-xynth/developers/autogen.sh
+--- kaffe-1.1.7/developers/autogen.sh	2006-03-25 23:22:07.000000000 +0200
++++ kaffe-1.1.7-xynth/developers/autogen.sh	2006-08-04 12:42:56.000000000 +0300
+@@ -168,8 +168,3 @@
+   cd libraries/javalib/external/classpath
+   patch -p0 <../../../../developers/config3.patch
+ )
+-
+-(
+-  cd external/gcc/fastjar/scripts
+-  patch -p0 <../../../../developers/config4.patch
+-)
 diff -Naur kaffe-1.1.7/developers/config1.patch kaffe-1.1.7-xynth/developers/config1.patch
 --- kaffe-1.1.7/developers/config1.patch	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-1.1.7-xynth/developers/config1.patch	2005-12-02 01:51:05.000000000 +0200
++++ kaffe-1.1.7-xynth/developers/config1.patch	2006-08-04 12:41:39.000000000 +0300
 @@ -0,0 +1,17 @@
 +Index: config.sub
 +===================================================================
@@ -90,7 +102,7 @@ diff -Naur kaffe-1.1.7/developers/config1.patch kaffe-1.1.7-xynth/developers/con
 + 		;;
 diff -Naur kaffe-1.1.7/developers/config2.patch kaffe-1.1.7-xynth/developers/config2.patch
 --- kaffe-1.1.7/developers/config2.patch	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-1.1.7-xynth/developers/config2.patch	2005-12-02 01:51:05.000000000 +0200
++++ kaffe-1.1.7-xynth/developers/config2.patch	2006-08-04 12:41:39.000000000 +0300
 @@ -0,0 +1,17 @@
 +Index: config.sub
 +===================================================================
@@ -111,7 +123,7 @@ diff -Naur kaffe-1.1.7/developers/config2.patch kaffe-1.1.7-xynth/developers/con
 + 		;;
 diff -Naur kaffe-1.1.7/developers/config3.patch kaffe-1.1.7-xynth/developers/config3.patch
 --- kaffe-1.1.7/developers/config3.patch	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-1.1.7-xynth/developers/config3.patch	2005-12-02 01:51:05.000000000 +0200
++++ kaffe-1.1.7-xynth/developers/config3.patch	2006-08-04 12:41:39.000000000 +0300
 @@ -0,0 +1,17 @@
 +Index: config.sub
 +===================================================================
@@ -130,30 +142,9 @@ diff -Naur kaffe-1.1.7/developers/config3.patch kaffe-1.1.7-xynth/developers/con
 + 	-zvmoe)
 + 		os=-zvmoe
 + 		;;
-diff -Naur kaffe-1.1.7/developers/config4.patch kaffe-1.1.7-xynth/developers/config4.patch
---- kaffe-1.1.7/developers/config4.patch	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-1.1.7-xynth/developers/config4.patch	2006-03-25 20:05:12.000000000 +0200
-@@ -0,0 +1,17 @@
-+Index: config.sub
-+===================================================================
-+RCS file: /cvs/kaffe/kaffe/external/gcc/fastjar/scripts/config.sub,v
-+retrieving revision 1.1
-+diff -u -r1.1 config.sub
-+--- config.sub	9 Jan 2006 03:19:30 -0000	1.1
-++++ config.sub	25 Mar 2006 17:13:51 -0000
-+@@ -1315,6 +1315,9 @@
-+ 	-kaos*)
-+ 		os=-kaos
-+ 		;;
-++	-*drops)
-++		os=-drops
-++		;;
-+ 	-zvmoe)
-+ 		os=-zvmoe
-+ 		;;
 diff -Naur kaffe-1.1.7/kaffe/kaffe/Makefile.am kaffe-1.1.7-xynth/kaffe/kaffe/Makefile.am
 --- kaffe-1.1.7/kaffe/kaffe/Makefile.am	2005-05-20 23:10:16.000000000 +0300
-+++ kaffe-1.1.7-xynth/kaffe/kaffe/Makefile.am	2006-08-03 12:03:09.000000000 +0300
++++ kaffe-1.1.7-xynth/kaffe/kaffe/Makefile.am	2006-08-04 12:41:39.000000000 +0300
 @@ -28,6 +28,10 @@
  INCLUDE_KAFFE_NANOX_AWT = -DKAFFE_NANOX_AWT_INCLUDED
  endif
@@ -177,7 +168,7 @@ diff -Naur kaffe-1.1.7/kaffe/kaffe/Makefile.am kaffe-1.1.7-xynth/kaffe/kaffe/Mak
  	main.c \
 diff -Naur kaffe-1.1.7/kaffe/kaffe/main.c kaffe-1.1.7-xynth/kaffe/kaffe/main.c
 --- kaffe-1.1.7/kaffe/kaffe/main.c	2006-03-26 00:18:45.000000000 +0200
-+++ kaffe-1.1.7-xynth/kaffe/kaffe/main.c	2006-08-03 12:03:09.000000000 +0300
++++ kaffe-1.1.7-xynth/kaffe/kaffe/main.c	2006-08-04 12:41:39.000000000 +0300
 @@ -373,7 +373,7 @@
   */
  
@@ -213,7 +204,7 @@ diff -Naur kaffe-1.1.7/kaffe/kaffe/main.c kaffe-1.1.7-xynth/kaffe/kaffe/main.c
  			  "\n"
 diff -Naur kaffe-1.1.7/libraries/clib/awt/Makefile.am kaffe-1.1.7-xynth/libraries/clib/awt/Makefile.am
 --- kaffe-1.1.7/libraries/clib/awt/Makefile.am	2005-10-24 22:41:07.000000000 +0300
-+++ kaffe-1.1.7-xynth/libraries/clib/awt/Makefile.am	2006-08-03 12:03:09.000000000 +0300
++++ kaffe-1.1.7-xynth/libraries/clib/awt/Makefile.am	2006-08-04 12:41:39.000000000 +0300
 @@ -28,10 +28,15 @@
  MAYBE_KAFFE_NANOX_AWT = nano-X
  endif
@@ -233,7 +224,7 @@ diff -Naur kaffe-1.1.7/libraries/clib/awt/Makefile.am kaffe-1.1.7-xynth/librarie
  	win32/btn.cpp \
 diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/Makefile.am kaffe-1.1.7-xynth/libraries/clib/awt/xynth/Makefile.am
 --- kaffe-1.1.7/libraries/clib/awt/xynth/Makefile.am	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-1.1.7-xynth/libraries/clib/awt/xynth/Makefile.am	2006-08-03 12:03:09.000000000 +0300
++++ kaffe-1.1.7-xynth/libraries/clib/awt/xynth/Makefile.am	2006-08-04 12:41:39.000000000 +0300
 @@ -0,0 +1,42 @@
 +# Xynth-based AWT support for standard Java libraries
 +#
@@ -279,7 +270,7 @@ diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/Makefile.am kaffe-1.1.7-xynth/li
 +CLEANFILES = so_locations
 diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/color.c kaffe-1.1.7-xynth/libraries/clib/awt/xynth/color.c
 --- kaffe-1.1.7/libraries/clib/awt/xynth/color.c	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-1.1.7-xynth/libraries/clib/awt/xynth/color.c	2006-08-03 12:03:09.000000000 +0300
++++ kaffe-1.1.7-xynth/libraries/clib/awt/xynth/color.c	2006-08-03 12:03:47.000000000 +0300
 @@ -0,0 +1,64 @@
 +
 +#include "toolkit.h"
@@ -347,8 +338,8 @@ diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/color.c kaffe-1.1.7-xynth/librar
 +}
 diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/event.c kaffe-1.1.7-xynth/libraries/clib/awt/xynth/event.c
 --- kaffe-1.1.7/libraries/clib/awt/xynth/event.c	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-1.1.7-xynth/libraries/clib/awt/xynth/event.c	2006-08-03 12:03:09.000000000 +0300
-@@ -0,0 +1,321 @@
++++ kaffe-1.1.7-xynth/libraries/clib/awt/xynth/event.c	2006-08-03 14:16:47.000000000 +0300
+@@ -0,0 +1,329 @@
 +
 +#include "toolkit.h"
 +
@@ -411,9 +402,17 @@ diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/event.c kaffe-1.1.7-xynth/librar
 +
 +jobject event_handler_quit (JNIEnv *env, xynth_event_t *xevent)
 +{
++	int idx;
++	jobject jevent;
++	s_event_t *event;
 +	DEBUGF("Enter");
++	idx = source_idx_get(xynth, xevent->window);
++	if (idx < 0) {
++		return NULL;
++	}
++	jevent = (*env)->CallStaticObjectMethod(env, WMEvent, getWMEvent, idx, JQUIT);
 +	DEBUGF("Leave");
-+	return NULL;
++	return jevent;
 +}
 +
 +jobject event_handler_keybd (JNIEnv *env, xynth_event_t *xevent)
@@ -470,7 +469,7 @@ diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/event.c kaffe-1.1.7-xynth/librar
 +	event = xevent->event;
 +	event->expose->rect->x = event->expose->rect->x - xevent->window->surface->buf->x;
 +	event->expose->rect->y = event->expose->rect->y - xevent->window->surface->buf->y;
-+	jevent = (*env)->CallStaticObjectMethod( env, PaintEvent, getPaintEvent, idx, UPDATE, event->expose->rect->x, event->expose->rect->y, event->expose->rect->w, event->expose->rect->h);
++	jevent = (*env)->CallStaticObjectMethod( env, PaintEvent, getPaintEvent, idx, JUPDATE, event->expose->rect->x, event->expose->rect->y, event->expose->rect->w, event->expose->rect->h);
 +	DEBUGF("Leave");
 +	return jevent;
 +}
@@ -492,7 +491,7 @@ diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/event.c kaffe-1.1.7-xynth/librar
 +		xevent->window->surface->vbuf = (char *) malloc(xevent->window->surface->width * xevent->window->surface->height * xevent->window->surface->bytesperpixel);
 +	}
 +	event = xevent->event;
-+	jevent = (*env)->CallStaticObjectMethod(env, ComponentEvent, getComponentEvent, idx, COMPONENT_RESIZED, event->expose->rect->x, event->expose->rect->y, event->expose->rect->w, event->expose->rect->h);
++	jevent = (*env)->CallStaticObjectMethod(env, ComponentEvent, getComponentEvent, idx, JCOMPONENT_RESIZED, event->expose->rect->x, event->expose->rect->y, event->expose->rect->w, event->expose->rect->h);
 +	DEBUGF("Leave");
 +	return jevent;
 +}
@@ -509,9 +508,9 @@ diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/event.c kaffe-1.1.7-xynth/librar
 +	}
 +	event = xevent->event;
 +	if (xevent->window->client->pri == 0) {
-+		jevent = (*env)->CallStaticObjectMethod(env, FocusEvent, getFocusEvent, idx, FOCUS_GAINED, JNI_FALSE);
++		jevent = (*env)->CallStaticObjectMethod(env, FocusEvent, getFocusEvent, idx, JFOCUS_GAINED, JNI_FALSE);
 +	} else {
-+		jevent = (*env)->CallStaticObjectMethod(env, FocusEvent, getFocusEvent, idx, FOCUS_LOST, JNI_FALSE);
++		jevent = (*env)->CallStaticObjectMethod(env, FocusEvent, getFocusEvent, idx, JFOCUS_LOST, JNI_FALSE);
 +	}
 +	DEBUGF("Leave");
 +	return jevent;
@@ -672,12 +671,12 @@ diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/event.c kaffe-1.1.7-xynth/librar
 +}
 diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/font.c kaffe-1.1.7-xynth/libraries/clib/awt/xynth/font.c
 --- kaffe-1.1.7/libraries/clib/awt/xynth/font.c	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-1.1.7-xynth/libraries/clib/awt/xynth/font.c	2006-08-03 12:03:09.000000000 +0300
-@@ -0,0 +1,115 @@
++++ kaffe-1.1.7-xynth/libraries/clib/awt/xynth/font.c	2006-08-03 14:49:14.000000000 +0300
+@@ -0,0 +1,138 @@
 +
 +#include "toolkit.h"
 +
-+void * Java_java_awt_Toolkit_fntInitFont (JNIEnv *env, jclass clazz, jstring jSpec, jint style, jint size)
++void * Java_java_awt_Toolkit_fntInitFont (JNIEnv *env, jclass clazz UNUSED, jstring jSpec, jint style, jint size)
 +{
 +	char *spec;
 +	int italic = 0;
@@ -766,7 +765,7 @@ diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/font.c kaffe-1.1.7-xynth/librari
 +{
 +	DEBUGF("Enter");
 +	DEBUGF("Leave");
-+	return UNVEIL_FONT(jfont)->height;
++	return 0;
 +}
 +
 +KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntIsWideFont)
@@ -776,7 +775,7 @@ diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/font.c kaffe-1.1.7-xynth/librari
 +	return 0;
 +}
 +
-+KAFFE_FONT_FUNC_DECL(jint, Java_java_awt_Toolkit_fntStringWidth, jstring jStr)
++KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntStringWidth, jstring jStr)
 +{
 +	char *str;
 +	s_font_t *font;
@@ -789,10 +788,33 @@ diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/font.c kaffe-1.1.7-xynth/librari
 +	DEBUGF("Leave");
 +	return font->img->w;
 +}
++
++KAFFE_FONT_FUNC_DECL (jobject, Java_java_awt_Toolkit_fntGetWidths)
++{
++	int n;
++	jint *jw;
++	char str[3];
++	s_font_t *font;
++	jboolean isCopy;
++	jintArray widths;
++	DEBUGF("Enter");
++	font = UNVEIL_FONT(jfont);
++	widths = (*env)->NewIntArray(env, 256);
++	jw = (*env)->GetIntArrayElements(env, widths, &isCopy);
++	for (n = 0; n < 256; n++) {
++		sprintf(str, "%c", n);
++		s_font_set_str(font, str);
++		s_font_get_glyph(font);
++		jw[n] = font->img->w;
++		jw[n] = (jw[n] < 0) ? 0 : jw[n];
++	}
++	(*env)->ReleaseIntArrayElements(env, widths, jw, 0);
++	return widths;
++}
 diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/graphic.c kaffe-1.1.7-xynth/libraries/clib/awt/xynth/graphic.c
 --- kaffe-1.1.7/libraries/clib/awt/xynth/graphic.c	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-1.1.7-xynth/libraries/clib/awt/xynth/graphic.c	2006-08-03 12:03:09.000000000 +0300
-@@ -0,0 +1,388 @@
++++ kaffe-1.1.7-xynth/libraries/clib/awt/xynth/graphic.c	2006-08-03 13:14:55.000000000 +0300
+@@ -0,0 +1,386 @@
 +
 +#include "toolkit.h"
 +
@@ -871,7 +893,6 @@ diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/graphic.c kaffe-1.1.7-xynth/libr
 +void Java_java_awt_Toolkit_graSetClip (JNIEnv *env, jclass clazz UNUSED, jobject ngr, jint xClip, jint yClip, jint wClip, jint hClip)
 +{
 +	graphics_t *gr;
-+	s_rect_t rect;
 +	DEBUGF("Enter");
 +	gr = UNVEIL_GRAP(ngr);
 +	DEBUGF("set clip; xClip: %d, yClip: %d, wClip: %d, hClip: %d", xClip, yClip, wClip, hClip);
@@ -945,7 +966,7 @@ diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/graphic.c kaffe-1.1.7-xynth/libr
 +	DEBUGF("Leave");
 +}
 +
-+void Java_java_awt_Toolkit_graDrawImageScaled (JNIEnv *env, jclass clazz, jobject ngr, jobject nimg,
++void Java_java_awt_Toolkit_graDrawImageScaled (JNIEnv *env, jclass clazz UNUSED, jobject ngr, jobject nimg,
 +                                               jint dx0, jint dy0, jint dx1, jint dy1,
 +					       jint sx0, jint sy0, jint sx1, jint sy1, jint bgval)
 +{
@@ -985,7 +1006,6 @@ diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/graphic.c kaffe-1.1.7-xynth/libr
 +	s_fillbox(srfi, 0, 0, img->w, img->h, gr->bg);
 +	s_putboxrgba(srfi, 0, 0, img->w, img->h, img->rgba);
 +	s_scalebox(gr->surface, srfi->width, srfi->height, srfi->vbuf, srfs->width, srfs->height, srfs->vbuf);
-+
 +	coor.x = gr->x0 + x0;
 +	coor.y = gr->y0 + y0;
 +	coor.w = srfs->width;
@@ -1183,12 +1203,12 @@ diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/graphic.c kaffe-1.1.7-xynth/libr
 +}
 diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/image.c kaffe-1.1.7-xynth/libraries/clib/awt/xynth/image.c
 --- kaffe-1.1.7/libraries/clib/awt/xynth/image.c	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-1.1.7-xynth/libraries/clib/awt/xynth/image.c	2006-08-03 12:03:09.000000000 +0300
++++ kaffe-1.1.7-xynth/libraries/clib/awt/xynth/image.c	2006-08-03 12:39:08.000000000 +0300
 @@ -0,0 +1,40 @@
 +
 +#include "toolkit.h"
 +
-+jobject Java_java_awt_Toolkit_imgCreateFromFile (JNIEnv *env, jclass clazz, jstring fileName)
++jobject Java_java_awt_Toolkit_imgCreateFromFile (JNIEnv *env, jclass clazz UNUSED, jstring fileName)
 +{
 +	char *fname;
 +	s_image_t *img;
@@ -1227,7 +1247,7 @@ diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/image.c kaffe-1.1.7-xynth/librar
 +}
 diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/toolkit.c kaffe-1.1.7-xynth/libraries/clib/awt/xynth/toolkit.c
 --- kaffe-1.1.7/libraries/clib/awt/xynth/toolkit.c	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-1.1.7-xynth/libraries/clib/awt/xynth/toolkit.c	2006-08-03 12:03:09.000000000 +0300
++++ kaffe-1.1.7-xynth/libraries/clib/awt/xynth/toolkit.c	2006-08-03 12:03:47.000000000 +0300
 @@ -0,0 +1,67 @@
 +
 +#include "toolkit.h"
@@ -1298,8 +1318,8 @@ diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/toolkit.c kaffe-1.1.7-xynth/libr
 +}
 diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/toolkit.h kaffe-1.1.7-xynth/libraries/clib/awt/xynth/toolkit.h
 --- kaffe-1.1.7/libraries/clib/awt/xynth/toolkit.h	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-1.1.7-xynth/libraries/clib/awt/xynth/toolkit.h	2006-08-03 12:03:09.000000000 +0300
-@@ -0,0 +1,177 @@
++++ kaffe-1.1.7-xynth/libraries/clib/awt/xynth/toolkit.h	2006-08-03 14:15:58.000000000 +0300
+@@ -0,0 +1,179 @@
 +
 +#include "config.h"
 +#include "config-std.h"
@@ -1307,6 +1327,7 @@ diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/toolkit.h kaffe-1.1.7-xynth/libr
 +#include "config-setjmp.h"
 +
 +#include "jcl.h"
++#include "native.h"
 +
 +#include <xynth.h>
 +
@@ -1350,7 +1371,7 @@ diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/toolkit.h kaffe-1.1.7-xynth/libr
 +	deco_inset_t dialog_insets;
 +	unsigned int nwindows;
 +	window_rec_t *windows;
-+	window_rec_t *last_window;
++	s_window_t *last_window;
 +	unsigned int last_idx;
 +	s_window_t *root;
 +	xynth_eventq_t *eventq;
@@ -1358,8 +1379,8 @@ diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/toolkit.h kaffe-1.1.7-xynth/libr
 +
 +xynth_toolkit_t *xynth;
 +
-+//#define DEBUGF(a...)	printf(a); printf(" (%s [%s:%d])\n", __FUNCTION__, __FILE__, __LINE__);
-+#define DEBUGF(a...)
++#define DEBUGF(a...)	printf(a); printf(" (%s [%s:%d])\n", __FUNCTION__, __FILE__, __LINE__);
++//#define DEBUGF(a...)
 +
 +#define TLK_IS_BLOCKING			1
 +#define TLK_IS_DISPATCH_EXCLUSIVE	2
@@ -1367,10 +1388,11 @@ diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/toolkit.h kaffe-1.1.7-xynth/libr
 +#define TLK_NATIVE_DISPATCHER_LOOP	8
 +#define TLK_EXTERNAL_DECO		16
 +
-+#define COMPONENT_RESIZED 101
-+#define FOCUS_GAINED      1004
-+#define FOCUS_LOST        1005
-+#define UPDATE            801
++#define JCOMPONENT_RESIZED 101
++#define JFOCUS_GAINED      1004
++#define JFOCUS_LOST        1005
++#define JUPDATE            801
++#define JQUIT             202
 +#define JMOUSE_PRESSED    501
 +#define JMOUSE_RELEASED   502
 +#define JMOUSE_MOVED      503
@@ -1410,7 +1432,7 @@ diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/toolkit.h kaffe-1.1.7-xynth/libr
 +{
 +	char *buf;
 +	jboolean isCopy;
-+	register unsigned int i;
++	register int i;
 +	jsize n = (*env)->GetStringLength(env, jstr);
 +	const jchar *jc = (*env)->GetStringChars(env, jstr, &isCopy);
 +	buf = AWT_MALLOC(n + 1);
@@ -1422,10 +1444,10 @@ diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/toolkit.h kaffe-1.1.7-xynth/libr
 +	return buf;
 +}
 +
-+#define KAFFE_FONT_FUNC_DECL(ret, name, args...) ret name(JNIEnv *env, jclass clazz, jobject jfont, ##args)
++#define KAFFE_FONT_FUNC_DECL(ret, name, args...) ret name(JNIEnv *env, jclass clazz UNUSED, jobject jfont, ##args)
 +#define UNVEIL_FONT(jfont) ((s_font_t *) JCL_GetRawData(env, jfont))
 +
-+#define KAFFE_IMG_FUNC_DECL(ret, name, args...) ret name(JNIEnv *env, jclass clazz, jobject jimg, ##args)
++#define KAFFE_IMG_FUNC_DECL(ret, name, args...) ret name(JNIEnv *env, jclass clazz UNUSED, jobject jimg, ##args)
 +#define UNVEIL_IMG(jimg) ((s_image_t *) JCL_GetRawData(env, jimg))
 +
 +#define UNVEIL_WINDOW(jwin) ((s_window_t *) JCL_GetRawData(env, jwin))
@@ -1434,9 +1456,9 @@ diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/toolkit.h kaffe-1.1.7-xynth/libr
 +
 +static inline int source_idx_free (xynth_toolkit_t *tk, s_window_t *win)
 +{
-+	register int n;
++	register unsigned int n;
 +	for (n = 0; n < tk->nwindows; n++) {
-+		if (tk->windows[n].window <= 0 ) {
++		if (tk->windows[n].window == NULL) {
 +			tk->last_idx = n;
 +			tk->last_window = win;
 +			return n;
@@ -1461,7 +1483,7 @@ diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/toolkit.h kaffe-1.1.7-xynth/libr
 +
 +static inline int source_idx_get (xynth_toolkit_t *tk, s_window_t *win)
 +{
-+	register int n;
++	register unsigned int n;
 +	if (win == tk->last_window) {
 +		return tk->last_idx;
 +	} else {
@@ -1479,8 +1501,8 @@ diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/toolkit.h kaffe-1.1.7-xynth/libr
 +}
 diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/window.c kaffe-1.1.7-xynth/libraries/clib/awt/xynth/window.c
 --- kaffe-1.1.7/libraries/clib/awt/xynth/window.c	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-1.1.7-xynth/libraries/clib/awt/xynth/window.c	2006-08-03 12:03:09.000000000 +0300
-@@ -0,0 +1,146 @@
++++ kaffe-1.1.7-xynth/libraries/clib/awt/xynth/window.c	2006-08-03 12:22:23.000000000 +0300
+@@ -0,0 +1,148 @@
 +
 +#include "toolkit.h"
 +
@@ -1508,7 +1530,7 @@ diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/window.c kaffe-1.1.7-xynth/libra
 +	DEBUGF("Leave");
 +}
 +
-+jobject Java_java_awt_Toolkit_wndCreateFrame (JNIEnv *env, jclass clazz, jstring jTitle, jint x, jint y, jint width, jint height, jint jCursor, jint clrBack, jboolean isResizable)
++jobject Java_java_awt_Toolkit_wndCreateFrame (JNIEnv *env, jclass clazz UNUSED, jstring jTitle, jint x, jint y, jint width, jint height, jint jCursor, jint clrBack, jboolean isResizable)
 +{
 +	char *str;
 +	s_window_t *window;
@@ -1530,7 +1552,7 @@ diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/window.c kaffe-1.1.7-xynth/libra
 +	return jwindow;
 +}
 +
-+jobject Java_java_awt_Toolkit_wndCreateWindow (JNIEnv *env, jclass clazz, jobject nowner, jint x, jint y, jint width, jint height, jint jCursor, jint clrBack)
++jobject Java_java_awt_Toolkit_wndCreateWindow (JNIEnv *env, jclass clazz UNUSED, jobject nowner, jint x, jint y, jint width, jint height, jint jCursor, jint clrBack)
 +{
 +	jobject jwindow;
 +	s_window_t *owner;
@@ -1549,7 +1571,7 @@ diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/window.c kaffe-1.1.7-xynth/libra
 +	return jwindow;
 +}
 +
-+jobject Java_java_awt_Toolkit_wndCreateDialog (JNIEnv *env, jclass clazz, jobject nowner, jstring jTitle, jint x, jint y, jint width, jint height, jint jCursor, jint clrBack, jboolean isResizable)
++jobject Java_java_awt_Toolkit_wndCreateDialog (JNIEnv *env, jclass clazz UNUSED, jobject nowner, jstring jTitle, jint x, jint y, jint width, jint height, jint jCursor, jint clrBack, jboolean isResizable)
 +{
 +	char *str;
 +	jobject jwindow;
@@ -1609,7 +1631,9 @@ diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/window.c kaffe-1.1.7-xynth/libra
 +
 +void Java_java_awt_Toolkit_wndSetCursor (JNIEnv *env UNUSED, jclass clazz UNUSED, jobject nwnd, jint jCursor)
 +{
++	s_window_t *window;
 +	DEBUGF("Enter");
++	window = UNVEIL_WINDOW(nwnd);
 +	DEBUGF("Leave");
 +}
 +
@@ -1629,7 +1653,7 @@ diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/window.c kaffe-1.1.7-xynth/libra
 +}
 diff -Naur kaffe-1.1.7/libraries/javalib/Makefile.am.in kaffe-1.1.7-xynth/libraries/javalib/Makefile.am.in
 --- kaffe-1.1.7/libraries/javalib/Makefile.am.in	2006-03-23 01:43:26.000000000 +0200
-+++ kaffe-1.1.7-xynth/libraries/javalib/Makefile.am.in	2006-08-03 12:03:09.000000000 +0300
++++ kaffe-1.1.7-xynth/libraries/javalib/Makefile.am.in	2006-08-04 12:41:39.000000000 +0300
 @@ -8,6 +8,10 @@
  else
  if COND_KAFFE_NANOX_AWT
@@ -1643,9 +1667,9 @@ diff -Naur kaffe-1.1.7/libraries/javalib/Makefile.am.in kaffe-1.1.7-xynth/librar
  endif
 diff -Naur kaffe-1.1.7/test/awt/WidgetsDemo/WidgetsDemo.sh kaffe-1.1.7-xynth/test/awt/WidgetsDemo/WidgetsDemo.sh
 --- kaffe-1.1.7/test/awt/WidgetsDemo/WidgetsDemo.sh	1998-07-14 17:20:05.000000000 +0300
-+++ kaffe-1.1.7-xynth/test/awt/WidgetsDemo/WidgetsDemo.sh	2006-08-03 12:03:09.000000000 +0300
++++ kaffe-1.1.7-xynth/test/awt/WidgetsDemo/WidgetsDemo.sh	2006-08-04 12:49:25.000000000 +0300
 @@ -1,2 +1,3 @@
  #! /bin/sh
 -kaffe WidgetsDemo
-+jikes +Pno-switchcheck +Pno-shadow +E -g -classpath .:../../../build/libraries/javalib/external/classpath/lib/glibj.zip -d . ./WidgetsDemo.java 
++jikes +Pno-switchcheck +Pno-shadow +E -g -classpath .:../../../build-xynth/libraries/javalib/external/classpath/lib/glibj.zip -d . ./WidgetsDemo.java 
 +kaffe -Xkaffe-xynth-awt WidgetsDemo
