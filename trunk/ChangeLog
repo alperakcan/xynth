@@ -1,4 +1,11 @@
 
+Fri 04 Aug 2006 12:26:11 PM EEST
+	* rev : 258
+	* ports/kaffe : upgraded to kaffe-1.1.7
+	* video/fb/timing.c : applied Jim Huang (jserv@kaffe.org)`s round patch.
+	and changed sdl quit implementation as he suggested.
+	* lib/font.c : some corrections
+
 Wed 02 Aug 2006 04:52:41 PM EEST
 	* rev : 250
 	* lib/grlib.c : minor fixes, and new s_line(...) function
