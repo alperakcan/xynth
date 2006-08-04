@@ -49,20 +49,27 @@ s_video_driver_t s_video_sdl = {
 
 void s_video_sdl_server_uninit (void)
 {
-	s_video_sdl_data_t *priv = server->driver->driver_data;
+	SDL_Event event;
+	s_video_sdl_data_t *priv;
+	if (server->driver->driver_data == NULL) {
+		return;
+	}
+	priv =  server->driver->driver_data;
 #if defined(SINGLE_APP)
 	s_free((void *) server->window->surface->linear_mem_base);
 #else
 	shmdt((void *) server->window->surface->linear_mem_base);
 #endif
 	priv->screen->pixels = (char *) s_malloc(1);
-#if defined(PLATFORM_MINGW)
-#else
-	SDL_PrivateQuit();
-#endif
+	event.type = SDL_QUIT;
+	SDL_PushEvent(&event);
 	s_thread_join(priv->event_tid, NULL);
+	if(SDL_WasInit(SDL_INIT_VIDEO)) {
+		SDL_QuitSubSystem(SDL_INIT_VIDEO);
+	}
 	SDL_Quit();
 	s_free(priv);
+	server->driver->driver_data = NULL;
 }
 
 

@@ -81,7 +81,7 @@ static gtf_constants GC = {
 	20	/* Blanking formula scaling factor weight	*/
 };
 
-static double round (double v)
+static inline double xround (double v)
 {
 	return floor(v + 0.5);
 }
@@ -124,9 +124,9 @@ void gtf_calcTimings (double hPixels, double vLines, double freq, int type, int 
 
 	/* Get rounded gtf constants used for internal calculations */
 	c.margin = GC.margin;
-	c.cellGran = round(GC.cellGran);
-	c.minPorch = round(GC.minPorch);
-	c.vSyncRqd = round(GC.vSyncRqd);
+	c.cellGran = xround(GC.cellGran);
+	c.minPorch = xround(GC.minPorch);
+	c.vSyncRqd = xround(GC.vSyncRqd);
 	c.hSync = GC.hSync;
 	c.minVSyncBP = GC.minVSyncBP;
 	if (GC.k == 0) {
@@ -140,12 +140,12 @@ void gtf_calcTimings (double hPixels, double vLines, double freq, int type, int 
 	/* Move input parameters into appropriate variables */
 	vFreq = hFreq = dotClock = freq;
 	/* Round pixels to character cell granularity */
-	hPixels = round(hPixels / c.cellGran) * c.cellGran;
+	hPixels = xround(hPixels / c.cellGran) * c.cellGran;
 	/* For interlaced mode halve the vertical parameters, and double
 	 * the required field refresh rate.
 	 */
 	if (wantInterlace) {
-		vLines = round(vLines / 2);
+		vLines = xround(vLines / 2);
 		vFieldRate = vFreq * 2;
 		dotClock = dotClock * 2;
 		interlace = 0.5;
@@ -155,8 +155,8 @@ void gtf_calcTimings (double hPixels, double vLines, double freq, int type, int 
 	}
 	/* Determine the lines for margins */
 	if (wantMargins) {
-		topMarginLines = round(c.margin / 100 * vLines);
-		botMarginLines = round(c.margin / 100 * vLines);
+		topMarginLines = xround(c.margin / 100 * vLines);
+		botMarginLines = xround(c.margin / 100 * vLines);
 	} else {
 		topMarginLines = 0;
 		botMarginLines = 0;
@@ -167,10 +167,10 @@ void gtf_calcTimings (double hPixels, double vLines, double freq, int type, int 
 			hPeriodEst = ((1/vFieldRate) - (c.minVSyncBP/1000000)) /
 				     (vLines + (2*topMarginLines) + c.minPorch + interlace) * 1000000;
 			/* Find the number of lines in vSync + back porch */
-			vSyncBP = round(c.minVSyncBP / hPeriodEst);
+			vSyncBP = xround(c.minVSyncBP / hPeriodEst);
 		} else if (type == gtf_lockHF) {
 			/* Find the number of lines in vSync + back porch */
-			vSyncBP = round((c.minVSyncBP * hFreq) / 1000);
+			vSyncBP = xround((c.minVSyncBP * hFreq) / 1000);
 		}
 		/* Find the number of lines in the V back porch alone */
 		vBackPorch = vSyncBP - c.vSyncRqd;
@@ -191,8 +191,8 @@ void gtf_calcTimings (double hPixels, double vLines, double freq, int type, int 
 	}
 	/* Find the number of pixels in the left and right margins */
 	if (wantMargins) {
-		leftMarginPixels = round(hPixels * c.margin) / (100 * c.cellGran);
-		rightMarginPixels = round(hPixels * c.margin) / (100 * c.cellGran);
+		leftMarginPixels = xround(hPixels * c.margin) / (100 * c.cellGran);
+		rightMarginPixels = xround(hPixels * c.margin) / (100 * c.cellGran);
 	} else {
 		leftMarginPixels = 0;
 		rightMarginPixels = 0;
@@ -214,14 +214,14 @@ void gtf_calcTimings (double hPixels, double vLines, double freq, int type, int 
 		idealDutyCycle = c.c - ((c.m * idealHPeriod) / 1000);
 	}
 	/* Find the number of pixels in blanking time */
-	hBlankPixels = round((hTotalActivePixels * idealDutyCycle) /
+	hBlankPixels = xround((hTotalActivePixels * idealDutyCycle) /
 	                     ((100 - idealDutyCycle) * 2 * c.cellGran)) * (2 * c.cellGran);
 	/* Find the total number of pixels */
 	hTotalPixels = hTotalActivePixels + hBlankPixels;
 	/* Find the horizontal back porch */
-	hBackPorch = round((hBlankPixels / 2) / c.cellGran) * c.cellGran;
+	hBackPorch = xround((hBlankPixels / 2) / c.cellGran) * c.cellGran;
 	/* Find the horizontal sync width */
-	hSyncWidth = round(((c.hSync/100) * hTotalPixels) / c.cellGran) * c.cellGran;
+	hSyncWidth = xround(((c.hSync/100) * hTotalPixels) / c.cellGran) * c.cellGran;
 	/* Find the horizontal sync + back porch */
 	hSyncBP = hBackPorch + hSyncWidth;
 	if (type == gtf_lockPF) {
@@ -230,7 +230,7 @@ void gtf_calcTimings (double hPixels, double vLines, double freq, int type, int 
 		/* Find the horizontal period */
 		hPeriod = 1000 / hFreq;
 		/* Find the number of lines in vSync + back porch */
-		vSyncBP = round((c.minVSyncBP * hFreq) / 1000);
+		vSyncBP = xround((c.minVSyncBP * hFreq) / 1000);
 		/* Find the number of lines in the V back porch alone */
 		vBackPorch = vSyncBP - c.vSyncRqd;
 		/* Find the total number of lines in the vertical period */
