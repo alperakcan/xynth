@@ -130,7 +130,8 @@ static inline char * java2CString (JNIEnv *env, jstring jstr)
 
 #define UNVEIL_WINDOW(jwin) ((s_window_t *) JCL_GetRawData(env, jwin))
 
-#define UNVEIL_GRAP(jgraphics) ((graphics_t *) JCL_GetRawData(env, jgraphics));
+#define KAFFE_GR_FUNC_DECL(ret, name, args...) ret name(JNIEnv *env, jclass clazz UNUSED, jobject jgr, ##args)
+#define UNVEIL_GR(jgraphics) ((graphics_t *) JCL_GetRawData(env, jgraphics));
 
 static inline int source_idx_free (xynth_toolkit_t *tk, s_window_t *win)
 {

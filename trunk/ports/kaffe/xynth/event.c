@@ -32,12 +32,7 @@ typedef enum {
 S_JEVENT event_handler_number (s_event_t *event)
 {
 	S_EVENT event_type;
-	event_type = event->type & (QUIT_EVENT |
-	                            KEYBD_EVENT |
-				    MOUSE_EVENT |
-				    EXPOSE_EVENT |
-				    CONFIG_EVENT |
-				    FOCUS_EVENT);
+	event_type = event->type & (QUIT_EVENT | KEYBD_EVENT | MOUSE_EVENT | EXPOSE_EVENT | CONFIG_EVENT | FOCUS_EVENT);
 	switch (event_type) {
 		case QUIT_EVENT:  return JQUIT_EVENT;
 		case KEYBD_EVENT: return JKEYBD_EVENT;
