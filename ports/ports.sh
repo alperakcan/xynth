@@ -257,7 +257,7 @@
 	## Enter the source directory.
 	cd $SDL
 	## Rebuild configure script
-	./autogen.sh
+	./autogen.sh || { echo "ERROR REBUILDING CONFIGURE SCRIPT FOR SDL FAILED"; exit; }
 	## Create and enter the build directory.
 	mkdir build-xynth; cd build-xynth
 	## Configure the source.
@@ -277,7 +277,7 @@
 	## Enter the source directory.
 	cd $KAFFE
 	## Rebuild configure script
-	./developers/autogen.sh
+	./developers/autogen.sh || { echo "ERROR REBUILDING CONFIGURE SCRIPT FOR KAFFE FAILED"; exit; }
 	## Create and enter the build directory.
 	mkdir build-xynth; cd build-xynth
 	## Configure the source.
