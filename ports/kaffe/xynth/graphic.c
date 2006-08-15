@@ -1,19 +1,15 @@
 
 #include "toolkit.h"
 
-jobject Java_java_awt_Toolkit_graInitGraphics (JNIEnv *env, jclass clazz UNUSED,
-                                               jobject ngr, jobject tgt, jint tgtType,
-					       jint xOff, jint yOff,
-					       jint xClip, jint yClip, jint wClip, jint hClip,
-					       jobject fnt, jint fg, jint bg, jboolean blank)
+KAFFE_GR_FUNC_DECL(jobject, Java_java_awt_Toolkit_graInitGraphics, jobject tgt, jint tgtType, jint xOff, jint yOff, jint xClip, jint yClip, jint wClip, jint hClip, jobject fnt, jint fg, jint bg, jboolean blank)
 {
 	s_rect_t coor;
 	s_rect_t inter;
 	s_surface_t *srf;
 	graphics_t *gr = NULL;
 	DEBUGF("Enter");
-	if (ngr != NULL) {
-		gr = UNVEIL_GRAP(ngr);
+	if (jgr != NULL) {
+		gr = UNVEIL_GR(jgr);
 	}
 	DEBUGF("xoff: %d, yoff: %d, xclip: %d, yclip: %d, wclip: %d, hclip: %d", xOff, yOff, xClip, yClip, wClip, hClip);
 	if (tgt) {
@@ -46,7 +42,7 @@ jobject Java_java_awt_Toolkit_graInitGraphics (JNIEnv *env, jclass clazz UNUSED,
 		srf = gr->surface;
 	} else {
 		gr = (graphics_t *) AWT_MALLOC(sizeof(graphics_t));
-		ngr = JCL_NewRawDataObject(env, gr);
+		jgr = JCL_NewRawDataObject(env, gr);
 	}
 	wClip = (wClip > 0) ? wClip : 0;
 	hClip = (hClip > 0) ? hClip : 0;
@@ -70,14 +66,14 @@ jobject Java_java_awt_Toolkit_graInitGraphics (JNIEnv *env, jclass clazz UNUSED,
 		}
 	}
 	DEBUGF("Leave");
-	return ngr;
+	return jgr;
 }
 
-void Java_java_awt_Toolkit_graSetClip (JNIEnv *env, jclass clazz UNUSED, jobject ngr, jint xClip, jint yClip, jint wClip, jint hClip)
+KAFFE_GR_FUNC_DECL(void, Java_java_awt_Toolkit_graSetClip, jint xClip, jint yClip, jint wClip, jint hClip)
 {
 	graphics_t *gr;
 	DEBUGF("Enter");
-	gr = UNVEIL_GRAP(ngr);
+	gr = UNVEIL_GR(jgr);
 	DEBUGF("set clip; xClip: %d, yClip: %d, wClip: %d, hClip: %d", xClip, yClip, wClip, hClip);
 	gr->clip.x = gr->x0 + xClip;
 	gr->clip.y = gr->y0 + yClip;
@@ -86,22 +82,22 @@ void Java_java_awt_Toolkit_graSetClip (JNIEnv *env, jclass clazz UNUSED, jobject
 	DEBUGF("Leave");
 }
 
-void Java_java_awt_Toolkit_graSetColor (JNIEnv *env, jclass clazz UNUSED, jobject ngr, jint clr)
+KAFFE_GR_FUNC_DECL(void, Java_java_awt_Toolkit_graSetColor, jint clr)
 {
 	graphics_t *gr;
 	DEBUGF("Enter");
-	gr = UNVEIL_GRAP(ngr);
+	gr = UNVEIL_GR(jgr);
 	gr->fg = clr;
 	DEBUGF("Leave");
 }
 
-void Java_java_awt_Toolkit_graFillRect (JNIEnv *env UNUSED, jclass clazz UNUSED, jobject ngr, jint x, jint y, jint width, jint height)
+KAFFE_GR_FUNC_DECL(void, Java_java_awt_Toolkit_graFillRect, jint x, jint y, jint width, jint height)
 {
 	s_rect_t coor;
 	s_rect_t inter;
 	graphics_t *gr;
 	DEBUGF("Enter");
-	gr = UNVEIL_GRAP(ngr);
+	gr = UNVEIL_GR(jgr);
 	if ((width >= 0) && (height >= 0)) {
 		coor.x = gr->x0 + x;
 		coor.y = gr->y0 + y;
@@ -114,31 +110,31 @@ void Java_java_awt_Toolkit_graFillRect (JNIEnv *env UNUSED, jclass clazz UNUSED,
 	DEBUGF("Leave");
 }
 
-void Java_java_awt_Toolkit_graFreeGraphics (JNIEnv *env UNUSED, jclass clazz UNUSED, jobject ngr)
+KAFFE_GR_FUNC_DECL(void, Java_java_awt_Toolkit_graFreeGraphics)
 {
 	graphics_t *gr;
 	DEBUGF("Enter");
-	gr = UNVEIL_GRAP(ngr);
+	gr = UNVEIL_GR(jgr);
 	AWT_FREE(gr);
 	DEBUGF("Leave");
 }
 
-void Java_java_awt_Toolkit_graSetVisible (JNIEnv *env, jclass clazz UNUSED, jobject ngr, jint isVisible)
+KAFFE_GR_FUNC_DECL(void, Java_java_awt_Toolkit_graSetVisible, jint isVisible)
 {
 	graphics_t *gr;
 	DEBUGF("Enter");
-	gr = UNVEIL_GRAP(ngr);
+	gr = UNVEIL_GR(jgr);
 	DEBUGF("setvisible: %d", isVisible);
 	DEBUGF("Leave");
 }
 
-void Java_java_awt_Toolkit_graClearRect (JNIEnv *env UNUSED, jclass clazz UNUSED, jobject ngr, jint x, jint y, jint width, jint height)
+KAFFE_GR_FUNC_DECL(void, Java_java_awt_Toolkit_graClearRect, jint x, jint y, jint width, jint height)
 {
 	s_rect_t coor;
 	s_rect_t inter;
 	graphics_t *gr;
 	DEBUGF("Enter");
-	gr = UNVEIL_GRAP(ngr);
+	gr = UNVEIL_GR(jgr);
 	coor.x = gr->x0 + x;
 	coor.y = gr->y0 + y;
 	coor.w = width;
@@ -149,9 +145,7 @@ void Java_java_awt_Toolkit_graClearRect (JNIEnv *env UNUSED, jclass clazz UNUSED
 	DEBUGF("Leave");
 }
 
-void Java_java_awt_Toolkit_graDrawImageScaled (JNIEnv *env, jclass clazz UNUSED, jobject ngr, jobject nimg,
-                                               jint dx0, jint dy0, jint dx1, jint dy1,
-					       jint sx0, jint sy0, jint sx1, jint sy1, jint bgval)
+KAFFE_GR_FUNC_DECL(void, Java_java_awt_Toolkit_graDrawImageScaled, jobject nimg, jint dx0, jint dy0, jint dx1, jint dy1, jint sx0, jint sy0, jint sx1, jint sy1, jint bgval)
 {
 	int x0;
 	int y0;
@@ -167,7 +161,7 @@ void Java_java_awt_Toolkit_graDrawImageScaled (JNIEnv *env, jclass clazz UNUSED,
 	s_surface_t *srfs;
 	s_surface_t *srfi;
 	DEBUGF("Enter");
-	gr = UNVEIL_GRAP(ngr);
+	gr = UNVEIL_GR(jgr);
 	img = UNVEIL_IMG(nimg);
 	if (dx1 > dx0) { x0 = dx0; x1 = dx1;
 	} else {         x0 = dx1; x1 = dx0;
@@ -203,9 +197,7 @@ void Java_java_awt_Toolkit_graDrawImageScaled (JNIEnv *env, jclass clazz UNUSED,
 	DEBUGF("Leave");
 }
 
-void Java_java_awt_Toolkit_graDraw3DRect (JNIEnv *env, jclass clazz, jobject ngr,
-                                          jint x, jint y, jint width, jint height,
-					  jboolean raised, jint rgb)
+KAFFE_GR_FUNC_DECL(void, Java_java_awt_Toolkit_graDraw3DRect, jint x, jint y, jint width, jint height, jboolean raised, jint rgb)
 {
 	int xw;
 	int yh;
@@ -213,7 +205,7 @@ void Java_java_awt_Toolkit_graDraw3DRect (JNIEnv *env, jclass clazz, jobject ngr
 	int bright;
 	graphics_t *gr;
 	DEBUGF("Enter");
-	gr = UNVEIL_GRAP(ngr);
+	gr = UNVEIL_GR(jgr);
 	dark = (int) (Java_java_awt_Toolkit_clrDark(env, clazz, rgb) >> 32);
 	bright = (int) (Java_java_awt_Toolkit_clrBright(env, clazz, rgb) >> 32);
 	x += gr->x0;
@@ -227,15 +219,13 @@ void Java_java_awt_Toolkit_graDraw3DRect (JNIEnv *env, jclass clazz, jobject ngr
 	DEBUGF("Leave");
 }
 
-void Java_java_awt_Toolkit_graFill3DRect (JNIEnv *env, jclass clazz, jobject ngr,
-                                          jint x, jint y, jint width, jint height,
-					  jboolean raised, jint rgb)
+KAFFE_GR_FUNC_DECL(void, Java_java_awt_Toolkit_graFill3DRect, jint x, jint y, jint width, jint height, jboolean raised, jint rgb)
 {
 	s_rect_t coor;
 	s_rect_t inter;
 	graphics_t *gr;
 	DEBUGF("Enter");
-	gr = UNVEIL_GRAP(ngr);
+	gr = UNVEIL_GR(jgr);
 	coor.x = gr->x0 + x + 1;
 	coor.y = gr->y0 + y + 1;
 	coor.w = width - 2;
@@ -243,11 +233,11 @@ void Java_java_awt_Toolkit_graFill3DRect (JNIEnv *env, jclass clazz, jobject ngr
 	if (s_rect_intersect(&(gr->clip), &coor, &inter) == 0) {
 		s_fillbox(gr->surface, inter.x, inter.y, inter.w, inter.h, gr->fg);
 	}
-	Java_java_awt_Toolkit_graDraw3DRect(env, clazz, ngr, x, y, width - 1, height - 1, raised, rgb);
+	Java_java_awt_Toolkit_graDraw3DRect(env, clazz, jgr, x, y, width - 1, height - 1, raised, rgb);
 	DEBUGF("Leave");
 }
 
-void Java_java_awt_Toolkit_graDrawString (JNIEnv *env, jclass clazz UNUSED, jobject ngr, jstring jstr, jint x, jint y)
+KAFFE_GR_FUNC_DECL(void, Java_java_awt_Toolkit_graDrawString, jstring jstr, jint x, jint y)
 {
 	int r;
 	int g;
@@ -257,7 +247,7 @@ void Java_java_awt_Toolkit_graDrawString (JNIEnv *env, jclass clazz UNUSED, jobj
 	s_rect_t inter;
 	graphics_t *gr;
 	DEBUGF("Enter");
-	gr = UNVEIL_GRAP(ngr);
+	gr = UNVEIL_GR(jgr);
 	str = java2CString(env, jstr);
 	DEBUGF("string: %s", str);
 	s_font_set_str(gr->font, str);
@@ -275,11 +265,11 @@ void Java_java_awt_Toolkit_graDrawString (JNIEnv *env, jclass clazz UNUSED, jobj
 	DEBUGF("Leave");
 }
 
-void Java_java_awt_Toolkit_graDrawLine (JNIEnv *env UNUSED, jclass clazz UNUSED, jobject ngr, jint x1, jint y1, jint x2, jint y2)
+KAFFE_GR_FUNC_DECL(void, Java_java_awt_Toolkit_graDrawLine, jint x1, jint y1, jint x2, jint y2)
 {
 	graphics_t *gr;
 	DEBUGF("Enter");
-	gr = UNVEIL_GRAP(ngr);
+	gr = UNVEIL_GR(jgr);
 	if ((x1 == x2) && (y1 == y2)) {
 		s_setpixel(gr->surface, gr->x0 + x1, gr->y0 + y1, gr->fg);
 	} else if (x1 == x2) {
@@ -292,7 +282,7 @@ void Java_java_awt_Toolkit_graDrawLine (JNIEnv *env UNUSED, jclass clazz UNUSED,
 	DEBUGF("Leave");
 }
 
-void Java_java_awt_Toolkit_graDrawChars (JNIEnv *env, jclass clazz UNUSED, jobject ngr, jcharArray jChars, jint offset, jint len, jint x, jint y)
+KAFFE_GR_FUNC_DECL(void, Java_java_awt_Toolkit_graDrawChars, jcharArray jChars, jint offset, jint len, jint x, jint y)
 {
 	int i;
 	int n;
@@ -310,7 +300,7 @@ void Java_java_awt_Toolkit_graDrawChars (JNIEnv *env, jclass clazz UNUSED, jobje
 	if (!jChars) {
 		return;
 	}
-	gr = UNVEIL_GRAP(ngr);
+	gr = UNVEIL_GR(jgr);
 	n = (*env)->GetArrayLength(env, jChars);
 	jc = (*env)->GetCharArrayElements(env, jChars, &isCopy);
 	jco = jc + offset;
@@ -343,14 +333,14 @@ void Java_java_awt_Toolkit_graDrawChars (JNIEnv *env, jclass clazz UNUSED, jobje
 	(*env)->ReleaseCharArrayElements(env, jChars, jc, JNI_ABORT);
 }
 
-void Java_java_awt_Toolkit_graCopyArea (JNIEnv *env UNUSED, jclass clazz UNUSED, jobject ngr, jint x, jint y, jint width, jint height, jint xDelta, jint yDelta)
+KAFFE_GR_FUNC_DECL(void, Java_java_awt_Toolkit_graCopyArea, jint x, jint y, jint width, jint height, jint xDelta, jint yDelta)
 {
 	char *vbuf;
 	s_rect_t coor;
 	s_rect_t inter;
 	graphics_t *gr;
 	DEBUGF("Enter");
-	gr = UNVEIL_GRAP(ngr);
+	gr = UNVEIL_GR(jgr);
 	vbuf = (char *) AWT_MALLOC(width * height * gr->surface->bytesperpixel);
 	s_getbox(gr->surface, gr->x0 + x, gr->y0 + y, width, height, vbuf);
 	coor.x = gr->x0 + x + xDelta;
@@ -364,23 +354,23 @@ void Java_java_awt_Toolkit_graCopyArea (JNIEnv *env UNUSED, jclass clazz UNUSED,
 	DEBUGF("Leave");
 }
 
-void Java_java_awt_Toolkit_graSetFont (JNIEnv *env, jclass clazz UNUSED, jobject ngr, jobject jfnt)
+KAFFE_GR_FUNC_DECL(void, Java_java_awt_Toolkit_graSetFont, jobject jfnt)
 {
 	s_font_t *fnt;
 	graphics_t *gr;
 	DEBUGF("Enter");
-	gr = UNVEIL_GRAP(ngr);
+	gr = UNVEIL_GR(jgr);
 	fnt = UNVEIL_FONT(jfnt);
 	gr->font = fnt;
 	DEBUGF("Leave");
 }
 
-void Java_java_awt_Toolkit_graDrawRect (JNIEnv *env UNUSED, jclass clazz UNUSED, jobject ngr, jint x, jint y, jint width, jint height)
+KAFFE_GR_FUNC_DECL(void, Java_java_awt_Toolkit_graDrawRect, jint x, jint y, jint width, jint height)
 {
 	DEBUGF("Enter");
-	Java_java_awt_Toolkit_graDrawLine(env, clazz, ngr, x, y, x + width - 1, y);
-	Java_java_awt_Toolkit_graDrawLine(env, clazz, ngr, x, y + height - 1, x + width - 1, y + height - 1);
-	Java_java_awt_Toolkit_graDrawLine(env, clazz, ngr, x, y, x, y + height - 1);
-	Java_java_awt_Toolkit_graDrawLine(env, clazz, ngr, x + width - 1, y, x + width - 1, y);
+	Java_java_awt_Toolkit_graDrawLine(env, clazz, jgr, x, y, x + width - 1, y);
+	Java_java_awt_Toolkit_graDrawLine(env, clazz, jgr, x, y + height - 1, x + width - 1, y + height - 1);
+	Java_java_awt_Toolkit_graDrawLine(env, clazz, jgr, x, y, x, y + height - 1);
+	Java_java_awt_Toolkit_graDrawLine(env, clazz, jgr, x + width - 1, y, x + width - 1, y);
 	DEBUGF("Leave");
 }
