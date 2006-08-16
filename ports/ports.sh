@@ -15,7 +15,7 @@
     ## Source code versions.
     GTK="gtk+-2.4.14"
     MPLAYER="MPlayer-1.0pre8"
-    LINKS="links-2.1pre22"
+    LINKS="links-2.1pre23"
     SDL="SDL-1.2.10"
     KAFFE="kaffe-1.1.7"
     
