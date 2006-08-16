@@ -64,9 +64,9 @@
 		    BUILD_LINKS=1
 		    BUILD_KAFFE=1
 		    shift;;
-		-prefix | --prefix)
-		    PREFIX="$2"
-		    shift 2;;
+		-prefix=* | --prefix=*)
+		    PREFIX=`echo $1 | cut -d '=' -f 2`
+		    shift;;
 		-help | --help)
 		    echo "-d : download"
 		    echo "-g : build $GTK"
@@ -75,9 +75,14 @@
 		    echo "-s : build $SDL"
 		    echo "-k : build $KAFFE"
 		    echo "-a : build all"
-		    echo "-prefix path : prefix"
+		    echo "-prefix=path : prefix"
 		    echo "-help : this text"
 		    exit
+		    ;;
+		*)
+		    echo "Unknown parameter: $1"
+		    exit
+		    ;;
 	    esac
 	done
     fi
