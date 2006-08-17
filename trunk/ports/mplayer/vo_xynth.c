@@ -41,8 +41,8 @@ static void handler_set (void);
 static void atexit_handler (s_window_t *w);
 static void atexpose_handler (s_window_t *w);
 static uint32_t draw_image (mp_image_t *mpi);
-static int query_format(uint32_t format);
-static void draw_alpha(int x0, int y0, int w, int h, unsigned char *src, unsigned char *srca, int stride);
+static int query_format (uint32_t format);
+static void draw_alpha (int x0, int y0, int w, int h, unsigned char *src, unsigned char *srca, int stride);
 
 static int image_x;
 static int image_y;
