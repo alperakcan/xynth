@@ -11,7 +11,7 @@ clean:
 	$(MAKE) clean -C tools/optimize
 	rm -rf dist
 	rm -rf doc
-	rm configure.log
+	rm -rf configure.log
 	find . \( -name \*~ -o -name \#\*\# \) -exec rm '{}' \;
 
 dist: all
