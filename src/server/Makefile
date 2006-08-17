@@ -49,37 +49,37 @@ OBJS     += video/helper/console.o video/helper/cursor.o video/helper/kbd.o vide
 endif
 
 ifeq ($(SINGLE_APP), Y)
-	ifeq ($(SINGLE_APP_CHILD), Y)
+	ifeq ($(DEMO_CHILD), Y)
 		LDFLAGS += ../../demo/child/single_child.a
 	endif
-	ifeq ($(SINGLE_APP_DESKTOP), Y)
+	ifeq ($(DEMO_DESKTOP), Y)
 		LDFLAGS += ../../demo/desktop/single_desktop.a
 	endif
-	ifeq ($(SINGLE_APP_HIDE), Y)
+	ifeq ($(DEMO_HIDE), Y)
 		LDFLAGS += ../../demo/hide/single_hide.a
 	endif
-	ifeq ($(SINGLE_APP_LOAD), Y)
+	ifeq ($(DEMO_LOAD), Y)
 		LDFLAGS += ../../demo/load/single_load.a
 	endif
-	ifeq ($(SINGLE_APP_SIMPLE), Y)
+	ifeq ($(DEMO_SIMPLE), Y)
 		LDFLAGS += ../../demo/simple/single_simple.a
 	endif
-	ifeq ($(SINGLE_APP_OBJECT), Y)
+	ifeq ($(DEMO_OBJECT), Y)
 		LDFLAGS += ../../demo/object/single_object.a
 	endif
-	ifeq ($(SINGLE_APP_ONSCREENKEYBOARD), Y)
+	ifeq ($(DEMO_ONSCREENKEYBOARD), Y)
 		LDFLAGS += ../../demo/onscreenkeyboard/single_onscreenkeyboard.a
 	endif
-	ifeq ($(SINGLE_APP_TEMP), Y)
+	ifeq ($(DEMO_TEMP), Y)
 		LDFLAGS += ../../demo/temp/single_temp.a
 	endif
-	ifeq ($(SINGLE_APP_TERM), Y)
+	ifeq ($(DEMO_TERM), Y)
 		LDFLAGS += ../../demo/term/single_term.a
 	endif
-	ifeq ($(SINGLE_APP_TIMER), Y)
+	ifeq ($(DEMO_TIMER), Y)
 		LDFLAGS += ../../demo/timer/single_timer.a
 	endif
-	ifeq ($(SINGLE_APP_LOGOUT), Y)
+	ifeq ($(DEMO_LOGOUT), Y)
 		LDFLAGS += ../../demo/xynthlogout/single_xynthlogout.a
 	endif
 endif

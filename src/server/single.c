@@ -18,74 +18,74 @@
 #include "../lib/xynth_.h"
 #include "server.h"
 
-#if defined(SINGLE_APP_DESKTOP)
+#if defined(DEMO_DESKTOP)
 	extern s_single_app_t single_desktop;
-#endif /* SINGLE_APP_DESKTOP */
-#if defined(SINGLE_APP_CHILD)
+#endif /* DEMO_DESKTOP */
+#if defined(DEMO_CHILD)
 	extern s_single_app_t single_child;
-#endif /* SINGLE_APP_CHILD */
-#if defined(SINGLE_APP_HIDE)
+#endif /* DEMO_CHILD */
+#if defined(DEMO_HIDE)
 	extern s_single_app_t single_hide;
-#endif /* SINGLE_APP_HIDE */
-#if defined(SINGLE_APP_LOAD)
+#endif /* DEMO_HIDE */
+#if defined(DEMO_LOAD)
 	extern s_single_app_t single_load;
-#endif /* SINGLE_APP_LOAD */
-#if defined(SINGLE_APP_SIMPLE)
+#endif /* DEMO_LOAD */
+#if defined(DEMO_SIMPLE)
 	extern s_single_app_t single_simple;
-#endif /* SINGLE_APP_SIMPLE */
-#if defined(SINGLE_APP_OBJECT)
+#endif /* DEMO_SIMPLE */
+#if defined(DEMO_OBJECT)
 	extern s_single_app_t single_object;
-#endif /* SINGLE_APP_OBJECT */
-#if defined(SINGLE_APP_ONSCREENKEYBOARD)
+#endif /* DEMO_OBJECT */
+#if defined(DEMO_ONSCREENKEYBOARD)
 	extern s_single_app_t single_onscreenkeyboard;
-#endif /* SINGLE_APP_ONSCREENKEYBOARD */
-#if defined(SINGLE_APP_TEMP)
+#endif /* DEMO_ONSCREENKEYBOARD */
+#if defined(DEMO_TEMP)
 	extern s_single_app_t single_temp;
-#endif /* SINGLE_APP_TEMP */
-#if defined(SINGLE_APP_TERM)
+#endif /* DEMO_TEMP */
+#if defined(DEMO_TERM)
 	extern s_single_app_t single_term;
-#endif /* SINGLE_APP_TERM */
-#if defined(SINGLE_APP_TIMER)
+#endif /* DEMO_TERM */
+#if defined(DEMO_TIMER)
 	extern s_single_app_t single_timer;
-#endif /* SINGLE_APP_TIMER */
-#if defined(SINGLE_APP_LOGOUT)
+#endif /* DEMO_TIMER */
+#if defined(DEMO_LOGOUT)
 	extern s_single_app_t single_xynthlogout;
-#endif /* SINGLE_APP_LOGOUT */
+#endif /* DEMO_LOGOUT */
 
 s_single_app_t *s_server_single_apps[] = {
-#if defined(SINGLE_APP_DESKTOP)
+#if defined(DEMO_DESKTOP)
 	&single_desktop,
-#endif /* SINGLE_APP_DESKTOP */
-#if defined(SINGLE_APP_CHILD)
+#endif /* DEMO_DESKTOP */
+#if defined(DEMO_CHILD)
 	&single_child,
-#endif /* SINGLE_APP_CHILD */
-#if defined(SINGLE_APP_HIDE)
+#endif /* DEMO_CHILD */
+#if defined(DEMO_HIDE)
 	&single_hide,
-#endif /* SINGLE_APP_HIDE */
-#if defined(SINGLE_APP_LOAD)
+#endif /* DEMO_HIDE */
+#if defined(DEMO_LOAD)
 	&single_load,
-#endif /* SINGLE_APP_LOAD */
-#if defined(SINGLE_APP_SIMPLE)
+#endif /* DEMO_LOAD */
+#if defined(DEMO_SIMPLE)
 	&single_simple,
-#endif /* SINGLE_APP_SIMPLE */
-#if defined(SINGLE_APP_OBJECT)
+#endif /* DEMO_SIMPLE */
+#if defined(DEMO_OBJECT)
 	&single_object,
-#endif /* SINGLE_APP_OBJECT */
-#if defined(SINGLE_APP_ONSCREENKEYBOARD)
+#endif /* DEMO_OBJECT */
+#if defined(DEMO_ONSCREENKEYBOARD)
 	&single_onscreenkeyboard,
-#endif /* SINGLE_APP_ONSCREENKEYBOARD */
-#if defined(SINGLE_APP_TEMP)
+#endif /* DEMO_ONSCREENKEYBOARD */
+#if defined(DEMO_TEMP)
 	&single_temp,
-#endif /* SINGLE_APP_TEMP */
-#if defined(SINGLE_APP_TERM)
+#endif /* DEMO_TEMP */
+#if defined(DEMO_TERM)
 	&single_term,
-#endif /* SINGLE_APP_TERM */
-#if defined(SINGLE_APP_TIMER)
+#endif /* DEMO_TERM */
+#if defined(DEMO_TIMER)
 	&single_timer,
-#endif /* SINGLE_APP_TIMER */
-#if defined(SINGLE_APP_LOGOUT)
+#endif /* DEMO_TIMER */
+#if defined(DEMO_LOGOUT)
 	&single_xynthlogout,
-#endif /* SINGLE_APP_LOGOUT */
+#endif /* DEMO_LOGOUT */
 	NULL
 };
 
@@ -101,7 +101,7 @@ void s_server_single_start (void)
 {
 	s_single_app_t **sa;
 	debugf(DSER, "starting applications");
-#if defined(SINGLE_APP_DESKTOP)
+#if defined(DEMO_DESKTOP)
 	for (sa = s_server_single_apps; *sa; sa++) {
 		if (strcmp((*sa)->argv[0], "desktop") == 0) {
 			s_thread_create(s_server_single_app_start, *sa);

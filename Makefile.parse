@@ -21,39 +21,49 @@ endif
 
 ifeq ($(SINGLE_APP), Y)
 	CFLAGS += -DSINGLE_APP
-	ifeq ($(SINGLE_APP_CHILD), Y)
-		CFLAGS += -DSINGLE_APP_CHILD
-	endif
-	ifeq ($(SINGLE_APP_DESKTOP), Y)
-		CFLAGS += -DSINGLE_APP_DESKTOP
-	endif
-	ifeq ($(SINGLE_APP_HIDE), Y)
-		CFLAGS += -DSINGLE_APP_HIDE
-	endif
-	ifeq ($(SINGLE_APP_LOAD), Y)
-		CFLAGS += -DSINGLE_APP_LOAD
-	endif
-	ifeq ($(SINGLE_APP_SIMPLE), Y)
-		CFLAGS += -DSINGLE_APP_SIMPLE
-	endif
-	ifeq ($(SINGLE_APP_OBJECT), Y)
-		CFLAGS += -DSINGLE_APP_OBJECT
-	endif
-	ifeq ($(SINGLE_APP_ONSCREENKEYBOARD), Y)
-		CFLAGS += -DSINGLE_APP_ONSCREENKEYBOARD
-	endif
-	ifeq ($(SINGLE_APP_TEMP), Y)
-		CFLAGS += -DSINGLE_APP_TEMP
-	endif
-	ifeq ($(SINGLE_APP_TERM), Y)
-		CFLAGS += -DSINGLE_APP_TERM
-	endif
-	ifeq ($(SINGLE_APP_TIMER), Y)
-		CFLAGS += -DSINGLE_APP_TIMER
-	endif
-	ifeq ($(SINGLE_APP_LOGOUT), Y)
-		CFLAGS += -DSINGLE_APP_LOGOUT
-	endif
+endif
+
+ifeq ($(DEMO_CHILD), Y)
+	CFLAGS += -DDEMO_CHILD
+endif
+ifeq ($(DEMO_DESKTOP), Y)
+	CFLAGS += -DDEMO_DESKTOP
+endif
+ifeq ($(DEMO_HIDE), Y)
+	CFLAGS += -DDEMO_HIDE
+endif
+ifeq ($(DEMO_LOAD), Y)
+	CFLAGS += -DDEMO_LOAD
+endif
+ifeq ($(DEMO_SIMPLE), Y)
+	CFLAGS += -DDEMO_SIMPLE
+endif
+ifeq ($(DEMO_OBJECT), Y)
+	CFLAGS += -DDEMO_OBJECT
+endif
+ifeq ($(DEMO_ONSCREENKEYBOARD), Y)
+	CFLAGS += -DDEMO_ONSCREENKEYBOARD
+endif
+ifeq ($(DEMO_TEMP), Y)
+	CFLAGS += -DDEMO_TEMP
+endif
+ifeq ($(DEMO_TERM), Y)
+	CFLAGS += -DDEMO_TERM
+endif
+ifeq ($(DEMO_TIMER), Y)
+	CFLAGS += -DDEMO_TIMER
+endif
+ifeq ($(DEMO_LOGOUT), Y)
+	CFLAGS += -DDEMO_LOGOUT
+endif
+ifeq ($(DEMO_IMAGE), Y)
+	CFLAGS += -DDEMO_IMAGE
+endif
+ifeq ($(DEMO_MINES), Y)
+	CFLAGS += -DDEMO_MINES
+endif
+ifeq ($(DEMO_WIDGET), Y)
+	CFLAGS += -DDEMO_WIDGET
 endif
 
 ifeq ($(VIDEO_FBDev), Y)

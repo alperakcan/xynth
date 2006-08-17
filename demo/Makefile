@@ -3,49 +3,91 @@ include ../Makefile.cfg
 include ../Makefile.parse
 
 all:
+ifeq ($(DEMO_CHILD), Y)
 	$(MAKE) -C child
+endif
+ifeq ($(DEMO_DESKTOP), Y)
 	$(MAKE) -C desktop
-	$(MAKE) -C simple
-	$(MAKE) -C temp
+endif
+ifeq ($(DEMO_HIDE), Y)
 	$(MAKE) -C hide
+endif
+ifeq ($(DEMO_LOAD), Y)
+	$(MAKE) -C load
+endif
+ifeq ($(DEMO_SIMPLE), Y)
+	$(MAKE) -C simple
+endif
+ifeq ($(DEMO_OBJECT), Y)
 	$(MAKE) -C object
-	$(MAKE) -C timer
-	$(MAKE) -C xynthlogout
+endif
+ifeq ($(DEMO_ONSCREENKEYBOARD), Y)
 	$(MAKE) -C onscreenkeyboard
-ifeq ($(PLATFORM_LINUX), Y)
-	$(MAKE) -C load
-	$(MAKE) -C img
-	$(MAKE) -C mines
-	$(MAKE) -C widget
-	$(MAKE) -C term
-else
-ifeq ($(PLATFORM_GP2X), Y)
-	$(MAKE) -C load
+endif
+ifeq ($(DEMO_TEMP), Y)
+	$(MAKE) -C temp
+endif
+ifeq ($(DEMO_TERM), Y)
 	$(MAKE) -C term
 endif
+ifeq ($(DEMO_TIMER), Y)
+	$(MAKE) -C timer
+endif
+ifeq ($(DEMO_LOGOUT), Y)
+	$(MAKE) -C xynthlogout
+endif
+ifeq ($(DEMO_IMAGE), Y)
+	$(MAKE) -C img
+endif
+ifeq ($(DEMO_MINES), Y)
+	$(MAKE) -C mines
+endif
+ifeq ($(DEMO_WIDGET), Y)
+	$(MAKE) -C widget
 endif
 
 dist:
+ifeq ($(DEMO_CHILD), Y)
 	$(MAKE) dist -C child
+endif
+ifeq ($(DEMO_DESKTOP), Y)
 	$(MAKE) dist -C desktop
-	$(MAKE) dist -C simple
-	$(MAKE) dist -C temp
+endif
+ifeq ($(DEMO_HIDE), Y)
 	$(MAKE) dist -C hide
+endif
+ifeq ($(DEMO_LOAD), Y)
+	$(MAKE) dist -C load
+endif
+ifeq ($(DEMO_SIMPLE), Y)
+	$(MAKE) dist -C simple
+endif
+ifeq ($(DEMO_OBJECT), Y)
 	$(MAKE) dist -C object
-	$(MAKE) dist -C timer
-	$(MAKE) dist -C xynthlogout
+endif
+ifeq ($(DEMO_ONSCREENKEYBOARD), Y)
 	$(MAKE) dist -C onscreenkeyboard
-ifeq ($(PLATFORM_LINUX), Y)
-	$(MAKE) dist -C load
-	$(MAKE) dist -C img
-	$(MAKE) dist -C mines
-	$(MAKE) dist -C widget
-	$(MAKE) dist -C term
-else
-ifeq ($(PLATFORM_GP2X), Y)
-	$(MAKE) dist -C load
+endif
+ifeq ($(DEMO_TEMP), Y)
+	$(MAKE) dist -C temp
+endif
+ifeq ($(DEMO_TERM), Y)
 	$(MAKE) dist -C term
 endif
+ifeq ($(DEMO_TIMER), Y)
+	$(MAKE) dist -C timer
+endif
+ifeq ($(DEMO_LOGOUT), Y)
+	$(MAKE) dist -C xynthlogout
+endif
+ifeq ($(DEMO_IMAGE), Y)
+	$(MAKE) dist -C img
+endif
+ifeq ($(DEMO_MINES), Y)
+	$(MAKE) dist -C mines
+endif
+ifeq ($(DEMO_WIDGET), Y)
+	$(MAKE) dist -C widget
 endif
 
 clean:
