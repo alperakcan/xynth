@@ -1,4 +1,12 @@
 
+/*
+ * Copyright (c) 2006
+ *	Alper Akcan <distchx@yahoo.com>, All rights reserved.
+ *
+ * See the file "license.terms" for information on usage and redistribution 
+ * of this file. 
+ */
+
 #include "toolkit.h"
 
 KAFFE_GR_FUNC_DECL(jobject, Java_java_awt_Toolkit_graInitGraphics, jobject tgt, jint tgtType, jint xOff, jint yOff, jint xClip, jint yClip, jint wClip, jint hClip, jobject fnt, jint fg, jint bg, jboolean blank)

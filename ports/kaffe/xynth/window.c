@@ -1,4 +1,12 @@
 
+/*
+ * Copyright (c) 2006
+ *	Alper Akcan <distchx@yahoo.com>, All rights reserved.
+ *
+ * See the file "license.terms" for information on usage and redistribution 
+ * of this file. 
+ */
+
 #include "toolkit.h"
 
 void xynth_kaffe_atevent (s_window_t *window, s_event_t *event);

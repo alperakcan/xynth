@@ -1,4 +1,12 @@
 
+/*
+ * Copyright (c) 2006
+ *	Alper Akcan <distchx@yahoo.com>, All rights reserved.
+ *
+ * See the file "license.terms" for information on usage and redistribution 
+ * of this file. 
+ */
+
 #include "toolkit.h"
 
 #define JRGB(_r, _g, _b) (((_r) << 16) | ((_g) << 8) | (_b))

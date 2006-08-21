@@ -153,7 +153,7 @@ diff -Naur kaffe-cvs/libraries/clib/awt/xynth/Makefile.am kaffe-cvs-xynth/librar
 @@ -0,0 +1,42 @@
 +# Xynth-based AWT support for standard Java libraries
 +#
-+# Copyright (c) 2005
++# Copyright (c) 2006
 +#       Alper Akcan <distchx@yahoo.com>
 +#
 +
