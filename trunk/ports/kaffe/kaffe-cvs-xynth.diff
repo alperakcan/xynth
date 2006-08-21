@@ -1,6 +1,146 @@
-diff -Naur kaffe-cvs/Makefile.am kaffe-cvs-xynth/Makefile.am
---- kaffe-cvs/Makefile.am	2006-08-13 04:46:46.000000000 +0300
-+++ kaffe-cvs-xynth/Makefile.am	2006-08-15 14:31:03.000000000 +0300
+Index: kaffe/kaffe/Makefile.am
+===================================================================
+RCS file: /cvs/kaffe/kaffe/kaffe/kaffe/Makefile.am,v
+retrieving revision 1.35
+diff -u -r1.35 Makefile.am
+--- kaffe/kaffe/Makefile.am	9 Jul 2006 16:58:43 -0000	1.35
++++ kaffe/kaffe/Makefile.am	21 Aug 2006 13:20:10 -0000
+@@ -30,6 +30,10 @@
+ INCLUDE_KAFFE_NANOX_AWT = -DKAFFE_NANOX_AWT_INCLUDED
+ endif
+ 
++if COND_KAFFE_XYNTH_AWT
++INCLUDE_KAFFE_XYNTH_AWT = -DKAFFE_XYNTH_AWT_INCLUDED
++endif
++
+ AM_CPPFLAGS = \
+ 	-I../kaffevm \
+ 	-I$(srcdir)/../kaffevm \
+@@ -42,7 +46,8 @@
+ 	-I$(top_srcdir)/config/$(Khost_cpu)/$(Khost_os) \
+ 	$(INCLUDE_KAFFE_X_AWT) \
+ 	$(INCLUDE_KAFFE_QT_AWT) \
+-	$(INCLUDE_KAFFE_NANOX_AWT)
++	$(INCLUDE_KAFFE_NANOX_AWT) \
++	$(INCLUDE_KAFFE_XYNTH_AWT)
+ 
+ kaffe_bin_SOURCES = \
+ 	main.c \
+Index: kaffe/kaffe/main.c
+===================================================================
+RCS file: /cvs/kaffe/kaffe/kaffe/kaffe/main.c,v
+retrieving revision 1.100
+diff -u -r1.100 main.c
+--- kaffe/kaffe/main.c	19 Apr 2006 23:07:44 -0000	1.100
++++ kaffe/kaffe/main.c	21 Aug 2006 13:20:10 -0000
+@@ -375,7 +375,7 @@
+  */
+ 
+ #if defined (KAFFE_X_AWT_INCLUDED) || defined (KAFFE_QT_AWT_INCLUDED)	\
+-  || defined (KAFFE_NANOX_AWT_INCLUDED)
++  || defined (KAFFE_NANOX_AWT_INCLUDED) || defined(KAFFE_XYNTH_AWT_INCLUDED)
+ static 
+ userProperty*
+ setKaffeAWT(const char * propStr)
+@@ -534,6 +534,13 @@
+ 			prop = setKaffeAWT("kaffe.awt.nativelib=nanoxawt");
+ 		}
+ #endif
++#ifdef KAFFE_XYNTH_AWT_INCLUDED
++		/* Extra option to use kaffe's Xynth AWT backend.
++		 */
++		else if (strncmp(argv[i], "-Xkaffe-xynth-awt", (j=17)) == 0) {
++			prop = setKaffeAWT("kaffe.awt.nativelib=xynthawt");
++		}
++#endif
+ #if defined(USE_GMP)
+ 		/* Extra option to use gmp for native, fast bignums.
+ 		 * Only available with binreloc, since binreloc is used to
+@@ -1006,6 +1013,9 @@
+ #endif
+ #ifdef KAFFE_NANOX_AWT_INCLUDED
+ 	fprintf(stderr, "%s", _("	-Xkaffe-nanox-awt	 Use Kaffe's Nano-X AWT backend\n"));
++#endif
++#ifdef KAFFE_XYNTH_AWT_INCLUDED
++	fprintf(stderr, _("	-Xkaffe-xynth-awt	 Use Kaffe's Xynth AWT backend\n"));
+ #endif
+ 
+ 	fprintf(stderr, "%s", _("  * Option currently ignored.\n"
+Index: libraries/clib/awt/Makefile.am
+===================================================================
+RCS file: /cvs/kaffe/kaffe/libraries/clib/awt/Makefile.am,v
+retrieving revision 1.14
+diff -u -r1.14 Makefile.am
+--- libraries/clib/awt/Makefile.am	8 Jul 2006 14:44:21 -0000	1.14
++++ libraries/clib/awt/Makefile.am	21 Aug 2006 13:20:10 -0000
+@@ -30,10 +30,15 @@
+ MAYBE_KAFFE_NANOX_AWT = nano-X
+ endif
+ 
++if COND_KAFFE_XYNTH_AWT
++MAYBE_KAFFE_XYNTH_AWT = xynth
++endif
++
+ SUBDIRS = \
+ 	$(MAYBE_KAFFE_X_AWT) \
+ 	$(MAYBE_KAFFE_QT_AWT) \
+-	$(MAYBE_KAFFE_NANOX_AWT) 
++	$(MAYBE_KAFFE_NANOX_AWT) \
++	$(MAYBE_KAFFE_XYNTH_AWT)
+ 
+ EXTRA_DIST = \
+ 	win32/btn.cpp \
+Index: FAQ/FAQ.awt
+===================================================================
+RCS file: /cvs/kaffe/kaffe/FAQ/FAQ.awt,v
+retrieving revision 1.15
+diff -u -r1.15 FAQ.awt
+--- FAQ/FAQ.awt	25 Mar 2006 13:16:15 -0000	1.15
++++ FAQ/FAQ.awt	21 Aug 2006 13:20:10 -0000
+@@ -164,6 +164,22 @@
+ 
+   kaffe -Xkaffe-nanox-awt YourClass
+ 
++* --with-kaffe-xynth-awt
++
++  an Xynth Windowing System based AWT backend.
++
++  The Xynth based AWT backend has been written by Alper Akcan from
++  Xynth Team.
++
++  See http://www.xynth.org for information on Xynth Window System.
++  Additional url: http://gsulinux.org/~distch/projects/xynth
++
++  You need to run kaffe with -Xkaffe-xynth-awt option, in order for it
++  to load the correct classes for this AWT. So you should run your
++  code with
++
++  kaffe -Xkaffe-xynth-awt YourClass
++
+ Troubleshooting
+ ---------------
+ 
+Index: ChangeLog
+===================================================================
+RCS file: /cvs/kaffe/kaffe/ChangeLog,v
+retrieving revision 1.4892
+diff -u -r1.4892 ChangeLog
+--- ChangeLog	20 Aug 2006 22:27:29 -0000	1.4892
++++ ChangeLog	21 Aug 2006 13:20:07 -0000
+@@ -1,3 +1,6 @@
++2006-08-21  Alper Akcan <distchx@yahoo,com>
++	* awt/xynth : new xynth based awt backend.
++
+ 2006-08-20  Dalibor Topic  <robilad@kaffe.org>
+ 
+ 	* configure.ac: Substitute GLIBJ_ZIP for location of glibj.zip.
+Index: Makefile.am
+===================================================================
+RCS file: /cvs/kaffe/kaffe/Makefile.am,v
+retrieving revision 1.114
+diff -u -r1.114 Makefile.am
+--- Makefile.am	20 Aug 2006 22:27:32 -0000	1.114
++++ Makefile.am	21 Aug 2006 13:20:07 -0000
 @@ -240,6 +240,9 @@
  if COND_KAFFE_X_AWT
  DIRECTORIES_AFTER_RTJAR += libraries/clib/awt/X
@@ -11,24 +151,14 @@ diff -Naur kaffe-cvs/Makefile.am kaffe-cvs-xynth/Makefile.am
  endif
  
  check-local:
-diff -Naur kaffe-cvs/README.xynth kaffe-cvs-xynth/README.xynth
---- kaffe-cvs/README.xynth	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-cvs-xynth/README.xynth	2006-08-15 14:31:03.000000000 +0300
-@@ -0,0 +1,10 @@
-+
-+# developers/autogen.sh
-+# mkdir build-xynth
-+# cd build-xynth
-+# ../configure --with-kaffe-xynth-awt --disable-gtk-peer --disable-gconf-peer
-+# make
-+# make install
-+
-+ Alper Akcan <distchx@yahoo.com>
-+
-diff -Naur kaffe-cvs/configure.ac kaffe-cvs-xynth/configure.ac
---- kaffe-cvs/configure.ac	2006-08-14 04:05:57.000000000 +0300
-+++ kaffe-cvs-xynth/configure.ac	2006-08-15 14:31:03.000000000 +0300
-@@ -2011,6 +2011,30 @@
+Index: configure.ac
+===================================================================
+RCS file: /cvs/kaffe/kaffe/configure.ac,v
+retrieving revision 1.246
+diff -u -r1.246 configure.ac
+--- configure.ac	20 Aug 2006 22:27:40 -0000	1.246
++++ configure.ac	21 Aug 2006 13:20:09 -0000
+@@ -2015,6 +2015,30 @@
     fi
  fi
  
@@ -59,7 +189,7 @@ diff -Naur kaffe-cvs/configure.ac kaffe-cvs-xynth/configure.ac
  dnl -------------------------------------------------------------------------
  dnl Configure sound backend
  dnl -------------------------------------------------------------------------
-@@ -2549,6 +2573,7 @@
+@@ -2553,6 +2577,7 @@
  AC_CONFIG_FILES([libraries/clib/awt/X/Makefile])
  AC_CONFIG_FILES([libraries/clib/awt/qt/Makefile])
  AC_CONFIG_FILES([libraries/clib/awt/nano-X/Makefile])
@@ -67,674 +197,66 @@ diff -Naur kaffe-cvs/configure.ac kaffe-cvs-xynth/configure.ac
  AC_CONFIG_FILES([libraries/clib/sound/Makefile])
  AC_CONFIG_FILES([libraries/clib/sound/alsa/Makefile])
  AC_CONFIG_FILES([libraries/clib/sound/common/Makefile])
-diff -Naur kaffe-cvs/kaffe/kaffe/Makefile.am kaffe-cvs-xynth/kaffe/kaffe/Makefile.am
---- kaffe-cvs/kaffe/kaffe/Makefile.am	2006-07-09 19:58:43.000000000 +0300
-+++ kaffe-cvs-xynth/kaffe/kaffe/Makefile.am	2006-08-15 14:31:03.000000000 +0300
-@@ -30,6 +30,10 @@
- INCLUDE_KAFFE_NANOX_AWT = -DKAFFE_NANOX_AWT_INCLUDED
- endif
+Index: WHATSNEW
+===================================================================
+RCS file: /cvs/kaffe/kaffe/WHATSNEW,v
+retrieving revision 1.57
+diff -u -r1.57 WHATSNEW
+--- WHATSNEW	9 Aug 2006 21:43:04 -0000	1.57
++++ WHATSNEW	21 Aug 2006 13:20:07 -0000
+@@ -5,6 +5,7 @@
+ * Added --disable-zlib-zip optin to use GNU Classpath's
+   java.util.zip implementation.
+ * Removed comm, servlet, microsoft and pjava extensions.
++* Xynth Windowing System based AWT backend.
  
+ What's New In Kaffe 1.1.7
+ ------------------------------------------------------
+Index: libraries/javalib/Makefile.am
+===================================================================
+RCS file: /cvs/kaffe/kaffe/libraries/javalib/Makefile.am,v
+retrieving revision 1.456
+diff -u -r1.456 Makefile.am
+--- libraries/javalib/Makefile.am	20 Aug 2006 22:28:33 -0000	1.456
++++ libraries/javalib/Makefile.am	21 Aug 2006 13:20:10 -0000
+@@ -8,6 +8,10 @@
+ else
+ if COND_KAFFE_NANOX_AWT
+ MAYBE_PEERLESS_KAFFE_AWT=awt-implementations
++else
 +if COND_KAFFE_XYNTH_AWT
-+INCLUDE_KAFFE_XYNTH_AWT = -DKAFFE_XYNTH_AWT_INCLUDED
++MAYBE_PEERLESS_KAFFE_AWT=awt-implementations
 +endif
-+
- AM_CPPFLAGS = \
- 	-I../kaffevm \
- 	-I$(srcdir)/../kaffevm \
-@@ -42,7 +46,8 @@
- 	-I$(top_srcdir)/config/$(Khost_cpu)/$(Khost_os) \
- 	$(INCLUDE_KAFFE_X_AWT) \
- 	$(INCLUDE_KAFFE_QT_AWT) \
--	$(INCLUDE_KAFFE_NANOX_AWT)
-+	$(INCLUDE_KAFFE_NANOX_AWT) \
-+	$(INCLUDE_KAFFE_XYNTH_AWT)
- 
- kaffe_bin_SOURCES = \
- 	main.c \
-diff -Naur kaffe-cvs/kaffe/kaffe/main.c kaffe-cvs-xynth/kaffe/kaffe/main.c
---- kaffe-cvs/kaffe/kaffe/main.c	2006-04-20 02:07:44.000000000 +0300
-+++ kaffe-cvs-xynth/kaffe/kaffe/main.c	2006-08-15 14:31:03.000000000 +0300
-@@ -375,7 +375,7 @@
-  */
- 
- #if defined (KAFFE_X_AWT_INCLUDED) || defined (KAFFE_QT_AWT_INCLUDED)	\
--  || defined (KAFFE_NANOX_AWT_INCLUDED)
-+  || defined (KAFFE_NANOX_AWT_INCLUDED) || defined(KAFFE_XYNTH_AWT_INCLUDED)
- static 
- userProperty*
- setKaffeAWT(const char * propStr)
-@@ -534,6 +534,13 @@
- 			prop = setKaffeAWT("kaffe.awt.nativelib=nanoxawt");
- 		}
- #endif
-+#ifdef KAFFE_XYNTH_AWT_INCLUDED
-+		/* Extra option to use kaffe's Xynth AWT backend.
-+		 */
-+		else if (strncmp(argv[i], "-Xkaffe-xynth-awt", (j=17)) == 0) {
-+			prop = setKaffeAWT("kaffe.awt.nativelib=xynthawt");
-+		}
-+#endif
- #if defined(USE_GMP)
- 		/* Extra option to use gmp for native, fast bignums.
- 		 * Only available with binreloc, since binreloc is used to
-@@ -1007,6 +1014,9 @@
- #ifdef KAFFE_NANOX_AWT_INCLUDED
- 	fprintf(stderr, "%s", _("	-Xkaffe-nanox-awt	 Use Kaffe's Nano-X AWT backend\n"));
- #endif
-+#ifdef KAFFE_XYNTH_AWT_INCLUDED
-+	fprintf(stderr, _("	-Xkaffe-xynth-awt	 Use Kaffe's Xynth AWT backend\n"));
-+#endif
- 
- 	fprintf(stderr, "%s", _("  * Option currently ignored.\n"
- 			  "\n"
-diff -Naur kaffe-cvs/libraries/clib/awt/Makefile.am kaffe-cvs-xynth/libraries/clib/awt/Makefile.am
---- kaffe-cvs/libraries/clib/awt/Makefile.am	2006-07-08 17:44:21.000000000 +0300
-+++ kaffe-cvs-xynth/libraries/clib/awt/Makefile.am	2006-08-15 14:31:03.000000000 +0300
-@@ -30,10 +30,15 @@
- MAYBE_KAFFE_NANOX_AWT = nano-X
  endif
- 
-+if COND_KAFFE_XYNTH_AWT
-+MAYBE_KAFFE_XYNTH_AWT = xynth
-+endif
+ endif
+ endif
+Index: test/awt/WidgetsDemo/WidgetsDemo.sh
+===================================================================
+RCS file: /cvs/kaffe/kaffe/test/awt/WidgetsDemo/WidgetsDemo.sh,v
+retrieving revision 1.1
+diff -u -r1.1 WidgetsDemo.sh
+--- test/awt/WidgetsDemo/WidgetsDemo.sh	14 Jul 1998 14:20:05 -0000	1.1
++++ test/awt/WidgetsDemo/WidgetsDemo.sh	21 Aug 2006 13:20:10 -0000
+@@ -1,2 +1,3 @@
+ #! /bin/sh
+-kaffe WidgetsDemo
++jikes +Pno-switchcheck +Pno-shadow +E -g -classpath .:../../../build-xynth/libraries/javalib/external/classpath/lib/glibj.zip -d . ./WidgetsDemo.java 
++kaffe -Xkaffe-xynth-awt WidgetsDemo
+Index: libraries/clib/awt/xynth/graphic.c
+===================================================================
+RCS file: libraries/clib/awt/xynth/graphic.c
+diff -N libraries/clib/awt/xynth/graphic.c
+--- /dev/null	1 Jan 1970 00:00:00 -0000
++++ libraries/clib/awt/xynth/graphic.c	1 Jan 1970 00:00:00 -0000
+@@ -0,0 +1,384 @@
 +
- SUBDIRS = \
- 	$(MAYBE_KAFFE_X_AWT) \
- 	$(MAYBE_KAFFE_QT_AWT) \
--	$(MAYBE_KAFFE_NANOX_AWT) 
-+	$(MAYBE_KAFFE_NANOX_AWT) \
-+	$(MAYBE_KAFFE_XYNTH_AWT)
- 
- EXTRA_DIST = \
- 	win32/btn.cpp \
-diff -Naur kaffe-cvs/libraries/clib/awt/xynth/Makefile.am kaffe-cvs-xynth/libraries/clib/awt/xynth/Makefile.am
---- kaffe-cvs/libraries/clib/awt/xynth/Makefile.am	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-cvs-xynth/libraries/clib/awt/xynth/Makefile.am	2006-08-15 13:29:14.000000000 +0300
-@@ -0,0 +1,42 @@
-+# Xynth-based AWT support for standard Java libraries
-+#
-+# Copyright (c) 2006
-+#       Alper Akcan <distchx@yahoo.com>
-+#
-+
-+native_LTLIBRARIES = libxynthawt.la
-+
-+AM_CPPFLAGS = \
-+	-I$(top_builddir)/include \
-+	-I$(top_srcdir)/kaffe/kaffevm/jni \
-+	-I$(top_srcdir)/libraries/javalib/external/classpath/native/jni/classpath
-+
-+libxynthawt_la_CFLAGS = \
-+	$(CFLAGS_PG) \
-+	$(XYNTH_CFLAGS)
-+
-+libxynthawt_la_LDFLAGS = \
-+	$(KLIBFLAGS) \
-+	-no-undefined \
-+	-module \
-+	-release $(PACKAGE_VERSION) \
-+	-export-symbols-regex "^([Jj]ava|kaffe)_"
-+
-+libxynthawt_la_LIBADD = \
-+	$(top_builddir)/kaffe/kaffevm/libkaffevm.la \
-+	$(top_builddir)/libraries/javalib/external/classpath/native/jni/classpath/libclasspath.la \
-+	$(AWT_LIBS)
-+
-+libxynthawt_la_SOURCES = \
-+	color.c \
-+	event.c \
-+	image.c \
-+	font.c \
-+	graphic.c \
-+	toolkit.c \
-+	window.c
-+
-+noinst_HEADERS = \
-+	toolkit.h
-+
-+CLEANFILES = so_locations
-diff -Naur kaffe-cvs/libraries/clib/awt/xynth/color.c kaffe-cvs-xynth/libraries/clib/awt/xynth/color.c
---- kaffe-cvs/libraries/clib/awt/xynth/color.c	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-cvs-xynth/libraries/clib/awt/xynth/color.c	2006-08-15 13:29:14.000000000 +0300
-@@ -0,0 +1,64 @@
-+
-+#include "toolkit.h"
-+
-+#define JRGB(_r, _g, _b) (((_r) << 16) | ((_g) << 8) | (_b))
-+#define JRED(_rgb)       (((_rgb) & 0xff0000) >> 16)
-+#define JGREEN(_rgb)     (((_rgb) & 0x00ff00) >> 8)
-+#define JBLUE(_rgb)      ((_rgb) & 0x0000ff)
-+
-+jint Java_java_awt_Toolkit_clrGetPixelValue (JNIEnv *env, jclass clazz, jint rgb)
-+{
-+	jint pix;
-+	DEBUGF("Enter");
-+	pix = s_rgbcolor(xynth->root->surface, JRED(rgb), JGREEN(rgb), JBLUE(rgb));
-+	DEBUGF("Leave");
-+	return pix;
-+}
-+
-+jlong Java_java_awt_Toolkit_clrBright (JNIEnv *env UNUSED, jclass clazz UNUSED, jint rgb)
-+{
-+	unsigned int r;
-+	unsigned int g;
-+	unsigned int b;
-+	jint modRgb;
-+	jint modPix;
-+	
-+	r = JRED(rgb);
-+	g = JGREEN(rgb);
-+	b = JBLUE(rgb);
-+	
-+	r = (r * 4) / 3;
-+	g = (g * 4) / 3;
-+	b = (b * 4) / 3;
-+	
-+	if (r > 0xff) r = 0xff;
-+	if (g > 0xff) g = 0xff;
-+	if (b > 0xff) b = 0xff;
-+	
-+	modRgb = JRGB(r, g, b);
-+	modPix = s_rgbcolor(xynth->root->surface, r, g, b);
-+	
-+	return (((jlong) modPix << 32) | modRgb);
-+}
-+
-+jlong Java_java_awt_Toolkit_clrDark (JNIEnv *env UNUSED, jclass clazz UNUSED, jint rgb)
-+{
-+	unsigned int r;
-+	unsigned int g;
-+	unsigned int b;
-+	jint modRgb;
-+	jint modPix;
-+	
-+	r = JRED(rgb);
-+	g = JGREEN(rgb);
-+	b = JBLUE(rgb);
-+	
-+	r = (r * 2) / 3;
-+	g = (g * 2) / 3;
-+	b = (b * 2) / 3;
-+	
-+	modRgb = JRGB(r, g, b);
-+	modPix = s_rgbcolor(xynth->root->surface, r, g, b);
-+	
-+	return (((jlong) modPix << 32) | modRgb);
-+}
-diff -Naur kaffe-cvs/libraries/clib/awt/xynth/event.c kaffe-cvs-xynth/libraries/clib/awt/xynth/event.c
---- kaffe-cvs/libraries/clib/awt/xynth/event.c	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-cvs-xynth/libraries/clib/awt/xynth/event.c	2006-08-15 14:22:08.000000000 +0300
-@@ -0,0 +1,324 @@
-+
-+#include "toolkit.h"
-+
-+jclass     ComponentEvent;
-+jclass     MouseEvent;
-+jclass     FocusEvent;
-+jclass     WindowEvent;
-+jclass     KeyEvent;
-+jclass     PaintEvent;
-+jclass     WMEvent;
-+
-+jmethodID  getComponentEvent;
-+jmethodID  getMouseEvent;
-+jmethodID  getFocusEvent;
-+jmethodID  getWindowEvent;
-+jmethodID  getKeyEvent;
-+jmethodID  getPaintEvent;
-+jmethodID  getWMEvent;
-+
-+typedef jobject (*event_handler) (JNIEnv *, xynth_event_t *);
-+
-+typedef enum {
-+	JNONE_EVENT   = 0x0,
-+	JQUIT_EVENT   = 0x1,
-+	JKEYBD_EVENT  = 0x2,
-+	JMOUSE_EVENT  = 0x3,
-+	JEXPOSE_EVENT = 0x4,
-+	JCONFIG_EVENT = 0x5,
-+	JFOCUS_EVENT  = 0x6
-+} S_JEVENT;
-+
-+S_JEVENT event_handler_number (s_event_t *event)
-+{
-+	S_EVENT event_type;
-+	event_type = event->type & (QUIT_EVENT | KEYBD_EVENT | MOUSE_EVENT | EXPOSE_EVENT | CONFIG_EVENT | FOCUS_EVENT);
-+	switch (event_type) {
-+		case QUIT_EVENT:  return JQUIT_EVENT;
-+		case KEYBD_EVENT: return JKEYBD_EVENT;
-+		case MOUSE_EVENT: return JMOUSE_EVENT;
-+		case EXPOSE_EVENT:return JEXPOSE_EVENT;
-+		case CONFIG_EVENT:return JCONFIG_EVENT;
-+		case FOCUS_EVENT: return JFOCUS_EVENT;
-+		default:          break;
-+	}
-+	DEBUGF("unknown event: 0x%08x", event->type); 
-+	return JNONE_EVENT;
-+}
-+
-+jobject event_handler_none (JNIEnv *env, xynth_event_t *xevent)
-+{
-+	DEBUGF("Enter");
-+	DEBUGF("Leave");
-+	return NULL;
-+}
-+
-+jobject event_handler_quit (JNIEnv *env, xynth_event_t *xevent)
-+{
-+	int idx;
-+	jobject jevent;
-+	s_event_t *event;
-+	DEBUGF("Enter");
-+	idx = source_idx_get(xynth, xevent->window);
-+	if (idx < 0) {
-+		return NULL;
-+	}
-+	jevent = (*env)->CallStaticObjectMethod(env, WMEvent, getWMEvent, idx, JQUIT);
-+	DEBUGF("Leave");
-+	return jevent;
-+}
-+
-+jobject event_handler_keybd (JNIEnv *env, xynth_event_t *xevent)
-+{
-+	DEBUGF("Enter");
-+	DEBUGF("Leave");
-+	return NULL;
-+}
-+
-+jobject event_handler_mouse (JNIEnv *env, xynth_event_t *xevent)
-+{
-+	int idx;
-+	jobject jevent;
-+	s_event_t *event;
-+	DEBUGF("Enter");
-+	idx = source_idx_get(xynth, xevent->window);
-+	if (idx < 0) {
-+		return NULL;
-+	}
-+	jevent = NULL;
-+	event = xevent->event;
-+	if ((event->mouse->x >= xevent->window->surface->buf->x) &&
-+	    (event->mouse->y >= xevent->window->surface->buf->y) &&
-+	    (event->mouse->x <= (xevent->window->surface->buf->x + xevent->window->surface->buf->w - 1)) &&
-+	    (event->mouse->y <= (xevent->window->surface->buf->y + xevent->window->surface->buf->h - 1))) {
-+		event->mouse->x -= xevent->window->surface->buf->x;
-+		event->mouse->y -= xevent->window->surface->buf->y;
-+		if (event->type & MOUSE_RELEASED) {
-+			jevent = (*env)->CallStaticObjectMethod(env, MouseEvent, getMouseEvent, idx, JMOUSE_RELEASED, event->mouse->b, event->mouse->x, event->mouse->y);
-+		} else if (event->type & MOUSE_PRESSED) {
-+			jevent = (*env)->CallStaticObjectMethod(env, MouseEvent, getMouseEvent, idx, JMOUSE_PRESSED, event->mouse->b, event->mouse->x, event->mouse->y);
-+		} else if (event->type & MOUSE_ENTERED) {
-+			jevent = (*env)->CallStaticObjectMethod(env, MouseEvent, getMouseEvent, idx, JMOUSE_ENTERED, 0, event->mouse->x, event->mouse->y);
-+		} else if (event->type & MOUSE_EXITED) {
-+			jevent = (*env)->CallStaticObjectMethod(env, MouseEvent, getMouseEvent, idx, JMOUSE_EXITED, 0, event->mouse->x, event->mouse->y);
-+		} else {
-+			jevent = (*env)->CallStaticObjectMethod(env, MouseEvent, getMouseEvent, idx, JMOUSE_MOVED, 0, event->mouse->x, event->mouse->y);
-+		}
-+	}
-+	DEBUGF("Leave %d", xevent->window->client->id);
-+	return jevent;
-+}
-+
-+jobject event_handler_expose (JNIEnv *env, xynth_event_t *xevent)
-+{
-+	int idx;
-+	jobject jevent;
-+	s_event_t *event;
-+	DEBUGF("Enter");
-+	idx = source_idx_get(xynth, xevent->window);
-+	if (idx < 0) {
-+		return NULL;
-+	}
-+	event = xevent->event;
-+	event->expose->rect->x = event->expose->rect->x - xevent->window->surface->buf->x;
-+	event->expose->rect->y = event->expose->rect->y - xevent->window->surface->buf->y;
-+	jevent = (*env)->CallStaticObjectMethod( env, PaintEvent, getPaintEvent, idx, JUPDATE, event->expose->rect->x, event->expose->rect->y, event->expose->rect->w, event->expose->rect->h);
-+	DEBUGF("Leave");
-+	return jevent;
-+}
-+
-+jobject event_handler_config (JNIEnv *env, xynth_event_t *xevent)
-+{
-+	int idx;
-+	jobject jevent;
-+	s_event_t *event;
-+	DEBUGF("Enter");
-+	idx = source_idx_get(xynth, xevent->window);
-+	if (idx < 0) {
-+		return NULL;
-+	}
-+	if (xevent->event->type & (CONFIG_CHNGW | CONFIG_CHNGH)) {
-+		free(xevent->window->surface->vbuf);
-+		xevent->window->surface->width = xevent->event->expose->rect->w;
-+		xevent->window->surface->height = xevent->event->expose->rect->h;
-+		xevent->window->surface->vbuf = (char *) malloc(xevent->window->surface->width * xevent->window->surface->height * xevent->window->surface->bytesperpixel);
-+	}
-+	event = xevent->event;
-+	jevent = (*env)->CallStaticObjectMethod(env, ComponentEvent, getComponentEvent, idx, JCOMPONENT_RESIZED, event->expose->rect->x, event->expose->rect->y, event->expose->rect->w, event->expose->rect->h);
-+	DEBUGF("Leave");
-+	return jevent;
-+}
-+
-+jobject event_handler_focus (JNIEnv *env, xynth_event_t *xevent)
-+{
-+	int idx;
-+	jobject jevent;
-+	s_event_t *event;
-+	DEBUGF("Enter");
-+	idx = source_idx_get(xynth, xevent->window);
-+	if (idx < 0) {
-+		return NULL;
-+	}
-+	event = xevent->event;
-+	if (xevent->window->client->pri == 0) {
-+		jevent = (*env)->CallStaticObjectMethod(env, FocusEvent, getFocusEvent, idx, JFOCUS_GAINED, JNI_FALSE);
-+	} else {
-+		jevent = (*env)->CallStaticObjectMethod(env, FocusEvent, getFocusEvent, idx, JFOCUS_LOST, JNI_FALSE);
-+	}
-+	DEBUGF("Leave");
-+	return jevent;
-+}
-+
-+event_handler process_event[] = {
-+	event_handler_none,
-+	event_handler_quit,
-+	event_handler_keybd,
-+	event_handler_mouse,
-+	event_handler_expose,
-+	event_handler_config,
-+	event_handler_focus
-+};
-+
-+jobject Java_java_awt_Toolkit_evtInit (JNIEnv* env, jclass clazz UNUSED)
-+{
-+	jclass Component;
-+	
-+	DEBUGF("Enter");
-+	
-+	if (ComponentEvent != NULL) {
-+		DEBUGF("evtInit called twice");
-+		return NULL;
-+	}
-+	
-+	ComponentEvent = (*env)->FindClass( env, "java/awt/ComponentEvt");
-+	assert(ComponentEvent != NULL);
-+	MouseEvent     = (*env)->FindClass( env, "java/awt/MouseEvt");
-+	assert(MouseEvent != NULL);
-+	FocusEvent     = (*env)->FindClass( env, "java/awt/FocusEvt");
-+	assert(FocusEvent != NULL);
-+	WindowEvent    = (*env)->FindClass( env, "java/awt/WindowEvt");
-+	assert(WindowEvent != NULL);  
-+	KeyEvent       = (*env)->FindClass( env, "java/awt/KeyEvt");
-+	assert(KeyEvent != NULL);
-+	PaintEvent     = (*env)->FindClass( env, "java/awt/PaintEvt");
-+	assert(PaintEvent != NULL);
-+	WMEvent        = (*env)->FindClass( env, "java/awt/WMEvent");
-+	assert(WMEvent != NULL);
-+	
-+	getComponentEvent = (*env)->GetStaticMethodID( env, ComponentEvent, "getEvent", "(IIIIII)Ljava/awt/ComponentEvt;");
-+	getMouseEvent     = (*env)->GetStaticMethodID( env, MouseEvent, "getEvent", "(IIIII)Ljava/awt/MouseEvt;");
-+	getFocusEvent     = (*env)->GetStaticMethodID( env, FocusEvent, "getEvent", "(IIZ)Ljava/awt/FocusEvt;");
-+	getWindowEvent    = (*env)->GetStaticMethodID( env, WindowEvent, "getEvent", "(II)Ljava/awt/WindowEvt;");
-+	getKeyEvent       = (*env)->GetStaticMethodID( env, KeyEvent, "getEvent", "(IIIII)Ljava/awt/KeyEvt;");
-+	getPaintEvent     = (*env)->GetStaticMethodID( env, PaintEvent, "getEvent", "(IIIIII)Ljava/awt/PaintEvt;");
-+	getWMEvent        = (*env)->GetStaticMethodID( env, WMEvent, "getEvent", "(II)Ljava/awt/WMEvent;");
-+	
-+	Component = (*env)->FindClass( env, "java/awt/Component");
-+
-+	DEBUGF("Leave");
-+
-+	return (*env)->NewObjectArray( env, xynth->nwindows, Component, NULL);
-+}
-+
-+jint Java_java_awt_Toolkit_evtRegisterSource (JNIEnv* env UNUSED, jclass clazz UNUSED, jobject nativeWnd)
-+{
-+	int id;
-+	DEBUGF("Enter");
-+	s_window_t *window;
-+	window = UNVEIL_WINDOW(nativeWnd);
-+	id = source_idx_get(xynth, window);
-+	DEBUGF("Leave");
-+	return id;
-+}
-+
-+void xynth_kaffe_atevent (s_window_t *window, s_event_t *event)
-+{
-+	xynth_event_t *xevent;
-+	DEBUGF("Enter id: %d", window->client->id);
-+	switch (event->type & EVENT_MASK) {
-+		case QUIT_EVENT:
-+		case MOUSE_EVENT:
-+		case KEYBD_EVENT:
-+		case CONFIG_EVENT:
-+		case FOCUS_EVENT:
-+			xevent = (xynth_event_t *) AWT_MALLOC(sizeof(xynth_event_t));
-+			if (xevent != NULL) {
-+				if (!s_event_init(&(xevent->event))) {
-+					xevent->window = window;
-+					xevent->event->type = event->type;
-+					memcpy(xevent->event->mouse, event->mouse, sizeof(s_mouse_t));
-+					memcpy(xevent->event->keybd, event->keybd, sizeof(s_keybd_t));
-+					memcpy(xevent->event->expose->rect, event->expose->rect, sizeof(s_rect_t));
-+					s_thread_mutex_lock(xynth->eventq->mut);
-+					s_list_add(xynth->eventq->list, xevent, -1);
-+					s_thread_mutex_unlock(xynth->eventq->mut);
-+				} else {
-+					AWT_FREE(xevent);
-+				}
-+			}
-+			break;
-+		case EXPOSE_EVENT: /* nothing */
-+		default:
-+			break;
-+	}
-+	if (event->type & (CONFIG_CHNGW | CONFIG_CHNGH)) {
-+		xevent = (xynth_event_t *) AWT_MALLOC(sizeof(xynth_event_t));
-+		if (xevent != NULL) {
-+			if (!s_event_init(&(xevent->event))) {
-+				xevent->window = window;
-+				xevent->event->type = EXPOSE_EVENT;
-+				memcpy(xevent->event->mouse, event->mouse, sizeof(s_mouse_t));
-+				memcpy(xevent->event->keybd, event->keybd, sizeof(s_keybd_t));
-+				memcpy(xevent->event->expose->rect, event->expose->rect, sizeof(s_rect_t));
-+				s_thread_mutex_lock(xynth->eventq->mut);
-+				s_list_add(xynth->eventq->list, xevent, -1);
-+				s_thread_mutex_unlock(xynth->eventq->mut);
-+			} else {
-+				AWT_FREE(xevent);
-+			}
-+		}
-+	}
-+	DEBUGF("Leave");
-+}
-+
-+jobject Java_java_awt_Toolkit_evtGetNextEvent (JNIEnv *env, jclass clazz)
-+{
-+	jobject jevent;
-+	xynth_event_t *xevent;
-+	S_JEVENT jevent_type;
-+	jevent = NULL;
-+	s_thread_mutex_lock(xynth->eventq->mut);
-+        while (!s_list_eol(xynth->eventq->list, 0)) {
-+		xevent = (xynth_event_t *) s_list_get(xynth->eventq->list, 0);
-+		jevent_type = event_handler_number(xevent->event);
-+		jevent = process_event[jevent_type](env, xevent);
-+		s_list_remove(xynth->eventq->list, 0);
-+		s_event_uninit(xevent->event);
-+		AWT_FREE(xevent);
-+		if (jevent != NULL) {
-+			break;
-+		} else {
-+			DEBUGF("ERROR");
-+		}
-+	}
-+	s_thread_mutex_unlock(xynth->eventq->mut);
-+	return jevent;
-+}
-+
-+jint Java_java_awt_Toolkit_evtUnregisterSource (JNIEnv *env UNUSED, jclass clazz UNUSED, jobject nwnd)
-+{
-+	int i;
-+	s_window_t *window;
-+	DEBUGF("Enter");
-+	window = UNVEIL_WINDOW(nwnd);
-+	i = source_idx_get(xynth, window);
-+	if (i >= 0) {
-+		xynth->windows[i].window = 0;
-+		xynth->windows[i].owner = 0;
-+	}
-+	if (xynth->last_window == window) {
-+		xynth->last_window = 0;
-+	}
-+	DEBUGF("Leave");
-+	return i;
-+}
-diff -Naur kaffe-cvs/libraries/clib/awt/xynth/font.c kaffe-cvs-xynth/libraries/clib/awt/xynth/font.c
---- kaffe-cvs/libraries/clib/awt/xynth/font.c	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-cvs-xynth/libraries/clib/awt/xynth/font.c	2006-08-15 13:29:14.000000000 +0300
-@@ -0,0 +1,138 @@
-+
-+#include "toolkit.h"
-+
-+void * Java_java_awt_Toolkit_fntInitFont (JNIEnv *env, jclass clazz UNUSED, jstring jSpec, jint style, jint size)
-+{
-+	char *spec;
-+	int italic = 0;
-+	int weight = 0;
-+	s_font_t *font;
-+	
-+	DEBUGF("Enter");
-+	
-+	spec = java2CString(env, jSpec);
-+	if (style & 1) {
-+		weight = 1;
-+	}
-+	if (style & 2) {
-+		italic = 1;
-+	}
-+	DEBUGF("spec: %s, weight: %d, italic: %d, size: %d", spec, weight, italic, size);
-+	
-+	s_font_init(&font, "arial.ttf");
-+	s_font_set_size(font, size);
-+
-+	AWT_FREE(spec);
-+
-+	DEBUGF("Leave");
-+
-+	return JCL_NewRawDataObject(env, font);
-+}
-+
-+KAFFE_FONT_FUNC_DECL (jobject, Java_java_awt_Toolkit_fntInitFontMetrics)
-+{
-+	DEBUGF("Enter");
-+	DEBUGF("Leave");
-+	return jfont;
-+}
-+
-+KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntGetHeight)
-+{
-+	s_font_t *font = UNVEIL_FONT(jfont);
-+	DEBUGF("Enter");
-+	DEBUGF("Leave");
-+	return font->ascent - font->descent + 1;
-+}
-+
-+KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntGetDescent)
-+{
-+	DEBUGF("Enter");
-+	DEBUGF("Leave");
-+	return -(UNVEIL_FONT(jfont)->descent);
-+}
-+
-+KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntGetMaxDescent)
-+{
-+	DEBUGF("Enter");
-+	DEBUGF("Leave");
-+	return -(UNVEIL_FONT(jfont)->descent);
-+}
-+
-+KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntGetLeading)
-+{
-+	DEBUGF("Enter");
-+	DEBUGF("Leave");
-+	return 0;
-+}
-+
-+KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntGetAscent)
-+{
-+	DEBUGF("Enter");
-+	DEBUGF("Leave");
-+	return UNVEIL_FONT(jfont)->ascent;
-+}
-+
-+KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntGetMaxAscent)
-+{
-+	DEBUGF("Enter");
-+	DEBUGF("Leave");
-+	return UNVEIL_FONT(jfont)->ascent;
-+}
-+
-+KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntGetMaxAdvance)
-+{
-+	DEBUGF("Enter");
-+	DEBUGF("Leave");
-+	return UNVEIL_FONT(jfont)->height;
-+}
-+
-+KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntGetFixedWidth)
-+{
-+	DEBUGF("Enter");
-+	DEBUGF("Leave");
-+	return 0;
-+}
-+
-+KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntIsWideFont)
-+{
-+	DEBUGF("Enter");
-+	DEBUGF("Leave");
-+	return 0;
-+}
-+
-+KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntStringWidth, jstring jStr)
-+{
-+	char *str;
-+	s_font_t *font;
-+	DEBUGF("Enter");
-+	font = UNVEIL_FONT(jfont);
-+	str = java2CString(env, jStr);
-+	s_font_set_str(font, str);
-+	s_font_get_glyph(font);
-+	AWT_FREE(str);
-+	DEBUGF("Leave");
-+	return font->img->w;
-+}
-+
-+KAFFE_FONT_FUNC_DECL (jobject, Java_java_awt_Toolkit_fntGetWidths)
-+{
-+	int n;
-+	jint *jw;
-+	char str[3];
-+	s_font_t *font;
-+	jboolean isCopy;
-+	jintArray widths;
-+	DEBUGF("Enter");
-+	font = UNVEIL_FONT(jfont);
-+	widths = (*env)->NewIntArray(env, 256);
-+	jw = (*env)->GetIntArrayElements(env, widths, &isCopy);
-+	for (n = 0; n < 256; n++) {
-+		sprintf(str, "%c", n);
-+		s_font_set_str(font, str);
-+		s_font_get_glyph(font);
-+		jw[n] = font->img->w;
-+		jw[n] = (jw[n] < 0) ? 0 : jw[n];
-+	}
-+	(*env)->ReleaseIntArrayElements(env, widths, jw, 0);
-+	return widths;
-+}
-diff -Naur kaffe-cvs/libraries/clib/awt/xynth/graphic.c kaffe-cvs-xynth/libraries/clib/awt/xynth/graphic.c
---- kaffe-cvs/libraries/clib/awt/xynth/graphic.c	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-cvs-xynth/libraries/clib/awt/xynth/graphic.c	2006-08-15 14:16:38.000000000 +0300
-@@ -0,0 +1,376 @@
++/*
++ * Copyright (c) 2006
++ *	Alper Akcan <distchx@yahoo.com>, All rights reserved.
++ *
++ * See the file "license.terms" for information on usage and redistribution 
++ * of this file. 
++ */
 +
 +#include "toolkit.h"
 +
@@ -1111,10 +633,21 @@ diff -Naur kaffe-cvs/libraries/clib/awt/xynth/graphic.c kaffe-cvs-xynth/librarie
 +	Java_java_awt_Toolkit_graDrawLine(env, clazz, jgr, x + width - 1, y, x + width - 1, y);
 +	DEBUGF("Leave");
 +}
-diff -Naur kaffe-cvs/libraries/clib/awt/xynth/image.c kaffe-cvs-xynth/libraries/clib/awt/xynth/image.c
---- kaffe-cvs/libraries/clib/awt/xynth/image.c	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-cvs-xynth/libraries/clib/awt/xynth/image.c	2006-08-15 13:29:14.000000000 +0300
-@@ -0,0 +1,40 @@
+Index: libraries/clib/awt/xynth/image.c
+===================================================================
+RCS file: libraries/clib/awt/xynth/image.c
+diff -N libraries/clib/awt/xynth/image.c
+--- /dev/null	1 Jan 1970 00:00:00 -0000
++++ libraries/clib/awt/xynth/image.c	1 Jan 1970 00:00:00 -0000
+@@ -0,0 +1,48 @@
++
++/*
++ * Copyright (c) 2006
++ *	Alper Akcan <distchx@yahoo.com>, All rights reserved.
++ *
++ * See the file "license.terms" for information on usage and redistribution 
++ * of this file. 
++ */
 +
 +#include "toolkit.h"
 +
@@ -1155,81 +688,174 @@ diff -Naur kaffe-cvs/libraries/clib/awt/xynth/image.c kaffe-cvs-xynth/libraries/
 +	DEBUGF("Leave");
 +	return (UNVEIL_IMG(jimg)->layers->nb_elt != 0);
 +}
-diff -Naur kaffe-cvs/libraries/clib/awt/xynth/toolkit.c kaffe-cvs-xynth/libraries/clib/awt/xynth/toolkit.c
---- kaffe-cvs/libraries/clib/awt/xynth/toolkit.c	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-cvs-xynth/libraries/clib/awt/xynth/toolkit.c	2006-08-15 13:29:14.000000000 +0300
-@@ -0,0 +1,67 @@
+Index: libraries/clib/awt/xynth/font.c
+===================================================================
+RCS file: libraries/clib/awt/xynth/font.c
+diff -N libraries/clib/awt/xynth/font.c
+--- /dev/null	1 Jan 1970 00:00:00 -0000
++++ libraries/clib/awt/xynth/font.c	1 Jan 1970 00:00:00 -0000
+@@ -0,0 +1,146 @@
++
++/*
++ * Copyright (c) 2006
++ *	Alper Akcan <distchx@yahoo.com>, All rights reserved.
++ *
++ * See the file "license.terms" for information on usage and redistribution 
++ * of this file. 
++ */
 +
 +#include "toolkit.h"
 +
-+jint Java_java_awt_Toolkit_tlkProperties (JNIEnv *env UNUSED, jclass clazz UNUSED)
++void * Java_java_awt_Toolkit_fntInitFont (JNIEnv *env, jclass clazz UNUSED, jstring jSpec, jint style, jint size)
 +{
-+	jint props;
++	char *spec;
++	int italic = 0;
++	int weight = 0;
++	s_font_t *font;
++	
 +	DEBUGF("Enter");
-+	props = TLK_EXTERNAL_DECO;
++	
++	spec = java2CString(env, jSpec);
++	if (style & 1) {
++		weight = 1;
++	}
++	if (style & 2) {
++		italic = 1;
++	}
++	DEBUGF("spec: %s, weight: %d, italic: %d, size: %d", spec, weight, italic, size);
++	
++	s_font_init(&font, "arial.ttf");
++	s_font_set_size(font, size);
++
++	AWT_FREE(spec);
++
 +	DEBUGF("Leave");
-+	return props;
++
++	return JCL_NewRawDataObject(env, font);
 +}
 +
-+jboolean Java_java_awt_Toolkit_tlkInit (JNIEnv *env UNUSED, jclass clazz UNUSED, jstring name UNUSED)
-+{
-+	DEBUGF("Enter");
-+	xynth = AWT_MALLOC(sizeof(xynth_toolkit_t));
-+	xynth->eventq = (xynth_eventq_t *) AWT_MALLOC(sizeof(xynth_eventq_t));
-+	s_list_init(&(xynth->eventq->list));
-+	s_thread_mutex_init(&(xynth->eventq->mut));
-+	s_client_init(&(xynth->root));
-+	s_window_new(xynth->root, WINDOW_MAIN, NULL);
-+	s_thread_create(s_client_main, xynth->root);
-+	xynth->nwindows = XYNTH_NWINDOWS;
-+	xynth->windows = AWT_CALLOC(xynth->nwindows, sizeof(window_rec_t));
-+	DEBUGF("Leave");
-+	return JNI_TRUE;
-+}
-+
-+jint Java_java_awt_Toolkit_tlkGetScreenWidth (JNIEnv *env UNUSED, jclass clazz UNUSED)
-+{
-+	DEBUGF("Enter");
-+	DEBUGF("Leave");
-+	return xynth->root->surface->linear_buf_width;
-+}
-+
-+jint Java_java_awt_Toolkit_tlkGetScreenHeight (JNIEnv *env UNUSED, jclass clazz UNUSED)
++KAFFE_FONT_FUNC_DECL (jobject, Java_java_awt_Toolkit_fntInitFontMetrics)
 +{
 +	DEBUGF("Enter");
 +	DEBUGF("Leave");
-+	return xynth->root->surface->linear_buf_height;
++	return jfont;
 +}
 +
-+jint Java_java_awt_Toolkit_tlkGetResolution (JNIEnv *env UNUSED, jclass clazz UNUSED)
++KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntGetHeight)
++{
++	s_font_t *font = UNVEIL_FONT(jfont);
++	DEBUGF("Enter");
++	DEBUGF("Leave");
++	return font->ascent - font->descent + 1;
++}
++
++KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntGetDescent)
++{
++	DEBUGF("Enter");
++	DEBUGF("Leave");
++	return -(UNVEIL_FONT(jfont)->descent);
++}
++
++KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntGetMaxDescent)
++{
++	DEBUGF("Enter");
++	DEBUGF("Leave");
++	return -(UNVEIL_FONT(jfont)->descent);
++}
++
++KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntGetLeading)
 +{
 +	DEBUGF("Enter");
 +	DEBUGF("Leave");
 +	return 0;
 +}
 +
-+jstring Java_java_awt_Toolkit_tlkVersion (JNIEnv *env, jclass clazz UNUSED)
++KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntGetAscent)
 +{
 +	DEBUGF("Enter");
 +	DEBUGF("Leave");
-+	return (*env)->NewStringUTF(env, "Xynth Windowing System");
++	return UNVEIL_FONT(jfont)->ascent;
 +}
 +
-+void Java_java_awt_Toolkit_tlkDisplayBanner (JNIEnv* env UNUSED, jclass clazz UNUSED, jstring banner UNUSED)
++KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntGetMaxAscent)
 +{
 +	DEBUGF("Enter");
 +	DEBUGF("Leave");
++	return UNVEIL_FONT(jfont)->ascent;
 +}
 +
-+void Java_java_awt_Toolkit_tlkBeep (JNIEnv *env UNUSED, jclass clazz UNUSED)
++KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntGetMaxAdvance)
 +{
 +	DEBUGF("Enter");
 +	DEBUGF("Leave");
++	return UNVEIL_FONT(jfont)->height;
 +}
-diff -Naur kaffe-cvs/libraries/clib/awt/xynth/toolkit.h kaffe-cvs-xynth/libraries/clib/awt/xynth/toolkit.h
---- kaffe-cvs/libraries/clib/awt/xynth/toolkit.h	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-cvs-xynth/libraries/clib/awt/xynth/toolkit.h	2006-08-15 14:02:01.000000000 +0300
-@@ -0,0 +1,180 @@
++
++KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntGetFixedWidth)
++{
++	DEBUGF("Enter");
++	DEBUGF("Leave");
++	return 0;
++}
++
++KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntIsWideFont)
++{
++	DEBUGF("Enter");
++	DEBUGF("Leave");
++	return 0;
++}
++
++KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntStringWidth, jstring jStr)
++{
++	char *str;
++	s_font_t *font;
++	DEBUGF("Enter");
++	font = UNVEIL_FONT(jfont);
++	str = java2CString(env, jStr);
++	s_font_set_str(font, str);
++	s_font_get_glyph(font);
++	AWT_FREE(str);
++	DEBUGF("Leave");
++	return font->img->w;
++}
++
++KAFFE_FONT_FUNC_DECL (jobject, Java_java_awt_Toolkit_fntGetWidths)
++{
++	int n;
++	jint *jw;
++	char str[3];
++	s_font_t *font;
++	jboolean isCopy;
++	jintArray widths;
++	DEBUGF("Enter");
++	font = UNVEIL_FONT(jfont);
++	widths = (*env)->NewIntArray(env, 256);
++	jw = (*env)->GetIntArrayElements(env, widths, &isCopy);
++	for (n = 0; n < 256; n++) {
++		sprintf(str, "%c", n);
++		s_font_set_str(font, str);
++		s_font_get_glyph(font);
++		jw[n] = font->img->w;
++		jw[n] = (jw[n] < 0) ? 0 : jw[n];
++	}
++	(*env)->ReleaseIntArrayElements(env, widths, jw, 0);
++	return widths;
++}
+Index: libraries/clib/awt/xynth/toolkit.h
+===================================================================
+RCS file: libraries/clib/awt/xynth/toolkit.h
+diff -N libraries/clib/awt/xynth/toolkit.h
+--- /dev/null	1 Jan 1970 00:00:00 -0000
++++ libraries/clib/awt/xynth/toolkit.h	1 Jan 1970 00:00:00 -0000
+@@ -0,0 +1,188 @@
++
++/*
++ * Copyright (c) 2006
++ *	Alper Akcan <distchx@yahoo.com>, All rights reserved.
++ *
++ * See the file "license.terms" for information on usage and redistribution 
++ * of this file. 
++ */
 +
 +#include "config.h"
 +#include "config-std.h"
@@ -1410,10 +1036,117 @@ diff -Naur kaffe-cvs/libraries/clib/awt/xynth/toolkit.h kaffe-cvs-xynth/librarie
 +		return -1;
 +	}
 +}
-diff -Naur kaffe-cvs/libraries/clib/awt/xynth/window.c kaffe-cvs-xynth/libraries/clib/awt/xynth/window.c
---- kaffe-cvs/libraries/clib/awt/xynth/window.c	1970-01-01 02:00:00.000000000 +0200
-+++ kaffe-cvs-xynth/libraries/clib/awt/xynth/window.c	2006-08-15 13:29:14.000000000 +0300
-@@ -0,0 +1,148 @@
+Index: libraries/clib/awt/xynth/color.c
+===================================================================
+RCS file: libraries/clib/awt/xynth/color.c
+diff -N libraries/clib/awt/xynth/color.c
+--- /dev/null	1 Jan 1970 00:00:00 -0000
++++ libraries/clib/awt/xynth/color.c	1 Jan 1970 00:00:00 -0000
+@@ -0,0 +1,72 @@
++
++/*
++ * Copyright (c) 2006
++ *	Alper Akcan <distchx@yahoo.com>, All rights reserved.
++ *
++ * See the file "license.terms" for information on usage and redistribution 
++ * of this file. 
++ */
++
++#include "toolkit.h"
++
++#define JRGB(_r, _g, _b) (((_r) << 16) | ((_g) << 8) | (_b))
++#define JRED(_rgb)       (((_rgb) & 0xff0000) >> 16)
++#define JGREEN(_rgb)     (((_rgb) & 0x00ff00) >> 8)
++#define JBLUE(_rgb)      ((_rgb) & 0x0000ff)
++
++jint Java_java_awt_Toolkit_clrGetPixelValue (JNIEnv *env, jclass clazz, jint rgb)
++{
++	jint pix;
++	DEBUGF("Enter");
++	pix = s_rgbcolor(xynth->root->surface, JRED(rgb), JGREEN(rgb), JBLUE(rgb));
++	DEBUGF("Leave");
++	return pix;
++}
++
++jlong Java_java_awt_Toolkit_clrBright (JNIEnv *env UNUSED, jclass clazz UNUSED, jint rgb)
++{
++	unsigned int r;
++	unsigned int g;
++	unsigned int b;
++	jint modRgb;
++	jint modPix;
++	
++	r = JRED(rgb);
++	g = JGREEN(rgb);
++	b = JBLUE(rgb);
++	
++	r = (r * 4) / 3;
++	g = (g * 4) / 3;
++	b = (b * 4) / 3;
++	
++	if (r > 0xff) r = 0xff;
++	if (g > 0xff) g = 0xff;
++	if (b > 0xff) b = 0xff;
++	
++	modRgb = JRGB(r, g, b);
++	modPix = s_rgbcolor(xynth->root->surface, r, g, b);
++	
++	return (((jlong) modPix << 32) | modRgb);
++}
++
++jlong Java_java_awt_Toolkit_clrDark (JNIEnv *env UNUSED, jclass clazz UNUSED, jint rgb)
++{
++	unsigned int r;
++	unsigned int g;
++	unsigned int b;
++	jint modRgb;
++	jint modPix;
++	
++	r = JRED(rgb);
++	g = JGREEN(rgb);
++	b = JBLUE(rgb);
++	
++	r = (r * 2) / 3;
++	g = (g * 2) / 3;
++	b = (b * 2) / 3;
++	
++	modRgb = JRGB(r, g, b);
++	modPix = s_rgbcolor(xynth->root->surface, r, g, b);
++	
++	return (((jlong) modPix << 32) | modRgb);
++}
+Index: README.xynth
+===================================================================
+RCS file: README.xynth
+diff -N README.xynth
+--- /dev/null	1 Jan 1970 00:00:00 -0000
++++ README.xynth	1 Jan 1970 00:00:00 -0000
+@@ -0,0 +1,10 @@
++
++# developers/autogen.sh
++# mkdir build-xynth
++# cd build-xynth
++# ../configure --with-kaffe-xynth-awt --disable-gtk-peer --disable-gconf-peer
++# make
++# make install
++
++ Alper Akcan <distchx@yahoo.com>
++
+Index: libraries/clib/awt/xynth/window.c
+===================================================================
+RCS file: libraries/clib/awt/xynth/window.c
+diff -N libraries/clib/awt/xynth/window.c
+--- /dev/null	1 Jan 1970 00:00:00 -0000
++++ libraries/clib/awt/xynth/window.c	1 Jan 1970 00:00:00 -0000
+@@ -0,0 +1,156 @@
++
++/*
++ * Copyright (c) 2006
++ *	Alper Akcan <distchx@yahoo.com>, All rights reserved.
++ *
++ * See the file "license.terms" for information on usage and redistribution 
++ * of this file. 
++ */
 +
 +#include "toolkit.h"
 +
@@ -1562,25 +1295,473 @@ diff -Naur kaffe-cvs/libraries/clib/awt/xynth/window.c kaffe-cvs-xynth/libraries
 +	s_client_quit(window);
 +	DEBUGF("Leave");
 +}
-diff -Naur kaffe-cvs/libraries/javalib/Makefile.am kaffe-cvs-xynth/libraries/javalib/Makefile.am
---- kaffe-cvs/libraries/javalib/Makefile.am	2006-08-13 04:46:56.000000000 +0300
-+++ kaffe-cvs-xynth/libraries/javalib/Makefile.am	2006-08-15 14:31:03.000000000 +0300
-@@ -8,6 +8,10 @@
- else
- if COND_KAFFE_NANOX_AWT
- MAYBE_PEERLESS_KAFFE_AWT=awt-implementations
-+else
-+if COND_KAFFE_XYNTH_AWT
-+MAYBE_PEERLESS_KAFFE_AWT=awt-implementations
-+endif
- endif
- endif
- endif
-diff -Naur kaffe-cvs/test/awt/WidgetsDemo/WidgetsDemo.sh kaffe-cvs-xynth/test/awt/WidgetsDemo/WidgetsDemo.sh
---- kaffe-cvs/test/awt/WidgetsDemo/WidgetsDemo.sh	1998-07-14 17:20:05.000000000 +0300
-+++ kaffe-cvs-xynth/test/awt/WidgetsDemo/WidgetsDemo.sh	2006-08-15 14:31:03.000000000 +0300
-@@ -1,2 +1,3 @@
- #! /bin/sh
--kaffe WidgetsDemo
-+jikes +Pno-switchcheck +Pno-shadow +E -g -classpath .:../../../build-xynth/libraries/javalib/external/classpath/lib/glibj.zip -d . ./WidgetsDemo.java 
-+kaffe -Xkaffe-xynth-awt WidgetsDemo
+Index: libraries/clib/awt/xynth/Makefile.am
+===================================================================
+RCS file: libraries/clib/awt/xynth/Makefile.am
+diff -N libraries/clib/awt/xynth/Makefile.am
+--- /dev/null	1 Jan 1970 00:00:00 -0000
++++ libraries/clib/awt/xynth/Makefile.am	1 Jan 1970 00:00:00 -0000
+@@ -0,0 +1,42 @@
++# Xynth-based AWT support for standard Java libraries
++#
++# Copyright (c) 2006
++#       Alper Akcan <distchx@yahoo.com>
++#
++
++native_LTLIBRARIES = libxynthawt.la
++
++AM_CPPFLAGS = \
++	-I$(top_builddir)/include \
++	-I$(top_srcdir)/kaffe/kaffevm/jni \
++	-I$(top_srcdir)/libraries/javalib/external/classpath/native/jni/classpath
++
++libxynthawt_la_CFLAGS = \
++	$(CFLAGS_PG) \
++	$(XYNTH_CFLAGS)
++
++libxynthawt_la_LDFLAGS = \
++	$(KLIBFLAGS) \
++	-no-undefined \
++	-module \
++	-release $(PACKAGE_VERSION) \
++	-export-symbols-regex "^([Jj]ava|kaffe)_"
++
++libxynthawt_la_LIBADD = \
++	$(top_builddir)/kaffe/kaffevm/libkaffevm.la \
++	$(top_builddir)/libraries/javalib/external/classpath/native/jni/classpath/libclasspath.la \
++	$(AWT_LIBS)
++
++libxynthawt_la_SOURCES = \
++	color.c \
++	event.c \
++	image.c \
++	font.c \
++	graphic.c \
++	toolkit.c \
++	window.c
++
++noinst_HEADERS = \
++	toolkit.h
++
++CLEANFILES = so_locations
+Index: libraries/clib/awt/xynth/event.c
+===================================================================
+RCS file: libraries/clib/awt/xynth/event.c
+diff -N libraries/clib/awt/xynth/event.c
+--- /dev/null	1 Jan 1970 00:00:00 -0000
++++ libraries/clib/awt/xynth/event.c	1 Jan 1970 00:00:00 -0000
+@@ -0,0 +1,332 @@
++
++/*
++ * Copyright (c) 2006
++ *	Alper Akcan <distchx@yahoo.com>, All rights reserved.
++ *
++ * See the file "license.terms" for information on usage and redistribution 
++ * of this file. 
++ */
++
++#include "toolkit.h"
++
++jclass     ComponentEvent;
++jclass     MouseEvent;
++jclass     FocusEvent;
++jclass     WindowEvent;
++jclass     KeyEvent;
++jclass     PaintEvent;
++jclass     WMEvent;
++
++jmethodID  getComponentEvent;
++jmethodID  getMouseEvent;
++jmethodID  getFocusEvent;
++jmethodID  getWindowEvent;
++jmethodID  getKeyEvent;
++jmethodID  getPaintEvent;
++jmethodID  getWMEvent;
++
++typedef jobject (*event_handler) (JNIEnv *, xynth_event_t *);
++
++typedef enum {
++	JNONE_EVENT   = 0x0,
++	JQUIT_EVENT   = 0x1,
++	JKEYBD_EVENT  = 0x2,
++	JMOUSE_EVENT  = 0x3,
++	JEXPOSE_EVENT = 0x4,
++	JCONFIG_EVENT = 0x5,
++	JFOCUS_EVENT  = 0x6
++} S_JEVENT;
++
++S_JEVENT event_handler_number (s_event_t *event)
++{
++	S_EVENT event_type;
++	event_type = event->type & (QUIT_EVENT | KEYBD_EVENT | MOUSE_EVENT | EXPOSE_EVENT | CONFIG_EVENT | FOCUS_EVENT);
++	switch (event_type) {
++		case QUIT_EVENT:  return JQUIT_EVENT;
++		case KEYBD_EVENT: return JKEYBD_EVENT;
++		case MOUSE_EVENT: return JMOUSE_EVENT;
++		case EXPOSE_EVENT:return JEXPOSE_EVENT;
++		case CONFIG_EVENT:return JCONFIG_EVENT;
++		case FOCUS_EVENT: return JFOCUS_EVENT;
++		default:          break;
++	}
++	DEBUGF("unknown event: 0x%08x", event->type); 
++	return JNONE_EVENT;
++}
++
++jobject event_handler_none (JNIEnv *env, xynth_event_t *xevent)
++{
++	DEBUGF("Enter");
++	DEBUGF("Leave");
++	return NULL;
++}
++
++jobject event_handler_quit (JNIEnv *env, xynth_event_t *xevent)
++{
++	int idx;
++	jobject jevent;
++	s_event_t *event;
++	DEBUGF("Enter");
++	idx = source_idx_get(xynth, xevent->window);
++	if (idx < 0) {
++		return NULL;
++	}
++	jevent = (*env)->CallStaticObjectMethod(env, WMEvent, getWMEvent, idx, JQUIT);
++	DEBUGF("Leave");
++	return jevent;
++}
++
++jobject event_handler_keybd (JNIEnv *env, xynth_event_t *xevent)
++{
++	DEBUGF("Enter");
++	DEBUGF("Leave");
++	return NULL;
++}
++
++jobject event_handler_mouse (JNIEnv *env, xynth_event_t *xevent)
++{
++	int idx;
++	jobject jevent;
++	s_event_t *event;
++	DEBUGF("Enter");
++	idx = source_idx_get(xynth, xevent->window);
++	if (idx < 0) {
++		return NULL;
++	}
++	jevent = NULL;
++	event = xevent->event;
++	if ((event->mouse->x >= xevent->window->surface->buf->x) &&
++	    (event->mouse->y >= xevent->window->surface->buf->y) &&
++	    (event->mouse->x <= (xevent->window->surface->buf->x + xevent->window->surface->buf->w - 1)) &&
++	    (event->mouse->y <= (xevent->window->surface->buf->y + xevent->window->surface->buf->h - 1))) {
++		event->mouse->x -= xevent->window->surface->buf->x;
++		event->mouse->y -= xevent->window->surface->buf->y;
++		if (event->type & MOUSE_RELEASED) {
++			jevent = (*env)->CallStaticObjectMethod(env, MouseEvent, getMouseEvent, idx, JMOUSE_RELEASED, event->mouse->b, event->mouse->x, event->mouse->y);
++		} else if (event->type & MOUSE_PRESSED) {
++			jevent = (*env)->CallStaticObjectMethod(env, MouseEvent, getMouseEvent, idx, JMOUSE_PRESSED, event->mouse->b, event->mouse->x, event->mouse->y);
++		} else if (event->type & MOUSE_ENTERED) {
++			jevent = (*env)->CallStaticObjectMethod(env, MouseEvent, getMouseEvent, idx, JMOUSE_ENTERED, 0, event->mouse->x, event->mouse->y);
++		} else if (event->type & MOUSE_EXITED) {
++			jevent = (*env)->CallStaticObjectMethod(env, MouseEvent, getMouseEvent, idx, JMOUSE_EXITED, 0, event->mouse->x, event->mouse->y);
++		} else {
++			jevent = (*env)->CallStaticObjectMethod(env, MouseEvent, getMouseEvent, idx, JMOUSE_MOVED, 0, event->mouse->x, event->mouse->y);
++		}
++	}
++	DEBUGF("Leave %d", xevent->window->client->id);
++	return jevent;
++}
++
++jobject event_handler_expose (JNIEnv *env, xynth_event_t *xevent)
++{
++	int idx;
++	jobject jevent;
++	s_event_t *event;
++	DEBUGF("Enter");
++	idx = source_idx_get(xynth, xevent->window);
++	if (idx < 0) {
++		return NULL;
++	}
++	event = xevent->event;
++	event->expose->rect->x = event->expose->rect->x - xevent->window->surface->buf->x;
++	event->expose->rect->y = event->expose->rect->y - xevent->window->surface->buf->y;
++	jevent = (*env)->CallStaticObjectMethod( env, PaintEvent, getPaintEvent, idx, JUPDATE, event->expose->rect->x, event->expose->rect->y, event->expose->rect->w, event->expose->rect->h);
++	DEBUGF("Leave");
++	return jevent;
++}
++
++jobject event_handler_config (JNIEnv *env, xynth_event_t *xevent)
++{
++	int idx;
++	jobject jevent;
++	s_event_t *event;
++	DEBUGF("Enter");
++	idx = source_idx_get(xynth, xevent->window);
++	if (idx < 0) {
++		return NULL;
++	}
++	if (xevent->event->type & (CONFIG_CHNGW | CONFIG_CHNGH)) {
++		free(xevent->window->surface->vbuf);
++		xevent->window->surface->width = xevent->event->expose->rect->w;
++		xevent->window->surface->height = xevent->event->expose->rect->h;
++		xevent->window->surface->vbuf = (char *) malloc(xevent->window->surface->width * xevent->window->surface->height * xevent->window->surface->bytesperpixel);
++	}
++	event = xevent->event;
++	jevent = (*env)->CallStaticObjectMethod(env, ComponentEvent, getComponentEvent, idx, JCOMPONENT_RESIZED, event->expose->rect->x, event->expose->rect->y, event->expose->rect->w, event->expose->rect->h);
++	DEBUGF("Leave");
++	return jevent;
++}
++
++jobject event_handler_focus (JNIEnv *env, xynth_event_t *xevent)
++{
++	int idx;
++	jobject jevent;
++	s_event_t *event;
++	DEBUGF("Enter");
++	idx = source_idx_get(xynth, xevent->window);
++	if (idx < 0) {
++		return NULL;
++	}
++	event = xevent->event;
++	if (xevent->window->client->pri == 0) {
++		jevent = (*env)->CallStaticObjectMethod(env, FocusEvent, getFocusEvent, idx, JFOCUS_GAINED, JNI_FALSE);
++	} else {
++		jevent = (*env)->CallStaticObjectMethod(env, FocusEvent, getFocusEvent, idx, JFOCUS_LOST, JNI_FALSE);
++	}
++	DEBUGF("Leave");
++	return jevent;
++}
++
++event_handler process_event[] = {
++	event_handler_none,
++	event_handler_quit,
++	event_handler_keybd,
++	event_handler_mouse,
++	event_handler_expose,
++	event_handler_config,
++	event_handler_focus
++};
++
++jobject Java_java_awt_Toolkit_evtInit (JNIEnv* env, jclass clazz UNUSED)
++{
++	jclass Component;
++	
++	DEBUGF("Enter");
++	
++	if (ComponentEvent != NULL) {
++		DEBUGF("evtInit called twice");
++		return NULL;
++	}
++	
++	ComponentEvent = (*env)->FindClass( env, "java/awt/ComponentEvt");
++	assert(ComponentEvent != NULL);
++	MouseEvent     = (*env)->FindClass( env, "java/awt/MouseEvt");
++	assert(MouseEvent != NULL);
++	FocusEvent     = (*env)->FindClass( env, "java/awt/FocusEvt");
++	assert(FocusEvent != NULL);
++	WindowEvent    = (*env)->FindClass( env, "java/awt/WindowEvt");
++	assert(WindowEvent != NULL);  
++	KeyEvent       = (*env)->FindClass( env, "java/awt/KeyEvt");
++	assert(KeyEvent != NULL);
++	PaintEvent     = (*env)->FindClass( env, "java/awt/PaintEvt");
++	assert(PaintEvent != NULL);
++	WMEvent        = (*env)->FindClass( env, "java/awt/WMEvent");
++	assert(WMEvent != NULL);
++	
++	getComponentEvent = (*env)->GetStaticMethodID( env, ComponentEvent, "getEvent", "(IIIIII)Ljava/awt/ComponentEvt;");
++	getMouseEvent     = (*env)->GetStaticMethodID( env, MouseEvent, "getEvent", "(IIIII)Ljava/awt/MouseEvt;");
++	getFocusEvent     = (*env)->GetStaticMethodID( env, FocusEvent, "getEvent", "(IIZ)Ljava/awt/FocusEvt;");
++	getWindowEvent    = (*env)->GetStaticMethodID( env, WindowEvent, "getEvent", "(II)Ljava/awt/WindowEvt;");
++	getKeyEvent       = (*env)->GetStaticMethodID( env, KeyEvent, "getEvent", "(IIIII)Ljava/awt/KeyEvt;");
++	getPaintEvent     = (*env)->GetStaticMethodID( env, PaintEvent, "getEvent", "(IIIIII)Ljava/awt/PaintEvt;");
++	getWMEvent        = (*env)->GetStaticMethodID( env, WMEvent, "getEvent", "(II)Ljava/awt/WMEvent;");
++	
++	Component = (*env)->FindClass( env, "java/awt/Component");
++
++	DEBUGF("Leave");
++
++	return (*env)->NewObjectArray( env, xynth->nwindows, Component, NULL);
++}
++
++jint Java_java_awt_Toolkit_evtRegisterSource (JNIEnv* env UNUSED, jclass clazz UNUSED, jobject nativeWnd)
++{
++	int id;
++	DEBUGF("Enter");
++	s_window_t *window;
++	window = UNVEIL_WINDOW(nativeWnd);
++	id = source_idx_get(xynth, window);
++	DEBUGF("Leave");
++	return id;
++}
++
++void xynth_kaffe_atevent (s_window_t *window, s_event_t *event)
++{
++	xynth_event_t *xevent;
++	DEBUGF("Enter id: %d", window->client->id);
++	switch (event->type & EVENT_MASK) {
++		case QUIT_EVENT:
++		case MOUSE_EVENT:
++		case KEYBD_EVENT:
++		case CONFIG_EVENT:
++		case FOCUS_EVENT:
++			xevent = (xynth_event_t *) AWT_MALLOC(sizeof(xynth_event_t));
++			if (xevent != NULL) {
++				if (!s_event_init(&(xevent->event))) {
++					xevent->window = window;
++					xevent->event->type = event->type;
++					memcpy(xevent->event->mouse, event->mouse, sizeof(s_mouse_t));
++					memcpy(xevent->event->keybd, event->keybd, sizeof(s_keybd_t));
++					memcpy(xevent->event->expose->rect, event->expose->rect, sizeof(s_rect_t));
++					s_thread_mutex_lock(xynth->eventq->mut);
++					s_list_add(xynth->eventq->list, xevent, -1);
++					s_thread_mutex_unlock(xynth->eventq->mut);
++				} else {
++					AWT_FREE(xevent);
++				}
++			}
++			break;
++		case EXPOSE_EVENT: /* nothing */
++		default:
++			break;
++	}
++	if (event->type & (CONFIG_CHNGW | CONFIG_CHNGH)) {
++		xevent = (xynth_event_t *) AWT_MALLOC(sizeof(xynth_event_t));
++		if (xevent != NULL) {
++			if (!s_event_init(&(xevent->event))) {
++				xevent->window = window;
++				xevent->event->type = EXPOSE_EVENT;
++				memcpy(xevent->event->mouse, event->mouse, sizeof(s_mouse_t));
++				memcpy(xevent->event->keybd, event->keybd, sizeof(s_keybd_t));
++				memcpy(xevent->event->expose->rect, event->expose->rect, sizeof(s_rect_t));
++				s_thread_mutex_lock(xynth->eventq->mut);
++				s_list_add(xynth->eventq->list, xevent, -1);
++				s_thread_mutex_unlock(xynth->eventq->mut);
++			} else {
++				AWT_FREE(xevent);
++			}
++		}
++	}
++	DEBUGF("Leave");
++}
++
++jobject Java_java_awt_Toolkit_evtGetNextEvent (JNIEnv *env, jclass clazz)
++{
++	jobject jevent;
++	xynth_event_t *xevent;
++	S_JEVENT jevent_type;
++	jevent = NULL;
++	s_thread_mutex_lock(xynth->eventq->mut);
++        while (!s_list_eol(xynth->eventq->list, 0)) {
++		xevent = (xynth_event_t *) s_list_get(xynth->eventq->list, 0);
++		jevent_type = event_handler_number(xevent->event);
++		jevent = process_event[jevent_type](env, xevent);
++		s_list_remove(xynth->eventq->list, 0);
++		s_event_uninit(xevent->event);
++		AWT_FREE(xevent);
++		if (jevent != NULL) {
++			break;
++		} else {
++			DEBUGF("ERROR");
++		}
++	}
++	s_thread_mutex_unlock(xynth->eventq->mut);
++	return jevent;
++}
++
++jint Java_java_awt_Toolkit_evtUnregisterSource (JNIEnv *env UNUSED, jclass clazz UNUSED, jobject nwnd)
++{
++	int i;
++	s_window_t *window;
++	DEBUGF("Enter");
++	window = UNVEIL_WINDOW(nwnd);
++	i = source_idx_get(xynth, window);
++	if (i >= 0) {
++		xynth->windows[i].window = 0;
++		xynth->windows[i].owner = 0;
++	}
++	if (xynth->last_window == window) {
++		xynth->last_window = 0;
++	}
++	DEBUGF("Leave");
++	return i;
++}
+Index: libraries/clib/awt/xynth/toolkit.c
+===================================================================
+RCS file: libraries/clib/awt/xynth/toolkit.c
+diff -N libraries/clib/awt/xynth/toolkit.c
+--- /dev/null	1 Jan 1970 00:00:00 -0000
++++ libraries/clib/awt/xynth/toolkit.c	1 Jan 1970 00:00:00 -0000
+@@ -0,0 +1,75 @@
++
++/*
++ * Copyright (c) 2006
++ *	Alper Akcan <distchx@yahoo.com>, All rights reserved.
++ *
++ * See the file "license.terms" for information on usage and redistribution 
++ * of this file. 
++ */
++
++#include "toolkit.h"
++
++jint Java_java_awt_Toolkit_tlkProperties (JNIEnv *env UNUSED, jclass clazz UNUSED)
++{
++	jint props;
++	DEBUGF("Enter");
++	props = TLK_EXTERNAL_DECO;
++	DEBUGF("Leave");
++	return props;
++}
++
++jboolean Java_java_awt_Toolkit_tlkInit (JNIEnv *env UNUSED, jclass clazz UNUSED, jstring name UNUSED)
++{
++	DEBUGF("Enter");
++	xynth = AWT_MALLOC(sizeof(xynth_toolkit_t));
++	xynth->eventq = (xynth_eventq_t *) AWT_MALLOC(sizeof(xynth_eventq_t));
++	s_list_init(&(xynth->eventq->list));
++	s_thread_mutex_init(&(xynth->eventq->mut));
++	s_client_init(&(xynth->root));
++	s_window_new(xynth->root, WINDOW_MAIN, NULL);
++	s_thread_create(s_client_main, xynth->root);
++	xynth->nwindows = XYNTH_NWINDOWS;
++	xynth->windows = AWT_CALLOC(xynth->nwindows, sizeof(window_rec_t));
++	DEBUGF("Leave");
++	return JNI_TRUE;
++}
++
++jint Java_java_awt_Toolkit_tlkGetScreenWidth (JNIEnv *env UNUSED, jclass clazz UNUSED)
++{
++	DEBUGF("Enter");
++	DEBUGF("Leave");
++	return xynth->root->surface->linear_buf_width;
++}
++
++jint Java_java_awt_Toolkit_tlkGetScreenHeight (JNIEnv *env UNUSED, jclass clazz UNUSED)
++{
++	DEBUGF("Enter");
++	DEBUGF("Leave");
++	return xynth->root->surface->linear_buf_height;
++}
++
++jint Java_java_awt_Toolkit_tlkGetResolution (JNIEnv *env UNUSED, jclass clazz UNUSED)
++{
++	DEBUGF("Enter");
++	DEBUGF("Leave");
++	return 0;
++}
++
++jstring Java_java_awt_Toolkit_tlkVersion (JNIEnv *env, jclass clazz UNUSED)
++{
++	DEBUGF("Enter");
++	DEBUGF("Leave");
++	return (*env)->NewStringUTF(env, "Xynth Windowing System");
++}
++
++void Java_java_awt_Toolkit_tlkDisplayBanner (JNIEnv* env UNUSED, jclass clazz UNUSED, jstring banner UNUSED)
++{
++	DEBUGF("Enter");
++	DEBUGF("Leave");
++}
++
++void Java_java_awt_Toolkit_tlkBeep (JNIEnv *env UNUSED, jclass clazz UNUSED)
++{
++	DEBUGF("Enter");
++	DEBUGF("Leave");
++}
