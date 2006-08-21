@@ -1,4 +1,12 @@
 
+/*
+ * Copyright (c) 2006
+ *	Alper Akcan <distchx@yahoo.com>, All rights reserved.
+ *
+ * See the file "license.terms" for information on usage and redistribution 
+ * of this file. 
+ */
+
 #include "toolkit.h"
 
 void * Java_java_awt_Toolkit_fntInitFont (JNIEnv *env, jclass clazz UNUSED, jstring jSpec, jint style, jint size)
