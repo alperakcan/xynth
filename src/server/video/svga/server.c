@@ -13,6 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#if defined(VIDEO_SVGALib)
+
 #include "../../../lib/xynth_.h"
 #include "../../server.h"
 #include "svga.h"
@@ -351,3 +353,5 @@ int s_video_svga_server_init (s_server_conf_t *cfg)
 err0:	s_free(priv);
 	return -1;
 }
+
+#endif /* VIDEO_SVGALib */

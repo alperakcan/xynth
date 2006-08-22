@@ -13,6 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#if defined(VIDEO_GP2X)
+
 #include "../../../lib/xynth_.h"
 #include "../../server.h"
 #include "gp2x.h"
@@ -56,3 +58,5 @@ void s_video_gp2x_kbd_uninit (void)
 void s_video_gp2x_kbd_switch (int vt)
 {
 }
+
+#endif /* VIDEO_GP2X */

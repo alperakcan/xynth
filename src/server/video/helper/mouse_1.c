@@ -13,6 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#if defined(VIDEO_HELPER_MOUSE)
+
 /* mouse library functions (mouse_1.c) and mouse driver (mouse_2.c) are heavily
  * based on svgalib source code. here is the comments taken from the original
  * files.
@@ -236,3 +238,5 @@ static void mouse_getposition_6d (int *x, int *y, int *z, int *rx, int *ry, int 
 	if (rz)	*rz = ms.mouse.rz / ms.mouse_scale;
 	if (btns) *btns = ms.mouse_button;
 }
+
+#endif /* VIDEO_HELPER_MOUSE */

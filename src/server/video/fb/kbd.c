@@ -13,6 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#if defined(VIDEO_FBDev)
+
 #include <signal.h>
 #include <termios.h>
 #include <linux/vt.h>
@@ -32,3 +34,5 @@ int fb_kbd_init (s_server_conf_t *cfg)
 {
 	return s_video_helper_kbd_init(cfg, fb_console_fd);
 }
+
+#endif /* VIDEO_FBDev */

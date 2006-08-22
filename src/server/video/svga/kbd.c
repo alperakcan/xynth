@@ -13,6 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#if defined(VIDEO_SVGALib)
+
 #include "../../../lib/xynth_.h"
 #include "../../server.h"
 #include "svga.h"
@@ -23,3 +25,5 @@ int s_video_svga_kbd_init (s_server_conf_t *cfg)
 	s_video_svga_data_t *priv = (s_video_svga_data_t *) server->driver->driver_data;
 	return s_video_helper_kbd_init(cfg, priv->console_fd);
 }
+
+#endif /* VIDEO_SVGALib */

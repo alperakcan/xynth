@@ -13,6 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#if defined(VIDEO_FBDev)
+
 #include <linux/fb.h>
 
 struct {
@@ -48,3 +50,5 @@ void fb_server_surface_init (s_video_helper_mode_info_t *gmode);
 void fb_server_surface_uninit (void);
 
 void fb_timing_set (s_server_conf_t *cfg, struct fb_var_screeninfo *v_scr);
+
+#endif /* VIDEO_FBDev */

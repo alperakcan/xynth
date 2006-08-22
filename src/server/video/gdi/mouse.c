@@ -13,6 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#if defined(VIDEO_GDI)
+
 #include "../../../lib/xynth_.h"
 #include "../../server.h"
 #include "gdi.h"
@@ -68,3 +70,5 @@ void s_video_gdi_mouse_setyrange (int y1, int y2)
 	priv->ry[0] = y1;
 	priv->ry[1] = y2;
 }
+
+#endif /* VIDEO_GDI */

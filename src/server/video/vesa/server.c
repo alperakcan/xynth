@@ -13,6 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#if defined(VIDEO_VESA)
+
 #include "../../../lib/xynth_.h"
 #include "../../server.h"
 #include "vesa.h"
@@ -433,3 +435,5 @@ err0:	s_free(priv);
 	server->driver->driver_data = NULL;
 	return -1;
 }
+
+#endif /* VIDEO_VESA */

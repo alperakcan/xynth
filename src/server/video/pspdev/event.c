@@ -13,6 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#if defined(VIDEO_PSPDEV)
+
 #include "../../../lib/xynth_.h"
 #include "../../server.h"
 #include "pspdev.h"
@@ -80,3 +82,5 @@ void * s_video_pspdev_event_parse (void *arg)
 	}
 	return NULL;
 }
+
+#endif /* VIDEO_PSPDEV */

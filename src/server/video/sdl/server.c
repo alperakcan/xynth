@@ -13,6 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#if defined(VIDEO_SDL)
+
 #include "../../../lib/xynth_.h"
 #include "../../server.h"
 #include "../helper/helper.h"
@@ -197,3 +199,5 @@ void s_video_sdl_server_fullscreen (void)
 	s_video_sdl_data_t *priv = server->driver->driver_data;
 	SDL_WM_ToggleFullScreen(priv->screen);
 }
+
+#endif /* VIDEO_SDL */

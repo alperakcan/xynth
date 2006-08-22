@@ -13,6 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#if defined(VIDEO_FBDev)
+
 #include <sys/ioctl.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -124,3 +126,5 @@ void fb_init (void)
 	}
 	fb_open();
 }
+
+#endif /* VIDEO_FBDev */

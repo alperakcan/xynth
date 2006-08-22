@@ -13,6 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#if defined(VIDEO_FBDev)
+
 #include "../../../lib/xynth_.h"
 #include "../../server.h"
 #include "../helper/helper.h"
@@ -271,3 +273,5 @@ void fb_server_setmode (s_server_conf_t *cfg, s_video_helper_mode_info_t *gmode)
 			debugf(DSER | DSYS | DFAT, "FBDEV : Unsupported visual(%d) requested", fb.f_scr.visual);
 	}
 }
+
+#endif /* VIDEO_FBDev */

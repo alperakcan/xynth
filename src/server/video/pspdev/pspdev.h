@@ -13,6 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#if defined(VIDEO_PSPDEV)
+
 #include <psptypes.h>
 #include <pspdebug.h>
 #include <pspge.h>
@@ -53,3 +55,5 @@ void s_video_pspdev_mouse_setyrange (int y1, int y2);
 void s_video_pspdev_server_uninit (void);
 int s_video_pspdev_server_init (s_server_conf_t *cfg);
 void s_video_pspdev_server_surface_update (s_rect_t *coor);
+
+#endif /* VIDEO_PSPDEV */

@@ -13,6 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#if defined(VIDEO_NULL)
+
 #include "../../../lib/xynth_.h"
 #include "../../server.h"
 #include "null.h"
@@ -69,3 +71,5 @@ void s_video_null_server_surface_update (s_rect_t *coor)
 void s_video_null_server_fullscreen (void)
 {
 }
+
+#endif /* VIDEO_NULL */
