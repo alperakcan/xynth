@@ -13,6 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#if defined(PIPE_POSIX)
+
 static int s_pipe_posix_init (void)
 {
 	return 0;
@@ -139,3 +141,5 @@ static s_pipe_api_t s_pipe_posix = {
 	s_pipe_posix_write,
 	s_pipe_posix_close
 };
+
+#endif /* PIPE_POSIX */
