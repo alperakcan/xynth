@@ -13,6 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#if defined(THREAD_PTHREADS)
+
 #include <pthread.h>
 
 #if defined(PLATFORM_MINGW)
@@ -295,3 +297,5 @@ static s_thread_api_t s_thread_pthreads = {
 	s_thread_pthreads_thread_self,
 	s_thread_pthreads_thread_exit,
 };
+
+#endif /* THREAD_PTHREADS */
