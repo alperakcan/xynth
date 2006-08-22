@@ -13,6 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#if defined(VIDEO_GP2X)
+
 #include "../../../lib/xynth_.h"
 #include "../../server.h"
 #include "gp2x.h"
@@ -113,3 +115,5 @@ void * s_video_gp2x_event_parse (void *arg)
 	}
 	return NULL;
 }
+
+#endif /* VIDEO_GP2X */

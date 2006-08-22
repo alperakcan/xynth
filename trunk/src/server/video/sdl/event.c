@@ -13,6 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#if defined(VIDEO_SDL)
+
 #include "../../../lib/xynth_.h"
 #include "../../server.h"
 #include "sdl.h"
@@ -58,3 +60,5 @@ void * s_video_sdl_event_parse (void *arg)
 
 end:	return NULL;
 }
+
+#endif /* VIDEO_SDL */

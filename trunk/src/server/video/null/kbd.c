@@ -13,6 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#if defined(VIDEO_NULL)
+
 #include "../../../lib/xynth_.h"
 #include "../../server.h"
 #include "null.h"
@@ -33,3 +35,5 @@ void s_video_null_kbd_uninit (void)
 void s_video_null_kbd_switch (int vt)
 {
 }
+
+#endif /* VIDEO_NULL */

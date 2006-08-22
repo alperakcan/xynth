@@ -13,6 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#if defined(VIDEO_SDL)
+
 #include "../../../lib/xynth_.h"
 #include "../../server.h"
 #include "sdl.h"
@@ -95,3 +97,5 @@ void s_video_sdl_mouse_setyrange (int y1, int y2)
 	priv->ry[0] = y1;
 	priv->ry[1] = y2;
 }
+
+#endif /* VIDEO_SDL */

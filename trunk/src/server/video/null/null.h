@@ -13,6 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#if defined(VIDEO_NULL)
+
 int s_video_null_kbd_init (s_server_conf_t *cfg);
 void s_video_null_kbd_update (s_keybd_driver_t *keybd);
 void s_video_null_kbd_uninit (void);
@@ -33,3 +35,5 @@ void s_video_null_server_uninit (void);
 int s_video_null_server_init (s_server_conf_t *cfg);
 void s_video_null_server_surface_update (s_rect_t *coor);
 void s_video_null_server_fullscreen (void);
+
+#endif /* VIDEO_NULL */

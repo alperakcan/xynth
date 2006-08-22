@@ -13,6 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#if defined(VIDEO_GP2X)
+
 enum {
 	GP2X_UP = 0x1,           GP2X_LEFT = 0x4,	    GP2X_DOWN = 0x10,   GP2X_RIGHT = 0x40,
         GP2X_START = (1 << 8),   GP2X_SELECT = (1 << 9),    GP2X_L = (1 << 10), GP2X_R = (1 << 11),
@@ -53,3 +55,4 @@ void s_video_gp2x_server_fullscreen (void);
 
 void * s_video_gp2x_event_parse (void *arg);
 
+#endif /* VIDEO_GP2X */

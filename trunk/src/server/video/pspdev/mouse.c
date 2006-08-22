@@ -13,6 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#if defined(VIDEO_PSPDEV)
+
 #include "../../../lib/xynth_.h"
 #include "../../server.h"
 #include "../helper/helper.h"
@@ -76,3 +78,5 @@ void s_video_pspdev_mouse_setyrange (int y1, int y2)
 	priv->ry[0] = y1;
 	priv->ry[1] = y2;
 }
+
+#endif /* VIDEO_PSPDEV */

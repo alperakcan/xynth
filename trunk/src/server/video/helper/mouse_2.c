@@ -13,6 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#if defined(VIDEO_HELPER_MOUSE)
+
 /* mouse library functions (mouse_1.c) and mouse driver (mouse_2.c) are heavily
  * based on svgalib source code. here is the comments taken from the original
  * files.
@@ -893,3 +895,5 @@ handle_packets:
 
 	goto handle_packets;
 }
+
+#endif /* VIDEO_HELPER_MOUSE */
