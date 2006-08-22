@@ -13,6 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#if defined(THREAD_MUTEX_EMULATION)
+
 /* Emulation is heavily based on SDL Library www.libsdl.org
  */
 
@@ -219,3 +221,5 @@ static int s_thread_emul_cond_timedwait (s_thread_cond_t *cond, s_thread_mutex_t
 	s_thread_mutex_lock(mut);
 	return ret;
 }
+
+#endif /* THREAD_MUTEX_EMULATION */

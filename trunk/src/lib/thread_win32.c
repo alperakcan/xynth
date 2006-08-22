@@ -13,6 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#if defined(THREAD_WIN32)
+
 #include <windows.h>
 
 struct s_thread_sem_s {
@@ -170,3 +172,5 @@ static s_thread_api_t s_thread_win32 = {
 	s_thread_win32_thread_self,
 	s_thread_win32_thread_exit,
 };
+
+#endif /* THREAD_WIN32 */
