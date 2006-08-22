@@ -33,5 +33,5 @@ clean :
 	$(MAKE) clean -C themes
 	$(MAKE) clean -C fonts
 	$(MAKE) clean -C configs
-	$(MAKE) clean -C python
+#	$(MAKE) clean -C python
 	$(MAKE) clean -C server

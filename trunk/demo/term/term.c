@@ -13,6 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#if defined(DEMO_TERM)
+
 #include <fcntl.h>
 #include <ctype.h>
 #include <stdio.h>
@@ -1124,3 +1126,5 @@ s_single_app_t single_term = {
 	{"term"}
 };
 #endif
+
+#endif /* DEMO_TERM */
