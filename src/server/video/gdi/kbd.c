@@ -19,57 +19,213 @@
 #include "../../server.h"
 #include "gdi.h"
 
-#ifndef VK_0
-#define VK_0	'0'
-#define VK_1	'1'
-#define VK_2	'2'
-#define VK_3	'3'
-#define VK_4	'4'
-#define VK_5	'5'
-#define VK_6	'6'
-#define VK_7	'7'
-#define VK_8	'8'
-#define VK_9	'9'
-#define VK_A	'A'
-#define VK_B	'B'
-#define VK_C	'C'
-#define VK_D	'D'
-#define VK_E	'E'
-#define VK_F	'F'
-#define VK_G	'G'
-#define VK_H	'H'
-#define VK_I	'I'
-#define VK_J	'J'
-#define VK_K	'K'
-#define VK_L	'L'
-#define VK_M	'M'
-#define VK_N	'N'
-#define VK_O	'O'
-#define VK_P	'P'
-#define VK_Q	'Q'
-#define VK_R	'R'
-#define VK_S	'S'
-#define VK_T	'T'
-#define VK_U	'U'
-#define VK_V	'V'
-#define VK_W	'W'
-#define VK_X	'X'
-#define VK_Y	'Y'
-#define VK_Z	'Z'
-#endif
+#undef VK_ESCAPE
+#undef VK_1
+#undef VK_2
+#undef VK_3
+#undef VK_4
+#undef VK_5
+#undef VK_6
+#undef VK_7
+#undef VK_8
+#undef VK_9
+#undef VK_0
+#undef VK_MINUS
+#undef VK_EQUALS
+#undef VK_BACKSPACE
+#undef VK_TAB
+#undef VK_q
+#undef VK_w
+#undef VK_e
+#undef VK_r
+#undef VK_t
+#undef VK_y
+#undef VK_u
+#undef VK_i
+#undef VK_o
+#undef VK_p
+#undef VK_LEFTBRACKET
+#undef VK_RIGHTBRACKET
+#undef VK_RETURN
+#undef VK_LCTRL
+#undef VK_a
+#undef VK_s
+#undef VK_d
+#undef VK_f
+#undef VK_g
+#undef VK_h
+#undef VK_j
+#undef VK_k
+#undef VK_l
+#undef VK_SEMICOLON
+#undef VK_QUOTE
+#undef VK_BACKQUOTE
+#undef VK_LSHIFT
+#undef VK_BACKSLASH
+#undef VK_z
+#undef VK_x
+#undef VK_c
+#undef VK_v
+#undef VK_b
+#undef VK_n
+#undef VK_m
+#undef VK_COMMA
+#undef VK_PERIOD
+#undef VK_SLASH
+#undef VK_RSHIFT
+#undef VK_KP_MULTIPLY
+#undef VK_LALT
+#undef VK_SPACE
+#undef VK_CAPSLOCK
+#undef VK_F1
+#undef VK_F2
+#undef VK_F3
+#undef VK_F4
+#undef VK_F5
+#undef VK_F6
+#undef VK_F7
+#undef VK_F8
+#undef VK_F9
+#undef VK_F10
+#undef VK_NUMLOCK
+#undef VK_SCROLLOCK
+#undef VK_KP7
+#undef VK_KP8
+#undef VK_KP9
+#undef VK_KP_MINUS
+#undef VK_KP4
+#undef VK_KP5
+#undef VK_KP6
+#undef VK_KP_PLUS
+#undef VK_KP1
+#undef VK_KP2
+#undef VK_KP3
+#undef VK_KP0
+#undef VK_KP_PERIOD
+#undef VK_LESS
+#undef VK_F11
+#undef VK_F12
+#undef VK_KP_ENTER
+#undef VK_RCTRL
+#undef VK_KP_DIVIDE
+#undef VK_PRINT
+#undef VK_RALT
+#undef VK_BREAK
+#undef VK_HOME
+#undef VK_UP
+#undef VK_PAGEUP
+#undef VK_LEFT
+#undef VK_RIGHT
+#undef VK_END
+#undef VK_DOWN
+#undef VK_PAGEDOWN
+#undef VK_INSERT
+#undef VK_DELETE
+#undef VK_PAUSE
 
-#define VK_SEMICOLON	0xBA
-#define VK_EQUALS	0xBB
-#define VK_COMMA	0xBC
-#define VK_MINUS	0xBD
-#define VK_PERIOD	0xBE
-#define VK_SLASH	0xBF
-#define VK_GRAVE	0xC0
-#define VK_LBRACKET	0xDB
-#define VK_BACKSLASH	0xDC
-#define VK_RBRACKET	0xDD
-#define VK_APOSTROPHE	0xDE
-#define VK_BACKTICK	0xDF
+#define VK_ESCAPE	1
+#define VK_1		2
+#define VK_2		3
+#define VK_3		4
+#define VK_4		5
+#define VK_5		6
+#define VK_6		7
+#define VK_7		8
+#define VK_8		9
+#define VK_9		10
+#define VK_0		11
+#define VK_MINUS	12
+#define VK_EQUALS	13
+#define VK_BACKSPACE	14
+#define VK_TAB		15
+#define VK_q		16
+#define VK_w		17
+#define VK_e		18
+#define VK_r		19
+#define VK_t		20
+#define VK_y		21
+#define VK_u		22
+#define VK_i		23
+#define VK_o		24
+#define VK_p		25
+#define VK_LEFTBRACKET	26
+#define VK_RIGHTBRACKET	27
+#define VK_RETURN	28
+#define VK_LCTRL	29
+#define VK_a		30
+#define VK_s		31
+#define VK_d		32
+#define VK_f		33
+#define VK_g		34
+#define VK_h		35
+#define VK_j		36
+#define VK_k		37
+#define VK_l		38
+#define VK_SEMICOLON	39
+#define VK_QUOTE	40
+#define VK_BACKQUOTE	41
+#define VK_LSHIFT	42
+#define VK_BACKSLASH	43
+#define VK_z		44
+#define VK_x		45
+#define VK_c		46
+#define VK_v		47
+#define VK_b		48
+#define VK_n		49
+#define VK_m		50
+#define VK_COMMA	51
+#define VK_PERIOD	52
+#define VK_SLASH	53
+#define VK_RSHIFT	54
+#define VK_KP_MULTIPLY	55
+#define VK_LALT		56
+#define VK_SPACE	57
+#define VK_CAPSLOCK	58
+#define VK_F1		59
+#define VK_F2		60
+#define VK_F3		61
+#define VK_F4		62
+#define VK_F5		63
+#define VK_F6		64
+#define VK_F7		65
+#define VK_F8		66
+#define VK_F9		67
+#define VK_F10		68
+#define VK_NUMLOCK	69
+#define VK_SCROLLOCK	70
+#define VK_KP7		71
+#define VK_KP8		72
+#define VK_KP9		73
+#define VK_KP_MINUS	74
+#define VK_KP4		75
+#define VK_KP5		76
+#define VK_KP6		77
+#define VK_KP_PLUS	78
+#define VK_KP1		79
+#define VK_KP2		80
+#define VK_KP3		81
+#define VK_KP0		82
+#define VK_KP_PERIOD	83
+#define VK_LESS		86
+#define VK_F11		87
+#define VK_F12		88
+#define VK_KP_ENTER	28
+#define VK_RCTRL	29
+#define VK_KP_DIVIDE	89
+#define VK_PRINT	90
+#define VK_RALT		91
+#define VK_BREAK	92
+#define VK_HOME		93
+#define VK_UP		72
+#define VK_PAGEUP	73
+#define VK_LEFT		75
+#define VK_RIGHT	77
+#define VK_END		79
+#define VK_DOWN		80
+#define VK_PAGEDOWN	81
+#define VK_INSERT	82
+#define VK_DELETE	83
+#define VK_PAUSE	69
 
 int s_video_gdi_kbd_init (s_server_conf_t *cfg)
 {
@@ -98,52 +254,51 @@ int s_video_gdi_kbd_init (s_server_conf_t *cfg)
 	priv->keymap[VK_0] = S_KEYCODE_ZERO;
 	priv->keymap[VK_MINUS] = S_KEYCODE_MINUS;
 	priv->keymap[VK_EQUALS] = S_KEYCODE_EQUAL;
-	priv->keymap[VK_BACK] = S_KEYCODE_DELETE;
+	priv->keymap[VK_BACKSPACE] = S_KEYCODE_DELETE;
 	priv->keymap[VK_TAB] = S_KEYCODE_TAB;
-	priv->keymap[VK_Q] = S_KEYCODE_q;
-	priv->keymap[VK_W] = S_KEYCODE_w;
-	priv->keymap[VK_E] = S_KEYCODE_e;
-	priv->keymap[VK_R] = S_KEYCODE_r;
-	priv->keymap[VK_T] = S_KEYCODE_t;
-	priv->keymap[VK_Y] = S_KEYCODE_y;
-	priv->keymap[VK_U] = S_KEYCODE_u;
-	priv->keymap[VK_I] = S_KEYCODE_i;
-	priv->keymap[VK_O] = S_KEYCODE_o;
-	priv->keymap[VK_P] = S_KEYCODE_p;
-	priv->keymap[VK_LBRACKET] = S_KEYCODE_BRACKETLEFT;
-	priv->keymap[VK_RBRACKET] = S_KEYCODE_BRACKETRIGHT;
+	priv->keymap[VK_q] = S_KEYCODE_q;
+	priv->keymap[VK_w] = S_KEYCODE_w;
+	priv->keymap[VK_e] = S_KEYCODE_e;
+	priv->keymap[VK_r] = S_KEYCODE_r;
+	priv->keymap[VK_t] = S_KEYCODE_t;
+	priv->keymap[VK_y] = S_KEYCODE_y;
+	priv->keymap[VK_u] = S_KEYCODE_u;
+	priv->keymap[VK_i] = S_KEYCODE_i;
+	priv->keymap[VK_o] = S_KEYCODE_o;
+	priv->keymap[VK_p] = S_KEYCODE_p;
+	priv->keymap[VK_LEFTBRACKET] = S_KEYCODE_BRACKETLEFT;
+	priv->keymap[VK_RIGHTBRACKET] = S_KEYCODE_BRACKETRIGHT;
 	priv->keymap[VK_RETURN] = S_KEYCODE_RETURN;
-	priv->keymap[VK_LCONTROL] = S_KEYCODE_LEFTCONTROL;
-	priv->keymap[VK_A] = S_KEYCODE_a;
-	priv->keymap[VK_S] = S_KEYCODE_s;
-	priv->keymap[VK_D] = S_KEYCODE_d;
-	priv->keymap[VK_F] = S_KEYCODE_f;
-	priv->keymap[VK_G] = S_KEYCODE_g;
-	priv->keymap[VK_H] = S_KEYCODE_h;
-	priv->keymap[VK_J] = S_KEYCODE_j;
-	priv->keymap[VK_K] = S_KEYCODE_k;
-	priv->keymap[VK_L] = S_KEYCODE_l;
+	priv->keymap[VK_LCTRL] = S_KEYCODE_LEFTCONTROL;
+	priv->keymap[VK_a] = S_KEYCODE_a;
+	priv->keymap[VK_s] = S_KEYCODE_s;
+	priv->keymap[VK_d] = S_KEYCODE_d;
+	priv->keymap[VK_f] = S_KEYCODE_f;
+	priv->keymap[VK_g] = S_KEYCODE_g;
+	priv->keymap[VK_h] = S_KEYCODE_h;
+	priv->keymap[VK_j] = S_KEYCODE_j;
+	priv->keymap[VK_k] = S_KEYCODE_k;
+	priv->keymap[VK_l] = S_KEYCODE_l;
 	priv->keymap[VK_SEMICOLON] = S_KEYCODE_SEMICOLON;
-	priv->keymap[VK_APOSTROPHE] = S_KEYCODE_APOSTROPHE;
-	priv->keymap[VK_GRAVE] = S_KEYCODE_GRAVE;
-	priv->keymap[VK_BACKTICK] = S_KEYCODE_GRAVE;
+	priv->keymap[VK_QUOTE] = S_KEYCODE_APOSTROPHE;
+	priv->keymap[VK_BACKQUOTE] = S_KEYCODE_GRAVE;
 	priv->keymap[VK_LSHIFT] = S_KEYCODE_LEFTSHIFT;
 	priv->keymap[VK_BACKSLASH] = S_KEYCODE_BACKSLASH;
-	priv->keymap[VK_Z] = S_KEYCODE_z;
-	priv->keymap[VK_X] = S_KEYCODE_x;
-	priv->keymap[VK_C] = S_KEYCODE_c;
-	priv->keymap[VK_V] = S_KEYCODE_v;
-	priv->keymap[VK_B] = S_KEYCODE_b;
-	priv->keymap[VK_N] = S_KEYCODE_n;
-	priv->keymap[VK_M] = S_KEYCODE_m;
+	priv->keymap[VK_z] = S_KEYCODE_z;
+	priv->keymap[VK_x] = S_KEYCODE_x;
+	priv->keymap[VK_c] = S_KEYCODE_c;
+	priv->keymap[VK_v] = S_KEYCODE_v;
+	priv->keymap[VK_b] = S_KEYCODE_b;
+	priv->keymap[VK_n] = S_KEYCODE_n;
+	priv->keymap[VK_m] = S_KEYCODE_m;
 	priv->keymap[VK_COMMA] = S_KEYCODE_COMMA;
 	priv->keymap[VK_PERIOD] = S_KEYCODE_PERIOD;
 	priv->keymap[VK_SLASH] = S_KEYCODE_SLASH;
 	priv->keymap[VK_RSHIFT] = S_KEYCODE_RIGHTSHIFT;
-	priv->keymap[VK_MULTIPLY] = S_KEYCODE_KP_MULTIPLY;
-	priv->keymap[VK_LMENU] = S_KEYCODE_ALT;
+	priv->keymap[VK_KP_MULTIPLY] = S_KEYCODE_KP_MULTIPLY;
+	priv->keymap[VK_LALT] = S_KEYCODE_ALT;
 	priv->keymap[VK_SPACE] = S_KEYCODE_SPACE;
-	priv->keymap[VK_CAPITAL] = S_KEYCODE_CAPS_LOCK;
+	priv->keymap[VK_CAPSLOCK] = S_KEYCODE_CAPS_LOCK;
 	priv->keymap[VK_F1] = S_KEYCODE_F1;
 	priv->keymap[VK_F2] = S_KEYCODE_F2;
 	priv->keymap[VK_F3] = S_KEYCODE_F3;
@@ -155,35 +310,37 @@ int s_video_gdi_kbd_init (s_server_conf_t *cfg)
 	priv->keymap[VK_F9] = S_KEYCODE_F9;
 	priv->keymap[VK_F10] = S_KEYCODE_F10;
 	priv->keymap[VK_NUMLOCK] = S_KEYCODE_NUM_LOCK;
-	priv->keymap[VK_SCROLL] = S_KEYCODE_SCROLL_LOCK;
-	priv->keymap[VK_NUMPAD7] = S_KEYCODE_KP_7;
-	priv->keymap[VK_NUMPAD8] = S_KEYCODE_KP_8;
-	priv->keymap[VK_NUMPAD9] = S_KEYCODE_KP_9;
-	priv->keymap[VK_SUBTRACT] = S_KEYCODE_KP_SUBTRACT;
-	priv->keymap[VK_NUMPAD4] = S_KEYCODE_KP_4;
-	priv->keymap[VK_NUMPAD5] = S_KEYCODE_KP_5;
-	priv->keymap[VK_NUMPAD6] = S_KEYCODE_KP_6;
-	priv->keymap[VK_ADD] = S_KEYCODE_KP_ADD;
-	priv->keymap[VK_NUMPAD1] = S_KEYCODE_KP_1;
-	priv->keymap[VK_NUMPAD2] = S_KEYCODE_KP_2;
-	priv->keymap[VK_NUMPAD3] = S_KEYCODE_KP_3;
-	priv->keymap[VK_NUMPAD0] = S_KEYCODE_KP_0;
-	priv->keymap[VK_DECIMAL] = S_KEYCODE_KP_PERIOD;
+	priv->keymap[VK_SCROLLOCK] = S_KEYCODE_SCROLL_LOCK;
+	priv->keymap[VK_KP7] = S_KEYCODE_KP_7;
+	priv->keymap[VK_KP8] = S_KEYCODE_KP_8;
+	priv->keymap[VK_KP9] = S_KEYCODE_KP_9;
+	priv->keymap[VK_KP_MINUS] = S_KEYCODE_KP_SUBTRACT;
+	priv->keymap[VK_KP4] = S_KEYCODE_KP_4;
+	priv->keymap[VK_KP5] = S_KEYCODE_KP_5;
+	priv->keymap[VK_KP6] = S_KEYCODE_KP_6;
+	priv->keymap[VK_KP_PLUS] = S_KEYCODE_KP_ADD;
+	priv->keymap[VK_KP1] = S_KEYCODE_KP_1;
+	priv->keymap[VK_KP2] = S_KEYCODE_KP_2;
+	priv->keymap[VK_KP3] = S_KEYCODE_KP_3;
+	priv->keymap[VK_KP0] = S_KEYCODE_KP_0;
+	priv->keymap[VK_KP_PERIOD] = S_KEYCODE_KP_PERIOD;
+	priv->keymap[VK_LESS] = S_KEYCODE_LESS;
 	priv->keymap[VK_F11] = S_KEYCODE_F11;
 	priv->keymap[VK_F12] = S_KEYCODE_F12;
-	priv->keymap[VK_RCONTROL] = S_KEYCODE_RIGHTCONTROL;
-	priv->keymap[VK_DIVIDE] = S_KEYCODE_KP_DIVIDE;
+	priv->keymap[VK_KP_ENTER] = S_KEYCODE_KP_ENTER;
+	priv->keymap[VK_RCTRL] = S_KEYCODE_RIGHTCONTROL;
+	priv->keymap[VK_KP_DIVIDE] = S_KEYCODE_KP_DIVIDE;
 	priv->keymap[VK_PRINT] = S_KEYCODE_VOIDSYMBOL;
-	priv->keymap[VK_RMENU] = S_KEYCODE_ALTGR;
-	priv->keymap[VK_CANCEL] = S_KEYCODE_BREAK;
+	priv->keymap[VK_RALT] = S_KEYCODE_ALTGR;
+	priv->keymap[VK_BREAK] = S_KEYCODE_BREAK;
 	priv->keymap[VK_HOME] = S_KEYCODE_HOME;
 	priv->keymap[VK_UP] = S_KEYCODE_UP;
-	priv->keymap[VK_PRIOR] = S_KEYCODE_PAGEUP;
+	priv->keymap[VK_PAGEUP] = S_KEYCODE_PAGEUP;
 	priv->keymap[VK_LEFT] = S_KEYCODE_LEFT;
 	priv->keymap[VK_RIGHT] = S_KEYCODE_RIGHT;
 	priv->keymap[VK_END] = S_KEYCODE_END;
 	priv->keymap[VK_DOWN] = S_KEYCODE_DOWN;
-	priv->keymap[VK_NEXT] = S_KEYCODE_PAGEDOWN;
+	priv->keymap[VK_PAGEDOWN] = S_KEYCODE_PAGEDOWN;
 	priv->keymap[VK_INSERT] = S_KEYCODE_INSERT;
 	priv->keymap[VK_DELETE] = S_KEYCODE_REMOVE;
 	priv->keymap[VK_PAUSE] = S_KEYCODE_PAUSE;
