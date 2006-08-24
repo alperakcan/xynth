@@ -70,9 +70,9 @@ mouse_event:            priv->mouse.x = (((int) lParam) & 0xFFFF);
                 case WM_SYSKEYDOWN:
                         priv->keybd.state = KEYBD_PRESSED;
 keybd_event:            GetKeyboardState(keystate);
-                        priv->keybd.button = priv->keymap[(unsigned int) wParam];
-                        priv->keybd.keycode = priv->keymap[(unsigned int) wParam];
                         priv->keybd.scancode = (((unsigned int) lParam) >> 16) & 0xFF;
+                        priv->keybd.button = priv->keymap[priv->keybd.scancode];
+                        priv->keybd.keycode = priv->keymap[priv->keybd.scancode];
                         priv->keybd.ascii = wParam;
                         if (ToAscii(wParam, lParam, keystate, (WORD *) chars, 0) == 1) {
                                 priv->keybd.ascii = chars[0];
