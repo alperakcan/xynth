@@ -22,9 +22,7 @@ dist: all
 	mkdir -p $(DISTBINDIR)
 	mkdir -p $(DISTCONFDIR)
 	mkdir -p $(DISTFONTDIR)
-ifeq ($(THEME_PLUGIN), Y)
 	mkdir -p $(DISTTHEMEDIR)
-endif
 	$(MAKE) dist -C src
 
 install: dist
