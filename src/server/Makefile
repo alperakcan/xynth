@@ -59,6 +59,7 @@ LDFLAGS-$(THEME_PLUGIN) += -ldl
 
 OBJS    += $(OBJS-Y)
 CFLAGS  += $(CFLAGS-Y)
+LIBDIR  += $(LIBDIR-Y)
 LDFLAGS += $(LDFLAGS-Y) -lxynth $(VLDFLAGS-Y)
 TARGET   = $(TARGET-Y)
 
