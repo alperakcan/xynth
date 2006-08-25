@@ -34,9 +34,10 @@ ifeq ($(PLATFORM_MINGW), Y)
 	cp -af dist/* c:/xynth
 else
 ifeq ($(PLATFORM_PSPDEV), Y)
-	rm -rf dist/include
-	rm -rf dist/lib
-	rm -rf dist/$(_SHAREDIR)/$(_CONFDIR)
+	rm -rf $(DISTINCDIR)
+	rm -rf $(DISTLIBDIR)
+	rm -rf $(DISTCONFDIR)
+	rm -rf $(DISTTHEMEDIR)
 	mkdir -p dist/psp/game
 	cp -af dist/bin/xynth dist/psp/game
 ifeq ($(PSP-VERSION), 1.5)
@@ -47,9 +48,10 @@ endif
 	rm -rf dist/bin
 else
 ifeq ($(PLATFORM_GP2X), Y)
-	rm -rf dist/include
-	rm -rf dist/lib
-	rm -rf dist/$(_SHAREDIR)/$(_CONFDIR)
+	rm -rf $(DISTINCDIR)
+	rm -rf $(DISTLIBDIR)
+	rm -rf $(DISTCONFDIR)
+	rm -rf $(DISTTHEMEDIR)
 	gp2x-strip -xsR .note -R .comment dist/bin/xynth
 endif
 endif
