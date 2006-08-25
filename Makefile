@@ -63,29 +63,29 @@ optimize:
 
 doxy-doc:
 	rm -rf doc
-	EXCLUDE_PATTERNS='*/dist/*\
-	                  */demo/*\
-	                  */tools/*\
-	                  */ports/*\
-	                  */themes/*\
-	                  */libz/*\
-	                  */libpng/*\
-	                  */freetype2/*\
-	                  */lrmi-*/*\
-	                  */pthread_w32/*'\
-	SRCDIR='.'\
-	PROJECT='xynth'\
-	DOCDIR='doc'\
-	VERSION='0.8.20'\
-	PERL_PATH='perl'\
-	HAVE_DOT='NO'\
-	GENERATE_MAN='NO'\
-	GENERATE_RTF='NO'\
-	GENERATE_XML='NO'\
-	GENERATE_HTMLHELP='NO'\
-	GENERATE_CHI='NO'\
-	GENERATE_HTML='YES'\
-	GENERATE_LATEX='NO'\
+	EXCLUDE_PATTERNS='*/dist/* \
+	                  */demo/* \
+			  */tools/* \
+			  */ports/* \
+			  */themes/* \
+			  */libz/* \
+			  */libpng/* \
+			  */freetype2/* \
+			  */lrmi-*/* \
+			  */pthread_w32/*' \
+	SRCDIR='.' \
+	PROJECT='xynth' \
+	DOCDIR='doc' \
+	VERSION='0.8.20' \
+	PERL_PATH='perl' \
+	HAVE_DOT='NO' \
+	GENERATE_MAN='NO' \
+	GENERATE_RTF='NO' \
+	GENERATE_XML='NO' \
+	GENERATE_HTMLHELP='NO' \
+	GENERATE_CHI='NO' \
+	GENERATE_HTML='YES' \
+	GENERATE_LATEX='NO' \
 	doxygen ./doxygen.cfg
 
 test: clean all dist install
