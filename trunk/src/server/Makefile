@@ -4,92 +4,65 @@ include ../../Makefile.parse
 
 INCDIR += ../lib
 LIBDIR += ../lib
-TARGET = xynth
 
-VLDFLAGS :=
+TARGET-$(PLATFORM_LINUX)  = xynth
+TARGET-$(PLATFORM_PSPDEV) = xynth.elf
+TARGET-$(PLATFORM_MINGW)  = xynth.exe
+TARGET-$(PLATFORM_GP2X)   = xynth
+
 OBJS = event.o id.o kbd.o mouse.o priority.o single.o server.o socket.o start.o \
        surface.o theme.o window.o window_handler.o window_move_resize.o
 
-ifeq ($(VIDEO_FBDev), Y)
-OBJS     += video/fb/fb.o video/fb/kbd.o video/fb/server.o video/fb/timing.o
-VLDFLAGS += -lm
-endif
-ifeq ($(VIDEO_SDL), Y)
-OBJS     += video/sdl/event.o video/sdl/kbd.o video/sdl/mouse.o video/sdl/server.o
-CFLAGS   += $(shell sdl-config --cflags)
-VLDFLAGS += $(shell sdl-config --libs)
-endif
-ifeq ($(VIDEO_SVGALib), Y)
-OBJS     += video/svga/kbd.o video/svga/server.o
-VLDFLAGS += -lvga -lm
-endif
-ifeq ($(VIDEO_VESA), Y)
-OBJS     += video/vesa/kbd.o video/vesa/server.o video/vesa/lrmi-0.10/lrmi.o
-endif
-ifeq ($(VIDEO_PSPDEV), Y)
-TARGET    = xynth.elf
-OBJS     += video/pspdev/event.o video/pspdev/kbd.o video/pspdev/mouse.o video/pspdev/server.o
-VLDFLAGS += -lm -lpspdebug -lpspdisplay -lpspge -lpspctrl -lpspsdk -lc -lpsputility -lpspuser -lpspkernel
-endif
-ifeq ($(VIDEO_GDI), Y)
-OBJS     += video/gdi/event.o video/gdi/kbd.o video/gdi/mouse.o video/gdi/server.o
-LIBDIR   += video/gdi/pthread_w32
-VLDFLAGS += -lpthreadGC2 -lgdi32
-TARGET    = xynth.exe
-endif
-ifeq ($(VIDEO_GP2X), Y)
-OBJS     += video/gp2x/event.o video/gp2x/kbd.o video/gp2x/mouse.o video/gp2x/server.o
-VLDFLAGS += -lpthread -lm
-endif
-ifeq ($(VIDEO_NULL), Y)
-OBJS     += video/null/kbd.o video/null/mouse.o video/null/server.o
-endif
-ifeq ($(VIDEO_HELPER), Y)
-OBJS     += video/helper/console.o video/helper/cursor.o video/helper/kbd.o video/helper/modes.o video/helper/mouse.o video/helper/mtrr.o
-endif
+OBJS-$(VIDEO_FBDev)       += video/fb/fb.o video/fb/kbd.o video/fb/server.o video/fb/timing.o
+VLDFLAGS-$(VIDEO_FBDev)   += -lm
+
+OBJS-$(VIDEO_SDL)         += video/sdl/event.o video/sdl/kbd.o video/sdl/mouse.o video/sdl/server.o
+CFLAGS-$(VIDEO_SDL)       += $(shell sdl-config --cflags)
+VLDFLAGS-$(VIDEO_SDL)     += $(shell sdl-config --libs)
+
+OBJS-$(VIDEO_SVGALib)     += video/svga/kbd.o video/svga/server.o
+VLDFLAGS-$(VIDEO_SVGALib) += -lvga -lm
+
+OBJS-$(VIDEO_VESA)        += video/vesa/kbd.o video/vesa/server.o video/vesa/lrmi-0.10/lrmi.o
+
+TARGET-$(VIDEO_PSPDEV)     = xynth.elf
+OBJS-$(VIDEO_PSPDEV)      += video/pspdev/event.o video/pspdev/kbd.o video/pspdev/mouse.o video/pspdev/server.o
+VLDFLAGS-$(VIDEO_PSPDEV)  += -lm -lpspdebug -lpspdisplay -lpspge -lpspctrl -lpspsdk -lc -lpsputility -lpspuser -lpspkernel
+
+OBJS-$(VIDEO_GDI)         += video/gdi/event.o video/gdi/kbd.o video/gdi/mouse.o video/gdi/server.o
+LIBDIR-$(VIDEO_GDI)       += video/gdi/pthread_w32
+VLDFLAGS-$(VIDEO_GDI)     += -lpthreadGC2 -lgdi32
+TARGET-$(VIDEO_GDI)        = xynth.exe
+
+OBJS-$(VIDEO_GP2X)        += video/gp2x/event.o video/gp2x/kbd.o video/gp2x/mouse.o video/gp2x/server.o
+VLDFLAGS-$(VIDEO_GP2X)    += -lpthread -lm
+
+OBJS-$(VIDEO_NULL)        += video/null/kbd.o video/null/mouse.o video/null/server.o
+
+OBJS-$(VIDEO_HELPER)      += video/helper/console.o video/helper/cursor.o video/helper/kbd.o video/helper/modes.o video/helper/mouse.o video/helper/mtrr.o
 
 ifeq ($(SINGLE_APP), Y)
-	ifeq ($(DEMO_CHILD), Y)
-		LDFLAGS += ../../demo/child/single_child.a
-	endif
-	ifeq ($(DEMO_DESKTOP), Y)
-		LDFLAGS += ../../demo/desktop/single_desktop.a
-	endif
-	ifeq ($(DEMO_HIDE), Y)
-		LDFLAGS += ../../demo/hide/single_hide.a
-	endif
-	ifeq ($(DEMO_LOAD), Y)
-		LDFLAGS += ../../demo/load/single_load.a
-	endif
-	ifeq ($(DEMO_SIMPLE), Y)
-		LDFLAGS += ../../demo/simple/single_simple.a
-	endif
-	ifeq ($(DEMO_OBJECT), Y)
-		LDFLAGS += ../../demo/object/single_object.a
-	endif
-	ifeq ($(DEMO_ONSCREENKEYBOARD), Y)
-		LDFLAGS += ../../demo/onscreenkeyboard/single_onscreenkeyboard.a
-	endif
-	ifeq ($(DEMO_TEMP), Y)
-		LDFLAGS += ../../demo/temp/single_temp.a
-	endif
-	ifeq ($(DEMO_TERM), Y)
-		LDFLAGS += ../../demo/term/single_term.a
-	endif
-	ifeq ($(DEMO_TIMER), Y)
-		LDFLAGS += ../../demo/timer/single_timer.a
-	endif
-	ifeq ($(DEMO_LOGOUT), Y)
-		LDFLAGS += ../../demo/xynthlogout/single_xynthlogout.a
-	endif
+	LDFLAGS-$(DEMO_CHILD) += ../../demo/child/single_child.a
+	LDFLAGS-$(DEMO_DESKTOP) += ../../demo/desktop/single_desktop.a
+	LDFLAGS-$(DEMO_HIDE) += ../../demo/hide/single_hide.a
+	LDFLAGS-$(DEMO_LOAD) += ../../demo/load/single_load.a
+	LDFLAGS-$(DEMO_SIMPLE) += ../../demo/simple/single_simple.a
+	LDFLAGS-$(DEMO_OBJECT) += ../../demo/object/single_object.a
+	LDFLAGS-$(DEMO_ONSCREENKEYBOARD) += ../../demo/onscreenkeyboard/single_onscreenkeyboard.a
+	LDFLAGS-$(DEMO_TEMP) += ../../demo/temp/single_temp.a
+	LDFLAGS-$(DEMO_TERM) += ../../demo/term/single_term.a
+	LDFLAGS-$(DEMO_TIMER) += ../../demo/timer/single_timer.a
+	LDFLAGS-$(DEMO_LOGOUT) += ../../demo/xynthlogout/single_xynthlogout.a
 endif
 
-ifeq ($(THEME_PLUGIN), Y)
-LDFLAGS += -ldl
-endif
-LDFLAGS += -lxynth $(VLDFLAGS)
+LDFLAGS-$(THEME_PLUGIN) += -ldl
 
-EXTRA_CLEAN = xynth xynth.elf xynth.exe video/*/*.o
+OBJS    += $(OBJS-Y)
+CFLAGS  += $(CFLAGS-Y)
+LDFLAGS += $(LDFLAGS-Y) -lxynth $(VLDFLAGS-Y)
+TARGET   = $(TARGET-Y)
+
+EXTRA_CLEAN = xynth xynth.exe xynth.elf $(OBJS-N) $(OBJS-)
 
 DEPEND_FILES       = *.c video/*/*.c
 EXTRA_DEPEND_FILES = *.h
