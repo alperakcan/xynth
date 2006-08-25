@@ -2,36 +2,22 @@
 include ../Makefile.cfg
 include ../Makefile.parse
 
+subdirs-Y += lib
+subdirs-$(WIDGET_LIB) += widget
+subdirs-Y += ../demo
+subdirs-Y += fonts
+subdirs-Y += configs
+subdirs-Y += server
+subdirs-$(THEME_PLUGIN)   += themes
+subdirs-$(PYTHON_BINDING) += python
+
 all :
-	$(MAKE) -C lib
-	$(MAKE) -C widget
-	$(MAKE) -C ../demo
-ifeq ($(THEME_PLUGIN), Y)
-	$(MAKE) -C themes
-endif
-	$(MAKE) -C fonts
-	$(MAKE) -C configs
-#	$(MAKE) -C python
-	$(MAKE) -C server
+	$(foreach F, $(subdirs-Y), $(MAKE) -C $F || exit 1;)
 
 dist:
-	$(MAKE) dist -C lib
-	$(MAKE) dist -C widget
-	$(MAKE) dist -C ../demo
-ifeq ($(THEME_PLUGIN), Y)
-	$(MAKE) dist -C themes
-endif
-	$(MAKE) dist -C fonts
-	$(MAKE) dist -C configs
-#	$(MAKE) dist -C python
-	$(MAKE) dist -C server
+	$(foreach F, $(subdirs-Y), $(MAKE) dist -C $F || exit 1;)
 
 clean :
-	$(MAKE) clean -C lib
-	$(MAKE) clean -C widget
-	$(MAKE) clean -C ../demo
-	$(MAKE) clean -C themes
-	$(MAKE) clean -C fonts
-	$(MAKE) clean -C configs
-#	$(MAKE) clean -C python
-	$(MAKE) clean -C server
+	$(foreach F, $(subdirs-Y), $(MAKE) clean -C $F || exit 1;)
+	$(foreach F, $(subdirs-N), $(MAKE) clean -C $F || exit 1;)
+	$(foreach F, $(subdirs-), $(MAKE) clean -C $F || exit 1;)

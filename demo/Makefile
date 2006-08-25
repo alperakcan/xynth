@@ -2,106 +2,28 @@
 include ../Makefile.cfg
 include ../Makefile.parse
 
+subdirs-$(DEMO_CHILD)    = child
+subdirs-$(DEMO_DESKTOP) += desktop
+subdirs-$(DEMO_HIDE)    += hide
+subdirs-$(DEMO_LOAD)    += load
+subdirs-$(DEMO_SIMPLE)  += simple
+subdirs-$(DEMO_OBJECT)  += object
+subdirs-$(DEMO_TEMP)    += temp
+subdirs-$(DEMO_TERM)    += term
+subdirs-$(DEMO_TIMER)   += timer
+subdirs-$(DEMO_LOGOUT)  += xynthlogout
+subdirs-$(DEMO_IMAGE)   += img
+subdirs-$(DEMO_MINES)   += mines
+subdirs-$(DEMO_WIDGET)  += widget
+subdirs-$(DEMO_ONSCREENKEYBOARD) += onscreenkeyboard
+
 all:
-ifeq ($(DEMO_CHILD), Y)
-	$(MAKE) -C child
-endif
-ifeq ($(DEMO_DESKTOP), Y)
-	$(MAKE) -C desktop
-endif
-ifeq ($(DEMO_HIDE), Y)
-	$(MAKE) -C hide
-endif
-ifeq ($(DEMO_LOAD), Y)
-	$(MAKE) -C load
-endif
-ifeq ($(DEMO_SIMPLE), Y)
-	$(MAKE) -C simple
-endif
-ifeq ($(DEMO_OBJECT), Y)
-	$(MAKE) -C object
-endif
-ifeq ($(DEMO_ONSCREENKEYBOARD), Y)
-	$(MAKE) -C onscreenkeyboard
-endif
-ifeq ($(DEMO_TEMP), Y)
-	$(MAKE) -C temp
-endif
-ifeq ($(DEMO_TERM), Y)
-	$(MAKE) -C term
-endif
-ifeq ($(DEMO_TIMER), Y)
-	$(MAKE) -C timer
-endif
-ifeq ($(DEMO_LOGOUT), Y)
-	$(MAKE) -C xynthlogout
-endif
-ifeq ($(DEMO_IMAGE), Y)
-	$(MAKE) -C img
-endif
-ifeq ($(DEMO_MINES), Y)
-	$(MAKE) -C mines
-endif
-ifeq ($(DEMO_WIDGET), Y)
-	$(MAKE) -C widget
-endif
+	$(foreach F, $(subdirs-Y), $(MAKE) -C $F || exit 1;)
 
 dist:
-ifeq ($(DEMO_CHILD), Y)
-	$(MAKE) dist -C child
-endif
-ifeq ($(DEMO_DESKTOP), Y)
-	$(MAKE) dist -C desktop
-endif
-ifeq ($(DEMO_HIDE), Y)
-	$(MAKE) dist -C hide
-endif
-ifeq ($(DEMO_LOAD), Y)
-	$(MAKE) dist -C load
-endif
-ifeq ($(DEMO_SIMPLE), Y)
-	$(MAKE) dist -C simple
-endif
-ifeq ($(DEMO_OBJECT), Y)
-	$(MAKE) dist -C object
-endif
-ifeq ($(DEMO_ONSCREENKEYBOARD), Y)
-	$(MAKE) dist -C onscreenkeyboard
-endif
-ifeq ($(DEMO_TEMP), Y)
-	$(MAKE) dist -C temp
-endif
-ifeq ($(DEMO_TERM), Y)
-	$(MAKE) dist -C term
-endif
-ifeq ($(DEMO_TIMER), Y)
-	$(MAKE) dist -C timer
-endif
-ifeq ($(DEMO_LOGOUT), Y)
-	$(MAKE) dist -C xynthlogout
-endif
-ifeq ($(DEMO_IMAGE), Y)
-	$(MAKE) dist -C img
-endif
-ifeq ($(DEMO_MINES), Y)
-	$(MAKE) dist -C mines
-endif
-ifeq ($(DEMO_WIDGET), Y)
-	$(MAKE) dist -C widget
-endif
+	$(foreach F, $(subdirs-Y), $(MAKE) dist -C $F || exit 1;)
 
 clean:
-	$(MAKE) clean -C child
-	$(MAKE) clean -C load
-	$(MAKE) clean -C mines
-	$(MAKE) clean -C desktop
-	$(MAKE) clean -C simple
-	$(MAKE) clean -C temp
-	$(MAKE) clean -C term
-	$(MAKE) clean -C widget
-	$(MAKE) clean -C hide
-	$(MAKE) clean -C object
-	$(MAKE) clean -C timer
-	$(MAKE) clean -C img
-	$(MAKE) clean -C xynthlogout
-	$(MAKE) clean -C onscreenkeyboard
+	$(foreach F, $(subdirs-Y), $(MAKE) clean -C $F || exit 1;)
+	$(foreach F, $(subdirs-N), $(MAKE) clean -C $F || exit 1;)
+	$(foreach F, $(subdirs-), $(MAKE) clean -C $F || exit 1;)

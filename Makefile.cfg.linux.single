@@ -66,13 +66,16 @@ IMAGE_GIF       = Y
 IMAGE_XPM       = Y
 
 # Theme plugin support
-THEME_PLUGIN    = Y
+THEME_PLUGIN    = N
 
 # Debug Options
 DEBUG		= Y
 
 # Link them all
 SINGLE_APP      = Y
+
+# Build widget library
+WIDGET_LIB      = N
 
 # Demo applications
 DEMO_CHILD      = Y
