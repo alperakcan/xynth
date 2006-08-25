@@ -23,26 +23,23 @@ OBJS += freetype2/ftbase.o freetype2/ftbitmap.o freetype2/ftdebug.o freetype2/ft
         freetype2/ftinit.o freetype2/ftsystem.o freetype2/autofit.o freetype2/sfnt.o \
         freetype2/smooth.o freetype2/truetype.o
 
-ifeq ($(PLATFORM_LINUX), Y)
-TARGET_A  = libxynth.a
-TARGET_SO = libxynth.so
-LDFLAGS   = -lpthread -lm
-else
-ifeq ($(PLATFORM_PSPDEV), Y)
-TARGET_A  = libxynth.a
-else
+TARGET_A-$(PLATFORM_LINUX)  = libxynth.a
+TARGET_SO-$(PLATFORM_LINUX) = libxynth.so
+LDFLAGS-$(PLATFORM_LINUX)   = -lpthread -lm
+
+TARGET_A-$(PLATFORM_PSPDEV)  = libxynth.a
+
+TARGET_A-$(PLATFORM_MINGW)  = libxynth.a
 ifeq ($(PLATFORM_MINGW), Y)
-TARGET_A  = libxynth.a
-ifeq ($(THREAD_PTHREADS), Y)
-INCDIR += ../server/video/gdi/pthread_w32
+INCDIR-$(THREAD_PTHREADS) += ../server/video/gdi/pthread_w32
 endif
-else
-ifeq ($(PLATFORM_GP2X), Y)
-TARGET_A  = libxynth.a
-endif
-endif
-endif
-endif
+
+TARGET_A-$(PLATFORM_GP2X)  = libxynth.a
+
+TARGET_A  = $(TARGET_A-Y)
+TARGET_SO = $(TARGET_SO-Y)
+INCDIR   += $(INCDIR-Y)
+LDFLAGS  += $(LDFLAGS-Y)
 
 EXTRA_CLEAN = libxynth.a libxynth.so
 
