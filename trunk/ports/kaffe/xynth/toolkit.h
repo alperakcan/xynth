@@ -61,6 +61,7 @@ typedef struct xynth_toolkit_s {
 	unsigned int last_idx;
 	s_window_t *root;
 	xynth_eventq_t *eventq;
+	int keymap[S_KEYCODE_CODES];
 } xynth_toolkit_t;
 
 xynth_toolkit_t *xynth;
@@ -78,12 +79,14 @@ xynth_toolkit_t *xynth;
 #define JFOCUS_GAINED      1004
 #define JFOCUS_LOST        1005
 #define JUPDATE            801
-#define JQUIT             202
-#define JMOUSE_PRESSED    501
-#define JMOUSE_RELEASED   502
-#define JMOUSE_MOVED      503
-#define JMOUSE_ENTERED    504
-#define JMOUSE_EXITED     505
+#define JQUIT              202
+#define JMOUSE_PRESSED     501
+#define JMOUSE_RELEASED    502
+#define JMOUSE_MOVED       503
+#define JMOUSE_ENTERED     504
+#define JMOUSE_EXITED      505
+#define JKEY_PRESSED       401
+#define JKEY_RELEASED      402
 
 static inline void * _awt_malloc_wrapper (size_t size)
 {
