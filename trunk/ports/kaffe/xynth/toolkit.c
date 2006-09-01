@@ -1,7 +1,7 @@
 
 /*
  * Copyright (c) 2006
- *	Alper Akcan <distchx@yahoo.com>, All rights reserved.
+ *	Alper Akcan <alper@kaffe.org>, All rights reserved.
  *
  * See the file "license.terms" for information on usage and redistribution 
  * of this file. 
@@ -44,8 +44,8 @@ jboolean Java_java_awt_Toolkit_tlkInit (JNIEnv *env UNUSED, jclass clazz UNUSED,
 	xynth->keymap[S_KEYCODE_ZERO] = 0x30;
 	xynth->keymap[S_KEYCODE_MINUS] = 0x0;
 	xynth->keymap[S_KEYCODE_EQUAL] = 0x3d;
-	xynth->keymap[S_KEYCODE_DELETE] = -'\b';
-	xynth->keymap[S_KEYCODE_TAB] = -'\t';
+	xynth->keymap[S_KEYCODE_DELETE] = 0x08;
+	xynth->keymap[S_KEYCODE_TAB] = 0x9;
 	xynth->keymap[S_KEYCODE_q] = 0x51;
 	xynth->keymap[S_KEYCODE_w] = 0x57;
 	xynth->keymap[S_KEYCODE_e] = 0x45;
@@ -58,7 +58,7 @@ jboolean Java_java_awt_Toolkit_tlkInit (JNIEnv *env UNUSED, jclass clazz UNUSED,
 	xynth->keymap[S_KEYCODE_p] = 0x50;
 	xynth->keymap[S_KEYCODE_BRACKETLEFT] = 0x5b;
 	xynth->keymap[S_KEYCODE_BRACKETRIGHT] = 0x5d;
-	xynth->keymap[S_KEYCODE_RETURN] = -'\n';
+	xynth->keymap[S_KEYCODE_RETURN] = 0xa;
 	xynth->keymap[S_KEYCODE_LEFTCONTROL] = 0x11;
 	xynth->keymap[S_KEYCODE_a] = 0x41;
 	xynth->keymap[S_KEYCODE_s] = 0x53;
