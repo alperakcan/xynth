@@ -35,7 +35,7 @@ VLDFLAGS-$(VIDEO_GDI)     += -lpthreadGC2 -lgdi32
 TARGET-$(VIDEO_GDI)        = xynth.exe
 
 OBJS-$(VIDEO_GP2X)        += video/gp2x/event.o video/gp2x/kbd.o video/gp2x/mouse.o video/gp2x/server.o
-VLDFLAGS-$(VIDEO_GP2X)    += -lpthread -lm
+VLDFLAGS-$(VIDEO_GP2X)    += -lpthread -lm -static
 
 OBJS-$(VIDEO_NULL)        += video/null/kbd.o video/null/mouse.o video/null/server.o
 
@@ -111,21 +111,21 @@ endif
 endif
 else
 ifeq ($(PLATFORM_GP2X), Y)
-	echo "#!/bin/bash"                          >  ../../$(DISTTOPDIR)/$(TARGET).gpe
-	echo "sync"                                 >> ../../$(DISTTOPDIR)/$(TARGET).gpe
-	echo "mount /mnt/sd -o remount,sync"        >> ../../$(DISTTOPDIR)/$(TARGET).gpe
-	echo "cd bin"                               >> ../../$(DISTTOPDIR)/$(TARGET).gpe
-	echo "export PATH=\`pwd\`:\$$PATH"          >> ../../$(DISTTOPDIR)/$(TARGET).gpe
+	echo "#!/bin/bash"                          >  ../../$(DISTTOPDIR)/$(TARGET).gpu
+	echo "sync"                                 >> ../../$(DISTTOPDIR)/$(TARGET).gpu
+	echo "mount /mnt/sd -o remount,sync"        >> ../../$(DISTTOPDIR)/$(TARGET).gpu
+	echo "cd bin"                               >> ../../$(DISTTOPDIR)/$(TARGET).gpu
+	echo "export PATH=\`pwd\`:\$$PATH"          >> ../../$(DISTTOPDIR)/$(TARGET).gpu
 ifeq ($(SINGLE_APP), Y)
-	echo "./xynth &> ../xynth.log"              >> ../../$(DISTTOPDIR)/$(TARGET).gpe
+	echo "./xynth &> ../xynth.log"              >> ../../$(DISTTOPDIR)/$(TARGET).gpu
 else
-	echo "./xynth &> ../xynth.log& sleep 2; ./desktop &> ../xynth_desktop.log" >> ../../$(DISTTOPDIR)/$(TARGET).gpe
+	echo "./xynth &> ../xynth.log& sleep 2; ./desktop &> ../xynth_desktop.log" >> ../../$(DISTTOPDIR)/$(TARGET).gpu
 endif
-	echo "sync"                                 >> ../../$(DISTTOPDIR)/$(TARGET).gpe
-	echo "mount /mnt/sd -o remount,async"       >> ../../$(DISTTOPDIR)/$(TARGET).gpe
-	echo "cd /usr/gp2x"                         >> ../../$(DISTTOPDIR)/$(TARGET).gpe
-	echo "exec ./gp2xmenu"                      >> ../../$(DISTTOPDIR)/$(TARGET).gpe
-	chmod +x ../../$(DISTTOPDIR)/$(TARGET).gpe
+	echo "sync"                                 >> ../../$(DISTTOPDIR)/$(TARGET).gpu
+	echo "mount /mnt/sd -o remount,async"       >> ../../$(DISTTOPDIR)/$(TARGET).gpu
+	echo "cd /usr/gp2x"                         >> ../../$(DISTTOPDIR)/$(TARGET).gpu
+	echo "exec ./gp2xmenu"                      >> ../../$(DISTTOPDIR)/$(TARGET).gpu
+	chmod +x ../../$(DISTTOPDIR)/$(TARGET).gpu
 	cp ../../tools/gp2x/xynth.png ../../$(DISTTOPDIR)
 endif
 endif
