@@ -59,9 +59,14 @@ end:
 			return -1;
 		}
 		if (pid == 0) {
+#if defined(PLATFORM_GP2X)
+			system(arg[0]);
+			exit(0);
+#else
 			execvp(arg[0], arg);
 			debugf(DCLI, "Error executing %s", arg[0]);
 			exit(2);
+#endif
 		}
 	}
 #endif

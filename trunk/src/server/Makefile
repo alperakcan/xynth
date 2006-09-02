@@ -114,8 +114,9 @@ ifeq ($(PLATFORM_GP2X), Y)
 	echo "#!/bin/bash"                          >  ../../$(DISTTOPDIR)/$(TARGET).gpu
 	echo "sync"                                 >> ../../$(DISTTOPDIR)/$(TARGET).gpu
 	echo "mount /mnt/sd -o remount,sync"        >> ../../$(DISTTOPDIR)/$(TARGET).gpu
+	echo "export PATH=\`pwd\`/bin:\$$PATH"          >> ../../$(DISTTOPDIR)/$(TARGET).gpu
+	echo "export LD_LIBRARY_PATH=\`pwd\`/lib:\$$LD_LIBRARY_PATH" >> ../../$(DISTTOPDIR)/$(TARGET).gpu
 	echo "cd bin"                               >> ../../$(DISTTOPDIR)/$(TARGET).gpu
-	echo "export PATH=\`pwd\`:\$$PATH"          >> ../../$(DISTTOPDIR)/$(TARGET).gpu
 ifeq ($(SINGLE_APP), Y)
 	echo "./xynth &> ../xynth.log"              >> ../../$(DISTTOPDIR)/$(TARGET).gpu
 else

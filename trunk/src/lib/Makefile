@@ -35,6 +35,8 @@ INCDIR-$(THREAD_PTHREADS) += ../server/video/gdi/pthread_w32
 endif
 
 TARGET_A-$(PLATFORM_GP2X)  = libxynth.a
+TARGET_SO-$(PLATFORM_GP2X) = libxynth.so
+LDFLAGS-$(PLATFORM_GP2X)   = -lpthread -lm
 
 TARGET_A  = $(TARGET_A-Y)
 TARGET_SO = $(TARGET_SO-Y)
