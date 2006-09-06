@@ -95,7 +95,7 @@ ifeq ($(PSP-VERSION), 1.5)
 	         NULL
 else
 ifeq ($(PSP-VERSION), 1.0)
-	mkdir -p $(BINDIR)/xynth
+	mkdir -p ../../$(DISTBINDIR)/xynth
 	psp-strip ../../$(DISTBINDIR)/$(TARGET) -o ../../$(DISTBINDIR)/$(TARGET).strip
 	pack-pbp ../../$(DISTBINDIR)/xynth/eboot.pbp \
 	         ../../$(DISTBINDIR)/param.sfo \
