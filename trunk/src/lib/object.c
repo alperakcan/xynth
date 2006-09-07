@@ -102,7 +102,7 @@ int s_object_move (s_object_t *object, int x, int y, int w, int h)
 	object->surface->win->w = w;
 	object->surface->win->h = h;
 	
-//	if ((old.w != w) || (old.h != h)) {
+	if ((old.w != w) || (old.h != h)) {
 		/* re prepare matrix and surface buffer */
 		s_free(object->surface->matrix);
 		s_free(object->surface->vbuf);
@@ -114,7 +114,7 @@ int s_object_move (s_object_t *object, int x, int y, int w, int h)
 		if (object->draw != NULL) {
 			object->draw(object);
 		}
-//	}
+	}
 
 	while (!(s_list_eol(object->childs, pos))) {
 		s_object_t *obj = (s_object_t *) s_list_get(object->childs, pos);
