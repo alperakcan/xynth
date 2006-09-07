@@ -1,4 +1,14 @@
 
+Thu 07 Sep 2006 12:53:01 PM EEST
+	* rev : 306
+	* demo/object/object.c,
+	  src/lib/object.c,
+	  src/lib/xynth.h :
+	  
+	  changed s_object_t, from now on every object must give its draw function,
+	  this is a small step for built in c widgets.
+	  
+
 Wed 06 Sep 2006 01:49:15 PM EEST
 	* rev : 300
 	* : released v0.8.40

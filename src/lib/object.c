@@ -85,8 +85,8 @@ int s_object_move (s_object_t *object, int x, int y, int w, int h)
 
 	if (w < 0) { w = 0; }
 	if (h < 0) { h = 0; }
-	if (w > object->surface->width) { w = object->surface->width; }
-	if (h > object->surface->height) { h = object->surface->height; }
+//	if (w > object->surface->width) { w = object->surface->width; }
+//	if (h > object->surface->height) { h = object->surface->height; }
 
 	old = *(object->surface->win);
 
@@ -102,16 +102,19 @@ int s_object_move (s_object_t *object, int x, int y, int w, int h)
 	object->surface->win->w = w;
 	object->surface->win->h = h;
 	
-	if ((old.w != w) || (old.h != h)) {
+//	if ((old.w != w) || (old.h != h)) {
 		/* re prepare matrix and surface buffer */
 		s_free(object->surface->matrix);
 		s_free(object->surface->vbuf);
 		object->surface->matrix = (unsigned char *) s_malloc(sizeof(char) * w * h + 1);
+		memset(object->surface->matrix, 1, sizeof(char) * w * h);
 		object->surface->vbuf = (char *) s_calloc(1, w * h * object->surface->bytesperpixel + 1);
+		object->surface->width = w;
+		object->surface->height = h;
 		if (object->draw != NULL) {
 			object->draw(object);
 		}
-	}
+//	}
 
 	while (!(s_list_eol(object->childs, pos))) {
 		s_object_t *obj = (s_object_t *) s_list_get(object->childs, pos);
@@ -205,6 +208,7 @@ int s_object_init (s_window_t *window, s_object_t **object, int w, int h, void (
 	(*object)->surface->win->y = 0;
 	(*object)->surface->win->w = 0;
 	(*object)->surface->win->h = 0;
+	(*object)->draw = draw;
 
 	if (parent != NULL) {
 		s_thread_mutex_lock(parent->mut);

@@ -56,6 +56,7 @@ object_draw object_draw_p[] = {
 	&object_draw_green,
 	&object_draw_blue,
 	&object_draw_white,
+	&object_draw_black
 };
 
 static void handler0_p (s_window_t *window, s_event_t *event, s_handler_t *handler)
@@ -68,20 +69,26 @@ static void handler1_p (s_window_t *window, s_event_t *event, s_handler_t *handl
 {
 	int i;
 	int j;
+	int w;
+	int h;
         main_data_t *mdata = (main_data_t *) window->client->user_data;
 
 	for (i = 0; i < 4; i++) {
-		s_object_move(mdata->objectc[i], ((unsigned) rand()) % mdata->objectc[i]->parent->surface->width,
-		                                 ((unsigned) rand()) % mdata->objectc[i]->parent->surface->height,
-		                                 ((unsigned) rand()) % mdata->objectc[i]->parent->surface->width,
-		                                 ((unsigned) rand()) % mdata->objectc[i]->parent->surface->height
+		w = (mdata->objectc[i]->parent->surface->width) ? mdata->objectc[i]->parent->surface->width : 1;
+		h = (mdata->objectc[i]->parent->surface->height) ? mdata->objectc[i]->parent->surface->height : 1;
+		s_object_move(mdata->objectc[i], ((unsigned) rand()) % w,
+		                                 ((unsigned) rand()) % h,
+		                                 ((unsigned) rand()) % w,
+		                                 ((unsigned) rand()) % h
 		                                 );
 		if (i == 0) {
 			for (j = 0; j < 4; j++) {
-				s_object_move(mdata->objectcc[j], ((unsigned) rand()) % mdata->objectcc[j]->parent->surface->width,
-			        	                          ((unsigned) rand()) % mdata->objectcc[j]->parent->surface->height,
-			                		 	  ((unsigned) rand()) % mdata->objectcc[j]->parent->surface->width,
-				                                  ((unsigned) rand()) % mdata->objectcc[j]->parent->surface->height
+				w = (mdata->objectcc[j]->parent->surface->width) ? mdata->objectcc[j]->parent->surface->width : 1;
+				h = (mdata->objectcc[j]->parent->surface->height) ? mdata->objectcc[j]->parent->surface->height : 1;
+				s_object_move(mdata->objectcc[j], ((unsigned) rand()) % w,
+			        	                          ((unsigned) rand()) % h,
+			                		 	  ((unsigned) rand()) % w,
+				                                  ((unsigned) rand()) % h
 				                                  );
 			}
 		}
@@ -119,7 +126,6 @@ static void handler3_p (s_window_t *window, s_event_t *event, s_handler_t *handl
 
 int main (int argc, char *argv[])
 {
-        int c = 0;
         int i = 0;
         int j = 0;
 	int x = 60;
@@ -197,24 +203,9 @@ int main (int argc, char *argv[])
 	s_object_init(window, &(mdata->objectp), 500, 500, object_draw_black, NULL);
 	for (i = 0; i < 4; i++) {
 		s_object_init(window, &(mdata->objectc[i]), 100, 100, object_draw_p[i], mdata->objectp);
-		switch (i) {
-			case 0: c = s_rgbcolor(mdata->objectc[i]->surface, 255, 0, 0); break;
-			case 1: c = s_rgbcolor(mdata->objectc[i]->surface, 0, 255, 0); break;
-			case 2: c = s_rgbcolor(mdata->objectc[i]->surface, 0, 0, 255); break;
-			case 3: c = s_rgbcolor(mdata->objectc[i]->surface, 255, 255, 255); break;
-		}
-//		s_fillbox(mdata->objectc[i]->surface, 0, 0, mdata->objectc[i]->surface->width, mdata->objectc[i]->surface->height, c);
-
 		if (i == 0) {
 			for (j = 0; j < 4; j++) {
-				s_object_init(window, &(mdata->objectcc[j]), 20, 20, object_draw_p[j], mdata->objectc[i]);
-				switch (j) {
-					case 0: c = s_rgbcolor(mdata->objectcc[j]->surface, 0, 0, 0); break;
-					case 1: c = s_rgbcolor(mdata->objectcc[j]->surface, 0, 255, 0); break;
-					case 2: c = s_rgbcolor(mdata->objectcc[j]->surface, 0, 0, 255); break;
-					case 3: c = s_rgbcolor(mdata->objectcc[j]->surface, 255, 255, 255); break;
-				}
-//				s_fillbox(mdata->objectcc[j]->surface, 0, 0, mdata->objectcc[j]->surface->width, mdata->objectcc[j]->surface->height, c);
+				s_object_init(window, &(mdata->objectcc[j]), 20, 20, object_draw_p[j + 1], mdata->objectc[i]);
 			}
 		}
 	}
