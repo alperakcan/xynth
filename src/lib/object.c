@@ -32,11 +32,11 @@ int s_object_update_to_surface (s_object_t *object, s_surface_t *surface, s_rect
 		if (s_rect_intersect(&bound, object->parent->surface->win, &update)) {
 			goto end;
 		}
-		s_putboxpartmask(surface, update.x, update.y, update.w, update.h,
-		                          object->surface->width, object->surface->height,
-	        	                  object->surface->vbuf, object->surface->matrix,
-					  update.x - object->surface->win->x,
-					  update.y - object->surface->win->y);
+		s_putboxpartalpha(surface, update.x, update.y, update.w, update.h,
+		                           object->surface->width, object->surface->height,
+	        	                   object->surface->vbuf, object->surface->matrix,
+					   update.x - object->surface->win->x,
+					   update.y - object->surface->win->y);
 	}
 
 	while (!(s_list_eol(object->childs, pos))) {
@@ -76,8 +76,9 @@ end:	return 0;
 
 int s_object_move (s_object_t *object, int x, int y, int w, int h)
 {
-        int pos = 0;
-        s_rect_t old;
+	int pos = 0;
+	s_rect_t old;
+	s_rect_t new;
 	s_rect_t *tmp;
 	s_list_t *diff;
 
@@ -89,26 +90,42 @@ int s_object_move (s_object_t *object, int x, int y, int w, int h)
 	old = *(object->surface->win);
 
         /* coordinates in bounds of object`s parent */
-	object->surface->buf->x = x;
-	object->surface->buf->y = y;
-	object->surface->buf->w = w;
-	object->surface->buf->h = h;
+        new.x = x;
+        new.y = y;
+        new.w = w;
+        new.h = h;
+        if (s_rect_intersect(&new, object->parent->content, object->surface->buf)) {
+        	/* error, do not draw this child */
+        	object->surface->buf->x = x;
+        	object->surface->buf->y = y;
+        	object->surface->buf->w = 0;
+        	object->surface->buf->h = 0;
+        }
 
         /* coordinates in bounds of object`s root */
 	object->surface->win->x = object->parent->surface->win->x + object->surface->buf->x;
 	object->surface->win->y = object->parent->surface->win->y + object->surface->buf->y;
-	object->surface->win->w = w;
-	object->surface->win->h = h;
+	object->surface->win->w = object->surface->buf->w;
+	object->surface->win->h = object->surface->buf->h;
 	
-	if ((old.w != w) || (old.h != h)) {
+	/* re set the content rectangle */
+	object->content->x = 0;
+	object->content->y = 0;
+	object->content->w = object->surface->buf->w;
+	object->content->h = object->surface->buf->h;
+	
+	if ((old.w != object->surface->buf->w) ||
+	    (old.h != object->surface->buf->h)) {
 		/* re prepare matrix and surface buffer */
 		s_free(object->surface->matrix);
 		s_free(object->surface->vbuf);
-		object->surface->matrix = (unsigned char *) s_malloc(sizeof(char) * w * h + 1);
-		memset(object->surface->matrix, 1, sizeof(char) * w * h);
-		object->surface->vbuf = (char *) s_calloc(1, w * h * object->surface->bytesperpixel + 1);
-		object->surface->width = w;
-		object->surface->height = h;
+
+		object->surface->width = object->surface->buf->w;
+		object->surface->height = object->surface->buf->h;
+		object->surface->matrix = (unsigned char *) s_malloc(sizeof(char) * object->surface->width * object->surface->height + 1);
+		object->surface->vbuf = (char *) s_calloc(1, object->surface->width * object->surface->height * object->surface->bytesperpixel + 1);
+		memset(object->surface->matrix, 0XFF, sizeof(char) * object->surface->width * object->surface->height);
+
 		if (object->draw != NULL) {
 			object->draw(object);
 		}
@@ -192,11 +209,16 @@ int s_object_init (s_window_t *window, s_object_t **object, int w, int h, void (
 	(*object)->surface->buf = (s_rect_t *) s_malloc(sizeof(s_rect_t));
 	(*object)->surface->win = (s_rect_t *) s_malloc(sizeof(s_rect_t));
 	(*object)->surface->matrix = (unsigned char *) s_malloc(sizeof(char) * w * h + 1);
-	memset((*object)->surface->matrix, 1, sizeof(char) * w * h);
-	s_list_init(&((*object)->childs));
         vbuf = (char *) s_calloc(1, w * h * window->surface->bytesperpixel + 1);
 	s_getsurfacevirtual((*object)->surface, w, h, window->surface->bitsperpixel, vbuf);
+
+	memset((*object)->surface->matrix, 1, sizeof(char) * w * h);
+
+	s_list_init(&((*object)->childs));
 	(*object)->parent = parent;
+	(*object)->draw = draw;
+
+	(*object)->content = (s_rect_t *) s_malloc(sizeof(s_rect_t));
 
 	(*object)->surface->buf->x = 0;
 	(*object)->surface->buf->y = 0;
@@ -206,7 +228,6 @@ int s_object_init (s_window_t *window, s_object_t **object, int w, int h, void (
 	(*object)->surface->win->y = 0;
 	(*object)->surface->win->w = 0;
 	(*object)->surface->win->h = 0;
-	(*object)->draw = draw;
 
 	if (parent != NULL) {
 		s_thread_mutex_lock(parent->mut);
@@ -223,6 +244,11 @@ int s_object_init (s_window_t *window, s_object_t **object, int w, int h, void (
 		}
 	}
 
+	(*object)->content->x = (*object)->surface->buf->x;
+	(*object)->content->y = (*object)->surface->buf->y;
+	(*object)->content->w = (*object)->surface->buf->w;
+	(*object)->content->h = (*object)->surface->buf->h;
+
 	return 0;
 err0:	s_free(vbuf);
 	s_free((*object)->surface->matrix);
@@ -230,6 +256,7 @@ err0:	s_free(vbuf);
 	s_free((*object)->surface->win);
 	s_free((*object)->surface);
 	s_free((*object)->childs);
+	s_free((*object)->content);
 	s_free(*object);
 	return 1;
 }
@@ -264,6 +291,7 @@ int s_object_uninit (s_object_t *object)
 	s_free(object->surface->vbuf);
 	s_free(object->surface->matrix);
 	s_free(object->surface);
+	s_free(object->content);
 	s_list_uninit(object->childs);
 	s_free(object);
 	return 0;
