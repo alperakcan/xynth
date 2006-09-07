@@ -530,10 +530,17 @@ typedef struct s_surface_s {
 typedef struct s_object_s s_object_t;
 
 struct s_object_s {
-	s_list_t *childs;		/* object`s childs	*/
-	s_thread_mutex_t *mut;		/* object`s root mutex	*/
-	s_surface_t *surface;		/* object`s surface	*/
-	s_object_t *parent;		/* object`s parent	*/
+	/** child list */
+	s_list_t *childs;
+	/** root mutex */
+	s_thread_mutex_t *mut;
+	/** the surface */
+	s_surface_t *surface;
+	/** the parent of the object */
+	s_object_t *parent;
+	/** content allowed rectangle */
+	s_rect_t *content;
+	/** draw function */
 	void (*draw) (s_object_t *object);
 };
 
