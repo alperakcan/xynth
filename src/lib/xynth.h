@@ -527,12 +527,14 @@ typedef struct s_surface_s {
         s_window_t *window;
 } s_surface_t;
 
-typedef struct s_object_s {
+typedef struct s_object_s s_object_t;
+struct s_object_s {
 	s_list_t *childs;		/* object`s childs	*/
 	s_thread_mutex_t *mut;		/* object`s root mutex	*/
 	s_surface_t *surface;		/* object`s surface	*/
 	struct s_object_s *parent;	/* object`s parent	*/
-} s_object_t;
+	void (*draw) (s_object_t *object);
+};
 
 typedef struct s_client_s {
 	int id;
@@ -1687,7 +1689,7 @@ int s_object_update (s_object_t *object, s_rect_t *coor);
 int s_object_move (s_object_t *object, int x, int y, int w, int h);
 int s_object_hide (s_object_t *object);
 int s_object_show (s_object_t *object);
-int s_object_init (s_window_t *window, s_object_t **object, int w, int h, s_object_t *parent);
+int s_object_init (s_window_t *window, s_object_t **object, int w, int h, void (*draw) (s_object_t *), s_object_t *parent);
 int s_object_uninit (s_object_t *object);
 
 /** @defgroup pollfd pollfd api
