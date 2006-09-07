@@ -202,17 +202,17 @@ int s_object_show (s_object_t *object)
 
 int s_object_init (s_window_t *window, s_object_t **object, int w, int h, void (*draw) (s_object_t *), s_object_t *parent)
 {
-        char *vbuf;
+	char *vbuf;
 
 	(*object) = (s_object_t *) s_malloc(sizeof(s_object_t));
 	(*object)->surface = (s_surface_t *) s_malloc(sizeof(s_surface_t));
 	(*object)->surface->buf = (s_rect_t *) s_malloc(sizeof(s_rect_t));
 	(*object)->surface->win = (s_rect_t *) s_malloc(sizeof(s_rect_t));
 	(*object)->surface->matrix = (unsigned char *) s_malloc(sizeof(char) * w * h + 1);
-        vbuf = (char *) s_calloc(1, w * h * window->surface->bytesperpixel + 1);
+	vbuf = (char *) s_calloc(1, w * h * window->surface->bytesperpixel + 1);
 	s_getsurfacevirtual((*object)->surface, w, h, window->surface->bitsperpixel, vbuf);
 
-	memset((*object)->surface->matrix, 1, sizeof(char) * w * h);
+	memset((*object)->surface->matrix, 0xFF, sizeof(char) * w * h);
 
 	s_list_init(&((*object)->childs));
 	(*object)->parent = parent;
