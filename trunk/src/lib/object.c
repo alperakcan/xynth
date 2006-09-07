@@ -85,8 +85,6 @@ int s_object_move (s_object_t *object, int x, int y, int w, int h)
 
 	if (w < 0) { w = 0; }
 	if (h < 0) { h = 0; }
-//	if (w > object->surface->width) { w = object->surface->width; }
-//	if (h > object->surface->height) { h = object->surface->height; }
 
 	old = *(object->surface->win);
 

@@ -528,11 +528,12 @@ typedef struct s_surface_s {
 } s_surface_t;
 
 typedef struct s_object_s s_object_t;
+
 struct s_object_s {
 	s_list_t *childs;		/* object`s childs	*/
 	s_thread_mutex_t *mut;		/* object`s root mutex	*/
 	s_surface_t *surface;		/* object`s surface	*/
-	struct s_object_s *parent;	/* object`s parent	*/
+	s_object_t *parent;		/* object`s parent	*/
 	void (*draw) (s_object_t *object);
 };
 
