@@ -124,6 +124,53 @@ static void handler3_p (s_window_t *window, s_event_t *event, s_handler_t *handl
 	handler0_p(window, event, handler);
 }
 
+static int hide_show = 0;
+static void handler4_p (s_window_t *window, s_event_t *event, s_handler_t *handler)
+{
+        main_data_t *mdata = (main_data_t *) window->client->user_data;
+	if (hide_show++ % 2) {
+		s_object_show(mdata->objectc[0]);
+	} else {
+		s_object_hide(mdata->objectc[0]);
+	}
+	handler0_p(window, event, handler);
+}
+
+static void print_object (s_window_t *window, s_object_t *object)
+{
+	int i;
+	int j;
+        main_data_t *mdata = (main_data_t *) window->client->user_data;
+        if (object == mdata->objectp) {
+        	printf("root\n");
+        }
+	for (i = 0; i < 4; i++) {
+		if (mdata->objectc[i] == object) {
+			printf("big: %s\n", (i == 0) ? "red" : (i == 1) ? "green" : (i == 2) ? "blue" : "white");
+		}
+		if (i == 0) {
+			for (j = 0; j < 4; j++) {
+				if (mdata->objectcc[j] == object) {
+					printf("small: %s\n", (j == 0) ? "green" : (j == 1) ? "blue" : (j == 2) ? "white" : "black");
+				}
+			}
+		}
+	}
+}
+
+static void object_atevent (s_window_t *window, s_event_t *event)
+{
+	s_object_t *object;
+        main_data_t *mdata = (main_data_t *) window->client->user_data;
+	if (event->type & MOUSE_EVENT &&
+	    event->type & MOUSE_PRESSED &&
+	    event->mouse->b == MOUSE_LEFTBUTTON) {
+	    	s_object_atposition(mdata->objectp, event->mouse->x - window->surface->buf->x - 10, event->mouse->y -window->surface->buf->y - 50, &object);
+	    	print_object(window, object);
+	    	
+	}
+}
+
 int main (int argc, char *argv[])
 {
         int i = 0;
@@ -197,6 +244,18 @@ int main (int argc, char *argv[])
 	hndl->mouse.button = MOUSE_LEFTBUTTON;
 	s_handler_add(window, hndl);
 
+	s_fillbox(window->surface, 80, 0, 20, 20, s_rgbcolor(window->surface, 222, 222, 222));
+	s_fillbox(window->surface, 82, 2, 16, 16, s_rgbcolor(window->surface, 255, 0, 0));
+	s_handler_init(&hndl);
+	hndl->type = MOUSE_HANDLER;
+	hndl->mouse.x = 80;
+	hndl->mouse.y = 0;
+	hndl->mouse.w = 20;
+	hndl->mouse.h = 20;
+	hndl->mouse.p = handler4_p;
+	hndl->mouse.button = MOUSE_LEFTBUTTON;
+	s_handler_add(window, hndl);
+
 	mdata = (main_data_t *) s_malloc(sizeof(main_data_t));
 	window->client->user_data = (void *) mdata;
 	
@@ -213,6 +272,8 @@ int main (int argc, char *argv[])
 	s_window_set_coor(window, WINDOW_NOFORM, window->surface->buf->x, window->surface->buf->y,
 	                                         mdata->objectp->surface->width + 20, mdata->objectp->surface->height + 60);
         s_fillbox(window->surface, 0, 40, mdata->objectp->surface->width + 20, mdata->objectp->surface->height + 20, s_rgbcolor(window->surface, 222, 222, 222));
+
+	s_client_atevent(window, object_atevent);
 
 	s_window_show(window);
 	s_client_main(window);

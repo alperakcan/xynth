@@ -1697,6 +1697,8 @@ int s_object_update (s_object_t *object, s_rect_t *coor);
 int s_object_move (s_object_t *object, int x, int y, int w, int h);
 int s_object_hide (s_object_t *object);
 int s_object_show (s_object_t *object);
+int s_object_childatposition (s_object_t *object, int x, int y, s_object_t **child);
+int s_object_atposition (s_object_t *root, int x, int y, s_object_t **object);
 int s_object_init (s_window_t *window, s_object_t **object, int w, int h, void (*draw) (s_object_t *), s_object_t *parent);
 int s_object_uninit (s_object_t *object);
 

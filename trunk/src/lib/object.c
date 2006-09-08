@@ -50,27 +50,14 @@ end:	return 0;
 
 int s_object_update (s_object_t *object, s_rect_t *coor)
 {
-        s_object_t *parent;
-
 	if (object == NULL) {
 		goto end;
 	}
-	if (object->parent == NULL) {
-		s_fillbox(object->surface, coor->x, coor->y, coor->w, coor->h, 0);
-		s_object_update_to_surface(object, object->surface, coor);
-		goto end;
+	while (object->parent != NULL) {
+		object = object->parent;
 	}
-	parent = object;
-	while (1) {
-		if (parent->parent != NULL) {
-			parent = parent->parent;
-		} else {
-			s_fillbox(parent->surface, coor->x, coor->y, coor->w, coor->h, 0);
-			s_object_update_to_surface(parent, parent->surface, coor);
-			goto end;
-		}
-	}
-
+	s_fillbox(object->surface, coor->x, coor->y, coor->w, coor->h, 0);
+	s_object_update_to_surface(object,object->surface, coor);
 end:	return 0;
 }
 
@@ -197,6 +184,43 @@ int s_object_show (s_object_t *object)
 		s_object_update(object, object->surface->win);
 	}
         s_thread_mutex_unlock(object->mut);
+	return 0;
+}
+
+int s_object_childatposition (s_object_t *object, int x, int y, s_object_t **child)
+{
+	int pos;
+	s_rect_t coor;
+	s_rect_t rect;
+	(*child) = NULL;
+	coor.x = x;
+	coor.y = y;
+	coor.w = 1;
+	coor.h = 1;
+	pos = 0;
+	while (!s_list_eol(object->childs, pos)) {
+		s_object_t *obj = (s_object_t *) s_list_get(object->childs, pos);
+		if (s_rect_intersect(obj->surface->buf, &coor, &rect)) {
+		} else {
+			(*child) = obj;
+		}
+		pos++;
+	}
+	return (*child) ? 0 : -1;
+}
+
+int s_object_atposition (s_object_t *root, int x, int y, s_object_t **object)
+{
+	s_object_t *tmp;
+	tmp = root;
+	while (tmp->parent) {
+		tmp = tmp->parent;
+	}
+	do {
+		*object = tmp;
+		x -= (*object)->surface->buf->x;
+		y -= (*object)->surface->buf->y;
+	} while (s_object_childatposition(*object, x, y, &tmp) == 0);
 	return 0;
 }
 
