@@ -540,9 +540,54 @@ struct s_object_s {
 	s_object_t *parent;
 	/** content allowed rectangle */
 	s_rect_t *content;
+	/** geometry function */
+	void (*geometry) (s_object_t *object);
 	/** draw function */
 	void (*draw) (s_object_t *object);
+	/** event function */
+	void (*event) (s_object_t *object, s_event_t *event);
+	/** window */
+	s_window_t *window;
+	/** user data */
+	void *data;
 };
+
+typedef enum {
+	FRAME_NOFRAME		= 0x00,
+	FRAME_BOX		= 0x01,
+	FRAME_PANEL		= 0x02,
+	FRAME_WINPANEL	= 0x03,
+	FRAME_HLINE		= 0x04,
+	FRAME_VLINE		= 0x05,
+	FRAME_STYLEDPANEL	= 0x06,
+	FRAME_POPUPPANEL	= 0x07,
+	FRAME_MENUBARPANEL	= 0x08,
+	FRAME_TOOLBARPANEL	= 0x09,
+	FRAME_LINEEDITPANEL	= 0x0a,
+	FRAME_TABWIDGETPANEL	= 0x0b,
+	FRAME_GROUPBOXPANEL	= 0x0c,
+	FRAME_MSHAPE		= 0x0f
+} FRAME_SHAPE;
+
+typedef enum {
+	FRAME_PLAIN		= 0x10,
+	FRAME_RAISED		= 0x20,
+	FRAME_SUNKEN		= 0x40,
+	FRAME_MSHADOW		= 0xf0
+} FRAME_SHADOW;
+
+typedef struct s_frame_s {
+	s_object_t *object;
+	unsigned int style;
+	unsigned int linewidth;
+	unsigned int midlinewidth;
+} s_frame_t;
+
+typedef struct s_button_s {
+	s_frame_t *frame;
+	s_handler_t *handler;
+	int state;
+} s_button_t;
 
 typedef struct s_client_s {
 	int id;
@@ -791,7 +836,9 @@ void bpp_putbox_mask_o (s_surface_t *surface, int id,  int x, int y, int w, int 
 void bpp_getbox_o (s_surface_t *surface, int id,  int x, int y, int w, int h, char *dp);
 
 /* event.c */
-int s_event_mouse_state (s_window_t *window, s_event_t *event, s_handler_mouse_t *mouse, int over);
+int s_event_mouse_handler_state (s_window_t *window, s_event_t *event, s_handler_mouse_t *mouse, int over);
+int s_event_parse_handler_over (s_window_t *window, s_event_t *event, s_handler_t *work);
+int s_event_parse_handler_notover (s_window_t *window, s_event_t *event, s_handler_t *work);
 void s_event_parse_mouse (s_window_t *window, s_event_t *event);
 int s_event_parse_keybd (s_window_t *window, s_event_t *event);
 int s_event_parse_expos (s_window_t *window, s_event_t *event);
@@ -1691,9 +1738,32 @@ int s_list_get_pos (s_list_t *list, void *node);
 
 /*@}*/
 
+/* button.c */
+void s_button_event (s_object_t *object, s_event_t *event);
+void s_button_draw (s_object_t *object);
+void s_button_geometry (s_object_t *object);
+void s_button_cb_o (s_window_t *window, s_event_t *event, s_handler_t *handler);
+void s_button_cb_p (s_window_t *window, s_event_t *event, s_handler_t *handler);
+void s_button_cb_c (s_window_t *window, s_event_t *event, s_handler_t *handler);
+void s_button_cb_r (s_window_t *window, s_event_t *event, s_handler_t *handler);
+void s_button_cb_hr (s_window_t *window, s_event_t *event, s_handler_t *handler);
+void s_button_cb_rh (s_window_t *window, s_event_t *event, s_handler_t *handler);
+void s_button_cb_ho (s_window_t *window, s_event_t *event, s_handler_t *handler);
+void s_button_cb_oh (s_window_t *window, s_event_t *event, s_handler_t *handler);
+void s_button_cb_hoh (s_window_t *window, s_event_t *event, s_handler_t *handler);
+int s_button_init (s_window_t *window, s_button_t **button, int w, int h, s_object_t *parent);
+int s_button_uninit (s_button_t *button);
+
+/* frame.c */
+void s_frame_content (s_frame_t *frame);
+void s_frame_draw (s_object_t *object);
+int s_frame_init (s_window_t *window, s_frame_t **frame, int w, int h, unsigned int style, s_object_t *parent);
+int s_frame_uninit (s_frame_t *frame);
+
 /* object.c */
 int s_object_update_to_surface (s_object_t *object, s_surface_t *surface, s_rect_t *coor);
 int s_object_update (s_object_t *object, s_rect_t *coor);
+int s_object_set_content (s_object_t *object, int x, int y, int w, int h);
 int s_object_move (s_object_t *object, int x, int y, int w, int h);
 int s_object_hide (s_object_t *object);
 int s_object_show (s_object_t *object);
