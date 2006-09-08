@@ -84,6 +84,11 @@ int main (int argc, char *argv[])
 
 	s_window_show(window);
 	s_client_main(window);
+	
+	s_button_uninit(button[0]);
+	s_button_uninit(button[1]);
+	s_frame_uninit(frame);
+	s_object_uninit(root);
 
 	return 0;
 }
