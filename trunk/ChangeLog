@@ -1,4 +1,16 @@
 
+Fri 08 Sep 2006 11:24:40 PM EEST
+	* demo/object/object.c,
+	  src/lib/object.c,
+	  src/lib/button.c,
+	  src/lib/Makefile,
+	  src/lib/xynth.h,
+	  src/lib/event.c,
+	  src/lib/frame.c :
+	  
+	  new c widgets base classes, too much work to do...
+	  objects have their events, buffers, etc..
+
 Fri 08 Sep 2006 12:36:12 PM EEST
 	* demo/object/object.c,
 	  src/lib/object.c,

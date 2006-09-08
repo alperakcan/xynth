@@ -15,7 +15,7 @@
 
 #include "xynth_.h"
 
-int s_event_mouse_state (s_window_t *window, s_event_t *event, s_handler_mouse_t *mouse, int over)
+int s_event_mouse_handler_state (s_window_t *window, s_event_t *event, s_handler_mouse_t *mouse, int over)
 {
         int x = mouse->x + window->surface->buf->x;
         int y = mouse->y + window->surface->buf->y;
@@ -25,7 +25,7 @@ int s_event_mouse_state (s_window_t *window, s_event_t *event, s_handler_mouse_t
 	
 	int overbit = MOUSE_OVER << 16;
         int type = (event->type & MOUSE_CLICKED) ? event->type &= ~MOUSE_RELEASED : event->type;
-	
+        
 	if ((type & (MOUSE_PRESSED | MOUSE_CLICKED | MOUSE_RELEASED)) &&
 	    !(event->mouse->b & b)) {
 		return -1;
@@ -64,13 +64,99 @@ int s_event_mouse_state (s_window_t *window, s_event_t *event, s_handler_mouse_t
 end:	return -1;
 }
 
+int s_event_parse_handler_over (s_window_t *window, s_event_t *event, s_handler_t *work)
+{
+	switch (s_event_mouse_handler_state(window, event, &(work->mouse), 1)) {
+		case MOUSE_OVER:
+			if (work->mouse.o != NULL) {
+				s_thread_mutex_unlock(window->handlers->mut);
+				work->mouse.o(window, event, work);
+				s_thread_mutex_lock(window->handlers->mut);
+			}
+			goto not_over;
+		case MOUSE_PRESSED:
+			if (work->mouse.p != NULL) {
+				s_thread_mutex_unlock(window->handlers->mut);
+				work->mouse.p(window, event, work);
+				s_thread_mutex_lock(window->handlers->mut);
+			}
+			goto not_over;
+		case MOUSE_CLICKED:
+			if (work->mouse.c != NULL) {
+				s_thread_mutex_unlock(window->handlers->mut);
+				work->mouse.c(window, event, work);
+				s_thread_mutex_lock(window->handlers->mut);
+				work = (s_handler_t *) s_list_get(window->handlers->list, s_list_get_pos(window->handlers->list, work));
+				if (work == NULL) {
+					goto not_over;
+				}
+			}
+			/* no break */
+		case MOUSE_RELEASED:
+			if (work->mouse.r != NULL) {
+				s_thread_mutex_unlock(window->handlers->mut);
+				work->mouse.r(window, event, work);
+				s_thread_mutex_lock(window->handlers->mut);
+			}
+			goto not_over;
+		case (MOUSE_RELEASED | MOUSE_HINT):
+			/* mouse button released, but the prev. press was not on us */
+			if (work->mouse.hr != NULL) {
+				s_thread_mutex_unlock(window->handlers->mut);
+				work->mouse.hr(window, event, work);
+				s_thread_mutex_lock(window->handlers->mut);
+			}
+			goto not_over;
+		case (MOUSE_OVER | MOUSE_HINT):
+			/* on over, but mouse button is still pressed */
+			if (work->mouse.ho != NULL) {
+				s_thread_mutex_unlock(window->handlers->mut);
+				work->mouse.ho(window, event, work);
+				s_thread_mutex_lock(window->handlers->mut);
+			}
+			goto not_over;
+	}
+	return -1;
+not_over:
+	return 0;
+}
+
+int s_event_parse_handler_notover (s_window_t *window, s_event_t *event, s_handler_t *work)
+{
+	switch (s_event_mouse_handler_state(window, event, &(work->mouse), 0)) {
+		case (MOUSE_OVER | MOUSE_HINT2):
+			/* not on over, but was on over */
+			if (work->mouse.oh != NULL) {
+				s_thread_mutex_unlock(window->handlers->mut);
+				work->mouse.oh(window, event, work);
+				s_thread_mutex_lock(window->handlers->mut);
+			}
+			goto end;
+		case (MOUSE_OVER | MOUSE_HINT | MOUSE_HINT2):
+			/* not on over, but was on over. and button is still pressed */
+			if (work->mouse.hoh != NULL) {
+				s_thread_mutex_unlock(window->handlers->mut);
+				work->mouse.hoh(window, event, work);
+				s_thread_mutex_lock(window->handlers->mut);
+			}
+			goto end;
+		case (MOUSE_RELEASED | MOUSE_HINT2):
+			/* mouse button released outside, but the prev. press was on us */
+			if (work->mouse.rh != NULL) {
+				s_thread_mutex_unlock(window->handlers->mut);
+				work->mouse.rh(window, event, work);
+				s_thread_mutex_lock(window->handlers->mut);
+			}
+			goto end;
+	}
+	return -1;
+end:	return 0;
+} 
+
 void s_event_parse_mouse (s_window_t *window, s_event_t *event)
 {
-        int c;
         int pos;
 	s_handler_t *work;
-	
-        c = 0;
         pos = 0;
 	s_thread_mutex_lock(window->handlers->mut);
 	while (!s_list_eol(window->handlers->list, pos)) {
@@ -78,94 +164,21 @@ void s_event_parse_mouse (s_window_t *window, s_event_t *event)
 		if (work->type != MOUSE_HANDLER) {
 			continue;
 		}
-		switch (s_event_mouse_state(window, event, &(work->mouse), 1)) {
-			case MOUSE_OVER:
-				if (work->mouse.o != NULL) {
-					s_thread_mutex_unlock(window->handlers->mut);
-					work->mouse.o(window, event, work);
-					s_thread_mutex_lock(window->handlers->mut);
-				}
-				goto not_over;
-			case MOUSE_PRESSED:
-				if (work->mouse.p != NULL) {
-					s_thread_mutex_unlock(window->handlers->mut);
-					work->mouse.p(window, event, work);
-					s_thread_mutex_lock(window->handlers->mut);
-				}
-				goto not_over;
-			case MOUSE_CLICKED:
-				if (work->mouse.c != NULL) {
-					s_thread_mutex_unlock(window->handlers->mut);
-					work->mouse.c(window, event, work);
-					s_thread_mutex_lock(window->handlers->mut);
-					work = (s_handler_t *) s_list_get(window->handlers->list, s_list_get_pos(window->handlers->list, work));
-					if (work == NULL) {
-						goto not_over;
-					}
-				}
-				/* no break */
-			case MOUSE_RELEASED:
-				if (work->mouse.r != NULL) {
-					s_thread_mutex_unlock(window->handlers->mut);
-					work->mouse.r(window, event, work);
-					s_thread_mutex_lock(window->handlers->mut);
-				}
-				goto not_over;
-			case (MOUSE_RELEASED | MOUSE_HINT):
-				/* mouse button released, but the prev. press was not on us */
-				if (work->mouse.hr != NULL) {
-					s_thread_mutex_unlock(window->handlers->mut);
-					work->mouse.hr(window, event, work);
-					s_thread_mutex_lock(window->handlers->mut);
-				}
-				goto not_over;
-			case (MOUSE_OVER | MOUSE_HINT):
-				/* on over, but mouse button is still pressed */
-				if (work->mouse.ho != NULL) {
-					s_thread_mutex_unlock(window->handlers->mut);
-					work->mouse.ho(window, event, work);
-					s_thread_mutex_lock(window->handlers->mut);
-				}
-				goto not_over;
+		if (s_event_parse_handler_over(window, event, work) == 0) {
+			break;
 		}
 	}
-
-not_over:
 	pos = 0;
 	while (!s_list_eol(window->handlers->list, pos)) {
 		work = (s_handler_t *) s_list_get(window->handlers->list, pos++);
 		if (work->type != MOUSE_HANDLER) {
 			continue;
 		}
-		switch (s_event_mouse_state(window, event, &(work->mouse), 0)) {
-			case (MOUSE_OVER | MOUSE_HINT2):
-				/* not on over, but was on over */
-				if (work->mouse.oh != NULL) {
-					s_thread_mutex_unlock(window->handlers->mut);
-					work->mouse.oh(window, event, work);
-					s_thread_mutex_lock(window->handlers->mut);
-				}
-				goto end;
-			case (MOUSE_OVER | MOUSE_HINT | MOUSE_HINT2):
-				/* not on over, but was on over. and button is still pressed */
-				if (work->mouse.hoh != NULL) {
-					s_thread_mutex_unlock(window->handlers->mut);
-					work->mouse.hoh(window, event, work);
-					s_thread_mutex_lock(window->handlers->mut);
-				}
-				goto end;
-			case (MOUSE_RELEASED | MOUSE_HINT2):
-				/* mouse button released outside, but the prev. press was on us */
-				if (work->mouse.rh != NULL) {
-					s_thread_mutex_unlock(window->handlers->mut);
-					work->mouse.rh(window, event, work);
-					s_thread_mutex_lock(window->handlers->mut);
-				}
-				goto end;
+		if (s_event_parse_handler_notover(window, event, work) == 0) {
+			break;
 		}
 	}
-
-end:	s_thread_mutex_unlock(window->handlers->mut);
+	s_thread_mutex_unlock(window->handlers->mut);
 	return;
 }
 

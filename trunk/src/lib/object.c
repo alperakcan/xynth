@@ -56,9 +56,23 @@ int s_object_update (s_object_t *object, s_rect_t *coor)
 	while (object->parent != NULL) {
 		object = object->parent;
 	}
-	s_fillbox(object->surface, coor->x, coor->y, coor->w, coor->h, 0);
-	s_object_update_to_surface(object,object->surface, coor);
+	if (object->draw == NULL) {
+		s_fillbox(object->surface, coor->x, coor->y, coor->w, coor->h, 0);
+	} else {
+		object->draw(object);
+	}
+	s_object_update_to_surface(object, object->surface, coor);
+	s_putboxpart(object->window->surface, coor->x, coor->y, coor->w, coor->h, object->surface->width, object->surface->height, object->surface->vbuf, coor->x, coor->y);
 end:	return 0;
+}
+
+int s_object_set_content (s_object_t *object, int x, int y, int w, int h)
+{
+	object->content->x = x;
+	object->content->y = y;
+	object->content->w = w;
+	object->content->h = h;
+	return 0;
 }
 
 int s_object_move (s_object_t *object, int x, int y, int w, int h)
@@ -116,6 +130,9 @@ int s_object_move (s_object_t *object, int x, int y, int w, int h)
 		if (object->draw != NULL) {
 			object->draw(object);
 		}
+	}
+	if (object->geometry != NULL) {
+		object->geometry(object);
 	}
 
 	while (!(s_list_eol(object->childs, pos))) {
@@ -182,7 +199,9 @@ int s_object_show (s_object_t *object)
 			s_list_add(object->parent->childs, object, -1);
 		}
 		s_object_update(object, object->surface->win);
-	}
+        } else {
+        	s_object_update(object, object->surface->win);
+        }
         s_thread_mutex_unlock(object->mut);
 	return 0;
 }
@@ -240,7 +259,12 @@ int s_object_init (s_window_t *window, s_object_t **object, int w, int h, void (
 
 	s_list_init(&((*object)->childs));
 	(*object)->parent = parent;
+
+ 	(*object)->event = NULL;
+ 	(*object)->data = NULL;
+ 	(*object)->geometry = NULL;
 	(*object)->draw = draw;
+	(*object)->window = window;
 
 	(*object)->content = (s_rect_t *) s_malloc(sizeof(s_rect_t));
 
@@ -272,7 +296,7 @@ int s_object_init (s_window_t *window, s_object_t **object, int w, int h, void (
 	(*object)->content->y = (*object)->surface->buf->y;
 	(*object)->content->w = (*object)->surface->buf->w;
 	(*object)->content->h = (*object)->surface->buf->h;
-
+	
 	return 0;
 err0:	s_free(vbuf);
 	s_free((*object)->surface->matrix);
