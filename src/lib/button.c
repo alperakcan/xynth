@@ -62,6 +62,9 @@ void s_button_cb_p (s_window_t *window, s_event_t *event, s_handler_t *handler)
 		button->frame->style = (button->frame->style & FRAME_MSHAPE) | FRAME_SUNKEN;
 		s_button_draw(button->frame->object);
 		s_object_update(button->frame->object, button->frame->object->surface->win);
+		if (button->pressed != NULL) {
+			button->pressed(button->frame->object, event->mouse->b);
+		}
 	}
 }
 
@@ -164,6 +167,11 @@ int s_button_init (s_window_t *window, s_button_t **button, int w, int h, s_obje
 	(*button)->frame->object->draw = s_button_draw;
 	(*button)->frame->object->event = s_button_event;
 	(*button)->frame->object->geometry = s_button_geometry;
+	
+	(*button)->pressed = NULL;
+	(*button)->clicked = NULL;
+	(*button)->released = NULL;
+	
 	return 0;
 err0:	s_free(*button);
 	return -1;
