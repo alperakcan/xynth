@@ -125,7 +125,7 @@ int s_object_move (s_object_t *object, int x, int y, int w, int h)
 		object->surface->height = object->surface->buf->h;
 		object->surface->matrix = (unsigned char *) s_malloc(sizeof(char) * object->surface->width * object->surface->height + 1);
 		object->surface->vbuf = (char *) s_calloc(1, object->surface->width * object->surface->height * object->surface->bytesperpixel + 1);
-		memset(object->surface->matrix, 0XFF, sizeof(char) * object->surface->width * object->surface->height);
+		memset(object->surface->matrix, 0xff, sizeof(char) * object->surface->width * object->surface->height);
 
 		if (object->draw != NULL) {
 			object->draw(object);
@@ -139,7 +139,7 @@ int s_object_move (s_object_t *object, int x, int y, int w, int h)
 		s_object_t *obj = (s_object_t *) s_list_get(object->childs, pos);
 		obj->surface->win->x = object->surface->win->x + obj->surface->buf->x;
 		obj->surface->win->y = object->surface->win->x + obj->surface->buf->y;
-		pos++;
+		pos++;	
 	}
 
 	s_list_init(&diff);
@@ -255,7 +255,7 @@ int s_object_init (s_window_t *window, s_object_t **object, int w, int h, void (
 	vbuf = (char *) s_calloc(1, w * h * window->surface->bytesperpixel + 1);
 	s_getsurfacevirtual((*object)->surface, w, h, window->surface->bitsperpixel, vbuf);
 
-	memset((*object)->surface->matrix, 0xFF, sizeof(char) * w * h);
+	memset((*object)->surface->matrix, 0xff, sizeof(char) * w * h);
 
 	s_list_init(&((*object)->childs));
 	(*object)->parent = parent;
