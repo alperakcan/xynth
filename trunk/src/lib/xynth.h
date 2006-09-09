@@ -586,6 +586,9 @@ typedef struct s_frame_s {
 typedef struct s_button_s {
 	s_frame_t *frame;
 	s_handler_t *handler;
+	void (*pressed) (s_object_t *, int);
+	void (*released) (s_object_t *, int);
+	void (*clicked) (s_object_t *, int, int);
 	int state;
 } s_button_t;
 
