@@ -19,28 +19,37 @@
 #include <time.h>
 #include "xynth_.h"
 
+static int area_hide = 0;
+static s_frame_t *area;
+static s_button_t *button[3];
+static s_font_t *font[3];
 static s_frame_t *big[4];
 
 static void object_draw_black (s_object_t *object)
 {
 	s_fillbox(object->surface, 0, 0, object->surface->width, object->surface->height, s_rgbcolor(object->surface, 0, 0, 0));
 }
+
 static void object_draw_red (s_object_t *object)
 {
 	s_fillbox(object->surface, 0, 0, object->surface->width, object->surface->height, s_rgbcolor(object->surface, 255, 0, 0));
 }
+
 static void object_draw_green (s_object_t *object)
 {
 	s_fillbox(object->surface, 0, 0, object->surface->width, object->surface->height, s_rgbcolor(object->surface, 0, 255, 0));
 }
+
 static void object_draw_blue (s_object_t *object)
 {
 	s_fillbox(object->surface, 0, 0, object->surface->width, object->surface->height, s_rgbcolor(object->surface, 0, 0, 255));
 }
+
 static void object_draw_white (s_object_t *object)
 {
 	s_fillbox(object->surface, 0, 0, object->surface->width, object->surface->height, s_rgbcolor(object->surface, 255, 255, 255));
 }
+
 typedef void (*object_draw) (s_object_t *);
 object_draw object_draw_p[] = {
 	&object_draw_red,
@@ -50,7 +59,43 @@ object_draw object_draw_p[] = {
 	&object_draw_black
 };
 
-static void button0_pressed (s_object_t *object, int button)
+static void button0_pressed (s_object_t *object, int buttonp)
+{
+	area_hide = (area_hide + 1) % 2;
+	if (area_hide) {
+		s_object_hide(area->object);
+		s_object_hide(button[1]->frame->object);
+		s_object_hide(button[2]->frame->object);
+	} else {
+		s_object_show(area->object);
+		s_object_show(button[1]->frame->object);
+		s_object_show(button[2]->frame->object);
+	}
+}
+
+static void button0_draw (s_object_t *object)
+{
+	int x;
+	int y;
+	if (area_hide) {
+		s_font_set_str(font[0], "show area");
+	} else {
+		s_font_set_str(font[0], "hide area");
+	}
+	s_font_get_glyph(font[0]);
+	x = MAX((object->content->w - font[0]->img->w) / 2, 0);
+	y = MAX((object->content->h - font[0]->img->h) / 2, 0);
+	s_button_draw(object);
+	s_putboxrgba(object->surface, x, y, font[0]->img->w, font[0]->img->h, font[0]->img->rgba);
+}
+
+static void button0_destroy (s_object_t *object)
+{
+	s_button_uninit(object);
+	s_font_uninit(font[0]);
+}
+
+static void button1_pressed (s_object_t *object, int button)
 {
 	int i;
 	int w;
@@ -62,8 +107,51 @@ static void button0_pressed (s_object_t *object, int button)
 		                              (rand() + 1) % (w - 10), (rand() + 1) % (h - 40));
 	}
 }
-static void button1_pressed (s_object_t *object, int button)
+
+static void button1_draw (s_object_t *object)
 {
+	int x;
+	int y;
+	s_font_set_str(font[1], "blender");
+	s_font_get_glyph(font[1]);
+	x = MAX((object->content->w - font[1]->img->w) / 2, 0);
+	y = MAX((object->content->h - font[1]->img->h) / 2, 0);
+	s_button_draw(object);
+	s_putboxrgba(object->surface, x, y, font[1]->img->w, font[1]->img->h, font[1]->img->rgba);
+}
+
+static void button1_destroy (s_object_t *object)
+{
+	s_button_uninit(object);
+	s_font_uninit(font[1]);
+}
+
+static void button2_pressed (s_object_t *object, int button)
+{
+	int r;
+	int show;
+	r = rand();
+	if (r) r++;
+	show = r % 4;
+	s_object_show(big[show]->object);
+}
+
+static void button2_draw (s_object_t *object)
+{
+	int x;
+	int y;
+	s_font_set_str(font[2], "random focus");
+	s_font_get_glyph(font[2]);
+	x = MAX((object->content->w - font[2]->img->w) / 2, 0);
+	y = MAX((object->content->h - font[2]->img->h) / 2, 0);
+	s_button_draw(object);
+	s_putboxrgba(object->surface, x, y, font[2]->img->w, font[2]->img->h, font[2]->img->rgba);
+}
+
+static void button2_destroy (s_object_t *object)
+{
+	s_button_uninit(object);
+	s_font_uninit(font[2]);
 }
 
 static void object_atevent (s_window_t *window, s_event_t *event)
@@ -100,9 +188,7 @@ int main (int argc, char *argv[])
 	s_window_t *window;
 	s_object_t *root;
 	s_frame_t *frame;
-	s_button_t *button[2];
-	s_frame_t *area;
-	
+
 	srand(time(NULL));
 
 	s_client_init(&window);
@@ -117,41 +203,54 @@ int main (int argc, char *argv[])
 	s_window_set_coor(window, WINDOW_NOFORM, x, y, w, h);
 	s_window_set_resizeable(window, 0);
 
-	s_object_init(window, &root, w, h, NULL, NULL);
+	s_object_init(window, &root, NULL, NULL);
+	s_object_move(root, 0, 0, w, h);
 	s_client_atevent(window, object_atevent);
 	window->client->user_data = root;
-		
-	s_frame_init(window, &frame, w, h, FRAME_PANEL | FRAME_RAISED, root);
+
+	s_frame_init(window, &frame, FRAME_PANEL | FRAME_RAISED, root);
 	s_object_move(frame->object, 0, 0, w, h);
 
-	s_button_init(window, &button[0], 20, 20, frame->object);
+	s_button_init(window, &button[0], frame->object);
 	button[0]->pressed = button0_pressed;
-	s_object_move(button[0]->frame->object, 5, 5, 20, 20);
+	button[0]->frame->object->draw = button0_draw;
+	button[0]->frame->object->destroy = button0_destroy;
+	s_font_init(&font[0], "arial.ttf");
+	s_font_set_size(font[0], 10);
+	s_object_move(button[0]->frame->object, 5, 5, 70, 20);
 
-	s_button_init(window, &button[1], 20, 20, frame->object);
+	s_button_init(window, &button[1], frame->object);
 	button[1]->pressed = button1_pressed;
-	s_object_move(button[1]->frame->object, 30, 5, 20, 20);
-	
-	s_frame_init(window, &area, w - 10, h - 40, FRAME_NOFRAME | FRAME_PLAIN, root);
-	s_object_move(area->object, 5, 35, w - 10, h - 40);
-	
-	for (i = 0; i < 4; i++) {
-		s_frame_init(window, &big[i], 100, 100, FRAME_NOFRAME | FRAME_PLAIN, area->object);
-		big[i]->object->draw = object_draw_p[i];
-		s_object_move(big[i]->object, (rand() + 1) % (w - 10), (rand() + 1) % (h - 40),
-		                              (rand() + 1) % (w - 10), (rand() + 1) % (h - 40));
-	}
+	button[1]->frame->object->draw = button1_draw;
+	button[1]->frame->object->destroy = button1_destroy;
+	s_font_init(&font[1], "arial.ttf");
+	s_font_set_size(font[1], 10);
+	s_object_move(button[1]->frame->object, 80, 5, 55, 20);
 
+	s_button_init(window, &button[2], frame->object);
+	button[2]->pressed = button2_pressed;
+	button[2]->frame->object->draw = button2_draw;
+	button[2]->frame->object->destroy = button2_destroy;
+	s_font_init(&font[2], "arial.ttf");
+	s_font_set_size(font[2], 10);
+	s_object_move(button[2]->frame->object, 140, 5, 85, 20);
+
+	s_frame_init(window, &area, FRAME_NOFRAME | FRAME_PLAIN, frame->object);
+	s_object_move(area->object, 5, 30, w - 10, h - 35);
+
+	for (i = 0; i < 4; i++) {
+		s_frame_init(window, &big[i], FRAME_NOFRAME | FRAME_PLAIN, area->object);
+		big[i]->object->draw = object_draw_p[i];
+		s_object_move(big[i]->object, (rand() + 1) % (w - 10), ((rand() + 1) % (h - 35)) + 1,
+		                              (rand() + 1) % (w - 10), ((rand() + 1) % (h - 35)) + 1);
+	}
 	s_object_show(root);
 
 	s_client_atevent(window, object_atevent);
 
 	s_window_show(window);
 	s_client_main(window);
-	
-	s_button_uninit(button[0]);
-	s_button_uninit(button[1]);
-	s_frame_uninit(frame);
+
 	s_object_uninit(root);
 
 	return 0;

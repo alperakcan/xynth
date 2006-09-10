@@ -546,6 +546,8 @@ struct s_object_s {
 	void (*draw) (s_object_t *object);
 	/** event function */
 	void (*event) (s_object_t *object, s_event_t *event);
+	/** uninit function */
+	void (*destroy) (s_object_t *object);
 	/** window */
 	s_window_t *window;
 	/** user data */
@@ -1754,14 +1756,14 @@ void s_button_cb_rh (s_window_t *window, s_event_t *event, s_handler_t *handler)
 void s_button_cb_ho (s_window_t *window, s_event_t *event, s_handler_t *handler);
 void s_button_cb_oh (s_window_t *window, s_event_t *event, s_handler_t *handler);
 void s_button_cb_hoh (s_window_t *window, s_event_t *event, s_handler_t *handler);
-int s_button_init (s_window_t *window, s_button_t **button, int w, int h, s_object_t *parent);
-int s_button_uninit (s_button_t *button);
+int s_button_init (s_window_t *window, s_button_t **button, s_object_t *parent);
+void s_button_uninit (s_object_t *object);
 
 /* frame.c */
 void s_frame_content (s_frame_t *frame);
 void s_frame_draw (s_object_t *object);
-int s_frame_init (s_window_t *window, s_frame_t **frame, int w, int h, unsigned int style, s_object_t *parent);
-int s_frame_uninit (s_frame_t *frame);
+int s_frame_init (s_window_t *window, s_frame_t **frame, unsigned int style, s_object_t *parent);
+void s_frame_uninit (s_object_t *object);
 
 /* object.c */
 int s_object_update_to_surface (s_object_t *object, s_surface_t *surface, s_rect_t *coor);
@@ -1772,8 +1774,8 @@ int s_object_hide (s_object_t *object);
 int s_object_show (s_object_t *object);
 int s_object_childatposition (s_object_t *object, int x, int y, s_object_t **child);
 int s_object_atposition (s_object_t *root, int x, int y, s_object_t **object);
-int s_object_init (s_window_t *window, s_object_t **object, int w, int h, void (*draw) (s_object_t *), s_object_t *parent);
-int s_object_uninit (s_object_t *object);
+int s_object_init (s_window_t *window, s_object_t **object, void (*draw) (s_object_t *), s_object_t *parent);
+void s_object_uninit (s_object_t *object);
 
 /** @defgroup pollfd pollfd api
   * @brief detailed description
