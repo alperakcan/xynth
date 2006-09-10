@@ -1,4 +1,14 @@
 
+Sun 10 Sep 2006 07:08:02 PM EEST
+        * demo/object/object.c,
+	  src/lib/object.c,
+	  src/lib/button.c,
+	  src/lib/xynth.h,
+	  src/lib/alloc.c,
+	  src/lib/frame.c :
+	  
+	  more for object
+
 Fri 08 Sep 2006 11:24:40 PM EEST
 	* demo/object/object.c,
 	  src/lib/object.c,

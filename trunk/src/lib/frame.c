@@ -208,24 +208,26 @@ swinpanel_sunken:		case FRAME_SUNKEN:
 	              s_rgbcolor(object->surface, 220, 220, 220));
 }
 
-int s_frame_init (s_window_t *window, s_frame_t **frame, int w, int h, unsigned int style, s_object_t *parent)
+int s_frame_init (s_window_t *window, s_frame_t **frame, unsigned int style, s_object_t *parent)
 {
 	(*frame) = (s_frame_t *) s_malloc(sizeof(s_frame_t));
 	(*frame)->style = style;
 	(*frame)->linewidth = 1;
 	(*frame)->midlinewidth = 0;
-	if (s_object_init(window, &((*frame)->object), w, h, s_frame_draw, parent)) {
+	if (s_object_init(window, &((*frame)->object), s_frame_draw, parent)) {
 		goto err0;
 	}
 	(*frame)->object->data = *frame;
+	(*frame)->object->destroy = s_frame_uninit;
 	return 0;
 err0:	s_free(*frame);
 	return -1;
 }
 
-int s_frame_uninit (s_frame_t *frame)
+void s_frame_uninit (s_object_t *object)
 {
+	s_frame_t *frame;
+	frame = (s_frame_t *) object->data;
 	s_object_uninit(frame->object);
 	s_free(frame);
-	return 0;
 }

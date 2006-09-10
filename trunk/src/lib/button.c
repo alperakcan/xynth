@@ -60,7 +60,7 @@ void s_button_cb_p (s_window_t *window, s_event_t *event, s_handler_t *handler)
 	    (event->mouse->buttons == event->mouse->b)) {
 		button->state |= event->mouse->b;
 		button->frame->style = (button->frame->style & FRAME_MSHAPE) | FRAME_SUNKEN;
-		s_button_draw(button->frame->object);
+		button->frame->object->draw(button->frame->object);
 		s_object_update(button->frame->object, button->frame->object->surface->win);
 		if (button->pressed != NULL) {
 			button->pressed(button->frame->object, event->mouse->b);
@@ -76,7 +76,7 @@ void s_button_cb_c (s_window_t *window, s_event_t *event, s_handler_t *handler)
 	    (button->state == event->mouse->b)) {
 		button->state = 0;
 		button->frame->style = (button->frame->style & FRAME_MSHAPE) | FRAME_RAISED;
-		s_button_draw(button->frame->object);
+		button->frame->object->draw(button->frame->object);
 		s_object_update(button->frame->object, button->frame->object->surface->win);
 	}
 }
@@ -89,7 +89,7 @@ void s_button_cb_r (s_window_t *window, s_event_t *event, s_handler_t *handler)
 	    (button->state == event->mouse->b)) {
 		button->state = 0;
 		button->frame->style = (button->frame->style & FRAME_MSHAPE) | FRAME_RAISED;
-		s_button_draw(button->frame->object);
+		button->frame->object->draw(button->frame->object);
 		s_object_update(button->frame->object, button->frame->object->surface->win);
 	}
 }
@@ -109,7 +109,7 @@ void s_button_cb_ho (s_window_t *window, s_event_t *event, s_handler_t *handler)
 	if (!(button->frame->style & FRAME_SUNKEN)) {
 		if (button->state != 0) {
 			button->frame->style = (button->frame->style & FRAME_MSHAPE) | FRAME_SUNKEN;
-			s_button_draw(button->frame->object);
+			button->frame->object->draw(button->frame->object);
 			s_object_update(button->frame->object, button->frame->object->surface->win);
 		}
 	}
@@ -121,7 +121,7 @@ void s_button_cb_oh (s_window_t *window, s_event_t *event, s_handler_t *handler)
 	button = (s_button_t *) handler->user_data;
 	if (!(button->frame->style & FRAME_RAISED)) {
 		button->frame->style = (button->frame->style & FRAME_MSHAPE) | FRAME_RAISED;
-		s_button_draw(button->frame->object);
+		button->frame->object->draw(button->frame->object);
 		s_object_update(button->frame->object, button->frame->object->surface->win);
 	}
 }
@@ -132,15 +132,15 @@ void s_button_cb_hoh (s_window_t *window, s_event_t *event, s_handler_t *handler
 	button = (s_button_t *) handler->user_data;
 	if (!(button->frame->style & FRAME_RAISED)) {
 		button->frame->style = (button->frame->style & FRAME_MSHAPE) | FRAME_RAISED;
-		s_button_draw(button->frame->object);
+		button->frame->object->draw(button->frame->object);
 		s_object_update(button->frame->object, button->frame->object->surface->win);
 	}
 }
 
-int s_button_init (s_window_t *window, s_button_t **button, int w, int h, s_object_t *parent)
+int s_button_init (s_window_t *window, s_button_t **button, s_object_t *parent)
 {
 	(*button) = (s_button_t *) s_malloc(sizeof(s_button_t));
-	if (s_frame_init(window, &((*button)->frame), w, h, FRAME_PANEL | FRAME_RAISED, parent)) {
+	if (s_frame_init(window, &((*button)->frame), FRAME_PANEL | FRAME_RAISED, parent)) {
 		goto err0;
 	}
 
@@ -167,6 +167,7 @@ int s_button_init (s_window_t *window, s_button_t **button, int w, int h, s_obje
 	(*button)->frame->object->draw = s_button_draw;
 	(*button)->frame->object->event = s_button_event;
 	(*button)->frame->object->geometry = s_button_geometry;
+	(*button)->frame->object->destroy = s_button_uninit;
 	
 	(*button)->pressed = NULL;
 	(*button)->clicked = NULL;
@@ -177,10 +178,12 @@ err0:	s_free(*button);
 	return -1;
 }
 
-int s_button_uninit (s_button_t *button)
+void s_button_uninit (s_object_t *object)
 {
-	s_frame_uninit(button->frame);
+	s_button_t *button;
+	button = (s_button_t *) object->data;
+	button->frame->object->data = button->frame;
+	s_frame_uninit(button->frame->object);
 	s_handler_uninit(button->handler);
 	s_free(button);
-	return 0;
 }

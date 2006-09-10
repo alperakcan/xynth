@@ -49,5 +49,7 @@ void * s_realloc (void *ptr, unsigned int size)
 
 void s_free (void *ptr)
 {
-	free(ptr);
+	if (ptr != NULL) {
+		free(ptr);
+	}
 }
