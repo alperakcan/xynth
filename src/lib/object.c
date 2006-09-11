@@ -270,7 +270,7 @@ int s_object_init (s_window_t *window, s_object_t **object, void (*draw) (s_obje
 	(*object)->parent = parent;
 
  	(*object)->event = NULL;
- 	(*object)->data = NULL;
+ 	memset((*object)->data, 0, sizeof(void *) * OBJECT_OBJECTS);
  	(*object)->geometry = NULL;
 	(*object)->draw = draw;
 	(*object)->destroy = s_object_uninit;

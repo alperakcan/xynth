@@ -529,6 +529,12 @@ typedef struct s_surface_s {
 
 typedef struct s_object_s s_object_t;
 
+typedef enum {
+	OBJECT_FRAME,
+	OBJECT_BUTTON,
+	OBJECT_OBJECTS
+} OBJECT;
+
 struct s_object_s {
 	/** child list */
 	s_list_t *childs;
@@ -551,14 +557,14 @@ struct s_object_s {
 	/** window */
 	s_window_t *window;
 	/** user data */
-	void *data;
+	void *data[OBJECT_OBJECTS];
 };
 
 typedef enum {
 	FRAME_NOFRAME		= 0x00,
 	FRAME_BOX		= 0x01,
 	FRAME_PANEL		= 0x02,
-	FRAME_WINPANEL	= 0x03,
+	FRAME_WINPANEL		= 0x03,
 	FRAME_HLINE		= 0x04,
 	FRAME_VLINE		= 0x05,
 	FRAME_STYLEDPANEL	= 0x06,

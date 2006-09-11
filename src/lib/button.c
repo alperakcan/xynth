@@ -18,7 +18,7 @@
 void s_button_event (s_object_t *object, s_event_t *event)
 {
 	s_button_t *button;
-	button = (s_button_t *) object->data;
+	button = (s_button_t *) object->data[OBJECT_BUTTON];
 	event->mouse->x += object->window->surface->buf->x;
 	event->mouse->y += object->window->surface->buf->y;
 	event->mouse->px += object->window->surface->buf->x;
@@ -32,16 +32,14 @@ void s_button_event (s_object_t *object, s_event_t *event)
 void s_button_draw (s_object_t *object)
 {
 	s_button_t *button;
-	button = (s_button_t *) object->data;
-	object->data = button->frame;
+	button = (s_button_t *) object->data[OBJECT_BUTTON];
 	s_frame_draw(object);
-	object->data = button;
 }
 
 void s_button_geometry (s_object_t *object)
 {
 	s_button_t *button;
-	button = (s_button_t *) object->data;
+	button = (s_button_t *) object->data[OBJECT_BUTTON];
 	button->handler->mouse.x = object->surface->win->x;
 	button->handler->mouse.y = object->surface->win->y;
 	button->handler->mouse.w = object->surface->win->w;
@@ -163,7 +161,7 @@ int s_button_init (s_window_t *window, s_button_t **button, s_object_t *parent)
 	(*button)->handler->user_data = *button;	
 	(*button)->state = 0;
 
-	(*button)->frame->object->data = *button;
+	(*button)->frame->object->data[OBJECT_BUTTON] = *button;
 	(*button)->frame->object->draw = s_button_draw;
 	(*button)->frame->object->event = s_button_event;
 	(*button)->frame->object->geometry = s_button_geometry;
@@ -181,8 +179,7 @@ err0:	s_free(*button);
 void s_button_uninit (s_object_t *object)
 {
 	s_button_t *button;
-	button = (s_button_t *) object->data;
-	button->frame->object->data = button->frame;
+	button = (s_button_t *) object->data[OBJECT_BUTTON];
 	s_frame_uninit(button->frame->object);
 	s_handler_uninit(button->handler);
 	s_free(button);
