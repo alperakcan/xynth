@@ -16,7 +16,7 @@
 #ifndef SWIDGET_H
 #define SWIDGET_H
 
-typedef struct s_object_s s_object_t;
+typedef struct w_object_s w_object_t;
 
 typedef enum {
 	OBJECT_FRAME   = 0x0,
@@ -24,7 +24,7 @@ typedef enum {
 	OBJECT_OBJECTS = 0x2
 } OBJECT;
 
-struct s_object_s {
+struct w_object_s {
 	/** child list */
 	s_list_t *childs;
 	/** shown list */
@@ -34,17 +34,17 @@ struct s_object_s {
 	/** the surface */
 	s_surface_t *surface;
 	/** the parent of the object */
-	s_object_t *parent;
+	w_object_t *parent;
 	/** content allowed rectangle */
 	s_rect_t *content;
 	/** geometry function */
-	void (*geometry) (s_object_t *object);
+	void (*geometry) (w_object_t *object);
 	/** draw function */
-	void (*draw) (s_object_t *object);
+	void (*draw) (w_object_t *object);
 	/** event function */
-	void (*event) (s_object_t *object, s_event_t *event);
+	void (*event) (w_object_t *object, s_event_t *event);
 	/** uninit function */
-	void (*destroy) (s_object_t *object);
+	void (*destroy) (w_object_t *object);
 	/** window */
 	s_window_t *window;
 	/** user data */
@@ -75,54 +75,54 @@ typedef enum {
 	FRAME_MSHADOW		= 0xf0
 } FRAME_SHADOW;
 
-typedef struct s_frame_s {
-	s_object_t *object;
+typedef struct w_frame_s {
+	w_object_t *object;
 	unsigned int style;
 	unsigned int linewidth;
 	unsigned int midlinewidth;
-} s_frame_t;
+} w_frame_t;
 
-typedef struct s_button_s {
-	s_frame_t *frame;
+typedef struct w_button_s {
+	w_frame_t *frame;
 	s_handler_t *handler;
-	void (*pressed) (s_object_t *, int);
-	void (*released) (s_object_t *, int);
-	void (*clicked) (s_object_t *, int, int);
+	void (*pressed) (w_object_t *, int);
+	void (*released) (w_object_t *, int);
+	void (*clicked) (w_object_t *, int, int);
 	int state;
-} s_button_t;
+} w_button_t;
 
 /* button.c */
-void s_button_event (s_object_t *object, s_event_t *event);
-void s_button_draw (s_object_t *object);
-void s_button_geometry (s_object_t *object);
-void s_button_cb_o (s_window_t *window, s_event_t *event, s_handler_t *handler);
-void s_button_cb_p (s_window_t *window, s_event_t *event, s_handler_t *handler);
-void s_button_cb_c (s_window_t *window, s_event_t *event, s_handler_t *handler);
-void s_button_cb_r (s_window_t *window, s_event_t *event, s_handler_t *handler);
-void s_button_cb_hr (s_window_t *window, s_event_t *event, s_handler_t *handler);
-void s_button_cb_rh (s_window_t *window, s_event_t *event, s_handler_t *handler);
-void s_button_cb_ho (s_window_t *window, s_event_t *event, s_handler_t *handler);
-void s_button_cb_oh (s_window_t *window, s_event_t *event, s_handler_t *handler);
-void s_button_cb_hoh (s_window_t *window, s_event_t *event, s_handler_t *handler);
-int s_button_init (s_window_t *window, s_button_t **button, s_object_t *parent);
-void s_button_uninit (s_object_t *object);
+void w_button_event (w_object_t *object, s_event_t *event);
+void w_button_draw (w_object_t *object);
+void w_button_geometry (w_object_t *object);
+void w_button_cb_o (s_window_t *window, s_event_t *event, s_handler_t *handler);
+void w_button_cb_p (s_window_t *window, s_event_t *event, s_handler_t *handler);
+void w_button_cb_c (s_window_t *window, s_event_t *event, s_handler_t *handler);
+void w_button_cb_r (s_window_t *window, s_event_t *event, s_handler_t *handler);
+void w_button_cb_hr (s_window_t *window, s_event_t *event, s_handler_t *handler);
+void w_button_cb_rh (s_window_t *window, s_event_t *event, s_handler_t *handler);
+void w_button_cb_ho (s_window_t *window, s_event_t *event, s_handler_t *handler);
+void w_button_cb_oh (s_window_t *window, s_event_t *event, s_handler_t *handler);
+void w_button_cb_hoh (s_window_t *window, s_event_t *event, s_handler_t *handler);
+int w_button_init (s_window_t *window, w_button_t **button, w_object_t *parent);
+void w_button_uninit (w_object_t *object);
 
 /* frame.c */
-void s_frame_content (s_frame_t *frame);
-void s_frame_draw (s_object_t *object);
-int s_frame_init (s_window_t *window, s_frame_t **frame, unsigned int style, s_object_t *parent);
-void s_frame_uninit (s_object_t *object);
+void w_frame_content (w_frame_t *frame);
+void w_frame_draw (w_object_t *object);
+int w_frame_init (s_window_t *window, w_frame_t **frame, unsigned int style, w_object_t *parent);
+void w_frame_uninit (w_object_t *object);
 
 /* object.c */
-int s_object_update_to_surface (s_object_t *object, s_surface_t *surface, s_rect_t *coor);
-int s_object_update (s_object_t *object, s_rect_t *coor);
-int s_object_set_content (s_object_t *object, int x, int y, int w, int h);
-int s_object_move (s_object_t *object, int x, int y, int w, int h);
-int s_object_hide (s_object_t *object);
-int s_object_show (s_object_t *object);
-int s_object_childatposition (s_object_t *object, int x, int y, s_object_t **child);
-int s_object_atposition (s_object_t *root, int x, int y, s_object_t **object);
-int s_object_init (s_window_t *window, s_object_t **object, void (*draw) (s_object_t *), s_object_t *parent);
-void s_object_uninit (s_object_t *object);
+int w_object_update_to_surface (w_object_t *object, s_surface_t *surface, s_rect_t *coor);
+int w_object_update (w_object_t *object, s_rect_t *coor);
+int w_object_set_content (w_object_t *object, int x, int y, int w, int h);
+int w_object_move (w_object_t *object, int x, int y, int w, int h);
+int w_object_hide (w_object_t *object);
+int w_object_show (w_object_t *object);
+int w_object_childatposition (w_object_t *object, int x, int y, w_object_t **child);
+int w_object_atposition (w_object_t *root, int x, int y, w_object_t **object);
+int w_object_init (s_window_t *window, w_object_t **object, void (*draw) (w_object_t *), w_object_t *parent);
+void w_object_uninit (w_object_t *object);
 
 #endif
