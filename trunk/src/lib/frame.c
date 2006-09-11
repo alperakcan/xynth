@@ -93,7 +93,7 @@ void s_frame_draw (s_object_t *object)
         int j;
         int c[4];
         s_frame_t *frame;
-        frame = (s_frame_t *) object->data;
+        frame = (s_frame_t *) object->data[OBJECT_FRAME];
         
 	s_frame_content(frame);
 
@@ -217,7 +217,7 @@ int s_frame_init (s_window_t *window, s_frame_t **frame, unsigned int style, s_o
 	if (s_object_init(window, &((*frame)->object), s_frame_draw, parent)) {
 		goto err0;
 	}
-	(*frame)->object->data = *frame;
+	(*frame)->object->data[OBJECT_FRAME] = *frame;
 	(*frame)->object->destroy = s_frame_uninit;
 	return 0;
 err0:	s_free(*frame);
@@ -227,7 +227,7 @@ err0:	s_free(*frame);
 void s_frame_uninit (s_object_t *object)
 {
 	s_frame_t *frame;
-	frame = (s_frame_t *) object->data;
+	frame = (s_frame_t *) object->data[OBJECT_FRAME];
 	s_object_uninit(frame->object);
 	s_free(frame);
 }
