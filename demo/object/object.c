@@ -155,28 +155,6 @@ static void button2_destroy (w_object_t *object)
 	s_font_uninit(font[2]);
 }
 
-static void object_atevent (s_window_t *window, s_event_t *event)
-{
-	w_object_t *root;
-	w_object_t *objectn;
-	w_object_t *objectp;
-	root = (w_object_t *) window->client->user_data;
-	if (event->type & MOUSE_EVENT) {
-		event->mouse->x -= window->surface->buf->x;
-		event->mouse->y -= window->surface->buf->y;
-		event->mouse->px -= window->surface->buf->x;
-		event->mouse->py -= window->surface->buf->y;
-		w_object_atposition(root, event->mouse->x, event->mouse->y, &objectn);
-		w_object_atposition(root, event->mouse->px, event->mouse->py, &objectp);
-		if ((objectn != objectp) && (objectp->event)) {
-			objectp->event(objectp, event);
-		}
-		if (objectn->event) {
-			objectn->event(objectn, event);
-		}
-	}
-}
-
 int main (int argc, char *argv[])
 {
 	int i;
@@ -186,34 +164,28 @@ int main (int argc, char *argv[])
 	int h = 300;
 	int mw = 1000;
 	int mh = 1000;
-	s_window_t *window;
-	w_object_t *root;
+	w_window_t *window;
 	w_frame_t *frame;
 
 	srand(time(NULL));
+	
+	w_window_init(&window, WINDOW_MAIN, NULL);
 
-	s_client_init(&window);
-
-	s_window_new(window, WINDOW_MAIN, NULL);
-	mw = window->surface->width;
-	mh = window->surface->height;
+	mw = window->window->surface->width;
+	mh = window->window->surface->height;
 	w = MIN(mw, w);
 	h = MIN(mh, h);
+	
+	w_window_set_coor(window, x, y, w, h);
 
-	s_window_set_title(window, "Demo - %s", argv[0]);
-	s_window_set_coor(window, WINDOW_NOFORM, x, y, w, h);
-	s_window_set_resizeable(window, 0);
+	s_window_set_title(window->window, "Demo - %s", argv[0]);
+	s_window_set_resizeable(window->window, 0);
 
-	w_object_init(window, &root, NULL, NULL);
-	w_object_move(root, 0, 0, w, h);
-	s_client_atevent(window, object_atevent);
-	window->client->user_data = root;
-
-	w_frame_init(window, &frame, FRAME_PANEL | FRAME_RAISED, root);
+	w_frame_init(window->window, &frame, FRAME_PANEL | FRAME_RAISED, window->object);
 	w_object_move(frame->object, 0, 0, w, h);
 	w_object_show(frame->object);
 
-	w_button_init(window, &button[0], frame->object);
+	w_button_init(window->window, &button[0], frame->object);
 	button[0]->pressed = button0_pressed;
 	button[0]->frame->object->draw = button0_draw;
 	button[0]->frame->object->destroy = button0_destroy;
@@ -222,7 +194,7 @@ int main (int argc, char *argv[])
 	w_object_move(button[0]->frame->object, 5, 5, 70, 20);
 	w_object_show(button[0]->frame->object);
 
-	w_button_init(window, &button[1], frame->object);
+	w_button_init(window->window, &button[1], frame->object);
 	button[1]->pressed = button1_pressed;
 	button[1]->frame->object->draw = button1_draw;
 	button[1]->frame->object->destroy = button1_destroy;
@@ -231,7 +203,7 @@ int main (int argc, char *argv[])
 	w_object_move(button[1]->frame->object, 80, 5, 55, 20);
 	w_object_show(button[1]->frame->object);
 
-	w_button_init(window, &button[2], frame->object);
+	w_button_init(window->window, &button[2], frame->object);
 	button[2]->pressed = button2_pressed;
 	button[2]->frame->object->draw = button2_draw;
 	button[2]->frame->object->destroy = button2_destroy;
@@ -240,25 +212,23 @@ int main (int argc, char *argv[])
 	w_object_move(button[2]->frame->object, 140, 5, 85, 20);
 	w_object_show(button[2]->frame->object);
 
-	w_frame_init(window, &area, FRAME_NOFRAME | FRAME_PLAIN, frame->object);
+	w_frame_init(window->window, &area, FRAME_NOFRAME | FRAME_PLAIN, frame->object);
 	w_object_move(area->object, 5, 30, w - 10, h - 35);
 	w_object_show(area->object);
 
 	for (i = 0; i < 4; i++) {
-		w_frame_init(window, &big[i], FRAME_NOFRAME | FRAME_PLAIN, area->object);
+		w_frame_init(window->window, &big[i], FRAME_NOFRAME | FRAME_PLAIN, area->object);
 		big[i]->object->draw = object_draw_p[i];
 		w_object_move(big[i]->object, (rand() + 1) % (w - 10), ((rand() + 1) % (h - 35)) + 1,
 		                              (rand() + 1) % (w - 10), ((rand() + 1) % (h - 35)) + 1);
 		w_object_show(big[i]->object);
 	}
-	w_object_show(root);
+	w_object_show(window->object);
 
-	s_client_atevent(window, object_atevent);
+	s_window_show(window->window);
+	s_client_main(window->window);
 
-	s_window_show(window);
-	s_client_main(window);
-
-	w_object_uninit(root);
+	w_window_uninit(window);
 
 	return 0;
 }

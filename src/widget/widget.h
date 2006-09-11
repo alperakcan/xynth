@@ -91,6 +91,11 @@ typedef struct w_button_s {
 	int state;
 } w_button_t;
 
+typedef struct w_window_s {
+	s_window_t *window;
+	w_object_t *object;
+} w_window_t;
+
 /* button.c */
 void w_button_event (w_object_t *object, s_event_t *event);
 void w_button_draw (w_object_t *object);
@@ -124,5 +129,11 @@ int w_object_childatposition (w_object_t *object, int x, int y, w_object_t **chi
 int w_object_atposition (w_object_t *root, int x, int y, w_object_t **object);
 int w_object_init (s_window_t *window, w_object_t **object, void (*draw) (w_object_t *), w_object_t *parent);
 void w_object_uninit (w_object_t *object);
+
+/* window.c */
+void w_window_atevent (s_window_t *window, s_event_t *event);
+int w_window_init (w_window_t **window, S_WINDOW type, w_window_t *parent);
+int w_window_set_coor (w_window_t *window, int x, int y, int w, int h);
+int w_window_uninit (w_window_t *window);
 
 #endif
