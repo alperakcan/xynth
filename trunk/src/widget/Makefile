@@ -2,7 +2,7 @@
 include ../../Makefile.cfg
 include ../../Makefile.parse
 
-OBJS = button.o frame.o object.o
+OBJS = button.o frame.o object.o window.o
 
 ifeq ($(PLATFORM_LINUX), Y)
 TARGET_A  = libwidget.a

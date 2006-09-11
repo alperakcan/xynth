@@ -140,7 +140,7 @@ int w_object_move (w_object_t *object, int x, int y, int w, int h)
 		object->surface->height = object->surface->buf->h;
 		object->surface->matrix = (unsigned char *) s_malloc(sizeof(char) * object->surface->width * object->surface->height + 1);
 		object->surface->vbuf = (char *) s_calloc(1, object->surface->width * object->surface->height * object->surface->bytesperpixel + 1);
-		memset(object->surface->matrix, 0xff, sizeof(char) * object->surface->width * object->surface->height);
+		memset(object->surface->matrix, 0x88, sizeof(char) * object->surface->width * object->surface->height);
 
 		if (object->draw != NULL) {
 			object->draw(object);
