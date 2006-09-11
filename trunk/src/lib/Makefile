@@ -9,8 +9,6 @@ OBJS = alloc.o child.o client.o config.o debug.o driver.o event.o eventq.o font.
        list.o pipe_api.o pollfd.o rect.o socket.o socket_api.o surface.o thread.o \
        timer.o window.o
 
-OBJS += object.o frame.o button.o
-
 OBJS += libz/adler32.o libz/compress.o libz/crc32.o libz/gzio.o libz/uncompr.o \
         libz/deflate.o libz/trees.o libz/zutil.o libz/inflate.o libz/infback.o \
         libz/inftrees.o libz/inffast.o

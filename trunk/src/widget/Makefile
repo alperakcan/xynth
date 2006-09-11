@@ -2,7 +2,7 @@
 include ../../Makefile.cfg
 include ../../Makefile.parse
 
-OBJS = button.o frame.o handler.o layout.o object.o rect.o window.o
+OBJS = button.o frame.o object.o
 
 ifeq ($(PLATFORM_LINUX), Y)
 TARGET_A  = libwidget.a
@@ -25,7 +25,7 @@ endif
 
 EXTRA_CLEAN = libwidget.a libwidget.so
 
-DEPEND_FILES       = *.cpp
+DEPEND_FILES       = *.c
 EXTRA_DEPEND_FILES = *.h
 
 include ../../Makefile.rules

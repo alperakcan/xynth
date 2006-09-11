@@ -13,7 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "xynth_.h"
+#include "../lib/xynth_.h"
+#include "widget.h"
 
 void s_button_event (s_object_t *object, s_event_t *event)
 {

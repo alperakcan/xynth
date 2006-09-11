@@ -13,7 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "xynth_.h"
+#include "../lib/xynth_.h"
+#include "widget.h"
 
 void s_frame_content (s_frame_t *frame)
 {

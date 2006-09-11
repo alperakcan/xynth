@@ -16,214 +16,113 @@
 #ifndef SWIDGET_H
 #define SWIDGET_H
 
-class SRect {
-public:
-	int rectX;
-	int rectY;
-	int rectW;
-	int rectH;
+typedef struct s_object_s s_object_t;
 
-        void rectSet (int x, int y, int w, int h);
-	SRect (int x = 0, int y = 0, int w = 0, int h = 0);
-	SRect (const SRect &copy);
-	~SRect (void);
-	void operator = (const SRect &copy);
+typedef enum {
+	OBJECT_FRAME   = 0x0,
+	OBJECT_BUTTON  = 0x1,
+	OBJECT_OBJECTS = 0x2
+} OBJECT;
+
+struct s_object_s {
+	/** child list */
+	s_list_t *childs;
+	/** shown list */
+	s_list_t *shown;
+	/** root mutex */
+	s_thread_mutex_t *mut;
+	/** the surface */
+	s_surface_t *surface;
+	/** the parent of the object */
+	s_object_t *parent;
+	/** content allowed rectangle */
+	s_rect_t *content;
+	/** geometry function */
+	void (*geometry) (s_object_t *object);
+	/** draw function */
+	void (*draw) (s_object_t *object);
+	/** event function */
+	void (*event) (s_object_t *object, s_event_t *event);
+	/** uninit function */
+	void (*destroy) (s_object_t *object);
+	/** window */
+	s_window_t *window;
+	/** user data */
+	void *data[OBJECT_OBJECTS];
 };
 
-class SSize {
-public:
-	int sizeW;
-	int sizeH;
+typedef enum {
+	FRAME_NOFRAME		= 0x00,
+	FRAME_BOX		= 0x01,
+	FRAME_PANEL		= 0x02,
+	FRAME_WINPANEL		= 0x03,
+	FRAME_HLINE		= 0x04,
+	FRAME_VLINE		= 0x05,
+	FRAME_STYLEDPANEL	= 0x06,
+	FRAME_POPUPPANEL	= 0x07,
+	FRAME_MENUBARPANEL	= 0x08,
+	FRAME_TOOLBARPANEL	= 0x09,
+	FRAME_LINEEDITPANEL	= 0x0a,
+	FRAME_TABWIDGETPANEL	= 0x0b,
+	FRAME_GROUPBOXPANEL	= 0x0c,
+	FRAME_MSHAPE		= 0x0f
+} FRAME_SHAPE;
 
-        void sizeSet (int w, int h);
-	SSize (int w = 0, int h = 0);
-	~SSize (void);
-};
+typedef enum {
+	FRAME_PLAIN		= 0x10,
+	FRAME_RAISED		= 0x20,
+	FRAME_SUNKEN		= 0x40,
+	FRAME_MSHADOW		= 0xf0
+} FRAME_SHADOW;
 
-class SObject {
-public:
-	typedef enum {
-		FixedSize   = 0x1,
-		FreeResize  = 0x2
-	} ResizeMode;
+typedef struct s_frame_s {
+	s_object_t *object;
+	unsigned int style;
+	unsigned int linewidth;
+	unsigned int midlinewidth;
+} s_frame_t;
 
-	typedef enum {
-		AlignCenter = 0x1
-	} Alignment;
-	
-	SObject *objectChild;
-	SObject *objectParent;
+typedef struct s_button_s {
+	s_frame_t *frame;
+	s_handler_t *handler;
+	void (*pressed) (s_object_t *, int);
+	void (*released) (s_object_t *, int);
+	void (*clicked) (s_object_t *, int, int);
+	int state;
+} s_button_t;
 
-	s_window_t *objectWindow;
+/* button.c */
+void s_button_event (s_object_t *object, s_event_t *event);
+void s_button_draw (s_object_t *object);
+void s_button_geometry (s_object_t *object);
+void s_button_cb_o (s_window_t *window, s_event_t *event, s_handler_t *handler);
+void s_button_cb_p (s_window_t *window, s_event_t *event, s_handler_t *handler);
+void s_button_cb_c (s_window_t *window, s_event_t *event, s_handler_t *handler);
+void s_button_cb_r (s_window_t *window, s_event_t *event, s_handler_t *handler);
+void s_button_cb_hr (s_window_t *window, s_event_t *event, s_handler_t *handler);
+void s_button_cb_rh (s_window_t *window, s_event_t *event, s_handler_t *handler);
+void s_button_cb_ho (s_window_t *window, s_event_t *event, s_handler_t *handler);
+void s_button_cb_oh (s_window_t *window, s_event_t *event, s_handler_t *handler);
+void s_button_cb_hoh (s_window_t *window, s_event_t *event, s_handler_t *handler);
+int s_button_init (s_window_t *window, s_button_t **button, s_object_t *parent);
+void s_button_uninit (s_object_t *object);
 
-	int objectAlignment;
-	int objectResizeMode;
+/* frame.c */
+void s_frame_content (s_frame_t *frame);
+void s_frame_draw (s_object_t *object);
+int s_frame_init (s_window_t *window, s_frame_t **frame, unsigned int style, s_object_t *parent);
+void s_frame_uninit (s_object_t *object);
 
-	SSize objectSizeBufferMin;
-	SSize objectSizeBufferMax;
-	SSize objectSizeContentsMin;
-	SSize objectSizeContentsMax;
-
-	SRect objectRectBuffer;
-	SRect objectRectContents;
-
-	int objectRGBColor (int r, int g, int b);
-	void objectFillBox (int x, int y, int w, int h, int color);
-
-	void objectSetSizeMin (int w, int h);
-	void objectSetSizeMax (int w, int h);
-	void objectSetRectBuffer (int x, int y, int w, int h);
-	void objectSetRectContents (int x, int y, int w, int h);
-
-	void objectDelFromParent (void);
-	void objectSetParent (SObject *parent);
-        
-	void draw (void);
-	void expose (int x, int y, int w, int h);
-	void geometry (int x, int y, int w, int h);
-
-	virtual void objectDraw (void) = 0;
-	virtual void objectGeometry (int x, int y, int w, int h) = 0;
-	virtual void objectSetObjectWindow (s_window_t *window);
-
-	SObject (SObject *parent = NULL, Alignment alignment = SObject::AlignCenter, ResizeMode resizemode = SObject::FreeResize);
-	virtual ~SObject (void);
-};
-
-class SHandler {
-public:
-	SObject *handlerObj;
-	s_handler_t *handlerHndl;
-
-	void handlerAdd (void);
-	void handlerDel (void);
-
-	SHandler (SObject *obj, S_HANDLER type);
-	~SHandler (void);
-};
-
-class SLayoutCell : public SObject {
-public:
-	SObject *layoutCellObject;
-
-	virtual void objectDraw (void);
-	virtual void objectGeometry (int x, int y, int w, int h);
-
-	SLayoutCell (void);
-	~SLayoutCell (void);
-};
-
-class SLayout : public SObject {
-public:
-        int layoutRows;
-        int layoutCols;
-        int layoutColSpacing;
-        int layoutRowSpacing;
-	double *layoutRowsWeight;
-	double *layoutColsWeight;
-	SLayoutCell **layoutCells;
-	
-        void layoutSetColSpacing (int spacing);
-        void layoutSetRowSpacing (int spacing);
-        void layoutInsertObject (SObject *object, int row, int col);
-        
-	virtual void objectDraw (void);
-	virtual void objectGeometry (int x, int y, int w, int h);
-	virtual void objectSetObjectWindow (s_window_t *window);
-
-	SLayout (SObject *parent, int rows = 1, int cols = 1);
-	~SLayout (void);
-};
-
-class SFrame : public SObject {
-public:
-	typedef enum {
-		NoFrame		= 0x00,
-		Box		= 0x01,
-		Panel		= 0x02,
-		WinPanel	= 0x03,
-		HLine		= 0x04,
-		VLine		= 0x05,
-		StyledPanel	= 0x06,
-		PopupPanel	= 0x07,
-		MenuBarPanel	= 0x08,
-		ToolBarPanel	= 0x09,
-		LineEditPanel	= 0x0a,
-		TabWidgetPanel	= 0x0b,
-		GroupBoxPanel	= 0x0c,
-		MShape		= 0x0f
-	} frameShape;
-	
-	typedef enum {
-		Plain		= 0x10,
-		Raised		= 0x20,
-		Sunken		= 0x40,
-		MShadow		= 0xf0
-	} frameShadow;
-	
-	int frameStyle;
-	int frameLineWidth;
-	int frameMidLineWidth;
-
-	void frameRectContents (void);
-	void frameSetStyle (int style);
-        void frameSetLineWidth (int width);
-        void frameSetMidLineWidth (int width);
-        
-	virtual void objectDraw (void);
-	virtual void objectGeometry (int x, int y, int w, int h);
-
-	SFrame (SObject *parent, int style = (SFrame::NoFrame | SFrame::Plain));
-	~SFrame (void);
-};
-
-
-class SButton : public SFrame {
-public:
-	int bstate;
-	SHandler *buttonHandler;
-	
-	virtual void buttonPressed (int button);
-	virtual void buttonReleased (int button);
-	virtual void buttonClicked (int button, int clickCount);
-
-	static void button_cb_o (s_window_t *window, s_event_t *event, s_handler_t *hndl);
-	static void button_cb_p (s_window_t *window, s_event_t *event, s_handler_t *hndl);
-	static void button_cb_c (s_window_t *window, s_event_t *event, s_handler_t *hndl);
-	static void button_cb_r (s_window_t *window, s_event_t *event, s_handler_t *hndl);
-	static void button_cb_hr (s_window_t *window, s_event_t *event, s_handler_t *hndl);
-	static void button_cb_rh (s_window_t *window, s_event_t *event, s_handler_t *hndl);
-	static void button_cb_ho (s_window_t *window, s_event_t *event, s_handler_t *hndl);
-	static void button_cb_oh (s_window_t *window, s_event_t *event, s_handler_t *hndl);
-	static void button_cb_hoh (s_window_t *window, s_event_t *event, s_handler_t *hndl);
-
-	virtual void objectDraw (void);
-	virtual void objectGeometry (int x, int y, int w, int h);
-
-	SButton (SObject *parent, int style = SFrame::NoFrame);
-	~SButton (void);
-};
-
-class SWindow : public SObject {
-public:
-	void windowSetTitle (char *fmt, ...);
-	void windowFormDraw (void);
-	void windowSetCoor (int x, int y, int w, int h, int with_form = WINDOW_NOFORM);
-	void windowSetResizeable (int resizeable);
-	void windowShow (void);
-	void windowMain (void);
-	
-        void windowAtExit (s_window_t *window);
-	void windowAtEvent (s_window_t *window, s_event_t *event);
-	
-	static void windowAtExitCallback (s_window_t *window);
-	static void windowAtEventCallback (s_window_t *window, s_event_t *event);
-
-	virtual void objectDraw (void);
-	virtual void objectGeometry (int x, int y, int w, int h);
-
-	SWindow (S_WINDOW type = WINDOW_MAIN, s_window_t *parent = NULL);
-	~SWindow (void);
-};
+/* object.c */
+int s_object_update_to_surface (s_object_t *object, s_surface_t *surface, s_rect_t *coor);
+int s_object_update (s_object_t *object, s_rect_t *coor);
+int s_object_set_content (s_object_t *object, int x, int y, int w, int h);
+int s_object_move (s_object_t *object, int x, int y, int w, int h);
+int s_object_hide (s_object_t *object);
+int s_object_show (s_object_t *object);
+int s_object_childatposition (s_object_t *object, int x, int y, s_object_t **child);
+int s_object_atposition (s_object_t *root, int x, int y, s_object_t **object);
+int s_object_init (s_window_t *window, s_object_t **object, void (*draw) (s_object_t *), s_object_t *parent);
+void s_object_uninit (s_object_t *object);
 
 #endif
