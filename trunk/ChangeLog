@@ -1,4 +1,37 @@
 
+Mon 11 Sep 2006 02:06:11 PM EEST
+	* M Makefile.cfg,
+	  M Makefile.cfg.gp2x,
+	  M Makefile.cfg.linux,
+	  M Makefile.cfg.linux.single,
+	  M Makefile.cfg.mingw,
+	  M Makefile.cfg.pspdev,
+	  M Makefile.parse,
+	  M demo/Makefile,
+	  M demo/object/Makefile,
+	  M demo/object/object.c,
+	  D demo/widget,
+	  M src/lib/Makefile,
+	  D src/lib/button.c,
+	  D src/lib/frame.c,
+	  D src/lib/object.c,
+	  M src/lib/xynth.h,
+	  M src/widget/Makefile,
+	  A src/widget/button.c,
+	  D src/widget/button.cpp,
+	  A src/widget/frame.c,
+	  D src/widget/frame.cpp,
+	  D src/widget/handler.cpp,
+	  D src/widget/layout.cpp,
+	  A src/widget/object.c,
+	  D src/widget/object.cpp,
+	  D src/widget/rect.cpp,
+	  M src/widget/widget.h,
+	  D src/widget/window.cpp :
+	  
+	  removed c++ widget library, c is enough for every one. developing a
+	  brand new c widget library.
+
 Sun 10 Sep 2006 07:08:02 PM EEST
         * demo/object/object.c,
 	  src/lib/object.c,
