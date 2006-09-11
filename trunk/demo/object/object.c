@@ -52,7 +52,7 @@ static void object_draw_white (w_object_t *object)
 }
 
 typedef void (*object_draw) (w_object_t *);
-object_draw object_draw_p[] = {
+static object_draw object_draw_p[] = {
 	&object_draw_red,
 	&object_draw_green,
 	&object_draw_blue,
