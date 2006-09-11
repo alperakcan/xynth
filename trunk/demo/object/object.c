@@ -210,6 +210,7 @@ int main (int argc, char *argv[])
 
 	s_frame_init(window, &frame, FRAME_PANEL | FRAME_RAISED, root);
 	s_object_move(frame->object, 0, 0, w, h);
+	s_object_show(frame->object);
 
 	s_button_init(window, &button[0], frame->object);
 	button[0]->pressed = button0_pressed;
@@ -218,6 +219,7 @@ int main (int argc, char *argv[])
 	s_font_init(&font[0], "arial.ttf");
 	s_font_set_size(font[0], 10);
 	s_object_move(button[0]->frame->object, 5, 5, 70, 20);
+	s_object_show(button[0]->frame->object);
 
 	s_button_init(window, &button[1], frame->object);
 	button[1]->pressed = button1_pressed;
@@ -226,6 +228,7 @@ int main (int argc, char *argv[])
 	s_font_init(&font[1], "arial.ttf");
 	s_font_set_size(font[1], 10);
 	s_object_move(button[1]->frame->object, 80, 5, 55, 20);
+	s_object_show(button[1]->frame->object);
 
 	s_button_init(window, &button[2], frame->object);
 	button[2]->pressed = button2_pressed;
@@ -234,15 +237,18 @@ int main (int argc, char *argv[])
 	s_font_init(&font[2], "arial.ttf");
 	s_font_set_size(font[2], 10);
 	s_object_move(button[2]->frame->object, 140, 5, 85, 20);
+	s_object_show(button[2]->frame->object);
 
 	s_frame_init(window, &area, FRAME_NOFRAME | FRAME_PLAIN, frame->object);
 	s_object_move(area->object, 5, 30, w - 10, h - 35);
+	s_object_show(area->object);
 
 	for (i = 0; i < 4; i++) {
 		s_frame_init(window, &big[i], FRAME_NOFRAME | FRAME_PLAIN, area->object);
 		big[i]->object->draw = object_draw_p[i];
 		s_object_move(big[i]->object, (rand() + 1) % (w - 10), ((rand() + 1) % (h - 35)) + 1,
 		                              (rand() + 1) % (w - 10), ((rand() + 1) % (h - 35)) + 1);
+		s_object_show(big[i]->object);
 	}
 	s_object_show(root);
 
