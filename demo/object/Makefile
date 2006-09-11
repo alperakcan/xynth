@@ -2,9 +2,9 @@
 include ../../Makefile.cfg
 include ../../Makefile.parse
 
-INCDIR  = ../../src/lib
-LIBDIR  = ../../src/lib
-LDFLAGS = -lxynth
+INCDIR  = ../../src/lib ../../src/widget
+LIBDIR  = ../../src/widget ../../src/lib
+LDFLAGS = -lwidget -lxynth
 
 OBJS = object.o
 

@@ -13,8 +13,6 @@ subdirs-$(DEMO_TERM)    += term
 subdirs-$(DEMO_TIMER)   += timer
 subdirs-$(DEMO_LOGOUT)  += xynthlogout
 subdirs-$(DEMO_IMAGE)   += img
-subdirs-$(DEMO_MINES)   += mines
-subdirs-$(DEMO_WIDGET)  += widget
 subdirs-$(DEMO_ONSCREENKEYBOARD) += onscreenkeyboard
 
 all:

@@ -13,7 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "xynth_.h"
+#include "../lib/xynth_.h"
+#include "widget.h"
 
 int s_object_update_to_surface (s_object_t *object, s_surface_t *surface, s_rect_t *coor)
 {
