@@ -16,7 +16,7 @@
 #include "../lib/xynth_.h"
 #include "widget.h"
 
-int s_object_update_to_surface (s_object_t *object, s_surface_t *surface, s_rect_t *coor)
+int w_object_update_to_surface (w_object_t *object, s_surface_t *surface, s_rect_t *coor)
 {
         int pos = 0;
 	s_rect_t bound;
@@ -41,15 +41,15 @@ int s_object_update_to_surface (s_object_t *object, s_surface_t *surface, s_rect
 	}
 
 	while (!(s_list_eol(object->shown, pos))) {
-		s_object_t *obj = (s_object_t *) s_list_get(object->shown, pos);
-		s_object_update_to_surface(obj, surface, coor);
+		w_object_t *obj = (w_object_t *) s_list_get(object->shown, pos);
+		w_object_update_to_surface(obj, surface, coor);
 		pos++;
 	}
 
 end:	return 0;
 }
 
-int s_object_update (s_object_t *object, s_rect_t *coor)
+int w_object_update (w_object_t *object, s_rect_t *coor)
 {
 	s_rect_t clip;
 	if (object == NULL) {
@@ -64,13 +64,13 @@ int s_object_update (s_object_t *object, s_rect_t *coor)
 		object->draw(object);
 	}
 	if (s_rect_intersect(coor, object->surface->win, &clip) == 0) {
-		s_object_update_to_surface(object, object->surface, &clip);
+		w_object_update_to_surface(object, object->surface, &clip);
 		s_putboxpart(object->window->surface, clip.x, clip.y, clip.w, clip.h, object->surface->width, object->surface->height, object->surface->vbuf, clip.x, clip.y);
 	}
 end:	return 0;
 }
 
-int s_object_set_content (s_object_t *object, int x, int y, int w, int h)
+int w_object_set_content (w_object_t *object, int x, int y, int w, int h)
 {
 	object->content->x = x;
 	object->content->y = y;
@@ -79,7 +79,7 @@ int s_object_set_content (s_object_t *object, int x, int y, int w, int h)
 	return 0;
 }
 
-int s_object_move (s_object_t *object, int x, int y, int w, int h)
+int w_object_move (w_object_t *object, int x, int y, int w, int h)
 {
 	int pos = 0;
 	s_rect_t old;
@@ -151,7 +151,7 @@ int s_object_move (s_object_t *object, int x, int y, int w, int h)
 	}
 
 	while (!(s_list_eol(object->shown, pos))) {
-		s_object_t *obj = (s_object_t *) s_list_get(object->shown, pos);
+		w_object_t *obj = (w_object_t *) s_list_get(object->shown, pos);
 		obj->surface->win->x = object->surface->win->x + obj->surface->buf->x;
 		obj->surface->win->y = object->surface->win->x + obj->surface->buf->y;
 		pos++;	
@@ -161,28 +161,28 @@ int s_object_move (s_object_t *object, int x, int y, int w, int h)
 	s_rect_difference(&old, object->surface->win, diff);
 	while (!s_list_eol(diff, 0)) {
 		tmp = (s_rect_t *) s_list_get(diff, 0);
-		s_object_update(object, tmp);
+		w_object_update(object, tmp);
 		s_list_remove(diff, 0);
 		s_free(tmp);
 	}
 	s_list_uninit(diff);
-	s_object_update(object, object->surface->win);
+	w_object_update(object, object->surface->win);
 
         s_thread_mutex_unlock(object->mut);
 
 	return 0;
 }
 
-int s_object_hide (s_object_t *object)
+int w_object_hide (w_object_t *object)
 {
         s_thread_mutex_lock(object->mut);
         if (object->parent != NULL) {
 		int pos = 0;
 		while (!s_list_eol(object->parent->shown, pos)) {
-			s_object_t *obj = (s_object_t *) s_list_get(object->parent->shown, pos);
+			w_object_t *obj = (w_object_t *) s_list_get(object->parent->shown, pos);
 			if (obj == object) {
 				s_list_remove(object->parent->shown, pos);
-				s_object_update(object, object->surface->win);
+				w_object_update(object, object->surface->win);
 				break;
 			}
 			pos++;
@@ -192,17 +192,17 @@ int s_object_hide (s_object_t *object)
 	return 0;
 }
 
-int s_object_show (s_object_t *object)
+int w_object_show (w_object_t *object)
 {
 	int pos;
 	int found;
-	s_object_t *obj;
+	w_object_t *obj;
         s_thread_mutex_lock(object->mut);
         if (object->parent != NULL) {
 		pos = 0;
 		found = 0;
 		while (!s_list_eol(object->parent->childs, pos)) {
-			obj = (s_object_t *) s_list_get(object->parent->childs, pos);
+			obj = (w_object_t *) s_list_get(object->parent->childs, pos);
 			if (obj == object) {
 				found = 1;
 				break;
@@ -213,7 +213,7 @@ int s_object_show (s_object_t *object)
 			pos = 0;
 			found = 0;
 			while (!s_list_eol(object->parent->shown, pos)) {
-				obj = (s_object_t *) s_list_get(object->parent->shown, pos);
+				obj = (w_object_t *) s_list_get(object->parent->shown, pos);
 				if (obj == object) {
 					if ((pos + 1) != object->parent->shown->nb_elt) {
 						s_list_remove(object->parent->shown, pos);
@@ -227,16 +227,16 @@ int s_object_show (s_object_t *object)
 			if (!found) {
 				s_list_add(object->parent->shown, object, -1);
 			}
-			s_object_update(object, object->surface->win);
+			w_object_update(object, object->surface->win);
 		}
         } else {
-        	s_object_update(object, object->surface->win);
+        	w_object_update(object, object->surface->win);
         }
         s_thread_mutex_unlock(object->mut);
 	return 0;
 }
 
-int s_object_childatposition (s_object_t *object, int x, int y, s_object_t **child)
+int w_object_childatposition (w_object_t *object, int x, int y, w_object_t **child)
 {
 	int pos;
 	s_rect_t coor;
@@ -248,7 +248,7 @@ int s_object_childatposition (s_object_t *object, int x, int y, s_object_t **chi
 	coor.h = 1;
 	pos = 0;
 	while (!s_list_eol(object->shown, pos)) {
-		s_object_t *obj = (s_object_t *) s_list_get(object->shown, pos);
+		w_object_t *obj = (w_object_t *) s_list_get(object->shown, pos);
 		if (s_rect_intersect(obj->surface->buf, &coor, &rect)) {
 		} else {
 			(*child) = obj;
@@ -258,9 +258,9 @@ int s_object_childatposition (s_object_t *object, int x, int y, s_object_t **chi
 	return (*child) ? 0 : -1;
 }
 
-int s_object_atposition (s_object_t *root, int x, int y, s_object_t **object)
+int w_object_atposition (w_object_t *root, int x, int y, w_object_t **object)
 {
-	s_object_t *tmp;
+	w_object_t *tmp;
 	tmp = root;
 	while (tmp->parent) {
 		tmp = tmp->parent;
@@ -269,13 +269,13 @@ int s_object_atposition (s_object_t *root, int x, int y, s_object_t **object)
 		*object = tmp;
 		x -= (*object)->surface->buf->x;
 		y -= (*object)->surface->buf->y;
-	} while (s_object_childatposition(*object, x, y, &tmp) == 0);
+	} while (w_object_childatposition(*object, x, y, &tmp) == 0);
 	return 0;
 }
 
-int s_object_init (s_window_t *window, s_object_t **object, void (*draw) (s_object_t *), s_object_t *parent)
+int w_object_init (s_window_t *window, w_object_t **object, void (*draw) (w_object_t *), w_object_t *parent)
 {
-	(*object) = (s_object_t *) s_malloc(sizeof(s_object_t));
+	(*object) = (w_object_t *) s_malloc(sizeof(w_object_t));
 	(*object)->surface = (s_surface_t *) s_malloc(sizeof(s_surface_t));
 	(*object)->surface->buf = (s_rect_t *) s_malloc(sizeof(s_rect_t));
 	(*object)->surface->win = (s_rect_t *) s_malloc(sizeof(s_rect_t));
@@ -290,7 +290,7 @@ int s_object_init (s_window_t *window, s_object_t **object, void (*draw) (s_obje
  	memset((*object)->data, 0, sizeof(void *) * OBJECT_OBJECTS);
  	(*object)->geometry = NULL;
 	(*object)->draw = draw;
-	(*object)->destroy = s_object_uninit;
+	(*object)->destroy = w_object_uninit;
 	(*object)->window = window;
 
 	(*object)->content = (s_rect_t *) s_malloc(sizeof(s_rect_t));
@@ -335,13 +335,13 @@ err0:	s_free((*object)->surface->buf);
 	return 1;
 }
 
-void s_object_uninit (s_object_t *object)
+void w_object_uninit (w_object_t *object)
 {
 	s_thread_mutex_lock(object->mut);
         if (object->parent != NULL) {
 		int pos = 0;
 		while (!s_list_eol(object->parent->childs, pos)) {
-			s_object_t *obj = (s_object_t *) s_list_get(object->parent->childs, pos);
+			w_object_t *obj = (w_object_t *) s_list_get(object->parent->childs, pos);
 			if (obj == object) {
 				s_list_remove(object->parent->childs, pos);
 				break;
@@ -350,13 +350,13 @@ void s_object_uninit (s_object_t *object)
 		}
 	}
         while (!s_list_eol(object->childs, 0)) {
-		s_object_t *obj = (s_object_t *) s_list_get(object->childs, 0);
+		w_object_t *obj = (w_object_t *) s_list_get(object->childs, 0);
 		s_list_remove(object->childs, 0);
 		s_thread_mutex_unlock(object->mut);
 		if (obj->destroy != NULL) {
 			obj->destroy(obj);
 		} else {
-			s_object_uninit(obj);
+			w_object_uninit(obj);
 		}
 		s_thread_mutex_lock(object->mut);
 	}
