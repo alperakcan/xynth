@@ -39,8 +39,8 @@ int s_object_update_to_surface (s_object_t *object, s_surface_t *surface, s_rect
 					   update.y - object->surface->win->y);
 	}
 
-	while (!(s_list_eol(object->childs, pos))) {
-		s_object_t *obj = (s_object_t *) s_list_get(object->childs, pos);
+	while (!(s_list_eol(object->shown, pos))) {
+		s_object_t *obj = (s_object_t *) s_list_get(object->shown, pos);
 		s_object_update_to_surface(obj, surface, coor);
 		pos++;
 	}
@@ -149,8 +149,8 @@ int s_object_move (s_object_t *object, int x, int y, int w, int h)
 		object->geometry(object);
 	}
 
-	while (!(s_list_eol(object->childs, pos))) {
-		s_object_t *obj = (s_object_t *) s_list_get(object->childs, pos);
+	while (!(s_list_eol(object->shown, pos))) {
+		s_object_t *obj = (s_object_t *) s_list_get(object->shown, pos);
 		obj->surface->win->x = object->surface->win->x + obj->surface->buf->x;
 		obj->surface->win->y = object->surface->win->x + obj->surface->buf->y;
 		pos++;	
@@ -177,15 +177,15 @@ int s_object_hide (s_object_t *object)
         s_thread_mutex_lock(object->mut);
         if (object->parent != NULL) {
 		int pos = 0;
-		while (!s_list_eol(object->parent->childs, pos)) {
-			s_object_t *obj = (s_object_t *) s_list_get(object->parent->childs, pos);
+		while (!s_list_eol(object->parent->shown, pos)) {
+			s_object_t *obj = (s_object_t *) s_list_get(object->parent->shown, pos);
 			if (obj == object) {
-				s_list_remove(object->parent->childs, pos);
+				s_list_remove(object->parent->shown, pos);
+				s_object_update(object, object->surface->win);
 				break;
 			}
 			pos++;
 		}
-		s_object_update(object, object->surface->win);
 	}
         s_thread_mutex_unlock(object->mut);
 	return 0;
@@ -193,26 +193,41 @@ int s_object_hide (s_object_t *object)
 
 int s_object_show (s_object_t *object)
 {
+	int pos;
+	int found;
+	s_object_t *obj;
         s_thread_mutex_lock(object->mut);
         if (object->parent != NULL) {
-		int pos = 0;
-		int found = 0;
+		pos = 0;
+		found = 0;
 		while (!s_list_eol(object->parent->childs, pos)) {
-			s_object_t *obj = (s_object_t *) s_list_get(object->parent->childs, pos);
+			obj = (s_object_t *) s_list_get(object->parent->childs, pos);
 			if (obj == object) {
-				if ((pos + 1) != object->parent->childs->nb_elt) {
-					s_list_remove(object->parent->childs, pos);
-				} else {
-					found = 1;
-				}
+				found = 1;
 				break;
 			}
 			pos++;
 		}
-		if (!found) {
-			s_list_add(object->parent->childs, object, -1);
+		if (found == 1) {
+			pos = 0;
+			found = 0;
+			while (!s_list_eol(object->parent->shown, pos)) {
+				obj = (s_object_t *) s_list_get(object->parent->shown, pos);
+				if (obj == object) {
+					if ((pos + 1) != object->parent->shown->nb_elt) {
+						s_list_remove(object->parent->shown, pos);
+					} else {
+						found = 1;
+					}
+					break;
+				}
+				pos++;
+			}
+			if (!found) {
+				s_list_add(object->parent->shown, object, -1);
+			}
+			s_object_update(object, object->surface->win);
 		}
-		s_object_update(object, object->surface->win);
         } else {
         	s_object_update(object, object->surface->win);
         }
@@ -231,8 +246,8 @@ int s_object_childatposition (s_object_t *object, int x, int y, s_object_t **chi
 	coor.w = 1;
 	coor.h = 1;
 	pos = 0;
-	while (!s_list_eol(object->childs, pos)) {
-		s_object_t *obj = (s_object_t *) s_list_get(object->childs, pos);
+	while (!s_list_eol(object->shown, pos)) {
+		s_object_t *obj = (s_object_t *) s_list_get(object->shown, pos);
 		if (s_rect_intersect(obj->surface->buf, &coor, &rect)) {
 		} else {
 			(*child) = obj;
@@ -266,6 +281,7 @@ int s_object_init (s_window_t *window, s_object_t **object, void (*draw) (s_obje
 	(*object)->surface->matrix = NULL;
 	s_getsurfacevirtual((*object)->surface, 0, 0, window->surface->bitsperpixel, NULL);
 
+	s_list_init(&((*object)->shown));
 	s_list_init(&((*object)->childs));
 	(*object)->parent = parent;
 
@@ -311,7 +327,8 @@ int s_object_init (s_window_t *window, s_object_t **object, void (*draw) (s_obje
 err0:	s_free((*object)->surface->buf);
 	s_free((*object)->surface->win);
 	s_free((*object)->surface);
-	s_free((*object)->childs);
+	s_list_uninit((*object)->shown);
+	s_list_uninit((*object)->childs);
 	s_free((*object)->content);
 	s_free(*object);
 	return 1;
@@ -342,6 +359,9 @@ void s_object_uninit (s_object_t *object)
 		}
 		s_thread_mutex_lock(object->mut);
 	}
+	while (!s_list_eol(object->shown, 0)) {
+		s_list_remove(object->shown, 0);
+	}
 	s_thread_mutex_unlock(object->mut);
 	if (object->parent == NULL) {
 		s_thread_mutex_destroy(object->mut);
@@ -352,6 +372,7 @@ void s_object_uninit (s_object_t *object)
 	s_free(object->surface->matrix);
 	s_free(object->surface);
 	s_free(object->content);
+	s_list_uninit(object->shown);
 	s_list_uninit(object->childs);
 	s_free(object);
 }

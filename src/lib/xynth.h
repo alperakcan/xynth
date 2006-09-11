@@ -530,14 +530,16 @@ typedef struct s_surface_s {
 typedef struct s_object_s s_object_t;
 
 typedef enum {
-	OBJECT_FRAME,
-	OBJECT_BUTTON,
-	OBJECT_OBJECTS
+	OBJECT_FRAME   = 0x0,
+	OBJECT_BUTTON  = 0x1,
+	OBJECT_OBJECTS = 0x2
 } OBJECT;
 
 struct s_object_s {
 	/** child list */
 	s_list_t *childs;
+	/** shown list */
+	s_list_t *shown;
 	/** root mutex */
 	s_thread_mutex_t *mut;
 	/** the surface */
