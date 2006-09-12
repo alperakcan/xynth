@@ -29,10 +29,16 @@ void w_window_atevent (s_window_t *window, s_event_t *event)
 		event->mouse->py -= window->surface->buf->y;
 		w_object_atposition(windoww->object, event->mouse->x, event->mouse->y, &objectn);
 		w_object_atposition(windoww->object, event->mouse->px, event->mouse->py, &objectp);
-		if ((objectn != objectp) && (objectp->event)) {
+		while (objectp && objectp->event == NULL) {
+			objectp = objectp->parent;
+		}
+		while (objectn && objectn->event == NULL) {
+			objectn = objectn->parent;
+		}
+		if (objectp && (objectn != objectp) && (objectp->event)) {
 			objectp->event(objectp, event);
 		}
-		if (objectn->event) {
+		if (objectn && objectn->event) {
 			objectn->event(objectn, event);
 		}
 	}
