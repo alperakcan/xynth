@@ -82,13 +82,16 @@ static void button0_pressed (w_object_t *object, int buttonp)
 static void button0_draw (w_object_t *object)
 {
 	w_object_t *obj;
+	w_button_draw(object);
 	obj = (w_object_t *) s_list_get(object->childs, 0);
+	if (obj == NULL) {
+		return;
+	}
 	if (area_hide) {
 		w_textbox_set_str(obj, "show area");
 	} else {
 		w_textbox_set_str(obj, "hide area");
 	}
-	w_button_draw(object);
 }
 
 static void button0_destroy (w_object_t *object)
@@ -164,6 +167,7 @@ int main (int argc, char *argv[])
 	
 	w_button_init(window->window, &button, frame->object);
 	button->pressed = button0_pressed;
+	button->frame->object->draw = button0_draw;
 	button->frame->object->destroy = button0_destroy;
 	w_object_move(button->frame->object, 5, 5, 70, 20);
 	w_object_show(button->frame->object);
@@ -171,7 +175,6 @@ int main (int argc, char *argv[])
 	w_textbox_init(window->window, &textbox, button->frame->object);
 	textbox->frame->style = FRAME_NOFRAME;
 	w_textbox_set_str(textbox->frame->object, "hide area");
-	button->frame->object->draw = button0_draw;
 	w_object_move(textbox->frame->object, 0, 0, 70, 20);
 	w_object_show(textbox->frame->object);
 
