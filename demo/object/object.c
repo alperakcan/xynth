@@ -63,7 +63,6 @@ static void button0_pressed (w_object_t *object, int buttonp)
 	w_object_t *obj;
 	area_hide = (area_hide + 1) % 2;
 	if (area_hide) {
-		w_object_hide(area->object);
 		for (i = 0; !s_list_eol(object->parent->childs, i); i++) {
 			obj = (w_object_t *) s_list_get(object->parent->childs, i);
 			if (obj != object) {
@@ -71,7 +70,6 @@ static void button0_pressed (w_object_t *object, int buttonp)
 			}
 		}
 	} else {
-		w_object_show(area->object);
 		for (i = 0; !s_list_eol(object->parent->childs, i); i++) {
 			obj = (w_object_t *) s_list_get(object->parent->childs, i);
 			if (obj != object) {
@@ -163,7 +161,7 @@ int main (int argc, char *argv[])
 	w_frame_init(window->window, &frame, FRAME_PANEL | FRAME_RAISED, window->object);
 	w_object_move(frame->object, 0, 0, w, h);
 	w_object_show(frame->object);
-
+	
 	w_button_init(window->window, &button, frame->object);
 	button->pressed = button0_pressed;
 	button->frame->object->destroy = button0_destroy;

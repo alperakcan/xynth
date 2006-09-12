@@ -36,7 +36,9 @@ void w_textbox_draw (w_object_t *object)
 
 	s_image_get_mat(textbox->font->img);
 	if ((textbox->frame->style & FRAME_MSHAPE) == FRAME_NOFRAME) {
-		memset(textbox->frame->object->surface->matrix, 0, textbox->frame->object->surface->width * textbox->frame->object->surface->height);
+		memset(textbox->frame->object->surface->matrix,
+		       0,
+		       textbox->frame->object->surface->width * textbox->frame->object->surface->height);
 		s_putmaskpart(textbox->frame->object->surface->matrix,
 		              textbox->frame->object->surface->width,
 		              textbox->frame->object->surface->height,
