@@ -1,5 +1,5 @@
 /***************************************************************************
-    begin                : Fri Sep 11 2006
+    begin                : Mon Sep 11 2006
     copyright            : (C) 2006 by Alper Akcan
     email                : distchx@yahoo.com
   ***************************************************************************/
@@ -43,6 +43,7 @@ int w_window_init (w_window_t **window, S_WINDOW type, w_window_t *parent)
 	(*window) = (w_window_t *) s_malloc(sizeof(w_window_t));
 	s_client_init(&((*window)->window));
 	s_window_new((*window)->window, type, NULL);
+	s_window_set_resizeable((*window)->window, 0);
 	w_object_init((*window)->window, &((*window)->object), NULL, NULL);
 	s_client_atevent((*window)->window, w_window_atevent);
 	(*window)->window->client->user_data = (*window);

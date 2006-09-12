@@ -21,7 +21,8 @@ typedef struct w_object_s w_object_t;
 typedef enum {
 	OBJECT_FRAME   = 0x0,
 	OBJECT_BUTTON  = 0x1,
-	OBJECT_OBJECTS = 0x2
+	OBJECT_TEXTBOX = 0x2,
+	OBJECT_OBJECTS = 0x3
 } OBJECT;
 
 struct w_object_s {
@@ -91,6 +92,17 @@ typedef struct w_button_s {
 	int state;
 } w_button_t;
 
+typedef enum {
+	TEXTBOX_WRAP,
+	TEXTBOX_NOWRAP
+} TEXTBOX_PROPERTIES;
+
+typedef struct w_textbox_s {
+	w_frame_t *frame;
+	s_font_t *font;
+	TEXTBOX_PROPERTIES properties;
+} w_textbox_t;
+
 typedef struct w_window_s {
 	s_window_t *window;
 	w_object_t *object;
@@ -129,6 +141,11 @@ int w_object_childatposition (w_object_t *object, int x, int y, w_object_t **chi
 int w_object_atposition (w_object_t *root, int x, int y, w_object_t **object);
 int w_object_init (s_window_t *window, w_object_t **object, void (*draw) (w_object_t *), w_object_t *parent);
 void w_object_uninit (w_object_t *object);
+
+/* textbox.c */
+void w_textbox_draw (w_object_t *object);
+int w_textbox_init (s_window_t *window, w_textbox_t **textbox, w_object_t *parent);
+void w_textbox_uninit (w_object_t *object);
 
 /* window.c */
 void w_window_atevent (s_window_t *window, s_event_t *event);

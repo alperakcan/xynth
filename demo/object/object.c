@@ -166,6 +166,7 @@ int main (int argc, char *argv[])
 	int mh = 1000;
 	w_window_t *window;
 	w_frame_t *frame;
+	w_textbox_t *textbox;
 
 	srand(time(NULL));
 	
@@ -176,14 +177,16 @@ int main (int argc, char *argv[])
 	w = MIN(mw, w);
 	h = MIN(mh, h);
 	
-	w_window_set_coor(window, x, y, w, h);
-
 	s_window_set_title(window->window, "Demo - %s", argv[0]);
-	s_window_set_resizeable(window->window, 0);
+	w_window_set_coor(window, x, y, w, h);
 
 	w_frame_init(window->window, &frame, FRAME_PANEL | FRAME_RAISED, window->object);
 	w_object_move(frame->object, 0, 0, w, h);
-	w_object_show(frame->object);
+	//w_object_show(frame->object);
+	
+	w_textbox_init(window->window, &textbox, frame->object);
+	w_object_move(textbox->frame->object, 0, 0, 100, 20);
+	w_object_show(textbox->frame->object);
 
 	w_button_init(window->window, &button[0], frame->object);
 	button[0]->pressed = button0_pressed;
