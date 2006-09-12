@@ -182,11 +182,11 @@ int main (int argc, char *argv[])
 
 	w_frame_init(window->window, &frame, FRAME_PANEL | FRAME_RAISED, window->object);
 	w_object_move(frame->object, 0, 0, w, h);
-	//w_object_show(frame->object);
+	w_object_show(frame->object);
 	
 	w_textbox_init(window->window, &textbox, frame->object);
 	w_object_move(textbox->frame->object, 0, 0, 100, 20);
-	w_object_show(textbox->frame->object);
+	//w_object_show(textbox->frame->object);
 
 	w_button_init(window->window, &button[0], frame->object);
 	button[0]->pressed = button0_pressed;
