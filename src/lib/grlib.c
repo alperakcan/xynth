@@ -656,3 +656,45 @@ void s_scalebox (s_surface_t *surface, int w1, int h1, void *_dp1, int w2, int h
 			break;
 	}
 }
+
+#include "mem.h"
+int s_putmaskpart (char *dp, int dw, int dh, int x, int y, int w, int h, int bw, int bh, char *sp, int xo, int yo)
+{
+	int x0;
+	int y0;
+	s_rect_t coor;
+	s_rect_t clip;
+	s_rect_t thip;
+	
+	thip.x = x;
+	thip.y = y;
+	thip.w = w;
+	thip.h = h;
+	
+	clip.x = 0;
+	clip.y = 0;
+	clip.w = dw;
+	clip.h = dh;
+	
+	if (s_rect_intersect(&thip, &clip, &coor)) {
+		return -1;
+	}
+	
+	x0 = coor.x - x;
+	y0 = coor.y - y;
+
+	{
+		int i = coor.h;
+		int s_ = bw;
+		int d_ = dw;
+		char *d = dp + (coor.y * dw + coor.x);
+		char *s = sp + (yo + y0) * bw + xo + x0;
+		while (i--) {
+			s_memcpy1(d, s, coor.w);
+			s += s_;
+			d += d_;
+		}
+	}
+
+	return 0;
+}

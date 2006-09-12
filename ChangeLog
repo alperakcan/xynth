@@ -1,4 +1,15 @@
 
+Tue 12 Sep 2006 07:27:10 PM EEST
+	* M demo/object/object.c,
+	  M src/widget/object.c,
+	  M src/widget/window.c,
+	  M src/widget/widget.h,
+	  M src/widget/textbox.c,
+	  M src/lib/grlib.c,
+	  M src/lib/xynth.h :
+	 
+	  new textbox class, simple but cute ;)
+
 Mon 11 Sep 2006 02:06:11 PM EEST
 	* M Makefile.cfg,
 	  M Makefile.cfg.gp2x,

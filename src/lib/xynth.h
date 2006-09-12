@@ -1016,9 +1016,9 @@ void s_putboxrgba (s_surface_t *surface, int x, int y, int w, int h, unsigned in
 void s_getbox (s_surface_t *surface, int x, int y, int w, int h, char *dp);
 
 /** @brief copy the contents of a memory buffer sp to a rectangular bitmap at position (x, y) with
-  *        size (w, h) on to the surface. however, only a part of size (bw, bh) starting at offset
+  *        size (w, h) on to the surface. however, only a part of size (w, h) starting at offset
   *        (xo, yo) in the pixmap is copied. pixmaps are in row-major order. the source pixmap memory
-  *        has the size w * h * surface->bytesperpixel
+  *        has the size bw * bh * surface->bytesperpixel
   *
   * @param *surface - the surface
   * @param x        - x coordinate
@@ -1159,6 +1159,27 @@ void s_rotatebox (s_surface_t *surface, s_rect_t *srect, void *sbuf, s_rect_t *d
   * @returns no return
   */
 void s_scalebox (s_surface_t *surface, int w1, int h1, void *_dp1, int w2, int h2, void *_dp2);
+
+/** @brief copy the contents of a memory buffer sp to a rectangular bitmap at position (x, y) with
+  *        size (w, h) on to the memory buffer dp. however, only a part of size (w, h) starting at offset
+  *        (xo, yo) in the pixmap is copied. pixmaps are in row-major order. the source pixmap memory
+  *        has the size bw * bh * 1. this is a special copy function to use internally.
+  *
+  * @param *dp - destination pixmap
+  * @param *dw - destination width
+  * @param *dh - destination height
+  * @param x   - x coordinate
+  * @param y   - y coordinate
+  * @param w   - width
+  * @param h   - height
+  * @param bw  - bitmap width
+  * @param bh  - bitmap heihgt
+  * @param *sp - source pixmap
+  * @param xo  - x offset
+  * @param yo  - y offset
+  * @returns no return
+  */
+int s_putmaskpart (char *dp, int dw, int dh, int x, int y, int w, int h, int bw, int bh, char *sp, int xo, int yo);
 
 /*@}*/
 

@@ -23,7 +23,7 @@
 static int area_hide = 0;
 static w_frame_t *area;
 static w_button_t *button[3];
-static s_font_t *font[3];
+static w_textbox_t *textbox[3];
 static w_frame_t *big[4];
 
 static void object_draw_black (w_object_t *object)
@@ -79,21 +79,16 @@ static void button0_draw (w_object_t *object)
 	int x;
 	int y;
 	if (area_hide) {
-		s_font_set_str(font[0], "show area");
+		w_textbox_set_str(textbox[0]->frame->object, "show area");
 	} else {
-		s_font_set_str(font[0], "hide area");
+		w_textbox_set_str(textbox[0]->frame->object, "hide area");
 	}
-	s_font_get_glyph(font[0]);
-	x = MAX((object->content->w - font[0]->img->w) / 2, 0);
-	y = MAX((object->content->h - font[0]->img->h) / 2, 0);
 	w_button_draw(object);
-	s_putboxrgba(object->surface, x, y, font[0]->img->w, font[0]->img->h, font[0]->img->rgba);
 }
 
 static void button0_destroy (w_object_t *object)
 {
 	w_button_uninit(object);
-	s_font_uninit(font[0]);
 }
 
 static void button1_pressed (w_object_t *object, int button)
@@ -109,22 +104,9 @@ static void button1_pressed (w_object_t *object, int button)
 	}
 }
 
-static void button1_draw (w_object_t *object)
-{
-	int x;
-	int y;
-	s_font_set_str(font[1], "blender");
-	s_font_get_glyph(font[1]);
-	x = MAX((object->content->w - font[1]->img->w) / 2, 0);
-	y = MAX((object->content->h - font[1]->img->h) / 2, 0);
-	w_button_draw(object);
-	s_putboxrgba(object->surface, x, y, font[1]->img->w, font[1]->img->h, font[1]->img->rgba);
-}
-
 static void button1_destroy (w_object_t *object)
 {
 	w_button_uninit(object);
-	s_font_uninit(font[1]);
 }
 
 static void button2_pressed (w_object_t *object, int button)
@@ -137,22 +119,9 @@ static void button2_pressed (w_object_t *object, int button)
 	w_object_show(big[show]->object);
 }
 
-static void button2_draw (w_object_t *object)
-{
-	int x;
-	int y;
-	s_font_set_str(font[2], "random focus");
-	s_font_get_glyph(font[2]);
-	x = MAX((object->content->w - font[2]->img->w) / 2, 0);
-	y = MAX((object->content->h - font[2]->img->h) / 2, 0);
-	w_button_draw(object);
-	s_putboxrgba(object->surface, x, y, font[2]->img->w, font[2]->img->h, font[2]->img->rgba);
-}
-
 static void button2_destroy (w_object_t *object)
 {
 	w_button_uninit(object);
-	s_font_uninit(font[2]);
 }
 
 int main (int argc, char *argv[])
@@ -166,7 +135,6 @@ int main (int argc, char *argv[])
 	int mh = 1000;
 	w_window_t *window;
 	w_frame_t *frame;
-	w_textbox_t *textbox;
 
 	srand(time(NULL));
 	
@@ -183,37 +151,43 @@ int main (int argc, char *argv[])
 	w_frame_init(window->window, &frame, FRAME_PANEL | FRAME_RAISED, window->object);
 	w_object_move(frame->object, 0, 0, w, h);
 	w_object_show(frame->object);
-	
-	w_textbox_init(window->window, &textbox, frame->object);
-	w_object_move(textbox->frame->object, 0, 0, 100, 20);
-	//w_object_show(textbox->frame->object);
 
 	w_button_init(window->window, &button[0], frame->object);
 	button[0]->pressed = button0_pressed;
-	button[0]->frame->object->draw = button0_draw;
 	button[0]->frame->object->destroy = button0_destroy;
-	s_font_init(&font[0], "arial.ttf");
-	s_font_set_size(font[0], 10);
 	w_object_move(button[0]->frame->object, 5, 5, 70, 20);
 	w_object_show(button[0]->frame->object);
 
+	w_textbox_init(window->window, &textbox[0], button[0]->frame->object);
+	textbox[0]->frame->style = FRAME_NOFRAME;
+	w_textbox_set_str(textbox[0]->frame->object, "hide area");
+	button[0]->frame->object->draw = button0_draw;
+	w_object_move(textbox[0]->frame->object, 0, 0, 70, 20);
+	w_object_show(textbox[0]->frame->object);
+
 	w_button_init(window->window, &button[1], frame->object);
 	button[1]->pressed = button1_pressed;
-	button[1]->frame->object->draw = button1_draw;
 	button[1]->frame->object->destroy = button1_destroy;
-	s_font_init(&font[1], "arial.ttf");
-	s_font_set_size(font[1], 10);
 	w_object_move(button[1]->frame->object, 80, 5, 55, 20);
 	w_object_show(button[1]->frame->object);
 
+	w_textbox_init(window->window, &textbox[1], button[1]->frame->object);
+	textbox[1]->frame->style = FRAME_NOFRAME;
+	w_textbox_set_str(textbox[1]->frame->object, "blender");
+	w_object_move(textbox[1]->frame->object, 0, 0, 55, 20);
+	w_object_show(textbox[1]->frame->object);
+
 	w_button_init(window->window, &button[2], frame->object);
 	button[2]->pressed = button2_pressed;
-	button[2]->frame->object->draw = button2_draw;
 	button[2]->frame->object->destroy = button2_destroy;
-	s_font_init(&font[2], "arial.ttf");
-	s_font_set_size(font[2], 10);
 	w_object_move(button[2]->frame->object, 140, 5, 85, 20);
 	w_object_show(button[2]->frame->object);
+
+	w_textbox_init(window->window, &textbox[2], button[2]->frame->object);
+	textbox[2]->frame->style = FRAME_NOFRAME;
+	w_textbox_set_str(textbox[2]->frame->object, "random focus");
+	w_object_move(textbox[2]->frame->object, 0, 0, 85, 20);
+	w_object_show(textbox[2]->frame->object);
 
 	w_frame_init(window->window, &area, FRAME_NOFRAME | FRAME_PLAIN, frame->object);
 	w_object_move(area->object, 5, 30, w - 10, h - 35);
@@ -226,6 +200,7 @@ int main (int argc, char *argv[])
 		                              (rand() + 1) % (w - 10), ((rand() + 1) % (h - 35)) + 1);
 		w_object_show(big[i]->object);
 	}
+
 	w_object_show(window->object);
 
 	s_window_show(window->window);

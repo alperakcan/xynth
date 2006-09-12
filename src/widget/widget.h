@@ -144,6 +144,7 @@ void w_object_uninit (w_object_t *object);
 
 /* textbox.c */
 void w_textbox_draw (w_object_t *object);
+int w_textbox_set_str (w_object_t *object, char *str);
 int w_textbox_init (s_window_t *window, w_textbox_t **textbox, w_object_t *parent);
 void w_textbox_uninit (w_object_t *object);
 
