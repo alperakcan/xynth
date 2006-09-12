@@ -76,8 +76,6 @@ static void button0_pressed (w_object_t *object, int buttonp)
 
 static void button0_draw (w_object_t *object)
 {
-	int x;
-	int y;
 	if (area_hide) {
 		w_textbox_set_str(textbox[0]->frame->object, "show area");
 	} else {
