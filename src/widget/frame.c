@@ -50,10 +50,7 @@ void w_frame_content (w_frame_t *frame)
 
 	switch (frame->style & FRAME_MSHAPE) {
 		case FRAME_NOFRAME:
-			w_object_set_content(object, object->surface->buf->x,
-			                      object->surface->buf->y,
-			                      object->surface->buf->w,
-			                      object->surface->buf->h);
+			w_object_set_content(object, 0, 0, object->surface->buf->w, object->surface->buf->h);
 			return;
 		case FRAME_BOX:
 		case FRAME_HLINE:
@@ -61,17 +58,16 @@ void w_frame_content (w_frame_t *frame)
 		case FRAME_GROUPBOXPANEL:
 			switch (frame->style & FRAME_MSHADOW) {
 				case FRAME_PLAIN:
-sbox_plain:				w_object_set_content(object, object->surface->buf->x + frame->linewidth,
-                                                              object->surface->buf->y + frame->linewidth,
-                                                              object->surface->buf->w - (frame->linewidth * 2),
-                                                              object->surface->buf->h - (frame->linewidth * 2));
+sbox_plain:				w_object_set_content(object, frame->linewidth, frame->linewidth,
+                                                                     object->surface->buf->w - (frame->linewidth * 2),
+                                                                     object->surface->buf->h - (frame->linewidth * 2));
 					break;
 				case FRAME_RAISED:
 				case FRAME_SUNKEN:
-					w_object_set_content(object, object->surface->buf->x + (frame->linewidth * 2) + (frame->midlinewidth),
-					                      object->surface->buf->y + (frame->linewidth * 2) + (frame->midlinewidth),
-					                      object->surface->buf->w - (frame->linewidth * 4) - (frame->midlinewidth * 2),
-					                      object->surface->buf->h - (frame->linewidth * 4) - (frame->midlinewidth * 2));
+					w_object_set_content(object, (frame->linewidth * 2) + (frame->midlinewidth),
+					                             (frame->linewidth * 2) + (frame->midlinewidth),
+					                             object->surface->buf->w - (frame->linewidth * 4) - (frame->midlinewidth * 2),
+					                             object->surface->buf->h - (frame->linewidth * 4) - (frame->midlinewidth * 2));
 					break;
 			}
 			break;
@@ -202,11 +198,11 @@ swinpanel_sunken:		case FRAME_SUNKEN:
 			break;
 	}
 
-	s_fillbox(object->surface, object->content->x - object->surface->buf->x,
-	              object->content->y - object->surface->buf->y,
-	              object->content->w,
-	              object->content->h,
-	              s_rgbcolor(object->surface, 220, 220, 220));
+	s_fillbox(object->surface, object->content->x, 
+	                           object->content->y,
+	                           object->content->w,
+	                           object->content->h,
+	                           s_rgbcolor(object->surface, 220, 220, 220));
 }
 
 int w_frame_init (s_window_t *window, w_frame_t **frame, unsigned int style, w_object_t *parent)
