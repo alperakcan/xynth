@@ -22,9 +22,6 @@
 
 static int area_hide = 0;
 static w_frame_t *area;
-static w_button_t *button[3];
-static w_textbox_t *textbox[3];
-static w_frame_t *big[4];
 
 static void object_draw_black (w_object_t *object)
 {
@@ -62,24 +59,36 @@ static object_draw object_draw_p[] = {
 
 static void button0_pressed (w_object_t *object, int buttonp)
 {
+	int i;
+	w_object_t *obj;
 	area_hide = (area_hide + 1) % 2;
 	if (area_hide) {
 		w_object_hide(area->object);
-		w_object_hide(button[1]->frame->object);
-		w_object_hide(button[2]->frame->object);
+		for (i = 0; !s_list_eol(object->parent->childs, i); i++) {
+			obj = (w_object_t *) s_list_get(object->parent->childs, i);
+			if (obj != object) {
+				w_object_hide(obj);
+			}
+		}
 	} else {
 		w_object_show(area->object);
-		w_object_show(button[1]->frame->object);
-		w_object_show(button[2]->frame->object);
+		for (i = 0; !s_list_eol(object->parent->childs, i); i++) {
+			obj = (w_object_t *) s_list_get(object->parent->childs, i);
+			if (obj != object) {
+				w_object_show(obj);
+			}
+		}
 	}
 }
 
 static void button0_draw (w_object_t *object)
 {
+	w_object_t *obj;
+	obj = (w_object_t *) s_list_get(object->childs, 0);
 	if (area_hide) {
-		w_textbox_set_str(textbox[0]->frame->object, "show area");
+		w_textbox_set_str(obj, "show area");
 	} else {
-		w_textbox_set_str(textbox[0]->frame->object, "hide area");
+		w_textbox_set_str(obj, "hide area");
 	}
 	w_button_draw(object);
 }
@@ -94,11 +103,13 @@ static void button1_pressed (w_object_t *object, int button)
 	int i;
 	int w;
 	int h;
+	w_object_t *obj;
 	w = object->window->surface->buf->w;
 	h = object->window->surface->buf->h;
-	for (i = 0; i < 4; i++) {
-		w_object_move(big[i]->object, (rand() + 1) % (w - 10), (rand() + 1) % (h - 40),
-		                              (rand() + 1) % (w - 10), (rand() + 1) % (h - 40));
+	for (i = 0; !s_list_eol(area->object->childs, i); i++) {
+		obj = (w_object_t *) s_list_get(area->object->childs, i);
+		w_object_move(obj, (rand() + 1) % (w - 10), (rand() + 1) % (h - 40),
+		                   (rand() + 1) % (w - 10), (rand() + 1) % (h - 40));
 	}
 }
 
@@ -111,10 +122,14 @@ static void button2_pressed (w_object_t *object, int button)
 {
 	int r;
 	int show;
+	w_object_t *obj;
 	r = rand();
-	if (r) r++;
-	show = r % 4;
-	w_object_show(big[show]->object);
+	if (r == 0) {
+		r++;
+	}
+	show = r % area->object->childs->nb_elt;
+	obj = (w_object_t *) s_list_get(area->object->childs, show);
+	w_object_show(obj);
 }
 
 static void button2_destroy (w_object_t *object)
@@ -133,6 +148,9 @@ int main (int argc, char *argv[])
 	int mh = 1000;
 	w_window_t *window;
 	w_frame_t *frame;
+	w_frame_t *square;
+	w_button_t *button;
+	w_textbox_t *textbox;
 
 	srand(time(NULL));
 	
@@ -150,53 +168,53 @@ int main (int argc, char *argv[])
 	w_object_move(frame->object, 0, 0, w, h);
 	w_object_show(frame->object);
 
-	w_button_init(window->window, &button[0], frame->object);
-	button[0]->pressed = button0_pressed;
-	button[0]->frame->object->destroy = button0_destroy;
-	w_object_move(button[0]->frame->object, 5, 5, 70, 20);
-	w_object_show(button[0]->frame->object);
+	w_button_init(window->window, &button, frame->object);
+	button->pressed = button0_pressed;
+	button->frame->object->destroy = button0_destroy;
+	w_object_move(button->frame->object, 5, 5, 70, 20);
+	w_object_show(button->frame->object);
 
-	w_textbox_init(window->window, &textbox[0], button[0]->frame->object);
-	textbox[0]->frame->style = FRAME_NOFRAME;
-	w_textbox_set_str(textbox[0]->frame->object, "hide area");
-	button[0]->frame->object->draw = button0_draw;
-	w_object_move(textbox[0]->frame->object, 0, 0, 70, 20);
-	w_object_show(textbox[0]->frame->object);
+	w_textbox_init(window->window, &textbox, button->frame->object);
+	textbox->frame->style = FRAME_NOFRAME;
+	w_textbox_set_str(textbox->frame->object, "hide area");
+	button->frame->object->draw = button0_draw;
+	w_object_move(textbox->frame->object, 0, 0, 70, 20);
+	w_object_show(textbox->frame->object);
 
-	w_button_init(window->window, &button[1], frame->object);
-	button[1]->pressed = button1_pressed;
-	button[1]->frame->object->destroy = button1_destroy;
-	w_object_move(button[1]->frame->object, 80, 5, 55, 20);
-	w_object_show(button[1]->frame->object);
+	w_button_init(window->window, &button, frame->object);
+	button->pressed = button1_pressed;
+	button->frame->object->destroy = button1_destroy;
+	w_object_move(button->frame->object, 80, 5, 55, 20);
+	w_object_show(button->frame->object);
 
-	w_textbox_init(window->window, &textbox[1], button[1]->frame->object);
-	textbox[1]->frame->style = FRAME_NOFRAME;
-	w_textbox_set_str(textbox[1]->frame->object, "blender");
-	w_object_move(textbox[1]->frame->object, 0, 0, 55, 20);
-	w_object_show(textbox[1]->frame->object);
+	w_textbox_init(window->window, &textbox, button->frame->object);
+	textbox->frame->style = FRAME_NOFRAME;
+	w_textbox_set_str(textbox->frame->object, "blender");
+	w_object_move(textbox->frame->object, 0, 0, 55, 20);
+	w_object_show(textbox->frame->object);
 
-	w_button_init(window->window, &button[2], frame->object);
-	button[2]->pressed = button2_pressed;
-	button[2]->frame->object->destroy = button2_destroy;
-	w_object_move(button[2]->frame->object, 140, 5, 85, 20);
-	w_object_show(button[2]->frame->object);
+	w_button_init(window->window, &button, frame->object);
+	button->pressed = button2_pressed;
+	button->frame->object->destroy = button2_destroy;
+	w_object_move(button->frame->object, 140, 5, 85, 20);
+	w_object_show(button->frame->object);
 
-	w_textbox_init(window->window, &textbox[2], button[2]->frame->object);
-	textbox[2]->frame->style = FRAME_NOFRAME;
-	w_textbox_set_str(textbox[2]->frame->object, "random focus");
-	w_object_move(textbox[2]->frame->object, 0, 0, 85, 20);
-	w_object_show(textbox[2]->frame->object);
+	w_textbox_init(window->window, &textbox, button->frame->object);
+	textbox->frame->style = FRAME_NOFRAME;
+	w_textbox_set_str(textbox->frame->object, "random focus");
+	w_object_move(textbox->frame->object, 0, 0, 85, 20);
+	w_object_show(textbox->frame->object);
 
 	w_frame_init(window->window, &area, FRAME_NOFRAME | FRAME_PLAIN, frame->object);
 	w_object_move(area->object, 5, 30, w - 10, h - 35);
 	w_object_show(area->object);
 
 	for (i = 0; i < 4; i++) {
-		w_frame_init(window->window, &big[i], FRAME_NOFRAME | FRAME_PLAIN, area->object);
-		big[i]->object->draw = object_draw_p[i];
-		w_object_move(big[i]->object, (rand() + 1) % (w - 10), ((rand() + 1) % (h - 35)) + 1,
+		w_frame_init(window->window, &square, FRAME_NOFRAME | FRAME_PLAIN, area->object);
+		square->object->draw = object_draw_p[i];
+		w_object_move(square->object, (rand() + 1) % (w - 10), ((rand() + 1) % (h - 35)) + 1,
 		                              (rand() + 1) % (w - 10), ((rand() + 1) % (h - 35)) + 1);
-		w_object_show(big[i]->object);
+		w_object_show(square->object);
 	}
 
 	w_object_show(window->object);
