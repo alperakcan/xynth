@@ -144,8 +144,6 @@ int main (int argc, char *argv[])
 	int y = 60;
 	int w = 400;
 	int h = 300;
-	int mw = 1000;
-	int mh = 1000;
 	w_window_t *window;
 	w_frame_t *frame;
 	w_frame_t *square;
@@ -156,10 +154,8 @@ int main (int argc, char *argv[])
 	
 	w_window_init(&window, WINDOW_MAIN, NULL);
 
-	mw = window->window->surface->width;
-	mh = window->window->surface->height;
-	w = MIN(mw, w);
-	h = MIN(mh, h);
+	w = MIN(window->window->surface->width, w);
+	h = MIN(window->window->surface->height, h);
 	
 	s_window_set_title(window->window, "Demo - %s", argv[0]);
 	w_window_set_coor(window, x, y, w, h);
@@ -205,7 +201,7 @@ int main (int argc, char *argv[])
 	w_object_move(textbox->frame->object, 0, 0, 85, 20);
 	w_object_show(textbox->frame->object);
 
-	w_frame_init(window->window, &area, FRAME_NOFRAME | FRAME_PLAIN, frame->object);
+	w_frame_init(window->window, &area, FRAME_PANEL | FRAME_SUNKEN, frame->object);
 	w_object_move(area->object, 5, 30, w - 10, h - 35);
 	w_object_show(area->object);
 
