@@ -173,7 +173,7 @@ int fb_server_init (s_server_conf_t *cfg)
 		goto err0;
 	}
         
-	fb_init();
+	fb_init(cfg);
 
 	fb_server_setmode(cfg, gmode);
 	fb_server_surface_init(gmode);

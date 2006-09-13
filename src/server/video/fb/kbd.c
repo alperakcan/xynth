@@ -32,7 +32,11 @@ extern int fb_console_fd;
 
 int fb_kbd_init (s_server_conf_t *cfg)
 {
-	return s_video_helper_kbd_init(cfg, fb_console_fd);
+	if (strcmp(cfg->keyboard.keyboard, "console") == 0) {
+		return s_video_helper_kbd_init(cfg, fb_console_fd);
+	} else {
+		return -1;
+	}
 }
 
 #endif /* VIDEO_FBDev */

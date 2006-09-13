@@ -117,14 +117,17 @@ void fb_close (void)
 	fb.fd = -1;
 }
 
-void fb_init (void)
+void fb_init (s_server_conf_t *cfg)
 {
-	fb_console_fd = s_video_helper_console_init();
-	if (fb_console_fd < 0) {
-		debugf(DSER, "Unable to get console");
-		return;
+	if (strcmp(cfg->keyboard.keyboard, "console") == 0) {
+		fb_console_fd = s_video_helper_console_init();
+		if (fb_console_fd < 0) {
+			debugf(DSER, "Unable to get console");
+			return;
+		}
+	} else {
+		fb_open();
 	}
-	fb_open();
 }
 
 #endif /* VIDEO_FBDev */
