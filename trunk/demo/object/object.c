@@ -109,8 +109,8 @@ static void button1_pressed (w_object_t *object, int button)
 	h = object->window->surface->buf->h;
 	for (i = 0; !s_list_eol(area->object->childs, i); i++) {
 		obj = (w_object_t *) s_list_get(area->object->childs, i);
-		w_object_move(obj, (rand() + 1) % (w - 10), (rand() + 1) % (h - 40),
-		                   (rand() + 1) % (w - 10), (rand() + 1) % (h - 40));
+		w_object_move(obj, (rand() + 1) % (w - 10), (rand() + 1) % (h - 100),
+		                   (rand() + 1) % (w - 10), (rand() + 1) % (h - 100));
 	}
 }
 
@@ -143,8 +143,8 @@ int main (int argc, char *argv[])
 	int i;
 	int x = 60;
 	int y = 60;
-	int w = 400;
-	int h = 300;
+	int w = 500;
+	int h = 400;
 	w_window_t *window;
 	w_frame_t *frame;
 	w_frame_t *square;
@@ -203,16 +203,22 @@ int main (int argc, char *argv[])
 	w_object_show(textbox->frame->object);
 
 	w_frame_init(window->window, &area, FRAME_PANEL | FRAME_SUNKEN, frame->object);
-	w_object_move(area->object, 5, 30, w - 10, h - 35);
+	w_object_move(area->object, 5, 30, w - 10, h - 100);
 	w_object_show(area->object);
 
 	for (i = 0; i < 4; i++) {
 		w_frame_init(window->window, &square, FRAME_NOFRAME | FRAME_PLAIN, area->object);
 		square->object->draw = object_draw_p[i];
-		w_object_move(square->object, (rand() + 1) % (w - 10), ((rand() + 1) % (h - 35)) + 1,
-		                              (rand() + 1) % (w - 10), ((rand() + 1) % (h - 35)) + 1);
+		w_object_move(square->object, (rand() + 1) % (w - 10), ((rand() + 1) % (h - 100)) + 1,
+		                              (rand() + 1) % (w - 10), ((rand() + 1) % (h - 100)) + 1);
 		w_object_show(square->object);
 	}
+	
+	w_textbox_init(window->window, &textbox, frame->object);
+	textbox->frame->style = FRAME_PANEL | FRAME_PLAIN;
+	w_textbox_set_str(textbox->frame->object, "this is a text box !");
+	w_object_move(textbox->frame->object, 5, 30 + (h - 100) + 5, w - 10, 100 - 30 - 5 - 5);
+	w_object_show(textbox->frame->object); 
 
 	w_object_show(window->object);
 
