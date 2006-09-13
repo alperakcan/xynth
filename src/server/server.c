@@ -206,6 +206,59 @@ vr_bad:						debugf(DSER, "Illegal vertrefresh setting. Correct usage: vertrefre
 						ret = -1;
 					}
 					s_free(nptr_);
+				} else if (strcasecmp(var->name, "timing") == 0) {
+					nptr = strdup(var->value);
+					nptr_ = nptr;
+					ptr = s_server_cfg_token(&nptr);
+					if (s_server_cfg_check_digit(ptr, digits)) {
+						config->monitor.pixclock = atoi(ptr);
+					} else {
+						goto tm_bad;
+					}
+					ptr = s_server_cfg_token(&nptr);
+					if (s_server_cfg_check_digit(ptr, digits)) {
+						config->monitor.left_margin = atoi(ptr);
+					} else {
+						goto tm_bad;
+					}
+					ptr = s_server_cfg_token(&nptr);
+					if (s_server_cfg_check_digit(ptr, digits)) {
+						config->monitor.right_margin = atoi(ptr);
+					} else {
+						goto tm_bad;
+					}
+					ptr = s_server_cfg_token(&nptr);
+					if (s_server_cfg_check_digit(ptr, digits)) {
+						config->monitor.upper_margin = atoi(ptr);
+					} else {
+						goto tm_bad;
+					}
+					ptr = s_server_cfg_token(&nptr);
+					if (s_server_cfg_check_digit(ptr, digits)) {
+						config->monitor.lower_margin = atoi(ptr);
+					} else {
+						goto tm_bad;
+					}
+					ptr = s_server_cfg_token(&nptr);
+					if (s_server_cfg_check_digit(ptr, digits)) {
+						config->monitor.hsync_len = atoi(ptr);
+					} else {
+						goto tm_bad;
+					}
+					ptr = s_server_cfg_token(&nptr);
+					if (s_server_cfg_check_digit(ptr, digits)) {
+						config->monitor.vsync_len = atoi(ptr);
+					} else {
+						goto tm_bad;
+					}
+					ptr = s_server_cfg_token(&nptr);
+					if (s_server_cfg_check_digit(ptr, digits)) {
+						config->monitor.vmode = atoi(ptr);
+					} else {
+tm_bad:						debugf(DSER, "Illegal timing setting. Correct usage: vertrefresh pixclock left_margin right_margin upper_margin lower_margin hsync_len vsync_len vmode\n");
+						ret = -1;
+					}
+					s_free(nptr_);
 				}
 			}
 		}

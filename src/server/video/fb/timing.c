@@ -291,24 +291,43 @@ void fb_timing_set (s_server_conf_t *cfg, struct fb_var_screeninfo *v_scr)
 	double freq = 150;
 	double xPixels = v_scr->xres;
 	double yPixels = v_scr->yres;
-
-        while (1) {
-		gtf_calcTimings(xPixels, yPixels, freq, gtf_lockPF, 0, interlace, &t);
-		if ((t.vFreq > cfg->monitor.vertrefresh_min) && (t.vFreq < cfg->monitor.vertrefresh_max) &&
-		    (t.hFreq > cfg->monitor.horizsync_min) && (t.hFreq < cfg->monitor.horizsync_max)) {
-			v_scr->pixclock = 1000000000 / (t.dotClock * 1000);
-			v_scr->left_margin = t.h.hBackPorch;
-			v_scr->right_margin = t.h.hFrontPorch;
-			v_scr->upper_margin = t.v.vBackPorch;
-			v_scr->lower_margin = t.v.vFrontPorch;
-			v_scr->hsync_len = t.h.hSyncWidth;
-			v_scr->vsync_len = t.v.vSyncWidth;
-			v_scr->sync = FB_SYNC_VERT_HIGH_ACT;
-			v_scr->vmode = (interlace) ? FB_VMODE_INTERLACED : 0;
-			return;
-		}
-		if (freq-- <= 0) {
-			debugf(DSER | DFAT, "FBDEV : Unable to get a suitable timing frequency for your monitor");
+	
+	if (cfg->monitor.pixclock ||
+	    cfg->monitor.left_margin ||
+	    cfg->monitor.right_margin ||
+	    cfg->monitor.upper_margin ||
+	    cfg->monitor.lower_margin ||
+	    cfg->monitor.hsync_len ||
+	    cfg->monitor.vsync_len ||
+	    cfg->monitor.vmode) {
+	    	v_scr->pixclock = cfg->monitor.pixclock;
+	    	v_scr->left_margin = cfg->monitor.left_margin;
+	    	v_scr->right_margin = cfg->monitor.right_margin;
+	    	v_scr->upper_margin = cfg->monitor.upper_margin;
+	    	v_scr->lower_margin = cfg->monitor.lower_margin;
+	    	v_scr->hsync_len = cfg->monitor.hsync_len;
+	    	v_scr->vsync_len = cfg->monitor.vsync_len;
+	    	v_scr->vmode = cfg->monitor.vmode;
+	    	return;
+	} else {
+		while (1) {
+			gtf_calcTimings(xPixels, yPixels, freq, gtf_lockPF, 0, interlace, &t);
+			if ((t.vFreq > cfg->monitor.vertrefresh_min) && (t.vFreq < cfg->monitor.vertrefresh_max) &&
+			    (t.hFreq > cfg->monitor.horizsync_min) && (t.hFreq < cfg->monitor.horizsync_max)) {
+				v_scr->pixclock = 1000000000 / (t.dotClock * 1000);
+				v_scr->left_margin = t.h.hBackPorch;
+				v_scr->right_margin = t.h.hFrontPorch;
+				v_scr->upper_margin = t.v.vBackPorch;
+				v_scr->lower_margin = t.v.vFrontPorch;
+				v_scr->hsync_len = t.h.hSyncWidth;
+				v_scr->vsync_len = t.v.vSyncWidth;
+				v_scr->sync = FB_SYNC_VERT_HIGH_ACT;
+				v_scr->vmode = (interlace) ? FB_VMODE_INTERLACED : 0;
+				return;
+			}
+			if (freq-- <= 0) {
+				debugf(DSER | DFAT, "FBDEV : Unable to get a suitable timing frequency for your monitor");
+			}
 		}
 	}
 }
