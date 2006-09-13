@@ -118,6 +118,14 @@ typedef struct s_server_conf_s {
 		float horizsync_max;
 		float vertrefresh_min;
 		float vertrefresh_max;
+		unsigned int pixclock;
+		unsigned int left_margin;
+		unsigned int right_margin;
+		unsigned int upper_margin;
+		unsigned int lower_margin;
+		unsigned int hsync_len;
+		unsigned int vsync_len;
+		unsigned int vmode;
 	} monitor;
 } s_server_conf_t;
 
