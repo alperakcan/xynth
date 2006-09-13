@@ -90,6 +90,9 @@ doxy-doc:
 
 test: clean all dist install
 
+update: clean
+		svn update
+
 pspdev:
 	mount /mnt/sda1
 	cp -Rf dist/psp/game/xynth* /mnt/sda1/psp/game/
