@@ -91,7 +91,7 @@ doxy-doc:
 test: clean all dist install
 
 update: clean
-		svn update
+	svn update
 
 pspdev:
 	mount /mnt/sda1
