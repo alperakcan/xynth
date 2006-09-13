@@ -35,7 +35,7 @@ void fb_getvar (void);
 void fb_putvar (void);
 void fb_open (void);
 void fb_close (void);
-void fb_init (void);
+void fb_init (s_server_conf_t *cfg);
 
 int fb_kbd_init (s_server_conf_t *cfg);
 
