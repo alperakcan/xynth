@@ -27,9 +27,9 @@ void w_textbox_draw (w_object_t *object)
 
 	w = MIN(textbox->frame->object->content->w, textbox->font->img->w);
 	h = MIN(textbox->frame->object->content->h, textbox->font->img->h);
-	if (textbox->frame->object->content->w == w) { x = 0;
+	if (!(textbox->properties & TEXTBOX_HCENTER) || textbox->frame->object->content->w == w) { x = 0;
 	} else { x = (textbox->frame->object->content->w - w) / 2; }
-	if (textbox->frame->object->content->h == h) { y = 0;
+	if (!(textbox->properties & TEXTBOX_VCENTER) || textbox->frame->object->content->h == h) { y = 0;
 	} else { y = (textbox->frame->object->content->h - h) / 2; }
 	x += textbox->frame->object->content->x;
 	y += textbox->frame->object->content->y;
@@ -88,6 +88,8 @@ int w_textbox_init (s_window_t *window, w_textbox_t **textbox, w_object_t *paren
 	if (w_frame_init(window, &((*textbox)->frame), FRAME_PANEL | FRAME_RAISED, parent)) {
 		goto err1;
 	}
+	
+	(*textbox)->properties = TEXTBOX_VCENTER | TEXTBOX_HCENTER;
 
 	(*textbox)->frame->object->draw = w_textbox_draw;
 	(*textbox)->frame->object->destroy = w_textbox_uninit;

@@ -165,10 +165,11 @@ swinpanel_sunken:		case FRAME_SUNKEN:
 					c[0] = s_rgbcolor(object->surface, 0, 0, 0);
 					c[1] = s_rgbcolor(object->surface, 96, 96, 96);
 					c[2] = s_rgbcolor(object->surface, 220, 220, 220);
+					c[3] = s_rgbcolor(object->surface, 255, 255, 255);
 					s_fillbox(object->surface, 0, 0, object->surface->buf->w, object->surface->buf->h, c[1]);
 					s_fillbox(object->surface, 1, 1, object->surface->buf->w - 1, object->surface->buf->h - 1, c[2]);
 					s_fillbox(object->surface, 1, 1, object->surface->buf->w - 2, object->surface->buf->h - 2, c[0]);
-					s_fillbox(object->surface, 2, 2, object->surface->buf->w - 3, object->surface->buf->h - 3, c[2]);
+					s_fillbox(object->surface, 2, 2, object->surface->buf->w - 3, object->surface->buf->h - 3, c[3]);
 					break;
 			}
 			break;

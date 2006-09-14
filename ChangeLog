@@ -1,4 +1,15 @@
 
+Thu 14 Sep 2006 09:51:37 PM EEST
+	* M demo/object/object.c,
+	  A src/widget/editbox.c,
+	  M src/widget/window.c,
+	  M src/widget/widget.h,
+	  M src/widget/frame.c,
+	  M src/widget/Makefile,
+	  M src/widget/textbox.c :
+	  
+	  new editbox widget
+
 Thu 14 Sep 2006 02:35:18 PM EEST
 	* M AUTHORS,
 	  M src/lib/grlib.c,

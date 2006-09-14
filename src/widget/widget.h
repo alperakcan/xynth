@@ -22,7 +22,8 @@ typedef enum {
 	OBJECT_FRAME   = 0x0,
 	OBJECT_BUTTON  = 0x1,
 	OBJECT_TEXTBOX = 0x2,
-	OBJECT_OBJECTS = 0x3
+	OBJECT_EDITBOX = 0x3,
+	OBJECT_OBJECTS = 0x4
 } OBJECT;
 
 struct w_object_s {
@@ -93,8 +94,10 @@ typedef struct w_button_s {
 } w_button_t;
 
 typedef enum {
-	TEXTBOX_WRAP,
-	TEXTBOX_NOWRAP
+	TEXTBOX_WRAP    = 0x1,
+	TEXTBOX_NOWRAP  = 0x2,
+	TEXTBOX_VCENTER = 0x4,
+	TEXTBOX_HCENTER = 0x8
 } TEXTBOX_PROPERTIES;
 
 typedef struct w_textbox_s {
@@ -102,6 +105,13 @@ typedef struct w_textbox_s {
 	s_font_t *font;
 	TEXTBOX_PROPERTIES properties;
 } w_textbox_t;
+
+typedef struct w_editbox_s {
+	w_textbox_t *textbox;
+	s_handler_t *handler_mouse;
+	s_handler_t *handler_keybd;
+	w_object_t *object;
+} w_editbox_t;
 
 typedef struct w_window_s {
 	s_window_t *window;
@@ -123,6 +133,12 @@ void w_button_cb_oh (s_window_t *window, s_event_t *event, s_handler_t *handler)
 void w_button_cb_hoh (s_window_t *window, s_event_t *event, s_handler_t *handler);
 int w_button_init (s_window_t *window, w_button_t **button, w_object_t *parent);
 void w_button_uninit (w_object_t *object);
+
+/* editbox.c */
+void w_editbox_draw (w_object_t *object);
+void w_editbox_geometry (w_object_t *object);
+int w_editbox_init (s_window_t *window, w_editbox_t **editbox, w_object_t *parent);
+void w_editbox_uninit (w_object_t *object);
 
 /* frame.c */
 void w_frame_content (w_frame_t *frame);
