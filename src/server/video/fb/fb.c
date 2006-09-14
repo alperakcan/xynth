@@ -130,4 +130,42 @@ void fb_init (s_server_conf_t *cfg)
 	}
 }
 
+void fb_dump_vscr (struct fb_var_screeninfo *vscr)
+{
+	printf("xres: %u\n", vscr->xres);
+	printf("yres: %u\n", vscr->yres);
+	printf("xres_virtual: %u\n", vscr->xres_virtual);
+	printf("yres_virtual: %u\n", vscr->yres_virtual);
+	printf("xoffset: %u\n", vscr->xoffset);
+	printf("yoffset: %u\n", vscr->yoffset);
+	printf("bits_per_pixel: %u\n", vscr->bits_per_pixel);
+	printf("grayscale: %u\n", vscr->grayscale);
+	printf("nonstd: %u\n", vscr->nonstd);
+	printf("red.offset: %u\n", vscr->red.offset);
+	printf("red.length: %u\n", vscr->red.length);
+	printf("red.msb_right: %u\n", vscr->red.msb_right);
+	printf("green.offset: %u\n", vscr->green.offset);
+	printf("green.length: %u\n", vscr->green.length);
+	printf("green.msb_right: %u\n", vscr->green.msb_right);
+	printf("blue.offset: %u\n", vscr->blue.offset);
+	printf("blue.length: %u\n", vscr->blue.length);
+	printf("blue.msb_right: %u\n", vscr->blue.msb_right);
+	printf("transp.offset: %u\n", vscr->transp.offset);
+	printf("transp.length: %u\n", vscr->transp.length);
+	printf("transp.msb_right: %u\n", vscr->transp.msb_right);
+	printf("activate: %u\n", vscr->activate);
+	printf("height: %u\n", vscr->height);
+	printf("width: %u\n", vscr->width);
+	printf("accel_flags: %u\n", vscr->accel_flags);
+	printf("pixclock: %u\n", vscr->pixclock);
+	printf("left_margin: %u\n", vscr->left_margin);
+	printf("right_margin: %u\n", vscr->right_margin);
+	printf("upper_margin: %u\n", vscr->upper_margin);
+	printf("lower_margin: %u\n", vscr->lower_margin);
+	printf("hsync_len: %u\n", vscr->hsync_len);
+	printf("vsync_len: %u\n", vscr->vsync_len);
+	printf("sync: %u\n", vscr->sync);
+	printf("vmode: %u\n", vscr->vmode);
+}
+
 #endif /* VIDEO_FBDev */
