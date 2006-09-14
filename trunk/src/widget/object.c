@@ -79,13 +79,26 @@ int w_object_set_content (w_object_t *object, int x, int y, int w, int h)
 	return 0;
 }
 
-int w_object_move (w_object_t *object, int x, int y, int w, int h)
+static int w_object_move_correct (w_object_t *object)
 {
 	int pos = 0;
+	while (!(s_list_eol(object->childs, pos))) {
+		w_object_t *obj = (w_object_t *) s_list_get(object->childs, pos);
+		obj->surface->win->x = object->surface->win->x + obj->surface->buf->x;
+		obj->surface->win->y = object->surface->win->y + obj->surface->buf->y;
+		w_object_move_correct(obj);
+		pos++;	
+	}
+	return 0;
+}
+
+int w_object_move (w_object_t *object, int x, int y, int w, int h)
+{
 	s_rect_t old;
 	s_rect_t new;
 	s_rect_t *tmp;
 	s_list_t *diff;
+	w_object_t *root;
 
         s_thread_mutex_lock(object->mut);
 
@@ -130,6 +143,16 @@ int w_object_move (w_object_t *object, int x, int y, int w, int h)
 	object->content->w = object->surface->buf->w;
 	object->content->h = object->surface->buf->h;
 	
+	root = object;
+	while (root->parent) {
+		root = root->parent;
+	}
+	w_object_move_correct(root);
+
+	if (object->geometry != NULL) {
+		object->geometry(object);
+	}
+
 	if ((old.w != object->surface->buf->w) ||
 	    (old.h != object->surface->buf->h)) {
 		/* re prepare matrix and surface buffer */
@@ -145,16 +168,6 @@ int w_object_move (w_object_t *object, int x, int y, int w, int h)
 		if (object->draw != NULL) {
 			object->draw(object);
 		}
-	}
-	if (object->geometry != NULL) {
-		object->geometry(object);
-	}
-
-	while (!(s_list_eol(object->shown, pos))) {
-		w_object_t *obj = (w_object_t *) s_list_get(object->shown, pos);
-		obj->surface->win->x = object->surface->win->x + obj->surface->buf->x;
-		obj->surface->win->y = object->surface->win->x + obj->surface->buf->y;
-		pos++;	
 	}
 
 	s_list_init(&diff);
