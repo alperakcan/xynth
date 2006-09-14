@@ -93,6 +93,10 @@ test: clean all dist install
 update: clean
 	svn update
 
+strip: dist
+	$(STRIP) $(DISTBINDIR)/*
+	$(STRIP) $(DISTLIBDIR)/*
+
 pspdev:
 	mount /mnt/sda1
 	cp -Rf dist/psp/game/xynth* /mnt/sda1/psp/game/

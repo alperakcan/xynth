@@ -421,6 +421,21 @@ void s_getsurfacevirtual (s_surface_t *s, int w, int h, int bitspp, char *vbuf)
 			s->greenlength = 6;
 			s->redlength = 5;
 			break;
+                case 18:
+			s->bytesperpixel = 4;
+                        s->bitsperpixel = 18;
+                        s->blueoffset = 0;
+                        s->greenoffset = 6;
+                        s->redoffset = 12;
+#if defined(VIDEO_PSPDEV)
+			s->blueoffset = 12;
+			s->greenoffset = 6;
+			s->redoffset = 0;
+#endif
+                        s->bluelength = 6;
+                        s->greenlength = 6;
+                        s->redlength = 6;
+                        break;
 		case 24:
 		case 32:
                         s->bytesperpixel = 4;

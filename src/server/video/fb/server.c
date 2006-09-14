@@ -126,6 +126,15 @@ void fb_server_surface_init (s_video_helper_mode_info_t *gmode)
 			server->window->surface->greenlength = 6;
 			server->window->surface->redlength = 5;
 			break;
+		case (1 << 18):
+                        server->window->surface->bitsperpixel = 18;
+                        server->window->surface->blueoffset = 0;
+                        server->window->surface->greenoffset = 6;
+                        server->window->surface->redoffset = 12;
+                        server->window->surface->bluelength = 6;
+                        server->window->surface->greenlength = 6;
+                        server->window->surface->redlength = 6;
+                        break;
 		case 256 * 65536:
 			server->window->surface->bitsperpixel = server->window->surface->bytesperpixel * 8;
 			server->window->surface->blueoffset = 0;
@@ -135,10 +144,6 @@ void fb_server_surface_init (s_video_helper_mode_info_t *gmode)
 			server->window->surface->greenlength = 8;
 			server->window->surface->redlength = 8;
 			break;
-	}
-
-	if (fb.bytesperpixel == 4) {
-		server->window->surface->bitsperpixel = fb.bytesperpixel * 8;
 	}
 
 	server->window->surface->linear_mem_base = 0;
@@ -234,6 +239,15 @@ void fb_server_setmode (s_server_conf_t *cfg, s_video_helper_mode_info_t *gmode)
 			fb.v_scr.blue.length = 5;
 			fb.v_scr.green.length = 6;
 			fb.v_scr.red.length = 5;
+			break;
+		case  (1 << 18):
+			fb.bitsperpixel = 18;
+			fb.v_scr.blue.offset = 0;
+			fb.v_scr.green.offset = 6;
+			fb.v_scr.red.offset = 12;
+			fb.v_scr.blue.length = 6;
+			fb.v_scr.green.length = 6;
+			fb.v_scr.red.length = 6;
 			break;
 		case 256 * 65536:
 			fb.bitsperpixel = 24;
