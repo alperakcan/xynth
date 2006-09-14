@@ -242,6 +242,7 @@ void fb_server_setmode (s_server_conf_t *cfg, s_video_helper_mode_info_t *gmode)
 			break;
 		case  (1 << 18):
 			fb.bitsperpixel = 18;
+			fb.v_scr.bits_per_pixel = 18;
 			fb.v_scr.blue.offset = 0;
 			fb.v_scr.green.offset = 6;
 			fb.v_scr.red.offset = 12;
@@ -267,6 +268,11 @@ void fb_server_setmode (s_server_conf_t *cfg, s_video_helper_mode_info_t *gmode)
 	fb.v_scr.blue.msb_right = 0;
 
 	fb_timing_set(cfg, &(fb.v_scr));
+	
+	void fb_dump_vscr (struct fb_var_screeninfo *vscr);
+	
+	fb_dump_vscr(&(fb.v_scr));
+	fb_dump_vscr(&(fb.v_scro));
 
 	fb_putvar();
 
