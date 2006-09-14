@@ -1,4 +1,16 @@
 
+Thu 14 Sep 2006 02:35:18 PM EEST
+	* M AUTHORS,
+	  M src/lib/grlib.c,
+	  M src/server/video/helper/helper.h,
+	  M src/server/video/helper/modes.c,
+	  M src/server/video/fb/server.c,
+	  M Makefile :
+	  
+	  18 bitsperpixel support for dummy lcd displays. this is only for fbdev
+	  video driver, and could be easily added to others if needed. this
+	  patch comes from Ali Utku Selen, and he is added to the pacthers list.
+
 Wed 13 Sep 2006 07:35:42 PM EEST
 	* M src/server/server.c,
 	  M src/server/server.h,
