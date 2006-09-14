@@ -213,12 +213,19 @@ int main (int argc, char *argv[])
 		                              (rand() + 1) % (w - 10), ((rand() + 1) % (h - 100)) + 1);
 		w_object_show(square->object);
 	}
-	
+
 	w_textbox_init(window->window, &textbox, frame->object);
 	textbox->frame->style = FRAME_PANEL | FRAME_PLAIN;
 	w_textbox_set_str(textbox->frame->object, "this is a text box !");
-	w_object_move(textbox->frame->object, 5, 30 + (h - 100) + 5, w - 10, 100 - 30 - 5 - 5);
-	w_object_show(textbox->frame->object); 
+	w_object_move(textbox->frame->object, 5, 30 + (h - 100) + 5, w - 10, 100 - 30 - 5 - 30);
+	w_object_show(textbox->frame->object);
+	{
+		w_editbox_t *editbox;
+		w_editbox_init(window->window, &editbox, frame->object);
+		w_object_move(editbox->object, 5, 30 + (h - 60) + 5, w - 10, 100 - 30 - 5 - 5);
+		w_textbox_set_str(editbox->object, "this is an editable box !");
+		w_object_show(editbox->object);
+	}
 
 	w_object_show(window->object);
 

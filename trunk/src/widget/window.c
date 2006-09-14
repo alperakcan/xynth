@@ -22,7 +22,7 @@ void w_window_atevent (s_window_t *window, s_event_t *event)
 	w_object_t *objectp;
 	w_window_t *windoww;
 	windoww = (w_window_t *) window->client->user_data;
-	if (event->type & MOUSE_EVENT) {
+	if (event->type & (MOUSE_EVENT | KEYBD_EVENT)) {
 		event->mouse->x -= window->surface->buf->x;
 		event->mouse->y -= window->surface->buf->y;
 		event->mouse->px -= window->surface->buf->x;
