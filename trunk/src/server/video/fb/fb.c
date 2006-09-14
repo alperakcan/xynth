@@ -130,6 +130,7 @@ void fb_init (s_server_conf_t *cfg)
 	}
 }
 
+#if 0
 void fb_dump_vscr (struct fb_var_screeninfo *vscr)
 {
 	printf("xres: %u\n", vscr->xres);
@@ -167,5 +168,6 @@ void fb_dump_vscr (struct fb_var_screeninfo *vscr)
 	printf("sync: %u\n", vscr->sync);
 	printf("vmode: %u\n", vscr->vmode);
 }
+#endif
 
 #endif /* VIDEO_FBDev */

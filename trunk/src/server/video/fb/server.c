@@ -268,11 +268,12 @@ void fb_server_setmode (s_server_conf_t *cfg, s_video_helper_mode_info_t *gmode)
 	fb.v_scr.blue.msb_right = 0;
 
 	fb_timing_set(cfg, &(fb.v_scr));
-	
+
+#if 0
 	void fb_dump_vscr (struct fb_var_screeninfo *vscr);
-	
 	fb_dump_vscr(&(fb.v_scr));
 	fb_dump_vscr(&(fb.v_scro));
+#endif
 
 	fb_putvar();
 
