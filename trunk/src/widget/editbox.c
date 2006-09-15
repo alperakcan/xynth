@@ -51,16 +51,14 @@ void w_editbox_draw (w_object_t *object)
 {
 	w_editbox_t *editbox;
 	editbox = object->data[OBJECT_EDITBOX];
-	editbox->textbox->frame->style = FRAME_LINEEDITPANEL | FRAME_SUNKEN;
 	w_textbox_draw(object);
 }
 
 void w_editbox_geometry (w_object_t *object)
 {
 	w_editbox_t *editbox;
+	w_textbox_geometry(object);
 	editbox = object->data[OBJECT_EDITBOX];
-	object->surface->buf->h = 20;
-	object->surface->win->h = 20;
 }
 
 int w_editbox_init (s_window_t *window, w_editbox_t **editbox, w_object_t *parent)
@@ -70,6 +68,7 @@ int w_editbox_init (s_window_t *window, w_editbox_t **editbox, w_object_t *paren
 	s_handler_init(&((*editbox)->handler_mouse));
 	s_handler_init(&((*editbox)->handler_keybd));
 	(*editbox)->textbox->properties = TEXTBOX_VCENTER;
+	(*editbox)->textbox->frame->style = FRAME_LINEEDITPANEL | FRAME_SUNKEN;
 	(*editbox)->object = (*editbox)->textbox->frame->object;
 	(*editbox)->object->data[OBJECT_EDITBOX] = *editbox;
 	(*editbox)->object->geometry = w_editbox_geometry;

@@ -40,6 +40,7 @@ void w_button_draw (w_object_t *object)
 void w_button_geometry (w_object_t *object)
 {
 	w_button_t *button;
+	w_frame_geometry(object);
 	button = (w_button_t *) object->data[OBJECT_BUTTON];
 	button->handler->mouse.x = object->surface->win->x;
 	button->handler->mouse.y = object->surface->win->y;

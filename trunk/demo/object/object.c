@@ -222,7 +222,7 @@ int main (int argc, char *argv[])
 	{
 		w_editbox_t *editbox;
 		w_editbox_init(window->window, &editbox, frame->object);
-		w_object_move(editbox->object, 5, 30 + (h - 60) + 5, w - 10, 100 - 30 - 5 - 5);
+		w_object_move(editbox->object, 5, 30 + (h - 60) + 5, w - 10, 20);
 		w_textbox_set_str(editbox->object, "this is an editable box !");
 		w_object_show(editbox->object);
 	}
