@@ -25,7 +25,7 @@ void w_textbox_draw (w_object_t *object)
 	int d;
 	w_textbox_t *textbox;
 	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
-
+	
 	w = MIN(textbox->object->content->w, textbox->font->img->w);
 	h = MIN(textbox->object->content->h, textbox->font->height);
 	if (!(textbox->properties & TEXTBOX_HCENTER) || textbox->object->content->w == w) { x = 0;
@@ -81,6 +81,11 @@ int w_textbox_set_str (w_object_t *object, char *str)
 	return 0;
 }
 
+void w_textbox_geometry (w_object_t *object)
+{
+	w_frame_geometry(object);
+}
+
 int w_textbox_init (s_window_t *window, w_textbox_t **textbox, w_object_t *parent)
 {
 	(*textbox) = (w_textbox_t *) s_malloc(sizeof(w_textbox_t));
@@ -97,6 +102,7 @@ int w_textbox_init (s_window_t *window, w_textbox_t **textbox, w_object_t *paren
 
 	(*textbox)->object = (*textbox)->frame->object;
 	(*textbox)->object->draw = w_textbox_draw;
+	(*textbox)->object->geometry = w_textbox_geometry;
 	(*textbox)->object->destroy = w_textbox_uninit;
 	(*textbox)->object->data[OBJECT_TEXTBOX] = *textbox;
 

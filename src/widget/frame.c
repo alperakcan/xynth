@@ -16,74 +16,6 @@
 #include "../lib/xynth_.h"
 #include "widget.h"
 
-void w_frame_content (w_frame_t *frame)
-{
-	w_object_t *object;
-	object = frame->object;
-	switch (frame->style & FRAME_MSHAPE) {
-		case FRAME_NOFRAME:
-		case FRAME_MENUBARPANEL:
-		case FRAME_TOOLBARPANEL:
-			frame->linewidth = 1;
-			frame->midlinewidth = 0;
-			break;
-		case FRAME_PANEL:
-		case FRAME_STYLEDPANEL:
-			frame->midlinewidth = 0;
-			break;
-		case FRAME_WINPANEL:
-		case FRAME_POPUPPANEL:
-		case FRAME_LINEEDITPANEL:
-		case FRAME_TABWIDGETPANEL:
-			frame->linewidth = 2;
-			frame->midlinewidth = 0;
-			break;
-		case FRAME_BOX:
-		case FRAME_HLINE:
-		case FRAME_VLINE:
-		case FRAME_GROUPBOXPANEL:
-			if ((frame->style & FRAME_MSHADOW) == FRAME_PLAIN) {
-				frame->midlinewidth = 0;
-			}
-			break;
-	}
-
-	switch (frame->style & FRAME_MSHAPE) {
-		case FRAME_NOFRAME:
-			w_object_set_content(object, 0, 0, object->surface->buf->w, object->surface->buf->h);
-			return;
-		case FRAME_BOX:
-		case FRAME_HLINE:
-		case FRAME_VLINE:
-		case FRAME_GROUPBOXPANEL:
-			switch (frame->style & FRAME_MSHADOW) {
-				case FRAME_PLAIN:
-sbox_plain:				w_object_set_content(object, frame->linewidth, frame->linewidth,
-                                                                     object->surface->buf->w - (frame->linewidth * 2),
-                                                                     object->surface->buf->h - (frame->linewidth * 2));
-					break;
-				case FRAME_RAISED:
-				case FRAME_SUNKEN:
-					w_object_set_content(object, (frame->linewidth * 2) + (frame->midlinewidth),
-					                             (frame->linewidth * 2) + (frame->midlinewidth),
-					                             object->surface->buf->w - (frame->linewidth * 4) - (frame->midlinewidth * 2),
-					                             object->surface->buf->h - (frame->linewidth * 4) - (frame->midlinewidth * 2));
-					break;
-			}
-			break;
-		case FRAME_PANEL:
-		case FRAME_WINPANEL:
-		case FRAME_POPUPPANEL:
-		case FRAME_STYLEDPANEL:
-		case FRAME_MENUBARPANEL:
-		case FRAME_TOOLBARPANEL:
-		case FRAME_LINEEDITPANEL:
-		case FRAME_TABWIDGETPANEL:
-			goto sbox_plain;
-			break;
-	}
-}
-
 void w_frame_draw (w_object_t *object)
 {
         int i;
@@ -92,8 +24,6 @@ void w_frame_draw (w_object_t *object)
         w_frame_t *frame;
         frame = (w_frame_t *) object->data[OBJECT_FRAME];
         
-	w_frame_content(frame);
-
         switch (frame->style & FRAME_MSHAPE) {
 		case FRAME_NOFRAME:		return;
 		case FRAME_BOX:
@@ -206,6 +136,75 @@ swinpanel_sunken:		case FRAME_SUNKEN:
 	                           s_rgbcolor(object->surface, 220, 220, 220));
 }
 
+void w_frame_geometry (w_object_t *object)
+{
+        w_frame_t *frame;
+        frame = (w_frame_t *) object->data[OBJECT_FRAME];
+
+	switch (frame->style & FRAME_MSHAPE) {
+		case FRAME_NOFRAME:
+		case FRAME_MENUBARPANEL:
+		case FRAME_TOOLBARPANEL:
+			frame->linewidth = 1;
+			frame->midlinewidth = 0;
+			break;
+		case FRAME_PANEL:
+		case FRAME_STYLEDPANEL:
+			frame->midlinewidth = 0;
+			break;
+		case FRAME_WINPANEL:
+		case FRAME_POPUPPANEL:
+		case FRAME_LINEEDITPANEL:
+		case FRAME_TABWIDGETPANEL:
+			frame->linewidth = 2;
+			frame->midlinewidth = 0;
+			break;
+		case FRAME_BOX:
+		case FRAME_HLINE:
+		case FRAME_VLINE:
+		case FRAME_GROUPBOXPANEL:
+			if ((frame->style & FRAME_MSHADOW) == FRAME_PLAIN) {
+				frame->midlinewidth = 0;
+			}
+			break;
+	}
+
+	switch (frame->style & FRAME_MSHAPE) {
+		case FRAME_NOFRAME:
+			w_object_set_content(object, 0, 0, object->surface->buf->w, object->surface->buf->h);
+			return;
+		case FRAME_BOX:
+		case FRAME_HLINE:
+		case FRAME_VLINE:
+		case FRAME_GROUPBOXPANEL:
+			switch (frame->style & FRAME_MSHADOW) {
+				case FRAME_PLAIN:
+sbox_plain:				w_object_set_content(object, frame->linewidth, frame->linewidth,
+                                                                     object->surface->buf->w - (frame->linewidth * 2),
+                                                                     object->surface->buf->h - (frame->linewidth * 2));
+					break;
+				case FRAME_RAISED:
+				case FRAME_SUNKEN:
+					w_object_set_content(object, (frame->linewidth * 2) + (frame->midlinewidth),
+					                             (frame->linewidth * 2) + (frame->midlinewidth),
+					                             object->surface->buf->w - (frame->linewidth * 4) - (frame->midlinewidth * 2),
+					                             object->surface->buf->h - (frame->linewidth * 4) - (frame->midlinewidth * 2));
+					break;
+			}
+			break;
+		case FRAME_PANEL:
+		case FRAME_WINPANEL:
+		case FRAME_POPUPPANEL:
+		case FRAME_STYLEDPANEL:
+		case FRAME_MENUBARPANEL:
+		case FRAME_TOOLBARPANEL:
+		case FRAME_LINEEDITPANEL:
+		case FRAME_TABWIDGETPANEL:
+			goto sbox_plain;
+			break;
+	}
+}
+
 int w_frame_init (s_window_t *window, w_frame_t **frame, unsigned int style, w_object_t *parent)
 {
 	(*frame) = (w_frame_t *) s_malloc(sizeof(w_frame_t));
@@ -216,6 +215,7 @@ int w_frame_init (s_window_t *window, w_frame_t **frame, unsigned int style, w_o
 		goto err0;
 	}
 	(*frame)->object->data[OBJECT_FRAME] = *frame;
+	(*frame)->object->geometry = w_frame_geometry;
 	(*frame)->object->destroy = w_frame_uninit;
 	return 0;
 err0:	s_free(*frame);

@@ -143,8 +143,8 @@ int w_editbox_init (s_window_t *window, w_editbox_t **editbox, w_object_t *paren
 void w_editbox_uninit (w_object_t *object);
 
 /* frame.c */
-void w_frame_content (w_frame_t *frame);
 void w_frame_draw (w_object_t *object);
+void w_frame_geometry (w_object_t *object);
 int w_frame_init (s_window_t *window, w_frame_t **frame, unsigned int style, w_object_t *parent);
 void w_frame_uninit (w_object_t *object);
 
@@ -163,6 +163,7 @@ void w_object_uninit (w_object_t *object);
 /* textbox.c */
 void w_textbox_draw (w_object_t *object);
 int w_textbox_set_str (w_object_t *object, char *str);
+void w_textbox_geometry (w_object_t *object);
 int w_textbox_init (s_window_t *window, w_textbox_t **textbox, w_object_t *parent);
 void w_textbox_uninit (w_object_t *object);
 
