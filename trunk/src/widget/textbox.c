@@ -25,23 +25,23 @@ void w_textbox_draw (w_object_t *object)
 	w_textbox_t *textbox;
 	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
 
-	w = MIN(textbox->frame->object->content->w, textbox->font->img->w);
-	h = MIN(textbox->frame->object->content->h, textbox->font->img->h);
-	if (!(textbox->properties & TEXTBOX_HCENTER) || textbox->frame->object->content->w == w) { x = 0;
-	} else { x = (textbox->frame->object->content->w - w) / 2; }
-	if (!(textbox->properties & TEXTBOX_VCENTER) || textbox->frame->object->content->h == h) { y = 0;
-	} else { y = (textbox->frame->object->content->h - h) / 2; }
-	x += textbox->frame->object->content->x;
-	y += textbox->frame->object->content->y;
+	w = MIN(textbox->object->content->w, textbox->font->img->w);
+	h = MIN(textbox->object->content->h, textbox->font->img->h);
+	if (!(textbox->properties & TEXTBOX_HCENTER) || textbox->object->content->w == w) { x = 0;
+	} else { x = (textbox->object->content->w - w) / 2; }
+	if (!(textbox->properties & TEXTBOX_VCENTER) || textbox->object->content->h == h) { y = 0;
+	} else { y = (textbox->object->content->h - h) / 2; }
+	x += textbox->object->content->x;
+	y += textbox->object->content->y;
 
 	s_image_get_mat(textbox->font->img);
 	if ((textbox->frame->style & FRAME_MSHAPE) == FRAME_NOFRAME) {
-		memset(textbox->frame->object->surface->matrix,
+		memset(textbox->object->surface->matrix,
 		       0,
-		       textbox->frame->object->surface->width * textbox->frame->object->surface->height);
-		s_putmaskpart(textbox->frame->object->surface->matrix,
-		              textbox->frame->object->surface->width,
-		              textbox->frame->object->surface->height,
+		       textbox->object->surface->width * textbox->object->surface->height);
+		s_putmaskpart(textbox->object->surface->matrix,
+		              textbox->object->surface->width,
+		              textbox->object->surface->height,
 		              x,
 		              y,
 		              w,
@@ -52,10 +52,10 @@ void w_textbox_draw (w_object_t *object)
 		              0,
 		              0);
 	} else {
-		w_frame_draw(textbox->frame->object);
+		w_frame_draw(textbox->object);
 	}
 	
-	s_putboxpartrgba(textbox->frame->object->surface,
+	s_putboxpartrgba(textbox->object->surface,
 	                 x,
 	                 y,
 	                 w,
@@ -91,13 +91,14 @@ int w_textbox_init (s_window_t *window, w_textbox_t **textbox, w_object_t *paren
 	
 	(*textbox)->properties = TEXTBOX_VCENTER | TEXTBOX_HCENTER;
 
-	(*textbox)->frame->object->draw = w_textbox_draw;
-	(*textbox)->frame->object->destroy = w_textbox_uninit;
-	(*textbox)->frame->object->data[OBJECT_TEXTBOX] = *textbox;
+	(*textbox)->object = (*textbox)->frame->object;
+	(*textbox)->object->draw = w_textbox_draw;
+	(*textbox)->object->destroy = w_textbox_uninit;
+	(*textbox)->object->data[OBJECT_TEXTBOX] = *textbox;
 
 	s_font_set_size((*textbox)->font, 10);
 	s_font_set_rgb((*textbox)->font, 0, 0, 0);
-	w_textbox_set_str((*textbox)->frame->object, "");
+	w_textbox_set_str((*textbox)->object, "");
 
 	return 0;
 err1:	s_font_uninit((*textbox)->font);
@@ -108,7 +109,7 @@ void w_textbox_uninit (w_object_t *object)
 {
 	w_textbox_t *textbox;
 	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
-	w_frame_uninit(textbox->frame->object);
+	w_frame_uninit(textbox->object);
 	s_font_uninit(textbox->font);
 	s_free(textbox);
 }

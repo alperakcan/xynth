@@ -85,6 +85,7 @@ typedef struct w_frame_s {
 } w_frame_t;
 
 typedef struct w_button_s {
+	w_object_t *object;
 	w_frame_t *frame;
 	s_handler_t *handler;
 	void (*pressed) (w_object_t *, int);
@@ -101,16 +102,17 @@ typedef enum {
 } TEXTBOX_PROPERTIES;
 
 typedef struct w_textbox_s {
+	w_object_t *object;
 	w_frame_t *frame;
 	s_font_t *font;
 	TEXTBOX_PROPERTIES properties;
 } w_textbox_t;
 
 typedef struct w_editbox_s {
+	w_object_t *object;
 	w_textbox_t *textbox;
 	s_handler_t *handler_mouse;
 	s_handler_t *handler_keybd;
-	w_object_t *object;
 } w_editbox_t;
 
 typedef struct w_window_s {
