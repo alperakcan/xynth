@@ -96,6 +96,7 @@ update: clean
 strip: dist
 	$(STRIP) $(DISTBINDIR)/*
 	$(STRIP) $(DISTLIBDIR)/*
+	$(STRIP) $(DISTTHEMEDIR)/*
 
 pspdev:
 	mount /mnt/sda1

@@ -681,10 +681,24 @@ int s_putmaskpart (char *dp, int dw, int dh, int x, int y, int w, int h, int bw,
 	s_rect_t clip;
 	s_rect_t thip;
 	
-	thip.x = x;
-	thip.y = y;
+	thip.x = xo;
+	thip.y = yo;
 	thip.w = w;
 	thip.h = h;
+	
+	clip.x = 0;
+	clip.y = 0;
+	clip.w = bw;
+	clip.h = bh;
+
+	if (s_rect_intersect(&thip, &clip, &coor)) {
+		return -1;
+	}
+	
+	thip.x = x;
+	thip.y = y;
+	thip.w = coor.w;
+	thip.h = coor.h;
 	
 	clip.x = 0;
 	clip.y = 0;
