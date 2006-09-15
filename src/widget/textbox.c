@@ -22,17 +22,21 @@ void w_textbox_draw (w_object_t *object)
 	int y;
 	int w;
 	int h;
+	int d;
 	w_textbox_t *textbox;
 	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
 
 	w = MIN(textbox->object->content->w, textbox->font->img->w);
-	h = MIN(textbox->object->content->h, textbox->font->img->h);
+	h = MIN(textbox->object->content->h, textbox->font->height);
 	if (!(textbox->properties & TEXTBOX_HCENTER) || textbox->object->content->w == w) { x = 0;
 	} else { x = (textbox->object->content->w - w) / 2; }
 	if (!(textbox->properties & TEXTBOX_VCENTER) || textbox->object->content->h == h) { y = 0;
 	} else { y = (textbox->object->content->h - h) / 2; }
 	x += textbox->object->content->x;
 	y += textbox->object->content->y;
+	
+	d = textbox->font->img->w - textbox->object->content->w;
+	if (d > 0) { x -= d; w += d; }
 
 	s_image_get_mat(textbox->font->img);
 	if ((textbox->frame->style & FRAME_MSHAPE) == FRAME_NOFRAME) {
@@ -43,7 +47,7 @@ void w_textbox_draw (w_object_t *object)
 		              textbox->object->surface->width,
 		              textbox->object->surface->height,
 		              x,
-		              y,
+		              y + textbox->font->size - textbox->font->yMax,
 		              w,
 		              h,
 		              textbox->font->img->w,
@@ -57,7 +61,7 @@ void w_textbox_draw (w_object_t *object)
 	
 	s_putboxpartrgba(textbox->object->surface,
 	                 x,
-	                 y,
+	                 y + textbox->font->size - textbox->font->yMax,
 	                 w,
 	                 h,
 	                 textbox->font->img->w,
