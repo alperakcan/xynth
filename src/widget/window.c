@@ -25,10 +25,12 @@ void w_window_atevent (s_window_t *window, s_event_t *event)
 	if (event->type & (MOUSE_EVENT | KEYBD_EVENT)) {
 		event->mouse->x -= window->surface->buf->x;
 		event->mouse->y -= window->surface->buf->y;
+		event->mouse->x_old -= window->surface->buf->x;
+		event->mouse->y_old -= window->surface->buf->y;
 		event->mouse->px -= window->surface->buf->x;
 		event->mouse->py -= window->surface->buf->y;
 		w_object_atposition(windoww->object, event->mouse->x, event->mouse->y, &objectn);
-		w_object_atposition(windoww->object, event->mouse->px, event->mouse->py, &objectp);
+		w_object_atposition(windoww->object, event->mouse->x_old, event->mouse->y_old, &objectp);
 		while (objectp && objectp->event == NULL) {
 			objectp = objectp->parent;
 		}

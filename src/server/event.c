@@ -100,6 +100,8 @@ int s_server_event_parse_mouse (void)
 
 	if ((server->window->event->mouse->x != mouse.x) ||
 	    (server->window->event->mouse->y != mouse.y)) {
+	    	server->window->event->mouse->x_old = server->window->event->mouse->x;
+	    	server->window->event->mouse->y_old = server->window->event->mouse->y;
 		server->window->event->mouse->x = mouse.x;
 		server->window->event->mouse->y = mouse.y;
 		s_server_mouse_draw();
