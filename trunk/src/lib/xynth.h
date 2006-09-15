@@ -400,6 +400,8 @@ typedef struct s_font_s {
 typedef struct s_mouse_s {
 	int x;
 	int y;
+	int x_old;
+	int y_old;
 	S_MOUSECODE_CODE b;
 	int clicks;		  /* click count	       */
 	S_MOUSECODE_CODE buttons; /* buttons bitwise ORed      */
