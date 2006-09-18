@@ -361,6 +361,15 @@ void w_object_uninit (w_object_t *object)
 			}
 			pos++;
 		}
+		pos = 0;
+		while (!s_list_eol(object->parent->shown, pos)) {
+			w_object_t *obj = (w_object_t *) s_list_get(object->parent->shown, pos);
+			if (obj == object) {
+				s_list_remove(object->parent->shown, pos);
+				break;
+			}
+			pos++;
+		}
 	}
         while (!s_list_eol(object->childs, 0)) {
 		w_object_t *obj = (w_object_t *) s_list_get(object->childs, 0);

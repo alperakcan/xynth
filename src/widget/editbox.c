@@ -56,9 +56,7 @@ void w_editbox_draw (w_object_t *object)
 
 void w_editbox_geometry (w_object_t *object)
 {
-	w_editbox_t *editbox;
 	w_textbox_geometry(object);
-	editbox = object->data[OBJECT_EDITBOX];
 }
 
 int w_editbox_init (s_window_t *window, w_editbox_t **editbox, w_object_t *parent)
