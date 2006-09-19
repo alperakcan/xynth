@@ -18,6 +18,11 @@
 
 typedef struct w_object_s w_object_t;
 
+typedef struct w_window_s {
+	s_window_t *window;
+	w_object_t *object;
+} w_window_t;
+
 typedef enum {
 	OBJECT_FRAME   = 0x0,
 	OBJECT_BUTTON  = 0x1,
@@ -48,7 +53,7 @@ struct w_object_s {
 	/** uninit function */
 	void (*destroy) (w_object_t *object);
 	/** window */
-	s_window_t *window;
+	w_window_t *window;
 	/** user data */
 	void *data[OBJECT_OBJECTS];
 };
@@ -115,11 +120,6 @@ typedef struct w_editbox_s {
 	s_handler_t *handler_keybd;
 } w_editbox_t;
 
-typedef struct w_window_s {
-	s_window_t *window;
-	w_object_t *object;
-} w_window_t;
-
 /* button.c */
 void w_button_event (w_object_t *object, s_event_t *event);
 void w_button_draw (w_object_t *object);
@@ -133,19 +133,19 @@ void w_button_cb_rh (s_window_t *window, s_event_t *event, s_handler_t *handler)
 void w_button_cb_ho (s_window_t *window, s_event_t *event, s_handler_t *handler);
 void w_button_cb_oh (s_window_t *window, s_event_t *event, s_handler_t *handler);
 void w_button_cb_hoh (s_window_t *window, s_event_t *event, s_handler_t *handler);
-int w_button_init (s_window_t *window, w_button_t **button, w_object_t *parent);
+int w_button_init (w_window_t *window, w_button_t **button, w_object_t *parent);
 void w_button_uninit (w_object_t *object);
 
 /* editbox.c */
 void w_editbox_draw (w_object_t *object);
 void w_editbox_geometry (w_object_t *object);
-int w_editbox_init (s_window_t *window, w_editbox_t **editbox, w_object_t *parent);
+int w_editbox_init (w_window_t *window, w_editbox_t **editbox, w_object_t *parent);
 void w_editbox_uninit (w_object_t *object);
 
 /* frame.c */
 void w_frame_draw (w_object_t *object);
 void w_frame_geometry (w_object_t *object);
-int w_frame_init (s_window_t *window, w_frame_t **frame, unsigned int style, w_object_t *parent);
+int w_frame_init (w_window_t *window, w_frame_t **frame, unsigned int style, w_object_t *parent);
 void w_frame_uninit (w_object_t *object);
 
 /* object.c */
@@ -157,14 +157,14 @@ int w_object_hide (w_object_t *object);
 int w_object_show (w_object_t *object);
 int w_object_childatposition (w_object_t *object, int x, int y, w_object_t **child);
 int w_object_atposition (w_object_t *root, int x, int y, w_object_t **object);
-int w_object_init (s_window_t *window, w_object_t **object, void (*draw) (w_object_t *), w_object_t *parent);
+int w_object_init (w_window_t *window, w_object_t **object, void (*draw) (w_object_t *), w_object_t *parent);
 void w_object_uninit (w_object_t *object);
 
 /* textbox.c */
 void w_textbox_draw (w_object_t *object);
 int w_textbox_set_str (w_object_t *object, char *str);
 void w_textbox_geometry (w_object_t *object);
-int w_textbox_init (s_window_t *window, w_textbox_t **textbox, w_object_t *parent);
+int w_textbox_init (w_window_t *window, w_textbox_t **textbox, w_object_t *parent);
 void w_textbox_uninit (w_object_t *object);
 
 /* window.c */

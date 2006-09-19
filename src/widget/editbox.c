@@ -59,7 +59,7 @@ void w_editbox_geometry (w_object_t *object)
 	w_textbox_geometry(object);
 }
 
-int w_editbox_init (s_window_t *window, w_editbox_t **editbox, w_object_t *parent)
+int w_editbox_init (w_window_t *window, w_editbox_t **editbox, w_object_t *parent)
 {
 	(*editbox) = (w_editbox_t *) s_malloc(sizeof(w_editbox_t));
 	w_textbox_init(window, &((*editbox)->textbox), parent);

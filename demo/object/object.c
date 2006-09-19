@@ -105,8 +105,8 @@ static void button1_pressed (w_object_t *object, int button)
 	int w;
 	int h;
 	w_object_t *obj;
-	w = object->window->surface->buf->w;
-	h = object->window->surface->buf->h;
+	w = object->window->window->surface->buf->w;
+	h = object->window->window->surface->buf->h;
 	for (i = 0; !s_list_eol(area->object->childs, i); i++) {
 		obj = (w_object_t *) s_list_get(area->object->childs, i);
 		w_object_move(obj, (rand() + 1) % (w - 10), (rand() + 1) % (h - 100),
@@ -161,67 +161,67 @@ int main (int argc, char *argv[])
 	s_window_set_title(window->window, "Demo - %s", argv[0]);
 	w_window_set_coor(window, x, y, w, h);
 
-	w_frame_init(window->window, &frame, FRAME_PANEL | FRAME_RAISED, window->object);
+	w_frame_init(window, &frame, FRAME_PANEL | FRAME_RAISED, window->object);
 	w_object_move(frame->object, 0, 0, w, h);
 	w_object_show(frame->object);
 	
-	w_button_init(window->window, &button, frame->object);
+	w_button_init(window, &button, frame->object);
 	button->pressed = button0_pressed;
 	button->object->draw = button0_draw;
 	button->object->destroy = button0_destroy;
 	w_object_move(button->object, 5, 5, 70, 20);
 	w_object_show(button->object);
 
-	w_textbox_init(window->window, &textbox, button->object);
+	w_textbox_init(window, &textbox, button->object);
 	textbox->frame->style = FRAME_NOFRAME;
 	w_textbox_set_str(textbox->object, "hide area");
 	w_object_move(textbox->object, 0, 0, 70, 20);
 	w_object_show(textbox->object);
 
-	w_button_init(window->window, &button, frame->object);
+	w_button_init(window, &button, frame->object);
 	button->pressed = button1_pressed;
 	button->object->destroy = button1_destroy;
 	w_object_move(button->object, 80, 5, 55, 20);
 	w_object_show(button->object);
 
-	w_textbox_init(window->window, &textbox, button->object);
+	w_textbox_init(window, &textbox, button->object);
 	textbox->frame->style = FRAME_NOFRAME;
 	w_textbox_set_str(textbox->object, "blender");
 	w_object_move(textbox->object, 0, 0, 55, 20);
 	w_object_show(textbox->object);
 
-	w_button_init(window->window, &button, frame->object);
+	w_button_init(window, &button, frame->object);
 	button->pressed = button2_pressed;
 	button->object->destroy = button2_destroy;
 	w_object_move(button->object, 140, 5, 85, 20);
 	w_object_show(button->object);
 
-	w_textbox_init(window->window, &textbox, button->object);
+	w_textbox_init(window, &textbox, button->object);
 	textbox->frame->style = FRAME_NOFRAME;
 	w_textbox_set_str(textbox->object, "random focus");
 	w_object_move(textbox->object, 0, 0, 85, 20);
 	w_object_show(textbox->object);
 
-	w_frame_init(window->window, &area, FRAME_PANEL | FRAME_SUNKEN, frame->object);
+	w_frame_init(window, &area, FRAME_PANEL | FRAME_SUNKEN, frame->object);
 	w_object_move(area->object, 5, 30, w - 10, h - 100);
 	w_object_show(area->object);
 
 	for (i = 0; i < 4; i++) {
-		w_frame_init(window->window, &square, FRAME_NOFRAME | FRAME_PLAIN, area->object);
+		w_frame_init(window, &square, FRAME_NOFRAME | FRAME_PLAIN, area->object);
 		square->object->draw = object_draw_p[i];
 		w_object_move(square->object, (rand() + 1) % (w - 10), ((rand() + 1) % (h - 100)) + 1,
 		                              (rand() + 1) % (w - 10), ((rand() + 1) % (h - 100)) + 1);
 		w_object_show(square->object);
 	}
 
-	w_textbox_init(window->window, &textbox, frame->object);
+	w_textbox_init(window, &textbox, frame->object);
 	textbox->frame->style = FRAME_PANEL | FRAME_PLAIN;
 	w_textbox_set_str(textbox->object, "this is a text box !");
 	w_object_move(textbox->object, 5, 30 + (h - 100) + 5, w - 10, 100 - 30 - 5 - 30);
 	w_object_show(textbox->object);
 	{
 		w_editbox_t *editbox;
-		w_editbox_init(window->window, &editbox, frame->object);
+		w_editbox_init(window, &editbox, frame->object);
 		w_object_move(editbox->object, 5, 30 + (h - 60) + 5, w - 10, 20);
 		w_textbox_set_str(editbox->object, "this is an editable box !");
 		w_object_show(editbox->object);

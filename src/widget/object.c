@@ -65,7 +65,7 @@ int w_object_update (w_object_t *object, s_rect_t *coor)
 	}
 	if (s_rect_intersect(coor, object->surface->win, &clip) == 0) {
 		w_object_update_to_surface(object, object->surface, &clip);
-		s_putboxpart(object->window->surface, clip.x, clip.y, clip.w, clip.h, object->surface->width, object->surface->height, object->surface->vbuf, clip.x, clip.y);
+		s_putboxpart(object->window->window->surface, clip.x, clip.y, clip.w, clip.h, object->surface->width, object->surface->height, object->surface->vbuf, clip.x, clip.y);
 	}
 end:	return 0;
 }
@@ -286,14 +286,14 @@ int w_object_atposition (w_object_t *root, int x, int y, w_object_t **object)
 	return 0;
 }
 
-int w_object_init (s_window_t *window, w_object_t **object, void (*draw) (w_object_t *), w_object_t *parent)
+int w_object_init (w_window_t *window, w_object_t **object, void (*draw) (w_object_t *), w_object_t *parent)
 {
 	(*object) = (w_object_t *) s_malloc(sizeof(w_object_t));
 	(*object)->surface = (s_surface_t *) s_malloc(sizeof(s_surface_t));
 	(*object)->surface->buf = (s_rect_t *) s_malloc(sizeof(s_rect_t));
 	(*object)->surface->win = (s_rect_t *) s_malloc(sizeof(s_rect_t));
 	(*object)->surface->matrix = NULL;
-	s_getsurfacevirtual((*object)->surface, 0, 0, window->surface->bitsperpixel, NULL);
+	s_getsurfacevirtual((*object)->surface, 0, 0, window->window->surface->bitsperpixel, NULL);
 
 	s_list_init(&((*object)->shown));
 	s_list_init(&((*object)->childs));

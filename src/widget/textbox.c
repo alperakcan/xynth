@@ -86,7 +86,7 @@ void w_textbox_geometry (w_object_t *object)
 	w_frame_geometry(object);
 }
 
-int w_textbox_init (s_window_t *window, w_textbox_t **textbox, w_object_t *parent)
+int w_textbox_init (w_window_t *window, w_textbox_t **textbox, w_object_t *parent)
 {
 	(*textbox) = (w_textbox_t *) s_malloc(sizeof(w_textbox_t));
 	(*textbox)->properties = TEXTBOX_NOWRAP;
