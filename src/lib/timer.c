@@ -43,7 +43,20 @@ int s_timer_uninit (s_timer_t *timer)
 
 int s_timer_del (s_window_t *window, s_timer_t *timer)
 {
+	int i;
 	int r;
+	s_event_t *evn;
+	
+	s_thread_mutex_lock(window->eventq->mut);
+	for (i = 0; !s_list_eol(window->eventq->queue, i); i++) {
+		evn = (s_event_t *) s_list_get(window->eventq->queue, i);
+		if ((evn->type == TIMER_EVENT) &&
+		    (evn->timer == timer)) {
+			s_list_remove(window->eventq->queue, i);
+			s_event_uninit(evn);
+		}
+	}
+	s_thread_mutex_unlock(window->eventq->mut);
 	
 	s_thread_mutex_lock(window->timers->mut);
 	r = s_list_remove(window->timers->timers, s_list_get_pos(window->timers->timers, timer));
