@@ -44,6 +44,14 @@ void w_window_atevent (s_window_t *window, s_event_t *event)
 			objectn->event(objectn, event);
 		}
 	}
+	if (event->type & SIGNAL_EVENT) {
+		w_signal_t *signal;
+		signal = (w_signal_t *) event->data;
+		signal->func(signal);
+	}
+	if (event->type & QUIT_EVENT) {
+		w_window_uninit(windoww);
+	}
 }
 
 int w_window_init (w_window_t **window, S_WINDOW type, w_window_t *parent)

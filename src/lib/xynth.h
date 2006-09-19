@@ -373,6 +373,7 @@ typedef enum {
 	DESKTOP_EVENT  = 0x00100000,
 	TIMER_EVENT    = 0x00200000,
 	REMOTE_EVENT   = 0x00400000,
+	SIGNAL_EVENT   = 0x00800000,
 	EVENT_MASK     = (QUIT_EVENT | KEYBD_EVENT | MOUSE_EVENT | EXPOSE_EVENT | CONFIG_EVENT | FOCUS_EVENT | DESKTOP_EVENT | TIMER_EVENT)
 } S_EVENT;
 
@@ -451,6 +452,8 @@ typedef struct s_event_s {
 	s_desktop_t *desktop;
 	/** timer event */
 	s_timer_t *timer;
+	/** void event */
+	void *data;
 } s_event_t;
 
 /** event queue */
