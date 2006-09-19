@@ -118,7 +118,12 @@ struct s_thread_mutex_s {
 
 static int s_thread_pthreads_mutex_init (s_thread_mutex_t *mut)
 {
+#if 1
 	return pthread_mutex_init(&(mut->mut), NULL);
+#else
+	pthread_mutexattr_t mattr = { PTHREAD_MUTEX_RECURSIVE_NP };
+	return pthread_mutex_init(&(mut->mut), &mattr);
+#endif
 }
 
 static int s_thread_pthreads_mutex_destroy (s_thread_mutex_t *mut)
