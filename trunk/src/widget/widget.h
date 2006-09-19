@@ -36,8 +36,6 @@ struct w_object_s {
 	s_list_t *childs;
 	/** shown list */
 	s_list_t *shown;
-	/** root mutex */
-	s_thread_mutex_t *mut;
 	/** the surface */
 	s_surface_t *surface;
 	/** the parent of the object */
@@ -119,6 +117,14 @@ typedef struct w_editbox_s {
 	s_handler_t *handler_mouse;
 	s_handler_t *handler_keybd;
 } w_editbox_t;
+
+typedef struct w_signal_s w_signal_t;
+struct w_signal_s {
+	w_object_t *from;
+	w_object_t *to;
+	void (*func) (w_signal_t *);
+	void *arg;
+};
 
 /* button.c */
 void w_button_event (w_object_t *object, s_event_t *event);

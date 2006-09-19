@@ -100,8 +100,6 @@ int w_object_move (w_object_t *object, int x, int y, int w, int h)
 	s_list_t *diff;
 	w_object_t *root;
 
-        s_thread_mutex_lock(object->mut);
-
 	if (w < 0) { w = 0; }
 	if (h < 0) { h = 0; }
 
@@ -181,14 +179,11 @@ int w_object_move (w_object_t *object, int x, int y, int w, int h)
 	s_list_uninit(diff);
 	w_object_update(object, object->surface->win);
 
-        s_thread_mutex_unlock(object->mut);
-
 	return 0;
 }
 
 int w_object_hide (w_object_t *object)
 {
-        s_thread_mutex_lock(object->mut);
         if (object->parent != NULL) {
 		int pos = 0;
 		while (!s_list_eol(object->parent->shown, pos)) {
@@ -201,7 +196,6 @@ int w_object_hide (w_object_t *object)
 			pos++;
 		}
 	}
-        s_thread_mutex_unlock(object->mut);
 	return 0;
 }
 
@@ -210,7 +204,6 @@ int w_object_show (w_object_t *object)
 	int pos;
 	int found;
 	w_object_t *obj;
-        s_thread_mutex_lock(object->mut);
         if (object->parent != NULL) {
 		pos = 0;
 		found = 0;
@@ -245,7 +238,6 @@ int w_object_show (w_object_t *object)
         } else {
         	w_object_update(object, object->surface->win);
         }
-        s_thread_mutex_unlock(object->mut);
 	return 0;
 }
 
@@ -286,6 +278,21 @@ int w_object_atposition (w_object_t *root, int x, int y, w_object_t **object)
 	return 0;
 }
 
+void w_object_signal (w_object_t *from, w_object_t *to, void (*func) (w_signal_t *), void *arg)
+{
+	s_event_t *event;
+	w_signal_t *signal;
+	s_event_init(&event);
+	event->type = SIGNAL_EVENT;
+	signal = (w_signal_t *) s_malloc(sizeof(w_signal_t));
+	signal->from = from;
+	signal->to  = to;
+	signal->func = func;
+	signal->arg = arg;
+	event->data = (void *) signal;
+	s_eventq_add(to->window->window, event);
+}
+
 int w_object_init (w_window_t *window, w_object_t **object, void (*draw) (w_object_t *), w_object_t *parent)
 {
 	(*object) = (w_object_t *) s_malloc(sizeof(w_object_t));
@@ -316,20 +323,14 @@ int w_object_init (w_window_t *window, w_object_t **object, void (*draw) (w_obje
 	(*object)->surface->win->y = 0;
 	(*object)->surface->win->w = 0;
 	(*object)->surface->win->h = 0;
-
+	
 	if (parent != NULL) {
-		s_thread_mutex_lock(parent->mut);
 		s_list_add(parent->childs, *object, -1);
-		(*object)->mut = parent->mut;
-		s_thread_mutex_unlock(parent->mut);
 	} else {
 		(*object)->surface->buf->w = (*object)->surface->width;
 		(*object)->surface->buf->h = (*object)->surface->height;
 		(*object)->surface->win->w = (*object)->surface->width;
 		(*object)->surface->win->h = (*object)->surface->height;
-		if (s_thread_mutex_init(&((*object)->mut))) {
-			goto err0;
-		}
 	}
 
 	(*object)->content->x = (*object)->surface->buf->x;
@@ -338,19 +339,28 @@ int w_object_init (w_window_t *window, w_object_t **object, void (*draw) (w_obje
 	(*object)->content->h = (*object)->surface->buf->h;
 	
 	return 0;
-err0:	s_free((*object)->surface->buf);
-	s_free((*object)->surface->win);
-	s_free((*object)->surface);
-	s_list_uninit((*object)->shown);
-	s_list_uninit((*object)->childs);
-	s_free((*object)->content);
-	s_free(*object);
-	return 1;
 }
 
 void w_object_uninit (w_object_t *object)
 {
-	s_thread_mutex_lock(object->mut);
+	int pos;
+	s_event_t *event;
+	w_signal_t *signal;
+        s_thread_mutex_lock(object->window->window->eventq->mut);
+	pos = 0;
+	while (!s_list_eol(object->window->window->eventq->queue, pos)) {
+		event = (s_event_t *) s_list_get(object->window->window->eventq->queue, pos);
+		signal = (w_signal_t *) event->data;
+		if ((event->type == SIGNAL_EVENT) &&
+		    ((signal->from == object) || (signal->to == object))) {
+			s_list_remove(object->window->window->eventq->queue, pos);
+			s_free(signal);
+			s_event_uninit(event);
+		} else {
+			pos++;
+		}
+	}
+	s_thread_mutex_unlock(object->window->window->eventq->mut);
         if (object->parent != NULL) {
 		int pos = 0;
 		while (!s_list_eol(object->parent->childs, pos)) {
@@ -374,20 +384,14 @@ void w_object_uninit (w_object_t *object)
         while (!s_list_eol(object->childs, 0)) {
 		w_object_t *obj = (w_object_t *) s_list_get(object->childs, 0);
 		s_list_remove(object->childs, 0);
-		s_thread_mutex_unlock(object->mut);
 		if (obj->destroy != NULL) {
 			obj->destroy(obj);
 		} else {
 			w_object_uninit(obj);
 		}
-		s_thread_mutex_lock(object->mut);
 	}
 	while (!s_list_eol(object->shown, 0)) {
 		s_list_remove(object->shown, 0);
-	}
-	s_thread_mutex_unlock(object->mut);
-	if (object->parent == NULL) {
-		s_thread_mutex_destroy(object->mut);
 	}
 	s_free(object->surface->buf);
 	s_free(object->surface->win);

@@ -99,6 +99,12 @@ static void button0_destroy (w_object_t *object)
 	w_button_uninit(object);
 }
 
+void w_object_signal (w_object_t *from, w_object_t *to, void (*func) (w_signal_t *), void *arg);
+static void alper (w_signal_t *signal)
+{
+	printf("alper\n");
+}
+
 static void button1_pressed (w_object_t *object, int button)
 {
 	int i;
@@ -112,6 +118,7 @@ static void button1_pressed (w_object_t *object, int button)
 		w_object_move(obj, (rand() + 1) % (w - 10), (rand() + 1) % (h - 100),
 		                   (rand() + 1) % (w - 10), (rand() + 1) % (h - 100));
 	}
+	w_object_signal(object, object, alper, NULL);
 }
 
 static void button1_destroy (w_object_t *object)
@@ -231,8 +238,6 @@ int main (int argc, char *argv[])
 
 	s_window_show(window->window);
 	s_client_main(window->window);
-
-	w_window_uninit(window);
 
 	return 0;
 }
