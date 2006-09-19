@@ -163,6 +163,7 @@ int w_object_hide (w_object_t *object);
 int w_object_show (w_object_t *object);
 int w_object_childatposition (w_object_t *object, int x, int y, w_object_t **child);
 int w_object_atposition (w_object_t *root, int x, int y, w_object_t **object);
+void w_object_signal (w_object_t *from, w_object_t *to, void (*func) (w_signal_t *), void *arg);
 int w_object_init (w_window_t *window, w_object_t **object, void (*draw) (w_object_t *), w_object_t *parent);
 void w_object_uninit (w_object_t *object);
 
