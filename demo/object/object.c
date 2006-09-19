@@ -99,10 +99,9 @@ static void button0_destroy (w_object_t *object)
 	w_button_uninit(object);
 }
 
-void w_object_signal (w_object_t *from, w_object_t *to, void (*func) (w_signal_t *), void *arg);
-static void alper (w_signal_t *signal)
+static void button1_signal_func (w_signal_t *signal)
 {
-	printf("alper\n");
+	printf("button1_signal_func\n");
 }
 
 static void button1_pressed (w_object_t *object, int button)
@@ -118,7 +117,7 @@ static void button1_pressed (w_object_t *object, int button)
 		w_object_move(obj, (rand() + 1) % (w - 10), (rand() + 1) % (h - 100),
 		                   (rand() + 1) % (w - 10), (rand() + 1) % (h - 100));
 	}
-	w_object_signal(object, object, alper, NULL);
+	w_object_signal(object, object, button1_signal_func, NULL);
 }
 
 static void button1_destroy (w_object_t *object)
