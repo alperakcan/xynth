@@ -205,7 +205,7 @@ sbox_plain:				w_object_set_content(object, frame->linewidth, frame->linewidth,
 	}
 }
 
-int w_frame_init (s_window_t *window, w_frame_t **frame, unsigned int style, w_object_t *parent)
+int w_frame_init (w_window_t *window, w_frame_t **frame, unsigned int style, w_object_t *parent)
 {
 	(*frame) = (w_frame_t *) s_malloc(sizeof(w_frame_t));
 	(*frame)->style = style;

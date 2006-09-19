@@ -20,14 +20,14 @@ void w_button_event (w_object_t *object, s_event_t *event)
 {
 	w_button_t *button;
 	button = (w_button_t *) object->data[OBJECT_BUTTON];
-	event->mouse->x += object->window->surface->buf->x;
-	event->mouse->y += object->window->surface->buf->y;
-	event->mouse->px += object->window->surface->buf->x;
-	event->mouse->py += object->window->surface->buf->y;
-	s_thread_mutex_lock(object->window->handlers->mut);
-	s_event_parse_handler_over(button->frame->object->window, event, button->handler);
-	s_event_parse_handler_notover(button->object->window, event, button->handler);
-	s_thread_mutex_unlock(object->window->handlers->mut);
+	event->mouse->x += object->window->window->surface->buf->x;
+	event->mouse->y += object->window->window->surface->buf->y;
+	event->mouse->px += object->window->window->surface->buf->x;
+	event->mouse->py += object->window->window->surface->buf->y;
+	s_thread_mutex_lock(object->window->window->handlers->mut);
+	s_event_parse_handler_over(button->frame->object->window->window, event, button->handler);
+	s_event_parse_handler_notover(button->object->window->window, event, button->handler);
+	s_thread_mutex_unlock(object->window->window->handlers->mut);
 }
 
 void w_button_draw (w_object_t *object)
@@ -137,7 +137,7 @@ void w_button_cb_hoh (s_window_t *window, s_event_t *event, s_handler_t *handler
 	}
 }
 
-int w_button_init (s_window_t *window, w_button_t **button, w_object_t *parent)
+int w_button_init (w_window_t *window, w_button_t **button, w_object_t *parent)
 {
 	(*button) = (w_button_t *) s_malloc(sizeof(w_button_t));
 	if (w_frame_init(window, &((*button)->frame), FRAME_PANEL | FRAME_RAISED, parent)) {

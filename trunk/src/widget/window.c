@@ -52,7 +52,7 @@ int w_window_init (w_window_t **window, S_WINDOW type, w_window_t *parent)
 	s_client_init(&((*window)->window));
 	s_window_new((*window)->window, type, NULL);
 	s_window_set_resizeable((*window)->window, 0);
-	w_object_init((*window)->window, &((*window)->object), NULL, NULL);
+	w_object_init(*window, &((*window)->object), NULL, NULL);
 	s_client_atevent((*window)->window, w_window_atevent);
 	(*window)->window->client->user_data = (*window);
 	return 0;
