@@ -4,7 +4,7 @@ LIBDIR := $(LIBDIR)
 
 CFLAGS   := $(addprefix -I,$(INCDIR)) $(CFLAGS)
 CXXFLAGS := $(CFLAGS) $(CXXFLAGS)
-CPPFLAGS := $(CXXFLAGS)
+CPPFLAGS := $(CFLAGS) $(CXXFLAGS)
 ASFLAGS  := $(CFLAGS) $(ASFLAGS)
 LDFLAGS  := $(addprefix -L,$(LIBDIR)) $(LDFLAGS)
 DEPEND   := Makefile.depend
