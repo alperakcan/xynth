@@ -32,7 +32,7 @@ Sat 30 Sep 2006 12:50:40 AM EEST
 	 
 	cursor is used every where, it is not a helper functionalty, it is
 	common.
-	mouse range get and set belongs to server, not herlper
+	mouse range get and set belongs to server, not helper
 
 Thu 14 Sep 2006 09:51:37 PM EEST
 	* M demo/object/object.c,
