@@ -29,9 +29,6 @@ int s_video_pspdev_mouse_init (s_server_conf_t *cfg)
 		debugf(DSER | DSYS, "pipe failed");
 		goto err0;
 	}
-	s_video_helper_mouse_cursor_init();
-	s_mouse_setxrange(server->window, 0, server->window->surface->width);
-	s_mouse_setyrange(server->window, 0, server->window->surface->height);
 	server->window->event->mouse->x = server->window->surface->width / 2;
 	server->window->event->mouse->y = server->window->surface->height / 2;
         priv->pad_old.x = server->window->event->mouse->x;
