@@ -33,12 +33,4 @@ void s_video_null_mouse_uninit (void)
 {
 }
 
-void s_video_null_mouse_setxrange (int x1, int x2)
-{
-}
-
-void s_video_null_mouse_setyrange (int y1, int y2)
-{
-}
-
 #endif /* VIDEO_NULL */

@@ -225,10 +225,9 @@ void s_mouse_setxrange (s_window_t *window, int a, int b)
 	x1 = MAX(a, b);
 	x0 = MAX(x0, 0);
 	x1 = MIN(x1, window->surface->width - 1);
-
-        if (server->driver->mouse_setxrange != NULL) {
-		server->driver->mouse_setxrange(x0, x1);
-	}
+	
+	server->mouse_rangex[0] = x0;
+	server->mouse_rangex[1] = x1;
 }
 
 void s_mouse_setyrange (s_window_t *window, int a, int b)
@@ -241,9 +240,8 @@ void s_mouse_setyrange (s_window_t *window, int a, int b)
 	y0 = MAX(y0, 0);
 	y1 = MIN(y1, window->surface->height - 1);
 
-        if (server->driver->mouse_setyrange != NULL) {
-		server->driver->mouse_setyrange(y0, y1);
-	}
+	server->mouse_rangey[0] = y0;
+	server->mouse_rangey[1] = y1;
 }
 
 void s_server_mouse_setcursor (S_MOUSE_CURSOR c)
@@ -282,7 +280,14 @@ void s_server_mouse_draw (void)
 int s_server_mouse_update (s_mouse_driver_t *mouse)
 {
         if (server->driver->mouse_update != NULL) {
-		return server->driver->mouse_update(mouse);
+		if (server->driver->mouse_update(mouse)) {
+			return -1;
+		}
+		mouse->x = MAX(mouse->x, server->mouse_rangex[0]);
+		mouse->x = MIN(mouse->x, server->mouse_rangex[1]);
+		mouse->y = MAX(mouse->y, server->mouse_rangey[0]);
+		mouse->y = MIN(mouse->y, server->mouse_rangey[1]);
+		return 0;
 	}
 	return -1;
 }
@@ -313,6 +318,8 @@ void s_server_mouse_init (s_server_conf_t *cfg)
 				debugf(DSER, "server->driver->mouse_init(cfg) failed");
 			} else {
 				s_server_cursor_init();
+				server->window->event->mouse->x = server->window->surface->width / 2;
+				server->window->event->mouse->y = server->window->surface->height / 2;
 				s_mouse_setxrange(server->window, 0, server->window->surface->width);
 				s_mouse_setyrange(server->window, 0, server->window->surface->height);
 			}

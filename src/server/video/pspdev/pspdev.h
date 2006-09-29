@@ -27,10 +27,7 @@
 typedef struct s_video_pspdev_data_s {
 	int mouse_fd[2];
 	int keybd_fd[2];
-	s_mouse_driver_t pad_old;
 	s_thread_t *event_tid;
-	int rx[2];
-	int ry[2];
 	void *vram_base;
 } s_video_pspdev_data_t;
 
@@ -49,8 +46,6 @@ void s_video_pspdev_mouse_setcursor (S_MOUSE_CURSOR c);
 void s_video_pspdev_mouse_draw (void);
 int s_video_pspdev_mouse_update (s_mouse_driver_t *mouse);
 void s_video_pspdev_mouse_uninit (void);
-void s_video_pspdev_mouse_setxrange (int x1, int x2);
-void s_video_pspdev_mouse_setyrange (int y1, int y2);
 
 void s_video_pspdev_server_uninit (void);
 int s_video_pspdev_server_init (s_server_conf_t *cfg);

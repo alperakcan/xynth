@@ -34,6 +34,7 @@ void * s_video_pspdev_event_parse (void *arg)
 	int axisy;
 	SceCtrlData pad;
 	s_mouse_driver_t pad_send;
+	enum PspCtrlButtons pad_old;
 	enum PspCtrlButtons changed;
 	s_video_pspdev_data_t *priv = (s_video_pspdev_data_t *) server->driver->driver_data;
 
@@ -44,11 +45,11 @@ void * s_video_pspdev_event_parse (void *arg)
 	while (server->window->running) {
 		sceCtrlReadBufferPositive(&pad, 1);
 
-		changed = priv->pad_old.buttons ^ pad.Buttons;
-		priv->pad_old.buttons = pad.Buttons;
+		changed = pad_old ^ pad.Buttons;
+		pad_old = pad.Buttons;
 
-		axisx = priv->pad_old.x;
-		axisy = priv->pad_old.y;
+		axisx = s_mouse_getx();
+		axisy = s_mouse_gety();
 		if (pad.Buttons & PSP_CTRL_LEFT) {
 			axisx -= MOUSE_ACCELL;
 		} else if (pad.Buttons & PSP_CTRL_RIGHT) {
@@ -59,17 +60,14 @@ void * s_video_pspdev_event_parse (void *arg)
 		} else if (pad.Buttons & PSP_CTRL_DOWN) {
 			axisy += MOUSE_ACCELL;
 		}
-		axisx = MAX(axisx, priv->rx[0]);
-		axisx = MIN(axisx, priv->rx[1]);
-		axisy = MAX(axisy, priv->ry[0]);
-		axisy = MIN(axisy, priv->ry[1]);
+		axisx = MAX(axisx, server->mouse_rangex[0]);
+		axisx = MIN(axisx, server->mouse_rangex[1]);
+		axisy = MAX(axisy, server->mouse_rangey[0]);
+		axisy = MIN(axisy, server->mouse_rangey[1]);
 
 		if ((changed & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE)) ||
-		    (axisx - priv->pad_old.x) ||
-		    (axisy - priv->pad_old.y)) {
-			priv->pad_old.x = axisx;
-			priv->pad_old.y = axisy;
-
+		    (axisx - s_mouse_getx()) ||
+		    (axisy - s_mouse_gety())) {
 			pad_send.x = axisx;
 			pad_send.y = axisy;
 			pad_send.buttons = pad.Buttons & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE);

@@ -27,10 +27,6 @@ int s_video_gp2x_mouse_init (s_server_conf_t *cfg)
 		debugf(DSER | DSYS, "pipe failed");
 		goto err0;
 	}
-	server->window->event->mouse->x = server->window->surface->width / 2;
-	server->window->event->mouse->y = server->window->surface->height / 2;
-        priv->pad_old.x = server->window->event->mouse->x;
-        priv->pad_old.y = server->window->event->mouse->y;
 	return priv->mouse_fd[0];
 err0:	priv->mouse_fd[0] = -1;
 	priv->mouse_fd[1] = -1;
@@ -58,20 +54,6 @@ void s_video_gp2x_mouse_uninit (void)
 	priv->mouse_fd[0] = -1;
 	priv->mouse_fd[1] = -1;
 	s_server_cursor_uninit();
-}
-
-void s_video_gp2x_mouse_setxrange (int x1, int x2)
-{
-	s_video_gp2x_data_t *priv = server->driver->driver_data;
-	priv->rx[0] = x1;
-	priv->rx[1] = x2;
-}
-
-void s_video_gp2x_mouse_setyrange (int y1, int y2)
-{
-	s_video_gp2x_data_t *priv = server->driver->driver_data;
-	priv->ry[0] = y1;
-	priv->ry[1] = y2;
 }
 
 #endif /* VIDEO_GP2X */

@@ -27,8 +27,6 @@ typedef struct s_video_gdi_data_s {
 	s_thread_t *event_tid;
 	int keybd_fd[2];
 	int mouse_fd[2];
-	int rx[2];
-	int ry[2];
 	int bpp_windows;
 	s_keybd_driver_t keybd;
 	s_mouse_driver_t mouse;
@@ -47,8 +45,6 @@ void s_video_gdi_kbd_switch (int vt);
 int s_video_gdi_mouse_init (s_server_conf_t *cfg);
 int s_video_gdi_mouse_update (s_mouse_driver_t *mouse);
 void s_video_gdi_mouse_uninit (void);
-void s_video_gdi_mouse_setxrange (int x1, int x2);
-void s_video_gdi_mouse_setyrange (int y1, int y2);
 
 void s_video_gdi_server_uninit (void);
 int s_video_gdi_server_init (s_server_conf_t *cfg);

@@ -32,8 +32,6 @@ s_video_driver_t s_video_gp2x = {
 	s_video_gp2x_kbd_update,
 	s_video_gp2x_kbd_uninit,
 	s_video_gp2x_kbd_switch,
-	s_video_gp2x_mouse_setxrange,
-	s_video_gp2x_mouse_setyrange,
 	s_video_gp2x_mouse_update,
 	s_video_gp2x_mouse_uninit,
 	s_video_gp2x_mouse_init,
@@ -77,9 +75,6 @@ int s_video_gp2x_server_init (s_server_conf_t *cfg)
         priv->mouse_fd[1] = -1;
         priv->keybd_fd[0] = -1;
         priv->keybd_fd[1] = -1;
-        priv->pad_old.x = 0;
-        priv->pad_old.y = 0;
-        priv->pad_old.buttons = 0;
 
 	server->window->surface->width = 320;
 	server->window->surface->height = 240;

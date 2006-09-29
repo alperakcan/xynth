@@ -25,10 +25,7 @@ enum {
 typedef struct s_video_gp2x_data_s {
 	int mouse_fd[2];
 	int keybd_fd[2];
-	s_mouse_driver_t pad_old;
 	s_thread_t *event_tid;
-	int rx[2];
-	int ry[2];
 	unsigned short *gp2x_io;
 } s_video_gp2x_data_t;
 
@@ -42,8 +39,6 @@ void s_video_gp2x_mouse_setcursor (S_MOUSE_CURSOR c);
 void s_video_gp2x_mouse_draw (void);
 int s_video_gp2x_mouse_update (s_mouse_driver_t *mouse);
 void s_video_gp2x_mouse_uninit (void);
-void s_video_gp2x_mouse_setxrange (int x1, int x2);
-void s_video_gp2x_mouse_setyrange (int y1, int y2);
 
 void s_video_gp2x_server_goto_back (void);
 void s_video_gp2x_server_comefrom_back (void);
