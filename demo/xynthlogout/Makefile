@@ -17,8 +17,6 @@ endif
 
 EXTRA_CLEAN = xynthlogout single_xynthlogout.a
 
-DEPEND_FILES       = *.c
-
 include ../../Makefile.rules
 
 dist: all

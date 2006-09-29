@@ -36,9 +36,9 @@ endif
 .cpp.o:
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
-$(DEPEND): $(DEPEND_FILES) $(EXTRA_DEPEND_FILES)
+$(DEPEND): $(EXTRA_DEPEND_FILES) $(OBJS:.o=.c)
 	@>$@
-	@$(foreach F, $(DEPEND_FILES), $(CC) $(CFLAGS) -MM $(F) >> $@;)
+	@$(foreach F, $(OBJS:.o=.c), $(CC) $(CFLAGS) -MT $(F:.c=.o) -MM $(F) >> $@;)
 -include $(DEPEND)
 
 clean:

@@ -17,8 +17,6 @@ endif
 
 EXTRA_CLEAN = simple single_simple.a
 
-DEPEND_FILES       = *.c
-
 include ../../Makefile.rules
 
 dist: all

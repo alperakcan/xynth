@@ -10,6 +10,4 @@ OBJS = theme.o
 
 TARGET = theme
 
-DEPEND_FILES       = *.c
-
 include ../../Makefile.rules
