@@ -13,13 +13,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(VIDEO_HELPER_CURSOR)
-/* cursor.c */
-void s_video_helper_mouse_cursor_init (void);
-void s_video_helper_mouse_setcursor (S_MOUSE_CURSOR c);
-void s_video_helper_mouse_draw (void);
-#endif /* VIDEO_HELPER_CURSOR */
-
 #if defined(VIDEO_HELPER_CONSOLE)
 /* console.c */
 int s_video_helper_console_init (void);

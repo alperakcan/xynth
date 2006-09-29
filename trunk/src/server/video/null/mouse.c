@@ -24,14 +24,6 @@ int s_video_null_mouse_init (s_server_conf_t *cfg)
 	return -1;
 }
 
-void s_video_null_mouse_setcursor (S_MOUSE_CURSOR c)
-{
-}
-
-void s_video_null_mouse_draw (void)
-{
-}
-
 int s_video_null_mouse_update (s_mouse_driver_t *mouse)
 {
 	return 0;

@@ -21,8 +21,6 @@ void s_video_null_kbd_uninit (void);
 void s_video_null_kbd_switch (int vt);
 
 int s_video_null_mouse_init (s_server_conf_t *cfg);
-void s_video_null_mouse_setcursor (S_MOUSE_CURSOR c);
-void s_video_null_mouse_draw (void);
 int s_video_null_mouse_update (s_mouse_driver_t *mouse);
 void s_video_null_mouse_uninit (void);
 void s_video_null_mouse_setxrange (int x1, int x2);

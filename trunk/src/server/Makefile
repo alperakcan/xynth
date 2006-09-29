@@ -39,7 +39,7 @@ VLDFLAGS-$(VIDEO_GP2X)    += -lpthread -lm -static
 
 OBJS-$(VIDEO_NULL)        += video/null/kbd.o video/null/mouse.o video/null/server.o
 
-OBJS-$(VIDEO_HELPER)      += video/helper/console.o video/helper/cursor.o video/helper/kbd.o video/helper/modes.o video/helper/mouse.o video/helper/mtrr.o
+OBJS-$(VIDEO_HELPER)      += video/helper/console.o video/helper/kbd.o video/helper/modes.o video/helper/mouse.o video/helper/mtrr.o
 
 ifeq ($(SINGLE_APP), Y)
 	LDFLAGS-$(DEMO_CHILD) += ../../demo/child/single_child.a

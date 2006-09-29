@@ -28,8 +28,6 @@ s_video_driver_t s_video_null = {
 	s_video_null_kbd_switch,
 	s_video_null_mouse_setxrange,
 	s_video_null_mouse_setyrange,
-	s_video_null_mouse_setcursor,
-	s_video_null_mouse_draw,
 	s_video_null_mouse_update,
 	s_video_null_mouse_uninit,
 	s_video_null_mouse_init,

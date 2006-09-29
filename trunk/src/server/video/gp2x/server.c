@@ -34,8 +34,6 @@ s_video_driver_t s_video_gp2x = {
 	s_video_gp2x_kbd_switch,
 	s_video_gp2x_mouse_setxrange,
 	s_video_gp2x_mouse_setyrange,
-	s_video_helper_mouse_setcursor,
-	s_video_helper_mouse_draw,
 	s_video_gp2x_mouse_update,
 	s_video_gp2x_mouse_uninit,
 	s_video_gp2x_mouse_init,

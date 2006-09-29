@@ -75,8 +75,6 @@ int s_video_helper_mouse_init (s_server_conf_t *cfg)
 	                  -20, 20,
 	                  0, 0,
 	                  MOUSE_6DIM);
-
-	s_video_helper_mouse_cursor_init();
 	
 	return fd;
 }

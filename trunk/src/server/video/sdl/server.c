@@ -34,8 +34,6 @@ s_video_driver_t s_video_sdl = {
 	NULL,
 	s_video_sdl_mouse_setxrange,
 	s_video_sdl_mouse_setyrange,
-	s_video_helper_mouse_setcursor,
-	s_video_helper_mouse_draw,
 	s_video_sdl_mouse_update,
 	s_video_sdl_mouse_uninit,
 	s_video_sdl_mouse_init,

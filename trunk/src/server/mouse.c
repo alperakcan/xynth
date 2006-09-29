@@ -15,6 +15,7 @@
 
 #include "../lib/xynth_.h"
 #include "server.h"
+#include "cursor.h"
 
 void s_server_cursor_uninit (void)
 {
@@ -48,6 +49,25 @@ void s_server_cursor_init (void)
 	}
 
 	server->cursor.sw = 1;
+
+	s_server_cursor_image_set(MOUSE_CURSOR_WAIT,    0xffffff, 0, s_video_helper_cursor_wait);
+	s_server_cursor_image_set(MOUSE_CURSOR_ARROW,   0xFFFFFF, 0, s_video_helper_cursor_arrow);
+	s_server_cursor_image_set(MOUSE_CURSOR_CROSS,   0xffffff, 0, s_video_helper_cursor_cross);
+	s_server_cursor_image_set(MOUSE_CURSOR_IBEAM,   0xffffff, 0, s_video_helper_cursor_ibeam);
+	s_server_cursor_image_set(MOUSE_CURSOR_SIZEV,   0xffffff, 0, s_video_helper_cursor_sizev);
+	s_server_cursor_image_set(MOUSE_CURSOR_SIZEH,   0xffffff, 0, s_video_helper_cursor_sizeh);
+	s_server_cursor_image_set(MOUSE_CURSOR_SIZES,   0xffffff, 0, s_video_helper_cursor_sizes);
+	s_server_cursor_image_set(MOUSE_CURSOR_SIZEB,   0xffffff, 0, s_video_helper_cursor_sizeb);
+	s_server_cursor_image_set(MOUSE_CURSOR_SIZEA,   0xffffff, 0, s_video_helper_cursor_sizea);
+	s_server_cursor_image_set(MOUSE_CURSOR_POINT,   0xffffff, 0, s_video_helper_cursor_point);
+	s_server_cursor_image_set(MOUSE_CURSOR_SPLITV,  0xffffff, 0, s_video_helper_cursor_splitv);
+	s_server_cursor_image_set(MOUSE_CURSOR_SPLITH,  0xffffff, 0, s_video_helper_cursor_splith);
+	s_server_cursor_image_set(MOUSE_CURSOR_FORBID,  0xffffff, 0, s_video_helper_cursor_forbid);
+	s_server_cursor_image_set(MOUSE_CURSOR_UPARROW, 0xffffff, 0, s_video_helper_cursor_uparrow);
+	s_server_cursor_image_set(MOUSE_CURSOR_NONE,    0xffffff, 0, s_video_helper_cursor_none);
+
+	s_server_mouse_setcursor(MOUSE_CURSOR_ARROW);
+	s_server_cursor_position(s_mouse_getx(), s_mouse_gety());
 }
 
 void s_server_cursor_image_set (int which, int c0, int c1, unsigned int *c)
@@ -198,15 +218,14 @@ int s_mouse_gety (void)
 
 void s_mouse_setxrange (s_window_t *window, int a, int b)
 {
-	int x0 = a;
-	int x1 = b;
+	int x0;
+	int x1;
 
-	if (x0 < 0) {
-		x0 = 0;
-	}
-	if (x1 >= window->surface->width) {
-		x1 = window->surface->width - 1;
-	}
+	x0 = MIN(a, b);
+	x1 = MAX(a, b);
+	x0 = MAX(x0, 0);
+	x1 = MIN(x1, window->surface->width - 1);
+
         if (server->driver->mouse_setxrange != NULL) {
 		server->driver->mouse_setxrange(x0, x1);
 	}
@@ -214,15 +233,14 @@ void s_mouse_setxrange (s_window_t *window, int a, int b)
 
 void s_mouse_setyrange (s_window_t *window, int a, int b)
 {
-        int y0 = a;
-        int y1 = b;
+        int y0;
+        int y1;
 
-        if (y0 < 0) {
-		y0 = 0;
-	}
-        if (y1 >= window->surface->height) {
-		y1 = window->surface->height - 1;
-	}
+	y0 = MIN(a, b);
+	y1 = MAX(a, b);
+	y0 = MAX(y0, 0);
+	y1 = MIN(y1, window->surface->height - 1);
+
         if (server->driver->mouse_setyrange != NULL) {
 		server->driver->mouse_setyrange(y0, y1);
 	}
@@ -230,16 +248,35 @@ void s_mouse_setyrange (s_window_t *window, int a, int b)
 
 void s_server_mouse_setcursor (S_MOUSE_CURSOR c)
 {
-        if (server->driver->mouse_setcursor != NULL) {
-		server->driver->mouse_setcursor(c);
-	}
+	server->window->event->mouse->cursor = c;
+	s_server_cursor_select(c);
+	s_server_mouse_draw();
 }
 
 void s_server_mouse_draw (void)
 {
-        if (server->driver->mouse_draw != NULL) {
-		server->driver->mouse_draw();
+	int x = s_mouse_getx();
+	int y = s_mouse_gety();
+
+	switch (server->window->event->mouse->cursor) {
+		case MOUSE_CURSOR_WAIT: 	x -= 7;		y -= 12;	break;
+		case MOUSE_CURSOR_NONE:
+		case MOUSE_CURSOR_ARROW:					break;
+		case MOUSE_CURSOR_CROSS:	x -= 9;		y -= 9;		break;
+		case MOUSE_CURSOR_IBEAM:	x -= 5;		y -= 9;		break;
+		case MOUSE_CURSOR_SIZEV:	x -= 5;		y -= 10;	break;
+		case MOUSE_CURSOR_SIZEH:	x -= 10; 	y -= 5;		break;
+		case MOUSE_CURSOR_SIZES:	x -= 7;		y -= 7;		break;
+		case MOUSE_CURSOR_SIZEB:	x -= 7;		y -= 7;		break;
+		case MOUSE_CURSOR_SIZEA:	x -= 10; 	y -= 10;	break;
+		case MOUSE_CURSOR_POINT:	x -= 6;				break;
+		case MOUSE_CURSOR_SPLITV:	x -= 10; 	y -= 8;		break;
+		case MOUSE_CURSOR_SPLITH:	x -= 8;		y -= 10;	break;
+		case MOUSE_CURSOR_FORBID:	x -= 9;		y -= 9;		break;
+		case MOUSE_CURSOR_UPARROW:	x -= 5;				break;
+		default:			break;
 	}
+	s_server_cursor_position(x, y);
 }
 
 int s_server_mouse_update (s_mouse_driver_t *mouse)
@@ -274,6 +311,10 @@ void s_server_mouse_init (s_server_conf_t *cfg)
 			fd = server->driver->mouse_init(cfg);
 			if (fd < 0) {
 				debugf(DSER, "server->driver->mouse_init(cfg) failed");
+			} else {
+				s_server_cursor_init();
+				s_mouse_setxrange(server->window, 0, server->window->surface->width);
+				s_mouse_setyrange(server->window, 0, server->window->surface->height);
 			}
 		}
 	}
