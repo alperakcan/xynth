@@ -65,7 +65,6 @@ TARGET   = $(TARGET-Y)
 
 EXTRA_CLEAN = xynth xynth.exe xynth.elf $(OBJS-N) $(OBJS-)
 
-DEPEND_FILES       = *.c video/*/*.c
 EXTRA_DEPEND_FILES = *.h
 
 include ../../Makefile.rules

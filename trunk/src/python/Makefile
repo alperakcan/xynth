@@ -10,7 +10,6 @@ OBJS = window.o xynthpy.o
 ifeq ($(PLATFORM_LINUX), Y)
 TARGET_SO = xynth.so
 LDFLAGS   = -lpython2.4 -lxynth
-DEPEND_FILES       = *.c
 EXTRA_DEPEND_FILES = *.h
 else
 ifeq ($(PLATFORM_PSPDEV), Y)

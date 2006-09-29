@@ -45,7 +45,6 @@ LDFLAGS  += $(LDFLAGS-Y)
 
 EXTRA_CLEAN = libxynth.a libxynth.so
 
-DEPEND_FILES       = *.c
 EXTRA_DEPEND_FILES = *.h
 
 include ../../Makefile.rules

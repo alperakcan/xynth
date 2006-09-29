@@ -17,8 +17,6 @@ endif
 
 EXTRA_CLEAN = img single_img.a
 
-DEPEND_FILES       = *.c
-
 include ../../Makefile.rules
 
 dist: all

@@ -18,8 +18,6 @@ endif
 
 EXTRA_CLEAN = mines single_mines.a
 
-DEPEND_FILES       = *.cpp
-
 include ../../Makefile.rules
 
 dist: all
