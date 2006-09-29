@@ -31,9 +31,6 @@ int s_video_sdl_mouse_init (s_server_conf_t *cfg)
 	}
 	
 	SDL_ShowCursor(0);
-	s_video_helper_mouse_cursor_init();
-	s_mouse_setxrange(server->window, 0, server->window->surface->width);
-	s_mouse_setyrange(server->window, 0, server->window->surface->height);
 	return priv->mouse_fd[0];
 err0:	priv->mouse_fd[0] = -1;
 	priv->mouse_fd[1] = -1;

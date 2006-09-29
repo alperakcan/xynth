@@ -29,8 +29,6 @@ s_video_driver_t s_video_gdi = {
 	NULL,
 	s_video_gdi_mouse_setxrange,
 	s_video_gdi_mouse_setyrange,
-	s_video_helper_mouse_setcursor,
-	s_video_helper_mouse_draw,
 	s_video_gdi_mouse_update,
 	s_video_gdi_mouse_uninit,
 	s_video_gdi_mouse_init,

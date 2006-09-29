@@ -182,8 +182,6 @@ s_video_driver_t s_video_svga = {
 	s_video_helper_kbd_switch,
 	s_video_helper_mouse_setxrange,
 	s_video_helper_mouse_setyrange,
-	s_video_helper_mouse_setcursor,
-	s_video_helper_mouse_draw,
 	s_video_helper_mouse_update,
 	s_video_helper_mouse_uninit,
 	s_video_helper_mouse_init,

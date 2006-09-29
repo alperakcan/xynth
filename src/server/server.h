@@ -156,8 +156,6 @@ typedef struct s_video_driver_s {
 	/* mouse */
 	void (*mouse_setxrange) (int x1, int x2);
 	void (*mouse_setyrange) (int y1, int y2);
-	void (*mouse_setcursor) (S_MOUSE_CURSOR c);
-	void (*mouse_draw) (void);
 	int (*mouse_update) (s_mouse_driver_t *mouse);
 	void (*mouse_uninit) (void);
 	int (*mouse_init) (s_server_conf_t *cfg);
