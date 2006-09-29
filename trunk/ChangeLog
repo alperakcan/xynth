@@ -7,7 +7,12 @@ Sat 30 Sep 2006 12:50:40 AM EEST
 	  M src/server/server.h,
 	  M src/server/video/fb/server.c,
 	  M src/server/video/gdi/server.c,
-	  M src/server/video/gp2x/server.c,
+	  M src/server/video/gdi/gdi.h
+	  M src/server/video/gdi/mouse.c
+	  M src/server/video/gp2x/event.c
+	  M src/server/video/gp2x/gp2x.h
+	  M src/server/video/gp2x/server.c
+	  M src/server/video/gp2x/mouse.c
 	  D src/server/video/helper/cursor.c,
 	  D src/server/video/helper/cursor.h,
 	  M src/server/video/helper/helper.h,
@@ -15,14 +20,19 @@ Sat 30 Sep 2006 12:50:40 AM EEST
 	  M src/server/video/null/mouse.c,
 	  M src/server/video/null/null.h,
 	  M src/server/video/null/server.c,
-	  M src/server/video/pspdev/server.c,
+	  M src/server/video/pspdev/event.c
+	  M src/server/video/pspdev/pspdev.h
+	  M src/server/video/pspdev/server.c
+	  M src/server/video/pspdev/mouse.c
 	  M src/server/video/sdl/mouse.c,
+	  M src/server/video/sdl/sdl.h
 	  M src/server/video/sdl/server.c,
 	  M src/server/video/svga/server.c,
 	  M src/server/video/vesa/server.c :
 	 
-	 cursor is used every where, it is not a helper functionalty, it is
-	 common.
+	cursor is used every where, it is not a helper functionalty, it is
+	common.
+	mouse range get and set belongs to server, not herlper
 
 Thu 14 Sep 2006 09:51:37 PM EEST
 	* M demo/object/object.c,
