@@ -1,4 +1,29 @@
 
+Sat 30 Sep 2006 12:50:40 AM EEST
+	* M Makefile.parse,
+	  M src/server/Makefile,
+	  A src/server/cursor.h,
+	  M src/server/mouse.c,
+	  M src/server/server.h,
+	  M src/server/video/fb/server.c,
+	  M src/server/video/gdi/server.c,
+	  M src/server/video/gp2x/server.c,
+	  D src/server/video/helper/cursor.c,
+	  D src/server/video/helper/cursor.h,
+	  M src/server/video/helper/helper.h,
+	  M src/server/video/helper/mouse.c,
+	  M src/server/video/null/mouse.c,
+	  M src/server/video/null/null.h,
+	  M src/server/video/null/server.c,
+	  M src/server/video/pspdev/server.c,
+	  M src/server/video/sdl/mouse.c,
+	  M src/server/video/sdl/server.c,
+	  M src/server/video/svga/server.c,
+	  M src/server/video/vesa/server.c :
+	 
+	 cursor is used every where, it is not a helper functionalty, it is
+	 common.
+
 Thu 14 Sep 2006 09:51:37 PM EEST
 	* M demo/object/object.c,
 	  A src/widget/editbox.c,
