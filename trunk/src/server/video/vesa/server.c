@@ -36,8 +36,6 @@ s_video_driver_t s_video_vesa = {
 	s_video_helper_kbd_update,
 	s_video_helper_kbd_uninit,
 	s_video_helper_kbd_switch,
-	s_video_helper_mouse_setxrange,
-	s_video_helper_mouse_setyrange,
 	s_video_helper_mouse_update,
 	s_video_helper_mouse_uninit,
 	s_video_helper_mouse_init,

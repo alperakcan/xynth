@@ -24,8 +24,6 @@ typedef struct s_video_sdl_data_s {
 	SDL_Surface *screen;
 	s_thread_t *event_tid;
 	S_KEYCODE_CODE keymap[SDLK_LAST];
-	int rx[2];
-	int ry[2];
 } s_video_sdl_data_t;
 
 int SDL_PrivateQuit(void);
@@ -37,12 +35,8 @@ void s_video_sdl_kbd_update (s_keybd_driver_t *keybd);
 void s_video_sdl_kbd_uninit (void);
 
 int s_video_sdl_mouse_init (s_server_conf_t *cfg);
-void s_video_sdl_mouse_setcursor (S_MOUSE_CURSOR c);
-void s_video_sdl_mouse_draw (void);
 int s_video_sdl_mouse_update (s_mouse_driver_t *mouse);
 void s_video_sdl_mouse_uninit (void);
-void s_video_sdl_mouse_setxrange (int x1, int x2);
-void s_video_sdl_mouse_setyrange (int y1, int y2);
 
 void s_video_sdl_server_uninit (void);
 int s_video_sdl_server_init (s_server_conf_t *cfg);

@@ -154,8 +154,6 @@ typedef struct s_video_driver_s {
 	void (*kbd_switch) (int vt);
 
 	/* mouse */
-	void (*mouse_setxrange) (int x1, int x2);
-	void (*mouse_setyrange) (int y1, int y2);
 	int (*mouse_update) (s_mouse_driver_t *mouse);
 	void (*mouse_uninit) (void);
 	int (*mouse_init) (s_server_conf_t *cfg);
@@ -181,6 +179,9 @@ typedef struct s_server_s {
         s_theme_t theme;
         s_window_t *window;
 	s_video_driver_t *driver;
+
+	int mouse_rangex[2];
+	int mouse_rangey[2];
 
 	s_handler_t *whndl[20]; /* window move & resize handlers        */
 	int mh;                 /* mouse hint (search for server->mh)   */

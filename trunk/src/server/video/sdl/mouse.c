@@ -49,11 +49,6 @@ int s_video_sdl_mouse_update (s_mouse_driver_t *mouse)
 
         state = SDL_GetMouseState(&x, &y);
 
-	x = MAX(x, priv->rx[0]);
-	x = MIN(x, priv->rx[1]);
-	y = MAX(y, priv->ry[0]);
-	y = MIN(y, priv->ry[1]);
-
         mouse->x = x;
         mouse->y = y;
         mouse->buttons = 0;
@@ -79,20 +74,6 @@ void s_video_sdl_mouse_uninit (void)
 	priv->mouse_fd[0] = -1;
 	priv->mouse_fd[1] = -1;
 	s_server_cursor_uninit();
-}
-
-void s_video_sdl_mouse_setxrange (int x1, int x2)
-{
-	s_video_sdl_data_t *priv = server->driver->driver_data;
-	priv->rx[0] = x1;
-	priv->rx[1] = x2;
-}
-
-void s_video_sdl_mouse_setyrange (int y1, int y2)
-{
-	s_video_sdl_data_t *priv = server->driver->driver_data;
-	priv->ry[0] = y1;
-	priv->ry[1] = y2;
 }
 
 #endif /* VIDEO_SDL */

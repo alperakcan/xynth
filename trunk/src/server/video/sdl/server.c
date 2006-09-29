@@ -32,8 +32,6 @@ s_video_driver_t s_video_sdl = {
 	s_video_sdl_kbd_update,
 	s_video_sdl_kbd_uninit,
 	NULL,
-	s_video_sdl_mouse_setxrange,
-	s_video_sdl_mouse_setyrange,
 	s_video_sdl_mouse_update,
 	s_video_sdl_mouse_uninit,
 	s_video_sdl_mouse_init,

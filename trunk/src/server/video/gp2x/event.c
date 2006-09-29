@@ -26,6 +26,7 @@ void * s_video_gp2x_event_parse (void *arg)
 	int axisx;
 	int axisy;
 	unsigned long pad;
+	unsigned long pad_old;
 	unsigned long changed;
 	s_mouse_driver_t pad_send;
 	s_keybd_driver_t key_send;
@@ -43,11 +44,11 @@ void * s_video_gp2x_event_parse (void *arg)
 		if (pad == 0x7f) pad = 0xbe;
 		pad = ~((priv->gp2x_io[0x1184 >> 1] & 0xff00) | pad | (priv->gp2x_io[0x1186 >> 1] << 16));
 
-		changed = priv->pad_old.buttons ^ pad;
-		priv->pad_old.buttons = pad;
+		changed = pad_old ^ pad;
+		pad_old = pad;
 
-		axisx = priv->pad_old.x;
-		axisy = priv->pad_old.y;
+		axisx = s_mouse_getx();
+		axisy = s_mouse_gety();
 		if (pad & GP2X_LEFT) {
 			axisx -= MOUSE_ACCELL;
 		} else if (pad & GP2X_RIGHT) {
@@ -58,18 +59,15 @@ void * s_video_gp2x_event_parse (void *arg)
 		} else if (pad & GP2X_DOWN) {
 			axisy += MOUSE_ACCELL;
 		}
-		axisx = MAX(axisx, priv->rx[0]);
-		axisx = MIN(axisx, priv->rx[1]);
-		axisy = MAX(axisy, priv->ry[0]);
-		axisy = MIN(axisy, priv->ry[1]);
+		axisx = MAX(axisx, server->mouse_rangex[0]);
+		axisx = MIN(axisx, server->mouse_rangex[1]);
+		axisy = MAX(axisy, server->mouse_rangey[0]);
+		axisy = MIN(axisy, server->mouse_rangey[1]);
 
 		if ((changed & (GP2X_L |
 		                GP2X_R)) ||
-		    (axisx - priv->pad_old.x) ||
-		    (axisy - priv->pad_old.y)) {
-			priv->pad_old.x = axisx;
-			priv->pad_old.y = axisy;
-
+		    (axisx - s_mouse_getx()) ||
+		    (axisy - s_mouse_gety())) {
 			pad_send.x = axisx;
 			pad_send.y = axisy;
 			pad_send.buttons = pad & (GP2X_L |
