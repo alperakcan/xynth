@@ -40,8 +40,6 @@ int s_video_helper_touchscreen_init (s_server_conf_t *cfg)
 		debugf(DSER, "Touchscreen configuration error");
 	}
 
-	s_video_helper_mouse_cursor_init();
-
 	debugf(DSER, "Touchscreen initialized");
 
 	return ts_fd(ts);
