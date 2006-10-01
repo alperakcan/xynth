@@ -20,7 +20,7 @@
 
 #include "../../../lib/xynth_.h"
 #include "../../server.h"
-#include "tslib.h"
+#include <tslib.h>
  
 static struct tsdev *ts = NULL;
 
