@@ -355,7 +355,7 @@ static int load_draw_load (s_window_t *window)
         load_data_t *ldata;
 	s_surface_t surface;
 
-	ldata = (load_data_t *) window->client->user_data;
+	ldata = (load_data_t *) window->client->data;
 
 	vbuf = (char *) s_malloc(ldata->width * ldata->height * window->surface->bytesperpixel);
 	s_getsurfacevirtual(&surface, ldata->width, ldata->height, window->surface->bitsperpixel, vbuf);
@@ -385,7 +385,7 @@ static int load_get_load (s_window_t *window)
 	unsigned long long int c_sys_;
 	unsigned long long int c_idle_;
 
-	ldata = (load_data_t *) window->client->user_data;
+	ldata = (load_data_t *) window->client->data;
 
 	fp = fopen("/proc/stat", "r");
 	while (!feof(fp)) {
@@ -472,7 +472,7 @@ static int load_get_load (s_window_t *window)
 static void load_timer (s_window_t *window, s_timer_t *timer)
 {
 	load_data_t *ldata;
-	ldata = (load_data_t *) window->client->user_data;
+	ldata = (load_data_t *) window->client->data;
 	if (ldata->running) {
 		load_get_load(window);
 	}
@@ -482,7 +482,7 @@ static void load_atexit (s_window_t *window)
 {
 	load_data_t *ldata;
 
-	ldata = (load_data_t *) window->client->user_data;
+	ldata = (load_data_t *) window->client->data;
 	ldata->running = 0;
 	s_free(ldata);
 }
@@ -507,7 +507,7 @@ int main (int argc, char *argv[])
 	s_client_atexit(window, load_atexit);
 
 	ldata = (load_data_t *) s_calloc(1, sizeof(load_data_t));
-	window->client->user_data = (void *) ldata;
+	window->client->data = (void *) ldata;
 
 	ldata->running = 1;
 	ldata->width = 300;

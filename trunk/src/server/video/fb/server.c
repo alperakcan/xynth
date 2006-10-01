@@ -22,16 +22,35 @@
 
 #include <sys/mman.h>
 
+s_video_input_t s_video_fb_input_keybd = {
+	.keybd = {
+		VIDEO_INPUT_KEYBD,
+		fb_kbd_init,
+		s_video_helper_kbd_update,
+		s_video_helper_kbd_uninit,
+		s_video_helper_kbd_switch,
+	}
+};
+
+s_video_input_t s_video_fb_input_mouse = {
+	.mouse = {
+		VIDEO_INPUT_MOUSE,
+		s_video_helper_mouse_update,
+		s_video_helper_mouse_uninit,
+		s_video_helper_mouse_init,
+	}
+};
+
+s_video_input_t *s_video_fb_input[] = {
+	&s_video_fb_input_keybd,
+	&s_video_fb_input_mouse,
+	NULL,
+};
+
 s_video_driver_t s_video_fbdev = {
 	"fbdev",
 	"/dev/fb0",
-	fb_kbd_init,
-	s_video_helper_kbd_update,
-	s_video_helper_kbd_uninit,
-	s_video_helper_kbd_switch,
-	s_video_helper_mouse_update,
-	s_video_helper_mouse_uninit,
-	s_video_helper_mouse_init,
+	s_video_fb_input,
 	fb_server_init,
 	fb_server_uninit,
 	fb_server_goto_back,

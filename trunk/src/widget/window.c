@@ -21,7 +21,7 @@ void w_window_atevent (s_window_t *window, s_event_t *event)
 	w_object_t *objectn;
 	w_object_t *objectp;
 	w_window_t *windoww;
-	windoww = (w_window_t *) window->client->user_data;
+	windoww = (w_window_t *) window->client->data;
 	if (event->type & (MOUSE_EVENT | KEYBD_EVENT)) {
 		event->mouse->x -= window->surface->buf->x;
 		event->mouse->y -= window->surface->buf->y;
@@ -62,7 +62,7 @@ int w_window_init (w_window_t **window, S_WINDOW type, w_window_t *parent)
 	s_window_set_resizeable((*window)->window, 0);
 	w_object_init(*window, &((*window)->object), NULL, NULL);
 	s_client_atevent((*window)->window, w_window_atevent);
-	(*window)->window->client->user_data = (*window);
+	(*window)->window->client->data = (*window);
 	return 0;
 }
 

@@ -25,16 +25,35 @@
 	#include <sys/shm.h>
 #endif
 
+s_video_input_t s_video_sdl_input_keybd = {
+	.keybd = {
+		VIDEO_INPUT_KEYBD,
+		s_video_sdl_kbd_init,
+		s_video_sdl_kbd_update,
+		s_video_sdl_kbd_uninit,
+		NULL,
+	}
+};
+
+s_video_input_t s_video_sdl_input_mouse = {
+	.mouse = {
+		VIDEO_INPUT_MOUSE,
+		s_video_sdl_mouse_update,
+		s_video_sdl_mouse_uninit,
+		s_video_sdl_mouse_init,
+	}
+};
+
+s_video_input_t *s_video_sdl_input[] = {
+	&s_video_sdl_input_keybd,
+	&s_video_sdl_input_mouse,
+	NULL,
+};
+
 s_video_driver_t s_video_sdl = {
 	"sdl",
 	"NULL",
-	s_video_sdl_kbd_init,
-	s_video_sdl_kbd_update,
-	s_video_sdl_kbd_uninit,
-	NULL,
-	s_video_sdl_mouse_update,
-	s_video_sdl_mouse_uninit,
-	s_video_sdl_mouse_init,
+	s_video_sdl_input,
 	s_video_sdl_server_init,
 	s_video_sdl_server_uninit,
 	NULL,

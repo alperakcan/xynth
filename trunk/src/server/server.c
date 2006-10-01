@@ -417,9 +417,23 @@ int s_server_init (void)
 	s_pollfds_init(server->window);
 	s_timers_init(server->window);
 	s_server_socket_init();
-	s_server_mouse_init(&config);
-	s_server_kbd_init(&config);
-
+	
+	{
+		s_video_input_t **input;
+		for (input = server->driver->input; *input; input++) {
+			switch ((*input)->type) {
+				case VIDEO_INPUT_MOUSE:
+					s_server_mouse_init(&config, &((*input)->mouse));
+					break;
+				case VIDEO_INPUT_KEYBD:
+					s_server_kbd_init(&config, &((*input)->keybd));
+					break;
+				default:
+					break;
+			}
+		}
+	}
+	 
 	for (i = 0; i < 20; i++) {
 		s_handler_init(&(server->whndl[i]));
 	}

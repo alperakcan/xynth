@@ -94,7 +94,7 @@ int s_pollfds_uninit (s_window_t *window)
 		pfd = (s_pollfd_t *) s_list_get(window->pollfds->list, 0);
 		s_list_remove(window->pollfds->list, 0);
 		if (pfd->pf_close != NULL) {
-			pfd->pf_close(window, pfd->fd);
+			pfd->pf_close(window, pfd);
 		}
 		s_pollfd_uninit(pfd);
 	}

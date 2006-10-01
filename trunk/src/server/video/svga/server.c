@@ -173,16 +173,35 @@ static struct {
 	{M320x200x256V, G320x200x256V}
 };
 
+s_video_input_t s_video_svga_input_keybd = {
+	.keybd = {
+		VIDEO_INPUT_KEYBD,
+		s_video_svga_kbd_init,
+		s_video_helper_kbd_update,
+		s_video_helper_kbd_uninit,
+		s_video_helper_kbd_switch,
+	}
+};
+
+s_video_input_t s_video_svga_input_mouse = {
+	.mouse = {
+		VIDEO_INPUT_MOUSE,
+		s_video_helper_mouse_update,
+		s_video_helper_mouse_uninit,
+		s_video_helper_mouse_init,
+	}
+};
+
+s_video_input_t *s_video_svga_input[] = {
+	&s_video_svga_input_keybd,
+	&s_video_svga_input_mouse,
+	NULL,
+};
+
 s_video_driver_t s_video_svga = {
 	"svgalib",
 	"/dev/mem",
-	s_video_svga_kbd_init,
-	s_video_helper_kbd_update,
-	s_video_helper_kbd_uninit,
-	s_video_helper_kbd_switch,
-	s_video_helper_mouse_update,
-	s_video_helper_mouse_uninit,
-	s_video_helper_mouse_init,
+	s_video_svga_input,
 	s_video_svga_server_init,
 	s_video_svga_server_uninit,
 	s_video_svga_server_goto_back,

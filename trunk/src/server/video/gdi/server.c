@@ -20,16 +20,35 @@
 #include "../helper/helper.h"
 #include "gdi.h"
 
+s_video_input_t s_video_gdi_input_keybd = {
+	.keybd = {
+		VIDEO_INPUT_KEYBD,
+		s_video_gdi_kbd_init,
+		s_video_gdi_kbd_update,
+		s_video_gdi_kbd_uninit,
+		NULL,
+	}
+};
+
+s_video_input_t s_video_gdi_input_mouse = {
+	.mouse = {
+		VIDEO_INPUT_MOUSE,
+		s_video_gdi_mouse_update,
+		s_video_gdi_mouse_uninit,
+		s_video_gdi_mouse_init,
+	}
+};
+
+s_video_input_t *s_video_gdi_input[] = {
+	&s_video_gdi_input_keybd,
+	&s_video_gdi_input_mouse,
+	NULL,
+};
+
 s_video_driver_t s_video_gdi = {
 	"gdi",
 	"/dev/gdi",
-	s_video_gdi_kbd_init,
-	s_video_gdi_kbd_update,
-	s_video_gdi_kbd_uninit,
-	NULL,
-	s_video_gdi_mouse_update,
-	s_video_gdi_mouse_uninit,
-	s_video_gdi_mouse_init,
+	s_video_gdi_input,
 	s_video_gdi_server_init,
 	s_video_gdi_server_uninit,
 	NULL,

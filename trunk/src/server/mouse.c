@@ -277,45 +277,53 @@ void s_server_mouse_draw (void)
 	s_server_cursor_position(x, y);
 }
 
-int s_server_mouse_update (s_mouse_driver_t *mouse)
+int s_server_mouse_uninit (s_window_t *window, s_pollfd_t *pfd)
 {
-        if (server->driver->mouse_update != NULL) {
-		if (server->driver->mouse_update(mouse)) {
-			return -1;
+	s_video_input_mouse_t *mouse;
+	mouse = (s_video_input_mouse_t *) pfd->data;
+        if (mouse->mouse_uninit != NULL) {
+		mouse->mouse_uninit();
+	}
+	return 0;
+}
+
+int s_server_mouse_update (s_window_t *window, s_pollfd_t *pfd)
+{
+	s_mouse_driver_t mdata;
+	s_video_input_mouse_t *mouse;
+
+	mouse = (s_video_input_mouse_t *) pfd->data;
+	server->window->event->type = 0;
+	memset(&mdata, 0, sizeof(s_mouse_driver_t));
+
+	if (mouse->mouse_update != NULL) {
+		if (mouse->mouse_update(&mdata)) {
+			return 0;
 		}
-		mouse->x = MAX(mouse->x, server->mouse_rangex[0]);
-		mouse->x = MIN(mouse->x, server->mouse_rangex[1]);
-		mouse->y = MAX(mouse->y, server->mouse_rangey[0]);
-		mouse->y = MIN(mouse->y, server->mouse_rangey[1]);
-		return 0;
+		mdata.x = MAX(mdata.x, server->mouse_rangex[0]);
+		mdata.x = MIN(mdata.x, server->mouse_rangex[1]);
+		mdata.y = MAX(mdata.y, server->mouse_rangey[0]);
+		mdata.y = MIN(mdata.y, server->mouse_rangey[1]);
+		
+		if (s_server_event_parse_mouse(&mdata)) {
+			return 0;
+		}
+		s_server_event_changed();
 	}
-	return -1;
-}
 
-int s_server_mouse_uninit (s_window_t *window, int fd)
-{
-        if (server->driver->mouse_uninit != NULL) {
-		server->driver->mouse_uninit();
-	}
 	return 0;
 }
 
-int s_server_mouse_in_f (s_window_t *window, int s)
-{
-	s_server_event_parse(MOUSE_EVENT);
-	return 0;
-}
-
-void s_server_mouse_init (s_server_conf_t *cfg)
+void s_server_mouse_init (s_server_conf_t *cfg, s_video_input_mouse_t *mouse)
 {
 	int fd = -1;
 	s_pollfd_t *pfd;
 
-        if (server->driver->mouse_init != NULL) {
+        if (mouse->mouse_init != NULL) {
 		if (strcasecmp(cfg->mouse.type, "MOUSE_NONE") != 0) {
-			fd = server->driver->mouse_init(cfg);
+			fd = mouse->mouse_init(cfg);
 			if (fd < 0) {
-				debugf(DSER, "server->driver->mouse_init(cfg) failed");
+				debugf(DSER, "mouse->mouse_init(cfg) failed");
 			} else {
 				s_server_cursor_init();
 				server->window->event->mouse->x = server->window->surface->width / 2;
@@ -330,8 +338,9 @@ void s_server_mouse_init (s_server_conf_t *cfg)
 	} else {
 		s_pollfd_init(&pfd);
 		pfd->fd = fd;
-		pfd->pf_in = s_server_mouse_in_f;
+		pfd->pf_in = s_server_mouse_update;
 		pfd->pf_close = s_server_mouse_uninit;
+		pfd->data = mouse;
 		s_pollfd_add(server->window, pfd);
 	}
 }

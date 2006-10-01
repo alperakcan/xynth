@@ -547,7 +547,7 @@ typedef struct s_client_s {
 	void (*atevent) (s_window_t *, s_event_t *);
 	void (*atexit) (s_window_t *);
 
-	void *user_data;
+	void *data;
 } s_client_t;
 
 struct s_window_s {
@@ -1258,7 +1258,7 @@ struct s_handler_s {
 	/** keyboard handler */
 	s_handler_keybd_t keybd;
 	/** user data which will be passed through callback functions */
-	void *user_data;
+	void *data;
 };
 
 /** handlers struct
@@ -1760,11 +1760,13 @@ struct s_pollfd_s {
 	/** fd to poll */
 	int fd;
 	/** in data call back function */
-	int (*pf_in) (s_window_t *, int);
+	int (*pf_in) (s_window_t *, s_pollfd_t *);
 	/** error call back function */
-	int (*pf_err) (s_window_t *, int);
+	int (*pf_err) (s_window_t *, s_pollfd_t *);
 	/** closing call back function */
-	int (*pf_close) (s_window_t *, int);
+	int (*pf_close) (s_window_t *, s_pollfd_t *);
+	/** user data */
+	void *data;
 };
 
 /** polfds struct
@@ -1963,12 +1965,12 @@ int s_socket_listen_expose (s_window_t *window, int soc);
 int s_socket_listen_desktop (s_window_t *window, int soc);
 int s_socket_listen_parse (s_window_t *window, int soc);
 int s_socket_listen_wait (s_window_t *window, int timeout);
-int s_socket_uninit (s_window_t *window, int s);
-int s_socket_in_f (s_window_t *window, int s);
-int s_socket_ierr_f (s_window_t *window, int s);
-int s_socket_inw_f (s_window_t *window, int s);
-int s_socket_ierrw_f (s_window_t *window, int s);
-int s_socket_closew_f (s_window_t *window, int s);	
+int s_socket_uninit (s_window_t *window, s_pollfd_t *pfd);
+int s_socket_in_f (s_window_t *window, s_pollfd_t *pfd);
+int s_socket_ierr_f (s_window_t *window, s_pollfd_t *pfd);
+int s_socket_inw_f (s_window_t *window, s_pollfd_t *pfd);
+int s_socket_ierrw_f (s_window_t *window, s_pollfd_t *pfd);
+int s_socket_closew_f (s_window_t *window, s_pollfd_t *pfd);	
 int s_socket_init_uds (s_window_t *window);
 int s_socket_init_tcp (s_window_t *window);
 int s_socket_init_wakeup (s_window_t *window);

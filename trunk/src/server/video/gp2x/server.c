@@ -25,16 +25,35 @@
 #include "../helper/helper.h"
 #include "gp2x.h"
 
+s_video_input_t s_video_gp2x_input_keybd = {
+	.keybd = {
+		VIDEO_INPUT_KEYBD,
+		s_video_gp2x_kbd_init,
+		s_video_gp2x_kbd_update,
+		s_video_gp2x_kbd_uninit,
+		NULL,
+	}
+};
+
+s_video_input_t s_video_gp2x_input_mouse = {
+	.mouse = {
+		VIDEO_INPUT_MOUSE,
+		s_video_gp2x_mouse_update,
+		s_video_gp2x_mouse_uninit,
+		s_video_gp2x_mouse_init,
+	}
+};
+
+s_video_input_t *s_video_gp2x_input[] = {
+	&s_video_gp2x_input_keybd,
+	&s_video_gp2x_input_mouse,
+	NULL,
+};
+
 s_video_driver_t s_video_gp2x = {
 	"gp2x",
 	"/dev/mem",
-	s_video_gp2x_kbd_init,
-	s_video_gp2x_kbd_update,
-	s_video_gp2x_kbd_uninit,
-	s_video_gp2x_kbd_switch,
-	s_video_gp2x_mouse_update,
-	s_video_gp2x_mouse_uninit,
-	s_video_gp2x_mouse_init,
+	s_video_gp2x_input,
 	s_video_gp2x_server_init,
 	s_video_gp2x_server_uninit,
 	s_video_gp2x_server_goto_back,

@@ -55,8 +55,4 @@ void s_video_gp2x_kbd_uninit (void)
 	priv->keybd_fd[1] = -1;
 }
 
-void s_video_gp2x_kbd_switch (int vt)
-{
-}
-
 #endif /* VIDEO_GP2X */

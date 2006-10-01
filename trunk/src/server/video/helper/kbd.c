@@ -56,7 +56,8 @@ static void s_video_helper_kbd_signal_handler (int v)
 {
 	int i;
 
-	s_server_kbd_uninit(server->window, s_video_helper_keybd.fd);
+	s_video_helper_kbd_uninit();
+	s_server_quit(server->window);
 
 	debugf(DSER, "Signal %d: %s received %s", v, strsignal(v), (v == SIGINT) ? "(ctrl-alt-backspace or ctrl-c pressed)" : "");
 
@@ -79,7 +80,8 @@ static void s_video_helper_kbd_atexit (void)
 		return;
 	}
 	if (s_video_helper_keybd.pid == getpid()) {
-		s_server_kbd_uninit(server->window, s_video_helper_keybd.fd);
+		s_video_helper_kbd_uninit();
+		s_server_quit(server->window);
 	}
 }
 
