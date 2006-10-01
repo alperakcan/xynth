@@ -34,7 +34,7 @@ static void img_show (s_window_t *window)
 	s_surface_t *srf;
 	img_data_t *imgd;
 
-	imgd = window->client->user_data;
+	imgd = window->client->data;
 
 	name = (char *) s_list_get(imgd->imgl, imgd->imgp);
 	if (name == NULL) {
@@ -73,7 +73,7 @@ static void img_show (s_window_t *window)
 static void img_atevent (s_window_t *window, s_event_t *event)
 {
 	img_data_t *imgd;
-	imgd = window->client->user_data;
+	imgd = window->client->data;
 
 	if (event->type & CONFIG_EVENT) {
 		if (event->type & (CONFIG_CHNGW |  CONFIG_CHNGH)) {
@@ -149,7 +149,7 @@ int main (int argc, char *argv[])
 	s_window_new(window, WINDOW_MAIN, NULL);
         s_window_set_title(window, "Demo - %s ", argv[0]);
 
-        window->client->user_data = imgd;
+        window->client->data = imgd;
 
         imgd->imgf = 0;
         imgd->imgp = 0;

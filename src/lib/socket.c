@@ -485,12 +485,12 @@ int s_socket_listen_wait (s_window_t *window, int timeout)
 				}
 				if (polfd[i].revents & (POLLHUP | POLLERR | POLLNVAL)) {
 err:					if (pfd->pf_err != NULL) {
-						retval = pfd->pf_err(window, polfd[i].fd);
+						retval = pfd->pf_err(window, pfd);
 						goto end;
 					}
 				} else if (polfd[i].revents == POLLIN) {
 					if (pfd->pf_in != NULL) {
-						if ((retval = pfd->pf_in(window, polfd[i].fd)) < 0) {
+						if ((retval = pfd->pf_in(window, pfd)) < 0) {
 							debugf(DSER, "pfd->in(window, polfd[%d].fd) < 0) Calling pfd->ierr if exists", i);
 							goto err;
 						}
@@ -525,39 +525,39 @@ end:	i = 0;
 	return retval;
 }
 
-int s_socket_uninit (s_window_t *window, int s)
+int s_socket_uninit (s_window_t *window, s_pollfd_t *pfd)
 {
 	s_thread_mutex_destroy(window->socket_mutex);
-	s_socket_api_close(s);
+	s_socket_api_close(pfd->fd);
 	return 0;
 }
 
-int s_socket_in_f (s_window_t *window, int s)
+int s_socket_in_f (s_window_t *window, s_pollfd_t *pfd)
 {
-	return s_socket_listen_parse(window, s);
+	return s_socket_listen_parse(window, pfd->fd);
 }
 
-int s_socket_ierr_f (s_window_t *window, int s)
+int s_socket_ierr_f (s_window_t *window, s_pollfd_t *pfd)
 {
 	debugf(DCLI, "[%d] Server side closed the connection", window->client->id);
 	return -1;
 }
 
-int s_socket_inw_f (s_window_t *window, int s)
+int s_socket_inw_f (s_window_t *window, s_pollfd_t *pfd)
 {
         int w;
-	s_pipe_api_read(s, &w, sizeof(int));
+	s_pipe_api_read(pfd->fd, &w, sizeof(int));
 	return 0;
 }
 
-int s_socket_ierrw_f (s_window_t *window, int s)
+int s_socket_ierrw_f (s_window_t *window, s_pollfd_t *pfd)
 {
 	return -1;
 }
 
-int s_socket_api_closew_f (s_window_t *window, int s)
+int s_socket_api_closew_f (s_window_t *window, s_pollfd_t *pfd)
 {
-	s_pipe_api_close(s);
+	s_pipe_api_close(pfd->fd);
 	s_pipe_api_close(window->wsoc);
 	return 0;
 }

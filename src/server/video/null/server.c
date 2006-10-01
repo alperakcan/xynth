@@ -19,16 +19,35 @@
 #include "../../server.h"
 #include "null.h"
 
+s_video_input_t s_video_null_input_keybd = {
+	.keybd = {
+		VIDEO_INPUT_KEYBD,
+		s_video_null_kbd_init,
+		s_video_null_kbd_update,
+		s_video_null_kbd_uninit,
+		s_video_null_kbd_switch,
+	}
+};
+
+s_video_input_t s_video_null_input_mouse = {
+	.mouse = {
+		VIDEO_INPUT_MOUSE,
+		s_video_null_mouse_update,
+		s_video_null_mouse_uninit,
+		s_video_null_mouse_init,
+	}
+};
+
+s_video_input_t *s_video_null_input[] = {
+	&s_video_null_input_keybd,
+	&s_video_null_input_mouse,
+	NULL,
+};
+
 s_video_driver_t s_video_null = {
 	"null",
 	"/dev/null",
-	s_video_null_kbd_init,
-	s_video_null_kbd_update,
-	s_video_null_kbd_uninit,
-	s_video_null_kbd_switch,
-	s_video_null_mouse_update,
-	s_video_null_mouse_uninit,
-	s_video_null_mouse_init,
+	s_video_null_input,
 	s_video_null_server_init,
 	s_video_null_server_uninit,
 	s_video_null_server_goto_back,

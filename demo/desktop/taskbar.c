@@ -25,7 +25,7 @@ void taskbar_progs_handler_r (s_window_t *window, s_event_t *event, s_handler_t 
         tbar_progs_t *tbar_progs;
         s_desktop_client_t *desktopc;
 
-        tbar_data = (tbar_data_t *) window->client->user_data;
+        tbar_data = (tbar_data_t *) window->client->data;
         tbar_progs = (tbar_progs_t *) tbar_data->tbar_progs;
 
 	px = event->mouse->x - tbar_progs->rect.x;
@@ -109,7 +109,7 @@ void taskbar_progs_draw (s_window_t *window)
         s_desktop_client_t *desktopc;
 
         pos = 0;
-        tbar_data = (tbar_data_t *) window->client->user_data;
+        tbar_data = (tbar_data_t *) window->client->data;
         tbar_progs = (tbar_progs_t *) tbar_data->tbar_progs;
 
 	if (tbar_progs->desktop->clients->nb_elt > 0) {
@@ -142,7 +142,7 @@ void taskbar_start_menu_icon (s_window_t *window)
         tbar_data_t *tbar_data;
         tbar_smenu_t *tbar_smenu;
 
-        tbar_data = (tbar_data_t *) window->client->user_data;
+        tbar_data = (tbar_data_t *) window->client->data;
         tbar_smenu = (tbar_smenu_t *) tbar_data->tbar_smenu;
 
 	srf = (s_surface_t *) s_malloc(sizeof(s_surface_t));
@@ -161,7 +161,7 @@ void taskbar_start_menu_handler_p (s_window_t *window, s_event_t *event, s_handl
         tbar_data_t *tbar_data;
         tbar_smenu_t *tbar_smenu;
 
-        tbar_data = (tbar_data_t *) window->client->user_data;
+        tbar_data = (tbar_data_t *) window->client->data;
         tbar_smenu = (tbar_smenu_t *) tbar_data->tbar_smenu;
 
         while (tbar_data->tbar_smenu->running) {
@@ -185,7 +185,7 @@ void taskbar_start_menu_handler_rh (s_window_t *window, s_event_t *event, s_hand
         tbar_progs_t *tbar_progs;
         tbar_smenu_t *tbar_smenu;
 
-        tbar_data = (tbar_data_t *) window->client->user_data;
+        tbar_data = (tbar_data_t *) window->client->data;
         tbar_smenu = (tbar_smenu_t *) tbar_data->tbar_smenu;
         tbar_progs = (tbar_progs_t *) tbar_data->tbar_progs;
 
@@ -205,7 +205,7 @@ void taskbar_clock_popup_atexit (s_window_t *window)
 {
         tbar_data_t *tbar_data;
         tbar_clock_t *tbar_clock;
-        tbar_data = (tbar_data_t *) window->parent->client->user_data;
+        tbar_data = (tbar_data_t *) window->parent->client->data;
         tbar_clock = (tbar_clock_t *) tbar_data->tbar_clock;
 	tbar_clock->clock = NULL;
 }
@@ -217,7 +217,7 @@ void taskbar_clock_popup_atevent (s_window_t *window, s_event_t *event)
 	tbar_data_t *tbar_data;
 	tbar_clock_t *tbar_clock;
 	if (event->type & MOUSE_EVENT) {
-		tbar_data = (tbar_data_t *) window->parent->client->user_data;
+		tbar_data = (tbar_data_t *) window->parent->client->data;
 		tbar_clock = (tbar_clock_t *) tbar_data->tbar_clock;
 		x = event->mouse->x - window->parent->surface->buf->x;
 		y = event->mouse->y - window->parent->surface->buf->y;
@@ -234,7 +234,7 @@ void taskbar_clock_handler_oh (s_window_t *window, s_event_t *event, s_handler_t
 {
         tbar_data_t *tbar_data;
         tbar_clock_t *tbar_clock;
-	tbar_data = (tbar_data_t *) window->client->user_data;
+	tbar_data = (tbar_data_t *) window->client->data;
 	tbar_clock = tbar_data->tbar_clock;
 	if (tbar_clock->clock == NULL) {
 		return;
@@ -257,7 +257,7 @@ void taskbar_clock_handler_o (s_window_t *window, s_event_t *event, s_handler_t 
 	char *mons[] = {"January", "February", "March", "April", "May", "June", "July",
 	                "August", "September", "October", "November", "December"};
 
-	tbar_data = (tbar_data_t *) window->client->user_data;
+	tbar_data = (tbar_data_t *) window->client->data;
 	tbar_clock = tbar_data->tbar_clock;
 
 	if (tbar_clock->clock != NULL) {
@@ -350,7 +350,7 @@ void taskbar_clock_draw (s_window_t *window, s_timer_t *timer)
 	int c1 = s_rgbcolor(window->surface, 255, 255, 255);
 	int c2 = s_rgbcolor(window->surface, 220, 220, 220);
 
-	tbar_data = (tbar_data_t *) window->client->user_data;
+	tbar_data = (tbar_data_t *) window->client->data;
 	tbar_clock = tbar_data->tbar_clock;
 
 	t_ = time(NULL);
@@ -411,7 +411,7 @@ void taskbar_atexit (s_window_t *window)
         tbar_clock_t *tbar_clock;
         s_desktop_client_t *desktopc;
 
-        tbar_data = (tbar_data_t *) window->client->user_data;
+        tbar_data = (tbar_data_t *) window->client->data;
         tbar_progs = (tbar_progs_t *) tbar_data->tbar_progs;
         tbar_clock = (tbar_clock_t *) tbar_data->tbar_clock;
 
@@ -452,7 +452,7 @@ void taskbar_atevent (s_window_t *window, s_event_t *event)
 		return;
 	}
 
-        tbar_data = (tbar_data_t *) window->client->user_data;
+        tbar_data = (tbar_data_t *) window->client->data;
         tbar_progs = (tbar_progs_t *) tbar_data->tbar_progs;
 
 	while (!s_list_eol(tbar_progs->desktop->clients, 0)) {
@@ -519,7 +519,7 @@ void taskbar_start (s_window_t *window, s_config_t *cfg)
 	s_image_img(DESKTOPDIR "/img/widget/button3.png", tbar_data->tbar_progs->prog_img[1]);
 	s_image_get_buf(window->surface, tbar_data->tbar_progs->prog_img[1]);
 
-	window->client->user_data = (void *) tbar_data;
+	window->client->data = (void *) tbar_data;
 
 	s_fillbox(window->surface, 0, 0, window->surface->buf->w, window->surface->buf->h, s_rgbcolor(window->surface, 255, 255, 255));
 	s_fillbox(window->surface, 1, 1, window->surface->buf->w - 1, window->surface->buf->h - 1, s_rgbcolor(window->surface, 115, 117, 115));
@@ -575,7 +575,7 @@ void taskbar_start (s_window_t *window, s_config_t *cfg)
 	hndl->mouse.h = tbar_data->tbar_clock->rect.h;
 	hndl->mouse.o = taskbar_clock_handler_o;
 	hndl->mouse.oh = taskbar_clock_handler_oh;
-	hndl->user_data = NULL;
+	hndl->data = NULL;
 	s_handler_add(window, hndl);
 	
 	start_menu_setup(window, cfg);

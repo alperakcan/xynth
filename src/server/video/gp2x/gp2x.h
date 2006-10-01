@@ -32,7 +32,6 @@ typedef struct s_video_gp2x_data_s {
 int s_video_gp2x_kbd_init (s_server_conf_t *cfg);
 void s_video_gp2x_kbd_update (s_keybd_driver_t *keybd);
 void s_video_gp2x_kbd_uninit (void);
-void s_video_gp2x_kbd_switch (int vt);
 
 int s_video_gp2x_mouse_init (s_server_conf_t *cfg);
 void s_video_gp2x_mouse_setcursor (S_MOUSE_CURSOR c);

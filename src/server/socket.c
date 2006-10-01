@@ -287,14 +287,14 @@ int s_server_socket_listen_parse (int soc)
 end:	return 0;
 }
 
-int s_server_socket_client_in_f (s_window_t *window, int soc)
+int s_server_socket_client_in_f (s_window_t *window, s_pollfd_t *pfd)
 {
-	return s_server_socket_listen_parse(soc);
+	return s_server_socket_listen_parse(pfd->fd);
 }
 
-int s_server_socket_client_ierr_f (s_window_t *window, int soc)
+int s_server_socket_client_ierr_f (s_window_t *window, s_pollfd_t *pfd)
 {
-	return s_server_socket_listen_window_close(soc);
+	return s_server_socket_listen_window_close(pfd->fd);
 }
 
 int s_server_socket_listen_accept (int soc)
@@ -471,21 +471,21 @@ err:		debugf(DSER, "Error occured when requesting (%d) from client[%d]. Closing 
 	return ret;
 }
 
-int s_server_socket_uninit (s_window_t *window, int soc)
+int s_server_socket_uninit (s_window_t *window, s_pollfd_t *pfd)
 {
-	s_socket_api_close(soc);
+	s_socket_api_close(pfd->fd);
 #if defined(IPC_UDS)
 	unlink(S_SERVER_SOC_NAME);
 #endif
 	return 0;
 }
 
-int s_server_socket_in_f (s_window_t *window, int soc)
+int s_server_socket_in_f (s_window_t *window, s_pollfd_t *pfd)
 {
-	return s_server_socket_listen_accept(soc);
+	return s_server_socket_listen_accept(pfd->fd);
 }
 
-int s_server_socket_ierr_f (s_window_t *window, int soc)
+int s_server_socket_ierr_f (s_window_t *window, s_pollfd_t *pfd)
 {
         return 0;
 }

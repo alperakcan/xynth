@@ -19,6 +19,8 @@
 void s_server_kbd_switch_handler (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
         int f = -1;
+	s_video_input_keybd_t *keybd;
+	keybd = (s_video_input_keybd_t *) handler->data;
 
         switch (event->keybd->button) {
 		case S_KEYCODE_F1:  f = 1;  break;
@@ -34,7 +36,9 @@ void s_server_kbd_switch_handler (s_window_t *window, s_event_t *event, s_handle
 	};
 
 	if (f >= 0) {
-		s_server_kdb_switch(f);
+		if (keybd->kbd_switch != NULL) {
+			keybd->kbd_switch(f);
+		}
 		memset(server->window->event->keybd, 0, sizeof(s_keybd_t));
 		server->window->event->type &= ~KEYBD_MASK;
 	}
@@ -50,32 +54,42 @@ void s_server_kbd_server_quit_handler (s_window_t *window, s_event_t *event, s_h
 	s_server_quit(window);
 }
 
-int s_server_kbd_in_f (s_window_t *window, int s)
+int s_server_kbd_update (s_window_t *window, s_pollfd_t *pfd)
 {
-	s_server_event_parse(KEYBD_EVENT);
+	s_keybd_driver_t kdata;
+	s_video_input_keybd_t *keybd;
+	keybd = (s_video_input_keybd_t *) pfd->data;
+	server->window->event->type = 0;
+	memset(&kdata, 0, sizeof(s_keybd_driver_t));
+	if (keybd->kbd_update != NULL) {
+		keybd->kbd_update(&kdata);
+		s_server_event_parse_keyboard(&kdata);
+	}
+	s_server_event_changed();
 	return 0;
 }
 
-void s_server_kbd_init (s_server_conf_t *cfg)
+void s_server_kbd_init (s_server_conf_t *cfg, s_video_input_keybd_t *keybd)
 {
 	int i;
 	int fd = -1;
 	s_pollfd_t *pfd;
 	s_handler_t *hndl;
 
-        if (server->driver->kbd_init != NULL) {
-		fd = server->driver->kbd_init(cfg);
+        if (keybd->kbd_init != NULL) {
+		fd = keybd->kbd_init(cfg);
 	}
 	if (fd < 0) {
-		debugf(DSER, "server->driver->kbd_init(cfg) failed");
+		debugf(DSER, "keybd->kbd_init(cfg) failed");
 		debugf(DSER, "keyboard support disabled");
 		return;
 	}
 
 	s_pollfd_init(&pfd);
 	pfd->fd = fd;
-        pfd->pf_in = s_server_kbd_in_f;
+        pfd->pf_in = s_server_kbd_update;
         pfd->pf_close = s_server_kbd_uninit;
+        pfd->data = keybd;
         s_pollfd_add(server->window, pfd);
 
         s_handler_init(&hndl);
@@ -109,29 +123,18 @@ void s_server_kbd_init (s_server_conf_t *cfg)
 			case 10: hndl->keybd.button = S_KEYCODE_F10; break;
 		};
 		hndl->keybd.p = s_server_kbd_switch_handler;
+		hndl->data = keybd;
 		s_handler_add(server->window, hndl);
 	}
 }
 
-int s_server_kbd_uninit (s_window_t *window, int fd)
+int s_server_kbd_uninit (s_window_t *window, s_pollfd_t *pfd)
 {
-        if (server->driver->kbd_uninit != NULL) {
-		server->driver->kbd_uninit();
+	s_video_input_keybd_t *keybd;
+	keybd = (s_video_input_keybd_t *) pfd->data;
+        if (keybd->kbd_uninit != NULL) {
+		keybd->kbd_uninit();
 	}
         s_server_quit(server->window);
         return 0;
-}
-
-void s_server_kbd_update (s_keybd_driver_t *keybd)
-{
-        if (server->driver->kbd_update != NULL) {
-		server->driver->kbd_update(keybd);
-	}
-}
-
-void s_server_kdb_switch (int vt)
-{
-        if (server->driver->kbd_switch != NULL) {
-		server->driver->kbd_switch(vt);
-	}
 }

@@ -891,7 +891,7 @@ static void pfd_in_escape (s_window_t *window, int fd)
 	}
 }
 
-static int pfd_in (s_window_t *window, int fd)
+static int pfd_in (s_window_t *window, s_pollfd_t *pfd)
 {
         int x;
         char chr;
@@ -900,7 +900,7 @@ static int pfd_in (s_window_t *window, int fd)
 
 	box = (char *) s_malloc(FONTW * SCREENW * FONTH * SCREENH * window->surface->bytesperpixel + 1);
 
-        chr = get_char(fd);
+        chr = get_char(pfd->fd);
 
 pdf_in_g0:
 	switch (chr) {
@@ -927,7 +927,7 @@ pdf_in_g0:
 			charset = 0;
 			break;
 		case '\033': /* escape */
-			pfd_in_escape(window, fd);
+			pfd_in_escape(window, pfd->fd);
 			break;
 		case '\r':   /* carriage return */
 			cursorx = 1;
@@ -948,7 +948,7 @@ pdf_in_g0:
 	if (cursorx > SCREENW) {
 		cursorx = 1;
 		if (mode.wraparound == 0) {
-			chr = get_char(fd);
+			chr = get_char(pfd->fd);
 			if ((chr != '\n') && (chr != '\r') && (chr != '\033')) {
 				chr_ = 1;
 				cursory++;
@@ -978,7 +978,7 @@ pdf_in_g0:
 	return 0;
 }
 
-static int pfd_err (s_window_t *window, int fd)
+static int pfd_err (s_window_t *window, s_pollfd_t *pfd)
 {
 	exit(2);
 }

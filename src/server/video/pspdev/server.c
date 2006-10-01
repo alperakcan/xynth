@@ -28,16 +28,35 @@
 	#define PSP_BITSPERPIXEL 32
 #endif
 
+s_video_input_t s_video_pspdev_input_keybd = {
+	.keybd = {
+		VIDEO_INPUT_KEYBD,
+		s_video_pspdev_kbd_init,
+		s_video_pspdev_kbd_update,
+		s_video_pspdev_kbd_uninit,
+		NULL,
+	}
+};
+
+s_video_input_t s_video_pspdev_input_mouse = {
+	.mouse = {
+		VIDEO_INPUT_MOUSE,
+		s_video_pspdev_mouse_update,
+		s_video_pspdev_mouse_uninit,
+		s_video_pspdev_mouse_init,
+	}
+};
+
+s_video_input_t *s_video_pspdev_input[] = {
+	&s_video_pspdev_input_keybd,
+	&s_video_pspdev_input_mouse,
+	NULL,
+};
+
 s_video_driver_t s_video_pspdev = {
 	"pspdev",
 	"/dev/pspdev",
-	s_video_pspdev_kbd_init,
-	s_video_pspdev_kbd_update,
-	s_video_pspdev_kbd_uninit,
-	NULL,
-	s_video_pspdev_mouse_update,
-	s_video_pspdev_mouse_uninit,
-	s_video_pspdev_mouse_init,
+	s_video_pspdev_input,
 	s_video_pspdev_server_init,
 	s_video_pspdev_server_uninit,
 	NULL,

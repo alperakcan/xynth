@@ -84,31 +84,24 @@ void s_server_event_parse_keyboard (s_keybd_driver_t *keybd)
 	server->window->event->keybd->state[keybd->keycode] = keybd->state;
 }
 
-int s_server_event_parse_mouse (void)
+int s_server_event_parse_mouse (s_mouse_driver_t *mouse)
 {
 	long long time;
-	s_mouse_driver_t mouse;
-
-	memset(&mouse, 0, sizeof(s_mouse_driver_t));
-
-	if (s_server_mouse_update(&mouse)) {
-		return 1;
-	}
 
 	time = s_gettimeofday();
 	server->window->event->type |= MOUSE_EVENT;
 
-	if ((server->window->event->mouse->x != mouse.x) ||
-	    (server->window->event->mouse->y != mouse.y)) {
+	if ((server->window->event->mouse->x != mouse->x) ||
+	    (server->window->event->mouse->y != mouse->y)) {
 	    	server->window->event->mouse->x_old = server->window->event->mouse->x;
 	    	server->window->event->mouse->y_old = server->window->event->mouse->y;
-		server->window->event->mouse->x = mouse.x;
-		server->window->event->mouse->y = mouse.y;
+		server->window->event->mouse->x = mouse->x;
+		server->window->event->mouse->y = mouse->y;
 		s_server_mouse_draw();
 	}
 
 	server->window->event->mouse->pbuttons = server->window->event->mouse->buttons;
-	server->window->event->mouse->buttons = mouse.buttons;
+	server->window->event->mouse->buttons = mouse->buttons;
 
         if (server->window->event->mouse->buttons > server->window->event->mouse->pbuttons) {
 		server->window->event->type |= MOUSE_PRESSED;
@@ -245,28 +238,4 @@ void s_server_event_changed (void)
 			}
 		}
 	}
-}
-
-void s_server_event_parse (S_EVENT event)
-{
-	s_keybd_driver_t keybd;
-	server->window->event->type = 0;
-
-	switch (event) {
-		case KEYBD_EVENT:
-			memset(&keybd, 0, sizeof(s_keybd_driver_t));
-			s_server_kbd_update(&keybd);
-			s_server_event_parse_keyboard(&keybd);
-			break;
-		case MOUSE_EVENT:
-			if (s_server_event_parse_mouse()) {
-				return;
-			}
-			break;
-		default:
-			debugf(DSER, "this should not happen");
-			return;
-	}
-
-	s_server_event_changed();
 }

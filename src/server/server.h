@@ -143,22 +143,39 @@ typedef struct s_keybd_driver_s {
 	int ascii;
 } s_keybd_driver_t;
 
-typedef struct s_video_driver_s {
-	char *driver;
-	char *device;
+typedef enum {
+	VIDEO_INPUT_NONE,
+	VIDEO_INPUT_MOUSE,
+	VIDEO_INPUT_KEYBD,
+} VIDEO_INPUT;
 
-	/* kbd */
+typedef struct s_video_input_mouse_s {
+	VIDEO_INPUT type;
+	int (*mouse_update) (s_mouse_driver_t *mouse);
+	void (*mouse_uninit) (void);
+	int (*mouse_init) (s_server_conf_t *cfg);
+} s_video_input_mouse_t;
+
+typedef struct s_video_input_keybd_s {
+	VIDEO_INPUT type;
 	int (*kbd_init) (s_server_conf_t *cfg);
 	void (*kbd_update) (s_keybd_driver_t *keybd);
 	void (*kbd_uninit) (void);
 	void (*kbd_switch) (int vt);
+} s_video_input_keybd_t;
 
-	/* mouse */
-	int (*mouse_update) (s_mouse_driver_t *mouse);
-	void (*mouse_uninit) (void);
-	int (*mouse_init) (s_server_conf_t *cfg);
+typedef union s_video_input_u {
+	VIDEO_INPUT type;
+	s_video_input_mouse_t mouse;
+	s_video_input_keybd_t keybd;
+} s_video_input_t;
 
-	/* server */
+typedef struct s_video_driver_s {
+	char *driver;
+	char *device;
+
+	s_video_input_t **input;
+
 	int (*server_init) (s_server_conf_t *cfg);
 	void (*server_uninit) (void);
 	void (*server_goto_back) (void);
@@ -197,9 +214,9 @@ s_server_t *server;
 
 /* event.c */
 void s_server_event_parse_keyboard (s_keybd_driver_t *keybd);
-int s_server_event_parse_mouse (void);
+int s_server_event_parse_mouse (s_mouse_driver_t *mouse);
+int s_event_changed_ (s_window_t *window);
 void s_server_event_changed (void);
-void s_server_event_parse (S_EVENT event);
 
 /* id.c */
 int s_server_id_get (void);
@@ -207,22 +224,14 @@ int s_server_id_find (int soc);
 void s_server_id_del (int id);
 
 /* kbd.c */
-void s_server_kbd_init (s_server_conf_t *cfg);
-void s_server_kbd_update (s_keybd_driver_t *keybd);
-int s_server_kbd_uninit (s_window_t *window, int fd);
-void s_server_kdb_switch (int vt);
+void s_server_kbd_switch_handler (s_window_t *window, s_event_t *event, s_handler_t *handler);
+void s_server_kbd_window_close_handler (s_window_t *window, s_event_t *event, s_handler_t *handler);
+void s_server_kbd_server_quit_handler (s_window_t *window, s_event_t *event, s_handler_t *handler);
+int s_server_kbd_update (s_window_t *window, s_pollfd_t *pfd);
+void s_server_kbd_init (s_server_conf_t *cfg, s_video_input_keybd_t *keybd);
+int s_server_kbd_uninit (s_window_t *window, s_pollfd_t *pfd);
 
 /* mouse.c */
-int s_mouse_getx (void);
-int s_mouse_gety (void);
-void s_mouse_setxrange (s_window_t *window, int a, int b);
-void s_mouse_setyrange (s_window_t *window, int a, int b);
-void s_server_mouse_setcursor (S_MOUSE_CURSOR c);
-void s_server_mouse_draw (void);
-int s_server_mouse_update (s_mouse_driver_t *mouse);
-int s_server_mouse_uninit (s_window_t *window, int fd);
-int s_server_mouse_in_f (s_window_t *window, int s);
-void s_server_mouse_init (s_server_conf_t *cfg);
 void s_server_cursor_uninit (void);
 void s_server_cursor_init (void);
 void s_server_cursor_image_set (int which, int c0, int c1, unsigned int *c);
@@ -230,10 +239,18 @@ void s_server_cursor_matrix_add (void);
 void s_server_cursor_draw (void);
 void s_server_cursor_select (S_MOUSE_CURSOR c);
 void s_server_cursor_position (int x, int y);
+int s_mouse_getx (void);
+int s_mouse_gety (void);
+void s_mouse_setxrange (s_window_t *window, int a, int b);
+void s_mouse_setyrange (s_window_t *window, int a, int b);
+void s_server_mouse_setcursor (S_MOUSE_CURSOR c);
+void s_server_mouse_draw (void);
+int s_server_mouse_uninit (s_window_t *window, s_pollfd_t *pfd);
+int s_server_mouse_update (s_window_t *window, s_pollfd_t *pfd);
+void s_server_mouse_init (s_server_conf_t *cfg, s_video_input_mouse_t *mouse);
 
 /* priority.c */
 void s_server_pri_set (S_SURFACE_CHNGF flag, ...);
-void s_server_pri_set_add_diff (s_rect_t *diff, int s_id, int p_id, s_list_t *result);
 void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1);
 int s_server_id_pri (int id);
 int s_server_pri_id (int pri);
@@ -244,8 +261,8 @@ int s_server_cfg_check_digit (char *ptr, char *digits);
 char * s_server_cfg_token (char **ptr);
 int s_server_cfg (s_server_conf_t *config);
 int s_server_init (void);
-void s_server_uninit (void);
 void s_server_quit (s_window_t *window);
+void s_server_uninit (void);
 void s_server_goto_back (void);
 void s_server_comefrom_back (void);
 void s_server_restore (void);
@@ -269,17 +286,17 @@ int s_server_socket_listen_show (int id);
 int s_server_socket_listen_event (int id);
 int s_server_socket_listen_window_close (int soc);
 int s_server_socket_listen_parse (int soc);
-int s_server_socket_client_in_f (s_window_t *window, int soc);
-int s_server_socket_client_ierr_f (s_window_t *window, int soc);
+int s_server_socket_client_in_f (s_window_t *window, s_pollfd_t *pfd);
+int s_server_socket_client_ierr_f (s_window_t *window, s_pollfd_t *pfd);
 int s_server_socket_listen_accept (int soc);
 int s_server_socket_request_event (int id);
 int s_server_socket_request_close (int id);
 int s_server_socket_request_expose (int id, s_rect_t *changed);
 int s_server_socket_request_desktop (int id);
 int s_server_socket_request (S_SOC_DATA req, int id, ...);
-int s_server_socket_uninit (s_window_t *window, int soc);
-int s_server_socket_in_f (s_window_t *window, int soc);
-int s_server_socket_ierr_f (s_window_t *window, int soc);
+int s_server_socket_uninit (s_window_t *window, s_pollfd_t *pfd);
+int s_server_socket_in_f (s_window_t *window, s_pollfd_t *pfd);
+int s_server_socket_ierr_f (s_window_t *window, s_pollfd_t *pfd);
 int s_server_socket_init_uds (void);
 int s_server_socket_init_tcp (void);
 int s_server_socket_init_pipe (void);
