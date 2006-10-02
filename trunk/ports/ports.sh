@@ -10,7 +10,7 @@
     ## Set the directories.
     PTCDIR="`pwd`"
     SRCDIR="`pwd`/tmp/"
-    SRCDIR="/home/self/ports"
+#    SRCDIR="/home/self/ports"
 
     ## Source code versions.
     GTK="gtk+-2.4.14"
