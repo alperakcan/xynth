@@ -41,9 +41,23 @@ s_video_input_t s_video_fb_input_mouse = {
 	}
 };
 
+#if defined(VIDEO_HELPER_TSCREEN)
+s_video_input_t s_video_fb_input_tscreen = {
+	.mouse = {
+		VIDEO_INPUT_MOUSE,
+		s_video_helper_touchscreen_update,
+		s_video_helper_touchscreen_uninit,
+		s_video_helper_touchscreen_init,
+	}
+};
+#endif
+
 s_video_input_t *s_video_fb_input[] = {
 	&s_video_fb_input_keybd,
 	&s_video_fb_input_mouse,
+#if defined(VIDEO_HELPER_TSCREEN)
+	&s_video_fb_input_tscreen,
+#endif
 	NULL,
 };
 
