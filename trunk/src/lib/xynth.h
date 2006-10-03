@@ -2289,7 +2289,7 @@ struct s_timer_s {
 	/** call back function */
 	void (*cb) (s_window_t *, struct s_timer_s *);
 	/** pointer to hold user specified data */
-	void *user_data;
+	void *data;
 };
 
 /** timers struct

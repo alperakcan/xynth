@@ -3209,8 +3209,8 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkrender-fb.c gtk+-2.4.14-xynth/
 -  }
 -  
 -  (*shadow_copy_rect[_gdk_fb_screen_angle]) (minx, miny, maxx - minx + 1, maxy - miny + 1);
-+        s_putboxpart(window->surface, x - GDK_DRAWABLE_IMPL_FBDATA((GdkWindow *) window->client->user_data)->abs_x,
-+                                      y - GDK_DRAWABLE_IMPL_FBDATA((GdkWindow *) window->client->user_data)->abs_y,
++        s_putboxpart(window->surface, x - GDK_DRAWABLE_IMPL_FBDATA((GdkWindow *) window->client->data)->abs_x,
++                                      y - GDK_DRAWABLE_IMPL_FBDATA((GdkWindow *) window->client->data)->abs_y,
 +                                      width, height, window->surface->width, window->surface->height, gdk_display->fb_mem, x, y);
  }
  
@@ -3399,15 +3399,15 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkwindow-fb.c gtk+-2.4.14-xynth/
 +void gdk_client_atevent (s_window_t *window, s_event_t *event)
  {
 -  GdkWindow *window;
-+GdkWindow *gwindow = window->client->user_data;
++GdkWindow *gwindow = window->client->data;
 +GdkWindowObject *private = (GdkWindowObject *) gwindow;
 +
 +	if (event->type & EXPOSE_EVENT) {
-+		if ((((GdkWindowObject *) window->client->user_data)->x != window->surface->buf->x) ||
-+		    (((GdkWindowObject *) window->client->user_data)->y != window->surface->buf->y) ||
-+		    (GDK_DRAWABLE_IMPL_FBDATA((GdkWindowObject *) window->client->user_data)->width != window->surface->buf->w) ||
-+		    (GDK_DRAWABLE_IMPL_FBDATA((GdkWindowObject *) window->client->user_data)->height != window->surface->buf->h)) {
-+			gdk_window_move_resize((GdkWindow *) window->client->user_data,
++		if ((((GdkWindowObject *) window->client->data)->x != window->surface->buf->x) ||
++		    (((GdkWindowObject *) window->client->data)->y != window->surface->buf->y) ||
++		    (GDK_DRAWABLE_IMPL_FBDATA((GdkWindowObject *) window->client->data)->width != window->surface->buf->w) ||
++		    (GDK_DRAWABLE_IMPL_FBDATA((GdkWindowObject *) window->client->data)->height != window->surface->buf->h)) {
++			gdk_window_move_resize((GdkWindow *) window->client->data,
 +			                       window->surface->buf->x, window->surface->buf->y,
 +			                       window->surface->buf->w, window->surface->buf->h);
 +		}
@@ -3449,7 +3449,7 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkwindow-fb.c gtk+-2.4.14-xynth/
 -  GdkVisual *visual;
 -  GdkWindowFBData *impl;
 +	GdkEvent *event;
-+	GdkWindow *destroy_window = (GdkWindow *) window->client->user_data;
++	GdkWindow *destroy_window = (GdkWindow *) window->client->data;
  
 -  int x, y, depth;
 -  
@@ -3628,7 +3628,7 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkwindow-fb.c gtk+-2.4.14-xynth/
 +                case GDK_WINDOW_ROOT:
 +                	{
 +				GDK_DRAWABLE_IMPL_FBDATA(window)->xynth_window = gdk_display->xynth_root;
-+				gdk_display->xynth_root->client->user_data = window;
++				gdk_display->xynth_root->client->data = window;
 +			}
 +			break;
 +		default:
@@ -3664,7 +3664,7 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkwindow-fb.c gtk+-2.4.14-xynth/
 +					}
 +					s_client_atevent(window_tl, gdk_client_atevent);
 +					s_client_atexit(window_tl, gdk_client_atexit);
-+					window_tl->client->user_data = window;
++					window_tl->client->data = window;
 +	        s_client_main(window_tl);
 +          impl->drawable_data.running = 1;
 +          impl->drawable_data.th_id = window_tl->tid;
@@ -3683,7 +3683,7 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkwindow-fb.c gtk+-2.4.14-xynth/
 +				s_window_new(window_tmp, WINDOW_CHILD | WINDOW_NOFORM , gdk_display->xynth_root);
 +				s_client_atevent(window_tmp, gdk_client_atevent);
 +				s_client_atexit(window_tmp, gdk_client_atexit);
-+				window_tmp->client->user_data = window;
++				window_tmp->client->data = window;
 +			
 +				GDK_DRAWABLE_IMPL_FBDATA(window)->running = 1;
 +				GDK_DRAWABLE_IMPL_FBDATA(window)->th_id = window_tmp->tid;
