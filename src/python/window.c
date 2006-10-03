@@ -212,7 +212,7 @@ void p_client_atexit (s_window_t *xwin)
 	PyObject *res;
 	p_window_t *pwi;
 
-	pwi = (p_window_t *) xwin->client->user_data;
+	pwi = (p_window_t *) xwin->client->data;
 	arg = Py_BuildValue("(O)", pwi);
 	if (pwi->atexit != NULL) {
 		res = PyEval_CallObject(pwi->atexit, arg);
@@ -227,7 +227,7 @@ void p_client_atevent (s_window_t *xwin, s_event_t *xevn)
 	PyObject *res;
 	p_window_t *pwi;
 
-	pwi = (p_window_t *) xwin->client->user_data;
+	pwi = (p_window_t *) xwin->client->data;
 	arg = Py_BuildValue("(OO)", pwi, xevn);
 	if (pwi->atevent != NULL) {
 		res = PyEval_CallObject(pwi->atevent, arg);
@@ -261,7 +261,7 @@ PyObject * wrap_window (PyObject *self, PyObject *args)
 		Py_DECREF((PyObject *) window);
 		return NULL;
 	}
-	window->window->client->user_data = window;
+	window->window->client->data = window;
 
 	s_client_atexit(window->window, p_client_atexit);
 	s_client_atevent(window->window, p_client_atevent);

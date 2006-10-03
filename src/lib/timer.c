@@ -21,7 +21,7 @@ int s_timer_init (s_timer_t **timer)
 	(*timer)->timeval = -1;
 	(*timer)->interval = -1;
 	(*timer)->cb = NULL;
-	(*timer)->user_data = NULL;
+	(*timer)->data = NULL;
 	return 0;
 }
 
