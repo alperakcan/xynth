@@ -85,11 +85,18 @@ typedef enum {
 	FRAME_MSHADOW		= 0xf0
 } FRAME_SHADOW;
 
+typedef struct w_frame_image_s {
+	unsigned int style;
+	unsigned int rotation;
+	s_list_t *images;
+} w_frame_image_t;
+
 typedef struct w_frame_s {
 	w_object_t *object;
 	unsigned int style;
 	unsigned int linewidth;
 	unsigned int midlinewidth;
+	s_list_t *images;
 } w_frame_t;
 
 typedef struct w_button_s {
