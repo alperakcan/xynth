@@ -158,7 +158,7 @@ int w_radiobutton_init (w_window_t *window, w_radiobutton_t **radiobutton, w_obj
 	if((*radiobutton)->button->isimg!=0)
 		(*radiobutton)->buttonwidth = (*radiobutton)->button->img_a->w;
 	if((*radiobutton)->editbox->textbox->isimg!=0)
-		(*radiobutton)->itemheight = (*radiobutton)->editbox->textbox->img_middle;
+		(*radiobutton)->itemheight = (*radiobutton)->editbox->textbox->img_middle->h;
 			
 	return 0;
 err0:	s_free(*radiobutton);
