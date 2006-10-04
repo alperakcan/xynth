@@ -23,6 +23,7 @@ void w_textbox_draw (w_object_t *object)
 	int w;
 	int h;
 	int d;
+	int i;
 	w_textbox_t *textbox;
 	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
 	
@@ -43,7 +44,7 @@ void w_textbox_draw (w_object_t *object)
 		memset(textbox->object->surface->matrix,
 		       0,
 		       textbox->object->surface->width * textbox->object->surface->height);
-		s_putmaskpart(textbox->object->surface->matrix,
+		s_putmaskpart((char*)textbox->object->surface->matrix,
 		              textbox->object->surface->width,
 		              textbox->object->surface->height,
 		              x,
@@ -52,11 +53,61 @@ void w_textbox_draw (w_object_t *object)
 		              h,
 		              textbox->font->img->w,
 		              textbox->font->img->h,
-		              textbox->font->img->mat,
+		              (char*)textbox->font->img->mat,
 		              0,
 		              0);
 	} else {
-		w_frame_draw(textbox->object);
+		if(textbox->isimg==0)
+			w_frame_draw(textbox->object);
+		else
+		{
+			s_image_get_mat(textbox->img_left);
+			s_putmaskpart((char*)textbox->object->surface->matrix,
+		              textbox->object->surface->width,
+		              textbox->object->surface->height,
+		              0,
+		              0,
+		              textbox->img_left->w,
+		              textbox->img_left->h,
+		              textbox->img_left->w,
+		              textbox->img_left->h,
+		              (char*)textbox->img_left->mat,
+		              0,
+		              0);
+            s_putboxrgba(object->surface,0,0,textbox->img_left->w,textbox->img_left->h,textbox->img_left->rgba);				
+		    s_image_get_mat(textbox->img_middle);
+		    for(i=textbox->img_left->w;i<textbox->object->surface->width-textbox->img_left->w;i++)
+			{
+				s_putmaskpart((char*)textbox->object->surface->matrix,
+			              textbox->object->surface->width,
+			              textbox->object->surface->height,
+			              i,
+			              0,
+			              textbox->img_middle->w,
+			              textbox->img_middle->h,
+			              textbox->img_middle->w,
+			              textbox->img_middle->h,
+			              (char*)textbox->img_middle->mat,
+			              0,
+			              0);
+                s_putboxrgba(object->surface,i,0,textbox->img_middle->w,textbox->img_middle->h,textbox->img_middle->rgba);				
+			}
+		    s_image_get_mat(textbox->img_right);
+			s_putmaskpart((char*)textbox->object->surface->matrix,
+		              textbox->object->surface->width,
+		              textbox->object->surface->height,
+		              textbox->object->surface->width-textbox->img_left->w,
+		              0,
+		              textbox->img_right->w,
+		              textbox->img_right->h,
+		              textbox->img_right->w,
+		              textbox->img_right->h,
+		              (char*)textbox->img_right->mat,
+		              0,
+		              0);			
+            s_putboxrgba(object->surface,textbox->object->surface->width-textbox->img_left->w,0,
+            					textbox->img_right->w,textbox->img_right->h,textbox->img_right->rgba);				
+		}
 	}
 	
 	s_putboxpartrgba(textbox->object->surface,
@@ -86,6 +137,31 @@ void w_textbox_geometry (w_object_t *object)
 	w_frame_geometry(object);
 }
 
+void w_textbox_loadimages(w_object_t *object,char *file_left,char *file_middle,char *file_right)
+{
+	w_textbox_t *textbox;
+	
+	textbox = (w_textbox_t*) object->data[OBJECT_TEXTBOX];
+	
+	s_image_init(&(textbox->img_left));	
+	s_image_init(&(textbox->img_middle));	
+	s_image_init(&(textbox->img_right));	
+	
+	if( (s_image_img(file_left,textbox->img_left)!=-1) &&
+		(s_image_img(file_middle,textbox->img_middle)!=-1) &&
+		(s_image_img(file_right,textbox->img_right)!=-1) )
+	{
+		textbox->isimg=1;
+	}
+	else
+	{
+		textbox->isimg=0;
+		s_image_uninit(textbox->img_left);	
+		s_image_uninit(textbox->img_middle);	
+		s_image_uninit(textbox->img_right);	
+	}	
+}
+
 int w_textbox_init (w_window_t *window, w_textbox_t **textbox, w_object_t *parent)
 {
 	(*textbox) = (w_textbox_t *) s_malloc(sizeof(w_textbox_t));
@@ -97,6 +173,8 @@ int w_textbox_init (w_window_t *window, w_textbox_t **textbox, w_object_t *paren
 	if (w_frame_init(window, &((*textbox)->frame), FRAME_PANEL | FRAME_RAISED, parent)) {
 		goto err1;
 	}
+	
+	(*textbox)->isimg=0;
 	
 	(*textbox)->properties = TEXTBOX_VCENTER | TEXTBOX_HCENTER;
 
@@ -119,6 +197,14 @@ void w_textbox_uninit (w_object_t *object)
 {
 	w_textbox_t *textbox;
 	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
+	
+	if(textbox->isimg==1)
+	{
+		s_image_uninit(textbox->img_left);	
+		s_image_uninit(textbox->img_middle);	
+		s_image_uninit(textbox->img_right);	
+	}
+	
 	w_frame_uninit(textbox->object);
 	s_font_uninit(textbox->font);
 	s_free(textbox);
