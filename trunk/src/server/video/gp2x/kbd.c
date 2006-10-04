@@ -32,18 +32,19 @@ err0:   priv->keybd_fd[0] = -1;
 	return -1;
 }
 
-void s_video_gp2x_kbd_update (s_keybd_driver_t *keybd)
+int s_video_gp2x_kbd_update (s_video_input_data_t *keybd)
 {
         s_keybd_driver_t key;
 	s_video_gp2x_data_t *priv = server->driver->driver_data;
 
 	s_pipe_api_read(priv->keybd_fd[0], &key, sizeof(s_keybd_driver_t));
 
-	keybd->ascii = -1;
-	keybd->scancode = key.button;
-	keybd->keycode = key.button;
-	keybd->button = key.button;
-	keybd->state = key.state;
+	keybd->keybd.ascii = -1;
+	keybd->keybd.scancode = key.button;
+	keybd->keybd.keycode = key.button;
+	keybd->keybd.button = key.button;
+	keybd->keybd.state = key.state;
+	return 0;
 }
 
 void s_video_gp2x_kbd_uninit (void)

@@ -36,6 +36,7 @@ void * s_video_gp2x_event_parse (void *arg)
 		usleep(20000);
 	}
 
+	pad_old = 0;
 	while (server->window->running) {
 		pad = priv->gp2x_io[0x1198 >> 1] & 0xff;
 		if (pad == 0xfd) pad = 0xfa;

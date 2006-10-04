@@ -312,4 +312,12 @@ int s_video_helper_console_init (void)
 	return s_video_helper_console.fd;
 }
 
+int s_video_helper_console_switch (int vt)
+{
+	if (vt != s_video_helper_console.vc) {
+		ioctl(s_video_helper_console.fd, VT_ACTIVATE, vt);
+	}
+	return 0;
+}
+
 #endif /* VIDEO_HELPER_CONSOLE */

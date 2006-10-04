@@ -30,22 +30,17 @@
 #include <stdint.h>
 
 s_video_input_t s_video_vesa_input_keybd = {
-	.keybd = {
-		VIDEO_INPUT_KEYBD,
-		s_video_vesa_kbd_init,
-		s_video_helper_kbd_update,
-		s_video_helper_kbd_uninit,
-		s_video_helper_kbd_switch,
-	}
+	VIDEO_INPUT_KEYBD,
+	s_video_vesa_kbd_init,
+	s_video_helper_kbd_update,
+	s_video_helper_kbd_uninit,
 };
 
 s_video_input_t s_video_vesa_input_mouse = {
-	.mouse = {
-		VIDEO_INPUT_MOUSE,
-		s_video_helper_mouse_update,
-		s_video_helper_mouse_uninit,
-		s_video_helper_mouse_init,
-	}
+	VIDEO_INPUT_MOUSE,
+	s_video_helper_mouse_init,
+	s_video_helper_mouse_update,
+	s_video_helper_mouse_uninit,
 };
 
 s_video_input_t *s_video_vesa_input[] = {

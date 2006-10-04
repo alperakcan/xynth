@@ -179,7 +179,6 @@ s_video_input_t s_video_svga_input_keybd = {
 		s_video_svga_kbd_init,
 		s_video_helper_kbd_update,
 		s_video_helper_kbd_uninit,
-		s_video_helper_kbd_switch,
 	}
 };
 

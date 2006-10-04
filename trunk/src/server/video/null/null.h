@@ -18,7 +18,6 @@
 int s_video_null_kbd_init (s_server_conf_t *cfg);
 void s_video_null_kbd_update (s_keybd_driver_t *keybd);
 void s_video_null_kbd_uninit (void);
-void s_video_null_kbd_switch (int vt);
 
 int s_video_null_mouse_init (s_server_conf_t *cfg);
 int s_video_null_mouse_update (s_mouse_driver_t *mouse);
