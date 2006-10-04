@@ -13,8 +13,85 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <stdarg.h>
+
 #include "../lib/xynth_.h"
 #include "widget.h"
+
+int w_frame_image_init (w_frame_image_t **fimg)
+{
+	*fimg = s_malloc(sizeof(w_frame_image_t));
+	memset(*fimg, 0, sizeof(w_frame_image_t));
+	s_list_init(&((*fimg)->images));
+	return 0;
+}
+
+int w_frame_image_uninit (w_frame_image_t *fimg)
+{
+	s_image_t *img;
+	while (!s_list_eol(fimg->images, 0)) {
+		img = (s_image_t *) s_list_get(fimg->images, 0);
+		s_list_remove(fimg->images, 0);
+		s_image_uninit(img);
+	}
+	s_free(fimg);
+	return 0;
+}
+
+int w_frame_set_image (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, ...)
+{
+	int pos;
+	char *file;
+	va_list ap;
+	s_image_t *img;
+        w_frame_t *frame;
+	w_frame_image_t *fimg;
+        frame = (w_frame_t *) object->data[OBJECT_FRAME];
+	for (pos = 0; !s_list_eol(frame->images, pos); pos++) {
+		fimg = (w_frame_image_t *) s_list_get(frame->images, pos);
+		if (fimg->style == style) {
+			s_list_remove(frame->images, pos);
+			w_frame_image_uninit(fimg);
+			break;
+		}
+	}
+	va_start(ap, nimgs);
+	w_frame_image_init(&fimg);
+	fimg->style = style;
+	fimg->rotation = rotation;
+	for (; nimgs > 0; nimgs--) {
+		file = va_arg(ap, char *);
+		s_image_init(&img);
+		s_image_img(file, img);
+		s_image_get_mat(img);
+		s_list_add(fimg->images, img, -1);
+	}
+	va_end(ap);
+	s_list_add(frame->images, fimg, -1);
+	return 0;
+}
+
+void w_frame_draw_image (w_object_t *object, w_frame_image_t *fimg)
+{
+	int i;
+	s_image_t *img;
+	img = (s_image_t *) s_list_get(fimg->images, 0);
+	s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
+	              0, 0, img->w, img->h, img->w, img->h, img->mat, 0, 0);
+	s_putboxrgba(object->surface, 0, 0, img->w, img->h, img->rgba);
+	i = img->h;
+	img = (s_image_t *) s_list_get(fimg->images, 1);
+	for (; i < object->surface->height - img->h; i++) {
+		s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
+		              0, i, img->w, img->h, img->w, img->h, img->mat, 0, 0);
+		s_putboxrgba(object->surface, 0, i, img->w, img->h, img->rgba);
+	}
+	img = (s_image_t *) s_list_get(fimg->images, 2);
+	s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
+	              0, object->surface->height - img->h, img->w, img->h, img->w, img->h,
+	              img->mat, 0, 0);
+	s_putboxrgba(object->surface, 0, object->surface->height - img->h, img->w, img->h, img->rgba);				
+}
 
 void w_frame_draw (w_object_t *object)
 {
@@ -22,7 +99,16 @@ void w_frame_draw (w_object_t *object)
         int j;
         int c[4];
         w_frame_t *frame;
+        w_frame_image_t *fimg;
         frame = (w_frame_t *) object->data[OBJECT_FRAME];
+        
+        for (i = 0; !s_list_eol(frame->images, i); i++) {
+        	fimg = (w_frame_image_t *) s_list_get(frame->images, i);
+        	if (frame->style == fimg->style) {
+        		w_frame_draw_image(object, fimg);
+        		return;
+        	}
+        }
         
         switch (frame->style & FRAME_MSHAPE) {
 		case FRAME_NOFRAME:		return;
@@ -217,6 +303,7 @@ int w_frame_init (w_window_t *window, w_frame_t **frame, unsigned int style, w_o
 	(*frame)->object->data[OBJECT_FRAME] = *frame;
 	(*frame)->object->geometry = w_frame_geometry;
 	(*frame)->object->destroy = w_frame_uninit;
+	s_list_init(&((*frame)->images));
 	return 0;
 err0:	s_free(*frame);
 	return -1;
@@ -225,7 +312,13 @@ err0:	s_free(*frame);
 void w_frame_uninit (w_object_t *object)
 {
 	w_frame_t *frame;
+	w_frame_image_t *fimg;
 	frame = (w_frame_t *) object->data[OBJECT_FRAME];
 	w_object_uninit(frame->object);
+	while (!s_list_eol(frame->images, 0)) {
+		fimg = s_list_get(frame->images, 0);
+		w_frame_image_uninit(fimg);
+	}
+	s_list_uninit(frame->images);
 	s_free(frame);
 }
