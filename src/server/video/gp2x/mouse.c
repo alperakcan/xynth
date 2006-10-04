@@ -33,16 +33,16 @@ err0:	priv->mouse_fd[0] = -1;
 	return -1;
 }
 
-int s_video_gp2x_mouse_update (s_mouse_driver_t *mouse)
+int s_video_gp2x_mouse_update (s_video_input_data_t *mouse)
 {
 	s_mouse_driver_t pad_recv;
 	s_video_gp2x_data_t *priv = server->driver->driver_data;
 	s_pipe_api_read(priv->mouse_fd[0], &pad_recv, sizeof(s_mouse_driver_t));
-	mouse->x = pad_recv.x;
-	mouse->y = pad_recv.y;
-	mouse->buttons = 0;
-	mouse->buttons |= (pad_recv.buttons & GP2X_L) ? MOUSE_LEFTBUTTON : 0;
-	mouse->buttons |= (pad_recv.buttons & GP2X_R) ? MOUSE_RIGHTBUTTON : 0;
+	mouse->mouse.x = pad_recv.x;
+	mouse->mouse.y = pad_recv.y;
+	mouse->mouse.buttons = 0;
+	mouse->mouse.buttons |= (pad_recv.buttons & GP2X_L) ? MOUSE_LEFTBUTTON : 0;
+	mouse->mouse.buttons |= (pad_recv.buttons & GP2X_R) ? MOUSE_RIGHTBUTTON : 0;
 	return 0;
 }
 

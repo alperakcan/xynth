@@ -16,15 +16,15 @@
 #if defined(VIDEO_HELPER_CONSOLE)
 /* console.c */
 int s_video_helper_console_init (void);
+int s_video_helper_console_switch (int vt);
 #endif /* VIDEO_HELPER_CONSOLE */
 
 #if defined(VIDEO_HELPER_KBD)
 /* kbd.c */
 void s_video_helper_kbd_set_attr (void);
 int s_video_helper_kbd_init (s_server_conf_t *cfg, int kfd);
-void s_video_helper_kbd_update (s_keybd_driver_t *keybd);
+int s_video_helper_kbd_update (s_video_input_data_t *keybd);
 void s_video_helper_kbd_uninit (void);
-void s_video_helper_kbd_switch (int vt);
 #endif /* VIDEO_HELPER_KBD */
 
 #if defined(VIDEO_HELPER_MODES)
@@ -208,7 +208,7 @@ int s_video_helper_mode_find (s_server_conf_t *cfg, s_video_helper_mode_info_t *
 #if defined(VIDEO_HELPER_MOUSE)
 /* mouse.c */
 int s_video_helper_mouse_init (s_server_conf_t *cfg);
-int s_video_helper_mouse_update (s_mouse_driver_t *mouse);
+int s_video_helper_mouse_update (s_video_input_data_t *mouse);
 void s_video_helper_mouse_uninit (void);
 void s_video_helper_mouse_setxrange (int x1, int x2);
 void s_video_helper_mouse_setyrange (int y1, int y2);

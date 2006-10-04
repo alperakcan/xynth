@@ -351,16 +351,17 @@ err0:   priv->keybd_fd[0] = -1;
 	return -1;
 }
 
-void s_video_gdi_kbd_update (s_keybd_driver_t *keybd)
+int s_video_gdi_kbd_update (s_video_input_data_t *keybd)
 {
         int k = 0;
 	s_video_gdi_data_t *priv = server->driver->driver_data;
 	s_pipe_api_read(priv->keybd_fd[0], &k, sizeof(int));
-	keybd->ascii = priv->keybd.ascii;
-	keybd->scancode = priv->keybd.scancode;
-	keybd->keycode = priv->keybd.keycode;
-	keybd->button = priv->keybd.button;
-        keybd->state = priv->keybd.state;
+	keybd->keybd.ascii = priv->keybd.ascii;
+	keybd->keybd.scancode = priv->keybd.scancode;
+	keybd->keybd.keycode = priv->keybd.keycode;
+	keybd->keybd.button = priv->keybd.button;
+        keybd->keybd.state = priv->keybd.state;
+        return 0;
 }
 
 void s_video_gdi_kbd_uninit (void)

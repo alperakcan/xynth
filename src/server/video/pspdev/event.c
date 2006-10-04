@@ -41,7 +41,8 @@ void * s_video_pspdev_event_parse (void *arg)
 	while (server->window->running != 1) {
 		usleep(20000);
 	}
-
+	
+	pad_old = 0;
 	while (server->window->running) {
 		sceCtrlReadBufferPositive(&pad, 1);
 

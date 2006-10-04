@@ -79,7 +79,7 @@ int s_video_helper_mouse_init (s_server_conf_t *cfg)
 	return fd;
 }
 
-int s_video_helper_mouse_update (s_mouse_driver_t *mouse)
+int s_video_helper_mouse_update (s_video_input_data_t *mouse)
 {
         int rx = 0;
         int ry = 0;
@@ -88,21 +88,21 @@ int s_video_helper_mouse_update (s_mouse_driver_t *mouse)
 		return 1;
 	}
 
-	mouse_getposition_6d(&mouse->x,  &mouse->y,  NULL, &rx, &ry, NULL, &mouse->buttons);
+	mouse_getposition_6d(&(mouse->mouse.x),  &(mouse->mouse.y),  NULL, &rx, &ry, NULL, &(mouse->mouse.buttons));
 
 	if (rx != 0) {
 		if (rx < 0) {
-			mouse->buttons |= MOUSE_WHEELXBUTTON_U;
+			mouse->mouse.buttons |= MOUSE_WHEELXBUTTON_U;
 		} else {
-			mouse->buttons |= MOUSE_WHEELXBUTTON_D;
+			mouse->mouse.buttons |= MOUSE_WHEELXBUTTON_D;
 		}
 	}
 
 	if (ry != 0) {
 		if (ry < 0) {
-			mouse->buttons |= MOUSE_WHEELYBUTTON_U;
+			mouse->mouse.buttons |= MOUSE_WHEELYBUTTON_U;
 		} else {
-			mouse->buttons |= MOUSE_WHEELYBUTTON_D;
+			mouse->mouse.buttons |= MOUSE_WHEELYBUTTON_D;
 		}
 	}
 

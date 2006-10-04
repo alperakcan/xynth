@@ -423,10 +423,10 @@ int s_server_init (void)
 		for (input = server->driver->input; *input; input++) {
 			switch ((*input)->type) {
 				case VIDEO_INPUT_MOUSE:
-					s_server_mouse_init(&config, &((*input)->mouse));
+					s_server_mouse_init(&config, *input);
 					break;
 				case VIDEO_INPUT_KEYBD:
-					s_server_kbd_init(&config, &((*input)->keybd));
+					s_server_kbd_init(&config, *input);
 					break;
 				default:
 					break;

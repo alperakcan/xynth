@@ -149,25 +149,16 @@ typedef enum {
 	VIDEO_INPUT_KEYBD,
 } VIDEO_INPUT;
 
-typedef struct s_video_input_mouse_s {
-	VIDEO_INPUT type;
-	int (*mouse_update) (s_mouse_driver_t *mouse);
-	void (*mouse_uninit) (void);
-	int (*mouse_init) (s_server_conf_t *cfg);
-} s_video_input_mouse_t;
+typedef union s_video_input_data_u {
+	s_keybd_driver_t keybd;
+	s_mouse_driver_t mouse;
+} s_video_input_data_t;
 
-typedef struct s_video_input_keybd_s {
+typedef struct s_video_input_s {
 	VIDEO_INPUT type;
-	int (*kbd_init) (s_server_conf_t *cfg);
-	void (*kbd_update) (s_keybd_driver_t *keybd);
-	void (*kbd_uninit) (void);
-	void (*kbd_switch) (int vt);
-} s_video_input_keybd_t;
-
-typedef union s_video_input_u {
-	VIDEO_INPUT type;
-	s_video_input_mouse_t mouse;
-	s_video_input_keybd_t keybd;
+	int (*init) (s_server_conf_t *cfg);
+	int (*update) (s_video_input_data_t *idata);
+	void (*uninit) (void);
 } s_video_input_t;
 
 typedef struct s_video_driver_s {
@@ -228,7 +219,7 @@ void s_server_kbd_switch_handler (s_window_t *window, s_event_t *event, s_handle
 void s_server_kbd_window_close_handler (s_window_t *window, s_event_t *event, s_handler_t *handler);
 void s_server_kbd_server_quit_handler (s_window_t *window, s_event_t *event, s_handler_t *handler);
 int s_server_kbd_update (s_window_t *window, s_pollfd_t *pfd);
-void s_server_kbd_init (s_server_conf_t *cfg, s_video_input_keybd_t *keybd);
+void s_server_kbd_init (s_server_conf_t *cfg, s_video_input_t *keybd);
 int s_server_kbd_uninit (s_window_t *window, s_pollfd_t *pfd);
 
 /* mouse.c */
@@ -247,7 +238,7 @@ void s_server_mouse_setcursor (S_MOUSE_CURSOR c);
 void s_server_mouse_draw (void);
 int s_server_mouse_uninit (s_window_t *window, s_pollfd_t *pfd);
 int s_server_mouse_update (s_window_t *window, s_pollfd_t *pfd);
-void s_server_mouse_init (s_server_conf_t *cfg, s_video_input_mouse_t *mouse);
+void s_server_mouse_init (s_server_conf_t *cfg, s_video_input_t *mouse);
 
 /* priority.c */
 void s_server_pri_set (S_SURFACE_CHNGF flag, ...);

@@ -147,23 +147,24 @@ err0:   priv->keybd_fd[0] = -1;
 	return -1;
 }
 
-void s_video_sdl_kbd_update (s_keybd_driver_t *keybd)
+int s_video_sdl_kbd_update (s_video_input_data_t *keybd)
 {
 	SDL_Event event;
 	s_video_sdl_data_t *priv = server->driver->driver_data;
 
 	s_pipe_api_read(priv->keybd_fd[0], &event.key, sizeof(event.key));
 
-	keybd->ascii = event.key.keysym.unicode;
-	keybd->scancode = event.key.keysym.scancode;
-	keybd->keycode = priv->keymap[event.key.keysym.sym];
-	keybd->button = priv->keymap[event.key.keysym.sym];
+	keybd->keybd.ascii = event.key.keysym.unicode;
+	keybd->keybd.scancode = event.key.keysym.scancode;
+	keybd->keybd.keycode = priv->keymap[event.key.keysym.sym];
+	keybd->keybd.button = priv->keymap[event.key.keysym.sym];
 
-	keybd->state = (event.key.state == SDL_PRESSED) ? KEYBD_PRESSED : KEYBD_RELEASED;
-	if ((keybd->keycode == S_KEYCODE_NUM_LOCK) ||
-	    (keybd->keycode == S_KEYCODE_CAPS_LOCK)) {
-		keybd->state = KEYBD_PRESSED;
+	keybd->keybd.state = (event.key.state == SDL_PRESSED) ? KEYBD_PRESSED : KEYBD_RELEASED;
+	if ((keybd->keybd.keycode == S_KEYCODE_NUM_LOCK) ||
+	    (keybd->keybd.keycode == S_KEYCODE_CAPS_LOCK)) {
+		keybd->keybd.state = KEYBD_PRESSED;
 	}
+	return 0;
 }
 
 void s_video_sdl_kbd_uninit (void)

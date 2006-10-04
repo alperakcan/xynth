@@ -23,32 +23,25 @@
 #include <sys/mman.h>
 
 s_video_input_t s_video_fb_input_keybd = {
-	.keybd = {
-		VIDEO_INPUT_KEYBD,
-		fb_kbd_init,
-		s_video_helper_kbd_update,
-		s_video_helper_kbd_uninit,
-		s_video_helper_kbd_switch,
-	}
+	VIDEO_INPUT_KEYBD,
+	fb_kbd_init,
+	s_video_helper_kbd_update,
+	s_video_helper_kbd_uninit,
 };
 
 s_video_input_t s_video_fb_input_mouse = {
-	.mouse = {
-		VIDEO_INPUT_MOUSE,
-		s_video_helper_mouse_update,
-		s_video_helper_mouse_uninit,
-		s_video_helper_mouse_init,
-	}
+	VIDEO_INPUT_MOUSE,
+	s_video_helper_mouse_init,
+	s_video_helper_mouse_update,
+	s_video_helper_mouse_uninit,
 };
 
 #if defined(VIDEO_HELPER_TSCREEN)
 s_video_input_t s_video_fb_input_tscreen = {
-	.mouse = {
-		VIDEO_INPUT_MOUSE,
-		s_video_helper_touchscreen_update,
-		s_video_helper_touchscreen_uninit,
-		s_video_helper_touchscreen_init,
-	}
+	VIDEO_INPUT_MOUSE,
+	s_video_helper_touchscreen_init,
+	s_video_helper_touchscreen_update,
+	s_video_helper_touchscreen_uninit,
 };
 #endif
 

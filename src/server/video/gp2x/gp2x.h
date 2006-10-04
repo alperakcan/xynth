@@ -30,13 +30,13 @@ typedef struct s_video_gp2x_data_s {
 } s_video_gp2x_data_t;
 
 int s_video_gp2x_kbd_init (s_server_conf_t *cfg);
-void s_video_gp2x_kbd_update (s_keybd_driver_t *keybd);
+int s_video_gp2x_kbd_update (s_video_input_data_t *keybd);
 void s_video_gp2x_kbd_uninit (void);
 
 int s_video_gp2x_mouse_init (s_server_conf_t *cfg);
 void s_video_gp2x_mouse_setcursor (S_MOUSE_CURSOR c);
 void s_video_gp2x_mouse_draw (void);
-int s_video_gp2x_mouse_update (s_mouse_driver_t *mouse);
+int s_video_gp2x_mouse_update (s_video_input_data_t *mouse);
 void s_video_gp2x_mouse_uninit (void);
 
 void s_video_gp2x_server_goto_back (void);

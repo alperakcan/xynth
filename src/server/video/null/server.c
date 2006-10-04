@@ -25,7 +25,6 @@ s_video_input_t s_video_null_input_keybd = {
 		s_video_null_kbd_init,
 		s_video_null_kbd_update,
 		s_video_null_kbd_uninit,
-		s_video_null_kbd_switch,
 	}
 };
 

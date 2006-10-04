@@ -37,7 +37,7 @@ err0:	priv->mouse_fd[0] = -1;
 	return -1;
 }
 
-int s_video_sdl_mouse_update (s_mouse_driver_t *mouse)
+int s_video_sdl_mouse_update (s_video_input_data_t *mouse)
 {
         int x;
         int y;
@@ -49,18 +49,18 @@ int s_video_sdl_mouse_update (s_mouse_driver_t *mouse)
 
         state = SDL_GetMouseState(&x, &y);
 
-        mouse->x = x;
-        mouse->y = y;
-        mouse->buttons = 0;
+        mouse->mouse.x = x;
+        mouse->mouse.y = y;
+        mouse->mouse.buttons = 0;
 	
         if (state & (1 << (SDL_BUTTON_LEFT - 1))) {
-		mouse->buttons |= MOUSE_LEFTBUTTON;
+		mouse->mouse.buttons |= MOUSE_LEFTBUTTON;
 	}
         if (state & (1 << (SDL_BUTTON_MIDDLE - 1))) {
-		mouse->buttons |= MOUSE_MIDDLEBUTTON;
+		mouse->mouse.buttons |= MOUSE_MIDDLEBUTTON;
 	}
         if (state & (1 << (SDL_BUTTON_RIGHT - 1))) {
-		mouse->buttons |= MOUSE_RIGHTBUTTON;
+		mouse->mouse.buttons |= MOUSE_RIGHTBUTTON;
 	}
 
 	return 0;

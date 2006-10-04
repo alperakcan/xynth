@@ -29,22 +29,17 @@
 #endif
 
 s_video_input_t s_video_pspdev_input_keybd = {
-	.keybd = {
-		VIDEO_INPUT_KEYBD,
-		s_video_pspdev_kbd_init,
-		s_video_pspdev_kbd_update,
-		s_video_pspdev_kbd_uninit,
-		NULL,
-	}
+	VIDEO_INPUT_KEYBD,
+	s_video_pspdev_kbd_init,
+	s_video_pspdev_kbd_update,
+	s_video_pspdev_kbd_uninit,
 };
 
 s_video_input_t s_video_pspdev_input_mouse = {
-	.mouse = {
-		VIDEO_INPUT_MOUSE,
-		s_video_pspdev_mouse_update,
-		s_video_pspdev_mouse_uninit,
-		s_video_pspdev_mouse_init,
-	}
+	VIDEO_INPUT_MOUSE,
+	s_video_pspdev_mouse_init,
+	s_video_pspdev_mouse_update,
+	s_video_pspdev_mouse_uninit,
 };
 
 s_video_input_t *s_video_pspdev_input[] = {

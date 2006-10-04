@@ -38,13 +38,13 @@ void s_video_pspdev_mouse_draw (void);
 void * s_video_pspdev_event_parse (void *);
 
 int s_video_pspdev_kbd_init (s_server_conf_t *cfg);
-void s_video_pspdev_kbd_update (s_keybd_driver_t *keybd);
+int s_video_pspdev_kbd_update (s_video_input_data_t *keybd);
 void s_video_pspdev_kbd_uninit (void);
 
 int s_video_pspdev_mouse_init (s_server_conf_t *cfg);
 void s_video_pspdev_mouse_setcursor (S_MOUSE_CURSOR c);
 void s_video_pspdev_mouse_draw (void);
-int s_video_pspdev_mouse_update (s_mouse_driver_t *mouse);
+int s_video_pspdev_mouse_update (s_video_input_data_t *mouse);
 void s_video_pspdev_mouse_uninit (void);
 
 void s_video_pspdev_server_uninit (void);

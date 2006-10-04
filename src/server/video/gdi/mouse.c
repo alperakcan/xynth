@@ -33,14 +33,14 @@ err0:	priv->mouse_fd[0] = -1;
 	return -1;
 }
 
-int s_video_gdi_mouse_update (s_mouse_driver_t *mouse)
+int s_video_gdi_mouse_update (s_video_input_data_t *mouse)
 {
         int m;
 	s_video_gdi_data_t *priv = server->driver->driver_data;
         s_pipe_api_read(priv->mouse_fd[0], &m, sizeof(int));
-        mouse->x = priv->mouse.x;
-        mouse->y = priv->mouse.y;
-        mouse->buttons = priv->mouse.buttons;
+        mouse->mouse.x = priv->mouse.x;
+        mouse->mouse.y = priv->mouse.y;
+        mouse->mouse.buttons = priv->mouse.buttons;
 	return 0;
 }
 

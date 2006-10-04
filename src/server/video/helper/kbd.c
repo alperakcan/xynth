@@ -42,11 +42,10 @@ static struct {
 	int fd;
 	int oldmode;
 	int pid;
-	int vt;
 	struct termios oldtermios;
 	struct termios newtermios;
 	struct sigaction old_signal_handler[sizeof(s_video_helper_keybd_sig2catch)];
-} s_video_helper_keybd = {-1, -1, -1, -1};
+} s_video_helper_keybd = {-1, -1, -1};
 
 static void s_video_helper_kbd_signal_handler (int v);
 static void s_video_helper_kbd_atexit (void);
@@ -159,18 +158,11 @@ int s_video_helper_kbd_init (s_server_conf_t *cfg, int kfd)
 {
 	int i;
 	struct sigaction siga;
-	struct vt_stat vts;
 
 	s_video_helper_keybd.fd = kfd;
 	if (s_video_helper_keybd.fd < 0) {
 		return -1;
 	}
-
-	/* since keybd fd and terminal fd are equal */
-	if (ioctl(s_video_helper_keybd.fd, VT_GETSTATE, &vts)) {
-		debugf(DSER | DSYS | DFAT, "Cannot get vt state");
-	}
-	s_video_helper_keybd.vt = vts.v_active;
 
 	if (ioctl(s_video_helper_keybd.fd, KDGKBMODE, &s_video_helper_keybd.oldmode)) {
 		debugf(DSER | DSYS | DFAT, "Cannot get keyboard mode");
@@ -202,7 +194,7 @@ int s_video_helper_kbd_init (s_server_conf_t *cfg, int kfd)
 	return s_video_helper_keybd.fd;
 }
 
-void s_video_helper_kbd_update (s_keybd_driver_t *keybd)
+int s_video_helper_kbd_update (s_video_input_data_t *keybd)
 {
 	int i;
 	int led = 0;
@@ -220,13 +212,13 @@ void s_video_helper_kbd_update (s_keybd_driver_t *keybd)
 		scancode = buf & 0x7f;
 		pressed = (buf & 0x80) ? KEYBD_RELEASED : KEYBD_PRESSED;
 
-                keybd->state = pressed;
-		keybd->scancode = scancode;
-		keybd->button = s_video_helper_keybd_keycode_[scancode][KEYCODE_PLAIN];
-		keybd->keycode = s_video_helper_keybd_keycode_[scancode][KEYCODE_PLAIN];
+                keybd->keybd.state = pressed;
+		keybd->keybd.scancode = scancode;
+		keybd->keybd.button = s_video_helper_keybd_keycode_[scancode][KEYCODE_PLAIN];
+		keybd->keybd.keycode = s_video_helper_keybd_keycode_[scancode][KEYCODE_PLAIN];
 
 		keycode_flag = server->window->event->keybd->flag;
-		switch (keybd->button) {
+		switch (keybd->keybd.button) {
 			case S_KEYCODE_LEFTSHIFT:
 			case S_KEYCODE_RIGHTSHIFT:
 			case S_KEYCODE_LEFTCONTROL:
@@ -239,7 +231,7 @@ void s_video_helper_kbd_update (s_keybd_driver_t *keybd)
 				break;
 		}
 		if (keycode_flag & KEYCODE_SHIFTF) {
-			keybd->button = s_video_helper_keybd_keycode_[scancode][KEYCODE_SHIFT];
+			keybd->keybd.button = s_video_helper_keybd_keycode_[scancode][KEYCODE_SHIFT];
 			map |= (1 << KG_SHIFT);
 		}
 		if (keycode_flag & KEYCODE_CTRLF) {
@@ -249,7 +241,7 @@ void s_video_helper_kbd_update (s_keybd_driver_t *keybd)
 			map |= (1 << KG_ALT);
 		}
 		if (keycode_flag & KEYCODE_ALTGRF) {
-			keybd->button = s_video_helper_keybd_keycode_[scancode][KEYCODE_ALTGR];
+			keybd->keybd.button = s_video_helper_keybd_keycode_[scancode][KEYCODE_ALTGR];
 			map |= (1 << KG_ALTGR);
 		}
 keycode_plain:
@@ -260,10 +252,10 @@ keycode_plain:
 		}
 		if (KTYP(s_video_helper_keybd_keymap[map][scancode]) == KT_PAD) {
 			if (keycode_flag & KEYCODE_NMLCKF) {
-				keybd->ascii = KVAL(s_video_helper_keybd_keymap[map][scancode]);
+				keybd->keybd.ascii = KVAL(s_video_helper_keybd_keymap[map][scancode]);
 			}
 		} else {
-			keybd->ascii = KVAL(s_video_helper_keybd_keymap[map][scancode]);
+			keybd->keybd.ascii = KVAL(s_video_helper_keybd_keymap[map][scancode]);
 		}
 
 		ioctl(s_video_helper_keybd.fd, KDGETLED, &led);
@@ -279,6 +271,7 @@ keycode_plain:
 		}
 		ioctl(s_video_helper_keybd.fd, KDSETLED, led);
 	}
+	return 0;
 }
 
 void s_video_helper_kbd_uninit (void)
@@ -291,13 +284,6 @@ void s_video_helper_kbd_uninit (void)
         tcsetattr(s_video_helper_keybd.fd, 0, &s_video_helper_keybd.oldtermios);
 
 	s_video_helper_keybd.fd = -1;
-}
-
-void s_video_helper_kbd_switch (int vt)
-{
-	if (vt != s_video_helper_keybd.vt) {
-		ioctl(s_video_helper_keybd.fd, VT_ACTIVATE, vt);
-	}
 }
 
 #endif /* VIDEO_HELPER_KBD */
