@@ -45,7 +45,7 @@ int s_video_helper_touchscreen_init (s_server_conf_t *cfg)
 	return ts_fd(ts);
 }
 
-int s_video_helper_touchscreen_update (s_mouse_driver_t *mouse)
+int s_video_helper_touchscreen_update (s_video_input_data_t *mouse)
 {
 	struct ts_sample samp;
 	int ret;
@@ -66,10 +66,10 @@ int s_video_helper_touchscreen_update (s_mouse_driver_t *mouse)
 		return 0;
 	}
 
-	mouse->x = samp.x;
-	mouse->y = samp.y;
+	mouse->mouse.x = samp.x;
+	mouse->mouse.y = samp.y;
 
-	debugf(DSER, "Touchscreen update (%d,%d)", mouse->x, mouse->y);
+	debugf(DSER, "Touchscreen update (%d,%d)", mouse->mouse.x, mouse->mouse.y);
 	
         return 0;
 }
