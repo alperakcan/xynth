@@ -24,11 +24,16 @@ typedef struct w_window_s {
 } w_window_t;
 
 typedef enum {
-	OBJECT_FRAME   = 0x0,
-	OBJECT_BUTTON  = 0x1,
-	OBJECT_TEXTBOX = 0x2,
-	OBJECT_EDITBOX = 0x3,
-	OBJECT_OBJECTS = 0x4
+	OBJECT_FRAME   		= 0x0,
+	OBJECT_BUTTON  		= 0x1,
+	OBJECT_TEXTBOX 		= 0x2,
+	OBJECT_EDITBOX 		= 0x3,
+	OBJECT_LISTBOX 		= 0x4,
+	OBJECT_PROGRESSBAR 	= 0x5,
+	OBJECT_SCROLLBAR	= 0x6,
+	OBJECT_COMBOBOX     = 0x7,
+	OBJECT_RADIOBUTTON  = 0x8,
+	OBJECT_OBJECTS 		= 0x9
 } OBJECT;
 
 struct w_object_s {
@@ -94,6 +99,10 @@ typedef struct w_button_s {
 	void (*pressed) (w_object_t *, int);
 	void (*released) (w_object_t *, int);
 	void (*clicked) (w_object_t *, int, int);
+	int isimg;
+	s_image_t *img_a;
+	s_image_t *img_b;
+	s_image_t *img_c;
 	int state;
 } w_button_t;
 
@@ -108,8 +117,59 @@ typedef struct w_textbox_s {
 	w_object_t *object;
 	w_frame_t *frame;
 	s_font_t *font;
+	s_image_t *img_left;
+	s_image_t *img_middle;
+	s_image_t *img_right;
+	int isimg;
 	TEXTBOX_PROPERTIES properties;
 } w_textbox_t;
+
+typedef struct w_progressbar_s {
+	w_frame_t *frame;
+	s_handler_t *handler;
+	w_textbox_t *textbox;
+	void (*pressed) (w_object_t *, int);
+	void (*released) (w_object_t *, int);
+	void (*clicked) (w_object_t *, int, int);
+	int state;	
+	int progressbarstatus;
+} w_progressbar_t;
+
+typedef struct w_scrollbar_s {
+	w_frame_t *frame;
+	s_handler_t *handler;
+	void (*pressed) (w_object_t *, int);
+	void (*released) (w_object_t *, int);
+	void (*clicked) (w_object_t *, int, int);
+	w_button_t *scrollup;
+	w_button_t *scrolldown;
+	w_button_t *scrollmiddle;
+	w_button_t *background;
+	int state;	
+	int progressbarstatus;
+	int activeitem;
+	int maxactivescreenitem;	
+	int maxactiveitem;
+	int firstitemonscreen;
+	int activeitemonscreen;
+	w_object_t *friendobject;
+} w_scrollbar_t;
+	
+typedef enum {
+	LISTBOX_FRAME    = 0x1,
+	LISTBOX_NOFRAME  = 0x2,
+} LISTBOX_PROPERTIES;
+
+typedef struct w_listbox_s {
+	w_frame_t *object;
+	w_frame_t *frame;
+	s_list_t *list;
+	s_handler_t *handler;
+	int state;
+	w_scrollbar_t *scrollbar;
+	LISTBOX_PROPERTIES properties;
+	int itemheight;
+} w_listbox_t;
 
 typedef struct w_editbox_s {
 	w_object_t *object;
@@ -117,6 +177,31 @@ typedef struct w_editbox_s {
 	s_handler_t *handler_mouse;
 	s_handler_t *handler_keybd;
 } w_editbox_t;
+
+typedef struct w_radiobutton_s {
+	w_object_t *object;
+	w_frame_t *frame;
+	w_button_t *button;
+	w_editbox_t *editbox;
+	int buttonwidth;
+	int itemheight;
+	int state;
+} w_radiobutton_t;
+
+typedef struct w_combobox_s {
+	w_frame_t *frame;
+	s_handler_t *handler;
+	void (*pressed) (w_object_t *, int);
+	void (*released) (w_object_t *, int);
+	void (*clicked) (w_object_t *, int, int);
+	int state;
+	w_listbox_t *listbox;
+	w_button_t *button;
+	w_editbox_t *editbox;
+	int islistboxvisible;
+	int itemheight;
+	int buttonlength;
+} w_combobox_t;
 
 typedef struct w_signal_s w_signal_t;
 struct w_signal_s {
@@ -141,6 +226,11 @@ void w_button_cb_oh (s_window_t *window, s_event_t *event, s_handler_t *handler)
 void w_button_cb_hoh (s_window_t *window, s_event_t *event, s_handler_t *handler);
 int w_button_init (w_window_t *window, w_button_t **button, w_object_t *parent);
 void w_button_uninit (w_object_t *object);
+void w_button_loadimages(w_object_t *object,char *file_a,char *file_b,char *file_c,int isimg);
+void w_button_loadstaticimage(w_object_t *object,char *file_normal,char *file_pressed,char *file_ontop);
+void w_button_loadhorizantalimage(w_object_t *object,char *file_left,char *file_middle,char *file_right);
+void w_button_loadverticalimage(w_object_t *object,char *file_up,char *file_middle,char *file_bottom);
+void w_button_unloadimages(w_object_t *object);
 
 /* editbox.c */
 void w_editbox_draw (w_object_t *object);
@@ -153,6 +243,13 @@ void w_frame_draw (w_object_t *object);
 void w_frame_geometry (w_object_t *object);
 int w_frame_init (w_window_t *window, w_frame_t **frame, unsigned int style, w_object_t *parent);
 void w_frame_uninit (w_object_t *object);
+
+/* listbox.c */
+void w_listbox_draw (w_object_t *object);
+void w_listbox_geometry(w_object_t *object);
+int w_listbox_init (w_window_t *window, w_listbox_t **listbox, w_object_t *parent);
+void w_listbox_uninit (w_object_t *object);
+int w_listbox_add (w_listbox_t *listbox, char *item);
 
 /* object.c */
 int w_object_update_to_surface (w_object_t *object, s_surface_t *surface, s_rect_t *coor);
@@ -173,6 +270,36 @@ int w_textbox_set_str (w_object_t *object, char *str);
 void w_textbox_geometry (w_object_t *object);
 int w_textbox_init (w_window_t *window, w_textbox_t **textbox, w_object_t *parent);
 void w_textbox_uninit (w_object_t *object);
+void w_textbox_loadimages(w_object_t *object,char *file_left,char *file_middle,char *file_right);
+
+/*progressbar.c*/
+void w_progressbar_uninit (w_object_t *object);
+int w_progressbar_init (w_window_t *window, w_progressbar_t **progressbar, w_object_t *parent);
+void w_progressbar_draw (w_object_t *object);
+void w_progressbar_geometry (w_object_t *object);
+void w_progressbar_setstatus (w_object_t *object,int progressbarstatus);
+int w_progressbar_textbox_set_str (w_object_t *object, char *str,int barlength);
+
+/* scrollbar.c*/
+void w_scrollbar_geometry (w_object_t *object);
+void w_scrollbar_draw (w_object_t *object);
+int w_scrollbar_init (w_window_t *window, w_scrollbar_t **scrollbar, w_object_t *parent);
+void w_scrollbar_uninit (w_object_t *object);
+void w_buttonup_pressed (w_object_t *object, int buttonp);
+void w_buttondown_pressed (w_object_t *object, int buttonp);
+void w_scrollbar_loadimages (w_object_t *object,char *file_top,char *file_middle,char *file_bottom);
+
+/*combobox.c*/
+void w_combobox_geometry (w_object_t *object);
+void w_combobox_draw (w_object_t *object);
+int w_combobox_init (w_window_t *window, w_combobox_t **combobox, w_object_t *parent);
+void w_combobox_uninit (w_object_t *object);
+
+/*radiobutton.c*/
+void w_radiobutton_geometry (w_object_t *object);
+void w_radiobutton_draw (w_object_t *object);
+int w_radiobutton_init (w_window_t *window, w_radiobutton_t **radiobutton, w_object_t *parent);
+void w_radiobutton_uninit (w_object_t *object);
 
 /* window.c */
 void w_window_atevent (s_window_t *window, s_event_t *event);
