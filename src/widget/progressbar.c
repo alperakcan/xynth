@@ -145,7 +145,7 @@ int w_progressbar_init (w_window_t *window, w_progressbar_t **progressbar, w_obj
 	(*progressbar)->handler->mouse.w = 0;
 	(*progressbar)->handler->mouse.h = 0;
 	(*progressbar)->handler->mouse.button = ~MOUSE_NONEBUTTON;
-	(*progressbar)->handler->user_data = *progressbar;	
+	(*progressbar)->handler->data = *progressbar;	
 	(*progressbar)->state = 0;
 
 	(*progressbar)->frame->object->data[OBJECT_PROGRESSBAR] = *progressbar;

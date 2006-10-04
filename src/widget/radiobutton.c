@@ -54,7 +54,7 @@ static void button_cb_p (s_window_t *window, s_event_t *event, s_handler_t *hand
 	w_button_t *button;
 	w_radiobutton_t *radiobutton;
 	
-	button = (w_button_t *) handler->user_data;
+	button = (w_button_t *) handler->data;
 
 	w_button_cb_c (window, event, handler);
 	

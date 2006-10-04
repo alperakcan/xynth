@@ -131,7 +131,7 @@ int w_combobox_init (w_window_t *window, w_combobox_t **combobox, w_object_t *pa
 	(*combobox)->handler->mouse.w = 0;
 	(*combobox)->handler->mouse.h = 0;
 	(*combobox)->handler->mouse.button = ~MOUSE_NONEBUTTON;
-	(*combobox)->handler->user_data = *combobox;	
+	(*combobox)->handler->data = *combobox;	
 	(*combobox)->state = 0;
 
 	(*combobox)->frame->object->data[OBJECT_COMBOBOX] = *combobox;

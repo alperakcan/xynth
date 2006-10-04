@@ -161,7 +161,7 @@ int w_scrollbar_init (w_window_t *window, w_scrollbar_t **scrollbar, w_object_t 
 	(*scrollbar)->handler->mouse.w = 0;
 	(*scrollbar)->handler->mouse.h = 0;
 	(*scrollbar)->handler->mouse.button = ~MOUSE_NONEBUTTON;
-	(*scrollbar)->handler->user_data = *scrollbar;	
+	(*scrollbar)->handler->data = *scrollbar;	
 	(*scrollbar)->state = 0;
 
 	(*scrollbar)->frame->object->data[OBJECT_SCROLLBAR] = *scrollbar;

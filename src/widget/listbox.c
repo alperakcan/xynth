@@ -163,7 +163,7 @@ int w_listbox_init (w_window_t *window, w_listbox_t **listbox, w_object_t *paren
 	(*listbox)->handler->mouse.w = 0;
 	(*listbox)->handler->mouse.h = 0;
 	(*listbox)->handler->mouse.button = ~MOUSE_NONEBUTTON;
-	(*listbox)->handler->user_data = *listbox;	
+	(*listbox)->handler->data = *listbox;	
 	(*listbox)->state = 0;
 
 	(*listbox)->frame->object->data[OBJECT_LISTBOX] = *listbox;
