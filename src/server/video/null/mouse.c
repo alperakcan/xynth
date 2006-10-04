@@ -24,7 +24,7 @@ int s_video_null_mouse_init (s_server_conf_t *cfg)
 	return -1;
 }
 
-int s_video_null_mouse_update (s_mouse_driver_t *mouse)
+int s_video_null_mouse_update (s_video_input_data_t *mouse)
 {
 	return 0;
 }

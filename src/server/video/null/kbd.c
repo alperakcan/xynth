@@ -24,8 +24,9 @@ int s_video_null_kbd_init (s_server_conf_t *cfg)
 	return -1;
 }
 
-void s_video_null_kbd_update (s_keybd_driver_t *keybd)
+int s_video_null_kbd_update (s_video_input_data_t *keybd)
 {
+	return 0;
 }
 
 void s_video_null_kbd_uninit (void)
