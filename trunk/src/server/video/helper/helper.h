@@ -222,6 +222,6 @@ void s_video_helper_mtrr_add (unsigned int base, unsigned int size);
 #if defined(VIDEO_HELPER_TSCREEN)
 /* tscreen.c */
 int s_video_helper_touchscreen_init (s_server_conf_t *cfg);
-int s_video_helper_touchscreen_update (s_mouse_driver_t *mouse);
+int s_video_helper_touchscreen_update (s_video_input_data_mouse_t *mouse);
 void s_video_helper_touchscreen_uninit (void);
 #endif /* VIDEO_HELPER_TSCREEN */

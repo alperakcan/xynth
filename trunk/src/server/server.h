@@ -129,19 +129,19 @@ typedef struct s_server_conf_s {
 	} monitor;
 } s_server_conf_t;
 
-typedef struct s_mouse_driver_s {
+typedef struct s_video_input_data_mouse_s {
 	int x;
 	int y;
 	int buttons;
-} s_mouse_driver_t;
+} s_video_input_data_mouse_t;
 
-typedef struct s_keybd_driver_s {
+typedef struct s_video_input_data_keybd_s {
 	int state;
 	int button;
 	int keycode;
 	int scancode;
 	int ascii;
-} s_keybd_driver_t;
+} s_video_input_data_keybd_t;
 
 typedef enum {
 	VIDEO_INPUT_NONE,
@@ -150,8 +150,8 @@ typedef enum {
 } VIDEO_INPUT;
 
 typedef union s_video_input_data_u {
-	s_keybd_driver_t keybd;
-	s_mouse_driver_t mouse;
+	s_video_input_data_keybd_t keybd;
+	s_video_input_data_mouse_t mouse;
 } s_video_input_data_t;
 
 typedef struct s_video_input_s {
@@ -204,8 +204,8 @@ typedef struct s_server_s {
 s_server_t *server;
 
 /* event.c */
-void s_server_event_parse_keyboard (s_keybd_driver_t *keybd);
-int s_server_event_parse_mouse (s_mouse_driver_t *mouse);
+void s_server_event_parse_keyboard (s_video_input_data_keybd_t *keybd);
+int s_server_event_parse_mouse (s_video_input_data_mouse_t *mouse);
 int s_event_changed_ (s_window_t *window);
 void s_server_event_changed (void);
 

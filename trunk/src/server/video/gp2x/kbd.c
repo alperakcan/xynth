@@ -34,10 +34,10 @@ err0:   priv->keybd_fd[0] = -1;
 
 int s_video_gp2x_kbd_update (s_video_input_data_t *keybd)
 {
-        s_keybd_driver_t key;
+        s_video_input_data_keybd_t key;
 	s_video_gp2x_data_t *priv = server->driver->driver_data;
 
-	s_pipe_api_read(priv->keybd_fd[0], &key, sizeof(s_keybd_driver_t));
+	s_pipe_api_read(priv->keybd_fd[0], &key, sizeof(s_video_input_data_keybd_t));
 
 	keybd->keybd.ascii = -1;
 	keybd->keybd.scancode = key.button;

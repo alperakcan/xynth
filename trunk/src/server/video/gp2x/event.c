@@ -29,7 +29,7 @@ void * s_video_gp2x_event_parse (void *arg)
 	unsigned long pad_old;
 	unsigned long changed;
 	s_mouse_driver_t pad_send;
-	s_keybd_driver_t key_send;
+	s_video_input_data_keybd_t key_send;
 	s_video_gp2x_data_t *priv = (s_video_gp2x_data_t *) server->driver->driver_data;
 
 	while (server->window->running != 1) {
@@ -107,7 +107,7 @@ void * s_video_gp2x_event_parse (void *arg)
 			}
 			key_send.state = (changed & pad) ? KEYBD_PRESSED : KEYBD_RELEASED;
 			if (priv->keybd_fd[1] != -1) {
-				s_pipe_api_write(priv->keybd_fd[1], &key_send, sizeof(s_keybd_driver_t));
+				s_pipe_api_write(priv->keybd_fd[1], &key_send, sizeof(s_video_input_data_keybd_t));
 			}
 		}
 		usleep(30000);

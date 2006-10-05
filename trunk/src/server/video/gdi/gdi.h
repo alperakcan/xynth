@@ -28,8 +28,8 @@ typedef struct s_video_gdi_data_s {
 	int keybd_fd[2];
 	int mouse_fd[2];
 	int bpp_windows;
-	s_keybd_driver_t keybd;
-	s_mouse_driver_t mouse;
+	s_video_input_data_keybd_t keybd;
+	s_video_input_data_mouse_t mouse;
 	S_KEYCODE_CODE keymap[GDI_MAX_KEYS];
 } s_video_gdi_data_t;
 
@@ -38,12 +38,12 @@ LRESULT CALLBACK MainWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
 void * s_video_gdi_create_window (void *arg);
 
 int s_video_gdi_kbd_init (s_server_conf_t *cfg);
-void s_video_gdi_kbd_update (s_keybd_driver_t *keybd);
+void s_video_gdi_kbd_update (s_video_input_data_keybd_t *keybd);
 void s_video_gdi_kbd_uninit (void);
 void s_video_gdi_kbd_switch (int vt);
 
 int s_video_gdi_mouse_init (s_server_conf_t *cfg);
-int s_video_gdi_mouse_update (s_mouse_driver_t *mouse);
+int s_video_gdi_mouse_update (s_video_input_data_mouse_t *mouse);
 void s_video_gdi_mouse_uninit (void);
 
 void s_video_gdi_server_uninit (void);
