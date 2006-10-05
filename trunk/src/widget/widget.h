@@ -251,6 +251,10 @@ int w_editbox_init (w_window_t *window, w_editbox_t **editbox, w_object_t *paren
 void w_editbox_uninit (w_object_t *object);
 
 /* frame.c */
+int w_frame_image_init (w_frame_image_t **fimg);
+int w_frame_image_uninit (w_frame_image_t *fimg);
+int w_frame_set_image (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, ...);
+void w_frame_draw_image (w_object_t *object, w_frame_image_t *fimg);
 void w_frame_draw (w_object_t *object);
 void w_frame_geometry (w_object_t *object);
 int w_frame_init (w_window_t *window, w_frame_t **frame, unsigned int style, w_object_t *parent);
