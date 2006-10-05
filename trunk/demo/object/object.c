@@ -199,6 +199,8 @@ int main (int argc, char *argv[])
 	w_button_init(window, &button, frame->object);
 	button->pressed = button2_pressed;
 	button->object->destroy = button2_destroy;
+//	int w_frame_set_image (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, ...);
+//	w_frame_set_image(button->object, FRAME_PANEL | FRAME_RAISED, FRAME_IMAGE_HORIZONTAL, 3, "1.png", "2.png", "3.png");
 	w_object_move(button->object, 140, 5, 85, 20);
 	w_object_show(button->object);
 

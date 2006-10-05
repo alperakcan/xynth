@@ -34,6 +34,7 @@ int w_frame_image_uninit (w_frame_image_t *fimg)
 		s_list_remove(fimg->images, 0);
 		s_image_uninit(img);
 	}
+	s_list_uninit(fimg->images);
 	s_free(fimg);
 	return 0;
 }
@@ -75,22 +76,45 @@ void w_frame_draw_image (w_object_t *object, w_frame_image_t *fimg)
 {
 	int i;
 	s_image_t *img;
-	img = (s_image_t *) s_list_get(fimg->images, 0);
-	s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
-	              0, 0, img->w, img->h, img->w, img->h, img->mat, 0, 0);
-	s_putboxrgba(object->surface, 0, 0, img->w, img->h, img->rgba);
-	i = img->h;
-	img = (s_image_t *) s_list_get(fimg->images, 1);
-	for (; i < object->surface->height - img->h; i++) {
-		s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
-		              0, i, img->w, img->h, img->w, img->h, img->mat, 0, 0);
-		s_putboxrgba(object->surface, 0, i, img->w, img->h, img->rgba);
-	}
-	img = (s_image_t *) s_list_get(fimg->images, 2);
-	s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
-	              0, object->surface->height - img->h, img->w, img->h, img->w, img->h,
-	              img->mat, 0, 0);
-	s_putboxrgba(object->surface, 0, object->surface->height - img->h, img->w, img->h, img->rgba);				
+	switch (fimg->images->nb_elt) {
+		case 3:
+			if (fimg->rotation == FRAME_IMAGE_VERTICAL) {
+				img = (s_image_t *) s_list_get(fimg->images, 0);
+				s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
+				              0, 0, img->w, img->h, img->w, img->h, img->mat, 0, 0);
+				s_putboxrgba(object->surface, 0, 0, img->w, img->h, img->rgba);
+				i = img->h;
+				img = (s_image_t *) s_list_get(fimg->images, 1);
+				for (; i < object->surface->height - ((s_image_t *) s_list_get(fimg->images, 2))->h; i++) {
+					s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
+					              0, i, img->w, img->h, img->w, img->h, img->mat, 0, 0);
+					s_putboxrgba(object->surface, 0, i, img->w, img->h, img->rgba);
+				}
+				img = (s_image_t *) s_list_get(fimg->images, 2);
+				s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
+				              0, object->surface->height - img->h, img->w, img->h, img->w, img->h,
+				              img->mat, 0, 0);
+				s_putboxrgba(object->surface, 0, object->surface->height - img->h, img->w, img->h, img->rgba);
+			} else if (fimg->rotation == FRAME_IMAGE_HORIZONTAL) {
+				img = (s_image_t *) s_list_get(fimg->images, 0);
+				s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
+				              0, 0, img->w, img->h, img->w, img->h, img->mat, 0, 0);
+				s_putboxrgba(object->surface, 0, 0, img->w, img->h, img->rgba);
+				i = img->w;
+				img = (s_image_t *) s_list_get(fimg->images, 1);
+				for (; i < object->surface->width - ((s_image_t *) s_list_get(fimg->images, 2))->w; i++) {
+					s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
+					              i, 0, img->w, img->h, img->w, img->h, img->mat, 0, 0);
+					s_putboxrgba(object->surface, i, 0, img->w, img->h, img->rgba);
+				}
+				img = (s_image_t *) s_list_get(fimg->images, 2);
+				s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
+				              object->surface->width - img->w, 0, img->w, img->h, img->w, img->h,
+				              img->mat, 0, 0);
+				s_putboxrgba(object->surface, object->surface->width - img->w, 0, img->w, img->h, img->rgba);
+			}
+			break;
+	}				
 }
 
 void w_frame_draw (w_object_t *object)
@@ -105,11 +129,13 @@ void w_frame_draw (w_object_t *object)
         for (i = 0; !s_list_eol(frame->images, i); i++) {
         	fimg = (w_frame_image_t *) s_list_get(frame->images, i);
         	if (frame->style == fimg->style) {
+        		memset(object->surface->matrix, 0x00, sizeof(char) * object->surface->width * object->surface->height);
         		w_frame_draw_image(object, fimg);
         		return;
         	}
         }
         
+	memset(object->surface->matrix, 0xff, sizeof(char) * object->surface->width * object->surface->height);
         switch (frame->style & FRAME_MSHAPE) {
 		case FRAME_NOFRAME:		return;
 		case FRAME_BOX:
@@ -317,6 +343,7 @@ void w_frame_uninit (w_object_t *object)
 	w_object_uninit(frame->object);
 	while (!s_list_eol(frame->images, 0)) {
 		fimg = s_list_get(frame->images, 0);
+		s_list_remove(frame->images, 0);
 		w_frame_image_uninit(fimg);
 	}
 	s_list_uninit(frame->images);
