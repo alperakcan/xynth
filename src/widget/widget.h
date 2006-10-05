@@ -85,6 +85,11 @@ typedef enum {
 	FRAME_MSHADOW		= 0xf0
 } FRAME_SHADOW;
 
+typedef enum {
+	FRAME_IMAGE_VERTICAL    = 0x0,
+	FRAME_IMAGE_HORIZONTAL  = 0x1,
+} FRAME_IMAGE_ROTATION;
+
 typedef struct w_frame_image_s {
 	unsigned int style;
 	unsigned int rotation;
