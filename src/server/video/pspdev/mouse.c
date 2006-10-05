@@ -37,9 +37,9 @@ err0:	priv->mouse_fd[0] = -1;
 
 int s_video_pspdev_mouse_update (s_video_input_data_t *mouse)
 {
-	s_mouse_driver_t pad_recv;
+	s_video_input_data_mouse_t pad_recv;
 	s_video_pspdev_data_t *priv = server->driver->driver_data;
-	s_pipe_api_read(priv->mouse_fd[0], &pad_recv, sizeof(s_mouse_driver_t));
+	s_pipe_api_read(priv->mouse_fd[0], &pad_recv, sizeof(s_video_input_data_mouse_t));
 	mouse->mouse.x = pad_recv.x;
 	mouse->mouse.y = pad_recv.y;
 	mouse->mouse.buttons = 0;

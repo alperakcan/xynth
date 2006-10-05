@@ -193,7 +193,7 @@ int s_server_socket_listen_show (int id)
 
 int s_server_socket_listen_event (int id)
 {
-	s_keybd_driver_t keybd;
+	s_video_input_data_keybd_t keybd;
 	s_soc_data_event_t *data;
 	data = (s_soc_data_event_t *) s_calloc(1, sizeof(s_soc_data_event_t));
 	if (s_socket_api_recv(server->client[id].soc, data, sizeof(s_soc_data_event_t)) != sizeof(s_soc_data_event_t)) {
@@ -203,7 +203,7 @@ int s_server_socket_listen_event (int id)
 	server->window->event->type = REMOTE_EVENT;
 	switch (data->type & (KEYBD_EVENT | MOUSE_EVENT)) {
 		case KEYBD_EVENT:
-			memset(&keybd, 0, sizeof(s_keybd_driver_t));
+			memset(&keybd, 0, sizeof(s_video_input_data_keybd_t));
 			keybd.ascii = data->keybd.ascii;
 			keybd.button = data->keybd.button;
 			keybd.keycode = data->keybd.keycode;

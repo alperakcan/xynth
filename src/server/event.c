@@ -16,7 +16,7 @@
 #include "../lib/xynth_.h"
 #include "server.h"
 
-void s_server_event_parse_keyboard (s_keybd_driver_t *keybd)
+void s_server_event_parse_keyboard (s_video_input_data_keybd_t *keybd)
 {
 	S_KEYCODE_FLAG keycode_flag;
 	
@@ -84,7 +84,7 @@ void s_server_event_parse_keyboard (s_keybd_driver_t *keybd)
 	server->window->event->keybd->state[keybd->keycode] = keybd->state;
 }
 
-int s_server_event_parse_mouse (s_mouse_driver_t *mouse)
+int s_server_event_parse_mouse (s_video_input_data_mouse_t *mouse)
 {
 	long long time;
 

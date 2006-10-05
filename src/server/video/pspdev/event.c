@@ -33,7 +33,7 @@ void * s_video_pspdev_event_parse (void *arg)
 	int axisx;
 	int axisy;
 	SceCtrlData pad;
-	s_mouse_driver_t pad_send;
+	s_video_input_data_mouse_t pad_send;
 	enum PspCtrlButtons pad_old;
 	enum PspCtrlButtons changed;
 	s_video_pspdev_data_t *priv = (s_video_pspdev_data_t *) server->driver->driver_data;
@@ -74,7 +74,7 @@ void * s_video_pspdev_event_parse (void *arg)
 			pad_send.buttons = pad.Buttons & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE);
 
 			if (priv->mouse_fd[1] != -1) {
-				s_pipe_api_write(priv->mouse_fd[1], &pad_send, sizeof(s_mouse_driver_t));
+				s_pipe_api_write(priv->mouse_fd[1], &pad_send, sizeof(s_video_input_data_mouse_t));
 			}
 		}
 		usleep(30000);
