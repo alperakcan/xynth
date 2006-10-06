@@ -75,7 +75,7 @@ DEBUG		= Y
 SINGLE_APP      = Y
 
 # Build widget library
-WIDGET_LIB      = N
+WIDGET_LIB      = Y
 
 # Demo applications
 DEMO_CHILD      = Y
@@ -83,7 +83,7 @@ DEMO_DESKTOP    = Y
 DEMO_HIDE       = Y
 DEMO_LOAD       = Y
 DEMO_SIMPLE     = Y
-DEMO_OBJECT     = N
+DEMO_OBJECT     = Y
 DEMO_ONSCREENKEYBOARD = Y
 DEMO_TEMP       = Y
 DEMO_TERM       = Y
