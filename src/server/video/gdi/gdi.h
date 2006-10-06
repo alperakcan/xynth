@@ -38,12 +38,12 @@ LRESULT CALLBACK MainWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
 void * s_video_gdi_create_window (void *arg);
 
 int s_video_gdi_kbd_init (s_server_conf_t *cfg);
-void s_video_gdi_kbd_update (s_video_input_data_keybd_t *keybd);
+int s_video_gdi_kbd_update (s_video_input_data_t *keybd);
 void s_video_gdi_kbd_uninit (void);
 void s_video_gdi_kbd_switch (int vt);
 
 int s_video_gdi_mouse_init (s_server_conf_t *cfg);
-int s_video_gdi_mouse_update (s_video_input_data_mouse_t *mouse);
+int s_video_gdi_mouse_update (s_video_input_data_t *mouse);
 void s_video_gdi_mouse_uninit (void);
 
 void s_video_gdi_server_uninit (void);
