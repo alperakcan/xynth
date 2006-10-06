@@ -1,4 +1,13 @@
 
+Sat 07 Oct 2006 01:58:37 AM EEST
+	* M src/widget/frame.c,
+	  M src/widget/textbox.c,
+	  M src/lib/grlib.c,
+	  M src/lib/xynth.h :
+	
+	new functions s_putboxrga(), and s_putboxpartrgba().
+	fixed minor bug with image alpha blending in frames and textboxes.
+
 Wed 04 Oct 2006 12:51:26 PM EEST
 	* M src/server/kbd.c,
 	  M src/server/server.c,
