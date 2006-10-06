@@ -277,6 +277,11 @@ void s_putboxalpha (s_surface_t *surface, int x, int y, int w, int h, char *sp, 
 	s_putboxpartalpha(surface, x, y, w, h, w, h, sp, sm, 0, 0);
 }
 
+void s_putboxrgb (s_surface_t *surface, int x, int y, int w, int h, unsigned int *rgba)
+{
+	s_putboxpartrgb(surface, x, y, w, h, w, h, rgba, 0, 0);
+}
+
 void s_putboxrgba (s_surface_t *surface, int x, int y, int w, int h, unsigned int *rgba)
 {
 	s_putboxpartrgba(surface, x, y, w, h, w, h, rgba, 0, 0);
@@ -341,6 +346,21 @@ void s_putboxpartalpha (s_surface_t *surface, int x, int y, int w, int h, int bw
 		}
 	}
 	s_free(tsrf);
+}
+
+void s_putboxpartrgb (s_surface_t *surface, int x, int y, int w, int h, int bw, int bh, unsigned int *rgba, int xo, int yo)
+{
+	int txd;
+	int tyd;
+	int txs;
+	int tys;
+	for (tyd = y, tys = yo; ((tyd - y) < h) && (tys < bh); tyd++, tys++) {
+		for (txd = x, txs = xo; ((txd - x) < w) && (txs < bw); txd++, txs++) {
+			s_setpixelrgb(surface, txd, tyd, (*(rgba + (tys * bw + txs)) >> 0x18) & 0xFF,
+			                                 (*(rgba + (tys * bw + txs)) >> 0x10) & 0xFF,
+			                                 (*(rgba + (tys * bw + txs)) >> 0x08) & 0xFF);
+		}
+	}
 }
 
 void s_putboxpartrgba (s_surface_t *surface, int x, int y, int w, int h, int bw, int bh, unsigned int *rgba, int xo, int yo)

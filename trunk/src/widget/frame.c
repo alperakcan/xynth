@@ -82,36 +82,36 @@ void w_frame_draw_image (w_object_t *object, w_frame_image_t *fimg)
 				img = (s_image_t *) s_list_get(fimg->images, 0);
 				s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
 				              0, 0, img->w, img->h, img->w, img->h, img->mat, 0, 0);
-				s_putboxrgba(object->surface, 0, 0, img->w, img->h, img->rgba);
+				s_putboxrgb(object->surface, 0, 0, img->w, img->h, img->rgba);
 				i = img->h;
 				img = (s_image_t *) s_list_get(fimg->images, 1);
 				for (; i < object->surface->height - ((s_image_t *) s_list_get(fimg->images, 2))->h; i++) {
 					s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
 					              0, i, img->w, img->h, img->w, img->h, img->mat, 0, 0);
-					s_putboxrgba(object->surface, 0, i, img->w, img->h, img->rgba);
+					s_putboxrgb(object->surface, 0, i, img->w, img->h, img->rgba);
 				}
 				img = (s_image_t *) s_list_get(fimg->images, 2);
 				s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
 				              0, object->surface->height - img->h, img->w, img->h, img->w, img->h,
 				              img->mat, 0, 0);
-				s_putboxrgba(object->surface, 0, object->surface->height - img->h, img->w, img->h, img->rgba);
+				s_putboxrgb(object->surface, 0, object->surface->height - img->h, img->w, img->h, img->rgba);
 			} else if (fimg->rotation == FRAME_IMAGE_HORIZONTAL) {
 				img = (s_image_t *) s_list_get(fimg->images, 0);
 				s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
 				              0, 0, img->w, img->h, img->w, img->h, img->mat, 0, 0);
-				s_putboxrgba(object->surface, 0, 0, img->w, img->h, img->rgba);
+				s_putboxrgb(object->surface, 0, 0, img->w, img->h, img->rgba);
 				i = img->w;
 				img = (s_image_t *) s_list_get(fimg->images, 1);
 				for (; i < object->surface->width - ((s_image_t *) s_list_get(fimg->images, 2))->w; i++) {
 					s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
 					              i, 0, img->w, img->h, img->w, img->h, img->mat, 0, 0);
-					s_putboxrgba(object->surface, i, 0, img->w, img->h, img->rgba);
+					s_putboxrgb(object->surface, i, 0, img->w, img->h, img->rgba);
 				}
 				img = (s_image_t *) s_list_get(fimg->images, 2);
 				s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
 				              object->surface->width - img->w, 0, img->w, img->h, img->w, img->h,
 				              img->mat, 0, 0);
-				s_putboxrgba(object->surface, object->surface->width - img->w, 0, img->w, img->h, img->rgba);
+				s_putboxrgb(object->surface, object->surface->width - img->w, 0, img->w, img->h, img->rgba);
 			}
 			break;
 	}				

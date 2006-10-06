@@ -23,8 +23,8 @@ void w_textbox_draw (w_object_t *object)
 	int w;
 	int h;
 	int d;
-	int i;
 	w_textbox_t *textbox;
+	
 	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
 	
 	w = MIN(textbox->object->content->w, textbox->font->img->w);
@@ -41,85 +41,17 @@ void w_textbox_draw (w_object_t *object)
 
 	s_image_get_mat(textbox->font->img);
 	if ((textbox->frame->style & FRAME_MSHAPE) == FRAME_NOFRAME) {
-		memset(textbox->object->surface->matrix,
-		       0,
-		       textbox->object->surface->width * textbox->object->surface->height);
-		s_putmaskpart((char*)textbox->object->surface->matrix,
-		              textbox->object->surface->width,
-		              textbox->object->surface->height,
-		              x,
-		              y + textbox->font->size - textbox->font->yMax,
-		              w,
-		              h,
-		              textbox->font->img->w,
-		              textbox->font->img->h,
-		              (char*)textbox->font->img->mat,
-		              0,
-		              0);
+		memset(textbox->object->surface->matrix, 0, textbox->object->surface->width * textbox->object->surface->height);
+		s_putmaskpart(textbox->object->surface->matrix, textbox->object->surface->width, textbox->object->surface->height,
+		              x, y + textbox->font->size - textbox->font->yMax, w, h, textbox->font->img->w, textbox->font->img->h,
+		              textbox->font->img->mat, 0, 0);
+		s_putboxpartrgb(textbox->object->surface, x, y + textbox->font->size - textbox->font->yMax, w, h,
+		                textbox->font->img->w, textbox->font->img->h, textbox->font->img->rgba, 0, 0);
 	} else {
-		if(textbox->isimg==0)
-			w_frame_draw(textbox->object);
-		else
-		{
-			s_image_get_mat(textbox->img_left);
-			s_putmaskpart((char*)textbox->object->surface->matrix,
-		              textbox->object->surface->width,
-		              textbox->object->surface->height,
-		              0,
-		              0,
-		              textbox->img_left->w,
-		              textbox->img_left->h,
-		              textbox->img_left->w,
-		              textbox->img_left->h,
-		              (char*)textbox->img_left->mat,
-		              0,
-		              0);
-            s_putboxrgba(object->surface,0,0,textbox->img_left->w,textbox->img_left->h,textbox->img_left->rgba);				
-		    s_image_get_mat(textbox->img_middle);
-		    for(i=textbox->img_left->w;i<textbox->object->surface->width-textbox->img_left->w;i++)
-			{
-				s_putmaskpart((char*)textbox->object->surface->matrix,
-			              textbox->object->surface->width,
-			              textbox->object->surface->height,
-			              i,
-			              0,
-			              textbox->img_middle->w,
-			              textbox->img_middle->h,
-			              textbox->img_middle->w,
-			              textbox->img_middle->h,
-			              (char*)textbox->img_middle->mat,
-			              0,
-			              0);
-                s_putboxrgba(object->surface,i,0,textbox->img_middle->w,textbox->img_middle->h,textbox->img_middle->rgba);				
-			}
-		    s_image_get_mat(textbox->img_right);
-			s_putmaskpart((char*)textbox->object->surface->matrix,
-		              textbox->object->surface->width,
-		              textbox->object->surface->height,
-		              textbox->object->surface->width-textbox->img_left->w,
-		              0,
-		              textbox->img_right->w,
-		              textbox->img_right->h,
-		              textbox->img_right->w,
-		              textbox->img_right->h,
-		              (char*)textbox->img_right->mat,
-		              0,
-		              0);			
-            s_putboxrgba(object->surface,textbox->object->surface->width-textbox->img_left->w,0,
-            					textbox->img_right->w,textbox->img_right->h,textbox->img_right->rgba);				
-		}
+		w_frame_draw(textbox->object);
+		s_putboxpartrgba(textbox->object->surface, x, y + textbox->font->size - textbox->font->yMax, w, h,
+		                 textbox->font->img->w, textbox->font->img->h, textbox->font->img->rgba, 0, 0);
 	}
-	
-	s_putboxpartrgba(textbox->object->surface,
-	                 x,
-	                 y + textbox->font->size - textbox->font->yMax,
-	                 w,
-	                 h,
-	                 textbox->font->img->w,
-	                 textbox->font->img->h,
-	                 textbox->font->img->rgba,
-	                 0,
-	                 0);
 }
 
 int w_textbox_set_str (w_object_t *object, char *str)
