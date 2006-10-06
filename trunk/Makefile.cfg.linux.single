@@ -75,7 +75,7 @@ DEBUG		= Y
 SINGLE_APP      = Y
 
 # Build widget library
-WIDGET_LIB      = N
+WIDGET_LIB      = Y
 
 # Demo applications
 DEMO_CHILD      = Y

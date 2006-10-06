@@ -12,7 +12,7 @@ DEPEND   := Makefile.depend
 all: depend $(EXTRA_TARGETS) $(TARGET) $(TARGET_A) $(TARGET_SO)
 
 ifdef TARGET
-$(TARGET): $(OBJS) $(EXPORT_OBJ)
+$(TARGET): $(OBJS) $(EXTRA_OBJS)
 	rm -rf $@
 	$(CC) $^ $(LDFLAGS) -o $@
 endif

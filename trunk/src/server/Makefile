@@ -43,26 +43,30 @@ OBJS-$(VIDEO_HELPER)      += video/helper/console.o video/helper/kbd.o video/hel
 VLDFLAGS-$(VIDEO_HELPER_TSCREEN) += -lts
 
 ifeq ($(SINGLE_APP), Y)
-	LDFLAGS-$(DEMO_CHILD) += ../../demo/child/single_child.a
-	LDFLAGS-$(DEMO_DESKTOP) += ../../demo/desktop/single_desktop.a
-	LDFLAGS-$(DEMO_HIDE) += ../../demo/hide/single_hide.a
-	LDFLAGS-$(DEMO_LOAD) += ../../demo/load/single_load.a
-	LDFLAGS-$(DEMO_SIMPLE) += ../../demo/simple/single_simple.a
-	LDFLAGS-$(DEMO_OBJECT) += ../../demo/object/single_object.a
-	LDFLAGS-$(DEMO_ONSCREENKEYBOARD) += ../../demo/onscreenkeyboard/single_onscreenkeyboard.a
-	LDFLAGS-$(DEMO_TEMP) += ../../demo/temp/single_temp.a
-	LDFLAGS-$(DEMO_TERM) += ../../demo/term/single_term.a
-	LDFLAGS-$(DEMO_TIMER) += ../../demo/timer/single_timer.a
-	LDFLAGS-$(DEMO_LOGOUT) += ../../demo/xynthlogout/single_xynthlogout.a
+	EXTRA_OBJS-$(DEMO_CHILD) += ../../demo/child/single_child.a
+	EXTRA_OBJS-$(DEMO_DESKTOP) += ../../demo/desktop/single_desktop.a
+	EXTRA_OBJS-$(DEMO_HIDE) += ../../demo/hide/single_hide.a
+	EXTRA_OBJS-$(DEMO_LOAD) += ../../demo/load/single_load.a
+	EXTRA_OBJS-$(DEMO_SIMPLE) += ../../demo/simple/single_simple.a
+	EXTRA_OBJS-$(DEMO_OBJECT) += ../../demo/object/single_object.a
+	EXTRA_OBJS-$(DEMO_ONSCREENKEYBOARD) += ../../demo/onscreenkeyboard/single_onscreenkeyboard.a
+	EXTRA_OBJS-$(DEMO_TEMP) += ../../demo/temp/single_temp.a
+	EXTRA_OBJS-$(DEMO_TERM) += ../../demo/term/single_term.a
+	EXTRA_OBJS-$(DEMO_TIMER) += ../../demo/timer/single_timer.a
+	EXTRA_OBJS-$(DEMO_LOGOUT) += ../../demo/xynthlogout/single_xynthlogout.a
 endif
+
+LIBDIR-$(WIDGET_LIB) += ../widget
+LDFLAGS-$(WIDGET_LIB) += -lwidget
 
 LDFLAGS-$(THEME_PLUGIN) += -ldl
 
-OBJS    += $(OBJS-Y)
-CFLAGS  += $(CFLAGS-Y)
-LIBDIR  += $(LIBDIR-Y)
-LDFLAGS += $(LDFLAGS-Y) -lxynth $(VLDFLAGS-Y)
-TARGET   = $(TARGET-Y)
+OBJS       += $(OBJS-Y)
+EXTRA_OBJS += $(EXTRA_OBJS-Y)
+CFLAGS     += $(CFLAGS-Y)
+LIBDIR     += $(LIBDIR-Y)
+LDFLAGS    += $(LDFLAGS-Y) -lxynth $(VLDFLAGS-Y)
+TARGET      = $(TARGET-Y)
 
 EXTRA_CLEAN = xynth xynth.exe xynth.elf $(OBJS-N) $(OBJS-)
 
