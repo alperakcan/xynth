@@ -1007,6 +1007,19 @@ void s_putboxalpha (s_surface_t *surface, int x, int y, int w, int h, char *sp, 
   */
 void s_putboxrgba (s_surface_t *surface, int x, int y, int w, int h, unsigned int *rgba);
 
+/** @brief copy the contents of a rgb buffer rgb to a rectangular bitmap at position (x, y) with
+  *        size (w, h) on to the surface.
+  *
+  * @param *surface - the surface
+  * @param x        - x coordinate
+  * @param y        - y coordinate
+  * @param w        - width
+  * @param h        - height
+  * @param *rgb    - source pixmap rgb values
+  * @returns no return
+  */
+void s_putboxrgb (s_surface_t *surface, int x, int y, int w, int h, unsigned int *rgb);
+
 /** @brief copy a rectangular bitmap at position (x, y) with size (w, h) from the surface to a buffer
   *        dp. pixmaps are in row-major order. the destination pixmap has the size w * h * surface->bytesperpixel
   *
@@ -1059,6 +1072,24 @@ void s_putboxpart (s_surface_t *surface, int x, int y, int w, int h, int bw, int
   * @returns no return
   */
 void s_putboxpartmask (s_surface_t *surface, int x, int y, int w, int h, int bw, int bh, char *sp, unsigned char *sm, int xo, int yo);
+
+/** @brief copy the contents of a rgb buffer rgb to a rectangular bitmap at position (x, y) with
+  *        size (w, h) on to the surface. however, only a part of size (bw, bh) starting at offset
+  *        (xo, yo) in the pixmap is copied.
+  *
+  * @param *surface - the surface
+  * @param x        - x coordinate
+  * @param y        - y coordinate
+  * @param w        - width
+  * @param h        - height
+  * @param bw       - bitmap width
+  * @param bh       - bitmap heihgt
+  * @param *rgb    - source pixmap rgb values
+  * @param xo       - x offset
+  * @param yo       - y offset
+  * @returns no return
+  */
+void s_putboxpartrgb (s_surface_t *surface, int x, int y, int w, int h, int bw, int bh, unsigned int *rgb, int xo, int yo);
 
 /** @brief copy the contents of a rgba buffer rgba to a rectangular bitmap at position (x, y) with
   *        size (w, h) on to the surface. however, only a part of size (bw, bh) starting at offset
