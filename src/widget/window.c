@@ -48,6 +48,7 @@ void w_window_atevent (s_window_t *window, s_event_t *event)
 		w_signal_t *signal;
 		signal = (w_signal_t *) event->data;
 		signal->func(signal);
+		s_free(signal);
 	}
 	if (event->type & QUIT_EVENT) {
 		w_window_uninit(windoww);
