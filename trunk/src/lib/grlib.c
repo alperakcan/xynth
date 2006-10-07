@@ -300,7 +300,6 @@ void s_getbox (s_surface_t *surface, int x, int y, int w, int h, char *dp)
 {
 	clipv(x, y, w, h);
 	bpp_getbox(surface, coor.x, coor.y, coor.w, coor.h, dp + (y0 * w + x0) * surface->bytesperpixel);
-	return;
 }
 
 void s_putboxpart (s_surface_t *surface, int x, int y, int w, int h, int bw, int bh, char *sp, int xo, int yo)
