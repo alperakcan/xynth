@@ -217,6 +217,35 @@ void bpp_putbox_mask (s_surface_t *surface, int x, int y, int w, int h, char *sp
 	}
 }
 
+#define driverloop5a(func)\
+	while (i--) {\
+		func(d, s, m, w, rl, gl, bl, ro, go, bo);\
+		s += s_;\
+		d += d_;\
+		m += m_;\
+	}
+void bpp_putbox_alpha (s_surface_t *surface, int x, int y, int w, int h, char *sp, unsigned char *sm, int bw)
+{
+	int i = h;
+	int m_ = bw;
+	int s_ = bw * surface->bytesperpixel;
+	int d_ = surface->width * surface->bytesperpixel;
+	char *d = surface->vbuf + OFFSE1 * surface->bytesperpixel;
+	char *s = sp;
+	unsigned char *m = sm;
+	int rl = surface->redlength;
+	int gl = surface->greenlength;
+	int bl = surface->bluelength;
+	int ro = surface->redoffset;
+	int go = surface->greenoffset;
+	int bo = surface->blueoffset;
+	switch (surface->bytesperpixel) {
+		case 1:	driverloop5a(s_memcpy1a);	break;
+		case 2:	driverloop5a(s_memcpy2a);	break;
+		case 4:	driverloop5a(s_memcpy4a);	break;
+	}
+}
+
 void bpp_getbox (s_surface_t *surface, int x, int y, int w, int h, char *dp)
 {
 	int i = h;
@@ -277,6 +306,37 @@ void bpp_putbox_mask_o (s_surface_t *surface, int id,  int x, int y, int w, int 
 		case 1:	driverloop6m(s_memcpy1om);	break;
 		case 2:	driverloop6m(s_memcpy2om);	break;
 		case 4:	driverloop6m(s_memcpy4om);	break;
+	}
+}
+
+#define driverloop6a(func)\
+	while (i--) {\
+		func(m, id, d, s, msk, w, rl, gl, bl, ro, go, bo);\
+		s += s_;\
+		d += d_;\
+		m += m_;\
+		msk += msk_;\
+	}
+void bpp_putbox_alpha_o (s_surface_t *surface, int id,  int x, int y, int w, int h, char *sp, unsigned char *sm, int bw)
+{
+	int i = h;
+        int msk_ = bw;
+	int s_ = bw * surface->bytesperpixel;
+	int d_ = surface->linear_buf_pitch * surface->bytesperpixel;
+        unsigned char *msk = sm;
+	char *s = sp;
+	char *d = surface->linear_buf + OFFSE4P * surface->bytesperpixel;
+	int rl = surface->redlength;
+	int gl = surface->greenlength;
+	int bl = surface->bluelength;
+	int ro = surface->redoffset;
+	int go = surface->greenoffset;
+	int bo = surface->blueoffset;
+	prepare(OFFSE4);
+	switch (surface->bytesperpixel) {
+		case 1:	driverloop6a(s_memcpy1oa);	break;
+		case 2:	driverloop6a(s_memcpy2oa);	break;
+		case 4:	driverloop6a(s_memcpy4oa);	break;
 	}
 }
 

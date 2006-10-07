@@ -274,7 +274,16 @@ void s_putboxmask (s_surface_t *surface, int x, int y, int w, int h, char *sp, u
 
 void s_putboxalpha (s_surface_t *surface, int x, int y, int w, int h, char *sp, unsigned char *sm)
 {
-	s_putboxpartalpha(surface, x, y, w, h, w, h, sp, sm, 0, 0);
+	if (surface->mode & SURFACE_VIRTUAL) {
+		clipv(x, y, w, h);
+		bpp_putbox_alpha(surface, coor.x, coor.y, coor.w, coor.h, sp + (y0 * w + x0) * surface->bytesperpixel, sm + (y0 * w + x0), w);
+	}
+	if (surface->mode & SURFACE_REAL) {
+		clipr(x, y, w, h);
+    		gr_sendstream(
+			bpp_putbox_alpha_o(surface, *(surface->id), coor.x, coor.y, coor.w, coor.h, sp + (y0 * w + x0) * surface->bytesperpixel, sm + (y0 * w + x0), w);
+		);
+	}
 }
 
 void s_putboxrgb (s_surface_t *surface, int x, int y, int w, int h, unsigned int *rgba)
@@ -324,28 +333,16 @@ void s_putboxpartmask (s_surface_t *surface, int x, int y, int w, int h, int bw,
 
 void s_putboxpartalpha (s_surface_t *surface, int x, int y, int w, int h, int bw, int bh, char *sp, unsigned char *sm, int xo, int yo)
 {
-	int tr;
-	int tg;
-	int tb;
-	int txd;
-	int tyd;
-	int txs;
-	int tys;
-	unsigned char a;
-	s_surface_t *tsrf;
-	tsrf = (s_surface_t *) s_malloc(sizeof(s_surface_t));
-	s_getsurfacevirtual(tsrf, bw, bh, surface->bitsperpixel, sp);
-	for (tyd = y, tys = yo; ((tyd - y) < h) && (tys < bh); tyd++, tys++) {
-		for (txd = x, txs = xo; ((txd - x) < w) && (txs < bw); txd++, txs++) {
-			a = ~*(sm + (tys * bw + txs));
-			if (a == 0xFF) {
-				continue;
-			}
-			s_getpixelrgb(tsrf, txs, tys, &tr, &tg, &tb);
-			s_setpixelrgba(surface, txd, tyd, tr, tg, tb, a);
-		}
+	if (surface->mode & SURFACE_VIRTUAL) {
+		clipv(x, y, w, h);
+		bpp_putbox_alpha(surface, coor.x, coor.y, coor.w, coor.h, sp + ((yo + y0) * bw + xo + x0) * surface->bytesperpixel, sm + ((yo + y0) * bw + xo + x0), bw);
 	}
-	s_free(tsrf);
+	if (surface->mode & SURFACE_REAL) {
+		clipr(x, y, w, h);
+		gr_sendstream(
+			bpp_putbox_alpha_o(surface, *(surface->id), coor.x, coor.y, coor.w, coor.h, sp + ((yo + y0) * bw + xo + x0) * surface->bytesperpixel, sm + ((yo + y0) * bw + xo + x0), bw);
+		);
+	}
 }
 
 void s_putboxpartrgb (s_surface_t *surface, int x, int y, int w, int h, int bw, int bh, unsigned int *rgba, int xo, int yo)
