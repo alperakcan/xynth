@@ -35,6 +35,17 @@
 	x0 = coor.x - a;\
 	y0 = coor.y - b;
 
+#define clipb()\
+	s_rect_t thip;\
+	s_rect_t clip;\
+	s_rect_t intr;\
+	thip.x = 0; thip.y = 0; thip.w = bw; thip.h = bh;\
+	clip.x = xo; clip.y = yo; clip.w = w; clip.h = h;\
+	if (s_rect_intersect(&thip, &clip, &intr)) {\
+		return;\
+	}\
+	xo = intr.x; yo = intr.y; w = intr.w; h = intr.h;
+
 #define gr_sendstream(fonk)\
 	if (surface->need_expose & SURFACE_NEEDSTREAM) {\
 		s_socket_request(surface->window, SOC_DATA_EXPOSE, &coor);\
@@ -288,12 +299,30 @@ void s_putboxalpha (s_surface_t *surface, int x, int y, int w, int h, char *sp, 
 
 void s_putboxrgb (s_surface_t *surface, int x, int y, int w, int h, unsigned int *rgba)
 {
-	s_putboxpartrgb(surface, x, y, w, h, w, h, rgba, 0, 0);
+	if (surface->mode & SURFACE_VIRTUAL) {
+		clipv(x, y, w, h);
+		bpp_putbox_rgb(surface, coor.x, coor.y, coor.w, coor.h, rgba + (y0 * w + x0), w);
+	}
+	if (surface->mode & SURFACE_REAL) {
+		clipr(x, y, w, h);
+    		gr_sendstream(
+			bpp_putbox_rgb_o(surface, *(surface->id), coor.x, coor.y, coor.w, coor.h, rgba + (y0 * w + x0), w);
+		);
+	}
 }
 
 void s_putboxrgba (s_surface_t *surface, int x, int y, int w, int h, unsigned int *rgba)
 {
-	s_putboxpartrgba(surface, x, y, w, h, w, h, rgba, 0, 0);
+	if (surface->mode & SURFACE_VIRTUAL) {
+		clipv(x, y, w, h);
+		bpp_putbox_rgba(surface, coor.x, coor.y, coor.w, coor.h, rgba + (y0 * w + x0), w);
+	}
+	if (surface->mode & SURFACE_REAL) {
+		clipr(x, y, w, h);
+    		gr_sendstream(
+			bpp_putbox_rgba_o(surface, *(surface->id), coor.x, coor.y, coor.w, coor.h, rgba + (y0 * w + x0), w);
+		);
+	}
 }
 
 void s_getbox (s_surface_t *surface, int x, int y, int w, int h, char *dp)
@@ -304,6 +333,7 @@ void s_getbox (s_surface_t *surface, int x, int y, int w, int h, char *dp)
 
 void s_putboxpart (s_surface_t *surface, int x, int y, int w, int h, int bw, int bh, char *sp, int xo, int yo)
 {
+	clipb();
 	if (surface->mode & SURFACE_VIRTUAL) {
 		clipv(x, y, w, h);
 		bpp_putbox(surface, coor.x, coor.y, coor.w, coor.h, sp + ((yo + y0) * bw + xo + x0) * surface->bytesperpixel, bw);
@@ -318,6 +348,7 @@ void s_putboxpart (s_surface_t *surface, int x, int y, int w, int h, int bw, int
 
 void s_putboxpartmask (s_surface_t *surface, int x, int y, int w, int h, int bw, int bh, char *sp, unsigned char *sm, int xo, int yo)
 {
+	clipb();
 	if (surface->mode & SURFACE_VIRTUAL) {
 		clipv(x, y, w, h);
 		bpp_putbox_mask(surface, coor.x, coor.y, coor.w, coor.h, sp + ((yo + y0) * bw + xo + x0) * surface->bytesperpixel, sm + ((yo + y0) * bw + xo + x0), bw);
@@ -332,6 +363,7 @@ void s_putboxpartmask (s_surface_t *surface, int x, int y, int w, int h, int bw,
 
 void s_putboxpartalpha (s_surface_t *surface, int x, int y, int w, int h, int bw, int bh, char *sp, unsigned char *sm, int xo, int yo)
 {
+	clipb();
 	if (surface->mode & SURFACE_VIRTUAL) {
 		clipv(x, y, w, h);
 		bpp_putbox_alpha(surface, coor.x, coor.y, coor.w, coor.h, sp + ((yo + y0) * bw + xo + x0) * surface->bytesperpixel, sm + ((yo + y0) * bw + xo + x0), bw);
@@ -346,37 +378,31 @@ void s_putboxpartalpha (s_surface_t *surface, int x, int y, int w, int h, int bw
 
 void s_putboxpartrgb (s_surface_t *surface, int x, int y, int w, int h, int bw, int bh, unsigned int *rgba, int xo, int yo)
 {
-	int txd;
-	int tyd;
-	int txs;
-	int tys;
-	for (tyd = y, tys = yo; ((tyd - y) < h) && (tys < bh); tyd++, tys++) {
-		for (txd = x, txs = xo; ((txd - x) < w) && (txs < bw); txd++, txs++) {
-			s_setpixelrgb(surface, txd, tyd, (*(rgba + (tys * bw + txs)) >> 0x18) & 0xFF,
-			                                 (*(rgba + (tys * bw + txs)) >> 0x10) & 0xFF,
-			                                 (*(rgba + (tys * bw + txs)) >> 0x08) & 0xFF);
-		}
+	clipb();
+	if (surface->mode & SURFACE_VIRTUAL) {
+		clipv(x, y, w, h);
+		bpp_putbox_rgb(surface, coor.x, coor.y, coor.w, coor.h, rgba + ((yo + y0) * bw + xo + x0), bw);
+	}
+	if (surface->mode & SURFACE_REAL) {
+		clipr(x, y, w, h);
+		gr_sendstream(
+			bpp_putbox_rgb_o(surface, *(surface->id), coor.x, coor.y, coor.w, coor.h, rgba + ((yo + y0) * bw + xo + x0), bw);
+		);
 	}
 }
 
 void s_putboxpartrgba (s_surface_t *surface, int x, int y, int w, int h, int bw, int bh, unsigned int *rgba, int xo, int yo)
 {
-	int txd;
-	int tyd;
-	int txs;
-	int tys;
-	unsigned char alpha;
-	for (tyd = y, tys = yo; ((tyd - y) < h) && (tys < bh); tyd++, tys++) {
-		for (txd = x, txs = xo; ((txd - x) < w) && (txs < bw); txd++, txs++) {
-			alpha = (*(rgba + (tys * bw + txs)) >> 0x00) & 0xFF;
-			if (alpha == 0xFF) {
-				continue;
-			}
-			s_setpixelrgba(surface, txd, tyd, (*(rgba + (tys * bw + txs)) >> 0x18) & 0xFF,
-			                                  (*(rgba + (tys * bw + txs)) >> 0x10) & 0xFF,
-			                                  (*(rgba + (tys * bw + txs)) >> 0x08) & 0xFF,
-			                                  alpha);
-		}
+	clipb();
+	if (surface->mode & SURFACE_VIRTUAL) {
+		clipv(x, y, w, h);
+		bpp_putbox_rgba(surface, coor.x, coor.y, coor.w, coor.h, rgba + ((yo + y0) * bw + xo + x0), bw);
+	}
+	if (surface->mode & SURFACE_REAL) {
+		clipr(x, y, w, h);
+		gr_sendstream(
+			bpp_putbox_rgba_o(surface, *(surface->id), coor.x, coor.y, coor.w, coor.h, rgba + ((yo + y0) * bw + xo + x0), bw);
+		);
 	}
 }
 

@@ -246,6 +246,58 @@ void bpp_putbox_alpha (s_surface_t *surface, int x, int y, int w, int h, char *s
 	}
 }
 
+#define driverloop5rgb(func)\
+	while (i--) {\
+		func(d, s, w, rl, gl, bl, ro, go, bo);\
+		s += s_;\
+		d += d_;\
+	}
+void bpp_putbox_rgb (s_surface_t *surface, int x, int y, int w, int h, unsigned int *rgb, int bw)
+{
+	int i = h;
+	int s_ = bw;
+	int d_ = surface->width * surface->bytesperpixel;
+	char *d = surface->vbuf + OFFSE1 * surface->bytesperpixel;
+	unsigned int *s = rgb;
+	int rl = surface->redlength;
+	int gl = surface->greenlength;
+	int bl = surface->bluelength;
+	int ro = surface->redoffset;
+	int go = surface->greenoffset;
+	int bo = surface->blueoffset;
+	switch (surface->bytesperpixel) {
+		case 1:	driverloop5rgb(s_memcpy1rgb);		break;
+		case 2:	driverloop5rgb(s_memcpy2rgb);		break;
+		case 4:	driverloop5rgb(s_memcpy4rgb);		break;
+	}
+}
+
+#define driverloop5rgba(func)\
+	while (i--) {\
+		func(d, s, w, rl, gl, bl, ro, go, bo);\
+		s += s_;\
+		d += d_;\
+	}
+void bpp_putbox_rgba (s_surface_t *surface, int x, int y, int w, int h, unsigned int *rgba, int bw)
+{
+	int i = h;
+	int s_ = bw;
+	int d_ = surface->width * surface->bytesperpixel;
+	char *d = surface->vbuf + OFFSE1 * surface->bytesperpixel;
+	unsigned int *s = rgba;
+	int rl = surface->redlength;
+	int gl = surface->greenlength;
+	int bl = surface->bluelength;
+	int ro = surface->redoffset;
+	int go = surface->greenoffset;
+	int bo = surface->blueoffset;
+	switch (surface->bytesperpixel) {
+		case 1:	driverloop5rgba(s_memcpy1rgba);		break;
+		case 2:	driverloop5rgba(s_memcpy2rgba);		break;
+		case 4:	driverloop5rgba(s_memcpy4rgba);		break;
+	}
+}
+
 void bpp_getbox (s_surface_t *surface, int x, int y, int w, int h, char *dp)
 {
 	int i = h;
@@ -337,6 +389,62 @@ void bpp_putbox_alpha_o (s_surface_t *surface, int id,  int x, int y, int w, int
 		case 1:	driverloop6a(s_memcpy1oa);	break;
 		case 2:	driverloop6a(s_memcpy2oa);	break;
 		case 4:	driverloop6a(s_memcpy4oa);	break;
+	}
+}
+
+#define driverloop6rgb(func)\
+	while (i--) {\
+		func(m, id, d, s, w, rl, gl, bl, ro, go, bo);\
+		s += s_;\
+		d += d_;\
+		m += m_;\
+	}
+void bpp_putbox_rgb_o (s_surface_t *surface, int id,  int x, int y, int w, int h, unsigned int *rgb, int bw)
+{
+	int i = h;
+	int s_ = bw * surface->bytesperpixel;
+	int d_ = surface->linear_buf_pitch * surface->bytesperpixel;
+	unsigned int *s = rgb;
+	char *d = surface->linear_buf + OFFSE4P * surface->bytesperpixel;
+	int rl = surface->redlength;
+	int gl = surface->greenlength;
+	int bl = surface->bluelength;
+	int ro = surface->redoffset;
+	int go = surface->greenoffset;
+	int bo = surface->blueoffset;
+	prepare(OFFSE4);
+	switch (surface->bytesperpixel) {
+		case 1:	driverloop6rgb(s_memcpy1orgb);	break;
+		case 2:	driverloop6rgb(s_memcpy2orgb);	break;
+		case 4:	driverloop6rgb(s_memcpy4orgb);	break;
+	}
+}
+
+#define driverloop6rgba(func)\
+	while (i--) {\
+		func(m, id, d, s, w, rl, gl, bl, ro, go, bo);\
+		s += s_;\
+		d += d_;\
+		m += m_;\
+	}
+void bpp_putbox_rgba_o (s_surface_t *surface, int id,  int x, int y, int w, int h, unsigned int *rgba, int bw)
+{
+	int i = h;
+	int s_ = bw * surface->bytesperpixel;
+	int d_ = surface->linear_buf_pitch * surface->bytesperpixel;
+	unsigned int *s = rgba;
+	char *d = surface->linear_buf + OFFSE4P * surface->bytesperpixel;
+	int rl = surface->redlength;
+	int gl = surface->greenlength;
+	int bl = surface->bluelength;
+	int ro = surface->redoffset;
+	int go = surface->greenoffset;
+	int bo = surface->blueoffset;
+	prepare(OFFSE4);
+	switch (surface->bytesperpixel) {
+		case 1:	driverloop6rgba(s_memcpy1orgba);	break;
+		case 2:	driverloop6rgba(s_memcpy2orgba);	break;
+		case 4:	driverloop6rgba(s_memcpy4orgba);	break;
 	}
 }
 
