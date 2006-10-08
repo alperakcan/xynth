@@ -774,10 +774,14 @@ void bpp_fillbox_o (s_surface_t *surface, int id,  int x, int y, int w, int h, i
 void bpp_putbox (s_surface_t *surface, int x, int y, int w, int h, char *sp, int bw);
 void bpp_putbox_mask (s_surface_t *surface, int x, int y, int w, int h, char *sp, unsigned char *sm, int bw);
 void bpp_putbox_alpha (s_surface_t *surface, int x, int y, int w, int h, char *sp, unsigned char *sm, int bw);
+void bpp_putbox_rgb (s_surface_t *surface, int x, int y, int w, int h, unsigned int *rgb, int bw);
+void bpp_putbox_rgba (s_surface_t *surface, int x, int y, int w, int h, unsigned int *rgba, int bw);
 void bpp_getbox (s_surface_t *surface, int x, int y, int w, int h, char *dp);
 void bpp_putbox_o (s_surface_t *surface, int id,  int x, int y, int w, int h, char *sp, int bw);
 void bpp_putbox_mask_o (s_surface_t *surface, int id,  int x, int y, int w, int h, char *sp, unsigned char *sm, int bw);
 void bpp_putbox_alpha_o (s_surface_t *surface, int id,  int x, int y, int w, int h, char *sp, unsigned char *sm, int bw);
+void bpp_putbox_rgb_o (s_surface_t *surface, int id,  int x, int y, int w, int h, unsigned int *rgb, int bw);
+void bpp_putbox_rgba_o (s_surface_t *surface, int id,  int x, int y, int w, int h, unsigned int *rgba, int bw);
 void bpp_getbox_o (s_surface_t *surface, int id,  int x, int y, int w, int h, char *dp);
 
 /* event.c */
