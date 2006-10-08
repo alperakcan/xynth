@@ -1,4 +1,12 @@
 
+Sun 08 Oct 2006 04:51:54 PM EEST
+	* M src/lib/grlib.c,
+	  M src/lib/driver.c,
+	  M src/lib/xynth.h,
+	  M src/lib/mem.h :
+	
+	much more optimization
+
 Sun 08 Oct 2006 02:26:57 AM EEST
 	* M src/lib/grlib.c,
 	  M src/lib/driver.c,
