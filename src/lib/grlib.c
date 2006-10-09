@@ -258,72 +258,27 @@ void s_fillbox (s_surface_t *surface, int x, int y, int w, int h, int c)
 
 void s_putbox (s_surface_t *surface, int x, int y, int w, int h, char *sp)
 {
-	if (surface->mode & SURFACE_VIRTUAL) {
-		clipv(x, y, w, h);
-		bpp_putbox(surface, coor.x, coor.y, coor.w, coor.h, sp + (y0 * w + x0) * surface->bytesperpixel, w);
-	}
-	if (surface->mode & SURFACE_REAL) {
-		clipr(x, y, w, h);
-		gr_sendstream(
-			bpp_putbox_o(surface, *(surface->id), coor.x, coor.y, coor.w, coor.h, sp + (y0 * w + x0) * surface->bytesperpixel , w);
-		);
-	}
+	s_putboxpart(surface, x, y, w, h, w, h, sp, 0, 0);
 }
 
 void s_putboxmask (s_surface_t *surface, int x, int y, int w, int h, char *sp, unsigned char *sm)
 {
-	if (surface->mode & SURFACE_VIRTUAL) {
-		clipv(x, y, w, h);
-		bpp_putbox_mask(surface, coor.x, coor.y, coor.w, coor.h, sp + (y0 * w + x0) * surface->bytesperpixel, sm + (y0 * w + x0), w);
-	}
-	if (surface->mode & SURFACE_REAL) {
-		clipr(x, y, w, h);
-    		gr_sendstream(
-			bpp_putbox_mask_o(surface, *(surface->id), coor.x, coor.y, coor.w, coor.h, sp + (y0 * w + x0) * surface->bytesperpixel, sm + (y0 * w + x0), w);
-		);
-	}
+	s_putboxpartmask(surface, x, y, w, h, w, h, sp, sm, 0, 0);
 }
 
 void s_putboxalpha (s_surface_t *surface, int x, int y, int w, int h, char *sp, unsigned char *sm)
 {
-	if (surface->mode & SURFACE_VIRTUAL) {
-		clipv(x, y, w, h);
-		bpp_putbox_alpha(surface, coor.x, coor.y, coor.w, coor.h, sp + (y0 * w + x0) * surface->bytesperpixel, sm + (y0 * w + x0), w);
-	}
-	if (surface->mode & SURFACE_REAL) {
-		clipr(x, y, w, h);
-    		gr_sendstream(
-			bpp_putbox_alpha_o(surface, *(surface->id), coor.x, coor.y, coor.w, coor.h, sp + (y0 * w + x0) * surface->bytesperpixel, sm + (y0 * w + x0), w);
-		);
-	}
+	s_putboxpartalpha(surface, x, y, w, h, w, h, sp, sm, 0, 0);
 }
 
 void s_putboxrgb (s_surface_t *surface, int x, int y, int w, int h, unsigned int *rgba)
 {
-	if (surface->mode & SURFACE_VIRTUAL) {
-		clipv(x, y, w, h);
-		bpp_putbox_rgb(surface, coor.x, coor.y, coor.w, coor.h, rgba + (y0 * w + x0), w);
-	}
-	if (surface->mode & SURFACE_REAL) {
-		clipr(x, y, w, h);
-    		gr_sendstream(
-			bpp_putbox_rgb_o(surface, *(surface->id), coor.x, coor.y, coor.w, coor.h, rgba + (y0 * w + x0), w);
-		);
-	}
+	s_putboxpartrgb(surface, x, y, w, h, w, h, rgba, 0, 0);
 }
 
 void s_putboxrgba (s_surface_t *surface, int x, int y, int w, int h, unsigned int *rgba)
 {
-	if (surface->mode & SURFACE_VIRTUAL) {
-		clipv(x, y, w, h);
-		bpp_putbox_rgba(surface, coor.x, coor.y, coor.w, coor.h, rgba + (y0 * w + x0), w);
-	}
-	if (surface->mode & SURFACE_REAL) {
-		clipr(x, y, w, h);
-    		gr_sendstream(
-			bpp_putbox_rgba_o(surface, *(surface->id), coor.x, coor.y, coor.w, coor.h, rgba + (y0 * w + x0), w);
-		);
-	}
+	s_putboxpartrgba(surface, x, y, w, h, w, h, rgba, 0, 0);
 }
 
 void s_getbox (s_surface_t *surface, int x, int y, int w, int h, char *dp)
