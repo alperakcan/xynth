@@ -14,6 +14,7 @@
  ***************************************************************************/
 
 #include "xynth_.h"
+#include "mem.h"
 
 #define clipr(a, b, c, d)\
 	int x0;\
@@ -714,7 +715,6 @@ void s_scalebox (s_surface_t *surface, int w1, int h1, void *_dp1, int w2, int h
 	}
 }
 
-#include "mem.h"
 int s_putmaskpart (char *dp, int dw, int dh, int x, int y, int w, int h, int bw, int bh, char *sp, int xo, int yo)
 {
 	int x0;
