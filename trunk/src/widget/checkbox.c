@@ -58,12 +58,6 @@ void w_checkbox_state (w_object_t *object, int state)
 	}
 }
 
-void w_checkbox_pressed (w_object_t *object, int btn)
-{
-	w_checkbox_t *cb;
-	cb = object->data[OBJECT_CHECKBOX];
-}
-
 void w_checkbox_released (w_object_t *object, int btn)
 {
 	w_checkbox_t *cb;
@@ -107,7 +101,6 @@ int w_checkbox_init (w_window_t *window, w_checkbox_t **checkbox, w_object_t *pa
 	cb->object = cb->button->object;
 	cb->object->data[OBJECT_CHECKBOX] = cb;
 	cb->button->pressed = w_checkbox_pressed;
-	cb->button->released = w_checkbox_released;
 	cb->button->clicked = w_checkbox_clicked;
 	cb->object->draw = w_checkbox_draw;
 	cb->object->geometry = w_checkbox_geometry;
