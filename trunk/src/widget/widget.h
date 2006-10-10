@@ -31,8 +31,8 @@ typedef enum {
 	OBJECT_LISTBOX 		= 0x4,
 	OBJECT_PROGRESSBAR 	= 0x5,
 	OBJECT_SCROLLBAR	= 0x6,
-	OBJECT_COMBOBOX     = 0x7,
-	OBJECT_RADIOBUTTON  = 0x8,
+	OBJECT_COMBOBOX		= 0x7,
+	OBJECT_CHECKBOX		= 0x8,
 	OBJECT_OBJECTS 		= 0x9
 } OBJECT;
 
@@ -182,15 +182,14 @@ typedef struct w_editbox_s {
 	s_handler_t *handler_keybd;
 } w_editbox_t;
 
-typedef struct w_radiobutton_s {
+typedef struct w_checkbox_s {
 	w_object_t *object;
-	w_frame_t *frame;
 	w_button_t *button;
-	w_editbox_t *editbox;
-	int buttonwidth;
-	int itemheight;
+	w_frame_t *box;
+	w_textbox_t *text;
+	void (*changed) (w_object_t *, int);
 	int state;
-} w_radiobutton_t;
+} w_checkbox_t;
 
 typedef struct w_combobox_s {
 	w_frame_t *frame;
@@ -231,6 +230,15 @@ void w_button_cb_hoh (s_window_t *window, s_event_t *event, s_handler_t *handler
 int w_button_init (w_window_t *window, w_button_t **button, w_object_t *parent);
 void w_button_uninit (w_object_t *object);
 
+/* checkbox */
+void w_checkbox_geometry (w_object_t *object);
+void w_checkbox_draw (w_object_t *object);
+void w_checkbox_state (w_object_t *object, int state);
+void w_checkbox_pressed (w_object_t *object, int btn);
+void w_checkbox_released (w_object_t *object, int btn);
+void w_checkbox_clicked (w_object_t *object, int btn, int cnt);
+void w_checkbox_uninit (w_object_t *object);
+int w_checkbox_init (w_window_t *window, w_checkbox_t **checkbox, w_object_t *parent);
 
 /* editbox.c */
 void w_editbox_draw (w_object_t *object);
@@ -298,12 +306,6 @@ void w_combobox_geometry (w_object_t *object);
 void w_combobox_draw (w_object_t *object);
 int w_combobox_init (w_window_t *window, w_combobox_t **combobox, w_object_t *parent);
 void w_combobox_uninit (w_object_t *object);
-
-/*radiobutton.c*/
-void w_radiobutton_geometry (w_object_t *object);
-void w_radiobutton_draw (w_object_t *object);
-int w_radiobutton_init (w_window_t *window, w_radiobutton_t **radiobutton, w_object_t *parent);
-void w_radiobutton_uninit (w_object_t *object);
 
 /* window.c */
 void w_window_atevent (s_window_t *window, s_event_t *event);

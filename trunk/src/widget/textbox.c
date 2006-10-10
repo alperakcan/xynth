@@ -36,8 +36,10 @@ void w_textbox_draw (w_object_t *object)
 	x += textbox->object->content->x;
 	y += textbox->object->content->y;
 	
-	d = textbox->font->img->w - textbox->object->content->w;
-	if (d > 0) { x -= d; w += d; }
+	if (textbox->properties & TEXTBOX_HCENTER) {
+		d = textbox->font->img->w - textbox->object->content->w;
+		if (d > 0) { x -= d; w += d; }
+	}
 
 	s_image_get_mat(textbox->font->img);
 	if ((textbox->frame->style & FRAME_MSHAPE) == FRAME_NOFRAME) {

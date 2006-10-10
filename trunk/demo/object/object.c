@@ -156,6 +156,7 @@ int main (int argc, char *argv[])
 	w_frame_t *square;
 	w_button_t *button;
 	w_textbox_t *textbox;
+	w_checkbox_t *checkbox;
 
 	srand(time(NULL));
 	
@@ -199,8 +200,6 @@ int main (int argc, char *argv[])
 	w_button_init(window, &button, frame->object);
 	button->pressed = button2_pressed;
 	button->object->destroy = button2_destroy;
-//	int w_frame_set_image (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, ...);
-//	w_frame_set_image(button->object, FRAME_PANEL | FRAME_RAISED, FRAME_IMAGE_HORIZONTAL, 3, "1.png", "2.png", "3.png");
 	w_object_move(button->object, 140, 5, 85, 20);
 	w_object_show(button->object);
 
@@ -210,6 +209,11 @@ int main (int argc, char *argv[])
 	w_object_move(textbox->object, 0, 0, 85, 20);
 	w_object_show(textbox->object);
 
+	w_checkbox_init(window, &checkbox, frame->object);
+	w_textbox_set_str(checkbox->text->object, "checkbox");
+	w_object_move(checkbox->object, 300, 5, 85, 20);
+	w_object_show(checkbox->object);
+	
 	w_frame_init(window, &area, FRAME_PANEL | FRAME_SUNKEN, frame->object);
 	w_object_move(area->object, 5, 30, w - 10, h - 100);
 	w_object_show(area->object);

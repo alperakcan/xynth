@@ -32,9 +32,6 @@ void w_button_event (w_object_t *object, s_event_t *event)
 
 void w_button_draw (w_object_t *object)
 {
-	w_button_t *button;
-	button = (w_button_t *) object->data[OBJECT_BUTTON];
-	
 	w_frame_draw(object);
 }
 
@@ -80,6 +77,9 @@ void w_button_cb_c (s_window_t *window, s_event_t *event, s_handler_t *handler)
 		button->frame->style = (button->frame->style & FRAME_MSHAPE) | FRAME_RAISED;
 		button->object->draw(button->object);
 		w_object_update(button->object, button->object->surface->win);
+		if (button->clicked != NULL) {
+			button->clicked(button->object, event->mouse->b, event->mouse->clicks);
+		}
 	}
 	
 }
@@ -191,7 +191,6 @@ void w_button_uninit (w_object_t *object)
 {
 	w_button_t *button;
 	button = (w_button_t *) object->data[OBJECT_BUTTON];
-	
 	w_frame_uninit(button->object);
 	s_handler_uninit(button->handler);
 	s_free(button);
