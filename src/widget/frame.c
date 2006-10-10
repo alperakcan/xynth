@@ -81,7 +81,7 @@ void w_frame_draw_image (w_object_t *object, w_frame_image_t *fimg)
 			img = (s_image_t *) s_list_get(fimg->images, 0);
 			s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
 			              0, 0, img->w, img->h, img->w, img->h, img->mat, 0, 0);
-			s_putboxrgba(object->surface, 0, 0, img->w, img->h, img->rgba);	
+			s_putboxrgb(object->surface, 0, 0, img->w, img->h, img->rgba);	
 			break;	
 		case 3:
 			if (fimg->rotation == FRAME_IMAGE_VERTICAL) {
