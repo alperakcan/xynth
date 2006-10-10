@@ -143,7 +143,9 @@ void w_frame_draw (w_object_t *object)
         
 	memset(object->surface->matrix, 0xff, sizeof(char) * object->surface->width * object->surface->height);
         switch (frame->style & FRAME_MSHAPE) {
-		case FRAME_NOFRAME:		return;
+		case FRAME_NOFRAME:
+			memset(object->surface->matrix, 0x00, sizeof(char) * object->surface->width * object->surface->height);
+			return;
 		case FRAME_BOX:
 		case FRAME_GROUPBOXPANEL:
 			switch (frame->style & FRAME_MSHADOW) {
