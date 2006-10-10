@@ -111,10 +111,6 @@ typedef struct w_button_s {
 	void (*pressed) (w_object_t *, int);
 	void (*released) (w_object_t *, int);
 	void (*clicked) (w_object_t *, int, int);
-	int isimg;
-	s_image_t *img_a;
-	s_image_t *img_b;
-	s_image_t *img_c;
 	int state;
 } w_button_t;
 
@@ -129,10 +125,6 @@ typedef struct w_textbox_s {
 	w_object_t *object;
 	w_frame_t *frame;
 	s_font_t *font;
-	s_image_t *img_left;
-	s_image_t *img_middle;
-	s_image_t *img_right;
-	int isimg;
 	TEXTBOX_PROPERTIES properties;
 } w_textbox_t;
 
@@ -238,11 +230,7 @@ void w_button_cb_oh (s_window_t *window, s_event_t *event, s_handler_t *handler)
 void w_button_cb_hoh (s_window_t *window, s_event_t *event, s_handler_t *handler);
 int w_button_init (w_window_t *window, w_button_t **button, w_object_t *parent);
 void w_button_uninit (w_object_t *object);
-void w_button_loadimages(w_object_t *object,char *file_a,char *file_b,char *file_c,int isimg);
-void w_button_loadstaticimage(w_object_t *object,char *file_normal,char *file_pressed,char *file_ontop);
-void w_button_loadhorizantalimage(w_object_t *object,char *file_left,char *file_middle,char *file_right);
-void w_button_loadverticalimage(w_object_t *object,char *file_up,char *file_middle,char *file_bottom);
-void w_button_unloadimages(w_object_t *object);
+
 
 /* editbox.c */
 void w_editbox_draw (w_object_t *object);

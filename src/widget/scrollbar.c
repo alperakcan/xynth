@@ -20,7 +20,7 @@
 void w_scrollbar_geometry(w_object_t *object)
 {
 	int width,height;
-	int itemspace=0;
+	int itemspace=2;
 	int itemheight=24;
 	w_scrollbar_t *scrollbar;
 	int scrollmiddlex,scrollmiddley,scrollmiddlew,scrollmiddleh;	
@@ -39,37 +39,10 @@ void w_scrollbar_geometry(w_object_t *object)
 		height=scrollbar->frame->object->content->h;
 	}
 	
-	if(scrollbar->background->isimg!=0)
-	{
-		width=scrollbar->background->img_b->w;
-	}
-	if(scrollbar->scrollup->isimg!=0)
-	{
-		itemheight=scrollbar->scrollup->img_b->h;
-	}
-
 	scrollmiddleh=(int)((double)scrollbar->maxactivescreenitem/(double)(scrollbar->maxactiveitem-1)*(double)(height-(itemheight*2)-itemspace*2));
 	
-	if(scrollbar->scrollmiddle->isimg!=0)
-	{
-		if(scrollmiddleh <= scrollbar->scrollmiddle->img_a->h+
-				scrollbar->scrollmiddle->img_b->h+
-					scrollbar->scrollmiddle->img_c->h)
-
-			scrollmiddleh=scrollbar->scrollmiddle->img_a->h+
-				scrollbar->scrollmiddle->img_b->h+
-					scrollbar->scrollmiddle->img_c->h;
-	}
-	else
-	{
-		if(scrollmiddleh<=21)
-			scrollmiddleh=21;
-	}
-	
-	//scrollmiddleh=30;
-	
 	scrollmiddley=(int)((double)scrollbar->activeitem/(double)(scrollbar->maxactiveitem-1)*(double)(height-(itemheight*2)-scrollmiddleh-2*itemspace))+itemspace;
-	scrollmiddlew=scrollbar->scrollmiddle->img_b->w;
+	scrollmiddlew=17;
 	scrollmiddlex=(width-scrollmiddlew)/2;
 	
 	w_object_move(scrollbar->background->object,0,itemheight,width,height-(itemheight*2));
@@ -89,10 +62,13 @@ void w_scrollbar_draw (w_object_t *object)
 {
 	w_scrollbar_t *scrollbar;
 	scrollbar = (w_scrollbar_t *) object->data[OBJECT_SCROLLBAR];
+
 	w_frame_draw(scrollbar->frame->object);
+	memset(scrollbar->frame->object->surface->matrix, 0, 
+			scrollbar->frame->object->surface->width * scrollbar->frame->object->surface->height);
+
+	w_frame_draw(scrollbar->background->object);
 	
-	if(scrollbar->background->isimg==0)
-		w_frame_draw(scrollbar->background->object);
 }
 
 void w_buttonup_pressed(w_object_t *object, int buttonp)
@@ -124,7 +100,7 @@ int w_scrollbar_init (w_window_t *window, w_scrollbar_t **scrollbar, w_object_t 
 {
 	(*scrollbar) = (w_scrollbar_t *) s_malloc(sizeof(w_scrollbar_t));
 	
-	if (w_frame_init(window, &((*scrollbar)->frame), FRAME_PLAIN|FRAME_MSHADOW, parent )) {
+	if (w_frame_init(window, &((*scrollbar)->frame), FRAME_PANEL | FRAME_RAISED, parent )) {
 		goto err0;
 	}
 	
@@ -133,26 +109,34 @@ int w_scrollbar_init (w_window_t *window, w_scrollbar_t **scrollbar, w_object_t 
 	w_button_init((*scrollbar)->frame->object->window, &((*scrollbar)->scrollup), 
 						(*scrollbar)->frame->object);	
 	(*scrollbar)->scrollup->pressed = w_buttonup_pressed;
-	w_button_loadstaticimage((*scrollbar)->scrollup->frame->object,
-				"upbutton.png","uppressed.png","upontop.png");
+	//w_frame_set_image((*scrollbar)->scrollup->object,
+	//				FRAME_PANEL | FRAME_RAISED,FRAME_IMAGE_VERTICAL,1,"upbutton.png");
+	//w_frame_set_image((*scrollbar)->scrollup->object,	
+	//				FRAME_PANEL | FRAME_SUNKEN,FRAME_IMAGE_VERTICAL,1,"uppressed.png");					
 		
 	w_button_init((*scrollbar)->frame->object->window, &((*scrollbar)->scrolldown), 
 						(*scrollbar)->frame->object);
-	w_button_loadstaticimage((*scrollbar)->scrolldown->frame->object,
-			"downbutton.png","downpressed.png","downontop.png");
 	(*scrollbar)->scrolldown->pressed = w_buttondown_pressed;
+	//w_frame_set_image((*scrollbar)->scrolldown->object,
+	//				FRAME_PANEL | FRAME_RAISED,FRAME_IMAGE_VERTICAL,1,"downbutton.png");
+	//w_frame_set_image((*scrollbar)->scrolldown->object,
+	//					FRAME_PANEL | FRAME_SUNKEN,FRAME_IMAGE_VERTICAL,1,"downpressed.png");					
 	
 	w_button_init((*scrollbar)->frame->object->window,
 		&((*scrollbar)->background), (*scrollbar)->frame->object );
-	w_button_loadverticalimage((*scrollbar)->background->frame->object,
-				  "scrollbarup.png","scrollbaronepix.png","scrollbardown.png");
-				//"scrollup_20.png","scrollmiddle_20.png","scrollbottom_20.png");								
+
+	//w_frame_set_image((*scrollbar)->background->frame->object,
+	//				FRAME_PANEL | FRAME_RAISED,FRAME_IMAGE_VERTICAL,3,
+	//			  "scrollbarup.png","scrollbaronepix.png","scrollbardown.png");
+	(*scrollbar)->background->object->event=NULL;
 	
 	w_button_init((*scrollbar)->frame->object->window,
     					 &((*scrollbar)->scrollmiddle), 
 								(*scrollbar)->background->frame->object);
-	w_button_loadverticalimage((*scrollbar)->scrollmiddle->frame->object,
-				"scrollbuttonup.png","scrollbuttononepix.png","scrollbuttondown.png");	
+	//w_frame_set_image((*scrollbar)->scrollmiddle->frame->object,
+	//				FRAME_PANEL | FRAME_RAISED,FRAME_IMAGE_VERTICAL,3,
+	//			  "scrollbuttonup.png","scrollbuttononepix.png","scrollbuttondown.png");
+	(*scrollbar)->scrollmiddle->object->event=NULL;
 						
 	s_handler_init(&((*scrollbar)->handler));
 	(*scrollbar)->handler->type = MOUSE_HANDLER;

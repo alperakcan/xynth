@@ -80,7 +80,11 @@ void w_combobox_draw (w_object_t *object)
 {
 	w_combobox_t *combobox;
 	combobox = object->data[OBJECT_COMBOBOX];
+	
 	w_frame_draw(combobox->frame->object);
+	memset(combobox->frame->object->surface->matrix,
+	       0,
+	       combobox->frame->object->surface->width * combobox->frame->object->surface->height);
 }
 
 
@@ -95,28 +99,21 @@ int w_combobox_init (w_window_t *window, w_combobox_t **combobox, w_object_t *pa
 	w_listbox_init(window, &((*combobox)->listbox), (*combobox)->frame->object);
 	
 	w_editbox_init(window, &((*combobox)->editbox), (*combobox)->frame->object);
-	w_textbox_loadimages((*combobox)->editbox->textbox->object,
-						//"etextleft_20.png","etextmiddle_20.png","etextright_20.png");
-						"etextboxleft.png","etextboxonepix.png","etextboxright.png");
+	(*combobox)->editbox->object->event=NULL;
+	
+	//w_frame_set_image((*combobox)->editbox->textbox->object,FRAME_LINEEDITPANEL | FRAME_SUNKEN,
+	//		FRAME_IMAGE_HORIZONTAL,3,"etextboxleft.png","etextboxonepix.png","etextboxright.png");
 	
 	w_button_init(window, &((*combobox)->button), (*combobox)->frame->object);
-	w_button_loadstaticimage((*combobox)->button->frame->object,"downbutton.png","downpressed.png","downontop.png");
+	//w_frame_set_image((*combobox)->button->frame->object,
+	//				FRAME_PANEL | FRAME_RAISED,FRAME_IMAGE_VERTICAL,1,"downbutton.png");
+	//w_frame_set_image((*combobox)->button->frame->object,
+	//				FRAME_PANEL | FRAME_SUNKEN,FRAME_IMAGE_VERTICAL,1,"downpressed.png");
 	
-	if((*combobox)->editbox->textbox->isimg!=0)
-	{
-		(*combobox)->itemheight=(*combobox)->editbox->textbox->img_left->h;
-		(*combobox)->listbox->itemheight=(*combobox)->editbox->textbox->img_left->h;
-	}
-	else
-	{
-		(*combobox)->itemheight=24;
-		(*combobox)->listbox->itemheight=24;
-	}
+	(*combobox)->itemheight=24;
+	(*combobox)->listbox->itemheight=24;
 		
-	if((*combobox)->button->isimg!=0)
-		(*combobox)->buttonlength=(*combobox)->button->img_a->w;
-	else
-		(*combobox)->buttonlength=24;	
+	(*combobox)->buttonlength=24;	
 			
 	(*combobox)->button->pressed = button_pressed;
 	(*combobox)->button->frame->object->draw = button_draw;
