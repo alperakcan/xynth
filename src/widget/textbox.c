@@ -92,7 +92,7 @@ int w_textbox_init (w_window_t *window, w_textbox_t **textbox, w_object_t *paren
 	(*textbox)->object->destroy = w_textbox_uninit;
 	(*textbox)->object->data[OBJECT_TEXTBOX] = *textbox;
 
-	s_font_set_size((*textbox)->font, 12);
+	s_font_set_size((*textbox)->font, 10);
 	s_font_set_rgb((*textbox)->font, 0, 0, 0);
 	w_textbox_set_str((*textbox)->object, "");
 

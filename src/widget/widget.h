@@ -234,7 +234,6 @@ void w_button_uninit (w_object_t *object);
 void w_checkbox_geometry (w_object_t *object);
 void w_checkbox_draw (w_object_t *object);
 void w_checkbox_state (w_object_t *object, int state);
-void w_checkbox_pressed (w_object_t *object, int btn);
 void w_checkbox_released (w_object_t *object, int btn);
 void w_checkbox_clicked (w_object_t *object, int btn, int cnt);
 void w_checkbox_uninit (w_object_t *object);
