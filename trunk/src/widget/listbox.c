@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Fri Sep 8 2006
     copyright            : (C) 2006 by Alper Akcan
-    email				 : distchx@yahoo.com, computationutku@yahoo.com
+    email		 : distchx@yahoo.com, computationutku@yahoo.com
     file author          : Alper Akcan, Utku Bulkan
   ***************************************************************************/
 
@@ -24,13 +24,10 @@ void w_listbox_geometry(w_object_t *object)
 	w_listbox_t *listbox;
 	w_textbox_t *textbox;
 	w_object_t *obj;
-	int itemwidth=20;
+	int itemwidth=24;
 	int counter;
 	
 	listbox = (w_listbox_t*) object->data[OBJECT_LISTBOX];
-	
-	if(listbox->scrollbar->background->isimg!=0)
-		itemwidth=listbox->scrollbar->background->img_b->w;
 
 	for (pos = 0; !s_list_eol(object->childs, 0); pos++) {
 		obj = (w_object_t *) s_list_get(object->childs, 0);
@@ -42,11 +39,23 @@ void w_listbox_geometry(w_object_t *object)
 					pos++,counter++) {
 		item = (char *) s_list_get(listbox->list, pos);
 		w_textbox_init(object->window, &(textbox), object);
+
+		memset(textbox->frame->object->surface->matrix, 0, 
+			textbox->frame->object->surface->width * textbox->frame->object->surface->height);
 		if(pos!=listbox->scrollbar->activeitem)
+		{
+			s_font_set_rgb(textbox->font, 255, 255, 255);
 			textbox->frame->style = FRAME_PLAIN;
+		}
 		else
+		{
+
 			textbox->frame->style = FRAME_PANEL | FRAME_PLAIN;
+			//w_frame_set_image(textbox->object,FRAME_PANEL | FRAME_PLAIN,
+			//FRAME_IMAGE_HORIZONTAL,3,"etextboxleft.png","etextboxonepix.png","etextboxright.png");
+		}
 		w_object_move(textbox->frame->object, 0, counter * listbox->itemheight, object->content->w, listbox->itemheight);
+		
 		w_textbox_set_str(textbox->frame->object, item);
 		w_object_show(textbox->frame->object);
 	}	
@@ -61,7 +70,12 @@ void w_listbox_draw (w_object_t *object)
 {
 	w_listbox_t *listbox;
 	listbox = object->data[OBJECT_LISTBOX];
+	
 	w_frame_draw(listbox->frame->object);
+	memset(listbox->frame->object->surface->matrix,
+	       0,
+	       listbox->frame->object->surface->width * listbox->frame->object->surface->height);
+	
 }
 
 static void scrollbar_destroy (w_object_t *object)

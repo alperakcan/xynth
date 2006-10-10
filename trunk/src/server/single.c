@@ -36,6 +36,9 @@
 #if defined(DEMO_OBJECT)
 	extern s_single_app_t single_object;
 #endif /* DEMO_OBJECT */
+#if defined(DEMO_SETUPWIZARD)
+	extern s_single_app_t single_setupwizard;
+#endif /* DEMO_SETUPWIZARD */
 #if defined(DEMO_ONSCREENKEYBOARD)
 	extern s_single_app_t single_onscreenkeyboard;
 #endif /* DEMO_ONSCREENKEYBOARD */
@@ -71,6 +74,9 @@ s_single_app_t *s_server_single_apps[] = {
 #if defined(DEMO_OBJECT)
 	&single_object,
 #endif /* DEMO_OBJECT */
+#if defined(DEMO_SETUPWIZARD)
+	&single_setupwizard,
+#endif /* DEMO_SETUPWIZARD */
 #if defined(DEMO_ONSCREENKEYBOARD)
 	&single_onscreenkeyboard,
 #endif /* DEMO_ONSCREENKEYBOARD */

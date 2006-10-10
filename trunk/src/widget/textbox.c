@@ -47,10 +47,10 @@ void w_textbox_draw (w_object_t *object)
 		              textbox->font->img->mat, 0, 0);
 		s_putboxpartrgb(textbox->object->surface, x, y + textbox->font->size - textbox->font->yMax, w, h,
 		                textbox->font->img->w, textbox->font->img->h, textbox->font->img->rgba, 0, 0);
-	} else {
+	} else { 
 		w_frame_draw(textbox->object);
 		s_putboxpartrgba(textbox->object->surface, x, y + textbox->font->size - textbox->font->yMax, w, h,
-		                 textbox->font->img->w, textbox->font->img->h, textbox->font->img->rgba, 0, 0);
+		                 textbox->font->img->w, textbox->font->img->h, textbox->font->img->rgba, 0, 0);		
 	}
 }
 
@@ -69,30 +69,6 @@ void w_textbox_geometry (w_object_t *object)
 	w_frame_geometry(object);
 }
 
-void w_textbox_loadimages(w_object_t *object,char *file_left,char *file_middle,char *file_right)
-{
-	w_textbox_t *textbox;
-	
-	textbox = (w_textbox_t*) object->data[OBJECT_TEXTBOX];
-	
-	s_image_init(&(textbox->img_left));	
-	s_image_init(&(textbox->img_middle));	
-	s_image_init(&(textbox->img_right));	
-	
-	if( (s_image_img(file_left,textbox->img_left)!=-1) &&
-		(s_image_img(file_middle,textbox->img_middle)!=-1) &&
-		(s_image_img(file_right,textbox->img_right)!=-1) )
-	{
-		textbox->isimg=1;
-	}
-	else
-	{
-		textbox->isimg=0;
-		s_image_uninit(textbox->img_left);	
-		s_image_uninit(textbox->img_middle);	
-		s_image_uninit(textbox->img_right);	
-	}	
-}
 
 int w_textbox_init (w_window_t *window, w_textbox_t **textbox, w_object_t *parent)
 {
@@ -106,8 +82,6 @@ int w_textbox_init (w_window_t *window, w_textbox_t **textbox, w_object_t *paren
 		goto err1;
 	}
 	
-	(*textbox)->isimg=0;
-	
 	(*textbox)->properties = TEXTBOX_VCENTER | TEXTBOX_HCENTER;
 
 	(*textbox)->object = (*textbox)->frame->object;
@@ -116,7 +90,7 @@ int w_textbox_init (w_window_t *window, w_textbox_t **textbox, w_object_t *paren
 	(*textbox)->object->destroy = w_textbox_uninit;
 	(*textbox)->object->data[OBJECT_TEXTBOX] = *textbox;
 
-	s_font_set_size((*textbox)->font, 10);
+	s_font_set_size((*textbox)->font, 12);
 	s_font_set_rgb((*textbox)->font, 0, 0, 0);
 	w_textbox_set_str((*textbox)->object, "");
 
@@ -129,14 +103,7 @@ void w_textbox_uninit (w_object_t *object)
 {
 	w_textbox_t *textbox;
 	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
-	
-	if(textbox->isimg==1)
-	{
-		s_image_uninit(textbox->img_left);	
-		s_image_uninit(textbox->img_middle);	
-		s_image_uninit(textbox->img_right);	
-	}
-	
+		
 	w_frame_uninit(textbox->object);
 	s_font_uninit(textbox->font);
 	s_free(textbox);

@@ -19,9 +19,14 @@
 void w_radiobutton_draw (w_object_t *object)
 {
 	w_radiobutton_t *radiobutton;
-	radiobutton = (w_radiobutton_t *) object->data[OBJECT_BUTTON];
-		
+	radiobutton = (w_radiobutton_t *) object->data[OBJECT_RADIOBUTTON];
+	
 	w_frame_draw(object);	
+	memset(radiobutton->frame->object->surface->matrix,
+	       0,
+	       radiobutton->frame->object->surface->width * radiobutton->frame->object->surface->height);
+		
+	
 }
 
 void w_radiobutton_geometry (w_object_t *object)
@@ -32,12 +37,13 @@ void w_radiobutton_geometry (w_object_t *object)
 		
 	w_object_move(radiobutton->editbox->textbox->frame->object, radiobutton->buttonwidth, 0, 
 					object->content->w-radiobutton->buttonwidth, radiobutton->itemheight);
-	//w_textbox_set_str(radiobutton->editbox->textbox->frame->object, "Radio Button");
 	w_object_show(radiobutton->editbox->textbox->frame->object);
 	
 	w_object_move(radiobutton->button->frame->object, 0, 0, radiobutton->buttonwidth, radiobutton->itemheight);
 	w_object_show(radiobutton->button->frame->object);	
+	
 }
+
 
 static void button_clicked (s_window_t *window, s_event_t *event, s_handler_t *handler)
 { /* clicked */
@@ -68,12 +74,12 @@ static void button_cb_p (s_window_t *window, s_event_t *event, s_handler_t *hand
 	if(radiobutton->state==0)
 	{
 		radiobutton->button->state=0;
-		radiobutton->button->frame->style=34;		
+		radiobutton->button->frame->style=FRAME_PANEL|FRAME_RAISED;		
 	}
 	else if(radiobutton->state==1)
 	{
 		radiobutton->button->state=4;
-		radiobutton->button->frame->style=66;
+		radiobutton->button->frame->style=FRAME_PANEL|FRAME_SUNKEN;
 	}
 	
 	w_button_draw(radiobutton->button->frame->object);
@@ -116,12 +122,15 @@ static void button_cb_hoh (s_window_t *window, s_event_t *event, s_handler_t *ha
 int w_radiobutton_init (w_window_t *window, w_radiobutton_t **radiobutton, w_object_t *parent)
 {
 	(*radiobutton) = (w_radiobutton_t *) s_malloc(sizeof(w_radiobutton_t));
-	if (w_frame_init(window, &((*radiobutton)->frame), FRAME_BOX , parent)) {
+	if (w_frame_init(window, &((*radiobutton)->frame), FRAME_PANEL | FRAME_RAISED , parent)) {
 		goto err0;
 	}
 	
 	w_button_init(window, &((*radiobutton)->button), (*radiobutton)->frame->object);
-	w_button_loadstaticimage((*radiobutton)->button->frame->object,"radiobutton.png","radiobuttonpressed.png","downontop.png");
+	w_frame_set_image((*radiobutton)->button->frame->object,
+					FRAME_PANEL | FRAME_RAISED,FRAME_IMAGE_VERTICAL,1,"radiobutton.png");
+	w_frame_set_image((*radiobutton)->button->frame->object,	
+					FRAME_PANEL | FRAME_SUNKEN,FRAME_IMAGE_VERTICAL,1,"radiobuttonpressed.png");					
 	
 	(*radiobutton)->button->handler->mouse.c = button_clicked;
 	
@@ -138,6 +147,8 @@ int w_radiobutton_init (w_window_t *window, w_radiobutton_t **radiobutton, w_obj
 	w_editbox_init(window, &((*radiobutton)->editbox), (*radiobutton)->frame->object);
 	//w_textbox_loadimages((*radiobutton)->editbox->textbox->object,
 	//					"etextleft_20.png","etextmiddle_20.png","etextright_20.png");
+	
+	(*radiobutton)->editbox->textbox->frame->style = FRAME_PLAIN;
 
 	(*radiobutton)->object=(*radiobutton)->frame->object;
 	(*radiobutton)->object->data[OBJECT_RADIOBUTTON] = *radiobutton;
@@ -148,17 +159,15 @@ int w_radiobutton_init (w_window_t *window, w_radiobutton_t **radiobutton, w_obj
 	(*radiobutton)->editbox->object->event = NULL;
 	
 	(*radiobutton)->editbox->textbox->properties = TEXTBOX_VCENTER | TEXTBOX_WRAP;
-	(*radiobutton)->editbox->textbox->frame->style = FRAME_BOX;
+	(*radiobutton)->editbox->textbox->frame->style = FRAME_PLAIN;
 	
 	(*radiobutton)->state=0;
 	
 	(*radiobutton)->buttonwidth=20;
 	(*radiobutton)->itemheight=20;
 	
-	if((*radiobutton)->button->isimg!=0)
-		(*radiobutton)->buttonwidth = (*radiobutton)->button->img_a->w;
-	if((*radiobutton)->editbox->textbox->isimg!=0)
-		(*radiobutton)->itemheight = (*radiobutton)->editbox->textbox->img_middle->h;
+	(*radiobutton)->buttonwidth = 24;
+	(*radiobutton)->itemheight = 24;
 			
 	return 0;
 err0:	s_free(*radiobutton);

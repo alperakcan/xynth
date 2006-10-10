@@ -2,7 +2,7 @@
 include ../../Makefile.cfg
 include ../../Makefile.parse
 
-OBJS = button.o editbox.o frame.o object.o textbox.o window.o listbox.o progressbar.o scrollbar.o combobox.o radiobutton.o
+OBJS = button.o editbox.o frame.o object.o textbox.o window.o scrollbar.o listbox.o combobox.o progressbar.o radiobutton.o
 
 ifeq ($(PLATFORM_LINUX), Y)
 TARGET_A  = libwidget.a
