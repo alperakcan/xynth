@@ -309,9 +309,7 @@ void w_object_level_get (w_object_t *parent, w_object_t **object, int *level)
 			*object = temp;
 			return;
 		}
-		w_object_level_get(temp,
-		object,
-		level);
+		w_object_level_get(temp, object, level);
 	}
 }
 
