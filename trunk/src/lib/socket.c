@@ -321,6 +321,7 @@ int s_socket_listen_expose (s_window_t *window, int soc)
 	if ((p_old != window->client->pri) &&
 	    ((p_old == 0) || (window->client->pri == 0))) {
 		window->event->type = FOCUS_EVENT;
+		window->event->type |= (window->client->pri == 0) ? FOCUSIN_EVENT : FOCUSOUT_EVENT;
 		window->event->expose->rect->x = window->surface->win->x;
 		window->event->expose->rect->y = window->surface->win->y;
 		window->event->expose->rect->w = window->surface->win->w;
