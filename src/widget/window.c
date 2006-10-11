@@ -37,6 +37,7 @@ void w_window_change_keybd_focus (s_window_t *window)
 		if (l > ls) {
 			l = 0;
 		}
+		w_object_level_get(root, &temp, l);
 		if (temp && temp->event) {
 			windoww->event = temp;
 			break;
