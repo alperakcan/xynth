@@ -21,6 +21,7 @@ typedef struct w_object_s w_object_t;
 typedef struct w_window_s {
 	s_window_t *window;
 	w_object_t *object;
+	w_object_t *focus;
 } w_window_t;
 
 typedef enum {

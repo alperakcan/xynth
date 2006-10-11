@@ -18,6 +18,7 @@
 
 void w_window_atevent (s_window_t *window, s_event_t *event)
 {
+	s_event_t *evnt;
 	w_object_t *objectn;
 	w_object_t *objectp;
 	w_window_t *windoww;
@@ -36,6 +37,21 @@ void w_window_atevent (s_window_t *window, s_event_t *event)
 		}
 		while (objectn && objectn->event == NULL) {
 			objectn = objectn->parent;
+		}
+		if (windoww->focus != objectn) {
+			s_event_init(&evnt);
+			evnt->type = FOCUS_EVENT | FOCUSIN_EVENT;
+			if (objectn && objectn->event) {
+				objectn->event(objectn, evnt);
+			}
+			s_event_uninit(evnt);
+			s_event_init(&evnt);
+			evnt->type = FOCUS_EVENT | FOCUSOUT_EVENT;
+			if (windoww->focus && windoww->focus->event) {
+				windoww->focus->event(windoww->focus, evnt);
+			}
+			s_event_uninit(evnt);
+			windoww->focus = objectn;
 		}
 		if (objectp && (objectn != objectp) && (objectp->event)) {
 			objectp->event(objectp, event);
@@ -62,6 +78,7 @@ int w_window_init (w_window_t **window, S_WINDOW type, w_window_t *parent)
 	s_window_new((*window)->window, type, NULL);
 	s_window_set_resizeable((*window)->window, 0);
 	w_object_init(*window, &((*window)->object), NULL, NULL);
+	(*window)->focus = NULL;
 	s_client_atevent((*window)->window, w_window_atevent);
 	(*window)->window->client->data = (*window);
 	return 0;
