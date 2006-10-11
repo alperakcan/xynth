@@ -32,6 +32,8 @@ void w_window_atevent (s_window_t *window, s_event_t *event)
 		event->mouse->py -= window->surface->buf->y;
 		w_object_atposition(windoww->object, event->mouse->x, event->mouse->y, &objectn);
 		w_object_atposition(windoww->object, event->mouse->x_old, event->mouse->y_old, &objectp);
+	}
+	if (event->type & MOUSE_EVENT) {
 		while (objectp && objectp->event == NULL) {
 			objectp = objectp->parent;
 		}
@@ -59,6 +61,14 @@ void w_window_atevent (s_window_t *window, s_event_t *event)
 		if (objectn && objectn->event) {
 			objectn->event(objectn, event);
 		}
+		if (event->type & MOUSE_PRESSED) {
+			windoww->event = objectn;
+		}
+	}
+	if (event->type & KEYBD_EVENT) {
+		if (windoww->event && windoww->event->event) {
+			windoww->event->event(windoww->event, event);
+		}
 	}
 	if (event->type & SIGNAL_EVENT) {
 		w_signal_t *signal;
@@ -79,6 +89,7 @@ int w_window_init (w_window_t **window, S_WINDOW type, w_window_t *parent)
 	s_window_set_resizeable((*window)->window, 0);
 	w_object_init(*window, &((*window)->object), NULL, NULL);
 	(*window)->focus = NULL;
+	(*window)->event = NULL;
 	s_client_atevent((*window)->window, w_window_atevent);
 	(*window)->window->client->data = (*window);
 	return 0;
