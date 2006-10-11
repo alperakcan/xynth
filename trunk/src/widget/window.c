@@ -18,22 +18,34 @@
 
 void w_window_change_keybd_focus (s_window_t *window)
 {
+	int i;
 	int l;
+	int ls;
 	w_object_t *temp;
 	w_object_t *root;
 	w_window_t *windoww;
 
 	windoww = (w_window_t *) window->client->data;
 
-	root = windoww->event;
-	while (root && root->parent != NULL) {
-		root = root->parent;
-	}
+	root = windoww->object;
 	
-	l = 0;
+	ls = 0;
 	w_object_level_find(root, windoww->event, &l);
-	printf("level %d\n", l);
-	w_object_level_get(root, &temp, &l);
+	w_object_level_count(root, &ls);
+	for (i = 0; i < ls; i++) {
+		l++;
+		if (l > ls) {
+			l = 0;
+		}
+		if (temp && temp->event) {
+			windoww->event = temp;
+			break;
+		}
+	}
+#if 0
+	w_object_level_find(root, windoww->event, &l);
+	printf("level %d [%d]\n", l, ls);
+#endif
 }
 
 void w_window_atevent (s_window_t *window, s_event_t *event)
@@ -82,7 +94,9 @@ void w_window_atevent (s_window_t *window, s_event_t *event)
 			objectn->event(objectn, event);
 		}
 		if (event->type & MOUSE_PRESSED) {
-			windoww->event = objectn;
+			if (objectn && objectn->event) {
+				windoww->event = objectn;
+			}
 		}
 	}
 	if (event->type & KEYBD_EVENT) {
