@@ -20,14 +20,22 @@ void w_button_event (w_object_t *object, s_event_t *event)
 {
 	w_button_t *button;
 	button = (w_button_t *) object->data[OBJECT_BUTTON];
-	event->mouse->x += object->window->window->surface->buf->x;
-	event->mouse->y += object->window->window->surface->buf->y;
-	event->mouse->px += object->window->window->surface->buf->x;
-	event->mouse->py += object->window->window->surface->buf->y;
-	s_thread_mutex_lock(object->window->window->handlers->mut);
-	s_event_parse_handler_over(button->frame->object->window->window, event, button->handler);
-	s_event_parse_handler_notover(button->object->window->window, event, button->handler);
-	s_thread_mutex_unlock(object->window->window->handlers->mut);
+	if (event->type & MOUSE_EVENT) {
+		event->mouse->x += object->window->window->surface->buf->x;
+		event->mouse->y += object->window->window->surface->buf->y;
+		event->mouse->px += object->window->window->surface->buf->x;
+		event->mouse->py += object->window->window->surface->buf->y;
+		s_thread_mutex_lock(object->window->window->handlers->mut);
+		s_event_parse_handler_over(button->frame->object->window->window, event, button->handler);
+		s_event_parse_handler_notover(button->object->window->window, event, button->handler);
+		s_thread_mutex_unlock(object->window->window->handlers->mut);
+	} else if (event->type & FOCUS_EVENT) {
+		if (event->type & FOCUSIN_EVENT) {
+			printf("focus in\n");
+		} else if (event->type & FOCUSOUT_EVENT) {
+			printf("focus out\n");
+		}
+	}
 }
 
 void w_button_draw (w_object_t *object)
