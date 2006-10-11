@@ -293,42 +293,95 @@ void w_object_signal (w_object_t *from, w_object_t *to, void (*func) (w_signal_t
 	s_eventq_add(to->window->window, event);
 }
 
-void w_object_level_get (w_object_t *parent, w_object_t **object, int *level)
+static int w_object_level_get_ (w_object_t *parent, w_object_t **object, int *level)
 {
 	int pos = 0;
 	w_object_t *temp = NULL;
 	if (*level == 0) {
 		*object = parent;
-		return;
+		return 0;
 	}
-	while (!s_list_eol(parent->childs, pos)) {
-		temp = (w_object_t *) s_list_get(parent->childs, pos);
+	while (!s_list_eol(parent->shown, pos)) {
+		temp = (w_object_t *) s_list_get(parent->shown, pos);
 		pos++;
 		(*level)--;
+		if ((*level) < 0) {
+			*object = NULL;
+			return -1;
+		}
 		if ((*level) == 0) {
 			*object = temp;
-			return;
+			return 0;
 		}
-		w_object_level_get(temp, object, level);
+		if (w_object_level_get_(temp, object, level) == 0) {
+			return 0;
+		}
 	}
+	return -1;
 }
 
-void w_object_level_find (w_object_t *parent, w_object_t *object, int *level)
+int w_object_level_get (w_object_t *parent, w_object_t **object, int level)
+{
+	int levels;
+	int l = level;
+	w_object_level_count(parent, &levels);
+	if (levels < l) {
+		*object = NULL;
+		return -1;
+	}
+	return w_object_level_get_(parent, object, &l);
+}
+
+static int w_object_level_count_ (w_object_t *parent, int *level)
 {
 	int pos = 0;
 	w_object_t *temp;
-	if (!object && parent == object) {
-		return;
+	if (parent == NULL) {
+		return -1;
+	}
+	while (!s_list_eol(parent->shown, pos)) {
+		temp = (w_object_t *) s_list_get(parent->shown, pos);
+		pos++;
+		(*level)++;
+		w_object_level_count_(temp, level);
+	}
+	return 0;
+}
+
+int w_object_level_count (w_object_t *parent, int *level)
+{
+	*level = 0;
+	return w_object_level_count_(parent, level);
+}
+
+static int w_object_level_find_ (w_object_t *parent, w_object_t *object, int *level)
+{
+	int pos = 0;
+	w_object_t *temp;
+	if (object == NULL) {
+		return -1;
+	}
+	if (parent == object) {
+		return 0;
 	}
 	while (!s_list_eol(parent->childs, pos)) {
 		temp = (w_object_t *) s_list_get(parent->childs, pos);
 		pos++;
 		(*level)++;
 		if (temp == object) {
-			return;
+			return 0;
 		}
-		w_object_level_find(temp, object, level);
+		if (w_object_level_find_(temp, object, level) == 0) {
+			return 0;
+		}
 	}
+	return -1;
+}
+
+int w_object_level_find (w_object_t *parent, w_object_t *object, int *level)
+{
+	*level = 0;
+	return w_object_level_find_(parent, object, level);
 }
 
 int w_object_init (w_window_t *window, w_object_t **object, void (*draw) (w_object_t *), w_object_t *parent)
