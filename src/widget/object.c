@@ -293,6 +293,46 @@ void w_object_signal (w_object_t *from, w_object_t *to, void (*func) (w_signal_t
 	s_eventq_add(to->window->window, event);
 }
 
+void w_object_level_get (w_object_t *parent, w_object_t **object, int *level)
+{
+	int pos = 0;
+	w_object_t *temp = NULL;
+	if (*level == 0) {
+		*object = parent;
+		return;
+	}
+	while (!s_list_eol(parent->childs, pos)) {
+		temp = (w_object_t *) s_list_get(parent->childs, pos);
+		pos++;
+		(*level)--;
+		if ((*level) == 0) {
+			*object = temp;
+			return;
+		}
+		w_object_level_get(temp,
+		object,
+		level);
+	}
+}
+
+void w_object_level_find (w_object_t *parent, w_object_t *object, int *level)
+{
+	int pos = 0;
+	w_object_t *temp;
+	if (!object && parent == object) {
+		return;
+	}
+	while (!s_list_eol(parent->childs, pos)) {
+		temp = (w_object_t *) s_list_get(parent->childs, pos);
+		pos++;
+		(*level)++;
+		if (temp == object) {
+			return;
+		}
+		w_object_level_find(temp, object, level);
+	}
+}
+
 int w_object_init (w_window_t *window, w_object_t **object, void (*draw) (w_object_t *), w_object_t *parent)
 {
 	(*object) = (w_object_t *) s_malloc(sizeof(w_object_t));

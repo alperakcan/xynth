@@ -16,6 +16,26 @@
 #include "../lib/xynth_.h"
 #include "widget.h"
 
+void w_window_change_keybd_focus (s_window_t *window)
+{
+	int l;
+	w_object_t *temp;
+	w_object_t *root;
+	w_window_t *windoww;
+
+	windoww = (w_window_t *) window->client->data;
+
+	root = windoww->event;
+	while (root && root->parent != NULL) {
+		root = root->parent;
+	}
+	
+	l = 0;
+	w_object_level_find(root, windoww->event, &l);
+	printf("level %d\n", l);
+	w_object_level_get(root, &temp, &l);
+}
+
 void w_window_atevent (s_window_t *window, s_event_t *event)
 {
 	s_event_t *evnt;
@@ -66,6 +86,10 @@ void w_window_atevent (s_window_t *window, s_event_t *event)
 		}
 	}
 	if (event->type & KEYBD_EVENT) {
+		if (event->type & KEYBD_PRESSED &&
+		    event->keybd->keycode == S_KEYCODE_TAB) {
+			w_window_change_keybd_focus(window);
+		}
 		if (windoww->event && windoww->event->event) {
 			windoww->event->event(windoww->event, event);
 		}
