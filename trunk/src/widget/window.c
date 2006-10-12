@@ -48,7 +48,7 @@ void w_window_focus_change_notify (s_window_t *window, w_object_t *focus)
 	}
 }
 
-void w_window_change_keybd_focus (s_window_t *window)
+void w_window_change_keybd_focus (s_window_t *window, int type)
 {
 	int i;
 	int l;
@@ -58,10 +58,20 @@ void w_window_change_keybd_focus (s_window_t *window)
 	w_window_t *windoww;
 
 	windoww = (w_window_t *) window->client->data;
-
-	root = windoww->object;
 	
-	ls = 0;
+	if (type == 0 || windoww->focus == NULL) {
+		/* focus next object */
+		root = windoww->object;
+	} else if (type == 1) {
+		/* focus next child oject of the same parent */
+		root = windoww->focus->parent;
+	} else if (type == 2) {
+		/* focus next sister object of the same grand parent */
+		root = windoww->object;
+	} else {
+		return;
+	}
+
 	w_object_level_find(root, windoww->focus, &l);
 	w_object_level_count(root, &ls);
 	for (i = 0; i < ls; i++) {
@@ -71,8 +81,14 @@ void w_window_change_keybd_focus (s_window_t *window)
 		}
 		w_object_level_get(root, &temp, l);
 		if (temp && temp->event) {
-			w_window_focus_change_notify(window, temp);
-			break;
+			if (type == 2 &&
+			    windoww->focus &&
+			    windoww->focus->parent &&
+			    w_object_ischild(windoww->focus->parent, temp) == 0) {
+			} else {
+				w_window_focus_change_notify(window, temp);
+				break;
+			}
 		}
 	}
 #if 0
@@ -83,6 +99,7 @@ void w_window_change_keybd_focus (s_window_t *window)
 
 void w_window_atevent (s_window_t *window, s_event_t *event)
 {
+	int flag;
 	w_object_t *objectn;
 	w_object_t *objectp;
 	w_window_t *windoww;
@@ -119,7 +136,8 @@ void w_window_atevent (s_window_t *window, s_event_t *event)
 	if (event->type & KEYBD_EVENT) {
 		if (event->type & KEYBD_PRESSED &&
 		    event->keybd->keycode == S_KEYCODE_TAB) {
-			w_window_change_keybd_focus(window);
+		    	flag = (event->keybd->flag & KEYCODE_LSHIFTF) ? 1 : (event->keybd->flag & KEYCODE_RSHIFTF) ? 2 : 0;
+		    	w_window_change_keybd_focus(window, flag);
 		}
 		if (windoww->focus && windoww->focus->event) {
 			windoww->focus->event(windoww->focus, event);

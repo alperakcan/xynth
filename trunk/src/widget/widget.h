@@ -279,6 +279,7 @@ void w_object_signal (w_object_t *from, w_object_t *to, void (*func) (w_signal_t
 int w_object_level_get (w_object_t *parent, w_object_t **object, int level);
 int w_object_level_find (w_object_t *parent, w_object_t *object, int *level);
 int w_object_level_count (w_object_t *parent, int *level);
+int w_object_ischild (w_object_t *parent, w_object_t *child);
 int w_object_init (w_window_t *window, w_object_t **object, void (*draw) (w_object_t *), w_object_t *parent);
 void w_object_uninit (w_object_t *object);
 
@@ -314,7 +315,8 @@ int w_combobox_init (w_window_t *window, w_combobox_t **combobox, w_object_t *pa
 void w_combobox_uninit (w_object_t *object);
 
 /* window.c */
-void w_window_change_keybd_focus (s_window_t *window);
+void w_window_focus_change_notify (s_window_t *window, w_object_t *focus);
+void w_window_change_keybd_focus (s_window_t *window, int type);
 void w_window_atevent (s_window_t *window, s_event_t *event);
 int w_window_init (w_window_t **window, S_WINDOW type, w_window_t *parent);
 int w_window_set_coor (w_window_t *window, int x, int y, int w, int h);

@@ -384,6 +384,23 @@ int w_object_level_find (w_object_t *parent, w_object_t *object, int *level)
 	return w_object_level_find_(parent, object, level);
 }
 
+int w_object_ischild (w_object_t *parent, w_object_t *child)
+{
+	int pos = 0;
+	w_object_t *tmp;
+	while (!s_list_eol(parent->childs, pos)) {
+		tmp = (w_object_t *) s_list_get(parent->childs, pos);
+		if (tmp == child) {
+			return 0;
+		}
+		if (w_object_ischild(tmp, child) == 0) {
+			return 0;
+		}
+		pos++;
+	}
+	return -1;
+}
+
 int w_object_init (w_window_t *window, w_object_t **object, void (*draw) (w_object_t *), w_object_t *parent)
 {
 	(*object) = (w_object_t *) s_malloc(sizeof(w_object_t));
