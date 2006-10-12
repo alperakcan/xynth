@@ -182,6 +182,31 @@ void s_event_parse_mouse (s_window_t *window, s_event_t *event)
 	return;
 }
 
+int s_event_parse_keybd_handler (s_window_t *window, s_event_t *event, s_handler_t *work)
+{
+	if (((work->keybd.flag & event->keybd->flag) == (event->keybd->flag & ~KEYBD_MASL)) &&
+	    !(work->keybd.flag & ~event->keybd->flag) &&
+	     (event->keybd->button == work->keybd.button)) {
+		if (event->type & KEYBD_PRESSED) {
+			if (work->keybd.p != NULL) {
+				s_thread_mutex_unlock(window->handlers->mut);
+				work->keybd.p(window, event, work);
+				s_thread_mutex_lock(window->handlers->mut);
+			}
+			return 0;
+		}
+		if (event->type & KEYBD_RELEASED) {
+			if (work->keybd.r != NULL) {
+				s_thread_mutex_unlock(window->handlers->mut);
+				work->keybd.r(window, event, work);
+				s_thread_mutex_lock(window->handlers->mut);
+			}
+			return 0;
+		}
+	}
+	return -1;
+}
+
 int s_event_parse_keybd (s_window_t *window, s_event_t *event)
 {
         int pos;
@@ -195,27 +220,9 @@ int s_event_parse_keybd (s_window_t *window, s_event_t *event)
 		if (work->type != KEYBD_HANDLER) {
 			continue;
 		}
-		if (((work->keybd.flag & event->keybd->flag) == (event->keybd->flag & ~KEYBD_MASL)) &&
-		    !(work->keybd.flag & ~event->keybd->flag) &&
-		     (event->keybd->button == work->keybd.button)) {
-			if (event->type & KEYBD_PRESSED) {
-				if (work->keybd.p != NULL) {
-					s_thread_mutex_unlock(window->handlers->mut);
-					work->keybd.p(window, event, work);
-					s_thread_mutex_lock(window->handlers->mut);
-				}
-				ret = 0;
-				break;
-			}
-			if (event->type & KEYBD_RELEASED) {
-				if (work->keybd.r != NULL) {
-					s_thread_mutex_unlock(window->handlers->mut);
-					work->keybd.r(window, event, work);
-					s_thread_mutex_lock(window->handlers->mut);
-				}
-				ret = 0;
-				break;
-			}
+		if (s_event_parse_keybd_handler(window, event, work) == 0) {
+			ret = 0;
+			break;
 		}
 	}
 	s_thread_mutex_unlock(window->handlers->mut);
