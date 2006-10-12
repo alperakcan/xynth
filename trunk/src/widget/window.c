@@ -21,18 +21,18 @@ void w_window_focus_change_notify (s_window_t *window, w_object_t *focus)
 	s_event_t *event;
 	w_window_t *windoww;
 	windoww = (w_window_t *) window->client->data;
-	if (windoww->event != focus) {
+	if (windoww->focus != focus) {
 		s_event_init(&event);
 		event->type = FOCUS_EVENT | FOCUSOUT_EVENT;
-		if (windoww->event && windoww->event->event) {
-			windoww->event->event(windoww->event, event);
+		if (windoww->focus && windoww->focus->event) {
+			windoww->focus->event(windoww->focus, event);
 		}
 		s_event_uninit(event);
-		windoww->event = focus;
+		windoww->focus = focus;
 		s_event_init(&event);
 		event->type = FOCUS_EVENT | FOCUSIN_EVENT;
-		if (windoww->event && windoww->event->event) {
-			windoww->event->event(windoww->event, event);
+		if (windoww->focus && windoww->focus->event) {
+			windoww->focus->event(windoww->focus, event);
 		}
 		s_event_uninit(event);
 	}
@@ -52,7 +52,7 @@ void w_window_change_keybd_focus (s_window_t *window)
 	root = windoww->object;
 	
 	ls = 0;
-	w_object_level_find(root, windoww->event, &l);
+	w_object_level_find(root, windoww->focus, &l);
 	w_object_level_count(root, &ls);
 	for (i = 0; i < ls; i++) {
 		l++;
@@ -66,7 +66,7 @@ void w_window_change_keybd_focus (s_window_t *window)
 		}
 	}
 #if 0
-	w_object_level_find(root, windoww->event, &l);
+	w_object_level_find(root, windoww->focus, &l);
 	printf("level %d [%d]\n", l, ls);
 #endif
 }
@@ -111,8 +111,8 @@ void w_window_atevent (s_window_t *window, s_event_t *event)
 		    event->keybd->keycode == S_KEYCODE_TAB) {
 			w_window_change_keybd_focus(window);
 		}
-		if (windoww->event && windoww->event->event) {
-			windoww->event->event(windoww->event, event);
+		if (windoww->focus && windoww->focus->event) {
+			windoww->focus->event(windoww->focus, event);
 		}
 	}
 	if (event->type & SIGNAL_EVENT) {
@@ -133,7 +133,7 @@ int w_window_init (w_window_t **window, S_WINDOW type, w_window_t *parent)
 	s_window_new((*window)->window, type, NULL);
 	s_window_set_resizeable((*window)->window, 0);
 	w_object_init(*window, &((*window)->object), NULL, NULL);
-	(*window)->event = NULL;
+	(*window)->focus = NULL;
 	s_client_atevent((*window)->window, w_window_atevent);
 	(*window)->window->client->data = (*window);
 	return 0;
