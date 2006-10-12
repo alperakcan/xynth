@@ -254,6 +254,9 @@ swinpanel_sunken:		case FRAME_SUNKEN:
 	                           object->content->w,
 	                           object->content->h,
 	                           s_rgbcolor(object->surface, 220, 220, 220));
+	if (object->focused) {
+		/* fix me */
+	}
 }
 
 void w_frame_geometry (w_object_t *object)

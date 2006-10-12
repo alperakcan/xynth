@@ -48,6 +48,8 @@ struct w_object_s {
 	w_object_t *parent;
 	/** content allowed rectangle */
 	s_rect_t *content;
+	/** is focused */
+	int focused;
 	/** geometry function */
 	void (*geometry) (w_object_t *object);
 	/** draw function */
