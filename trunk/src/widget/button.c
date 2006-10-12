@@ -30,12 +30,6 @@ void w_button_event (w_object_t *object, s_event_t *event)
 		s_event_parse_handler_notover(button->object->window->window, event, button->handler);
 		s_thread_mutex_unlock(object->window->window->handlers->mut);
 	}
-	if (event->type & FOCUSIN_EVENT) {
-		printf("focus in\n");
-	}
-	if (event->type & FOCUSOUT_EVENT) {
-		printf("focus out\n");
-	}
 }
 
 void w_button_draw (w_object_t *object)

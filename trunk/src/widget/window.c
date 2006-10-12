@@ -25,14 +25,24 @@ void w_window_focus_change_notify (s_window_t *window, w_object_t *focus)
 		s_event_init(&event);
 		event->type = FOCUS_EVENT | FOCUSOUT_EVENT;
 		if (windoww->focus && windoww->focus->event) {
+			windoww->focus->focused = 0;
 			windoww->focus->event(windoww->focus, event);
+			if (windoww->focus->draw) {
+				windoww->focus->draw(windoww->focus);
+				w_object_update(windoww->focus, windoww->focus->surface->win);
+			}
 		}
 		s_event_uninit(event);
 		windoww->focus = focus;
 		s_event_init(&event);
 		event->type = FOCUS_EVENT | FOCUSIN_EVENT;
 		if (windoww->focus && windoww->focus->event) {
+			windoww->focus->focused = 1;
 			windoww->focus->event(windoww->focus, event);
+			if (windoww->focus->draw) {
+				windoww->focus->draw(windoww->focus);
+				w_object_update(windoww->focus, windoww->focus->surface->win);
+			}
 		}
 		s_event_uninit(event);
 	}
@@ -94,16 +104,16 @@ void w_window_atevent (s_window_t *window, s_event_t *event)
 		while (objectn && objectn->event == NULL) {
 			objectn = objectn->parent;
 		}
+		if (event->type & MOUSE_PRESSED) {
+			if (objectn && objectn->event) {
+				w_window_focus_change_notify(window, objectn);
+			}
+		}
 		if (objectp && (objectn != objectp) && (objectp->event)) {
 			objectp->event(objectp, event);
 		}
 		if (objectn && objectn->event) {
 			objectn->event(objectn, event);
-		}
-		if (event->type & MOUSE_PRESSED) {
-			if (objectn && objectn->event) {
-				w_window_focus_change_notify(window, objectn);
-			}
 		}
 	}
 	if (event->type & KEYBD_EVENT) {

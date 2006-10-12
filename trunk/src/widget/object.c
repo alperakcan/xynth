@@ -396,6 +396,8 @@ int w_object_init (w_window_t *window, w_object_t **object, void (*draw) (w_obje
 	s_list_init(&((*object)->shown));
 	s_list_init(&((*object)->childs));
 	(*object)->parent = parent;
+	
+	(*object)->focused = 0;
 
  	(*object)->event = NULL;
  	memset((*object)->data, 0, sizeof(void *) * OBJECT_OBJECTS);
