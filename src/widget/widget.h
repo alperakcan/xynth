@@ -110,7 +110,8 @@ typedef struct w_frame_s {
 typedef struct w_button_s {
 	w_object_t *object;
 	w_frame_t *frame;
-	s_handler_t *handler;
+	s_handler_t *handler_m;
+	s_handler_t *handler_k;
 	void (*pressed) (w_object_t *, int);
 	void (*released) (w_object_t *, int);
 	void (*clicked) (w_object_t *, int, int);

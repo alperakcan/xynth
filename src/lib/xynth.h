@@ -791,6 +791,7 @@ int s_event_mouse_handler_state (s_window_t *window, s_event_t *event, s_handler
 int s_event_parse_handler_over (s_window_t *window, s_event_t *event, s_handler_t *work);
 int s_event_parse_handler_notover (s_window_t *window, s_event_t *event, s_handler_t *work);
 void s_event_parse_mouse (s_window_t *window, s_event_t *event);
+int s_event_parse_keybd_handler (s_window_t *window, s_event_t *event, s_handler_t *work);
 int s_event_parse_keybd (s_window_t *window, s_event_t *event);
 int s_event_parse_expos (s_window_t *window, s_event_t *event);
 int s_event_parse_config (s_window_t *window, s_event_t *event);
