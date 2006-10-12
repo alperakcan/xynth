@@ -215,14 +215,14 @@ int main (int argc, char *argv[])
 	w_object_show(checkbox->object);
 	
 	w_frame_init(window, &area, FRAME_PANEL | FRAME_SUNKEN, frame->object);
-	w_object_move(area->object, 5, 30, w - 10, h - 100);
+	w_object_move(area->object, 5, 60, w - 10, h - 130);
 	w_object_show(area->object);
 
 	for (i = 0; i < 4; i++) {
 		w_frame_init(window, &square, FRAME_NOFRAME | FRAME_PLAIN, area->object);
 		square->object->draw = object_draw_p[i];
-		w_object_move(square->object, (rand() + 1) % (w - 10), ((rand() + 1) % (h - 100)) + 1,
-		                              (rand() + 1) % (w - 10), ((rand() + 1) % (h - 100)) + 1);
+		w_object_move(square->object, (rand() + 1) % (w - 10), ((rand() + 1) % (h - 70)) + 1,
+		                              (rand() + 1) % (w - 10), ((rand() + 1) % (h - 70)) + 1);
 		w_object_show(square->object);
 	}
 
@@ -239,6 +239,45 @@ int main (int argc, char *argv[])
 		w_object_show(editbox->object);
 	}
 
+	w_frame_init(window, &frame, FRAME_NOFRAME, frame->object);
+	w_object_move(frame->object, 5, 30, w - 10, 25);
+	w_object_show(frame->object);
+
+	w_button_init(window, &button, frame->object);
+	w_object_move(button->object, 5, 2, 70, 20);
+	w_object_show(button->object);
+
+	w_textbox_init(window, &textbox, button->object);
+	textbox->frame->style = FRAME_NOFRAME;
+	w_textbox_set_str(textbox->object, "test 0");
+	w_object_move(textbox->object, 0, 0, 70, 20);
+	w_object_show(textbox->object);
+
+	w_button_init(window, &button, frame->object);
+	w_object_move(button->object, 80, 2, 55, 20);
+	w_object_show(button->object);
+
+	w_textbox_init(window, &textbox, button->object);
+	textbox->frame->style = FRAME_NOFRAME;
+	w_textbox_set_str(textbox->object, "test 1");
+	w_object_move(textbox->object, 0, 0, 55, 20);
+	w_object_show(textbox->object);
+
+	w_button_init(window, &button, frame->object);
+	w_object_move(button->object, 140, 2, 85, 20);
+	w_object_show(button->object);
+
+	w_textbox_init(window, &textbox, button->object);
+	textbox->frame->style = FRAME_NOFRAME;
+	w_textbox_set_str(textbox->object, "test 2");
+	w_object_move(textbox->object, 0, 0, 85, 20);
+	w_object_show(textbox->object);
+
+	w_checkbox_init(window, &checkbox, frame->object);
+	w_textbox_set_str(checkbox->text->object, "test 3");
+	w_object_move(checkbox->object, 300, 2, 85, 20);
+	w_object_show(checkbox->object);
+	
 	w_object_show(window->object);
 
 	s_window_show(window->window);
