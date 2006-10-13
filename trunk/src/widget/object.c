@@ -196,6 +196,7 @@ int w_object_hide (w_object_t *object)
 			pos++;
 		}
 	}
+	object->showed = 0;
 	return 0;
 }
 
@@ -238,6 +239,7 @@ int w_object_show (w_object_t *object)
         } else {
         	w_object_update(object, object->surface->win);
         }
+	object->showed = 1;
 	return 0;
 }
 
@@ -415,6 +417,7 @@ int w_object_init (w_window_t *window, w_object_t **object, void (*draw) (w_obje
 	(*object)->parent = parent;
 	
 	(*object)->focused = 0;
+	(*object)->showed = 0;
 
  	(*object)->event = NULL;
  	memset((*object)->data, 0, sizeof(void *) * OBJECT_OBJECTS);
