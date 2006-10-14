@@ -25,6 +25,18 @@ typedef struct w_window_s {
 } w_window_t;
 
 typedef enum {
+	EFFECT_NONE,
+	EFFECT_APPEAR,
+} EFFECT;
+
+typedef struct w_effect_s {
+	EFFECT effect;
+	int level;
+	int interval;
+	s_timer_t *timer;
+} w_effect_t;
+
+typedef enum {
 	OBJECT_FRAME   		= 0x0,
 	OBJECT_BUTTON  		= 0x1,
 	OBJECT_TEXTBOX 		= 0x2,
@@ -52,6 +64,8 @@ struct w_object_s {
 	int showed;
 	/** is focused */
 	int focused;
+	/** effect */
+	w_effect_t *effect;
 	/** geometry function */
 	void (*geometry) (w_object_t *object);
 	/** draw function */
