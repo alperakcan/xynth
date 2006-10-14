@@ -366,8 +366,8 @@ static int w_object_level_find_ (w_object_t *parent, w_object_t *object, int *le
 	if (parent == object) {
 		return 0;
 	}
-	while (!s_list_eol(parent->childs, pos)) {
-		temp = (w_object_t *) s_list_get(parent->childs, pos);
+	while (!s_list_eol(parent->shown, pos)) {
+		temp = (w_object_t *) s_list_get(parent->shown, pos);
 		pos++;
 		(*level)++;
 		if (temp == object) {
