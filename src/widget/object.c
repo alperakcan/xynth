@@ -16,8 +16,54 @@
 #include "../lib/xynth_.h"
 #include "widget.h"
 
+static void w_object_effect_timer_cb (s_window_t *window, s_timer_t *timer)
+{
+	w_object_t *object;
+	object = (w_object_t *) timer->data;
+	w_object_update(object, object->surface->win);
+	object->effect->interval -= 1;
+	if (object->effect->interval < 0) {
+		s_timer_del(window, timer);
+	}
+}
+
+int w_object_effect (w_object_t *object)
+{
+	if (object->effect->level <= 0) {
+		object->effect->level = 20;
+	}
+	if (object->effect->interval <= 0) {
+		object->effect->interval = object->effect->level;
+	}
+	s_timer_del(object->window->window, object->effect->timer);
+	object->effect->timer->timeval = 100;
+	object->effect->timer->cb = w_object_effect_timer_cb;
+	object->effect->timer->data = object;
+	s_timer_add(object->window->window, object->effect->timer);
+	return 0;
+}
+
+int w_object_has_effect (w_object_t *object, int *level, int *interval)
+{
+	while (object) {
+		if (object->effect->effect != EFFECT_NONE &&
+		    object->effect->interval > 0) {
+		    	*level = object->effect->level;
+		    	*interval = object->effect->interval;
+			return 1;
+		}
+		object = object->parent;
+	}
+	return 0;
+}
+
 int w_object_update_to_surface (w_object_t *object, s_surface_t *surface, s_rect_t *coor)
 {
+	int i;
+	int level;
+	int interval;
+	unsigned char *tmp;
+	unsigned char *mat;
         int pos = 0;
 	s_rect_t bound;
 	s_rect_t update;
@@ -33,11 +79,26 @@ int w_object_update_to_surface (w_object_t *object, s_surface_t *surface, s_rect
 		if (s_rect_intersect(&bound, object->parent->surface->win, &update)) {
 			goto end;
 		}
+		if (w_object_has_effect(object, &level, &interval)) {
+			mat = (unsigned char *) s_malloc(sizeof(char) * object->surface->width * object->surface->height);
+			memcpy(mat, object->surface->matrix, object->surface->width * object->surface->height);
+			i = object->surface->width * object->surface->height;
+			tmp = mat;
+			while (i--) {
+				*tmp = (*tmp * (level - interval)) / level;
+				tmp++;
+			}
+		} else {
+			mat = object->surface->matrix;
+		}
 		s_putboxpartalpha(surface, update.x, update.y, update.w, update.h,
 		                           object->surface->width, object->surface->height,
-	        	                   object->surface->vbuf, object->surface->matrix,
+		       	                   object->surface->vbuf, mat,
 					   update.x - object->surface->win->x,
 					   update.y - object->surface->win->y);
+		if (w_object_has_effect(object, &level, &interval)) {
+			s_free(mat);
+		}
 	}
 
 	while (!(s_list_eol(object->shown, pos))) {
@@ -189,6 +250,8 @@ int w_object_hide (w_object_t *object)
 		while (!s_list_eol(object->parent->shown, pos)) {
 			w_object_t *obj = (w_object_t *) s_list_get(object->parent->shown, pos);
 			if (obj == object) {
+				s_timer_del(object->window->window, object->effect->timer);
+				object->effect->interval = 0;
 				s_list_remove(object->parent->shown, pos);
 				w_object_update(object, object->surface->win);
 				break;
@@ -234,11 +297,13 @@ int w_object_show (w_object_t *object)
 			if (!found) {
 				s_list_add(object->parent->shown, object, -1);
 			}
-			w_object_update(object, object->surface->win);
 		}
-        } else {
-        	w_object_update(object, object->surface->win);
-        }
+	}
+	if (object->effect->effect != EFFECT_NONE) {
+		w_object_effect(object);
+	} else {
+		w_object_update(object, object->surface->win);
+	}
 	object->showed = 1;
 	return 0;
 }
@@ -418,6 +483,12 @@ int w_object_init (w_window_t *window, w_object_t **object, void (*draw) (w_obje
 	
 	(*object)->focused = 0;
 	(*object)->showed = 0;
+	
+	(*object)->effect = (w_effect_t *) s_malloc(sizeof(w_effect_t));
+	(*object)->effect->effect = EFFECT_NONE;
+	(*object)->effect->level = 0;
+	(*object)->effect->interval = 0;
+	s_timer_init(&((*object)->effect->timer));
 
  	(*object)->event = NULL;
  	memset((*object)->data, 0, sizeof(void *) * OBJECT_OBJECTS);
@@ -506,6 +577,8 @@ void w_object_uninit (w_object_t *object)
 	while (!s_list_eol(object->shown, 0)) {
 		s_list_remove(object->shown, 0);
 	}
+	s_timer_uninit(object->effect->timer);
+	s_free(object->effect);
 	s_free(object->surface->buf);
 	s_free(object->surface->win);
 	s_free(object->surface->vbuf);
