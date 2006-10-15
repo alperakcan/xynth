@@ -27,16 +27,25 @@ static void w_object_effect_timer_cb (s_window_t *window, s_timer_t *timer)
 	}
 }
 
-int w_object_effect (w_object_t *object)
+int w_object_effect_stop (w_object_t *object)
 {
+	s_timer_del(object->window->window, object->effect->timer);
+	object->effect->interval = 0;
+	return 0;
+}
+
+int w_object_effect_start (w_object_t *object)
+{
+	w_object_effect_stop(object);
 	if (object->effect->level <= 0) {
 		object->effect->level = 20;
 	}
 	if (object->effect->interval <= 0) {
 		object->effect->interval = object->effect->level;
 	}
-	s_timer_del(object->window->window, object->effect->timer);
-	object->effect->timer->timeval = 100;
+	if (object->effect->timer->timeval <= 0) {
+		object->effect->timer->timeval = 50;
+	}
 	object->effect->timer->cb = w_object_effect_timer_cb;
 	object->effect->timer->data = object;
 	s_timer_add(object->window->window, object->effect->timer);
@@ -250,8 +259,7 @@ int w_object_hide (w_object_t *object)
 		while (!s_list_eol(object->parent->shown, pos)) {
 			w_object_t *obj = (w_object_t *) s_list_get(object->parent->shown, pos);
 			if (obj == object) {
-				s_timer_del(object->window->window, object->effect->timer);
-				object->effect->interval = 0;
+				w_object_effect_stop(object);
 				s_list_remove(object->parent->shown, pos);
 				w_object_update(object, object->surface->win);
 				break;
@@ -300,7 +308,7 @@ int w_object_show (w_object_t *object)
 		}
 	}
 	if (object->effect->effect != EFFECT_NONE) {
-		w_object_effect(object);
+		w_object_effect_start(object);
 	} else {
 		w_object_update(object, object->surface->win);
 	}
