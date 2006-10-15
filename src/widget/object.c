@@ -52,11 +52,49 @@ int w_object_effect_start (w_object_t *object)
 	return 0;
 }
 
+int w_object_has_effect (w_object_t *effect, w_object_t *object)
+{
+	if (effect != NULL &&
+	    effect->showed == 1 &&
+	    effect->effect->effect != EFFECT_NONE &&
+	    (effect == object || w_object_ischild(effect, object) == 0)) {
+	    	return 0;
+	}
+	return -1;
+}
+
+int w_object_effect_apply (s_surface_t *surface, s_rect_t *rect, w_object_t *effect, w_object_t *object)
+{
+	if (w_object_has_effect(effect, object)) {
+		return -1;
+	}
+	
+	if (effect->effect->effect == EFFECT_APPEAR ) {
+		unsigned int i;
+		unsigned char *mat;
+		unsigned char *tmp;
+		mat = (unsigned char *) s_malloc(sizeof(char) * object->surface->width * object->surface->height);
+		memcpy(mat, object->surface->matrix, object->surface->width * object->surface->height);
+		i = object->surface->width * object->surface->height;
+		tmp = mat;
+		while (i--) {
+			*tmp = (*tmp * (effect->effect->level - effect->effect->interval)) / effect->effect->level;
+			tmp++;
+		}
+		s_putboxpartalpha(surface, rect->x, rect->y, rect->w, rect->h,
+		                           object->surface->width, object->surface->height,
+		       	                   object->surface->vbuf, mat,
+					   rect->x - object->surface->win->x,
+					   rect->y - object->surface->win->y);
+		s_free(mat);
+		return 0;
+	}
+
+	return -1;
+}
+
 int w_object_update_to_surface (w_object_t *object, s_surface_t *surface, s_rect_t *coor, w_object_t *effect)
 {
-	int i;
-	unsigned char *tmp;
-	unsigned char *mat;
         int pos = 0;
 	s_rect_t bound;
 	s_rect_t update;
@@ -72,31 +110,12 @@ int w_object_update_to_surface (w_object_t *object, s_surface_t *surface, s_rect
 		if (s_rect_intersect(&bound, object->parent->surface->win, &update)) {
 			goto end;
 		}
-		if (effect != NULL &&
-		    effect->showed == 1 &&
-		    effect->effect->effect != EFFECT_NONE &&
-		    (effect == object || w_object_ischild(effect, object) == 0)) {
-			mat = (unsigned char *) s_malloc(sizeof(char) * object->surface->width * object->surface->height);
-			memcpy(mat, object->surface->matrix, object->surface->width * object->surface->height);
-			i = object->surface->width * object->surface->height;
-			tmp = mat;
-			while (i--) {
-				*tmp = (*tmp * (effect->effect->level - effect->effect->interval)) / effect->effect->level;
-				tmp++;
-			}
-		} else {
-			mat = object->surface->matrix;
-		}
-		s_putboxpartalpha(surface, update.x, update.y, update.w, update.h,
-		                           object->surface->width, object->surface->height,
-		       	                   object->surface->vbuf, mat,
-					   update.x - object->surface->win->x,
-					   update.y - object->surface->win->y);
-		if (effect != NULL &&
-		    effect->showed == 1 &&
-		    effect->effect->effect != EFFECT_NONE &&
-		    (effect == object || w_object_ischild(effect, object) == 0)) {
-			s_free(mat);
+		if (w_object_effect_apply(surface, &update, effect, object)) {
+			s_putboxpartalpha(surface, update.x, update.y, update.w, update.h,
+			                           object->surface->width, object->surface->height,
+			       	                   object->surface->vbuf, object->surface->matrix,
+						   update.x - object->surface->win->x,
+						   update.y - object->surface->win->y);
 		}
 	}
 
