@@ -283,7 +283,7 @@ void w_listbox_uninit (w_object_t *object);
 int w_listbox_add (w_listbox_t *listbox, char *item);
 
 /* object.c */
-int w_object_update_to_surface (w_object_t *object, s_surface_t *surface, s_rect_t *coor);
+int w_object_update_to_surface (w_object_t *object, s_surface_t *surface, s_rect_t *coor, w_object_t *effect);
 int w_object_update (w_object_t *object, s_rect_t *coor);
 int w_object_set_content (w_object_t *object, int x, int y, int w, int h);
 int w_object_move (w_object_t *object, int x, int y, int w, int h);
