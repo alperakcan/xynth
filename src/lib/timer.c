@@ -47,6 +47,10 @@ int s_timer_del (s_window_t *window, s_timer_t *timer)
 	int pos;
 	s_event_t *evn;
 	
+	if (timer == NULL) {
+		return -1;
+	}
+	
 	s_thread_mutex_lock(window->eventq->mut);
 	pos = 0;
 	while (!s_list_eol(window->eventq->queue, pos)) {
