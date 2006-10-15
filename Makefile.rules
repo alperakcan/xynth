@@ -9,7 +9,7 @@ ASFLAGS  := $(CFLAGS) $(ASFLAGS)
 LDFLAGS  := $(addprefix -L,$(LIBDIR)) $(LDFLAGS)
 DEPEND   := Makefile.depend
 
-all: depend $(EXTRA_TARGETS) $(TARGET) $(TARGET_A) $(TARGET_SO)
+all: $(EXTRA_TARGETS) $(TARGET) $(TARGET_A) $(TARGET_SO)
 
 ifdef TARGET
 $(TARGET): $(OBJS) $(EXTRA_OBJS)
@@ -36,7 +36,7 @@ endif
 .cpp.o:
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
-depend: $(EXTRA_DEPEND_FILES) $(OBJS:.o=.c)
+$(DEPEND): $(EXTRA_DEPEND_FILES) $(OBJS:.o=.c)
 	@>$(DEPEND)
 	@$(foreach F, $(OBJS:.o=.c), $(CC) $(CFLAGS) -MT $(F:.c=.o) -MM $(F) >> $(DEPEND);)
 -include $(DEPEND)
