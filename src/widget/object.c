@@ -27,13 +27,6 @@ static void w_object_effect_timer_cb (s_window_t *window, s_timer_t *timer)
 	}
 }
 
-int w_object_effect_stop (w_object_t *object)
-{
-	s_timer_del(object->window->window, object->effect->timer);
-	object->effect->interval = 0;
-	return 0;
-}
-
 int w_object_effect_start (w_object_t *object)
 {
 	w_object_effect_stop(object);
@@ -49,6 +42,13 @@ int w_object_effect_start (w_object_t *object)
 	object->effect->timer->cb = w_object_effect_timer_cb;
 	object->effect->timer->data = object;
 	s_timer_add(object->window->window, object->effect->timer);
+	return 0;
+}
+
+int w_object_effect_stop (w_object_t *object)
+{
+	s_timer_del(object->window->window, object->effect->timer);
+	object->effect->interval = 0;
 	return 0;
 }
 
