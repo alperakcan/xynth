@@ -25,8 +25,13 @@ typedef struct w_window_s {
 } w_window_t;
 
 typedef enum {
-	EFFECT_NONE,
-	EFFECT_FADEIN,
+	EFFECT_NONE    = 0x0,
+	EFFECT_FADEIN  = 0x1,
+	EFFECT_FADEOUT = 0x2,
+	EFFECT_POPIN   = 0x4,
+	EFFECT_POPOUT  = 0x8,
+	EFFECT_SHOW    = (EFFECT_FADEIN | EFFECT_POPIN),
+	EFFECT_HIDE    = (EFFECT_FADEOUT | EFFECT_POPOUT)
 } EFFECT;
 
 typedef struct w_effect_s {
@@ -283,19 +288,29 @@ void w_listbox_uninit (w_object_t *object);
 int w_listbox_add (w_listbox_t *listbox, char *item);
 
 /* object.c */
+int w_object_effect_stop (w_object_t *object);
+void w_object_effect_timer_cb (s_window_t *window, s_timer_t *timer);
+int w_object_effect_start (w_object_t *object);
+int w_object_has_effect (w_object_t *effect, w_object_t *object);
+int w_object_effect_apply (s_surface_t *surface, s_rect_t *rect, w_object_t *effect, w_object_t *object);
 int w_object_update_to_surface (w_object_t *object, s_surface_t *surface, s_rect_t *coor, w_object_t *effect);
 int w_object_update (w_object_t *object, s_rect_t *coor);
 int w_object_set_content (w_object_t *object, int x, int y, int w, int h);
+int w_object_move_correct (w_object_t *object);
 int w_object_move (w_object_t *object, int x, int y, int w, int h);
 int w_object_hide (w_object_t *object);
 int w_object_show (w_object_t *object);
 int w_object_childatposition (w_object_t *object, int x, int y, w_object_t **child);
 int w_object_atposition (w_object_t *root, int x, int y, w_object_t **object);
 void w_object_signal (w_object_t *from, w_object_t *to, void (*func) (w_signal_t *), void *arg);
+int w_object_level_get_ (w_object_t *parent, w_object_t **object, int *level);
 int w_object_level_get (w_object_t *parent, w_object_t **object, int level);
-int w_object_level_find (w_object_t *parent, w_object_t *object, int *level);
+int w_object_level_count_ (w_object_t *parent, int *level);
 int w_object_level_count (w_object_t *parent, int *level);
+int w_object_level_find_ (w_object_t *parent, w_object_t *object, int *level);
+int w_object_level_find (w_object_t *parent, w_object_t *object, int *level);
 int w_object_ischild (w_object_t *parent, w_object_t *child);
+int w_object_isshownchild (w_object_t *parent, w_object_t *child);
 int w_object_init (w_window_t *window, w_object_t **object, void (*draw) (w_object_t *), w_object_t *parent);
 void w_object_uninit (w_object_t *object);
 

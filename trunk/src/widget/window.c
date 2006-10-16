@@ -84,7 +84,7 @@ void w_window_change_keybd_focus (s_window_t *window, int type)
 			if (type == 2 &&
 			    windoww->focus &&
 			    windoww->focus->parent &&
-			    w_object_ischild(windoww->focus->parent, temp) == 0) {
+			    w_object_isshownchild(windoww->focus->parent, temp) == 0) {
 			} else {
 				w_window_focus_change_notify(window, temp);
 				break;
