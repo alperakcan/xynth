@@ -198,7 +198,7 @@ int main (int argc, char *argv[])
 	w_object_show(textbox->object);
 
 	w_button_init(window, &button, frame->object);
-	button->object->effect->effect = EFFECT_APPEAR;
+	button->object->effect->effect = EFFECT_FADEIN;
 	button->pressed = button2_pressed;
 	button->object->destroy = button2_destroy;
 	w_object_move(button->object, 140, 5, 85, 20);
@@ -216,6 +216,7 @@ int main (int argc, char *argv[])
 	w_object_show(checkbox->object);
 	
 	w_frame_init(window, &area, FRAME_PANEL | FRAME_SUNKEN, frame->object);
+	area->object->effect->effect = EFFECT_FADEIN;
 	w_object_move(area->object, 5, 60, w - 10, h - 130);
 	w_object_show(area->object);
 

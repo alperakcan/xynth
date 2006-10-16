@@ -26,7 +26,7 @@ typedef struct w_window_s {
 
 typedef enum {
 	EFFECT_NONE,
-	EFFECT_APPEAR,
+	EFFECT_FADEIN,
 } EFFECT;
 
 typedef struct w_effect_s {
