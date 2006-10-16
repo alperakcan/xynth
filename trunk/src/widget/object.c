@@ -477,8 +477,8 @@ int w_object_ischild (w_object_t *parent, w_object_t *child)
 {
 	int pos = 0;
 	w_object_t *tmp;
-	while (!s_list_eol(parent->childs, pos)) {
-		tmp = (w_object_t *) s_list_get(parent->childs, pos);
+	while (!s_list_eol(parent->shown, pos)) {
+		tmp = (w_object_t *) s_list_get(parent->shown, pos);
 		if (tmp == child) {
 			return 0;
 		}
