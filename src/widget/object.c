@@ -23,7 +23,7 @@ int w_object_effect_stop (w_object_t *object)
 	return 0;
 }
 
-static void w_object_effect_timer_cb (s_window_t *window, s_timer_t *timer)
+void w_object_effect_timer_cb (s_window_t *window, s_timer_t *timer)
 {
 	w_object_t *object;
 	object = (w_object_t *) timer->data;
@@ -57,7 +57,8 @@ int w_object_has_effect (w_object_t *effect, w_object_t *object)
 	if (effect != NULL &&
 	    effect->showed == 1 &&
 	    effect->effect->effect != EFFECT_NONE &&
-	    (effect == object || w_object_ischild(effect, object) == 0)) {
+	    effect->effect->interval > 0 &&
+	    (effect == object || w_object_isshownchild(effect, object) == 0)) {
 	    	return 0;
 	}
 	return -1;
@@ -160,7 +161,7 @@ int w_object_set_content (w_object_t *object, int x, int y, int w, int h)
 	return 0;
 }
 
-static int w_object_move_correct (w_object_t *object)
+int w_object_move_correct (w_object_t *object)
 {
 	int pos = 0;
 	while (!(s_list_eol(object->childs, pos))) {
@@ -268,18 +269,12 @@ int w_object_move (w_object_t *object, int x, int y, int w, int h)
 
 int w_object_hide (w_object_t *object)
 {
-        if (object->parent != NULL) {
-		int pos = 0;
-		while (!s_list_eol(object->parent->shown, pos)) {
-			w_object_t *obj = (w_object_t *) s_list_get(object->parent->shown, pos);
-			if (obj == object) {
-				w_object_effect_stop(object);
-				s_list_remove(object->parent->shown, pos);
-				w_object_update(object, object->surface->win);
-				break;
-			}
-			pos++;
-		}
+        if (object->parent != NULL &&
+            w_object_ischild(object->parent, object) == 0 &&
+            w_object_isshownchild(object->parent, object) == 0) {
+            	w_object_effect_stop(object);
+       		s_list_remove(object->parent->shown, s_list_get_pos(object->parent->shown, object));
+		w_object_update(object, object->surface->win);
 	}
 	object->showed = 0;
 	return 0;
@@ -287,41 +282,14 @@ int w_object_hide (w_object_t *object)
 
 int w_object_show (w_object_t *object)
 {
-	int pos;
-	int found;
-	w_object_t *obj;
-        if (object->parent != NULL) {
-		pos = 0;
-		found = 0;
-		while (!s_list_eol(object->parent->childs, pos)) {
-			obj = (w_object_t *) s_list_get(object->parent->childs, pos);
-			if (obj == object) {
-				found = 1;
-				break;
-			}
-			pos++;
-		}
-		if (found == 1) {
-			pos = 0;
-			found = 0;
-			while (!s_list_eol(object->parent->shown, pos)) {
-				obj = (w_object_t *) s_list_get(object->parent->shown, pos);
-				if (obj == object) {
-					if ((pos + 1) != object->parent->shown->nb_elt) {
-						s_list_remove(object->parent->shown, pos);
-					} else {
-						found = 1;
-					}
-					break;
-				}
-				pos++;
-			}
-			if (!found) {
-				s_list_add(object->parent->shown, object, -1);
-			}
-		}
+        if (object->parent != NULL &&
+            w_object_ischild(object->parent, object) == 0) {
+            	if (w_object_isshownchild(object->parent, object) == 0) {
+            		s_list_remove(object->parent->shown, s_list_get_pos(object->parent->shown, object));
+            	}
+            	s_list_add(object->parent->shown, object, -1);
 	}
-	if (object->effect->effect != EFFECT_NONE) {
+	if (object->effect->effect & EFFECT_SHOW) {
 		w_object_effect_start(object);
 	} else {
 		w_object_update(object, object->surface->win);
@@ -382,7 +350,7 @@ void w_object_signal (w_object_t *from, w_object_t *to, void (*func) (w_signal_t
 	s_eventq_add(to->window->window, event);
 }
 
-static int w_object_level_get_ (w_object_t *parent, w_object_t **object, int *level)
+int w_object_level_get_ (w_object_t *parent, w_object_t **object, int *level)
 {
 	int pos = 0;
 	w_object_t *temp = NULL;
@@ -421,7 +389,7 @@ int w_object_level_get (w_object_t *parent, w_object_t **object, int level)
 	return w_object_level_get_(parent, object, &l);
 }
 
-static int w_object_level_count_ (w_object_t *parent, int *level)
+int w_object_level_count_ (w_object_t *parent, int *level)
 {
 	int pos = 0;
 	w_object_t *temp;
@@ -443,7 +411,7 @@ int w_object_level_count (w_object_t *parent, int *level)
 	return w_object_level_count_(parent, level);
 }
 
-static int w_object_level_find_ (w_object_t *parent, w_object_t *object, int *level)
+int w_object_level_find_ (w_object_t *parent, w_object_t *object, int *level)
 {
 	int pos = 0;
 	w_object_t *temp;
@@ -473,12 +441,29 @@ int w_object_level_find (w_object_t *parent, w_object_t *object, int *level)
 	return w_object_level_find_(parent, object, level);
 }
 
-int w_object_ischild (w_object_t *parent, w_object_t *child)
+int w_object_isshownchild (w_object_t *parent, w_object_t *child)
 {
 	int pos = 0;
 	w_object_t *tmp;
 	while (!s_list_eol(parent->shown, pos)) {
 		tmp = (w_object_t *) s_list_get(parent->shown, pos);
+		if (tmp == child) {
+			return 0;
+		}
+		if (w_object_isshownchild(tmp, child) == 0) {
+			return 0;
+		}
+		pos++;
+	}
+	return -1;
+}
+
+int w_object_ischild (w_object_t *parent, w_object_t *child)
+{
+	int pos = 0;
+	w_object_t *tmp;
+	while (!s_list_eol(parent->childs, pos)) {
+		tmp = (w_object_t *) s_list_get(parent->childs, pos);
 		if (tmp == child) {
 			return 0;
 		}
