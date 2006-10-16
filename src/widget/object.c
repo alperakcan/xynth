@@ -70,7 +70,7 @@ int w_object_effect_apply (s_surface_t *surface, s_rect_t *rect, w_object_t *eff
 		return -1;
 	}
 	
-	if (effect->effect->effect == EFFECT_FADEIN ) {
+	if (effect->effect->effect & EFFECT_FADEIN ) {
 		unsigned int i;
 		unsigned char *mat;
 		unsigned char *tmp;
