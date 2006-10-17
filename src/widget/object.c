@@ -72,45 +72,48 @@ int w_object_effect_apply (s_surface_t *surface, s_rect_t *rect, w_object_t *eff
 		return -1;
 	}
 	
-	if (effect->showed && effect->effect->effect & EFFECT_FADEIN) {
-		unsigned int i;
-		unsigned char *mat;
-		unsigned char *tmp;
-		mat = (unsigned char *) s_malloc(sizeof(char) * object->surface->width * object->surface->height);
-		memcpy(mat, object->surface->matrix, object->surface->width * object->surface->height);
-		i = object->surface->width * object->surface->height;
-		tmp = mat;
-		while (i--) {
-			*tmp = (*tmp * (effect->effect->level - effect->effect->interval)) / effect->effect->level;
-			tmp++;
+	if (effect->showed) {
+		if (effect->effect->effect & EFFECT_FADEIN) {
+			unsigned int i;
+			unsigned char *mat;
+			unsigned char *tmp;
+			mat = (unsigned char *) s_malloc(sizeof(char) * object->surface->width * object->surface->height);
+			memcpy(mat, object->surface->matrix, object->surface->width * object->surface->height);
+			i = object->surface->width * object->surface->height;
+			tmp = mat;
+			while (i--) {
+				*tmp = (*tmp * (effect->effect->level - effect->effect->interval)) / effect->effect->level;
+				tmp++;
+			}
+			s_putboxpartalpha(surface, rect->x, rect->y, rect->w, rect->h,
+			                           object->surface->width, object->surface->height,
+			       	                   object->surface->vbuf, mat,
+						   rect->x - object->surface->win->x,
+						   rect->y - object->surface->win->y);
+			s_free(mat);
+			return 0;
 		}
-		s_putboxpartalpha(surface, rect->x, rect->y, rect->w, rect->h,
-		                           object->surface->width, object->surface->height,
-		       	                   object->surface->vbuf, mat,
-					   rect->x - object->surface->win->x,
-					   rect->y - object->surface->win->y);
-		s_free(mat);
-		return 0;
-	}
-	if (!effect->showed && effect->effect->effect & EFFECT_FADEOUT) {
-		unsigned int i;
-		unsigned char *mat;
-		unsigned char *tmp;
-		mat = (unsigned char *) s_malloc(sizeof(char) * object->surface->width * object->surface->height);
-		memcpy(mat, object->surface->matrix, object->surface->width * object->surface->height);
-		i = object->surface->width * object->surface->height;
-		tmp = mat;
-		while (i--) {
-			*tmp = (*tmp * (effect->effect->interval)) / effect->effect->level;
-			tmp++;
+	} else if (!effect->showed) {
+		if (effect->effect->effect & EFFECT_FADEOUT) {
+			unsigned int i;
+			unsigned char *mat;
+			unsigned char *tmp;
+			mat = (unsigned char *) s_malloc(sizeof(char) * object->surface->width * object->surface->height);
+			memcpy(mat, object->surface->matrix, object->surface->width * object->surface->height);
+			i = object->surface->width * object->surface->height;
+			tmp = mat;
+			while (i--) {
+				*tmp = (*tmp * (effect->effect->interval)) / effect->effect->level;
+				tmp++;
+			}
+			s_putboxpartalpha(surface, rect->x, rect->y, rect->w, rect->h,
+			                           object->surface->width, object->surface->height,
+			       	                   object->surface->vbuf, mat,
+						   rect->x - object->surface->win->x,
+						   rect->y - object->surface->win->y);
+			s_free(mat);
+			return 0;
 		}
-		s_putboxpartalpha(surface, rect->x, rect->y, rect->w, rect->h,
-		                           object->surface->width, object->surface->height,
-		       	                   object->surface->vbuf, mat,
-					   rect->x - object->surface->win->x,
-					   rect->y - object->surface->win->y);
-		s_free(mat);
-		return 0;
 	}
 
 	return -1;
@@ -309,7 +312,7 @@ int w_object_hide (w_object_t *object)
 int w_object_show (w_object_t *object)
 {
 	object->showed = 1;
-        if (object->parent != NULL) {
+	if (object->parent != NULL) {
 		s_list_remove(object->parent->shown, s_list_get_pos(object->parent->shown, object));
             	s_list_add(object->parent->shown, object, -1);
 	}
