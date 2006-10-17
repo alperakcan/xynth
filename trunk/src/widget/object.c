@@ -293,13 +293,15 @@ int w_object_hide (w_object_t *object)
 {
 	object->showed = 0;
 	if (object->parent != NULL) {
-            	w_object_effect_stop(object);
-            	if (object->effect->effect & EFFECT_HIDE) {
-            		w_object_effect_start(object);
-            	} else {
+		if ((object->effect->effect & EFFECT_HIDE) == 0) {
 			s_list_remove(object->parent->shown, s_list_get_pos(object->parent->shown, object));
-            		w_object_update(object, object->surface->win);
-            	}
+		}
+	}
+	w_object_effect_stop(object);
+	if (object->effect->effect & EFFECT_HIDE) {
+		w_object_effect_start(object);
+	} else {
+		w_object_update(object, object->surface->win);
 	}
 	return 0;
 }
