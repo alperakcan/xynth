@@ -198,7 +198,7 @@ int main (int argc, char *argv[])
 	w_object_show(textbox->object);
 
 	w_button_init(window, &button, frame->object);
-	button->object->effect->effect = EFFECT_FADEIN;
+	button->object->effect->effect = EFFECT_FADEIN | EFFECT_FADEOUT;
 	button->pressed = button2_pressed;
 	button->object->destroy = button2_destroy;
 	w_object_move(button->object, 140, 5, 85, 20);
