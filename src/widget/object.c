@@ -291,28 +291,24 @@ int w_object_move (w_object_t *object, int x, int y, int w, int h)
 
 int w_object_hide (w_object_t *object)
 {
-        if (object->parent != NULL &&
-            w_object_ischild(object->parent, object) == 0 &&
-            w_object_isshownchild(object->parent, object) == 0) {
+	object->showed = 0;
+	if (object->parent != NULL) {
             	w_object_effect_stop(object);
             	if (object->effect->effect & EFFECT_HIDE) {
             		w_object_effect_start(object);
             	} else {
-            		s_list_remove(object->parent->shown, s_list_get_pos(object->parent->shown, object));
+			s_list_remove(object->parent->shown, s_list_get_pos(object->parent->shown, object));
             		w_object_update(object, object->surface->win);
             	}
 	}
-	object->showed = 0;
 	return 0;
 }
 
 int w_object_show (w_object_t *object)
 {
-        if (object->parent != NULL &&
-            w_object_ischild(object->parent, object) == 0) {
-            	if (w_object_isshownchild(object->parent, object) == 0) {
-            		s_list_remove(object->parent->shown, s_list_get_pos(object->parent->shown, object));
-            	}
+	object->showed = 1;
+        if (object->parent != NULL) {
+		s_list_remove(object->parent->shown, s_list_get_pos(object->parent->shown, object));
             	s_list_add(object->parent->shown, object, -1);
 	}
 	w_object_effect_stop(object);
@@ -321,7 +317,6 @@ int w_object_show (w_object_t *object)
 	} else {
 		w_object_update(object, object->surface->win);
 	}
-	object->showed = 1;
 	return 0;
 }
 
