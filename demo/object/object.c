@@ -186,7 +186,7 @@ int main (int argc, char *argv[])
 	w_object_show(textbox->object);
 
 	w_button_init(window, &button, frame->object);
-	button->object->effect->effect = EFFECT_POPIN | EFFECT_FADEOUT;
+	button->object->effect->effect = EFFECT_POPIN | EFFECT_POPOUT;
 	button->pressed = button1_pressed;
 	button->object->destroy = button1_destroy;
 	w_object_move(button->object, 80, 5, 55, 20);
