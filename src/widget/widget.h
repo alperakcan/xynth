@@ -293,7 +293,7 @@ void w_object_effect_timer_cb (s_window_t *window, s_timer_t *timer);
 int w_object_effect_start (w_object_t *object);
 int w_object_has_effect (w_object_t *effect, w_object_t *object);
 int w_object_effect_apply (s_surface_t *surface, s_rect_t *rect, w_object_t *effect, w_object_t *object);
-int w_object_update_to_surface (w_object_t *object, s_surface_t *surface, s_rect_t *coor, w_object_t *effect);
+int w_object_update_to_surface (w_object_t *object, s_surface_t *surface, s_rect_t *coor, w_object_t *effect, int do_effect);
 int w_object_update (w_object_t *object, s_rect_t *coor);
 int w_object_set_content (w_object_t *object, int x, int y, int w, int h);
 int w_object_move_correct (w_object_t *object);

@@ -92,6 +92,29 @@ int w_object_effect_apply (s_surface_t *surface, s_rect_t *rect, w_object_t *eff
 						   rect->y - object->surface->win->y);
 			s_free(mat);
 			return 0;
+		} else if (effect->effect->effect & EFFECT_POPIN) {
+			s_rect_t new;
+			s_surface_t *srf;
+			unsigned char *buf;
+			unsigned char *box;
+			unsigned char *scl;
+			if (effect == object) {
+				srf = (s_surface_t *) s_malloc(sizeof(s_surface_t));
+				buf = (unsigned char *) s_malloc(sizeof(char) * surface->width * surface->height * object->surface->bytesperpixel);
+				s_getsurfacevirtual(srf, surface->width, surface->height, surface->bitsperpixel, buf);
+				w_object_update_to_surface(object, srf, object->surface->win, effect, 0);
+				box = (unsigned char *) s_malloc(sizeof(char) * object->surface->width * object->surface->height * object->surface->bytesperpixel);
+				s_getbox(srf, object->surface->win->x, object->surface->win->y, object->surface->win->w, object->surface->win->h, box);
+				new.w = (object->surface->width * (effect->effect->level - effect->effect->interval)) / effect->effect->level;
+				new.h = (object->surface->height * (effect->effect->level - effect->effect->interval)) / effect->effect->level;
+				scl = (unsigned char *) s_malloc(sizeof(char) * new.w * new.h * object->surface->bytesperpixel);
+				s_scalebox(object->surface, object->surface->width, object->surface->height, box, new.w, new.h, scl);
+				s_putboxpart(surface, object->surface->win->x, object->surface->win->y, new.w, new.h, new.w, new.h, scl, 0, 0);
+				s_free(scl);
+				s_free(box);
+				s_free(srf);
+			}
+			return 0;
 		}
 	} else if (!effect->showed) {
 		if (effect->effect->effect & EFFECT_FADEOUT) {
@@ -119,7 +142,7 @@ int w_object_effect_apply (s_surface_t *surface, s_rect_t *rect, w_object_t *eff
 	return -1;
 }
 
-int w_object_update_to_surface (w_object_t *object, s_surface_t *surface, s_rect_t *coor, w_object_t *effect)
+int w_object_update_to_surface (w_object_t *object, s_surface_t *surface, s_rect_t *coor, w_object_t *effect, int do_effect)
 {
         int pos = 0;
 	s_rect_t bound;
@@ -136,7 +159,7 @@ int w_object_update_to_surface (w_object_t *object, s_surface_t *surface, s_rect
 		if (s_rect_intersect(&bound, object->parent->surface->win, &update)) {
 			goto end;
 		}
-		if (w_object_effect_apply(surface, &update, effect, object)) {
+		if (do_effect == 0 || w_object_effect_apply(surface, &update, effect, object)) {
 			s_putboxpartalpha(surface, update.x, update.y, update.w, update.h,
 			                           object->surface->width, object->surface->height,
 			       	                   object->surface->vbuf, object->surface->matrix,
@@ -147,7 +170,7 @@ int w_object_update_to_surface (w_object_t *object, s_surface_t *surface, s_rect
 
 	while (!(s_list_eol(object->shown, pos))) {
 		w_object_t *obj = (w_object_t *) s_list_get(object->shown, pos);
-		w_object_update_to_surface(obj, surface, coor, effect);
+		w_object_update_to_surface(obj, surface, coor, effect, do_effect);
 		pos++;
 	}
 
@@ -171,7 +194,7 @@ int w_object_update (w_object_t *object, s_rect_t *coor)
 		object->draw(object);
 	}
 	if (s_rect_intersect(coor, object->surface->win, &clip) == 0) {
-		w_object_update_to_surface(object, object->surface, &clip, effect);
+		w_object_update_to_surface(object, object->surface, &clip, effect, 1);
 		s_putboxpart(object->window->window->surface, clip.x, clip.y, clip.w, clip.h, object->surface->width, object->surface->height, object->surface->vbuf, clip.x, clip.y);
 	}
 end:	return 0;
