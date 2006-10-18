@@ -102,7 +102,7 @@ int w_object_effect_apply (s_surface_t *surface, s_rect_t *rect, w_object_t *eff
 				srf = (s_surface_t *) s_malloc(sizeof(s_surface_t));
 				buf = (unsigned char *) s_malloc(sizeof(char) * surface->width * surface->height * object->surface->bytesperpixel);
 				s_getsurfacevirtual(srf, surface->width, surface->height, surface->bitsperpixel, buf);
-				w_object_update_to_surface(object, srf, object->surface->win, effect, 0);
+				w_object_update_to_surface(object, srf, object->surface->win, effect, EFFECT_NONE);
 				box = (unsigned char *) s_malloc(sizeof(char) * object->surface->width * object->surface->height * object->surface->bytesperpixel);
 				s_getbox(srf, object->surface->win->x, object->surface->win->y, object->surface->win->w, object->surface->win->h, box);
 				new.w = (object->surface->width * (effect->effect->level - effect->effect->interval)) / effect->effect->level;
@@ -147,7 +147,7 @@ int w_object_effect_apply (s_surface_t *surface, s_rect_t *rect, w_object_t *eff
 				srf = (s_surface_t *) s_malloc(sizeof(s_surface_t));
 				buf = (unsigned char *) s_malloc(sizeof(char) * surface->width * surface->height * object->surface->bytesperpixel);
 				s_getsurfacevirtual(srf, surface->width, surface->height, surface->bitsperpixel, buf);
-				w_object_update_to_surface(object, srf, object->surface->win, effect, 0);
+				w_object_update_to_surface(object, srf, object->surface->win, effect, EFFECT_NONE);
 				box = (unsigned char *) s_malloc(sizeof(char) * object->surface->width * object->surface->height * object->surface->bytesperpixel);
 				s_getbox(srf, object->surface->win->x, object->surface->win->y, object->surface->win->w, object->surface->win->h, box);
 				new.w = (object->surface->width * effect->effect->interval) / effect->effect->level;
@@ -184,7 +184,7 @@ int w_object_update_to_surface (w_object_t *object, s_surface_t *surface, s_rect
 		if (s_rect_intersect(&bound, object->parent->surface->win, &update)) {
 			goto end;
 		}
-		if (do_effect == 0 || w_object_effect_apply(surface, &update, effect, object)) {
+		if (do_effect == EFFECT_NONE || w_object_effect_apply(surface, &update, effect, object)) {
 			s_putboxpartalpha(surface, update.x, update.y, update.w, update.h,
 			                           object->surface->width, object->surface->height,
 			       	                   object->surface->vbuf, object->surface->matrix,
@@ -219,7 +219,7 @@ int w_object_update (w_object_t *object, s_rect_t *coor)
 		object->draw(object);
 	}
 	if (s_rect_intersect(coor, object->surface->win, &clip) == 0) {
-		w_object_update_to_surface(object, object->surface, &clip, effect, 1);
+		w_object_update_to_surface(object, object->surface, &clip, effect, EFFECT_SHOW | EFFECT_HIDE);
 		s_putboxpart(object->window->window->surface, clip.x, clip.y, clip.w, clip.h, object->surface->width, object->surface->height, object->surface->vbuf, clip.x, clip.y);
 	}
 end:	return 0;
