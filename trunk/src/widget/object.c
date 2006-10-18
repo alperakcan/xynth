@@ -112,6 +112,7 @@ int w_object_effect_apply (s_surface_t *surface, s_rect_t *rect, w_object_t *eff
 				s_putboxpart(surface, object->surface->win->x, object->surface->win->y, new.w, new.h, new.w, new.h, scl, 0, 0);
 				s_free(scl);
 				s_free(box);
+				s_free(buf);
 				s_free(srf);
 			}
 			return 0;
@@ -135,6 +136,30 @@ int w_object_effect_apply (s_surface_t *surface, s_rect_t *rect, w_object_t *eff
 						   rect->x - object->surface->win->x,
 						   rect->y - object->surface->win->y);
 			s_free(mat);
+			return 0;
+		} else if (effect->effect->effect & EFFECT_POPOUT) {
+			s_rect_t new;
+			s_surface_t *srf;
+			unsigned char *buf;
+			unsigned char *box;
+			unsigned char *scl;
+			if (effect == object) {
+				srf = (s_surface_t *) s_malloc(sizeof(s_surface_t));
+				buf = (unsigned char *) s_malloc(sizeof(char) * surface->width * surface->height * object->surface->bytesperpixel);
+				s_getsurfacevirtual(srf, surface->width, surface->height, surface->bitsperpixel, buf);
+				w_object_update_to_surface(object, srf, object->surface->win, effect, 0);
+				box = (unsigned char *) s_malloc(sizeof(char) * object->surface->width * object->surface->height * object->surface->bytesperpixel);
+				s_getbox(srf, object->surface->win->x, object->surface->win->y, object->surface->win->w, object->surface->win->h, box);
+				new.w = (object->surface->width * effect->effect->interval) / effect->effect->level;
+				new.h = (object->surface->height * effect->effect->interval) / effect->effect->level;
+				scl = (unsigned char *) s_malloc(sizeof(char) * new.w * new.h * object->surface->bytesperpixel);
+				s_scalebox(object->surface, object->surface->width, object->surface->height, box, new.w, new.h, scl);
+				s_putboxpart(surface, object->surface->win->x, object->surface->win->y, new.w, new.h, new.w, new.h, scl, 0, 0);
+				s_free(scl);
+				s_free(box);
+				s_free(buf);
+				s_free(srf);
+			}
 			return 0;
 		}
 	}
