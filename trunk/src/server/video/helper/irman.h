@@ -1,4 +1,6 @@
 
+#if defined(VIDEO_HELPER_IRMAN)
+
 int ir_init (char *filename);
 int ir_finish (void);
 unsigned char * ir_read_code (unsigned long timeout);
@@ -20,3 +22,5 @@ void ir_usleep (unsigned long usec);
 int irman_init (char *port);
 char * irman_getcode (void);
 int irman_uninit (void);
+
+#endif

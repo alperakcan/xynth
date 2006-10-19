@@ -1,4 +1,6 @@
 
+#if defined(VIDEO_HELPER_IRMAN)
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -488,3 +490,5 @@ int irman_uninit (void)
 	ir_finish();
 	return 0;
 }
+
+#endif
