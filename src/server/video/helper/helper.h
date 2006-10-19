@@ -19,6 +19,10 @@ int s_video_helper_console_init (void);
 int s_video_helper_console_switch (int vt);
 #endif /* VIDEO_HELPER_CONSOLE */
 
+#if defined(VIDEO_HELPER_IRMAN)
+#include "irman"
+#endif /* VIDEO_HERLPER_IRMAN */
+
 #if defined(VIDEO_HELPER_KBD)
 /* kbd.c */
 void s_video_helper_kbd_set_attr (void);
