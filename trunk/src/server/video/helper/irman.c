@@ -464,7 +464,7 @@ int irman_init (char *port)
 	ret = ir_init(port);
 	if (ret == -1)
 		return -1;
-	return 1;
+	return ir_get_portfd();
 }
 
 char * irman_getcode (void)
