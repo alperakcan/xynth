@@ -57,16 +57,23 @@ void s_server_kbd_server_quit_handler (s_window_t *window, s_event_t *event, s_h
 
 int s_server_kbd_update (s_window_t *window, s_pollfd_t *pfd)
 {
+	int force_release = 0;
 	s_video_input_t *keybd;
 	s_video_input_data_t kdata;
 	keybd = (s_video_input_t *) pfd->data;
 	server->window->event->type = 0;
 	memset(&kdata, 0, sizeof(s_video_input_data_t));
 	if (keybd->update != NULL) {
-		keybd->update(&kdata);
+		force_release = keybd->update(&kdata);
 		s_server_event_parse_keyboard(&(kdata.keybd));
 	}
 	s_server_event_changed();
+	if (force_release) {
+		server->window->event->type = 0;
+		kdata.keybd.state = KEYBD_RELEASED;
+		s_server_event_parse_keyboard(&(kdata.keybd));
+		s_server_event_changed();
+	}
 	return 0;
 }
 

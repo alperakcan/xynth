@@ -39,9 +39,91 @@ s_video_input_t s_video_sdl_input_mouse = {
 	s_video_sdl_mouse_uninit,
 };
 
+#if defined(VIDEO_HELPER_IRMAN)
+
+typedef struct irman_codes_s {
+	char *code;
+	s_video_input_data_keybd_t keybd;
+} irman_codes_t;
+
+static irman_codes_t irman_codes_sonytv[] = {
+	{"290000000000", {KEYBD_PRESSED, 0, 0, 0, 0}},
+	{"6d0000000000", {KEYBD_PRESSED, 0, 0, 0, 0}},
+	{"a90000000000", {KEYBD_PRESSED, 0, 0, 0, 0}},
+	{"5d0000000000", {KEYBD_PRESSED, 0, 0, 0, 0}},
+	{"a50000000000", {KEYBD_PRESSED, 0, 0, 0, 0}},
+	{"010000000000", {KEYBD_PRESSED, 0, 0, 0, 0}},
+	{"810000000000", {KEYBD_PRESSED, 0, 0, 0, 0}},
+	{"410000000000", {KEYBD_PRESSED, 0, 0, 0, 0}},
+	{"c10000000000", {KEYBD_PRESSED, 0, 0, 0, 0}},
+	{"210000000000", {KEYBD_PRESSED, 0, 0, 0, 0}},
+	{"a10000000000", {KEYBD_PRESSED, 0, 0, 0, 0}},
+	{"610000000000", {KEYBD_PRESSED, 0, 0, 0, 0}},
+	{"e10000000000", {KEYBD_PRESSED, 0, 0, 0, 0}},
+	{"110000000000", {KEYBD_PRESSED, 0, 0, 0, 0}},
+	{"df0000000000", {KEYBD_PRESSED, 0, 0, 0, 0}},
+	{"910000000000", {KEYBD_PRESSED, 0, 0, 0, 0}},
+	{"d10000000000", {KEYBD_PRESSED, 0, 0, 0, 0}},
+	{"490000000000", {KEYBD_PRESSED, 0, 0, 0, 0}},
+	{"090000000000", {KEYBD_PRESSED, 0, 0, 0, 0}},
+	{"c90000000000", {KEYBD_PRESSED, 0, 0, 0, 0}},
+	{"890000000000", {KEYBD_PRESSED, 0, 0, 0, 0}},
+	{"690000000000", {KEYBD_PRESSED, 0, 0, 0, 0}},
+	{"070000000000", {KEYBD_PRESSED, 0, 0, 0, 0}},
+	{"2f0000000000", {KEYBD_PRESSED, 0, 0, 0, 0}},
+	{"2d0000000000", {KEYBD_PRESSED, 0, 0, 0, 0}},
+	{"a70000000000", {KEYBD_PRESSED, S_KEYCODE_SPACE, S_KEYCODE_SPACE, 0, 0}},
+	{"cd0000000000", {KEYBD_PRESSED, 0, 0, 0, 0}},
+	{"af0000000000", {KEYBD_PRESSED, 0, 0, 0, 0}},
+	{NULL, {0, 0, 0, 0, 0}},
+};
+
+int s_video_sdl_irman_init (s_server_conf_t *cfg)
+{
+	int fd;
+	fd = irman_init("/dev/tts/USB1");
+	return fd;
+}
+
+int s_video_sdl_irman_update (s_video_input_data_t *keybd)
+{
+	char *code;
+	code = irman_getcode();
+	if (code) {
+		irman_codes_t *codes;
+		codes = &irman_codes_sonytv[0];
+		while (codes->code != NULL) {
+			if (strcmp(codes->code, code) == 0) {
+				keybd->keybd.state = codes->keybd.state;
+				keybd->keybd.button = codes->keybd.button;
+				keybd->keybd.keycode = codes->keybd.keycode;
+				return 1;
+			}
+			codes++;
+		}
+	}
+	return 0;
+}
+
+void s_video_sdl_irman_uninit (void)
+{
+	irman_uninit();
+}
+
+s_video_input_t s_video_sdl_input_irman = {
+	VIDEO_INPUT_KEYBD,
+	s_video_sdl_irman_init,
+	s_video_sdl_irman_update,
+	s_video_sdl_irman_uninit,
+};
+#endif
+
 s_video_input_t *s_video_sdl_input[] = {
 	&s_video_sdl_input_keybd,
 	&s_video_sdl_input_mouse,
+#if defined(VIDEO_HELPER_IRMAN)
+	&s_video_sdl_input_irman,
+#endif
 	NULL,
 };
 
