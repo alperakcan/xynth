@@ -112,6 +112,9 @@ ifeq ($(VIDEO_HELPER), Y)
 	ifeq ($(VIDEO_HELPER_CONSOLE), Y)
 		CFLAGS += -DVIDEO_HELPER_CONSOLE
 	endif
+	ifeq ($(VIDEO_HELPER_IRMAN), Y)
+		CFLAGS += -DVIDEO_HELPER_IRMAN
+	endif
 	ifeq ($(VIDEO_HELPER_KBD), Y)
 		CFLAGS += -DVIDEO_HELPER_KBD
 	endif
@@ -123,6 +126,9 @@ ifeq ($(VIDEO_HELPER), Y)
 	endif
 	ifeq ($(VIDEO_HELPER_MTRR), Y)
 		CFLAGS += -DVIDEO_HELPER_MTRR
+	endif
+	ifeq ($(VIDEO_HELPER_TSCREEN), Y)
+		CFLAGS += -DVIDEO_HELPER_TSCREEN
 	endif
 endif
 
