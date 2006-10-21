@@ -132,10 +132,10 @@
 					</style>
 					<draw>frame_green_draw</draw>
 					<move>
-						<x>(rand() + 1) % 490</x>
-						<y>(rand() + 1) % 300</y>
-						<w>(rand() + 1) % 490</w>
-						<h>(rand() + 1) % 300</h>
+						<x>(rand() + 1) % area->object->surface->buf->w</x>
+						<y>(rand() + 1) % area->object->surface->buf->h</y>
+						<w>(rand() + 1) % area->object->surface->buf->w</w>
+						<h>(rand() + 1) % area->object->surface->buf->h</h>
 					</move>
 					<show>yes</show>
 				</object>
@@ -146,10 +146,10 @@
 					</style>
 					<draw>frame_blue_draw</draw>
 					<move>
-						<x>(rand() + 1) % 490</x>
-						<y>(rand() + 1) % 300</y>
-						<w>(rand() + 1) % 490</w>
-						<h>(rand() + 1) % 300</h>
+						<x>(rand() + 1) % area->object->surface->buf->w</x>
+						<y>(rand() + 1) % area->object->surface->buf->h</y>
+						<w>(rand() + 1) % area->object->surface->buf->w</w>
+						<h>(rand() + 1) % area->object->surface->buf->h</h>
 					</move>
 					<show>yes</show>
 				</object>
@@ -160,10 +160,10 @@
 					</style>
 					<draw>frame_white_draw</draw>
 					<move>
-						<x>(rand() + 1) % 490</x>
-						<y>(rand() + 1) % 300</y>
-						<w>(rand() + 1) % 490</w>
-						<h>(rand() + 1) % 300</h>
+						<x>(rand() + 1) % area->object->surface->buf->w</x>
+						<y>(rand() + 1) % area->object->surface->buf->h</y>
+						<w>(rand() + 1) % area->object->surface->buf->w</w>
+						<h>(rand() + 1) % area->object->surface->buf->h</h>
 					</move>
 					<show>yes</show>
 				</object>
