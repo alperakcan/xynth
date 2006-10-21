@@ -107,6 +107,8 @@ void node_generate_code (node_t *node)
 		}
 	} else if (strcmp(node->name, "draw") == 0) {
 		printf("%s->object->draw = %s;\n", node->parent->id, node->value);
+	} else if (strcmp(node->name, "pressed") == 0) {
+		printf("%s->pressed = %s;\n", node->parent->id, node->value);
 	}
 	data->depth++;
 	p = 0;
@@ -151,6 +153,8 @@ void node_generate_function (node_t *node)
 	node_t *tmp;
 	if (strcmp(node->name, "draw") == 0) {
 		printf("void %s (w_object_t *object);\n", node->value);
+	} else if (strcmp(node->name, "pressed") == 0) {
+		printf("void %s (w_object_t *object, int button);\n", node->value);
 	}
 	data->depth++;
 	p = 0;
@@ -166,10 +170,12 @@ void node_generate (node_t *node)
 {
 	printf("#include <stdio.h>\n"
 	       "#include <stdlib.h>\n"
+	       "#include <time.h>\n"
 	       "#include <xynth.h>\n"
 	       "#include <widget.h>\n"
 	       "\n");
 	node_generate_header(node);
+	printf("\n");
 	node_generate_function(node);
 	printf("\n"
 	       "int main (int argc, char *argv[])\n"

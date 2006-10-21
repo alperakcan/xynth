@@ -27,6 +27,8 @@
 					<w>70</w>
 					<h>20</h>
 				</move>
+				<draw>button_hide_draw</draw>
+				<pressed>button_hide_pressed</pressed>
 				<show>yes</show>
 				<object id="textbox_hide" type="textbox">
 					<style>
@@ -49,6 +51,7 @@
 					<w>55</w>
 					<h>20</h>
 				</move>
+				<pressed>button_blender_pressed</pressed>
 				<show>yes</show>
 				<object id="textbox_blender" type="textbox">
 					<style>
@@ -71,6 +74,7 @@
 					<w>85</w>
 					<h>20</h>
 				</move>
+				<pressed>button_focus_pressed</pressed>
 				<show>yes</show>
 				<object id="textbox_focus" type="textbox">
 					<style>
@@ -107,12 +111,26 @@
 					<w>490</w>
 					<h>300</h>
 				</move>
-				<object id="red" type="frame">
+				<object id="frame_red" type="frame">
 					<style>
 						<shape>FRAME_PANEL</shape>
 						<shadow>FRAME_PLAIN</shadow>
 					</style>
-					<draw>red_draw</draw>
+					<draw>frame_red_draw</draw>
+					<move>
+						<x>(rand() + 1) % area->object->surface->buf->w</x>
+						<y>(rand() + 1) % area->object->surface->buf->h</y>
+						<w>(rand() + 1) % area->object->surface->buf->w</w>
+						<h>(rand() + 1) % area->object->surface->buf->h</h>
+					</move>
+					<show>yes</show>
+				</object>
+				<object id="frame_green" type="frame">
+					<style>
+						<shape>FRAME_PANEL</shape>
+						<shadow>FRAME_PLAIN</shadow>
+					</style>
+					<draw>frame_green_draw</draw>
 					<move>
 						<x>(rand() + 1) % 490</x>
 						<y>(rand() + 1) % 300</y>
@@ -121,12 +139,12 @@
 					</move>
 					<show>yes</show>
 				</object>
-				<object id="green" type="frame">
+				<object id="frame_blue" type="frame">
 					<style>
 						<shape>FRAME_PANEL</shape>
 						<shadow>FRAME_PLAIN</shadow>
 					</style>
-					<draw>green_draw</draw>
+					<draw>frame_blue_draw</draw>
 					<move>
 						<x>(rand() + 1) % 490</x>
 						<y>(rand() + 1) % 300</y>
@@ -135,26 +153,12 @@
 					</move>
 					<show>yes</show>
 				</object>
-				<object id="blue" type="frame">
+				<object id="frame_white" type="frame">
 					<style>
 						<shape>FRAME_PANEL</shape>
 						<shadow>FRAME_PLAIN</shadow>
 					</style>
-					<draw>blue_draw</draw>
-					<move>
-						<x>(rand() + 1) % 490</x>
-						<y>(rand() + 1) % 300</y>
-						<w>(rand() + 1) % 490</w>
-						<h>(rand() + 1) % 300</h>
-					</move>
-					<show>yes</show>
-				</object>
-				<object id="white" type="frame">
-					<style>
-						<shape>FRAME_PANEL</shape>
-						<shadow>FRAME_PLAIN</shadow>
-					</style>
-					<draw>white_draw</draw>
+					<draw>frame_white_draw</draw>
 					<move>
 						<x>(rand() + 1) % 490</x>
 						<y>(rand() + 1) % 300</y>
