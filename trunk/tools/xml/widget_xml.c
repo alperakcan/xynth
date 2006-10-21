@@ -146,8 +146,7 @@ void node_generate (node_t *node)
 	       "int main (int argc, char *argv[])\n"
 	       "{\n");
 	node_generate_code(node);
-	printf("\n"
-	       "return 0;\n"
+	printf("return 0;\n"
 	       "}\n");
 }
 
