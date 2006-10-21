@@ -72,8 +72,8 @@ void node_generate_code (node_t *node)
 	} else if (strcmp(node->name, "title") == 0) {
 		printf("s_window_set_title(%s->window, \"%s\");\n", node_get_parent(node, "window")->id, node->value);
 	} else if (strcmp(node->name, "move") == 0) {
-		char *x = node_get_value(node, "y");
-		char *y = node_get_value(node, "x");
+		char *x = node_get_value(node, "x");
+		char *y = node_get_value(node, "y");
 		char *w = node_get_value(node, "w");
 		char *h = node_get_value(node, "h");
 		if (strcmp(node->parent->name, "window") == 0) {
@@ -89,6 +89,8 @@ void node_generate_code (node_t *node)
 		} else if (strcmp(node->parent->type, "textbox") == 0) {
 			printf("%s->frame->style = %s | %s;\n", node->parent->id, (shape) ? shape : "0" , (shadow) ? shadow : "0");
 		}
+	} else if (strcmp(node->name, "string") == 0) {
+		printf("w_textbox_set_str(%s->object, \"%s\");\n", node->parent->id, node->value);
 	} else if (strcmp(node->name, "show") == 0) {
 		if (strcmp(node->parent->name, "window") == 0) {
 			printf("w_object_show(%s->object);\n", node_get_parent(node, "window")->id);

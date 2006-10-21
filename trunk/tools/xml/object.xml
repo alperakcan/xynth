@@ -20,7 +20,7 @@
 				<h>600</h>
 			</move>
 			<show>yes</show>
-			<object id="button" type="button">
+			<object id="button_hide" type="button">
 				<move>
 					<x>5</x>
 					<y>5</y>
@@ -28,7 +28,7 @@
 					<h>20</h>
 				</move>
 				<show>yes</show>
-				<object id="textbox" type="textbox">
+				<object id="textbox_hide" type="textbox">
 					<style>
 						<shape>FRAME_NOFRAME</shape>
 					</style>
@@ -37,6 +37,50 @@
 						<x>0</x>
 						<y>0</y>
 						<w>70</w>
+						<h>20</h>
+					</move>
+					<show>yes</show>
+				</object>
+			</object>
+			<object id="button_blender" type="button">
+				<move>
+					<x>80</x>
+					<y>5</y>
+					<w>55</w>
+					<h>20</h>
+				</move>
+				<show>yes</show>
+				<object id="textbox_blender" type="textbox">
+					<style>
+						<shape>FRAME_NOFRAME</shape>
+					</style>
+					<string>blender</string>
+					<move>
+						<x>0</x>
+						<y>0</y>
+						<w>55</w>
+						<h>20</h>
+					</move>
+					<show>yes</show>
+				</object>
+			</object>
+			<object id="button_focus" type="button">
+				<move>
+					<x>140</x>
+					<y>5</y>
+					<w>85</w>
+					<h>20</h>
+				</move>
+				<show>yes</show>
+				<object id="textbox_focus" type="textbox">
+					<style>
+						<shape>FRAME_NOFRAME</shape>
+					</style>
+					<string>random focus</string>
+					<move>
+						<x>0</x>
+						<y>0</y>
+						<w>85</w>
 						<h>20</h>
 					</move>
 					<show>yes</show>
