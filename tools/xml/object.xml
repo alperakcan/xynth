@@ -6,7 +6,7 @@
 			<x>60</x>
 			<y>60</y>
 			<w>500</w>
-			<h>600</h>
+			<h>400</h>
 		</move>
 		<object id="frame" type="frame">
 			<style>
