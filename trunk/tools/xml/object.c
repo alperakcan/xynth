@@ -1,17 +1,7 @@
 
-#include <stdlib.h>
-#include <xynth.h>
-#include <widget.h>
+#include "object_xml.h"
 
 static int area_hide = 0;
-
-extern w_frame_t *area;
-extern w_frame_t *frame_red;
-extern w_frame_t *frame_green;
-extern w_frame_t *frame_blue;
-extern w_frame_t *frame_white;
-
-extern w_textbox_t *textbox_hide;
 
 void frame_red_draw (w_object_t *object)
 {
