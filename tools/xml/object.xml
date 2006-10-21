@@ -86,6 +86,16 @@
 					<show>yes</show>
 				</object>
 			</object>
+			<object id="checkbox" type="checkbox">
+				<move>
+					<x>300</x>
+					<y>5</y>
+					<w>85</w>
+					<h>20</h>
+				</move>
+				<string>checkbox</string>
+				<show>yes</show>
+			</object>
 		</object>
 		<show>yes</show>
 	</window>
