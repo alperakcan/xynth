@@ -84,11 +84,10 @@ void node_generate_code (node_t *node)
 	} else if (strcmp(node->name, "style") == 0) {
 		char *shape = node_get_value(node, "shape");
 		char *shadow = node_get_value(node, "shadow");
-		tmp = node_get_parent(node, "object");
-		if (strcmp(tmp->type, "frame") == 0) {
-			printf("%s->style = %s | %s;\n", tmp->id, (shape) ? shape : "0" , (shadow) ? shadow : "0");
-		} else if (strcmp(tmp->type, "textbox") == 0) {
-			printf("%s->frame->style = %s | %s;\n", tmp->id, (shape) ? shape : "0" , (shadow) ? shadow : "0");
+		if (strcmp(node->parent->type, "frame") == 0) {
+			printf("%s->style = %s | %s;\n", node->parent->id, (shape) ? shape : "0" , (shadow) ? shadow : "0");
+		} else if (strcmp(node->parent->type, "textbox") == 0) {
+			printf("%s->frame->style = %s | %s;\n", node->parent->id, (shape) ? shape : "0" , (shadow) ? shadow : "0");
 		}
 	} else if (strcmp(node->name, "show") == 0) {
 		if (strcmp(node->parent->name, "window") == 0) {
