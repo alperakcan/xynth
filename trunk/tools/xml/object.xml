@@ -1,0 +1,48 @@
+
+<application>
+	<window id="demo" type="WINDOW_MAIN">
+		<title>Object XML Demo</title>
+		<move>
+			<x>60</x>
+			<y>60</y>
+			<w>500</w>
+			<h>600</h>
+		</move>
+		<object id="frame" type="frame">
+			<style>
+				<shape>FRAME_PANEL</shape>
+				<shadow>FRAME_RAISED</shadow>
+			</style>
+			<move>
+				<x>0</x>
+				<y>0</y>
+				<w>500</w>
+				<h>600</h>
+			</move>
+			<show>yes</show>
+			<object id="button" type="button">
+				<move>
+					<x>5</x>
+					<y>5</y>
+					<w>70</w>
+					<h>20</h>
+				</move>
+				<show>yes</show>
+				<object id="textbox" type="textbox">
+					<style>
+						<shape>FRAME_NOFRAME</shape>
+					</style>
+					<string>hide area</string>
+					<move>
+						<x>0</x>
+						<y>0</y>
+						<w>70</w>
+						<h>20</h>
+					</move>
+					<show>yes</show>
+				</object>
+			</object>
+		</object>
+		<show>yes</show>
+	</window>
+</application>
