@@ -96,6 +96,75 @@
 				<string>checkbox</string>
 				<show>yes</show>
 			</object>
+			<object id="area" type="frame">
+				<style>
+					<shape>FRAME_PANEL</shape>
+					<shadow>FRAME_SUNKEN</shadow>
+				</style>
+				<move>
+					<x>5</x>
+					<y>30</y>
+					<w>490</w>
+					<h>300</h>
+				</move>
+				<object id="red" type="frame">
+					<style>
+						<shape>FRAME_PANEL</shape>
+						<shadow>FRAME_PLAIN</shadow>
+					</style>
+					<draw>red_draw</draw>
+					<move>
+						<x>(rand() + 1) % 490</x>
+						<y>(rand() + 1) % 300</y>
+						<w>(rand() + 1) % 490</w>
+						<h>(rand() + 1) % 300</h>
+					</move>
+					<show>yes</show>
+				</object>
+				<object id="green" type="frame">
+					<style>
+						<shape>FRAME_PANEL</shape>
+						<shadow>FRAME_PLAIN</shadow>
+					</style>
+					<draw>green_draw</draw>
+					<move>
+						<x>(rand() + 1) % 490</x>
+						<y>(rand() + 1) % 300</y>
+						<w>(rand() + 1) % 490</w>
+						<h>(rand() + 1) % 300</h>
+					</move>
+					<show>yes</show>
+				</object>
+				<object id="blue" type="frame">
+					<style>
+						<shape>FRAME_PANEL</shape>
+						<shadow>FRAME_PLAIN</shadow>
+					</style>
+					<draw>blue_draw</draw>
+					<move>
+						<x>(rand() + 1) % 490</x>
+						<y>(rand() + 1) % 300</y>
+						<w>(rand() + 1) % 490</w>
+						<h>(rand() + 1) % 300</h>
+					</move>
+					<show>yes</show>
+				</object>
+				<object id="white" type="frame">
+					<style>
+						<shape>FRAME_PANEL</shape>
+						<shadow>FRAME_PLAIN</shadow>
+					</style>
+					<draw>white_draw</draw>
+					<move>
+						<x>(rand() + 1) % 490</x>
+						<y>(rand() + 1) % 300</y>
+						<w>(rand() + 1) % 490</w>
+						<h>(rand() + 1) % 300</h>
+					</move>
+					<show>yes</show>
+				</object>
+				<show>yes</show>
+			</object>
 		</object>
 		<show>yes</show>
 	</window>

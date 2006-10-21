@@ -105,6 +105,8 @@ void node_generate_code (node_t *node)
 		} else if (strcmp(node->parent->name, "object") == 0) {
 			printf("w_object_show(%s->object);\n", node_get_parent(node, "object")->id);
 		}
+	} else if (strcmp(node->name, "draw") == 0) {
+		printf("%s->object->draw = %s;\n", node->parent->id, node->value);
 	}
 	data->depth++;
 	p = 0;
@@ -143,6 +145,23 @@ void node_generate_header (node_t *node)
 	data->depth--;
 }
 
+void node_generate_function (node_t *node)
+{
+	int p;
+	node_t *tmp;
+	if (strcmp(node->name, "draw") == 0) {
+		printf("void %s (w_object_t *object);\n", node->value);
+	}
+	data->depth++;
+	p = 0;
+	while (!s_list_eol(node->nodes, p)) {
+		tmp = (node_t *) s_list_get(node->nodes, p);
+		node_generate_function(tmp);
+		p++;
+	}
+	data->depth--;
+}
+
 void node_generate (node_t *node)
 {
 	printf("#include <stdio.h>\n"
@@ -151,9 +170,11 @@ void node_generate (node_t *node)
 	       "#include <widget.h>\n"
 	       "\n");
 	node_generate_header(node);
+	node_generate_function(node);
 	printf("\n"
 	       "int main (int argc, char *argv[])\n"
-	       "{\n");
+	       "{\n"
+	       "srand(time(NULL));\n");
 	node_generate_code(node);
 	printf("return 0;\n"
 	       "}\n");
@@ -239,22 +260,23 @@ void char_hndl (void *xdata, const char *txt, int txtlen)
 {
 	char *str;
 	char *ptr;
-	char *tmp;
+	char *end;
 	if (txtlen > 0 &&
 	    txt &&
 	    data->path) {
 	} else {
 	    return;
 	}
-	
+	end = (char *) malloc(sizeof(char) * (strlen(data->path) + 3 + 1));
+	sprintf(end, "</%s>", data->path);
 	str = strdup(txt);
-	ptr = strstr(str, data->path);
-	tmp = strchr(str, '<');
-	if (data->path && ptr && tmp && ptr == tmp + 2) {
-		str[txtlen] = '\0';
-		if (data->active) {
-			data->active->value = strdup(str);
-		}
+	ptr = str + txtlen;
+	if (data->path &&
+	    strncmp(ptr, end, strlen(end)) == 0) {
+	    	str[txtlen] = '\0';
+	    	if (data->active) {
+	    		data->active->value = strdup(str);
+	    	}
 	}
 	free(str);
 }
