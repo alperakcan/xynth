@@ -174,7 +174,7 @@
 					<shape>FRAME_PANEL</shape>
 					<shadow>FRAME_PLAIN</shadow>
 				</style>
-				<string>this is a textbox ! </string>
+				<string>this is a textbox !</string>
 				<move>
 					<x>5</x>
 					<y>340</y>
@@ -184,7 +184,7 @@
 				<show>yes</show>
 			</object>
 			<object id="editbox" type="editbox">
-				<string>this is an editbox ! </string>
+				<string>this is an editbox !</string>
 				<move>
 					<x>5</x>
 					<y>375</y>
