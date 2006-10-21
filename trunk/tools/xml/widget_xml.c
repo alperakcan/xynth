@@ -68,6 +68,8 @@ void node_generate_code (node_t *node)
 			printf("w_button_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
 		} else if (strcmp(node->type, "textbox") == 0) {
 			printf("w_textbox_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
+		} else if (strcmp(node->type, "checkbox") == 0) {
+			printf("w_checkbox_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
 		}
 	} else if (strcmp(node->name, "title") == 0) {
 		printf("s_window_set_title(%s->window, \"%s\");\n", node_get_parent(node, "window")->id, node->value);
@@ -90,7 +92,11 @@ void node_generate_code (node_t *node)
 			printf("%s->frame->style = %s | %s;\n", node->parent->id, (shape) ? shape : "0" , (shadow) ? shadow : "0");
 		}
 	} else if (strcmp(node->name, "string") == 0) {
-		printf("w_textbox_set_str(%s->object, \"%s\");\n", node->parent->id, node->value);
+		if (strcmp(node->parent->type, "textbox") == 0) {
+			printf("w_textbox_set_str(%s->object, \"%s\");\n", node->parent->id, node->value);
+		} else if (strcmp(node->parent->type, "checkbox") == 0) {
+			printf("w_textbox_set_str(%s->text->object, \"%s\");\n", node->parent->id, node->value);
+		}
 	} else if (strcmp(node->name, "show") == 0) {
 		if (strcmp(node->parent->name, "window") == 0) {
 			printf("w_object_show(%s->object);\n", node_get_parent(node, "window")->id);
@@ -123,6 +129,8 @@ void node_generate_header (node_t *node)
 			printf("w_button_t *%s;\n", node->id);
 		} else if (strcmp(node->type, "textbox") == 0) {
 			printf("w_textbox_t *%s;\n", node->id);
+		} else if (strcmp(node->type, "checkbox") == 0) {
+			printf("w_checkbox_t *%s;\n", node->id);
 		}
 	}
 	data->depth++;
