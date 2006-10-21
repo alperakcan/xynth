@@ -109,7 +109,7 @@
 					<x>5</x>
 					<y>30</y>
 					<w>490</w>
-					<h>300</h>
+					<h>305</h>
 				</move>
 				<object id="frame_red" type="frame">
 					<style>
@@ -167,6 +167,30 @@
 					</move>
 					<show>yes</show>
 				</object>
+				<show>yes</show>
+			</object>
+			<object id="textbox" type="textbox">
+				<style>
+					<shape>FRAME_PANEL</shape>
+					<shadow>FRAME_PLAIN</shadow>
+				</style>
+				<string>this is a textbox ! </string>
+				<move>
+					<x>5</x>
+					<y>340</y>
+					<w>490</w>
+					<h>30</h>
+				</move>
+				<show>yes</show>
+			</object>
+			<object id="editbox" type="editbox">
+				<string>this is an editbox ! </string>
+				<move>
+					<x>5</x>
+					<y>375</y>
+					<w>490</w>
+					<h>20</h>
+				</move>
 				<show>yes</show>
 			</object>
 		</object>
