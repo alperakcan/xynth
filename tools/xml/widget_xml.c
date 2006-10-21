@@ -2,13 +2,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #include <expat.h>
 #include <xynth.h>
 #include <widget.h>
 
-#define buffSIZE	8192
-
-char buff[buffSIZE];
+FILE *input = NULL;
+FILE *source = NULL;
+FILE *header = NULL;
+char *source_name = NULL;
+char *header_name = NULL;
 
 typedef struct node_s {
 	char *name;
@@ -60,55 +65,55 @@ void node_generate_code (node_t *node)
 	int p;
 	node_t *tmp;
 	if (strcmp(node->name, "window") == 0) {
-		printf("w_window_init(&%s, %s, NULL);\n", node->id, node->type);
+		fprintf(source, "w_window_init(&%s, %s, NULL);\n", node->id, node->type);
 	} else if (strcmp(node->name, "object") == 0) {
 		if (strcmp(node->type, "frame") == 0) {
-			printf("w_frame_init(%s, &%s, %s, %s->object);\n", node_get_parent(node, "window")->id, node->id, "0", node->parent->id);
+			fprintf(source, "w_frame_init(%s, &%s, %s, %s->object);\n", node_get_parent(node, "window")->id, node->id, "0", node->parent->id);
 		} else if (strcmp(node->type, "button") == 0) {
-			printf("w_button_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
+			fprintf(source, "w_button_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
 		} else if (strcmp(node->type, "textbox") == 0) {
-			printf("w_textbox_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
+			fprintf(source, "w_textbox_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
 		} else if (strcmp(node->type, "checkbox") == 0) {
-			printf("w_checkbox_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
+			fprintf(source, "w_checkbox_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
 		}
 	} else if (strcmp(node->name, "title") == 0) {
-		printf("s_window_set_title(%s->window, \"%s\");\n", node_get_parent(node, "window")->id, node->value);
+		fprintf(source, "s_window_set_title(%s->window, \"%s\");\n", node_get_parent(node, "window")->id, node->value);
 	} else if (strcmp(node->name, "move") == 0) {
 		char *x = node_get_value(node, "x");
 		char *y = node_get_value(node, "y");
 		char *w = node_get_value(node, "w");
 		char *h = node_get_value(node, "h");
 		if (strcmp(node->parent->name, "window") == 0) {
-			printf("w_window_set_coor(%s, %s, %s, %s, %s);\n", node_get_parent(node, "window")->id, (x) ? x : "0", (y) ? y : "0", (w) ? w : "w", (h) ? h : "0");
+			fprintf(source, "w_window_set_coor(%s, %s, %s, %s, %s);\n", node_get_parent(node, "window")->id, (x) ? x : "0", (y) ? y : "0", (w) ? w : "w", (h) ? h : "0");
 		} else if (strcmp(node->parent->name, "object") == 0) {
-			printf("w_object_move(%s->object, %s, %s, %s, %s);\n", node_get_parent(node, "object")->id, (x) ? x : "0", (y) ? y : "0", (w) ? w : "w", (h) ? h : "0");
+			fprintf(source, "w_object_move(%s->object, %s, %s, %s, %s);\n", node_get_parent(node, "object")->id, (x) ? x : "0", (y) ? y : "0", (w) ? w : "w", (h) ? h : "0");
 		}
 	} else if (strcmp(node->name, "style") == 0) {
 		char *shape = node_get_value(node, "shape");
 		char *shadow = node_get_value(node, "shadow");
 		if (strcmp(node->parent->type, "frame") == 0) {
-			printf("%s->style = %s | %s;\n", node->parent->id, (shape) ? shape : "0" , (shadow) ? shadow : "0");
+			fprintf(source, "%s->style = %s | %s;\n", node->parent->id, (shape) ? shape : "0" , (shadow) ? shadow : "0");
 		} else if (strcmp(node->parent->type, "textbox") == 0) {
-			printf("%s->frame->style = %s | %s;\n", node->parent->id, (shape) ? shape : "0" , (shadow) ? shadow : "0");
+			fprintf(source, "%s->frame->style = %s | %s;\n", node->parent->id, (shape) ? shape : "0" , (shadow) ? shadow : "0");
 		}
 	} else if (strcmp(node->name, "string") == 0) {
 		if (strcmp(node->parent->type, "textbox") == 0) {
-			printf("w_textbox_set_str(%s->object, \"%s\");\n", node->parent->id, node->value);
+			fprintf(source, "w_textbox_set_str(%s->object, \"%s\");\n", node->parent->id, node->value);
 		} else if (strcmp(node->parent->type, "checkbox") == 0) {
-			printf("w_textbox_set_str(%s->text->object, \"%s\");\n", node->parent->id, node->value);
+			fprintf(source, "w_textbox_set_str(%s->text->object, \"%s\");\n", node->parent->id, node->value);
 		}
 	} else if (strcmp(node->name, "show") == 0) {
 		if (strcmp(node->parent->name, "window") == 0) {
-			printf("w_object_show(%s->object);\n", node_get_parent(node, "window")->id);
-			printf("s_window_show(%s->window);\n", node_get_parent(node, "window")->id);
-			printf("s_client_main(%s->window);\n", node_get_parent(node, "window")->id);
+			fprintf(source, "w_object_show(%s->object);\n", node_get_parent(node, "window")->id);
+			fprintf(source, "s_window_show(%s->window);\n", node_get_parent(node, "window")->id);
+			fprintf(source, "s_client_main(%s->window);\n", node_get_parent(node, "window")->id);
 		} else if (strcmp(node->parent->name, "object") == 0) {
-			printf("w_object_show(%s->object);\n", node_get_parent(node, "object")->id);
+			fprintf(source, "w_object_show(%s->object);\n", node_get_parent(node, "object")->id);
 		}
 	} else if (strcmp(node->name, "draw") == 0) {
-		printf("%s->object->draw = %s;\n", node->parent->id, node->value);
+		fprintf(source, "%s->object->draw = %s;\n", node->parent->id, node->value);
 	} else if (strcmp(node->name, "pressed") == 0) {
-		printf("%s->pressed = %s;\n", node->parent->id, node->value);
+		fprintf(source, "%s->pressed = %s;\n", node->parent->id, node->value);
 	}
 	data->depth++;
 	p = 0;
@@ -125,16 +130,16 @@ void node_generate_header (node_t *node)
 	int p;
 	node_t *tmp;
 	if (strcmp(node->name, "window") == 0) {
-		printf("w_window_t *%s;\n", node->id);
+		fprintf(header, "w_window_t *%s;\n", node->id);
 	} else if (strcmp(node->name, "object") == 0) {
 		if (strcmp(node->type, "frame") == 0) {
-			printf("w_frame_t *%s;\n", node->id);
+			fprintf(header, "w_frame_t *%s;\n", node->id);
 		} else if (strcmp(node->type, "button") == 0) {
-			printf("w_button_t *%s;\n", node->id);
+			fprintf(header, "w_button_t *%s;\n", node->id);
 		} else if (strcmp(node->type, "textbox") == 0) {
-			printf("w_textbox_t *%s;\n", node->id);
+			fprintf(header, "w_textbox_t *%s;\n", node->id);
 		} else if (strcmp(node->type, "checkbox") == 0) {
-			printf("w_checkbox_t *%s;\n", node->id);
+			fprintf(header, "w_checkbox_t *%s;\n", node->id);
 		}
 	}
 	data->depth++;
@@ -152,9 +157,9 @@ void node_generate_function (node_t *node)
 	int p;
 	node_t *tmp;
 	if (strcmp(node->name, "draw") == 0) {
-		printf("void %s (w_object_t *object);\n", node->value);
+		fprintf(header, "void %s (w_object_t *object);\n", node->value);
 	} else if (strcmp(node->name, "pressed") == 0) {
-		printf("void %s (w_object_t *object, int button);\n", node->value);
+		fprintf(header, "void %s (w_object_t *object, int button);\n", node->value);
 	}
 	data->depth++;
 	p = 0;
@@ -168,22 +173,29 @@ void node_generate_function (node_t *node)
 
 void node_generate (node_t *node)
 {
-	printf("#include <stdio.h>\n"
-	       "#include <stdlib.h>\n"
-	       "#include <time.h>\n"
-	       "#include <xynth.h>\n"
-	       "#include <widget.h>\n"
-	       "\n");
+	fprintf(header,
+	        "\n"
+	        "#include <stdio.h>\n"
+	        "#include <stdlib.h>\n"
+	        "#include <time.h>\n"
+	        "#include <xynth.h>\n"
+	        "#include <widget.h>\n"
+	        "\n");
 	node_generate_header(node);
-	printf("\n");
+	fprintf(header, "\n");
 	node_generate_function(node);
-	printf("\n"
-	       "int main (int argc, char *argv[])\n"
-	       "{\n"
-	       "srand(time(NULL));\n");
+	fprintf(source,
+	        "\n"
+	        "#include \"%s\"\n"
+	        "\n"
+	        "int main (int argc, char *argv[])\n"
+	        "{\n"
+	        "srand(time(NULL));\n",
+	        header_name);
 	node_generate_code(node);
-	printf("return 0;\n"
-	       "}\n");
+	fprintf(source,
+	        "return 0;\n"
+	        "}\n");
 }
 
 void node_print (node_t *node)
@@ -289,33 +301,60 @@ void char_hndl (void *xdata, const char *txt, int txtlen)
 
 int main (int argc, char **argv)
 {
+	int c;
+	int l;
+	char *buf = NULL;
+	struct stat stbuf;
+	
+	while ((c = getopt(argc, argv, "f:o:h")) != -1) {
+		switch (c) {
+			case 'f':
+				input = fopen(optarg, "r");
+				stat(optarg, &stbuf);
+				l = stbuf.st_size;
+				buf = (char *) malloc(stbuf.st_size + 1);
+				fread(buf, 1, stbuf.st_size, input);
+				break;
+			case 'o':
+				source_name = (char *) malloc(strlen(optarg) + 20);
+				header_name = (char *) malloc(strlen(optarg) + 20);
+				sprintf(source_name, "%s_xml.c", optarg);
+				sprintf(header_name, "%s_xml.h", optarg);
+				source = fopen(source_name, "w+");
+				header = fopen(header_name, "w+");
+				break;
+usage:			case 'h':
+			default:
+				printf("%s -f input_file -o output_name\n", argv[0]);
+				exit(1);
+				break;
+		}
+	}
+	
+	if (buf == NULL ||
+	    input == NULL ||
+	    source == NULL ||
+	    header == NULL) {
+	    	goto usage;
+	}
+	
 	data = (data_t *) malloc(sizeof(data_t));
 	memset(data, 0, sizeof(data_t));
-	memset(buff, 0, buffSIZE);
 	
 	XML_Parser p = XML_ParserCreate(NULL);
 	if (!p) {
 		fprintf(stderr, "Couldn't allocate memory for parser\n");
 		exit(-1);
 	}
+
 	XML_SetElementHandler(p, start, end);
 	XML_SetCharacterDataHandler(p, char_hndl);
-	for (;;) {
-		int done;
-		int len;
-		len = fread(buff, 1, buffSIZE, stdin);
-		if (ferror(stdin)) {
-			fprintf(stderr, "Read error\n");
-			exit(-1);
-		}
-		done = feof(stdin);
-		if (!XML_Parse(p, buff, len, done)) {
-			fprintf(stderr, "Parse error at line %d:\n%s\n", XML_GetCurrentLineNumber(p), XML_ErrorString(XML_GetErrorCode(p)));
-			exit(-1);
-		}
-		if (done)
-			break;
+
+	if (!XML_Parse(p, buf, l, 1)) {
+		fprintf(stderr, "Parse error at line %d:\n%s\n", XML_GetCurrentLineNumber(p), XML_ErrorString(XML_GetErrorCode(p)));
+		exit(-1);
 	}
+
 //	node_parse(data->node);
 	node_generate(data->node);
 	return 0;
