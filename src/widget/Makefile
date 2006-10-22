@@ -23,11 +23,15 @@ endif
 endif
 endif
 
-EXTRA_CLEAN = libwidget.a libwidget.so
-
+EXTRA_TARGETS = widgetc
+EXTRA_CLEAN = libwidget.a libwidget.so widgetc.o
 EXTRA_DEPEND_FILES = *.h
 
 include ../../Makefile.rules
+
+widgetc: widgetc.o
+	rm -rf $@
+	PATH=/usr/bin gcc $^ $(LDFLAGS) -lexpat -o $@
 
 dist: all
 	cp -a widget.h ../../$(DISTINCDIR)
