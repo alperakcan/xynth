@@ -1,5 +1,5 @@
 
-#include "widget_xml.h"
+#include "widgetx_xml.h"
 
 static int area_hide = 0;
 
