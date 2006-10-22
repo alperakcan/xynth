@@ -31,9 +31,9 @@ EXTRA_DEPEND_FILES = *.h
 
 include ../../Makefile.rules
 
-widgetc: widgetc.o
+widgetc: widgetc.c
 	rm -rf $@
-	PATH=/usr/bin gcc $^ $(LDFLAGS) -lexpat -o $@
+	PATH=/usr/bin gcc -g -Wall $(CFLAGS) $^ -lexpat -o $@
 
 dist: all
 	cp -a widgetc ../../$(DISTBINDIR)
