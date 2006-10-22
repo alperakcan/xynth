@@ -1,0 +1,205 @@
+
+<application>
+	<window id="demo" type="WINDOW_MAIN">
+		<title>Object XML Demo</title>
+		<move>
+			<x>60</x>
+			<y>60</y>
+			<w>500</w>
+			<h>400</h>
+		</move>
+		<object id="frame" type="frame">
+			<style>
+				<shape>FRAME_PANEL</shape>
+				<shadow>FRAME_RAISED</shadow>
+			</style>
+			<move>
+				<x>0</x>
+				<y>0</y>
+				<w>500</w>
+				<h>600</h>
+			</move>
+			<show>yes</show>
+			<object id="button_hide" type="button">
+				<move>
+					<x>5</x>
+					<y>5</y>
+					<w>70</w>
+					<h>20</h>
+				</move>
+				<draw>button_hide_draw</draw>
+				<pressed>button_hide_pressed</pressed>
+				<show>yes</show>
+				<object id="textbox_hide" type="textbox">
+					<style>
+						<shape>FRAME_NOFRAME</shape>
+					</style>
+					<string>hide area</string>
+					<move>
+						<x>0</x>
+						<y>0</y>
+						<w>70</w>
+						<h>20</h>
+					</move>
+					<show>yes</show>
+				</object>
+			</object>
+			<object id="button_blender" type="button">
+				<effect>
+					<effect>EFFECT_POPIN | EFFECT_POPOUT</effect>
+				</effect>
+				<move>
+					<x>80</x>
+					<y>5</y>
+					<w>55</w>
+					<h>20</h>
+				</move>
+				<pressed>button_blender_pressed</pressed>
+				<show>yes</show>
+				<object id="textbox_blender" type="textbox">
+					<style>
+						<shape>FRAME_NOFRAME</shape>
+					</style>
+					<string>blender</string>
+					<move>
+						<x>0</x>
+						<y>0</y>
+						<w>55</w>
+						<h>20</h>
+					</move>
+					<show>yes</show>
+				</object>
+			</object>
+			<object id="button_focus" type="button">
+				<effect>
+					<effect>EFFECT_FADEIN | EFFECT_FADEOUT</effect>
+				</effect>
+				<move>
+					<x>140</x>
+					<y>5</y>
+					<w>85</w>
+					<h>20</h>
+				</move>
+				<pressed>button_focus_pressed</pressed>
+				<show>yes</show>
+				<object id="textbox_focus" type="textbox">
+					<style>
+						<shape>FRAME_NOFRAME</shape>
+					</style>
+					<string>random focus</string>
+					<move>
+						<x>0</x>
+						<y>0</y>
+						<w>85</w>
+						<h>20</h>
+					</move>
+					<show>yes</show>
+				</object>
+			</object>
+			<object id="checkbox" type="checkbox">
+				<move>
+					<x>300</x>
+					<y>5</y>
+					<w>85</w>
+					<h>20</h>
+				</move>
+				<string>checkbox</string>
+				<show>yes</show>
+			</object>
+			<object id="area" type="frame">
+				<style>
+					<shape>FRAME_PANEL</shape>
+					<shadow>FRAME_SUNKEN</shadow>
+				</style>
+				<move>
+					<x>5</x>
+					<y>30</y>
+					<w>490</w>
+					<h>305</h>
+				</move>
+				<object id="frame_red" type="frame">
+					<style>
+						<shape>FRAME_PANEL</shape>
+						<shadow>FRAME_PLAIN</shadow>
+					</style>
+					<draw>frame_red_draw</draw>
+					<move>
+						<x>(rand() + 1) % area->object->surface->buf->w</x>
+						<y>(rand() + 1) % area->object->surface->buf->h</y>
+						<w>(rand() + 1) % area->object->surface->buf->w</w>
+						<h>(rand() + 1) % area->object->surface->buf->h</h>
+					</move>
+					<show>yes</show>
+				</object>
+				<object id="frame_green" type="frame">
+					<style>
+						<shape>FRAME_PANEL</shape>
+						<shadow>FRAME_PLAIN</shadow>
+					</style>
+					<draw>frame_green_draw</draw>
+					<move>
+						<x>(rand() + 1) % area->object->surface->buf->w</x>
+						<y>(rand() + 1) % area->object->surface->buf->h</y>
+						<w>(rand() + 1) % area->object->surface->buf->w</w>
+						<h>(rand() + 1) % area->object->surface->buf->h</h>
+					</move>
+					<show>yes</show>
+				</object>
+				<object id="frame_blue" type="frame">
+					<style>
+						<shape>FRAME_PANEL</shape>
+						<shadow>FRAME_PLAIN</shadow>
+					</style>
+					<draw>frame_blue_draw</draw>
+					<move>
+						<x>(rand() + 1) % area->object->surface->buf->w</x>
+						<y>(rand() + 1) % area->object->surface->buf->h</y>
+						<w>(rand() + 1) % area->object->surface->buf->w</w>
+						<h>(rand() + 1) % area->object->surface->buf->h</h>
+					</move>
+					<show>yes</show>
+				</object>
+				<object id="frame_white" type="frame">
+					<style>
+						<shape>FRAME_PANEL</shape>
+						<shadow>FRAME_PLAIN</shadow>
+					</style>
+					<draw>frame_white_draw</draw>
+					<move>
+						<x>(rand() + 1) % area->object->surface->buf->w</x>
+						<y>(rand() + 1) % area->object->surface->buf->h</y>
+						<w>(rand() + 1) % area->object->surface->buf->w</w>
+						<h>(rand() + 1) % area->object->surface->buf->h</h>
+					</move>
+					<show>yes</show>
+				</object>
+				<show>yes</show>
+			</object>
+			<object id="textbox" type="textbox">
+				<style>
+					<shape>FRAME_PANEL</shape>
+					<shadow>FRAME_PLAIN</shadow>
+				</style>
+				<string>this is a textbox !</string>
+				<move>
+					<x>5</x>
+					<y>340</y>
+					<w>490</w>
+					<h>30</h>
+				</move>
+				<show>yes</show>
+			</object>
+			<object id="editbox" type="editbox">
+				<string>this is an editbox !</string>
+				<move>
+					<x>5</x>
+					<y>375</y>
+					<w>490</w>
+					<h>20</h>
+				</move>
+				<show>yes</show>
+			</object>
+		</object>
+		<show>yes</show>
+	</window>
+</application>
