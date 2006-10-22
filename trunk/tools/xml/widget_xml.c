@@ -22,6 +22,7 @@ typedef struct node_s {
 	char *value;
 	s_list_t *nodes;
 	struct node_s *parent;
+	int dontparse;
 } node_t;
 
 typedef struct data_s {
@@ -60,10 +61,28 @@ char * node_get_value (node_t *node, char *path)
 	return NULL;
 }
 
+node_t * node_get_node (node_t *node, char *path)
+{
+	int p;
+	node_t *tmp;
+	p = 0;
+	while (!s_list_eol(node->nodes, p)) {
+		tmp = (node_t *) s_list_get(node->nodes, p);
+		if (strcmp(tmp->name, path) == 0) {
+			return tmp;
+		}
+		p++;
+	}
+	return NULL;
+}
+
 void node_generate_code (node_t *node)
 {
 	int p;
 	node_t *tmp;
+	if (node->dontparse != 0) {
+		return;
+	}
 	if (strcmp(node->name, "window") == 0) {
 		fprintf(source, "w_window_init(&%s, %s, NULL);\n", node->id, node->type);
 	} else if (strcmp(node->name, "object") == 0) {
@@ -81,6 +100,7 @@ void node_generate_code (node_t *node)
 	} else if (strcmp(node->name, "title") == 0) {
 		fprintf(source, "s_window_set_title(%s->window, \"%s\");\n", node_get_parent(node, "window")->id, node->value);
 	} else if (strcmp(node->name, "move") == 0) {
+		node_t *tmp;
 		char *x = node_get_value(node, "x");
 		char *y = node_get_value(node, "y");
 		char *w = node_get_value(node, "w");
@@ -90,7 +110,17 @@ void node_generate_code (node_t *node)
 		} else if (strcmp(node->parent->name, "object") == 0) {
 			fprintf(source, "w_object_move(%s->object, %s, %s, %s, %s);\n", node_get_parent(node, "object")->id, (x) ? x : "0", (y) ? y : "0", (w) ? w : "w", (h) ? h : "0");
 		}
+		if ((tmp = node_get_node(node, "x")) != NULL) { tmp->dontparse = 1; }
+		if ((tmp = node_get_node(node, "y")) != NULL) { tmp->dontparse = 1; }
+		if ((tmp = node_get_node(node, "w")) != NULL) { tmp->dontparse = 1; }
+		if ((tmp = node_get_node(node, "h")) != NULL) { tmp->dontparse = 1; }
+	} else if (strcmp(node->name, "effect") == 0) {
+		node_t *tmp;
+		char *effect = node_get_value(node, "effect");
+		fprintf(source, "%s->object->effect->effect = %s;\n", node->parent->id, (effect) ? effect : "0");
+		if ((tmp = node_get_node(node, "effect")) != NULL) { tmp->dontparse = 1; }
 	} else if (strcmp(node->name, "style") == 0) {
+		node_t *tmp;
 		char *shape = node_get_value(node, "shape");
 		char *shadow = node_get_value(node, "shadow");
 		if (strcmp(node->parent->type, "frame") == 0) {
@@ -98,6 +128,8 @@ void node_generate_code (node_t *node)
 		} else if (strcmp(node->parent->type, "textbox") == 0) {
 			fprintf(source, "%s->frame->style = %s | %s;\n", node->parent->id, (shape) ? shape : "0" , (shadow) ? shadow : "0");
 		}
+		if ((tmp = node_get_node(node, "shape")) != NULL) { tmp->dontparse = 1; }
+		if ((tmp = node_get_node(node, "shadow")) != NULL) { tmp->dontparse = 1; }
 	} else if (strcmp(node->name, "string") == 0) {
 		if (strcmp(node->parent->type, "textbox") == 0 ||
 		    strcmp(node->parent->type, "editbox") == 0) {

@@ -45,6 +45,9 @@
 				</object>
 			</object>
 			<object id="button_blender" type="button">
+				<effect>
+					<effect>EFFECT_POPIN | EFFECT_POPOUT</effect>
+				</effect>
 				<move>
 					<x>80</x>
 					<y>5</y>
@@ -68,6 +71,9 @@
 				</object>
 			</object>
 			<object id="button_focus" type="button">
+				<effect>
+					<effect>EFFECT_FADEIN | EFFECT_FADEOUT</effect>
+				</effect>
 				<move>
 					<x>140</x>
 					<y>5</y>

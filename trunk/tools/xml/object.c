@@ -38,8 +38,12 @@ void button_hide_pressed (w_object_t *object, int button)
 	area_hide = (area_hide) % 2;
 	if (area_hide) {
 		w_object_hide(area->object);
+		w_object_hide(button_blender->object);
+		w_object_hide(button_focus->object);
 	} else {
 		w_object_show(area->object);
+		w_object_show(button_blender->object);
+		w_object_show(button_focus->object);
 	}
 }
 
