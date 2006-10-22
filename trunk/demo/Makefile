@@ -14,6 +14,7 @@ subdirs-$(DEMO_TIMER)   += timer
 subdirs-$(DEMO_LOGOUT)  += xynthlogout
 subdirs-$(DEMO_IMAGE)   += img
 subdirs-$(DEMO_ONSCREENKEYBOARD) += onscreenkeyboard
+subdirs-$(DEMO_WIDGETX) += widgetx
 
 all:
 	$(foreach F, $(subdirs-Y), $(MAKE) -C $F || exit 1;)
