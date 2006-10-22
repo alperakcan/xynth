@@ -90,6 +90,7 @@ DEMO_TERM       = Y
 DEMO_TIMER      = Y
 DEMO_LOGOUT     = Y
 DEMO_IMAGE      = Y
+DEMO_WIDGETX    = Y
 
 CFLAGS += -Wall -Wparentheses -pipe -fsigned-char -DREENTRANT
 

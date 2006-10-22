@@ -59,6 +59,9 @@ endif
 ifeq ($(DEMO_IMAGE), Y)
 	CFLAGS += -DDEMO_IMAGE
 endif
+ifeq ($(DEMO_WIDGETS), Y)
+	CFLAGS += -DDEMO_WIDGETX
+endif
 
 ifeq ($(VIDEO_FBDev), Y)
 	VIDEO_HELPER         = Y
