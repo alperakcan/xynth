@@ -34,5 +34,6 @@ widgetc: widgetc.o
 	PATH=/usr/bin gcc $^ $(LDFLAGS) -lexpat -o $@
 
 dist: all
+	cp -a widgetc ../../$(DISTBINDIR)
 	cp -a widget.h ../../$(DISTINCDIR)
 	cp -a $(TARGET_A) $(TARGET_SO) $(TARGET) ../../$(DISTLIBDIR)
