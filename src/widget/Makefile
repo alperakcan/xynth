@@ -33,7 +33,7 @@ include ../../Makefile.rules
 
 widgetc: widgetc.c
 	rm -rf $@
-	PATH=/usr/bin gcc -g -Wall $(CFLAGS) $^ -lexpat -o $@
+	PATH=/usr/bin:$PATH gcc -g -Wall $(CFLAGS) $^ -lexpat -o $@
 
 dist: all
 	cp -a widgetc ../../$(DISTBINDIR)
