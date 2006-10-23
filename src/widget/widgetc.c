@@ -677,8 +677,8 @@ usage:			case 'h':
 
 //	node_parse(g_node);
 	node_generate(g_node);
+
 	node_uninit(g_node);
-	
 	fclose(g_input);
 	fclose(g_source);
 	fclose(g_header);
