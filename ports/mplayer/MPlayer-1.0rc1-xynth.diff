@@ -1,18 +1,18 @@
-diff -Naur MPlayer-1.0pre8/Makefile MPlayer-1.0pre8-xynth/Makefile
---- MPlayer-1.0pre8/Makefile	2006-06-11 21:35:47.000000000 +0300
-+++ MPlayer-1.0pre8-xynth/Makefile	2006-06-22 17:01:00.000000000 +0300
-@@ -74,6 +74,7 @@
+diff -Naur MPlayer-1.0rc1/Makefile MPlayer-1.0rc1-xynth/Makefile
+--- MPlayer-1.0rc1/Makefile	2006-10-23 01:32:31.000000000 +0300
++++ MPlayer-1.0rc1-xynth/Makefile	2006-10-24 02:28:52.000000000 +0300
+@@ -75,6 +75,7 @@
            $(DIRECTFB_LIB) \
            $(CACA_LIB) \
  	  $(VESA_LIB) \
 +	  $(XYNTH_LIB) \
  
- ifeq ($(EXTERNAL_VIDIX),yes)
- VO_LIBS += $(EXTERNAL_VIDIX_LIB)
-diff -Naur MPlayer-1.0pre8/configure MPlayer-1.0pre8-xynth/configure
---- MPlayer-1.0pre8/configure	2006-06-11 21:35:47.000000000 +0300
-+++ MPlayer-1.0pre8-xynth/configure	2006-06-22 17:03:21.000000000 +0300
-@@ -307,6 +307,7 @@
+ ifeq ($(VIDIX),yes)
+ VO_LIBS += vidix/libvidix.a
+diff -Naur MPlayer-1.0rc1/configure MPlayer-1.0rc1-xynth/configure
+--- MPlayer-1.0rc1/configure	2006-10-23 01:32:31.000000000 +0300
++++ MPlayer-1.0rc1-xynth/configure	2006-10-24 02:28:52.000000000 +0300
+@@ -326,6 +326,7 @@
    --enable-dga[=n]       build with DGA [n in {1, 2} ] support [autodetect]
    --enable-vesa          build with VESA support [autodetect]
    --enable-svga          build with SVGAlib support [autodetect]
@@ -20,7 +20,7 @@ diff -Naur MPlayer-1.0pre8/configure MPlayer-1.0pre8-xynth/configure
    --enable-sdl           build with SDL render support [autodetect]
    --enable-aa            build with AAlib render support [autodetect]
    --enable-caca          build with CACA render support [autodetect]
-@@ -1578,6 +1579,7 @@
+@@ -1596,6 +1597,7 @@
  _aa=auto
  _caca=auto
  _svga=auto
@@ -28,7 +28,7 @@ diff -Naur MPlayer-1.0pre8/configure MPlayer-1.0pre8-xynth/configure
  _vesa=auto
  _fbdev=auto
  _dvb=auto
-@@ -1759,6 +1761,8 @@
+@@ -1793,6 +1795,8 @@
    --disable-caca)	_caca=no	;;
    --enable-svga)	_svga=yes	;;
    --disable-svga)	_svga=no	;;
@@ -37,7 +37,7 @@ diff -Naur MPlayer-1.0pre8/configure MPlayer-1.0pre8-xynth/configure
    --enable-vesa)	_vesa=yes	;;
    --disable-vesa)	_vesa=no	;;
    --enable-fbdev)	_fbdev=yes	;;
-@@ -4192,6 +4196,27 @@
+@@ -4251,6 +4255,27 @@
  echores "$_svga"
  
  
@@ -65,15 +65,15 @@ diff -Naur MPlayer-1.0pre8/configure MPlayer-1.0pre8-xynth/configure
  echocheck "FBDev"
  if test "$_fbdev" = auto ; then
    _fbdev=no
-@@ -7445,6 +7470,7 @@
+@@ -7518,6 +7543,7 @@
  GIF_LIB = $_ld_gif
  SDL_LIB = $_ld_sdl
  SVGA_LIB = $_ld_svga
 +XYNTH_LIB = $_ld_xynth
  VESA_LIB = $_ld_vesa
  AA_LIB = $_ld_aa
- CACA_INC = $_inc_caca
-@@ -8251,6 +8277,7 @@
+ CACA_LIB = $_ld_caca
+@@ -8371,6 +8397,7 @@
  $_def_dvb
  $_def_dvb_in
  $_def_svga
@@ -81,10 +81,10 @@ diff -Naur MPlayer-1.0pre8/configure MPlayer-1.0pre8-xynth/configure
  $_def_vesa
  $_def_xdpms
  $_def_aa
-diff -Naur MPlayer-1.0pre8/libvo/video_out.c MPlayer-1.0pre8-xynth/libvo/video_out.c
---- MPlayer-1.0pre8/libvo/video_out.c	2006-06-11 21:35:43.000000000 +0300
-+++ MPlayer-1.0pre8-xynth/libvo/video_out.c	2006-06-22 16:58:40.000000000 +0300
-@@ -87,6 +87,7 @@
+diff -Naur MPlayer-1.0rc1/libvo/video_out.c MPlayer-1.0rc1-xynth/libvo/video_out.c
+--- MPlayer-1.0rc1/libvo/video_out.c	2006-10-23 01:32:26.000000000 +0300
++++ MPlayer-1.0rc1-xynth/libvo/video_out.c	2006-10-24 02:28:52.000000000 +0300
+@@ -86,6 +86,7 @@
  extern vo_functions_t video_out_fbdev;
  extern vo_functions_t video_out_fbdev2;
  extern vo_functions_t video_out_svga;
@@ -92,7 +92,7 @@ diff -Naur MPlayer-1.0pre8/libvo/video_out.c MPlayer-1.0pre8-xynth/libvo/video_o
  extern vo_functions_t video_out_png;
  extern vo_functions_t video_out_ggi;
  extern vo_functions_t video_out_aa;
-@@ -199,6 +200,9 @@
+@@ -201,6 +202,9 @@
  #ifdef HAVE_SVGALIB
  	&video_out_svga,
  #endif
@@ -102,9 +102,9 @@ diff -Naur MPlayer-1.0pre8/libvo/video_out.c MPlayer-1.0pre8-xynth/libvo/video_o
  #ifdef HAVE_AA
  	&video_out_aa,
  #endif
-diff -Naur MPlayer-1.0pre8/libvo/vo_xynth.c MPlayer-1.0pre8-xynth/libvo/vo_xynth.c
---- MPlayer-1.0pre8/libvo/vo_xynth.c	1970-01-01 02:00:00.000000000 +0200
-+++ MPlayer-1.0pre8-xynth/libvo/vo_xynth.c	2006-06-22 17:07:01.000000000 +0300
+diff -Naur MPlayer-1.0rc1/libvo/vo_xynth.c MPlayer-1.0rc1-xynth/libvo/vo_xynth.c
+--- MPlayer-1.0rc1/libvo/vo_xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ MPlayer-1.0rc1-xynth/libvo/vo_xynth.c	2006-08-17 21:57:20.000000000 +0300
 @@ -0,0 +1,495 @@
 +/***************************************************************************
 +    begin                : Thu Jan 22 2004
