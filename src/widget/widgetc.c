@@ -542,6 +542,22 @@ void node_init (node_t **node)
 	*node = n;
 }
 
+void node_uninit (node_t *node)
+{
+	node_t *tmp;
+	while (!s_list_eol(node->nodes, 0)) {
+		tmp = (node_t *) s_list_get(node->nodes, 0);
+		s_list_remove(node->nodes, 0);
+		node_uninit(tmp);
+	}
+	s_list_uninit(node->nodes);
+	free(node->id);
+	free(node->name);
+	free(node->type);
+	free(node->value);
+	free(node);
+}
+
 void start (void *xdata, const char *el, const char **attr)
 {
 	free(g_path);
@@ -601,6 +617,7 @@ void char_hndl (void *xdata, const char *txt, int txtlen)
 	    	}
 	}
 	free(str);
+	free(end);
 }
 
 int main (int argc, char **argv)
@@ -655,8 +672,19 @@ usage:			case 'h':
 		fprintf(stderr, "Parse error at line %d:\n%s\n", XML_GetCurrentLineNumber(p), XML_ErrorString(XML_GetErrorCode(p)));
 		exit(-1);
 	}
+	
+	XML_ParserFree(p);
 
 //	node_parse(g_node);
 	node_generate(g_node);
+	node_uninit(g_node);
+	
+	fclose(g_input);
+	fclose(g_source);
+	fclose(g_header);
+	free(g_source_name);
+	free(g_header_name);
+	free(buf);
+	
 	return 0;
 }
