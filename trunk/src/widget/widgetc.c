@@ -176,32 +176,46 @@ node_t * node_get_parent (node_t *node, char *name)
 	return NULL;
 }
 
-char * node_get_value (node_t *node, char *path)
-{
-	int p;
-	node_t *tmp;
-	p = 0;
-	while (!s_list_eol(node->nodes, p)) {
-		tmp = (node_t *) s_list_get(node->nodes, p);
-		if (strcmp(tmp->name, path) == 0) {
-			return tmp->value;
-		}
-		p++;
-	}
-	return NULL;
-}
-
 node_t * node_get_node (node_t *node, char *path)
 {
 	int p;
+	char *ptr;
+	char *str;
+	node_t *res;
 	node_t *tmp;
 	p = 0;
+	res = NULL;
 	while (!s_list_eol(node->nodes, p)) {
 		tmp = (node_t *) s_list_get(node->nodes, p);
-		if (strcmp(tmp->name, path) == 0) {
-			return tmp;
+		str = strchr(path,  '/');
+		if (str == NULL) {
+			if (strcmp(tmp->name, path) == 0) {
+				res = tmp;
+				break;
+			}
+		} else {
+			if (strncmp(tmp->name, path, str - path) == 0 &&
+			    strlen(tmp->name) == str - path) {
+			    	ptr = strchr(path, '/');
+			    	if (ptr != NULL) {
+			    		ptr++;
+			    	}
+			    	if ((res = node_get_node(tmp, ptr)) != NULL) {
+			    		break;
+			    	}
+			}
 		}
 		p++;
+	}
+	return res;
+}
+
+char * node_get_value (node_t *node, char *path)
+{
+	node_t *res;
+	res = node_get_node(node, path);
+	if (res != NULL) {
+		return res->value;
 	}
 	return NULL;
 }
