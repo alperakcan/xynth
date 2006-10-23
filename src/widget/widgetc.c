@@ -7,7 +7,6 @@
 #include <unistd.h>
 #include <expat.h>
 #include <xynth.h>
-#include <widget.h>
 
 FILE *input = NULL;
 FILE *source = NULL;
@@ -28,7 +27,6 @@ typedef struct node_s {
 typedef struct data_s {
 	node_t *node;
 	int depth;
-	unsigned int objs[OBJECT_OBJECTS];
 	char *path;
 	node_t *active;
 } data_t;
@@ -176,7 +174,71 @@ node_t * node_get_parent (node_t *node, char *name)
 	return NULL;
 }
 
-node_t * node_get_node (node_t *node, char *path)
+int node_path_normalize (char *out, int len)
+{
+	int i;
+	int j;
+	int first;
+	int next;
+	
+	/* First append "/" to make the rest easier */
+	if (!strncat(out,"/",len))
+		return -10;
+
+	/* Convert "//" to "/" */
+	for (i = 0; out[i + 1]; i++) {
+		if (out[i] == '/' && out[i + 1] == '/') {
+			for (j = i + 1; out[j]; j++)
+				out[j] = out[j + 1];
+			i--;
+		}
+	}
+
+	/* Convert "/./" to "/" */
+	for (i = 0; out[i] && out[i + 1] && out[i + 2]; i++) {
+		if (out[i] == '/' && out[i + 1] == '.' && out[i + 2] == '/') {
+			for (j = i + 1; out[j]; j++)
+				out[j] = out[j + 2];
+			i--;
+		}
+	}
+
+	/* Convert "/asdf/../" to "/" until we can't anymore.  Also
+	 * convert leading "/../" to "/" */
+	first = next = 0;
+	while (1) {
+		/* If a "../" follows, remove it and the parent */
+		if (out[next + 1] && out[next + 1] == '.' && 
+		    out[next + 2] && out[next + 2] == '.' &&
+		    out[next + 3] && out[next + 3] == '/') {
+			for (j = 0; out[first + j + 1]; j++)
+				out[first + j + 1] = out[next + j + 4];
+			first = next = 0;
+			continue;
+		}
+
+		/* Find next slash */
+		first = next;
+		for (next = first + 1; out[next] && out[next] != '/'; next++)
+			continue;
+		if (!out[next])
+			break;
+	}
+	
+	/* Remove leading "/" */
+	if (out[0] == '/')
+		for (i = 0; out[i + 1]; i++)
+			out[i] = out[i + 1];
+
+	/* Remove trailing "/" */
+	for (i = 1; out[i]; i++)
+		continue;
+	if (i >= 1 && out[i - 1] == '/') 
+		out[i - 1] = 0;
+
+	return 0;
+}
+node_t * node_get_node_ (node_t *node, char *path)
 {
 	int p;
 	char *ptr;
@@ -200,13 +262,28 @@ node_t * node_get_node (node_t *node, char *path)
 			    	if (ptr != NULL) {
 			    		ptr++;
 			    	}
-			    	if ((res = node_get_node(tmp, ptr)) != NULL) {
+			    	if ((res = node_get_node_(tmp, ptr)) != NULL) {
 			    		break;
 			    	}
 			}
 		}
 		p++;
 	}
+	return res;
+}
+
+node_t * node_get_node (node_t *node, char *path)
+{
+	int len;
+	char *str;
+	node_t *res;
+	len = strlen(path);
+	str = (char *) malloc(len + 10 + 1);
+	memset(str, 0, len + 10 + 1);
+	memcpy(str, path, len);
+	node_path_normalize(str, len + 10);
+	res = node_get_node_(node, str);
+	free(str);
 	return res;
 }
 
