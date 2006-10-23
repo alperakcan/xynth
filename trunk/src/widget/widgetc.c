@@ -221,11 +221,6 @@ int node_path_normalize (char *out, int len)
 			break;
 	}
 	
-	/* Remove leading "/" */
-	if (out[0] == '/')
-		for (i = 0; out[i + 1]; i++)
-			out[i] = out[i + 1];
-
 	/* Remove trailing "/" */
 	for (i = 1; out[i]; i++)
 		continue;
@@ -278,6 +273,11 @@ node_t * node_get_node (node_t *node, char *path)
 	memset(str, 0, len + 10 + 1);
 	memcpy(str, path, len);
 	node_path_normalize(str, len + 10);
+	if (str[0] == '/') {
+		while (node->parent) {
+			node = node->parent;
+		}
+	}
 	res = node_get_node_(node, str);
 	free(str);
 	return res;
