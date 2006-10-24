@@ -298,21 +298,6 @@ void node_generate_code_window (node_t *node)
 	fprintf(g_source, "w_window_init(&%s, %s, NULL);\n", node->id, node->type);
 }
 
-void node_generate_code_object (node_t *node)
-{
-	if (strcmp(node->type, "frame") == 0) {
-		fprintf(g_source, "w_frame_init(%s, &%s, %s, %s->object);\n", node_get_parent(node, "window")->id, node->id, "0", node->parent->id);
-	} else if (strcmp(node->type, "button") == 0) {
-		fprintf(g_source, "w_button_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
-	} else if (strcmp(node->type, "textbox") == 0) {
-		fprintf(g_source, "w_textbox_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
-	} else if (strcmp(node->type, "checkbox") == 0) {
-		fprintf(g_source, "w_checkbox_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
-	} else if (strcmp(node->type, "editbox") == 0) {
-		fprintf(g_source, "w_editbox_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
-	}
-}
-
 void node_generate_code_title (node_t *node)
 {
 	fprintf(g_source, "s_window_set_title(%s->window, \"%s\");\n", node_get_parent(node, "window")->id, node->value);
@@ -387,6 +372,32 @@ void node_generate_code_draw (node_t *node)
 void node_generate_code_pressed (node_t *node)
 {
 	fprintf(g_source, "%s->pressed = %s;\n", node->parent->id, node->value);
+}
+
+void node_generate_code_object (node_t *node)
+{
+	node_t *tmp;
+	if (strcmp(node->type, "frame") == 0) {
+		fprintf(g_source, "w_frame_init(%s, &%s, %s, %s->object);\n", node_get_parent(node, "window")->id, node->id, "0", node->parent->id);
+	} else if (strcmp(node->type, "button") == 0) {
+		fprintf(g_source, "w_button_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
+	} else if (strcmp(node->type, "textbox") == 0) {
+		fprintf(g_source, "w_textbox_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
+	} else if (strcmp(node->type, "checkbox") == 0) {
+		fprintf(g_source, "w_checkbox_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
+	} else if (strcmp(node->type, "editbox") == 0) {
+		fprintf(g_source, "w_editbox_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
+	}
+	tmp = node_get_node(node, "style");
+	if (tmp) {
+		node_generate_code_style(tmp);
+		tmp->dontparse = 1;
+	}
+	tmp = node_get_node(node, "draw");
+	if (tmp) {
+		node_generate_code_draw(tmp);
+		tmp->dontparse = 1;
+	}
 }
 
 void node_generate_code (node_t *node)

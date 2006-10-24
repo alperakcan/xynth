@@ -25,6 +25,10 @@ void frame_white_draw (w_object_t *object)
 
 void button_hide_draw (w_object_t *object)
 {
+	w_button_draw(object);
+	if (textbox_hide == NULL) {
+		return;
+	}
 	if (area_hide) {
 		w_textbox_set_str(textbox_hide->object, "show area");
 	} else {

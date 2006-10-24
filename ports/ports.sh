@@ -10,11 +10,11 @@
     ## Set the directories.
     PTCDIR="`pwd`"
     SRCDIR="`pwd`/tmp/"
-#    SRCDIR="/home/self/ports"
+    SRCDIR="/home/self/ports"
 
     ## Source code versions.
     GTK="gtk+-2.4.14"
-    MPLAYER="MPlayer-1.0pre8"
+    MPLAYER="MPlayer-1.0rc1"
     LINKS="links-2.1pre23"
     SDL="SDL-1.2.10"
     KAFFE="kaffe-1.1.7"
@@ -228,7 +228,7 @@
 	## Enter the source directory.
 	cd $MPLAYER
 	## Configure the source.
-	./configure --prefix=$PREFIX --disable-unrarlib || { echo "ERROR CONFIGURING MPLAYER"; exit; }
+	./configure --prefix=$PREFIX --enable-gui || { echo "ERROR CONFIGURING MPLAYER"; exit; }
 	## Build the source.
 	$MAKE clean; $MAKE || { echo "ERROR BUILDING MPLAYER"; exit; }
 	## Install the result.
