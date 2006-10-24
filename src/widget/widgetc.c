@@ -393,6 +393,11 @@ void node_generate_code_object (node_t *node)
 		node_generate_code_style(tmp);
 		tmp->dontparse = 1;
 	}
+	tmp = node_get_node(node, "effect");
+	if (tmp) {
+		node_generate_code_effect(tmp);
+		tmp->dontparse = 1;
+	}
 	tmp = node_get_node(node, "draw");
 	if (tmp) {
 		node_generate_code_draw(tmp);
