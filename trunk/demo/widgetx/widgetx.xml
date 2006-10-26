@@ -180,7 +180,8 @@
 					<shape>FRAME_PANEL</shape>
 					<shadow>FRAME_PLAIN</shadow>
 				</style>
-				<string>this is a textbox !</string>
+				<properties>TEXTBOX_WRAP</properties>
+				<string>this is a textbox! this is a textbox! this is a textbox! this is a textbox! this is a textbox! this is a textbox! </string>
 				<move>
 					<x>5</x>
 					<y>340</y>

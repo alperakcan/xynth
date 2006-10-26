@@ -374,6 +374,11 @@ void node_generate_code_pressed (node_t *node)
 	fprintf(g_source, "%s->pressed = %s;\n", node->parent->id, node->value);
 }
 
+void node_generate_code_properties (node_t *node)
+{
+	fprintf(g_source, "%s->properties = %s;\n", node->parent->id, node->value);
+}
+
 void node_generate_code_object (node_t *node)
 {
 	node_t *tmp;
@@ -401,6 +406,11 @@ void node_generate_code_object (node_t *node)
 	tmp = node_get_node(node, "draw");
 	if (tmp) {
 		node_generate_code_draw(tmp);
+		tmp->dontparse = 1;
+	}
+	tmp = node_get_node(node, "properties");
+	if (tmp) {
+		node_generate_code_properties(tmp);
 		tmp->dontparse = 1;
 	}
 }
