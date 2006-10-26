@@ -84,7 +84,7 @@ int w_textbox_init (w_window_t *window, w_textbox_t **textbox, w_object_t *paren
 		goto err1;
 	}
 	
-	(*textbox)->properties = TEXTBOX_VCENTER | TEXTBOX_HCENTER;
+	(*textbox)->properties = TEXTBOX_VCENTER | TEXTBOX_HCENTER | TEXTBOX_NOWRAP;
 
 	(*textbox)->object = (*textbox)->frame->object;
 	(*textbox)->object->draw = w_textbox_draw;
