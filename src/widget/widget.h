@@ -150,6 +150,7 @@ typedef struct w_textbox_s {
 	w_object_t *object;
 	w_frame_t *frame;
 	s_font_t *font;
+	s_list_t *lines;
 	TEXTBOX_PROPERTIES properties;
 } w_textbox_t;
 

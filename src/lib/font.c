@@ -108,7 +108,11 @@ end:	return 0;
 int s_font_set_str (s_font_t *font, char *str)
 {
 	s_free(font->str);
-	font->str = strdup(str);
+	if (str) { 
+		font->str = strdup(str);
+	} else {
+		font->str = NULL;
+	}
 	return 0;
 }
 
@@ -261,4 +265,17 @@ int s_font_get_glyph (s_font_t *font)
 	s_free(glyphs);
 	s_free(images);
 	return 0;
+}
+
+int s_font_get_width (s_font_t *font, char *str)
+{
+	int w;
+	char *ptr = NULL;
+	if (font->str)
+		ptr = strdup(font->str);
+	s_font_set_str(font, str);
+	s_font_get_glyph(font);
+	w = font->img->w;
+	s_font_set_str(font, ptr);
+	return w;
 }
