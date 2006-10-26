@@ -54,6 +54,9 @@
 #if defined(DEMO_LOGOUT)
 	extern s_single_app_t single_xynthlogout;
 #endif /* DEMO_LOGOUT */
+#if defined(DEMO_WIDGETX)
+	extern s_single_app_t single_widgetx;
+#endif /* DEMO_WIDGETX */
 
 s_single_app_t *s_server_single_apps[] = {
 #if defined(DEMO_DESKTOP)
@@ -92,6 +95,9 @@ s_single_app_t *s_server_single_apps[] = {
 #if defined(DEMO_LOGOUT)
 	&single_xynthlogout,
 #endif /* DEMO_LOGOUT */
+#if defined(DEMO_WIDGETX)
+	&single_widgetx,
+#endif /* DEMO_WIDGETX */
 	NULL
 };
 
