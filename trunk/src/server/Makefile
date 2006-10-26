@@ -56,6 +56,7 @@ ifeq ($(SINGLE_APP), Y)
 	EXTRA_OBJS-$(DEMO_TERM) += ../../demo/term/single_term.a
 	EXTRA_OBJS-$(DEMO_TIMER) += ../../demo/timer/single_timer.a
 	EXTRA_OBJS-$(DEMO_LOGOUT) += ../../demo/xynthlogout/single_xynthlogout.a
+	EXTRA_OBJS-$(DEMO_WIDGETX) += ../../demo/widgetx/single_widgetx.a
 endif
 
 LIBDIR-$(WIDGET_LIB) += ../widget

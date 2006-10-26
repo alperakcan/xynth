@@ -59,7 +59,7 @@ endif
 ifeq ($(DEMO_IMAGE), Y)
 	CFLAGS += -DDEMO_IMAGE
 endif
-ifeq ($(DEMO_WIDGETS), Y)
+ifeq ($(DEMO_WIDGETX), Y)
 	CFLAGS += -DDEMO_WIDGETX
 endif
 
