@@ -814,6 +814,7 @@ int s_font_set_size (s_font_t *font, int size);
 int s_font_set_str (s_font_t *font, char *str);
 int s_font_set_rgb (s_font_t *font, int r, int g, int b);
 int s_font_get_glyph (s_font_t *font);
+int s_font_get_width (s_font_t *font, char *str);
 
 /* gettime.c */
 long long s_gettimeofday (void);

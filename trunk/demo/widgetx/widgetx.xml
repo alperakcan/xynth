@@ -181,13 +181,13 @@
 					<shadow>FRAME_PLAIN</shadow>
 				</style>
 				<properties>TEXTBOX_WRAP</properties>
-				<string>this is a textbox! this is a textbox! this is a textbox! this is a textbox! this is a textbox! this is a textbox! </string>
 				<move>
 					<x>5</x>
 					<y>340</y>
 					<w>490</w>
 					<h>30</h>
 				</move>
+				<string>this is a textbox! this is a textbox! this is a textbox! this is a textbox! this is a textbox! this is a textbox! yep it is multiline</string>
 				<show>yes</show>
 			</object>
 			<object id="editbox" type="editbox">
