@@ -177,7 +177,7 @@
 			</object>
 			<object id="textbox" type="textbox">
 				<style>
-					<shape>FRAME_PANEL</shape>
+					<shape>FRAME_NOFRAME</shape>
 					<shadow>FRAME_PLAIN</shadow>
 				</style>
 				<properties>TEXTBOX_HCENTER | TEXTBOX_VCENTER | TEXTBOX_WRAP</properties>
