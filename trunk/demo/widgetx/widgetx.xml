@@ -180,7 +180,7 @@
 					<shape>FRAME_PANEL</shape>
 					<shadow>FRAME_PLAIN</shadow>
 				</style>
-				<properties>TEXTBOX_WRAP</properties>
+				<properties>TEXTBOX_WRAP | TEXTBOX_HCENTER</properties>
 				<move>
 					<x>5</x>
 					<y>340</y>

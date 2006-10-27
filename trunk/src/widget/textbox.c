@@ -105,6 +105,7 @@ int w_textbox_set_str (w_object_t *object, char *str)
 		int limit;
 		int chars;
 		char *tmp;
+		char *ptr;
 		char *strline;
 		char *ptrline;
 		s_font_t *font;
@@ -129,6 +130,24 @@ int w_textbox_set_str (w_object_t *object, char *str)
 			}
 			s_list_add(textbox->lines, font, -1);
 			if (limit) {
+				ptrw = strlen(ptrline);
+				strw = strlen(strline);
+				if (ptrline[ptrw - 1] != ' ' &&
+				    strline[strw - 1] != ' ') {
+				    	ptr = strdup(ptrline);
+				    	for (strw = strlen(ptr) - 1; strw >= 0; strw--) {
+				    		if (ptr[strw] != ' ') {
+				    			chars--;
+				    			ptr[strw] = '\0';
+				    		} else {
+				    			break;
+				    		}
+				    	}
+				    	if (strw >= 0) {
+				    		sprintf(ptrline, "%s", ptr);
+				    	}
+				    	s_free(ptr);
+				}
 				s_font_set_str(font, ptrline);
 				s_font_get_glyph(font);
 			} else {
