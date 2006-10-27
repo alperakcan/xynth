@@ -57,16 +57,16 @@ extern "C" {
 	while (n--) {\
 		a = ~(*m & 0xff);\
 		if (a != 0xff) {\
-			dr = (unsigned char) ((((unsigned int) *d) >> ro) << (8 - rl));\
-			dg = (unsigned char) ((((unsigned int) *d) >> go) << (8 - gl));\
-			db = (unsigned char) ((((unsigned int) *d) >> bo) << (8 - bl));\
-			sr = (unsigned char) ((((unsigned int) *s) >> ro) << (8 - rl));\
-			sg = (unsigned char) ((((unsigned int) *s) >> go) << (8 - gl));\
-			sb = (unsigned char) ((((unsigned int) *s) >> bo) << (8 - bl));\
+			dr = (*d >> ro) << rl;\
+			dg = (*d >> go) << gl;\
+			db = (*d >> bo) << bl;\
+			sr = (*s >> ro) << rl;\
+			sg = (*s >> go) << gl;\
+			sb = (*s >> bo) << bl;\
 			dr  = (a * (dr - sr) >> 8) + sr;\
 			dg  = (a * (dg - sg) >> 8) + sg;\
 			db  = (a * (db - sb) >> 8) + sb;\
-			*d = (((((unsigned char) dr) >> (8 - rl)) << ro) | ((((unsigned char) dg) >> (8 - gl)) << go) | ((((unsigned char) db) >> (8 - bl)) << bo));\
+			*d = ((dr >> rl) << ro) | ((dg >> gl) << go) | ((db >> bl) << bo);\
 		}\
 		d++;\
 		s++;\
@@ -77,16 +77,16 @@ extern "C" {
 	while (n--) {\
 		a = ~(*m_ & 0xff);\
 		if ((*m == id) && (a != 0xff)) {\
-			dr = (unsigned char) ((((unsigned int) *d) >> ro) << (8 - rl));\
-			dg = (unsigned char) ((((unsigned int) *d) >> go) << (8 - gl));\
-			db = (unsigned char) ((((unsigned int) *d) >> bo) << (8 - bl));\
-			sr = (unsigned char) ((((unsigned int) *s) >> ro) << (8 - rl));\
-			sg = (unsigned char) ((((unsigned int) *s) >> go) << (8 - gl));\
-			sb = (unsigned char) ((((unsigned int) *s) >> bo) << (8 - bl));\
+			dr = (*d >> ro) << rl;\
+			dg = (*d >> go) << gl;\
+			db = (*d >> bo) << bl;\
+			sr = (*s >> ro) << rl;\
+			sg = (*s >> go) << gl;\
+			sb = (*s >> bo) << bl;\
 			dr  = (a * (dr - sr) >> 8) + sr;\
 			dg  = (a * (dg - sg) >> 8) + sg;\
 			db  = (a * (db - sb) >> 8) + sb;\
-			*d = (((((unsigned char) dr) >> (8 - rl)) << ro) | ((((unsigned char) dg) >> (8 - gl)) << go) | ((((unsigned char) db) >> (8 - bl)) << bo));\
+			*d = ((dr >> rl) << ro) | ((dg >> gl) << go) | ((db >> bl) << bo);\
 		}\
 		d++;\
 		s++;\
@@ -99,7 +99,7 @@ extern "C" {
 		dr = (*s >> 0x18) & 0xff;\
 		dg = (*s >> 0x10) & 0xff;\
 		db = (*s >> 0x08) & 0xff;\
-		*d = (((((unsigned char) dr) >> (8 - rl)) << ro) | ((((unsigned char) dg) >> (8 - gl)) << go) | ((((unsigned char) db) >> (8 - bl)) << bo));\
+		*d = ((dr >> rl) << ro) | ((dg >> gl) << go) | ((db >> bl) << bo);\
 		d++;\
 		s++;\
 	}
@@ -110,7 +110,7 @@ extern "C" {
 			dr = (*s >> 0x18) & 0xff;\
 			dg = (*s >> 0x10) & 0xff;\
 			db = (*s >> 0x08) & 0xff;\
-			*d = (((((unsigned char) dr) >> (8 - rl)) << ro) | ((((unsigned char) dg) >> (8 - gl)) << go) | ((((unsigned char) db) >> (8 - bl)) << bo));\
+			*d = ((dr >> rl) << ro) | ((dg >> gl) << go) | ((db >> bl) << bo);\
 		}\
 		d++;\
 		s++;\
@@ -121,16 +121,16 @@ extern "C" {
 	while (n--) {\
 		a = (*s & 0xff);\
 		if (a != 0xff) {\
-			dr = (unsigned char) ((((unsigned int) *d) >> ro) << (8 - rl));\
-			dg = (unsigned char) ((((unsigned int) *d) >> go) << (8 - gl));\
-			db = (unsigned char) ((((unsigned int) *d) >> bo) << (8 - bl));\
+			dr = (*d >> ro) << rl;\
+			dg = (*d >> go) << gl;\
+			db = (*d >> bo) << bl;\
 			sr = (*s >> 0x18) & 0xff;\
 			sg = (*s >> 0x10) & 0xff;\
 			sb = (*s >> 0x08) & 0xff;\
 			dr  = (a * (dr - sr) >> 8) + sr;\
 			dg  = (a * (dg - sg) >> 8) + sg;\
 			db  = (a * (db - sb) >> 8) + sb;\
-			*d = (((((unsigned char) dr) >> (8 - rl)) << ro) | ((((unsigned char) dg) >> (8 - gl)) << go) | ((((unsigned char) db) >> (8 - bl)) << bo));\
+			*d = ((dr >> rl) << ro) | ((dg >> gl) << go) | ((db >> bl) << bo);\
 		}\
 		d++;\
 		s++;\
@@ -140,16 +140,16 @@ extern "C" {
 	while (n--) {\
 		a = (*s & 0xff);\
 		if ((*m == id) && (a != 0xff)) {\
-			dr = (unsigned char) ((((unsigned int) *d) >> ro) << (8 - rl));\
-			dg = (unsigned char) ((((unsigned int) *d) >> go) << (8 - gl));\
-			db = (unsigned char) ((((unsigned int) *d) >> bo) << (8 - bl));\
+			dr = (*d >> ro) << rl;\
+			dg = (*d >> go) << gl;\
+			db = (*d >> bo) << bl;\
 			sr = (*s >> 0x18) & 0xff;\
 			sg = (*s >> 0x10) & 0xff;\
 			sb = (*s >> 0x08) & 0xff;\
 			dr  = (a * (dr - sr) >> 8) + sr;\
 			dg  = (a * (dg - sg) >> 8) + sg;\
 			db  = (a * (db - sb) >> 8) + sb;\
-			*d = (((((unsigned char) dr) >> (8 - rl)) << ro) | ((((unsigned char) dg) >> (8 - gl)) << go) | ((((unsigned char) db) >> (8 - bl)) << bo));\
+			*d = ((dr >> rl) << ro) | ((dg >> gl) << go) | ((db >> bl) << bo);\
 		}\
 		d++;\
 		s++;\
@@ -217,118 +217,145 @@ static inline void s_memcpy4om (unsigned char *m, int id, char *dest, char *src,
 
 static inline void s_memcpy1oa (unsigned char *m, int id, char *dest, char *src, unsigned char *mask, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
-	int sr;
-	int sg;
-	int sb;
-	int dr;
-	int dg;
-	int db;
 	unsigned char a;
+	unsigned char sr;
+	unsigned char sg;
+	unsigned char sb;
+	unsigned char dr;
+	unsigned char dg;
+	unsigned char db;
 	unsigned char *d = (unsigned char *) dest;
 	unsigned char *s = (unsigned char *) src;
         unsigned char *m_ = (unsigned char *) mask;
+	rl = 8 - rl;
+	gl = 8 - gl;
+	bl = 8 - bl;
 	memcpyloop6();
 }
 
 static inline void s_memcpy2oa (unsigned char *m, int id, char *dest, char *src, unsigned char *mask, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
-	int sr;
-	int sg;
-	int sb;
-	int dr;
-	int dg;
-	int db;
 	unsigned char a;
+	unsigned char sr;
+	unsigned char sg;
+	unsigned char sb;
+	unsigned char dr;
+	unsigned char dg;
+	unsigned char db;
 	unsigned short int *d = (unsigned short int *) dest;
 	unsigned short int *s = (unsigned short int *) src;
         unsigned char *m_ = (unsigned char *) mask;
+	rl = 8 - rl;
+	gl = 8 - gl;
+	bl = 8 - bl;
 	memcpyloop6();
 }
 
 static inline void s_memcpy4oa (unsigned char *m, int id, char *dest, char *src, unsigned char *mask, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
-	int sr;
-	int sg;
-	int sb;
-	int dr;
-	int dg;
-	int db;
 	unsigned char a;
+	unsigned char sr;
+	unsigned char sg;
+	unsigned char sb;
+	unsigned char dr;
+	unsigned char dg;
+	unsigned char db;
 	unsigned int *d = (unsigned int *) dest;
 	unsigned int *s = (unsigned int *) src;
         unsigned char *m_ = (unsigned char *) mask;
+	rl = 8 - rl;
+	gl = 8 - gl;
+	bl = 8 - bl;
 	memcpyloop6();
 }
 
 static inline void s_memcpy1orgb (unsigned char *m, int id, char *dest, unsigned int *rgb, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
-	int dr;
-	int dg;
-	int db;
+	unsigned char dr;
+	unsigned char dg;
+	unsigned char db;
 	unsigned char *d = (unsigned char *) dest;
 	unsigned int *s = (unsigned int *) rgb;
+	rl = 8 - rl;
+	gl = 8 - gl;
+	bl = 8 - bl;
 	memcpyloop8();
 }
 
 static inline void s_memcpy2orgb (unsigned char *m, int id, char *dest, unsigned int *rgb, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
-	int dr;
-	int dg;
-	int db;
+	unsigned char dr;
+	unsigned char dg;
+	unsigned char db;
 	unsigned short int *d = (unsigned short int *) dest;
 	unsigned int *s = (unsigned int *) rgb;
+	rl = 8 - rl;
+	gl = 8 - gl;
+	bl = 8 - bl;
 	memcpyloop8();
 }
 
 static inline void s_memcpy4orgb (unsigned char *m, int id, char *dest, unsigned int *rgb, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
-	int dr;
-	int dg;
-	int db;
+	unsigned char dr;
+	unsigned char dg;
+	unsigned char db;
 	unsigned int *d = (unsigned int *) dest;
 	unsigned int *s = (unsigned int *) rgb;
+	rl = 8 - rl;
+	gl = 8 - gl;
+	bl = 8 - bl;
 	memcpyloop8();
 }
 
 static inline void s_memcpy1orgba (unsigned char *m, int id, char *dest, unsigned int *rgb, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
-	int sr;
-	int sg;
-	int sb;
-	int dr;
-	int dg;
-	int db;
 	unsigned char a;
+	unsigned char sr;
+	unsigned char sg;
+	unsigned char sb;
+	unsigned char dr;
+	unsigned char dg;
+	unsigned char db;
 	unsigned char *d = (unsigned char *) dest;
 	unsigned int *s = (unsigned int *) rgb;
+	rl = 8 - rl;
+	gl = 8 - gl;
+	bl = 8 - bl;
 	memcpyloop10();
 }
 
 static inline void s_memcpy2orgba (unsigned char *m, int id, char *dest, unsigned int *rgb, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
-	int sr;
-	int sg;
-	int sb;
-	int dr;
-	int dg;
-	int db;
 	unsigned char a;
+	unsigned char sr;
+	unsigned char sg;
+	unsigned char sb;
+	unsigned char dr;
+	unsigned char dg;
+	unsigned char db;
 	unsigned short int *d = (unsigned short int *) dest;
 	unsigned int *s = (unsigned int *) rgb;
+	rl = 8 - rl;
+	gl = 8 - gl;
+	bl = 8 - bl;
 	memcpyloop10();
 }
 
 static inline void s_memcpy4orgba (unsigned char *m, int id, char *dest, unsigned int *rgb, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
-	int sr;
-	int sg;
-	int sb;
-	int dr;
-	int dg;
-	int db;
 	unsigned char a;
+	unsigned char sr;
+	unsigned char sg;
+	unsigned char sb;
+	unsigned char dr;
+	unsigned char dg;
+	unsigned char db;
 	unsigned int *d = (unsigned int *) dest;
 	unsigned int *s = (unsigned int *) rgb;
+	rl = 8 - rl;
+	gl = 8 - gl;
+	bl = 8 - bl;
 	memcpyloop10();
 }
 
@@ -379,118 +406,145 @@ static inline void s_memcpy4m (char *dest, char *src, unsigned char *mask, int n
 
 static inline void s_memcpy1a (char *dest, char *src, unsigned char *mask, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
-	int sr;
-	int sg;
-	int sb;
-	int dr;
-	int dg;
-	int db;
+	unsigned char sr;
+	unsigned char sg;
+	unsigned char sb;
+	unsigned char dr;
+	unsigned char dg;
+	unsigned char db;
 	unsigned char a;
         unsigned char *m = (unsigned char *) mask;
 	unsigned char *d = (unsigned char *) dest;
 	unsigned char *s = (unsigned char *) src;
+	rl = 8 - rl;
+	gl = 8 - gl;
+	bl = 8 - bl;
 	memcpyloop5();
 }
 
 static inline void s_memcpy2a (char *dest, char *src, unsigned char *mask, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
-	int sr;
-	int sg;
-	int sb;
-	int dr;
-	int dg;
-	int db;
+	unsigned char sr;
+	unsigned char sg;
+	unsigned char sb;
+	unsigned char dr;
+	unsigned char dg;
+	unsigned char db;
 	unsigned char a;
         unsigned char *m = (unsigned char *) mask;
 	unsigned short int *d = (unsigned short int *) dest;
 	unsigned short int *s = (unsigned short int *) src;
+	rl = 8 - rl;
+	gl = 8 - gl;
+	bl = 8 - bl;
 	memcpyloop5();
 }
 
 static inline void s_memcpy4a (char *dest, char *src, unsigned char *mask, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
-	int sr;
-	int sg;
-	int sb;
-	int dr;
-	int dg;
-	int db;
+	unsigned char sr;
+	unsigned char sg;
+	unsigned char sb;
+	unsigned char dr;
+	unsigned char dg;
+	unsigned char db;
 	unsigned char a;
         unsigned char *m = (unsigned char *) mask;
 	unsigned int *d = (unsigned int *) dest;
 	unsigned int *s = (unsigned int *) src;
+	rl = 8 - rl;
+	gl = 8 - gl;
+	bl = 8 - bl;
 	memcpyloop5();
 }
 
 static inline void s_memcpy1rgb (char *dest, unsigned int *rgb, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
-	int dr;
-	int dg;
-	int db;
+	unsigned char dr;
+	unsigned char dg;
+	unsigned char db;
 	unsigned char *d = (unsigned char *) dest;
 	unsigned int *s = (unsigned int *) rgb;
+	rl = 8 - rl;
+	gl = 8 - gl;
+	bl = 8 - bl;
 	memcpyloop7();
 }
 
 static inline void s_memcpy2rgb (char *dest, unsigned int *rgb, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
-	int dr;
-	int dg;
-	int db;
+	unsigned char dr;
+	unsigned char dg;
+	unsigned char db;
 	unsigned short int *d = (unsigned short int *) dest;
 	unsigned int *s = (unsigned int *) rgb;
+	rl = 8 - rl;
+	gl = 8 - gl;
+	bl = 8 - bl;
 	memcpyloop7();
 }
 
 static inline void s_memcpy4rgb (char *dest, unsigned int *rgb, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
-	int dr;
-	int dg;
-	int db;
+	unsigned char dr;
+	unsigned char dg;
+	unsigned char db;
 	unsigned int *d = (unsigned int *) dest;
 	unsigned int *s = (unsigned int *) rgb;
+	rl = 8 - rl;
+	gl = 8 - gl;
+	bl = 8 - bl;
 	memcpyloop7();
 }
 
 static inline void s_memcpy1rgba (char *dest, unsigned int *rgba, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
-	int sr;
-	int sg;
-	int sb;
-	int dr;
-	int dg;
-	int db;
 	unsigned char a;
+	unsigned char sr;
+	unsigned char sg;
+	unsigned char sb;
+	unsigned char dr;
+	unsigned char dg;
+	unsigned char db;
 	unsigned char *d = (unsigned char *) dest;
 	unsigned int *s = (unsigned int *) rgba;
+	rl = 8 - rl;
+	gl = 8 - gl;
+	bl = 8 - bl;
 	memcpyloop9();
 }
 
 static inline void s_memcpy2rgba (char *dest, unsigned int *rgba, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
-	int sr;
-	int sg;
-	int sb;
-	int dr;
-	int dg;
-	int db;
 	unsigned char a;
+	unsigned char sr;
+	unsigned char sg;
+	unsigned char sb;
+	unsigned char dr;
+	unsigned char dg;
+	unsigned char db;
 	unsigned short int *d = (unsigned short int *) dest;
 	unsigned int *s = (unsigned int *) rgba;
+	rl = 8 - rl;
+	gl = 8 - gl;
+	bl = 8 - bl;
 	memcpyloop9();
 }
 
 static inline void s_memcpy4rgba (char *dest, unsigned int *rgba, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
-	int sr;
-	int sg;
-	int sb;
-	int dr;
-	int dg;
-	int db;
 	unsigned char a;
+	unsigned char sr;
+	unsigned char sg;
+	unsigned char sb;
+	unsigned char dr;
+	unsigned char dg;
+	unsigned char db;
 	unsigned int *d = (unsigned int *) dest;
 	unsigned int *s = (unsigned int *) rgba;
+	rl = 8 - rl;
+	gl = 8 - gl;
+	bl = 8 - bl;
 	memcpyloop9();
 }
 
