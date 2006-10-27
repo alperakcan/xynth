@@ -141,9 +141,8 @@ typedef struct w_button_s {
 
 typedef enum {
 	TEXTBOX_WRAP    = 0x1,
-	TEXTBOX_NOWRAP  = 0x2,
-	TEXTBOX_VCENTER = 0x4,
-	TEXTBOX_HCENTER = 0x8
+	TEXTBOX_VCENTER = 0x2,
+	TEXTBOX_HCENTER = 0x4
 } TEXTBOX_PROPERTIES;
 
 typedef struct w_textbox_s {
