@@ -104,6 +104,13 @@ void w_window_atevent (s_window_t *window, s_event_t *event)
 	w_object_t *objectp;
 	w_window_t *windoww;
 	windoww = (w_window_t *) window->client->data;
+	if (event->type & (CONFIG_CHNGW | CONFIG_CHNGH)) {
+		window->surface->width = window->surface->buf->w;
+		window->surface->height = window->surface->buf->h;
+		s_free(window->surface->vbuf);
+		window->surface->vbuf = (unsigned char *) s_malloc(sizeof(char) * window->surface->bytesperpixel * window->surface->buf->w * window->surface->buf->h);
+		w_object_update(windoww->object, windoww->object->surface->win);
+	}
 	if (event->type & (MOUSE_EVENT | KEYBD_EVENT)) {
 		event->mouse->x -= window->surface->buf->x;
 		event->mouse->y -= window->surface->buf->y;
