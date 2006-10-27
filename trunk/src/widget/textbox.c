@@ -27,6 +27,9 @@ void w_textbox_draw (w_object_t *object)
 	w_textbox_t *textbox;
 	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
 	w_frame_draw(textbox->object);
+	if ((textbox->frame->style & FRAME_MSHAPE) == FRAME_NOFRAME) {
+		memset(textbox->object->surface->matrix, 0, textbox->object->surface->width * textbox->object->surface->height);
+	}
 	for (line = 0; !s_list_eol(textbox->lines, line); line++) {
 		s_font_t *font = (s_font_t *) s_list_get(textbox->lines, line);
 		w = MIN(textbox->object->content->w, font->img->w);
@@ -44,7 +47,6 @@ void w_textbox_draw (w_object_t *object)
 		}
 		s_image_get_mat(font->img);
 		if ((textbox->frame->style & FRAME_MSHAPE) == FRAME_NOFRAME) {
-			memset(textbox->object->surface->matrix, 0, textbox->object->surface->width * textbox->object->surface->height);
 			s_putmaskpart(textbox->object->surface->matrix, textbox->object->surface->width, textbox->object->surface->height,
 			              x, y + font->size - font->yMax, w, h, font->img->w, font->img->h,
 			              font->img->mat, 0, 0);
