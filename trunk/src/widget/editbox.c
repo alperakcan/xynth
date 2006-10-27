@@ -65,7 +65,7 @@ int w_editbox_init (w_window_t *window, w_editbox_t **editbox, w_object_t *paren
 	w_textbox_init(window, &((*editbox)->textbox), parent);
 	s_handler_init(&((*editbox)->handler_mouse));
 	s_handler_init(&((*editbox)->handler_keybd));
-	(*editbox)->textbox->properties = TEXTBOX_VCENTER | TEXTBOX_NOWRAP;
+	(*editbox)->textbox->properties = TEXTBOX_VCENTER;
 	(*editbox)->textbox->frame->style = FRAME_LINEEDITPANEL | FRAME_SUNKEN;
 	(*editbox)->object = (*editbox)->textbox->frame->object;
 	(*editbox)->object->data[OBJECT_EDITBOX] = *editbox;

@@ -180,14 +180,14 @@
 					<shape>FRAME_PANEL</shape>
 					<shadow>FRAME_PLAIN</shadow>
 				</style>
-				<properties>TEXTBOX_WRAP | TEXTBOX_HCENTER</properties>
+				<properties>TEXTBOX_HCENTER | TEXTBOX_VCENTER | TEXTBOX_WRAP</properties>
 				<move>
 					<x>5</x>
 					<y>340</y>
 					<w>490</w>
 					<h>30</h>
 				</move>
-				<string>this is a textbox! this is a textbox! this is a textbox! this is a textbox! this is a textbox! this is a textbox! yep it is multiline</string>
+				<string>this is a textbox! this is a textbox! this is a textbox! this is a textbox! this is a textbox! this is a textbox! yep it is multiline!</string>
 				<show>yes</show>
 			</object>
 			<object id="editbox" type="editbox">

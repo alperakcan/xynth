@@ -30,7 +30,7 @@ void w_textbox_draw (w_object_t *object)
 	for (line = 0; !s_list_eol(textbox->lines, line); line++) {
 		s_font_t *font = (s_font_t *) s_list_get(textbox->lines, line);
 		w = MIN(textbox->object->content->w, font->img->w);
-		h = MIN(textbox->object->content->h, font->height);
+		h = MIN(textbox->object->content->h, font->height * textbox->lines->nb_elt);
 		if (!(textbox->properties & TEXTBOX_HCENTER) || textbox->object->content->w == w) { x = 0;
 		} else { x = (textbox->object->content->w - w) / 2; }
 		if (!(textbox->properties & TEXTBOX_VCENTER) || textbox->object->content->h == h) { y = 0;
@@ -38,7 +38,7 @@ void w_textbox_draw (w_object_t *object)
 		x += textbox->object->content->x;
 		y += textbox->object->content->y;
 		y += font->lineskip * line;
-		if (textbox->properties & TEXTBOX_HCENTER) {
+		if (!(textbox->properties & TEXTBOX_HCENTER)) {
 			d = font->img->w - textbox->object->content->w;
 			if (d > 0) { x -= d; w += d; }
 		}
@@ -90,16 +90,7 @@ int w_textbox_set_str (w_object_t *object, char *str)
 		s_list_remove(textbox->lines, 0);
 		s_font_uninit(font);
 	}
-	if (textbox->properties & TEXTBOX_NOWRAP) {
-		s_font_t *font;
-		s_font_init(&font, "arial.ttf");
-		s_font_set_size(font, textbox->size);
-		s_font_set_rgb(font, (textbox->rgb >> 0x10) & 0xff, (textbox->rgb >> 0x8) & 0xff, textbox->rgb & 0xff);
-		s_font_set_str(font, str);
-		s_font_get_glyph(font);
-		s_list_add(textbox->lines, font, -1);
-		w_textbox_draw(object);
-	} else if (textbox->properties & TEXTBOX_WRAP) {
+	if (textbox->properties & TEXTBOX_WRAP) {
 		int ptrw;
 		int strw;
 		int limit;
@@ -159,6 +150,15 @@ int w_textbox_set_str (w_object_t *object, char *str)
 		s_free(strline);
 		s_free(ptrline);
 		w_textbox_draw(object);
+	} else {
+		s_font_t *font;
+		s_font_init(&font, "arial.ttf");
+		s_font_set_size(font, textbox->size);
+		s_font_set_rgb(font, (textbox->rgb >> 0x10) & 0xff, (textbox->rgb >> 0x8) & 0xff, textbox->rgb & 0xff);
+		s_font_set_str(font, str);
+		s_font_get_glyph(font);
+		s_list_add(textbox->lines, font, -1);
+		w_textbox_draw(object);
 	}
 	return 0;
 }
@@ -171,7 +171,6 @@ void w_textbox_geometry (w_object_t *object)
 int w_textbox_init (w_window_t *window, w_textbox_t **textbox, w_object_t *parent)
 {
 	(*textbox) = (w_textbox_t *) s_malloc(sizeof(w_textbox_t));
-	(*textbox)->properties = TEXTBOX_NOWRAP;
 
 	if (s_list_init(&((*textbox)->lines))) {
 		goto err0;
@@ -183,7 +182,7 @@ int w_textbox_init (w_window_t *window, w_textbox_t **textbox, w_object_t *paren
 	(*textbox)->str = NULL;
 	(*textbox)->size = 10;
 	(*textbox)->rgb = 0;
-	(*textbox)->properties = TEXTBOX_VCENTER | TEXTBOX_HCENTER | TEXTBOX_NOWRAP;
+	(*textbox)->properties = TEXTBOX_VCENTER | TEXTBOX_HCENTER;
 
 	(*textbox)->object = (*textbox)->frame->object;
 	(*textbox)->object->draw = w_textbox_draw;
