@@ -23,75 +23,81 @@ void w_textbox_draw (w_object_t *object)
 	int w;
 	int h;
 	int d;
+	int line;
 	w_textbox_t *textbox;
 	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
-	if (textbox->properties & TEXTBOX_NOWRAP) {
-		w = MIN(textbox->object->content->w, textbox->font->img->w);
-		h = MIN(textbox->object->content->h, textbox->font->height);
+	w_frame_draw(textbox->object);
+	for (line = 0; !s_list_eol(textbox->lines, line); line++) {
+		s_font_t *font = (s_font_t *) s_list_get(textbox->lines, line);
+		w = MIN(textbox->object->content->w, font->img->w);
+		h = MIN(textbox->object->content->h, font->height);
 		if (!(textbox->properties & TEXTBOX_HCENTER) || textbox->object->content->w == w) { x = 0;
 		} else { x = (textbox->object->content->w - w) / 2; }
 		if (!(textbox->properties & TEXTBOX_VCENTER) || textbox->object->content->h == h) { y = 0;
 		} else { y = (textbox->object->content->h - h) / 2; }
 		x += textbox->object->content->x;
 		y += textbox->object->content->y;
+		y += font->lineskip * line;
 		if (textbox->properties & TEXTBOX_HCENTER) {
-			d = textbox->font->img->w - textbox->object->content->w;
+			d = font->img->w - textbox->object->content->w;
 			if (d > 0) { x -= d; w += d; }
 		}
-		s_image_get_mat(textbox->font->img);
+		s_image_get_mat(font->img);
 		if ((textbox->frame->style & FRAME_MSHAPE) == FRAME_NOFRAME) {
 			memset(textbox->object->surface->matrix, 0, textbox->object->surface->width * textbox->object->surface->height);
 			s_putmaskpart(textbox->object->surface->matrix, textbox->object->surface->width, textbox->object->surface->height,
-			              x, y + textbox->font->size - textbox->font->yMax, w, h, textbox->font->img->w, textbox->font->img->h,
-			              textbox->font->img->mat, 0, 0);
-			s_putboxpartrgb(textbox->object->surface, x, y + textbox->font->size - textbox->font->yMax, w, h,
-			                textbox->font->img->w, textbox->font->img->h, textbox->font->img->rgba, 0, 0);
+			              x, y + font->size - font->yMax, w, h, font->img->w, font->img->h,
+			              font->img->mat, 0, 0);
+			s_putboxpartrgb(textbox->object->surface, x, y + font->size - font->yMax, w, h,
+			                font->img->w, font->img->h, font->img->rgba, 0, 0);
 		} else { 
-			w_frame_draw(textbox->object);
-			s_putboxpartrgba(textbox->object->surface, x, y + textbox->font->size - textbox->font->yMax, w, h,
-			                 textbox->font->img->w, textbox->font->img->h, textbox->font->img->rgba, 0, 0);		
-		}
-	} else if (textbox->properties & TEXTBOX_WRAP) {
-		int line;
-		w_frame_draw(textbox->object);
-		for (line = 0; !s_list_eol(textbox->lines, line); line++) {
-			s_font_t *font = (s_font_t *) s_list_get(textbox->lines, line);
-			w = MIN(textbox->object->content->w, font->img->w);
-			h = MIN(textbox->object->content->h, font->height);
-			if (!(textbox->properties & TEXTBOX_HCENTER) || textbox->object->content->w == w) { x = 0;
-			} else { x = (textbox->object->content->w - w) / 2; }
-			if (!(textbox->properties & TEXTBOX_VCENTER) || textbox->object->content->h == h) { y = 0;
-			} else { y = (textbox->object->content->h - h) / 2; }
-			x += textbox->object->content->x;
-			y += textbox->object->content->y;
-			y += 12 * line;
-			if (textbox->properties & TEXTBOX_HCENTER) {
-				d = font->img->w - textbox->object->content->w;
-				if (d > 0) { x -= d; w += d; }
-			}
-			s_image_get_mat(font->img);
-			if ((textbox->frame->style & FRAME_MSHAPE) == FRAME_NOFRAME) {
-				memset(textbox->object->surface->matrix, 0, textbox->object->surface->width * textbox->object->surface->height);
-				s_putmaskpart(textbox->object->surface->matrix, textbox->object->surface->width, textbox->object->surface->height,
-				              x, y + font->size - font->yMax, w, h, font->img->w, font->img->h,
-				              font->img->mat, 0, 0);
-				s_putboxpartrgb(textbox->object->surface, x, y + font->size - font->yMax, w, h,
-				                font->img->w, font->img->h, font->img->rgba, 0, 0);
-			} else { 
-				s_putboxpartrgba(textbox->object->surface, x, y + font->size - font->yMax, w, h,
-				                 font->img->w, font->img->h, font->img->rgba, 0, 0);		
-			}
+			s_putboxpartrgba(textbox->object->surface, x, y + font->size - font->yMax, w, h,
+			                 font->img->w, font->img->h, font->img->rgba, 0, 0);		
 		}
 	}
+}
+
+int w_textbox_set_rgb (w_object_t *object, int r, int g, int b)
+{
+	w_textbox_t *textbox;
+	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
+	textbox->rgb = ((r & 0xff) << 0x10) | ((g & 0xff) << 0x8) | (b & 0xff);
+	w_textbox_set_str(object, textbox->str);
+	return 0;
+}
+
+int w_textbox_set_size (w_object_t *object, int size)
+{
+	w_textbox_t *textbox;
+	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
+	textbox->size = size;
+	w_textbox_set_str(object, textbox->str);
+	return 0;
 }
 
 int w_textbox_set_str (w_object_t *object, char *str)
 {
 	w_textbox_t *textbox;
 	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
+	s_free(textbox->str);
+	if (str == NULL) {
+		textbox->str = strdup("");
+	} else {
+		textbox->str = strdup(str);
+	}
+	while (!s_list_eol(textbox->lines, 0)) {
+		s_font_t *font = (s_font_t *) s_list_get(textbox->lines, 0);
+		s_list_remove(textbox->lines, 0);
+		s_font_uninit(font);
+	}
 	if (textbox->properties & TEXTBOX_NOWRAP) {
-		s_font_set_str(textbox->font, str);
-		s_font_get_glyph(textbox->font);
+		s_font_t *font;
+		s_font_init(&font, "arial.ttf");
+		s_font_set_size(font, textbox->size);
+		s_font_set_rgb(font, (textbox->rgb >> 0x10) & 0xff, (textbox->rgb >> 0x8) & 0xff, textbox->rgb & 0xff);
+		s_font_set_str(font, str);
+		s_font_get_glyph(font);
+		s_list_add(textbox->lines, font, -1);
 		w_textbox_draw(object);
 	} else if (textbox->properties & TEXTBOX_WRAP) {
 		int ptrw;
@@ -102,19 +108,14 @@ int w_textbox_set_str (w_object_t *object, char *str)
 		char *strline;
 		char *ptrline;
 		s_font_t *font;
-		while (!s_list_eol(textbox->lines, 0)) {
-			font = (s_font_t *) s_list_get(textbox->lines, 0);
-			s_list_remove(textbox->lines, 0);
-			s_font_uninit(font);
-		}
 		strline = (char *) s_malloc(sizeof(char *) * (strlen(str) + 1));
 		ptrline = (char *) s_malloc(sizeof(char *) * (strlen(str) + 1));
 		memset(ptrline, 0, strlen(str) + 1);
 		memset(strline, 0, strlen(str) + 1);
 		for (tmp = str; tmp < str + strlen(str); tmp += (chars - 1)) {
 			s_font_init(&font, "arial.ttf");
-			s_font_set_size(font, 10);
-			s_font_set_rgb(font, 0, 0, 0);
+			s_font_set_size(font, textbox->size);
+			s_font_set_rgb(font, (textbox->rgb >> 0x10) & 0xff, (textbox->rgb >> 0x8) & 0xff, textbox->rgb & 0xff);
 			for (chars = 0, limit = 0; limit == 0 && chars <= strlen(tmp);) {
 				snprintf(ptrline, chars, "%s", tmp);
 				snprintf(strline, chars + 1, "%s", tmp);
@@ -153,14 +154,16 @@ int w_textbox_init (w_window_t *window, w_textbox_t **textbox, w_object_t *paren
 	(*textbox) = (w_textbox_t *) s_malloc(sizeof(w_textbox_t));
 	(*textbox)->properties = TEXTBOX_NOWRAP;
 
-	s_list_init(&((*textbox)->lines));
-	if (s_font_init(&((*textbox)->font), "arial.ttf")) {
+	if (s_list_init(&((*textbox)->lines))) {
 		goto err0;
 	}
 	if (w_frame_init(window, &((*textbox)->frame), FRAME_PANEL | FRAME_RAISED, parent)) {
 		goto err1;
 	}
 	
+	(*textbox)->str = NULL;
+	(*textbox)->size = 10;
+	(*textbox)->rgb = 0;
 	(*textbox)->properties = TEXTBOX_VCENTER | TEXTBOX_HCENTER | TEXTBOX_NOWRAP;
 
 	(*textbox)->object = (*textbox)->frame->object;
@@ -169,12 +172,8 @@ int w_textbox_init (w_window_t *window, w_textbox_t **textbox, w_object_t *paren
 	(*textbox)->object->destroy = w_textbox_uninit;
 	(*textbox)->object->data[OBJECT_TEXTBOX] = *textbox;
 
-	s_font_set_size((*textbox)->font, 10);
-	s_font_set_rgb((*textbox)->font, 0, 0, 0);
-	w_textbox_set_str((*textbox)->object, "");
-
 	return 0;
-err1:	s_font_uninit((*textbox)->font);
+err1:	s_list_uninit((*textbox)->lines);
 err0:	return -1;
 }
 
@@ -187,8 +186,8 @@ void w_textbox_uninit (w_object_t *object)
 		s_list_remove(textbox->lines, 0);
 		s_font_uninit(font);
 	}
+	s_free(textbox->str);
 	s_list_uninit(textbox->lines);
 	w_frame_uninit(textbox->object);
-	s_font_uninit(textbox->font);
 	s_free(textbox);
 }

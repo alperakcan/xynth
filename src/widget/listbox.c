@@ -44,7 +44,7 @@ void w_listbox_geometry(w_object_t *object)
 			textbox->frame->object->surface->width * textbox->frame->object->surface->height);
 		if(pos!=listbox->scrollbar->activeitem)
 		{
-			s_font_set_rgb(textbox->font, 255, 255, 255);
+			w_textbox_set_rgb(textbox->object, 255, 255, 255);
 			textbox->frame->style = FRAME_PLAIN;
 		}
 		else

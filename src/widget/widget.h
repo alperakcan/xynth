@@ -149,8 +149,10 @@ typedef enum {
 typedef struct w_textbox_s {
 	w_object_t *object;
 	w_frame_t *frame;
-	s_font_t *font;
 	s_list_t *lines;
+	char *str;
+	unsigned int size;
+	unsigned int rgb;
 	TEXTBOX_PROPERTIES properties;
 } w_textbox_t;
 
@@ -317,6 +319,8 @@ void w_object_uninit (w_object_t *object);
 
 /* textbox.c */
 void w_textbox_draw (w_object_t *object);
+int w_textbox_set_rgb (w_object_t *object, int r, int g, int b);
+int w_textbox_set_size (w_object_t *object, int size);
 int w_textbox_set_str (w_object_t *object, char *str);
 void w_textbox_geometry (w_object_t *object);
 int w_textbox_init (w_window_t *window, w_textbox_t **textbox, w_object_t *parent);

@@ -25,7 +25,7 @@ void w_editbox_event (w_object_t *object, s_event_t *event)
 	if (event->type & KEYBD_EVENT) {
 		if (event->type & KEYBD_PRESSED) {
 			if (event->keybd->keycode == S_KEYCODE_DELETE) {
-					str = strdup(editbox->textbox->font->str);
+					str = strdup(editbox->textbox->str);
 					if (strlen(str) > 0) {
 						*(str + strlen(str) - 1) = '\0';
 					}
@@ -34,7 +34,7 @@ void w_editbox_event (w_object_t *object, s_event_t *event)
 					s_free(str);
 			} else {
 				if (event->keybd->ascii) {
-					str = strdup(editbox->textbox->font->str);
+					str = strdup(editbox->textbox->str);
 					ptr = (char *) s_malloc(sizeof(char *) * strlen(str) + 1 + 1);
 					sprintf(ptr, "%s%c", str, event->keybd->ascii);
 					w_textbox_set_str(editbox->object, ptr);
