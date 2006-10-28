@@ -215,7 +215,7 @@ static inline void s_memcpy1om (unsigned char *m, int id, char *dest, char *src,
 {
 	unsigned char *d = (unsigned char *) dest;
 	unsigned char *s = (unsigned char *) src;
-        unsigned char *m_ = (unsigned char *) mask;
+	unsigned char *m_ = (unsigned char *) mask;
 	memcpyloop2();
 }
 
@@ -223,7 +223,7 @@ static inline void s_memcpy2om (unsigned char *m, int id, char *dest, char *src,
 {
 	unsigned short int *d = (unsigned short int *) dest;
 	unsigned short int *s = (unsigned short int *) src;
-        unsigned char *m_ = (unsigned char *) mask;
+	unsigned char *m_ = (unsigned char *) mask;
 	memcpyloop2();
 }
 
@@ -231,7 +231,7 @@ static inline void s_memcpy4om (unsigned char *m, int id, char *dest, char *src,
 {
 	unsigned int *d = (unsigned int *) dest;
 	unsigned int *s = (unsigned int *) src;
-        unsigned char *m_ = (unsigned char *) mask;
+	unsigned char *m_ = (unsigned char *) mask;
 	memcpyloop2();
 }
 
@@ -246,7 +246,7 @@ static inline void s_memcpy1oa (unsigned char *m, int id, char *dest, char *src,
 	unsigned char db;
 	unsigned char *d = (unsigned char *) dest;
 	unsigned char *s = (unsigned char *) src;
-        unsigned char *m_ = (unsigned char *) mask;
+	unsigned char *m_ = (unsigned char *) mask;
 	rl = 8 - rl;
 	gl = 8 - gl;
 	bl = 8 - bl;
@@ -264,7 +264,7 @@ static inline void s_memcpy2oa (unsigned char *m, int id, char *dest, char *src,
 	unsigned char db;
 	unsigned short int *d = (unsigned short int *) dest;
 	unsigned short int *s = (unsigned short int *) src;
-        unsigned char *m_ = (unsigned char *) mask;
+	unsigned char *m_ = (unsigned char *) mask;
 	rl = 8 - rl;
 	gl = 8 - gl;
 	bl = 8 - bl;
@@ -282,7 +282,7 @@ static inline void s_memcpy4oa (unsigned char *m, int id, char *dest, char *src,
 	unsigned char db;
 	unsigned int *d = (unsigned int *) dest;
 	unsigned int *s = (unsigned int *) src;
-        unsigned char *m_ = (unsigned char *) mask;
+	unsigned char *m_ = (unsigned char *) mask;
 	rl = 8 - rl;
 	gl = 8 - gl;
 	bl = 8 - bl;
@@ -402,7 +402,7 @@ static inline void s_memcpy4 (char *dest, char *src, int n)
 
 static inline void s_memcpy1m (char *dest, char *src, unsigned char *mask, int n)
 {
-        unsigned char *m = (unsigned char *) mask;
+	unsigned char *m = (unsigned char *) mask;
 	unsigned char *d = (unsigned char *) dest;
 	unsigned char *s = (unsigned char *) src;
 	memcpyloop4();
@@ -410,7 +410,7 @@ static inline void s_memcpy1m (char *dest, char *src, unsigned char *mask, int n
 
 static inline void s_memcpy2m (char *dest, char *src, unsigned char *mask, int n)
 {
-        unsigned char *m = (unsigned char *) mask;
+	unsigned char *m = (unsigned char *) mask;
 	unsigned short int *d = (unsigned short int *) dest;
 	unsigned short int *s = (unsigned short int *) src;
 	memcpyloop4();
@@ -418,7 +418,7 @@ static inline void s_memcpy2m (char *dest, char *src, unsigned char *mask, int n
 
 static inline void s_memcpy4m (char *dest, char *src, unsigned char *mask, int n)
 {
-        unsigned char *m = (unsigned char *) mask;
+	unsigned char *m = (unsigned char *) mask;
 	unsigned int *d = (unsigned int *) dest;
 	unsigned int *s = (unsigned int *) src;
 	memcpyloop4();
@@ -433,7 +433,7 @@ static inline void s_memcpy1a (char *dest, char *src, unsigned char *mask, int n
 	unsigned char dg;
 	unsigned char db;
 	unsigned char a;
-        unsigned char *m = (unsigned char *) mask;
+	unsigned char *m = (unsigned char *) mask;
 	unsigned char *d = (unsigned char *) dest;
 	unsigned char *s = (unsigned char *) src;
 	rl = 8 - rl;
@@ -451,7 +451,7 @@ static inline void s_memcpy2a (char *dest, char *src, unsigned char *mask, int n
 	unsigned char dg;
 	unsigned char db;
 	unsigned char a;
-        unsigned char *m = (unsigned char *) mask;
+	unsigned char *m = (unsigned char *) mask;
 	unsigned short int *d = (unsigned short int *) dest;
 	unsigned short int *s = (unsigned short int *) src;
 	rl = 8 - rl;
@@ -469,7 +469,7 @@ static inline void s_memcpy4a (char *dest, char *src, unsigned char *mask, int n
 	unsigned char dg;
 	unsigned char db;
 	unsigned char a;
-        unsigned char *m = (unsigned char *) mask;
+	unsigned char *m = (unsigned char *) mask;
 	unsigned int *d = (unsigned int *) dest;
 	unsigned int *s = (unsigned int *) src;
 	rl = 8 - rl;
@@ -570,42 +570,42 @@ static inline void s_memcpy4rgba (char *dest, unsigned int *rgba, int n, int rl,
 
 static inline void s_memset1o (unsigned char *m, int id, char *dest, int c, int n)
 {
-        unsigned char dc = (unsigned char) c;
+	unsigned char dc = (unsigned char) c;
 	unsigned char *d = (unsigned char *) dest;
 	memsetloop1();
 }
 
 static inline void s_memset2o (unsigned char *m, int id, char *dest, int c, int n)
 {
-        unsigned short int dc = (unsigned short int) c;
+	unsigned short int dc = (unsigned short int) c;
 	unsigned short int *d = (unsigned short int *) dest;
 	memsetloop1();
 }
 
 static inline void s_memset4o (unsigned char *m, int id, char *dest, int c, int n)
 {
-        unsigned int dc = (unsigned int) c;
+	unsigned int dc = (unsigned int) c;
 	unsigned int *d = (unsigned int *) dest;
 	memsetloop1();
 }
 
 static inline void s_memset1 (char *dest, int c, int n)
 {
-        unsigned char dc = (unsigned char) c;
+	unsigned char dc = (unsigned char) c;
 	unsigned char *d = (unsigned char *) dest;
 	memsetloop3();
 }
 
 static inline void s_memset2 (char *dest, int c, int n)
 {
-        unsigned short int dc = (unsigned short int) c;
+	unsigned short int dc = (unsigned short int) c;
 	unsigned short int *d = (unsigned short int *) dest;
 	memsetloop3();
 }
 
 static inline void s_memset4 (char *dest, int c, int n)
 {
-        unsigned int dc = (unsigned int) c;
+	unsigned int dc = (unsigned int) c;
 	unsigned int *d = (unsigned int *) dest;
 	memsetloop3();
 }
