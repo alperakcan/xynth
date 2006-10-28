@@ -57,16 +57,20 @@ extern "C" {
 	while (n--) {\
 		a = ~(*m & 0xff);\
 		if (a != 0xff) {\
-			dr = (*d >> ro) << rl;\
-			dg = (*d >> go) << gl;\
-			db = (*d >> bo) << bl;\
-			sr = (*s >> ro) << rl;\
-			sg = (*s >> go) << gl;\
-			sb = (*s >> bo) << bl;\
-			dr  = (a * (dr - sr) >> 8) + sr;\
-			dg  = (a * (dg - sg) >> 8) + sg;\
-			db  = (a * (db - sb) >> 8) + sb;\
-			*d = ((dr >> rl) << ro) | ((dg >> gl) << go) | ((db >> bl) << bo);\
+			if (a == 0) {\
+				*d = *s;\
+			} else {\
+				dr = (*d >> ro) << rl;\
+				dg = (*d >> go) << gl;\
+				db = (*d >> bo) << bl;\
+				sr = (*s >> ro) << rl;\
+				sg = (*s >> go) << gl;\
+				sb = (*s >> bo) << bl;\
+				dr  = (a * (dr - sr) >> 8) + sr;\
+				dg  = (a * (dg - sg) >> 8) + sg;\
+				db  = (a * (db - sb) >> 8) + sb;\
+				*d = ((dr >> rl) << ro) | ((dg >> gl) << go) | ((db >> bl) << bo);\
+			}\
 		}\
 		d++;\
 		s++;\
@@ -77,16 +81,20 @@ extern "C" {
 	while (n--) {\
 		a = ~(*m_ & 0xff);\
 		if ((*m == id) && (a != 0xff)) {\
-			dr = (*d >> ro) << rl;\
-			dg = (*d >> go) << gl;\
-			db = (*d >> bo) << bl;\
-			sr = (*s >> ro) << rl;\
-			sg = (*s >> go) << gl;\
-			sb = (*s >> bo) << bl;\
-			dr  = (a * (dr - sr) >> 8) + sr;\
-			dg  = (a * (dg - sg) >> 8) + sg;\
-			db  = (a * (db - sb) >> 8) + sb;\
-			*d = ((dr >> rl) << ro) | ((dg >> gl) << go) | ((db >> bl) << bo);\
+			if (a == 0) {\
+				*d = *s;\
+			} else {\
+				dr = (*d >> ro) << rl;\
+				dg = (*d >> go) << gl;\
+				db = (*d >> bo) << bl;\
+				sr = (*s >> ro) << rl;\
+				sg = (*s >> go) << gl;\
+				sb = (*s >> bo) << bl;\
+				dr  = (a * (dr - sr) >> 8) + sr;\
+				dg  = (a * (dg - sg) >> 8) + sg;\
+				db  = (a * (db - sb) >> 8) + sb;\
+				*d = ((dr >> rl) << ro) | ((dg >> gl) << go) | ((db >> bl) << bo);\
+			}\
 		}\
 		d++;\
 		s++;\
