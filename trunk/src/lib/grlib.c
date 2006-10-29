@@ -441,12 +441,12 @@ void s_getsurfacevirtual (s_surface_t *s, int w, int h, int bitspp, char *vbuf)
 			s->blueoffset = 0;
 			s->greenoffset = 8;
 			s->redoffset = 16;
-			s->bluelength = 8;
 #if defined(VIDEO_PSPDEV)
 			s->blueoffset = 16;
 			s->greenoffset = 8;
 			s->redoffset = 0;
 #endif
+			s->bluelength = 8;
 			s->greenlength = 8;
 			s->redlength = 8;
 			break;
