@@ -396,6 +396,7 @@ void node_generate_code_image (node_t *node)
 		tmp = node_get_node(node, cntstr);
 		tmp->dontparse = 1;
 	}
+	free(cntstr);
 	fprintf(g_source, ");\n");
 	if ((tmp = node_get_node(node, "style")) != NULL) { tmp->dontparse = 1; }
 	if ((tmp = node_get_node(node, "style/shape")) != NULL) { tmp->dontparse = 1; }
