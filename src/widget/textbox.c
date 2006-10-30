@@ -79,14 +79,16 @@ int w_textbox_set_size (w_object_t *object, int size)
 
 int w_textbox_set_str (w_object_t *object, char *str)
 {
+	char *tbstr;
 	w_textbox_t *textbox;
 	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
-	s_free(textbox->str);
 	if (str == NULL) {
-		textbox->str = strdup("");
+		tbstr = strdup("");
 	} else {
-		textbox->str = strdup(str);
+		tbstr = strdup(str);
 	}
+	s_free(textbox->str);
+	textbox->str = tbstr;
 	while (!s_list_eol(textbox->lines, 0)) {
 		s_font_t *font = (s_font_t *) s_list_get(textbox->lines, 0);
 		s_list_remove(textbox->lines, 0);
@@ -157,7 +159,7 @@ int w_textbox_set_str (w_object_t *object, char *str)
 		s_font_init(&font, "arial.ttf");
 		s_font_set_size(font, textbox->size);
 		s_font_set_rgb(font, (textbox->rgb >> 0x10) & 0xff, (textbox->rgb >> 0x8) & 0xff, textbox->rgb & 0xff);
-		s_font_set_str(font, str);
+		s_font_set_str(font, textbox->str);
 		s_font_get_glyph(font);
 		s_list_add(textbox->lines, font, -1);
 		w_textbox_draw(object);
