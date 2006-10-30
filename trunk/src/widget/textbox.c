@@ -79,16 +79,15 @@ int w_textbox_set_size (w_object_t *object, int size)
 
 int w_textbox_set_str (w_object_t *object, char *str)
 {
-	char *tbstr;
 	w_textbox_t *textbox;
 	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
 	if (str == NULL) {
-		tbstr = strdup("");
+		str = strdup("");
 	} else {
-		tbstr = strdup(str);
+		str = strdup(str);
 	}
 	s_free(textbox->str);
-	textbox->str = tbstr;
+	textbox->str = str;
 	while (!s_list_eol(textbox->lines, 0)) {
 		s_font_t *font = (s_font_t *) s_list_get(textbox->lines, 0);
 		s_list_remove(textbox->lines, 0);
