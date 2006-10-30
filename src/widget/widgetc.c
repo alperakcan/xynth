@@ -374,9 +374,34 @@ void node_generate_code_pressed (node_t *node)
 	fprintf(g_source, "%s->pressed = %s;\n", node->parent->id, node->value);
 }
 
-void node_generate_code_properties (node_t *node)
+void node_generate_code_image (node_t *node)
 {
-	fprintf(g_source, "%s->properties = %s;\n", node->parent->id, node->value);
+	int i;
+	int count;
+	char *shape;
+	char *shadow;
+	char *rotate;
+	char *cntstr;
+	node_t *tmp;
+	shape = node_get_value(node, "style/shape");
+	shadow = node_get_value(node, "style/shadow");
+	rotate = node_get_value(node, "rotate");
+	count = atoi(node_get_value(node, "count"));
+	fprintf(g_source, "w_frame_set_image(%s->object, %s | %s, %s, %d", node_get_parent(node, "object")->id, (shape) ? shape : "0", (shadow) ? shadow : "0", (rotate) ? rotate : "0", count);
+	printf("count: %s\n", node_get_value(node, "count"));
+	cntstr = (char *) malloc(sizeof(char *) * 255);
+	for (i = 0; i < count; i++) {
+		sprintf(cntstr, "image%d", i);
+		fprintf(g_source, ", \"%s\"", node_get_value(node, cntstr));
+		tmp = node_get_node(node, cntstr);
+		tmp->dontparse = 1;
+	}
+	fprintf(g_source, ");\n");
+	if ((tmp = node_get_node(node, "style")) != NULL) { tmp->dontparse = 1; }
+	if ((tmp = node_get_node(node, "style/shape")) != NULL) { tmp->dontparse = 1; }
+	if ((tmp = node_get_node(node, "style/shadow")) != NULL) { tmp->dontparse = 1; }
+	if ((tmp = node_get_node(node, "count")) != NULL) { tmp->dontparse = 1; }
+	if ((tmp = node_get_node(node, "rotate")) != NULL) { tmp->dontparse = 1; }
 }
 
 void node_generate_code_object (node_t *node)
@@ -388,6 +413,21 @@ void node_generate_code_object (node_t *node)
 		fprintf(g_source, "w_button_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
 	} else if (strcmp(node->type, "textbox") == 0) {
 		fprintf(g_source, "w_textbox_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
+		if ((tmp = node_get_node(node, "properties")) != NULL) {
+			fprintf(g_source, "%s->properties = %s;\n", tmp->parent->id, tmp->value);
+			tmp->dontparse = 1;
+		}
+		if ((tmp = node_get_node(node, "size")) != NULL) {
+			fprintf(g_source, "w_textbox_set_size(%s->object, %s);\n", tmp->parent->id, tmp->value);
+			tmp->dontparse = 1;
+		}
+		if ((tmp = node_get_node(node, "color")) != NULL) {
+			fprintf(g_source, "w_textbox_set_rgb(%s->object, %s, %s, %s);\n", tmp->parent->id, node_get_value(tmp, "red"), node_get_value(tmp, "green"), node_get_value(tmp, "blue"));
+			tmp->dontparse = 1;
+			if ((tmp = node_get_node(node, "color/red")) != NULL) { tmp->dontparse = 1; }
+			if ((tmp = node_get_node(node, "color/green")) != NULL) { tmp->dontparse = 1; }
+			if ((tmp = node_get_node(node, "color/blue")) != NULL) { tmp->dontparse = 1; }
+		}
 	} else if (strcmp(node->type, "checkbox") == 0) {
 		fprintf(g_source, "w_checkbox_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
 	} else if (strcmp(node->type, "editbox") == 0) {
@@ -408,9 +448,9 @@ void node_generate_code_object (node_t *node)
 		node_generate_code_draw(tmp);
 		tmp->dontparse = 1;
 	}
-	tmp = node_get_node(node, "properties");
+	tmp = node_get_node(node, "image");
 	if (tmp) {
-		node_generate_code_properties(tmp);
+		node_generate_code_image(tmp);
 		tmp->dontparse = 1;
 	}
 }
@@ -442,6 +482,8 @@ void node_generate_code (node_t *node)
 		node_generate_code_draw(node);
 	} else if (strcmp(node->name, "pressed") == 0) {
 		node_generate_code_pressed(node);
+	} else if (strcmp(node->name, "image") == 0) {
+		node_generate_code_image(node);
 	}
 	g_depth++;
 	p = 0;
@@ -701,7 +743,7 @@ usage:			case 'h':
 	
 	XML_ParserFree(p);
 
-//	node_parse(g_node);
+	node_parse(g_node);
 	node_generate(g_node);
 
 	node_uninit(g_node);
