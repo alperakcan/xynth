@@ -90,13 +90,14 @@ int w_frame_set_image (w_object_t *object, unsigned int style, unsigned int rota
 void w_frame_draw_image (w_object_t *object, w_frame_image_t *fimg)
 {
 	int i;
-	char *name;
-	s_image_t *img;
 	switch (fimg->names->nb_elt) {
 		case 1:
+		{
+			s_image_t *img;
 #if defined(SPEED_OPTIMIZED)
 			img = (s_image_t *) s_list_get(fimg->images, 0);
 #else
+			char *name;
 			name = (char *) s_list_get(fimg->names, 0);
 			s_image_init(&img);
 			s_image_img(name, img);
@@ -108,45 +109,66 @@ void w_frame_draw_image (w_object_t *object, w_frame_image_t *fimg)
 #if defined(SPEED_OPTIMIZED)
 #else
 			s_image_uninit(img);
-#endif	
+#endif
 			break;	
+		}
 		case 3:
+		{
+			s_image_t *imgs[3];
+#if defined(SPEED_OPTIMIZED)
+			imgs[0] = (s_image_t *) s_list_get(fimg->images, 0);
+			imgs[1] = (s_image_t *) s_list_get(fimg->images, 1);
+			imgs[2] = (s_image_t *) s_list_get(fimg->images, 2);
+#else
+			char *name[3];
+			name[0] = (char *) s_list_get(fimg->names, 0);
+			name[1] = (char *) s_list_get(fimg->names, 1);
+			name[2] = (char *) s_list_get(fimg->names, 2);
+			s_image_init(&imgs[0]);
+			s_image_img(name[0], imgs[0]);
+			s_image_get_mat(imgs[0]);
+			s_image_init(&imgs[1]);
+			s_image_img(name[1], imgs[1]);
+			s_image_get_mat(imgs[1]);
+			s_image_init(&imgs[2]);
+			s_image_img(name[2], imgs[2]);
+			s_image_get_mat(imgs[2]);
+#endif
 			if (fimg->rotation == FRAME_IMAGE_VERTICAL) {
-				img = (s_image_t *) s_list_get(fimg->images, 0);
 				s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
-				              0, 0, img->w, img->h, img->w, img->h, img->mat, 0, 0);
-				s_putboxrgb(object->surface, 0, 0, img->w, img->h, img->rgba);
-				i = img->h;
-				img = (s_image_t *) s_list_get(fimg->images, 1);
-				for (; i < object->surface->height - ((s_image_t *) s_list_get(fimg->images, 2))->h; i++) {
+				              0, 0, imgs[0]->w, imgs[0]->h, imgs[0]->w, imgs[0]->h, imgs[0]->mat, 0, 0);
+				s_putboxrgb(object->surface, 0, 0, imgs[0]->w, imgs[0]->h, imgs[0]->rgba);
+				for (i = imgs[0]->h; i < object->surface->height - imgs[2]->h; i++) {
 					s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
-					              0, i, img->w, img->h, img->w, img->h, img->mat, 0, 0);
-					s_putboxrgb(object->surface, 0, i, img->w, img->h, img->rgba);
+					              0, i, imgs[1]->w, imgs[1]->h, imgs[1]->w, imgs[1]->h, imgs[1]->mat, 0, 0);
+					s_putboxrgb(object->surface, 0, i, imgs[1]->w, imgs[1]->h, imgs[1]->rgba);
 				}
-				img = (s_image_t *) s_list_get(fimg->images, 2);
 				s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
-				              0, object->surface->height - img->h, img->w, img->h, img->w, img->h,
-				              img->mat, 0, 0);
-				s_putboxrgb(object->surface, 0, object->surface->height - img->h, img->w, img->h, img->rgba);
+				              0, object->surface->height - imgs[2]->h, imgs[2]->w, imgs[2]->h, imgs[2]->w, imgs[2]->h,
+				              imgs[2]->mat, 0, 0);
+				s_putboxrgb(object->surface, 0, object->surface->height - imgs[2]->h, imgs[2]->w, imgs[2]->h, imgs[2]->rgba);
 			} else if (fimg->rotation == FRAME_IMAGE_HORIZONTAL) {
-				img = (s_image_t *) s_list_get(fimg->images, 0);
 				s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
-				              0, 0, img->w, img->h, img->w, img->h, img->mat, 0, 0);
-				s_putboxrgb(object->surface, 0, 0, img->w, img->h, img->rgba);
-				i = img->w;
-				img = (s_image_t *) s_list_get(fimg->images, 1);
-				for (; i < object->surface->width - ((s_image_t *) s_list_get(fimg->images, 2))->w; i++) {
+				              0, 0, imgs[0]->w, imgs[0]->h, imgs[0]->w, imgs[0]->h, imgs[0]->mat, 0, 0);
+				s_putboxrgb(object->surface, 0, 0, imgs[0]->w, imgs[0]->h, imgs[0]->rgba);
+				for (i = imgs[0]->w; i < object->surface->width - imgs[2]->w; i++) {
 					s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
-					              i, 0, img->w, img->h, img->w, img->h, img->mat, 0, 0);
-					s_putboxrgb(object->surface, i, 0, img->w, img->h, img->rgba);
+					              i, 0, imgs[1]->w, imgs[1]->h, imgs[1]->w, imgs[1]->h, imgs[1]->mat, 0, 0);
+					s_putboxrgb(object->surface, i, 0, imgs[1]->w, imgs[1]->h, imgs[1]->rgba);
 				}
-				img = (s_image_t *) s_list_get(fimg->images, 2);
 				s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
-				              object->surface->width - img->w, 0, img->w, img->h, img->w, img->h,
-				              img->mat, 0, 0);
-				s_putboxrgb(object->surface, object->surface->width - img->w, 0, img->w, img->h, img->rgba);
+				              object->surface->width - imgs[2]->w, 0, imgs[2]->w, imgs[2]->h, imgs[2]->w, imgs[2]->h,
+				              imgs[2]->mat, 0, 0);
+				s_putboxrgb(object->surface, object->surface->width - imgs[2]->w, 0, imgs[2]->w, imgs[2]->h, imgs[2]->rgba);
 			}
+#if defined(SPEED_OPTIMIZED)
+#else
+			s_image_uninit(imgs[0]);
+			s_image_uninit(imgs[1]);
+			s_image_uninit(imgs[2]);
+#endif
 			break;
+		}
 	}				
 }
 
