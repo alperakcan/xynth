@@ -375,6 +375,11 @@ void node_generate_code_pressed (node_t *node)
 	fprintf(g_source, "%s->pressed = %s;\n", node->parent->id, node->value);
 }
 
+void node_generate_code_changed (node_t *node)
+{
+	fprintf(g_source, "%s->changed = %s;\n", node->parent->id, node->value);
+}
+
 void node_generate_code_image (node_t *node, char *to)
 {
 	int i;
@@ -450,6 +455,10 @@ void node_generate_code_object (node_t *node)
 			char str[255];
 			sprintf(str, "%s->box", node->id);
 			node_generate_code_image(tmp, str);
+			tmp->dontparse = 1;
+		}
+		if ((tmp = node_get_node(node, "changed")) != NULL) {
+			node_generate_code_changed(tmp);
 			tmp->dontparse = 1;
 		}
 	} else if (strcmp(node->type, "editbox") == 0) {
@@ -550,6 +559,8 @@ void node_generate_function (node_t *node)
 		fprintf(g_header, "void %s (w_object_t *object);\n", node->value);
 	} else if (strcmp(node->name, "pressed") == 0) {
 		fprintf(g_header, "void %s (w_object_t *object, int button);\n", node->value);
+	} else if (strcmp(node->name, "changed") == 0) {
+		fprintf(g_header, "void %s (w_object_t *object, int state);\n", node->value);
 	}
 	g_depth++;
 	p = 0;
