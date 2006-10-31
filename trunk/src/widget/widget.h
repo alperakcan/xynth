@@ -118,6 +118,7 @@ typedef struct w_frame_image_s {
 	unsigned int style;
 	unsigned int rotation;
 	s_list_t *images;
+	s_list_t *names;
 } w_frame_image_t;
 
 typedef struct w_frame_s {

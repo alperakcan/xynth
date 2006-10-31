@@ -18,16 +18,20 @@
 #include "../lib/xynth_.h"
 #include "widget.h"
 
+#undef SPEED_OPTIMIZED 
+
 int w_frame_image_init (w_frame_image_t **fimg)
 {
 	*fimg = s_malloc(sizeof(w_frame_image_t));
 	memset(*fimg, 0, sizeof(w_frame_image_t));
 	s_list_init(&((*fimg)->images));
+	s_list_init(&((*fimg)->names));
 	return 0;
 }
 
 int w_frame_image_uninit (w_frame_image_t *fimg)
 {
+	char *name;
 	s_image_t *img;
 	while (!s_list_eol(fimg->images, 0)) {
 		img = (s_image_t *) s_list_get(fimg->images, 0);
@@ -35,6 +39,12 @@ int w_frame_image_uninit (w_frame_image_t *fimg)
 		s_image_uninit(img);
 	}
 	s_list_uninit(fimg->images);
+	while (!s_list_eol(fimg->names, 0)) {
+		name = (char *) s_list_get(fimg->names, 0);
+		s_list_remove(fimg->names, 0);
+		s_free(name);
+	}
+	s_list_uninit(fimg->names);
 	s_free(fimg);
 	return 0;
 }
@@ -44,7 +54,9 @@ int w_frame_set_image (w_object_t *object, unsigned int style, unsigned int rota
 	int pos;
 	char *file;
 	va_list ap;
+#if defined(SPEED_OPTIMIZED)
 	s_image_t *img;
+#endif
         w_frame_t *frame;
 	w_frame_image_t *fimg;
         frame = (w_frame_t *) object->data[OBJECT_FRAME];
@@ -62,10 +74,13 @@ int w_frame_set_image (w_object_t *object, unsigned int style, unsigned int rota
 	fimg->rotation = rotation;
 	for (; nimgs > 0; nimgs--) {
 		file = va_arg(ap, char *);
+#if defined(SPEED_OPTIMIZED)
 		s_image_init(&img);
 		s_image_img(file, img);
 		s_image_get_mat(img);
 		s_list_add(fimg->images, img, -1);
+#endif
+		s_list_add(fimg->names, strdup(file), -1);
 	}
 	va_end(ap);
 	s_list_add(frame->images, fimg, -1);
@@ -75,13 +90,25 @@ int w_frame_set_image (w_object_t *object, unsigned int style, unsigned int rota
 void w_frame_draw_image (w_object_t *object, w_frame_image_t *fimg)
 {
 	int i;
+	char *name;
 	s_image_t *img;
-	switch (fimg->images->nb_elt) {
+	switch (fimg->names->nb_elt) {
 		case 1:
+#if defined(SPEED_OPTIMIZED)
 			img = (s_image_t *) s_list_get(fimg->images, 0);
+#else
+			name = (char *) s_list_get(fimg->names, 0);
+			s_image_init(&img);
+			s_image_img(name, img);
+			s_image_get_mat(img);
+#endif
 			s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
 			              0, 0, img->w, img->h, img->w, img->h, img->mat, 0, 0);
-			s_putboxrgb(object->surface, 0, 0, img->w, img->h, img->rgba);	
+			s_putboxrgb(object->surface, 0, 0, img->w, img->h, img->rgba);
+#if defined(SPEED_OPTIMIZED)
+#else
+			s_image_uninit(img);
+#endif	
 			break;	
 		case 3:
 			if (fimg->rotation == FRAME_IMAGE_VERTICAL) {
