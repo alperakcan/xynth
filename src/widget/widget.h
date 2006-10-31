@@ -104,10 +104,11 @@ typedef enum {
 } FRAME_SHAPE;
 
 typedef enum {
-	FRAME_PLAIN		= 0x10,
-	FRAME_RAISED		= 0x20,
-	FRAME_SUNKEN		= 0x40,
-	FRAME_MSHADOW		= 0xf0
+	FRAME_PLAIN		= 0x010,
+	FRAME_RAISED		= 0x020,
+	FRAME_SUNKEN		= 0x040,
+	FRAME_FOCUSED           = 0x100,
+	FRAME_MSHADOW		= 0x0f0
 } FRAME_SHADOW;
 
 typedef enum {

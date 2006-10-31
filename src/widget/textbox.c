@@ -153,6 +153,7 @@ int w_textbox_set_str (w_object_t *object, char *str)
 		s_free(strline);
 		s_free(ptrline);
 		w_textbox_draw(object);
+		w_object_update(object, object->surface->win);
 	} else {
 		s_font_t *font;
 		s_font_init(&font, "arial.ttf");
@@ -162,6 +163,7 @@ int w_textbox_set_str (w_object_t *object, char *str)
 		s_font_get_glyph(font);
 		s_list_add(textbox->lines, font, -1);
 		w_textbox_draw(object);
+		w_object_update(object, object->surface->win);
 	}
 	return 0;
 }
