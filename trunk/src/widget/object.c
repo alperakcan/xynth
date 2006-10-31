@@ -180,7 +180,9 @@ int w_object_update_to_surface (w_object_t *object, s_surface_t *surface, s_rect
 		goto end;
 	}
 	
-        if (object->parent != NULL) {
+        if (object->parent != NULL &&
+            object->surface->matrix != NULL &&
+            object->surface->vbuf != NULL) {
 		if (s_rect_intersect(&bound, object->parent->surface->win, &update)) {
 			goto end;
 		}
