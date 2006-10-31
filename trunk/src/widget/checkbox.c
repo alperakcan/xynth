@@ -53,9 +53,6 @@ void w_checkbox_state (w_object_t *object, int state)
 	cb->state = state;
 	w_checkbox_draw(object);
 	w_object_update(object, object->surface->win);
-	if (cb->changed != NULL) {
-		cb->changed(object, cb->state);
-	}
 }
 
 void w_checkbox_released (w_object_t *object, int btn)
@@ -63,6 +60,9 @@ void w_checkbox_released (w_object_t *object, int btn)
 	w_checkbox_t *cb;
 	cb = object->data[OBJECT_CHECKBOX];
 	w_checkbox_state(object, (cb->state + 1) % 2);
+	if (cb->changed != NULL) {
+		cb->changed(object, cb->state);
+	}
 }
 
 void w_checkbox_clicked (w_object_t *object, int btn, int cnt)
@@ -70,6 +70,9 @@ void w_checkbox_clicked (w_object_t *object, int btn, int cnt)
 	w_checkbox_t *cb;
 	cb = object->data[OBJECT_CHECKBOX];
 	w_checkbox_state(object, (cb->state + 1) % 2);
+	if (cb->changed != NULL) {
+		cb->changed(object, cb->state);
+	}
 }
 
 void w_checkbox_uninit (w_object_t *object)
