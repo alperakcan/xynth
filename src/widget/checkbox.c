@@ -27,7 +27,7 @@ void w_checkbox_geometry (w_object_t *object)
 	coor.x = 0;
 	coor.y = (object->surface->buf->h - coor.h) / 2;
 	w_object_move(cb->box->object, coor.x, coor.y, coor.w, coor.h);
-	coor.x = coor.w + 2;
+	coor.x = coor.w + 4;
 	coor.y = 0;
 	coor.w = object->surface->buf->w - coor.x;
 	coor.h = object->surface->buf->h;
@@ -93,6 +93,7 @@ int w_checkbox_init (w_window_t *window, w_checkbox_t **checkbox, w_object_t *pa
 	
 	w_textbox_init(window, &(cb->text), cb->button->object);
 	cb->text->frame->style = FRAME_NOFRAME;
+	cb->text->properties = TEXTBOX_VCENTER;
 	w_object_show(cb->text->object);
 	
 	w_frame_init(window, &(cb->box), FRAME_PANEL | FRAME_SUNKEN, cb->button->object);
