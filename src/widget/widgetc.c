@@ -455,18 +455,15 @@ void node_generate_code_object (node_t *node)
 	} else if (strcmp(node->type, "editbox") == 0) {
 		fprintf(g_source, "w_editbox_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
 	}
-	tmp = node_get_node(node, "style");
-	if (tmp) {
+	if ((tmp = node_get_node(node, "style")) != NULL) {
 		node_generate_code_style(tmp);
 		tmp->dontparse = 1;
 	}
-	tmp = node_get_node(node, "effect");
-	if (tmp) {
+	if ((tmp = node_get_node(node, "effect")) != NULL) {
 		node_generate_code_effect(tmp);
 		tmp->dontparse = 1;
 	}
-	tmp = node_get_node(node, "draw");
-	if (tmp) {
+	if ((tmp = node_get_node(node, "draw")) != NULL) {
 		node_generate_code_draw(tmp);
 		tmp->dontparse = 1;
 	}
