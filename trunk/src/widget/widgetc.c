@@ -388,7 +388,6 @@ void node_generate_code_image (node_t *node)
 	rotate = node_get_value(node, "rotate");
 	count = atoi(node_get_value(node, "count"));
 	fprintf(g_source, "w_frame_set_image(%s->object, %s | %s, %s, %d", node_get_parent(node, "object")->id, (shape) ? shape : "0", (shadow) ? shadow : "0", (rotate) ? rotate : "0", count);
-	printf("count: %s\n", node_get_value(node, "count"));
 	cntstr = (char *) malloc(sizeof(char *) * 255);
 	for (i = 0; i < count; i++) {
 		sprintf(cntstr, "image%d", i);
