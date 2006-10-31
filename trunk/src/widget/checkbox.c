@@ -40,10 +40,10 @@ void w_checkbox_draw (w_object_t *object)
 	cb = object->data[OBJECT_CHECKBOX];
 	w_button_draw(cb->button->object);
 	w_textbox_draw(cb->text->object);
+	cb->box->style &= ~FRAME_MSHADOW;
+	cb->box->style |= (cb->state == 0) ? FRAME_RAISED : FRAME_SUNKEN;
+	cb->box->object->focused = object->focused;
 	w_frame_draw(cb->box->object);
-	if (cb->state) {
-		s_fillbox(cb->box->object->surface, 4, 4, object->surface->buf->h - 8, object->surface->buf->h - 8, 0);
-	}
 }
 
 void w_checkbox_state (w_object_t *object, int state)
@@ -96,7 +96,7 @@ int w_checkbox_init (w_window_t *window, w_checkbox_t **checkbox, w_object_t *pa
 	cb->text->properties = TEXTBOX_VCENTER;
 	w_object_show(cb->text->object);
 	
-	w_frame_init(window, &(cb->box), FRAME_PANEL | FRAME_SUNKEN, cb->button->object);
+	w_frame_init(window, &(cb->box), FRAME_PANEL | FRAME_RAISED, cb->button->object);
 	w_object_show(cb->box->object);
 	
 	cb->object = cb->button->object;
