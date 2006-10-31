@@ -22,8 +22,8 @@ void w_checkbox_geometry (w_object_t *object)
 	w_checkbox_t *cb;
 	cb = object->data[OBJECT_CHECKBOX];
 	w_button_geometry(object);
-	coor.w = 16;
-	coor.h = 16;
+	coor.w = object->surface->buf->h;
+	coor.h = object->surface->buf->h;
 	coor.x = 0;
 	coor.y = (object->surface->buf->h - coor.h) / 2;
 	w_object_move(cb->box->object, coor.x, coor.y, coor.w, coor.h);
@@ -42,7 +42,7 @@ void w_checkbox_draw (w_object_t *object)
 	w_textbox_draw(cb->text->object);
 	w_frame_draw(cb->box->object);
 	if (cb->state) {
-		s_fillbox(cb->box->object->surface, 4, 4, 8, 8, 0);
+		s_fillbox(cb->box->object->surface, 4, 4, object->surface->buf->h - 8, object->surface->buf->h - 8, 0);
 	}
 }
 
