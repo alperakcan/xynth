@@ -170,6 +170,12 @@ void w_frame_draw (w_object_t *object)
         
 	memset(object->surface->matrix, 0xff, sizeof(char) * object->surface->width * object->surface->height);
         switch (frame->style & FRAME_MSHAPE) {
+        	case FRAME_EMPTY:
+        		s_free(object->surface->matrix);
+        		s_free(object->surface->vbuf);
+        		object->surface->matrix = NULL;
+        		object->surface->vbuf = NULL;
+        		return;
 		case FRAME_NOFRAME:
 			memset(object->surface->matrix, 0x00, sizeof(char) * object->surface->width * object->surface->height);
 			return;
