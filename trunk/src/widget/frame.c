@@ -180,7 +180,13 @@ void w_frame_draw (w_object_t *object)
         w_frame_t *frame;
         w_frame_image_t *fimg;
         frame = (w_frame_t *) object->data[OBJECT_FRAME];
-        
+
+	if (object->focused) {
+		frame->style |=  FRAME_FOCUSED;
+	} else {
+		frame->style &=  ~FRAME_FOCUSED;
+	}
+
         for (i = 0; !s_list_eol(frame->images, i); i++) {
         	fimg = (w_frame_image_t *) s_list_get(frame->images, i);
         	if (frame->style == fimg->style) {
@@ -309,9 +315,6 @@ swinpanel_sunken:		case FRAME_SUNKEN:
 	                           object->content->w,
 	                           object->content->h,
 	                           s_rgbcolor(object->surface, 220, 220, 220));
-	if (object->focused) {
-		/* fix me */
-	}
 }
 
 void w_frame_geometry (w_object_t *object)

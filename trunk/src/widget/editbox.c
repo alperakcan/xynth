@@ -34,8 +34,12 @@ void w_editbox_event (w_object_t *object, s_event_t *event)
 					s_free(str);
 			} else {
 				if (event->keybd->ascii) {
-					str = strdup(editbox->textbox->str);
-					ptr = (char *) s_malloc(sizeof(char *) * strlen(str) + 1 + 1);
+					if (editbox->textbox->str == NULL) {
+						str = strdup("");
+					} else {
+						str = strdup(editbox->textbox->str);
+					}
+					ptr = (char *) s_malloc(sizeof(char *) * (strlen(str) + 1 + 1));
 					sprintf(ptr, "%s%c", str, event->keybd->ascii);
 					w_textbox_set_str(editbox->object, ptr);
 					w_object_update(editbox->object, editbox->object->surface->win);
