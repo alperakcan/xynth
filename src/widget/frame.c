@@ -172,13 +172,12 @@ void w_frame_draw_image (w_object_t *object, w_frame_image_t *fimg)
 
 void w_frame_draw (w_object_t *object)
 {
-        int i;
-        int j;
-        int c[4];
-        w_frame_t *frame;
-        w_frame_image_t *fimg;
-        frame = (w_frame_t *) object->data[OBJECT_FRAME];
-
+	int i;
+	int j;
+	int c[4];
+	w_frame_t *frame;
+	w_frame_image_t *fimg;
+	frame = (w_frame_t *) object->data[OBJECT_FRAME];
 	if (object->focused) {
 		frame->style |=  FRAME_FOCUSED;
 	} else {
