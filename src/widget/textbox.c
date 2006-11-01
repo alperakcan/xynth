@@ -26,6 +26,11 @@ void w_textbox_draw (w_object_t *object)
 	int line;
 	w_textbox_t *textbox;
 	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
+
+	if (object->surface->vbuf == NULL) {
+		return;
+	}
+
 	w_frame_draw(textbox->object);
 	if ((textbox->frame->style & FRAME_MSHAPE) == FRAME_NOFRAME) {
 		memset(textbox->object->surface->matrix, 0, textbox->object->surface->width * textbox->object->surface->height);
