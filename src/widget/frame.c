@@ -178,6 +178,11 @@ void w_frame_draw (w_object_t *object)
 	w_frame_t *frame;
 	w_frame_image_t *fimg;
 	frame = (w_frame_t *) object->data[OBJECT_FRAME];
+
+	if (object->surface->vbuf == NULL) {
+		return;
+	}
+
 	if (object->focused) {
 		frame->style |=  FRAME_FOCUSED;
 	} else {
