@@ -40,6 +40,45 @@ int s_font_init (s_font_t **font, char *name)
 		debugf(0, "FT_New_Face (%s)", name_);
 		goto err1;
 	}
+#if 0
+	/* this should do the stuff for unicode, who knows ;)
+	 */
+	{
+		FT_Error error;
+		error = FT_Select_Charmap((*font)->ft->face, ft_encoding_unicode);
+		if ((*font)->ft->face->charmap == NULL ||
+		    (*font)->ft->face->charmap->encoding != ft_encoding_unicode) {
+		    	if (error) {
+				printf("Unicode charmap not available for this font. Very bad!");
+		    	}
+		}
+	}
+	{
+		#define MAX_CHARSET_SIZE 60000
+		int i;
+		FT_ULong charcode;
+		FT_UInt gindex;
+		FT_Face face = (*font)->ft->face;
+		FT_ULong *charset = malloc(MAX_CHARSET_SIZE * sizeof(FT_ULong)); /* characters we want to render; Unicode */
+		FT_ULong *charcodes = malloc(MAX_CHARSET_SIZE * sizeof(FT_ULong)); /* character codes in 'encoding' */
+		if (face->charmap==NULL || face->charmap->encoding!=ft_encoding_unicode) {
+			printf("Unicode charmap not available for this font. Very bad!");
+			return -1;
+		}
+		i = 0;
+		charcode = FT_Get_First_Char( face, &gindex );
+		while (gindex != 0) {
+			if (charcode < 65536 && charcode >= 33) { // sanity check
+				charset[i] = charcode;
+				charcodes[i] = 0;
+				i++;
+			}
+			charcode = FT_Get_Next_Char( face, charcode, &gindex );
+			printf("%d 0x%x\n", charcode, charcode);
+		}
+		printf("Unicode font: %d glyphs.\n", i);
+	}
+#endif
 	if (s_image_init(&((*font)->img))) {
 		goto err2;
 	}
