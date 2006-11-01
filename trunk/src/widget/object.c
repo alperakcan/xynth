@@ -179,13 +179,24 @@ int w_object_update_to_surface (w_object_t *object, s_surface_t *surface, s_rect
 	if (s_rect_intersect(coor, object->surface->win, &bound)) {
 		goto end;
 	}
-	
+	if (object->parent && s_rect_intersect(&bound, object->parent->surface->win, &update)) {
+		goto end;
+	}
+
+#if defined(WIDGET_OPTIMIZE_MEMORY)
+	if (object->parent != NULL) {
+		object->surface->matrix = (unsigned char *) s_malloc(sizeof(char) * object->surface->width * object->surface->height + 10);
+		object->surface->vbuf = (char *) s_calloc(1, object->surface->width * object->surface->height * object->surface->bytesperpixel + 1);
+		memset(object->surface->matrix, 0xff, sizeof(char) * object->surface->width * object->surface->height);
+		if (object->draw != NULL) {
+			object->draw(object);
+		}
+	}
+#endif
+
         if (object->parent != NULL &&
             object->surface->matrix != NULL &&
             object->surface->vbuf != NULL) {
-		if (s_rect_intersect(&bound, object->parent->surface->win, &update)) {
-			goto end;
-		}
 		if (do_effect == EFFECT_NONE || w_object_effect_apply(surface, &update, effect, object)) {
 			s_putboxpartalpha(surface, update.x, update.y, update.w, update.h,
 			                           object->surface->width, object->surface->height,
@@ -194,6 +205,15 @@ int w_object_update_to_surface (w_object_t *object, s_surface_t *surface, s_rect
 						   update.y - object->surface->win->y);
 		}
 	}
+
+#if defined(WIDGET_OPTIMIZE_MEMORY)
+	if (object->parent != NULL) {
+		s_free(object->surface->vbuf);
+		s_free(object->surface->matrix);
+		object->surface->vbuf = NULL;
+		object->surface->matrix = NULL;
+	}
+#endif
 
 	while (!(s_list_eol(object->shown, pos))) {
 		w_object_t *obj = (w_object_t *) s_list_get(object->shown, pos);
@@ -316,13 +336,15 @@ int w_object_move (w_object_t *object, int x, int y, int w, int h)
 
 		object->surface->width = object->surface->buf->w;
 		object->surface->height = object->surface->buf->h;
+#if defined(WIDGET_OPTIMIZE_MEMORY)
+#else
 		object->surface->matrix = (unsigned char *) s_malloc(sizeof(char) * object->surface->width * object->surface->height + 10);
 		object->surface->vbuf = (char *) s_calloc(1, object->surface->width * object->surface->height * object->surface->bytesperpixel + 1);
 		memset(object->surface->matrix, 0xff, sizeof(char) * object->surface->width * object->surface->height);
-
 		if (object->draw != NULL) {
 			object->draw(object);
 		}
+#endif
 	}
 	
 	if (object->parent != NULL &&
