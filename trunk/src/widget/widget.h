@@ -16,6 +16,10 @@
 #ifndef SWIDGET_H
 #define SWIDGET_H
 
+/* reduce memory usage, this is a bit hacky, but no speed consumptions
+ */
+#define WIDGET_OPTIMIZE_MEMORY
+
 typedef struct w_object_s w_object_t;
 
 typedef struct w_window_s {
