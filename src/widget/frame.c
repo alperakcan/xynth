@@ -18,8 +18,6 @@
 #include "../lib/xynth_.h"
 #include "widget.h"
 
-#undef SPEED_OPTIMIZED 
-
 int w_frame_image_init (w_frame_image_t **fimg)
 {
 	*fimg = s_malloc(sizeof(w_frame_image_t));
@@ -54,7 +52,8 @@ int w_frame_set_image (w_object_t *object, unsigned int style, unsigned int rota
 	int pos;
 	char *file;
 	va_list ap;
-#if defined(SPEED_OPTIMIZED)
+#if defined(WIDGET_OPTIMIZE_MEMORY)
+#else
 	s_image_t *img;
 #endif
         w_frame_t *frame;
@@ -74,7 +73,8 @@ int w_frame_set_image (w_object_t *object, unsigned int style, unsigned int rota
 	fimg->rotation = rotation;
 	for (; nimgs > 0; nimgs--) {
 		file = va_arg(ap, char *);
-#if defined(SPEED_OPTIMIZED)
+#if defined(WIDGET_OPTIMIZE_MEMORY)
+#else
 		s_image_init(&img);
 		s_image_img(file, img);
 		s_image_get_mat(img);
@@ -94,20 +94,19 @@ void w_frame_draw_image (w_object_t *object, w_frame_image_t *fimg)
 		case 1:
 		{
 			s_image_t *img;
-#if defined(SPEED_OPTIMIZED)
-			img = (s_image_t *) s_list_get(fimg->images, 0);
-#else
+#if defined(WIDGET_OPTIMIZE_MEMORY)
 			char *name;
 			name = (char *) s_list_get(fimg->names, 0);
 			s_image_init(&img);
 			s_image_img(name, img);
 			s_image_get_mat(img);
+#else
+			img = (s_image_t *) s_list_get(fimg->images, 0);
 #endif
 			s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
 			              0, 0, img->w, img->h, img->w, img->h, img->mat, 0, 0);
 			s_putboxrgb(object->surface, 0, 0, img->w, img->h, img->rgba);
-#if defined(SPEED_OPTIMIZED)
-#else
+#if defined(WIDGET_OPTIMIZE_MEMORY)
 			s_image_uninit(img);
 #endif
 			break;	
@@ -115,11 +114,7 @@ void w_frame_draw_image (w_object_t *object, w_frame_image_t *fimg)
 		case 3:
 		{
 			s_image_t *imgs[3];
-#if defined(SPEED_OPTIMIZED)
-			imgs[0] = (s_image_t *) s_list_get(fimg->images, 0);
-			imgs[1] = (s_image_t *) s_list_get(fimg->images, 1);
-			imgs[2] = (s_image_t *) s_list_get(fimg->images, 2);
-#else
+#if defined(WIDGET_OPTIMIZE_MEMORY)
 			char *name[3];
 			name[0] = (char *) s_list_get(fimg->names, 0);
 			name[1] = (char *) s_list_get(fimg->names, 1);
@@ -133,6 +128,10 @@ void w_frame_draw_image (w_object_t *object, w_frame_image_t *fimg)
 			s_image_init(&imgs[2]);
 			s_image_img(name[2], imgs[2]);
 			s_image_get_mat(imgs[2]);
+#else
+			imgs[0] = (s_image_t *) s_list_get(fimg->images, 0);
+			imgs[1] = (s_image_t *) s_list_get(fimg->images, 1);
+			imgs[2] = (s_image_t *) s_list_get(fimg->images, 2);
 #endif
 			if (fimg->rotation == FRAME_IMAGE_VERTICAL) {
 				s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
@@ -161,8 +160,7 @@ void w_frame_draw_image (w_object_t *object, w_frame_image_t *fimg)
 				              imgs[2]->mat, 0, 0);
 				s_putboxrgb(object->surface, object->surface->width - imgs[2]->w, 0, imgs[2]->w, imgs[2]->h, imgs[2]->rgba);
 			}
-#if defined(SPEED_OPTIMIZED)
-#else
+#if defined(WIDGET_OPTIMIZE_MEMORY)
 			s_image_uninit(imgs[0]);
 			s_image_uninit(imgs[1]);
 			s_image_uninit(imgs[2]);
