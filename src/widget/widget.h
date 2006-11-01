@@ -16,7 +16,8 @@
 #ifndef SWIDGET_H
 #define SWIDGET_H
 
-/* reduce memory usage, this is a bit hacky, but no speed consumptions
+/* reduce memory usage, this is a bit hacky
+ * some speed consumptions ;|
  */
 #define WIDGET_OPTIMIZE_MEMORY
 
