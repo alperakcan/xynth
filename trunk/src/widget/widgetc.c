@@ -375,6 +375,11 @@ void node_generate_code_pressed (node_t *node)
 	fprintf(g_source, "%s->pressed = %s;\n", node->parent->id, node->value);
 }
 
+void node_generate_code_released (node_t *node)
+{
+	fprintf(g_source, "%s->released = %s;\n", node->parent->id, node->value);
+}
+
 void node_generate_code_changed (node_t *node)
 {
 	fprintf(g_source, "%s->changed = %s;\n", node->parent->id, node->value);
@@ -384,6 +389,7 @@ void node_generate_code_image (node_t *node, char *to)
 {
 	int i;
 	int count;
+	char *parent;
 	char *shape;
 	char *shadow;
 	char *rotate;
@@ -393,7 +399,14 @@ void node_generate_code_image (node_t *node, char *to)
 	shadow = node_get_value(node, "style/shadow");
 	rotate = node_get_value(node, "rotate");
 	count = atoi(node_get_value(node, "count"));
-	fprintf(g_source, "w_frame_set_image(%s->object, %s | %s, %s, %d", (to == NULL) ? node_get_parent(node, "object")->id : to, (shape) ? shape : "0", (shadow) ? shadow : "0", (rotate) ? rotate : "0", count);
+	if (to) {
+		parent = to;
+	} else if (node_get_parent(node, "object")) {
+		parent = node_get_parent(node, "object")->id;
+	} else {
+		return;
+	}
+	fprintf(g_source, "w_frame_set_image(%s->object, %s | %s, %s, %d", parent, (shape) ? shape : "0", (shadow) ? shadow : "0", (rotate) ? rotate : "0", count);
 	cntstr = (char *) malloc(sizeof(char *) * 255);
 	for (i = 0; i < count; i++) {
 		sprintf(cntstr, "image%d", i);
@@ -509,6 +522,8 @@ void node_generate_code (node_t *node)
 		node_generate_code_draw(node);
 	} else if (strcmp(node->name, "pressed") == 0) {
 		node_generate_code_pressed(node);
+	} else if (strcmp(node->name, "released") == 0) {
+		node_generate_code_released(node);
 	} else if (strcmp(node->name, "image") == 0) {
 		node_generate_code_image(node, NULL);
 	}
@@ -558,6 +573,8 @@ void node_generate_function (node_t *node)
 	if (strcmp(node->name, "draw") == 0) {
 		fprintf(g_header, "void %s (w_object_t *object);\n", node->value);
 	} else if (strcmp(node->name, "pressed") == 0) {
+		fprintf(g_header, "void %s (w_object_t *object, int button);\n", node->value);
+	} else if (strcmp(node->name, "released") == 0) {
 		fprintf(g_header, "void %s (w_object_t *object, int button);\n", node->value);
 	} else if (strcmp(node->name, "changed") == 0) {
 		fprintf(g_header, "void %s (w_object_t *object, int state);\n", node->value);
