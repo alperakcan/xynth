@@ -344,6 +344,9 @@ int w_object_move (w_object_t *object, int x, int y, int w, int h)
 
 int w_object_hide (w_object_t *object)
 {
+	if (object == object->window->focus) {
+		w_window_change_keybd_focus(object->window->window, 0);
+	}
 	object->showed = 0;
 	if (object->parent != NULL) {
 		if ((object->effect->effect & EFFECT_HIDE) == 0) {
