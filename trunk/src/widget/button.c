@@ -55,7 +55,6 @@ void w_button_geometry (w_object_t *object)
 
 void w_button_cb_o (s_window_t *window, s_event_t *event, s_handler_t *handler)
 { /* over */
-	
 }
 
 void w_button_cb_p (s_window_t *window, s_event_t *event, s_handler_t *handler)
