@@ -85,6 +85,9 @@ void w_button_cb_c (s_window_t *window, s_event_t *event, s_handler_t *handler)
 		button->frame->style |= (button->frame->object->focused) ? FRAME_FOCUSED : 0;
 		button->object->draw(button->object);
 		w_object_update(button->object, button->object->surface->win);
+		if (button->released != NULL) {
+			button->released(button->object, event->mouse->b);
+		}
 		if (button->clicked != NULL) {
 			button->clicked(button->object, event->mouse->b, event->mouse->clicks);
 		}
