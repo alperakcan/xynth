@@ -82,7 +82,7 @@ int w_checkbox_init (w_window_t *window, w_checkbox_t **checkbox, w_object_t *pa
 	cb->state = 0;
 
 	w_button_init(window, &(cb->button), parent);
-	cb->button->frame->style = FRAME_NOFRAME;
+	cb->button->frame->style = FRAME_EMPTY;
 	
 	w_textbox_init(window, &(cb->text), cb->button->object);
 	cb->text->frame->style = FRAME_NOFRAME;
