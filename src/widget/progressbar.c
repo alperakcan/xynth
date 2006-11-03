@@ -40,10 +40,10 @@ void w_progressbar_geometry (w_object_t *object)
 	w_progressbar_t *pb;
 	pb = object->data[OBJECT_PROGRESSBAR];
 	w_frame_geometry(object);
-	w = ((object->surface->buf->w - 4) * pb->level) / 100;
+	w = ((object->content->w - 4) * pb->level) / 100;
 	w = MAX(w, 0);
-	w_object_move(pb->box->object, 2, 2, w, object->surface->buf->h - 4);
-	w_object_move(pb->text->object, 2, 2, object->surface->buf->w - 4, object->surface->buf->h - 4);
+	w_object_move(pb->box->object, 2, 2, w, object->content->h - 4);
+	w_object_move(pb->text->object, 2, 2, object->content->w - 4, object->content->h - 4);
 }
 
 int w_progressbar_init (w_window_t *window, w_progressbar_t **progressbar, w_object_t *parent)
