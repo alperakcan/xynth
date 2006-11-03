@@ -19,7 +19,7 @@
 /* reduce memory usage, this is a bit hacky
  * some speed consumptions ;|
  */
-//#define WIDGET_OPTIMIZE_MEMORY
+#define WIDGET_OPTIMIZE_MEMORY
 
 typedef struct w_object_s w_object_t;
 
@@ -172,6 +172,30 @@ typedef struct w_progressbar_s {
 	void (*changed) (w_object_t *, int);
 } w_progressbar_t;
 
+typedef struct w_editbox_s {
+	w_object_t *object;
+	w_textbox_t *textbox;
+	s_handler_t *handler_mouse;
+	s_handler_t *handler_keybd;
+} w_editbox_t;
+
+typedef struct w_checkbox_s {
+	w_object_t *object;
+	w_button_t *button;
+	w_frame_t *box;
+	w_textbox_t *text;
+	void (*changed) (w_object_t *, int);
+	int state;
+} w_checkbox_t;
+
+typedef struct w_signal_s w_signal_t;
+struct w_signal_s {
+	w_object_t *from;
+	w_object_t *to;
+	void (*func) (w_signal_t *);
+	void *arg;
+};
+
 typedef struct w_scrollbar_s {
 	w_frame_t *frame;
 	s_handler_t *handler;
@@ -208,22 +232,6 @@ typedef struct w_listbox_s {
 	int itemheight;
 } w_listbox_t;
 
-typedef struct w_editbox_s {
-	w_object_t *object;
-	w_textbox_t *textbox;
-	s_handler_t *handler_mouse;
-	s_handler_t *handler_keybd;
-} w_editbox_t;
-
-typedef struct w_checkbox_s {
-	w_object_t *object;
-	w_button_t *button;
-	w_frame_t *box;
-	w_textbox_t *text;
-	void (*changed) (w_object_t *, int);
-	int state;
-} w_checkbox_t;
-
 typedef struct w_combobox_s {
 	w_frame_t *frame;
 	s_handler_t *handler;
@@ -238,14 +246,6 @@ typedef struct w_combobox_s {
 	int itemheight;
 	int buttonlength;
 } w_combobox_t;
-
-typedef struct w_signal_s w_signal_t;
-struct w_signal_s {
-	w_object_t *from;
-	w_object_t *to;
-	void (*func) (w_signal_t *);
-	void *arg;
-};
 
 /* button.c */
 void w_button_event (w_object_t *object, s_event_t *event);
@@ -286,13 +286,6 @@ void w_frame_draw (w_object_t *object);
 void w_frame_geometry (w_object_t *object);
 int w_frame_init (w_window_t *window, w_frame_t **frame, unsigned int style, w_object_t *parent);
 void w_frame_uninit (w_object_t *object);
-
-/* listbox.c */
-void w_listbox_draw (w_object_t *object);
-void w_listbox_geometry(w_object_t *object);
-int w_listbox_init (w_window_t *window, w_listbox_t **listbox, w_object_t *parent);
-void w_listbox_uninit (w_object_t *object);
-int w_listbox_add (w_listbox_t *listbox, char *item);
 
 /* object.c */
 int w_object_effect_stop (w_object_t *object);
@@ -337,6 +330,14 @@ void w_progressbar_geometry (w_object_t *object);
 int w_progressbar_init (w_window_t *window, w_progressbar_t **progressbar, w_object_t *parent);
 void w_progressbar_uninit (w_object_t *object);
 
+/* window.c */
+void w_window_focus_change_notify (s_window_t *window, w_object_t *focus);
+void w_window_change_keybd_focus (s_window_t *window, int type);
+void w_window_atevent (s_window_t *window, s_event_t *event);
+int w_window_init (w_window_t **window, S_WINDOW type, w_window_t *parent);
+int w_window_set_coor (w_window_t *window, int x, int y, int w, int h);
+int w_window_uninit (w_window_t *window);
+
 /* scrollbar.c*/
 void w_scrollbar_geometry (w_object_t *object);
 void w_scrollbar_draw (w_object_t *object);
@@ -346,18 +347,17 @@ void w_buttonup_pressed (w_object_t *object, int buttonp);
 void w_buttondown_pressed (w_object_t *object, int buttonp);
 void w_scrollbar_loadimages (w_object_t *object,char *file_top,char *file_middle,char *file_bottom);
 
-/*combobox.c*/
+/* listbox.c */
+void w_listbox_draw (w_object_t *object);
+void w_listbox_geometry(w_object_t *object);
+int w_listbox_init (w_window_t *window, w_listbox_t **listbox, w_object_t *parent);
+void w_listbox_uninit (w_object_t *object);
+int w_listbox_add (w_listbox_t *listbox, char *item);
+
+/* combobox.c*/
 void w_combobox_geometry (w_object_t *object);
 void w_combobox_draw (w_object_t *object);
 int w_combobox_init (w_window_t *window, w_combobox_t **combobox, w_object_t *parent);
 void w_combobox_uninit (w_object_t *object);
-
-/* window.c */
-void w_window_focus_change_notify (s_window_t *window, w_object_t *focus);
-void w_window_change_keybd_focus (s_window_t *window, int type);
-void w_window_atevent (s_window_t *window, s_event_t *event);
-int w_window_init (w_window_t **window, S_WINDOW type, w_window_t *parent);
-int w_window_set_coor (w_window_t *window, int x, int y, int w, int h);
-int w_window_uninit (w_window_t *window);
 
 #endif
