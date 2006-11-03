@@ -635,7 +635,7 @@ void node_generate (node_t *node)
 	        "{\n"
 	        "srand(time(NULL));\n"
 	        "setlocale(LC_ALL, \"\");\n"
-	        "bindtextdomain(\"%s\", \"./\");\n"
+	        "bindtextdomain(\"%s\", \"./lang\");\n"
 	        "textdomain(\"%s\");\n",
 	        g_header_name,
 	        g_name,
