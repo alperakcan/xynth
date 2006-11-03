@@ -478,6 +478,19 @@ void node_generate_code_object (node_t *node)
 		fprintf(g_source, "w_editbox_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
 	} else if (strcmp(node->type, "progressbar") == 0) {
 		fprintf(g_source, "w_progressbar_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
+		while ((tmp = node_get_node(node, "image")) != NULL) {
+			node_generate_code_image(tmp, node->id);
+			tmp->dontparse = 1;
+		}
+		if ((tmp = node_get_node(node, "box")) != NULL) {
+			node_t *btmp;
+			while ((btmp = node_get_node(tmp, "image")) != NULL) {
+				char str[255];
+				sprintf(str, "%s->box", node->id);
+				node_generate_code_image(btmp, str);
+				btmp->dontparse = 1;
+			}
+		}
 	}
 	if ((tmp = node_get_node(node, "style")) != NULL) {
 		node_generate_code_style(tmp);
