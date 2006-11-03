@@ -34,7 +34,7 @@
 					<style>
 						<shape>FRAME_NOFRAME</shape>
 					</style>
-					<string>hide area</string>
+					<string>"hide area"</string>
 					<move>
 						<x>0</x>
 						<y>0</y>
@@ -60,7 +60,7 @@
 					<style>
 						<shape>FRAME_NOFRAME</shape>
 					</style>
-					<string>blender</string>
+					<string>"blender"</string>
 					<move>
 						<x>0</x>
 						<y>0</y>
@@ -86,7 +86,7 @@
 					<style>
 						<shape>FRAME_NOFRAME</shape>
 					</style>
-					<string>random focus</string>
+					<string>"random focus"</string>
 					<move>
 						<x>0</x>
 						<y>0</y>
@@ -103,7 +103,7 @@
 					<w>85</w>
 					<h>20</h>
 				</move>
-				<string>checkbox</string>
+				<string>"checkbox"</string>
 				<show>yes</show>
 			</object>
 			<object id="area" type="frame">
@@ -187,11 +187,11 @@
 					<w>490</w>
 					<h>30</h>
 				</move>
-				<string>this is a textbox! this is a textbox! this is a textbox! this is a textbox! this is a textbox! this is a textbox! yep it is multiline!</string>
+				<string>"this is a textbox! this is a textbox! this is a textbox! this is a textbox! this is a textbox! this is a textbox! yep it is multiline!"</string>
 				<show>yes</show>
 			</object>
 			<object id="editbox" type="editbox">
-				<string>this is an editbox !</string>
+				<string>"this is an editbox !"</string>
 				<move>
 					<x>5</x>
 					<y>375</y>
