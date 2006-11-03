@@ -29,6 +29,9 @@ void w_progressbar_level (w_object_t *object, unsigned int level)
 	w_progressbar_geometry(pb->object);
 	w_textbox_set_str(pb->text->object, str);
 	w_object_update(pb->object, pb->object->surface->win);
+	if (pb->changed) {
+		pb->changed(object, pb->level);
+	}
 }
 
 void w_progressbar_geometry (w_object_t *object)
@@ -56,6 +59,7 @@ int w_progressbar_init (w_window_t *window, w_progressbar_t **progressbar, w_obj
 	pb->text->properties = TEXTBOX_HCENTER | TEXTBOX_VCENTER;
 	w_object_show(pb->box->object);
 	w_object_show(pb->text->object);
+	pb->changed = NULL;
 	pb->object = pb->frame->object;
 	pb->object->geometry = w_progressbar_geometry;
 	pb->object->destroy = w_progressbar_uninit;
