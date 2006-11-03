@@ -203,7 +203,7 @@ int s_font_get_glyph (s_font_t *font)
 	for (n = 0; n < num_chars; n++) {
 		glyph_index = FT_Get_Char_Index(font->ft->face, unicode[n]);
 		if (glyph_index == 0) {
-			debugf(0, "Couldnt get glyph index for char: %c[%d]", font->str[n], font->str[n]);
+//			debugf(0, "Couldnt get glyph index for char: %c[%d]", font->str[n], font->str[n]);
 			continue;
 		}
 		if (use_kerning && previous && glyph_index) {
