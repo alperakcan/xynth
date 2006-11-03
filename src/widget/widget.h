@@ -169,6 +169,7 @@ typedef struct w_progressbar_s {
 	w_frame_t *box;
 	w_textbox_t *text;
 	unsigned int level;
+	void (*changed) (w_object_t *, int);
 } w_progressbar_t;
 
 typedef struct w_scrollbar_s {
