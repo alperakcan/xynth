@@ -476,6 +476,8 @@ void node_generate_code_object (node_t *node)
 		}
 	} else if (strcmp(node->type, "editbox") == 0) {
 		fprintf(g_source, "w_editbox_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
+	} else if (strcmp(node->type, "progressbar") == 0) {
+		fprintf(g_source, "w_progressbar_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
 	}
 	if ((tmp = node_get_node(node, "style")) != NULL) {
 		node_generate_code_style(tmp);
@@ -554,6 +556,8 @@ void node_generate_header (node_t *node)
 			fprintf(g_header, "w_checkbox_t *%s;\n", node->id);
 		} else if (strcmp(node->type, "editbox") == 0) {
 			fprintf(g_header, "w_editbox_t *%s;\n", node->id);
+		} else if (strcmp(node->type, "progressbar") == 0) {
+			fprintf(g_header, "w_progressbar_t *%s;\n", node->id);
 		}
 	}
 	g_depth++;

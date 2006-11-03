@@ -164,14 +164,11 @@ typedef struct w_textbox_s {
 } w_textbox_t;
 
 typedef struct w_progressbar_s {
+	w_object_t *object;
 	w_frame_t *frame;
-	s_handler_t *handler;
-	w_textbox_t *textbox;
-	void (*pressed) (w_object_t *, int);
-	void (*released) (w_object_t *, int);
-	void (*clicked) (w_object_t *, int, int);
-	int state;	
-	int progressbarstatus;
+	w_frame_t *box;
+	w_textbox_t *text;
+	unsigned int level;
 } w_progressbar_t;
 
 typedef struct w_scrollbar_s {
@@ -333,13 +330,11 @@ int w_textbox_init (w_window_t *window, w_textbox_t **textbox, w_object_t *paren
 void w_textbox_uninit (w_object_t *object);
 void w_textbox_loadimages(w_object_t *object,char *file_left,char *file_middle,char *file_right);
 
-/*progressbar.c*/
-void w_progressbar_uninit (w_object_t *object);
-int w_progressbar_init (w_window_t *window, w_progressbar_t **progressbar, w_object_t *parent);
-void w_progressbar_draw (w_object_t *object);
+/* progressbar.c */
+void w_progressbar_level (w_object_t *object, unsigned int level);
 void w_progressbar_geometry (w_object_t *object);
-void w_progressbar_setstatus (w_object_t *object,int progressbarstatus);
-int w_progressbar_textbox_set_str (w_object_t *object, char *str,int barlength);
+int w_progressbar_init (w_window_t *window, w_progressbar_t **progressbar, w_object_t *parent);
+void w_progressbar_uninit (w_object_t *object);
 
 /* scrollbar.c*/
 void w_scrollbar_geometry (w_object_t *object);
