@@ -40,7 +40,6 @@ int s_font_init (s_font_t **font, char *name)
 		debugf(0, "FT_New_Face (%s)", name_);
 		goto err1;
 	}
-#if 0
 	/* this should do the stuff for unicode, who knows ;)
 	 */
 	{
@@ -49,36 +48,10 @@ int s_font_init (s_font_t **font, char *name)
 		if ((*font)->ft->face->charmap == NULL ||
 		    (*font)->ft->face->charmap->encoding != ft_encoding_unicode) {
 		    	if (error) {
-				printf("Unicode charmap not available for this font. Very bad!");
+				debugf(0, "Unicode charmap not available for this font(%s). Very bad!", name_);
 		    	}
 		}
 	}
-	{
-		#define MAX_CHARSET_SIZE 60000
-		int i;
-		FT_ULong charcode;
-		FT_UInt gindex;
-		FT_Face face = (*font)->ft->face;
-		FT_ULong *charset = malloc(MAX_CHARSET_SIZE * sizeof(FT_ULong)); /* characters we want to render; Unicode */
-		FT_ULong *charcodes = malloc(MAX_CHARSET_SIZE * sizeof(FT_ULong)); /* character codes in 'encoding' */
-		if (face->charmap==NULL || face->charmap->encoding!=ft_encoding_unicode) {
-			printf("Unicode charmap not available for this font. Very bad!");
-			return -1;
-		}
-		i = 0;
-		charcode = FT_Get_First_Char( face, &gindex );
-		while (gindex != 0) {
-			if (charcode < 65536 && charcode >= 33) { // sanity check
-				charset[i] = charcode;
-				charcodes[i] = 0;
-				i++;
-			}
-			charcode = FT_Get_Next_Char( face, charcode, &gindex );
-			printf("%d 0x%x\n", charcode, charcode);
-		}
-		printf("Unicode font: %d glyphs.\n", i);
-	}
-#endif
 	if (s_image_init(&((*font)->img))) {
 		goto err2;
 	}
@@ -161,6 +134,34 @@ int s_font_set_rgb (s_font_t *font, int r, int g, int b)
 	return 0;
 }
 
+static inline unsigned short * s_font_utf8_to_unicode (unsigned short *unicode, char *utf8, int l)
+{
+	int i;
+	int j;
+	unsigned short ch;
+
+	for (i = 0, j = 0; i < l; ++i, ++j) {
+		ch = ((const unsigned char *) utf8)[i];
+		if (ch >= 0xF0) {
+			ch  =  (unsigned short) (utf8[i] & 0x07) << 18;
+			ch |=  (unsigned short) (utf8[++i] & 0x3F) << 12;
+			ch |=  (unsigned short) (utf8[++i] & 0x3F) << 6;
+			ch |=  (unsigned short) (utf8[++i] & 0x3F);
+		} else if (ch >= 0xE0) {
+			ch  =  (unsigned short) (utf8[i] & 0x0F) << 12;
+			ch |=  (unsigned short) (utf8[++i] & 0x3F) << 6;
+			ch |=  (unsigned short) (utf8[++i] & 0x3F);
+		} else if (ch >= 0xC0) {
+			ch  =  (unsigned short) (utf8[i] & 0x1F) << 6;
+			ch |=  (unsigned short) (utf8[++i] & 0x3F);
+		}
+		unicode[j] = ch;
+	}
+	unicode[j] = 0;
+
+	return unicode;
+}
+
 int s_font_get_glyph (s_font_t *font)
 {
         int n;
@@ -172,6 +173,7 @@ int s_font_get_glyph (s_font_t *font)
 	int num_chars;
 	int xmin;
 	int xmax;
+	unsigned short *unicode;
 	FT_Bool use_kerning;
 	FT_UInt glyph_index;
 	FT_UInt num_glyphs;
@@ -193,9 +195,13 @@ int s_font_get_glyph (s_font_t *font)
 	num_glyphs = 0;
 	use_kerning = FT_HAS_KERNING(font->ft->face);
 	previous = 0;
-
+	
+	unicode = (unsigned short *) s_malloc(sizeof(unsigned short) * num_chars + 1);
+	s_font_utf8_to_unicode(unicode, font->str, num_chars);
+	for (num_chars = 0; unicode[num_chars] != 0; num_chars++);
+	
 	for (n = 0; n < num_chars; n++) {
-		glyph_index = FT_Get_Char_Index(font->ft->face, font->str[n]);
+		glyph_index = FT_Get_Char_Index(font->ft->face, unicode[n]);
 		if (glyph_index == 0) {
 			debugf(0, "Couldnt get glyph index for char: %c[%d]", font->str[n], font->str[n]);
 			continue;
@@ -223,6 +229,7 @@ int s_font_get_glyph (s_font_t *font)
 		previous = glyph_index;
 		num_glyphs++;
 	}
+	s_free(unicode);
 
 	bbox.xMin = bbox.yMin =  32000;
 	bbox.xMax = bbox.yMax = -32000;

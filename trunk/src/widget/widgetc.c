@@ -21,6 +21,7 @@ typedef struct node_s {
 static FILE *g_input = NULL;
 static FILE *g_source = NULL;
 static FILE *g_header = NULL;
+static char *g_name = NULL;
 static char *g_source_name = NULL;
 static char *g_header_name = NULL;
 
@@ -348,9 +349,9 @@ void node_generate_code_string (node_t *node)
 {
 	if (strcmp(node->parent->type, "textbox") == 0 ||
 	    strcmp(node->parent->type, "editbox") == 0) {
-		fprintf(g_source, "w_textbox_set_str(%s->object, \"%s\");\n", node->parent->id, node->value);
+		fprintf(g_source, "w_textbox_set_str(%s->object, %s);\n", node->parent->id, node->value);
 	} else if (strcmp(node->parent->type, "checkbox") == 0) {
-		fprintf(g_source, "w_textbox_set_str(%s->text->object, \"%s\");\n", node->parent->id, node->value);
+		fprintf(g_source, "w_textbox_set_str(%s->text->object, %s);\n", node->parent->id, node->value);
 	}
 }
 
@@ -619,6 +620,9 @@ void node_generate (node_t *node)
 	        "#include <time.h>\n"
 	        "#include <xynth.h>\n"
 	        "#include <widget.h>\n"
+	        "\n"
+	        "#include <libintl.h>\n"
+	        "#define _(str) gettext(str)\n"
 	        "\n");
 	node_generate_header(node);
 	fprintf(g_header, "\n");
@@ -629,8 +633,13 @@ void node_generate (node_t *node)
 	        "\n"
 	        "int main (int argc, char *argv[])\n"
 	        "{\n"
-	        "srand(time(NULL));\n",
-	        g_header_name);
+	        "srand(time(NULL));\n"
+	        "setlocale(LC_ALL, \"\");\n"
+	        "bindtextdomain(\"%s\", \"./\");\n"
+	        "textdomain(\"%s\");\n",
+	        g_header_name,
+	        g_name,
+	        g_name);
 	node_generate_code(node);
 	fprintf(g_source,
 	        "return 0;\n"
@@ -774,6 +783,7 @@ int main (int argc, char **argv)
 			case 'o':
 				g_source_name = (char *) malloc(strlen(optarg) + 20);
 				g_header_name = (char *) malloc(strlen(optarg) + 20);
+				g_name = strdup(optarg);
 				sprintf(g_source_name, "%s_xml.c", optarg);
 				sprintf(g_header_name, "%s_xml.h", optarg);
 				g_source = fopen(g_source_name, "w+");
@@ -817,6 +827,7 @@ usage:			case 'h':
 	fclose(g_input);
 	fclose(g_source);
 	fclose(g_header);
+	free(g_name);
 	free(g_source_name);
 	free(g_header_name);
 	free(buf);
