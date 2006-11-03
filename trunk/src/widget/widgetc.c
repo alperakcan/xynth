@@ -491,6 +491,10 @@ void node_generate_code_object (node_t *node)
 				btmp->dontparse = 1;
 			}
 		}
+		if ((tmp = node_get_node(node, "changed")) != NULL) {
+			node_generate_code_changed(tmp);
+			tmp->dontparse = 1;
+		}
 	}
 	if ((tmp = node_get_node(node, "style")) != NULL) {
 		node_generate_code_style(tmp);
