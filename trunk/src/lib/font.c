@@ -196,7 +196,7 @@ int s_font_get_glyph (s_font_t *font)
 	use_kerning = FT_HAS_KERNING(font->ft->face);
 	previous = 0;
 	
-	unicode = (unsigned short *) s_malloc(sizeof(unsigned short) * num_chars + 1);
+	unicode = (unsigned short *) s_malloc(sizeof(unsigned short) * (num_chars + 1));
 	s_font_utf8_to_unicode(unicode, font->str, num_chars);
 	for (num_chars = 0; unicode[num_chars] != 0; num_chars++);
 	
