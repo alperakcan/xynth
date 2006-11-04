@@ -199,6 +199,11 @@ int w_textbox_set_str (w_object_t *object, char *str)
 void w_textbox_geometry (w_object_t *object)
 {
 	w_frame_geometry(object);
+#if defined(WIDGET_OPTIMIZE_MEMORY)
+#else
+	w_textbox_lines_calculate(object);
+	w_textbox_draw(object);
+#endif
 }
 
 int w_textbox_init (w_window_t *window, w_textbox_t **textbox, w_object_t *parent)

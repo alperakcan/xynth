@@ -289,6 +289,12 @@ int w_object_move (w_object_t *object, int x, int y, int w, int h)
         new.h = h;
 
         if (object->parent != NULL) {
+#if 1
+		/* will be allow to put objects yo any place ? and,
+		 * ofcourse updating to screen will be done in parent's bound
+		 */
+		*(object->surface->buf) = new;
+#else
         	if (s_rect_intersect(&new, object->parent->content, object->surface->buf)) {
 	        	/* error, do not draw this child */
         		object->surface->buf->x = x;
@@ -296,6 +302,7 @@ int w_object_move (w_object_t *object, int x, int y, int w, int h)
         		object->surface->buf->w = 0;
         		object->surface->buf->h = 0;
         	}
+#endif
         	/* coordinates in bounds of object`s root */
 		object->surface->win->x = object->parent->surface->win->x + object->surface->buf->x;
 		object->surface->win->y = object->parent->surface->win->y + object->surface->buf->y;
@@ -333,7 +340,6 @@ int w_object_move (w_object_t *object, int x, int y, int w, int h)
 		/* re prepare matrix and surface buffer */
 		s_free(object->surface->matrix);
 		s_free(object->surface->vbuf);
-
 		object->surface->width = object->surface->buf->w;
 		object->surface->height = object->surface->buf->h;
 #if defined(WIDGET_OPTIMIZE_MEMORY)
