@@ -16,88 +16,26 @@
 #include "../lib/xynth_.h"
 #include "widget.h"
 
-void w_textbox_draw (w_object_t *object)
-{
-	int x;
-	int y;
-	int w;
-	int h;
-	int d;
-	int line;
-	w_textbox_t *textbox;
-	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
-
-	if (object->surface->vbuf == NULL) {
-		return;
-	}
-	
-	w_frame_draw(textbox->object);
-	if ((textbox->frame->style & FRAME_MSHAPE) == FRAME_NOFRAME) {
-		memset(textbox->object->surface->matrix, 0, textbox->object->surface->width * textbox->object->surface->height);
-	}
-	for (line = 0; !s_list_eol(textbox->lines, line); line++) {
-		s_font_t *font = (s_font_t *) s_list_get(textbox->lines, line);
-		w = MIN(textbox->object->content->w, font->img->w);
-		h = MIN(textbox->object->content->h, font->height * textbox->lines->nb_elt);
-		if (!(textbox->properties & TEXTBOX_HCENTER) || textbox->object->content->w == w) { x = 0;
-		} else { x = (textbox->object->content->w - w) / 2; }
-		if (!(textbox->properties & TEXTBOX_VCENTER) || textbox->object->content->h == h) { y = 0;
-		} else { y = (textbox->object->content->h - h) / 2; }
-		x += textbox->object->content->x;
-		y += textbox->object->content->y;
-		y += font->lineskip * line;
-		if (!(textbox->properties & TEXTBOX_HCENTER)) {
-			d = font->img->w - textbox->object->content->w;
-			if (d > 0) { x -= d; w += d; }
-		}
-		s_image_get_mat(font->img);
-		if ((textbox->frame->style & FRAME_MSHAPE) == FRAME_NOFRAME) {
-			s_putmaskpart(textbox->object->surface->matrix, textbox->object->surface->width, textbox->object->surface->height,
-			              x, y + font->size - font->yMax, w, h, font->img->w, font->img->h,
-			              font->img->mat, 0, 0);
-			s_putboxpartrgb(textbox->object->surface, x, y + font->size - font->yMax, w, h,
-			                font->img->w, font->img->h, font->img->rgba, 0, 0);
-		} else { 
-			s_putboxpartrgba(textbox->object->surface, x, y + font->size - font->yMax, w, h,
-			                 font->img->w, font->img->h, font->img->rgba, 0, 0);		
-		}
-	}
-}
-
-int w_textbox_set_rgb (w_object_t *object, int r, int g, int b)
+void w_textbox_lines_uninit (w_object_t *object)
 {
 	w_textbox_t *textbox;
 	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
-	textbox->rgb = ((r & 0xff) << 0x10) | ((g & 0xff) << 0x8) | (b & 0xff);
-	w_textbox_set_str(object, textbox->str);
-	return 0;
-}
-
-int w_textbox_set_size (w_object_t *object, int size)
-{
-	w_textbox_t *textbox;
-	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
-	textbox->size = size;
-	w_textbox_set_str(object, textbox->str);
-	return 0;
-}
-
-int w_textbox_set_str (w_object_t *object, char *str)
-{
-	w_textbox_t *textbox;
-	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
-	if (str == NULL) {
-		str = strdup("");
-	} else {
-		str = strdup(str);
-	}
-	s_free(textbox->str);
-	textbox->str = str;
 	while (!s_list_eol(textbox->lines, 0)) {
 		s_font_t *font = (s_font_t *) s_list_get(textbox->lines, 0);
 		s_list_remove(textbox->lines, 0);
 		s_font_uninit(font);
 	}
+}
+
+void w_textbox_lines_calculate (w_object_t *object)
+{
+	char *str;
+	w_textbox_t *textbox;
+	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
+	if ((str = textbox->str) == NULL) {
+		return;
+	}
+	w_textbox_lines_uninit(object);
 	if (textbox->properties & TEXTBOX_WRAP) {
 		int ptrw;
 		int strw;
@@ -157,7 +95,6 @@ int w_textbox_set_str (w_object_t *object, char *str)
 		}
 		s_free(strline);
 		s_free(ptrline);
-		w_textbox_draw(object);
 	} else {
 		s_font_t *font;
 		s_font_init(&font, "arial.ttf");
@@ -166,8 +103,96 @@ int w_textbox_set_str (w_object_t *object, char *str)
 		s_font_set_str(font, textbox->str);
 		s_font_get_glyph(font);
 		s_list_add(textbox->lines, font, -1);
-		w_textbox_draw(object);
 	}
+}
+
+void w_textbox_draw (w_object_t *object)
+{
+	int x;
+	int y;
+	int w;
+	int h;
+	int d;
+	int line;
+	w_textbox_t *textbox;
+	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
+
+	if (object->surface->vbuf == NULL) {
+		return;
+	}
+#if defined(WIDGET_OPTIMIZE_MEMORY)
+	w_textbox_lines_calculate(object);
+#endif
+	w_frame_draw(textbox->object);
+	if ((textbox->frame->style & FRAME_MSHAPE) == FRAME_NOFRAME) {
+		memset(textbox->object->surface->matrix, 0, textbox->object->surface->width * textbox->object->surface->height);
+	}
+	for (line = 0; !s_list_eol(textbox->lines, line); line++) {
+		s_font_t *font = (s_font_t *) s_list_get(textbox->lines, line);
+		w = MIN(textbox->object->content->w, font->img->w);
+		h = MIN(textbox->object->content->h, font->height * textbox->lines->nb_elt);
+		if (!(textbox->properties & TEXTBOX_HCENTER) || textbox->object->content->w == w) { x = 0;
+		} else { x = (textbox->object->content->w - w) / 2; }
+		if (!(textbox->properties & TEXTBOX_VCENTER) || textbox->object->content->h == h) { y = 0;
+		} else { y = (textbox->object->content->h - h) / 2; }
+		x += textbox->object->content->x;
+		y += textbox->object->content->y;
+		y += font->lineskip * line;
+		if (!(textbox->properties & TEXTBOX_HCENTER)) {
+			d = font->img->w - textbox->object->content->w;
+			if (d > 0) { x -= d; w += d; }
+		}
+		s_image_get_mat(font->img);
+		if ((textbox->frame->style & FRAME_MSHAPE) == FRAME_NOFRAME) {
+			s_putmaskpart(textbox->object->surface->matrix, textbox->object->surface->width, textbox->object->surface->height,
+			              x, y + font->size - font->yMax, w, h, font->img->w, font->img->h,
+			              font->img->mat, 0, 0);
+			s_putboxpartrgb(textbox->object->surface, x, y + font->size - font->yMax, w, h,
+			                font->img->w, font->img->h, font->img->rgba, 0, 0);
+		} else { 
+			s_putboxpartrgba(textbox->object->surface, x, y + font->size - font->yMax, w, h,
+			                 font->img->w, font->img->h, font->img->rgba, 0, 0);		
+		}
+	}
+#if defined(WIDGET_OPTIMIZE_MEMORY)
+	w_textbox_lines_uninit(object);
+#endif
+}
+
+int w_textbox_set_rgb (w_object_t *object, int r, int g, int b)
+{
+	w_textbox_t *textbox;
+	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
+	textbox->rgb = ((r & 0xff) << 0x10) | ((g & 0xff) << 0x8) | (b & 0xff);
+	w_textbox_set_str(object, textbox->str);
+	return 0;
+}
+
+int w_textbox_set_size (w_object_t *object, int size)
+{
+	w_textbox_t *textbox;
+	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
+	textbox->size = size;
+	w_textbox_set_str(object, textbox->str);
+	return 0;
+}
+
+int w_textbox_set_str (w_object_t *object, char *str)
+{
+	w_textbox_t *textbox;
+	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
+	if (str == NULL) {
+		str = strdup("");
+	} else {
+		str = strdup(str);
+	}
+	s_free(textbox->str);
+	textbox->str = str;
+#if defined(WIDGET_OPTIMIZE_MEMORY)
+#else
+	w_textbox_lines_calculate(object);
+	w_textbox_draw(object);
+#endif
 	return 0;
 }
 
@@ -207,11 +232,7 @@ void w_textbox_uninit (w_object_t *object)
 {
 	w_textbox_t *textbox;
 	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
-	while (!s_list_eol(textbox->lines, 0)) {
-		s_font_t *font = (s_font_t *) s_list_get(textbox->lines, 0);
-		s_list_remove(textbox->lines, 0);
-		s_font_uninit(font);
-	}
+	w_textbox_lines_uninit(object);
 	s_free(textbox->str);
 	s_list_uninit(textbox->lines);
 	w_frame_uninit(textbox->object);
