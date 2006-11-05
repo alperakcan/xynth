@@ -180,7 +180,6 @@ int w_object_update_to_surface (w_object_t *object, s_surface_t *surface, s_rect
 	if (s_rect_intersect(coor, object->surface->win, &bound)) {
 		goto end;
 	}
-	
 	tmp = object;
 	while (tmp->parent) {
 		if (s_rect_intersect(&bound, tmp->parent->surface->win, &update)) {

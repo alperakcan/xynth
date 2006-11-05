@@ -1936,6 +1936,15 @@ struct s_rect_s {
 
 /* rect.c */
 
+/** @brief calculates the merging area of r1 and r2.
+  *
+  * @param *r1 - pointer to a rect
+  * @param *r2 - pointer to a rect
+  * @param *r  - on success r will be the merging area
+  * @returns 0 on success, 1 on error.
+  */
+int s_rect_merge (s_rect_t *r1, s_rect_t *r2, s_rect_t *r);
+
 /** @brief calculates the intersection area of r1 and r2.
   *
   * @param *r1 - pointer to a rect
