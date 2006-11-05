@@ -172,6 +172,7 @@ int w_object_update_to_surface (w_object_t *object, s_surface_t *surface, s_rect
         int pos = 0;
 	s_rect_t bound;
 	s_rect_t update;
+	w_object_t *tmp;
         
 	if (object == NULL) {
 		goto end;
@@ -179,8 +180,14 @@ int w_object_update_to_surface (w_object_t *object, s_surface_t *surface, s_rect
 	if (s_rect_intersect(coor, object->surface->win, &bound)) {
 		goto end;
 	}
-	if (object->parent && s_rect_intersect(&bound, object->parent->surface->win, &update)) {
-		goto end;
+	
+	tmp = object;
+	while (tmp->parent) {
+		if (s_rect_intersect(&bound, tmp->parent->surface->win, &update)) {
+			goto end;
+		}
+		bound = update;
+		tmp = tmp->parent;
 	}
 
 #if defined(WIDGET_OPTIMIZE_MEMORY)
