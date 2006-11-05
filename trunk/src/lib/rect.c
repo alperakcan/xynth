@@ -15,6 +15,27 @@
 
 #include "xynth_.h"
 
+int s_rect_merge (s_rect_t *r1, s_rect_t *r2, s_rect_t *r)
+{
+	int x31;
+	int x32;
+	int y31;
+	int y32;
+
+	x31 = MIN(r1->x, r2->x);
+	x32 = MAX(r1->x + r1->w - 1, r2->x + r2->w - 1);
+
+	y31 = MIN(r1->y, r2->y);
+	y32 = MAX(r1->y + r1->h - 1, r2->y + r2->h - 1);
+	
+	r->x = x31;
+	r->y = y31;
+	r->w = x32 - x31 + 1;
+	r->h = y32 - y31 + 1;
+	
+	return 0;
+}
+
 int s_rect_intersect (s_rect_t *r1, s_rect_t *r2, s_rect_t *r)
 {
 	int x31;
