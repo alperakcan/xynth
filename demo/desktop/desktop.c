@@ -101,7 +101,7 @@ void desktop_icon (s_window_t *window, dtop_prog_t *dtopp, s_font_t *font)
 
 	s_font_set_str(font, dtopp->name);
 	s_font_get_glyph(font);
-	s_putboxrgba(window->surface, dtopp->x + (img->w - font->img->w) / 2, dtopp->y + 35, font->img->w, font->img->h, font->img->rgba);
+	s_putboxrgba(window->surface, dtopp->x + (img->w - font->glyph.img->w) / 2, dtopp->y + 35, font->glyph.img->w, font->glyph.img->h, font->glyph.img->rgba);
 
 	s_handler_init(&hndl);
 	hndl->type = MOUSE_HANDLER;

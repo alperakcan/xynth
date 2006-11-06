@@ -124,15 +124,15 @@ void start_menu_start (s_window_t *pwindow, s_list_t *progs, int wx, int wy)
 
 		s_font_set_str(font, sprog->name);
 		s_font_get_glyph(font);
-		s_image_get_handler(font->img);
-		s_putboxrgba(temp->surface, fx, fy - font->yMax, font->img->w, font->img->h, font->img->rgba);
+		s_image_get_handler(font->glyph.img);
+		s_putboxrgba(temp->surface, fx, fy - font->glyph.yMax, font->glyph.img->w, font->glyph.img->h, font->glyph.img->rgba);
 
 		s_handler_init(&hndl);
 		hndl->type = MOUSE_HANDLER;
 		hndl->mouse.x = fx;
-		hndl->mouse.y = fy - font->img->h + font->img->handler->y;
+		hndl->mouse.y = fy - font->glyph.img->h + font->glyph.img->handler->y;
 		hndl->mouse.w = fw - 50;
-		hndl->mouse.h = font->img->h;
+		hndl->mouse.h = font->glyph.img->h;
 		hndl->mouse.p = start_menu_handler;
 		hndl->mouse.button = MOUSE_LEFTBUTTON;
 		hndl->data = sprog;
@@ -141,8 +141,8 @@ void start_menu_start (s_window_t *pwindow, s_list_t *progs, int wx, int wy)
 		if (sprog->type == SMENU_MENU) {
 			s_font_set_str(font, ">");
 			s_font_get_glyph(font);
-			s_image_get_handler(font->img);
-			s_putboxrgba(temp->surface, fw - font->img->w - 10, fy - font->yMax, font->img->w, font->img->h, font->img->rgba);
+			s_image_get_handler(font->glyph.img);
+			s_putboxrgba(temp->surface, fw - font->glyph.img->w - 10, fy - font->glyph.yMax, font->glyph.img->w, font->glyph.img->h, font->glyph.img->rgba);
 		}
 
 		fy += 22;

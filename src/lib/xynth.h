@@ -384,9 +384,13 @@ typedef enum {
 	KEYBD_HANDLER = 0x2
 } S_HANDLER;
 
-typedef struct s_font_s {
+typedef struct s_font_glyph_s {
 	int yMin;
 	int yMax;
+	s_image_t *img;
+} s_font_glyph_t;
+
+typedef struct s_font_s {
 	char *str;
 	int size;
 	int ascent;
@@ -396,7 +400,7 @@ typedef struct s_font_s {
 	int underline_offset;
 	int underline_height;
 	unsigned int rgb;
-	s_image_t *img;
+	s_font_glyph_t glyph;
 	s_font_ft_t *ft;
 } s_font_t;
 

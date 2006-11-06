@@ -303,12 +303,12 @@ static int draw_single_box (s_surface_t *wsurface, s_rect_t *rect, osk_char_t c[
 			s_font_set_size(font, fh);
 		}
 		s_font_get_glyph(font);
-		s_image_get_handler(font->img);
+		s_image_get_handler(font->glyph.img);
 
-		font->img->handler->x = 0;
-		font->img->handler->y = 0;
-		font->img->handler->w = font->img->w;
-		font->img->handler->h = font->img->h;
+		font->glyph.img->handler->x = 0;
+		font->glyph.img->handler->y = 0;
+		font->glyph.img->handler->w = font->glyph.img->w;
+		font->glyph.img->handler->h = font->glyph.img->h;
 
 		switch (i) {
 			case 0:
@@ -316,19 +316,19 @@ static int draw_single_box (s_surface_t *wsurface, s_rect_t *rect, osk_char_t c[
 				y = (rect->h - fh) / 2;
 				break;
 			case 1:
-				x = (rect->w - font->img->handler->w) / 2;
+				x = (rect->w - font->glyph.img->handler->w) / 2;
 				y = 2;
 				break;
 			case 2:
-				x = rect->w - font->img->handler->w - 3;
+				x = rect->w - font->glyph.img->handler->w - 3;
 				y = (rect->h - fh) / 2;
 				break;
 			case 3:
 				y = rect->h - fh - 7;
-				x = (rect->w - font->img->handler->w) / 2;
+				x = (rect->w - font->glyph.img->handler->w) / 2;
 				break;
 		}
-		s_putboxpartrgba(surface, x, y + fh - font->yMax, font->img->handler->w, font->img->handler->h, font->img->w, font->img->h, font->img->rgba, font->img->handler->x, font->img->handler->y);
+		s_putboxpartrgba(surface, x, y + fh - font->glyph.yMax, font->glyph.img->handler->w, font->glyph.img->handler->h, font->glyph.img->w, font->glyph.img->h, font->glyph.img->rgba, font->glyph.img->handler->x, font->glyph.img->handler->y);
 
 		s_font_uninit(font);
 	}
