@@ -51,7 +51,7 @@ void w_textbox_lines_calculate (w_object_t *object)
 		memset(ptrline, 0, strlen(str) + 1);
 		memset(strline, 0, strlen(str) + 1);
 		for (tmp = str; tmp < str + strlen(str); tmp += (chars - 1)) {
-			s_font_init(&font, "arial.ttf");
+			s_font_init(&font, textbox->font);
 			s_font_set_size(font, textbox->size);
 			s_font_set_rgb(font, (textbox->rgb >> 0x10) & 0xff, (textbox->rgb >> 0x8) & 0xff, textbox->rgb & 0xff);
 			for (chars = 0, limit = 0; limit == 0 && chars <= strlen(tmp);) {
@@ -97,7 +97,7 @@ void w_textbox_lines_calculate (w_object_t *object)
 		s_free(ptrline);
 	} else {
 		s_font_t *font;
-		s_font_init(&font, "arial.ttf");
+		s_font_init(&font, textbox->font);
 		s_font_set_size(font, textbox->size);
 		s_font_set_rgb(font, (textbox->rgb >> 0x10) & 0xff, (textbox->rgb >> 0x8) & 0xff, textbox->rgb & 0xff);
 		s_font_set_str(font, textbox->str);
@@ -220,6 +220,7 @@ int w_textbox_init (w_window_t *window, w_textbox_t **textbox, w_object_t *paren
 	(*textbox)->str = NULL;
 	(*textbox)->size = 10;
 	(*textbox)->rgb = 0;
+	(*textbox)->font = strdup("arial.ttf");
 	(*textbox)->properties = TEXTBOX_VCENTER | TEXTBOX_HCENTER;
 
 	(*textbox)->object = (*textbox)->frame->object;
@@ -239,6 +240,7 @@ void w_textbox_uninit (w_object_t *object)
 	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
 	w_textbox_lines_uninit(object);
 	s_free(textbox->str);
+	s_free(textbox->font);
 	s_list_uninit(textbox->lines);
 	w_frame_uninit(textbox->object);
 	s_free(textbox);
