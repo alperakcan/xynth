@@ -281,6 +281,9 @@ int s_font_get_glyph (s_font_t *font)
 	font->glyph.img->h = bbox.yMax - bbox.yMin;
 	font->glyph.yMin = bbox.yMin;
 	font->glyph.yMax = bbox.yMax;
+	font->glyph.height = font->height;
+	font->glyph.lineskip = font->lineskip;
+	font->glyph.size = font->size;
 	
 	s_free(font->glyph.img->rgba);
 	font->glyph.img->rgba  = (unsigned int *) s_calloc(font->glyph.img->w * font->glyph.img->h, sizeof(unsigned int *));
@@ -323,5 +326,6 @@ int s_font_get_width (s_font_t *font, char *str)
 	s_font_get_glyph(font);
 	w = font->glyph.img->w;
 	s_font_set_str(font, ptr);
+	s_free(ptr);
 	return w;
 }

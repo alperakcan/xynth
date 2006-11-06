@@ -387,6 +387,9 @@ typedef enum {
 typedef struct s_font_glyph_s {
 	int yMin;
 	int yMax;
+	int height;
+	int lineskip;
+	int size;
 	s_image_t *img;
 } s_font_glyph_t;
 
