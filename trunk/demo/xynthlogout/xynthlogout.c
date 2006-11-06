@@ -79,10 +79,10 @@ int main (int argc, char *argv[])
 	s_font_set_str(font, "Close Xynth Windowing System...");
 	s_font_set_size(font, 16);
 	s_font_get_glyph(font);
-	s_image_get_handler(font->img);
-	s_putboxrgba(window->surface, 18, 13, font->img->w, font->img->h, font->img->rgba);
+	s_image_get_handler(font->glyph.img);
+	s_putboxrgba(window->surface, 18, 13, font->glyph.img->w, font->glyph.img->h, font->glyph.img->rgba);
 
-	s_fillbox(window->surface, 18, 15 + font->img->h + 2, font->img->w, 2, 0);
+	s_fillbox(window->surface, 18, 15 + font->glyph.img->h + 2, font->glyph.img->w, 2, 0);
 	s_font_uninit(font);
 
 	s_fillbox(window->surface, 40, 48, 35, 35, s_rgbcolor(window->surface, 0, 0, 0));
@@ -92,8 +92,8 @@ int main (int argc, char *argv[])
 	s_font_set_str(font, "Shutdown");
 	s_font_set_size(font, 16);
 	s_font_get_glyph(font);
-	s_image_get_handler(font->img);
-	s_putboxrgba(window->surface, 40 + 35 + 5, 48 + 12, font->img->w, font->img->h, font->img->rgba);
+	s_image_get_handler(font->glyph.img);
+	s_putboxrgba(window->surface, 40 + 35 + 5, 48 + 12, font->glyph.img->w, font->glyph.img->h, font->glyph.img->rgba);
 	s_font_uninit(font);
 	
 	s_handler_init(&hndl);
@@ -113,8 +113,8 @@ int main (int argc, char *argv[])
 	s_font_set_str(font, "Cancel");
 	s_font_set_size(font, 16);
 	s_font_get_glyph(font);
-	s_image_get_handler(font->img);
-	s_putboxrgba(window->surface, 175 + 35 + 5, 48 + 12, font->img->w, font->img->h, font->img->rgba);
+	s_image_get_handler(font->glyph.img);
+	s_putboxrgba(window->surface, 175 + 35 + 5, 48 + 12, font->glyph.img->w, font->glyph.img->h, font->glyph.img->rgba);
 	s_font_uninit(font);
 
 	s_handler_init(&hndl);

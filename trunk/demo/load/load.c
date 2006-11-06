@@ -114,12 +114,12 @@ static int load_draw_cpu_bar (s_surface_t *surface, load_data_t *ldata)
 	s_font_set_str(font, text);
 	s_font_set_size(font, 12);
 	s_font_get_glyph(font);
-	s_image_get_handler(font->img);
+	s_image_get_handler(font->glyph.img);
 	s_putboxrgba(surface, ldata->c_rect.x,
 	                      ldata->c_rect.y + ldata->c_rect.h - 10,
-	                      font->img->w,
-	                      font->img->h,
-	                      font->img->rgba);
+	                      font->glyph.img->w,
+	                      font->glyph.img->h,
+	                      font->glyph.img->rgba);
 	s_font_uninit(font);
 
 	return 0;
@@ -181,12 +181,12 @@ static int load_draw_cpu_graph (s_surface_t *surface, load_data_t *ldata)
 	s_font_set_str(font, text);
 	s_font_set_size(font, 12);
 	s_font_get_glyph(font);
-	s_image_get_handler(font->img);
+	s_image_get_handler(font->glyph.img);
 	s_putboxrgba(surface, x,
 	                      y + h - 10,
-	                      font->img->w,
-	                      font->img->h,
-	                      font->img->rgba);
+	                      font->glyph.img->w,
+	                      font->glyph.img->h,
+	                      font->glyph.img->rgba);
 	s_font_uninit(font);
 	
 	x += 35;
@@ -272,12 +272,12 @@ static int load_draw_mem_bar (s_surface_t *surface, load_data_t *ldata)
 	s_font_set_str(font, text);
 	s_font_set_size(font, 12);
 	s_font_get_glyph(font);
-	s_image_get_handler(font->img);
+	s_image_get_handler(font->glyph.img);
 	s_putboxrgba(surface, ldata->m_rect.x,
 	                      ldata->m_rect.y + ldata->m_rect.h - 10,
-	                      font->img->w,
-	                      font->img->h,
-	                      font->img->rgba);
+	                      font->glyph.img->w,
+	                      font->glyph.img->h,
+	                      font->glyph.img->rgba);
 	s_font_uninit(font);
 	
 	return 0;
@@ -333,12 +333,12 @@ static int load_draw_mem_graph (s_surface_t *surface, load_data_t *ldata)
 	s_font_set_str(font, text);
 	s_font_set_size(font, 12);
 	s_font_get_glyph(font);
-	s_image_get_handler(font->img);
+	s_image_get_handler(font->glyph.img);
 	s_putboxrgba(surface, x,
 	                      y + h - 10,
-	                      font->img->w,
-	                      font->img->h,
-	                      font->img->rgba);
+	                      font->glyph.img->w,
+	                      font->glyph.img->h,
+	                      font->glyph.img->rgba);
 	s_font_uninit(font);
 	
 	x += 40;

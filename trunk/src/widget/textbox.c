@@ -129,7 +129,7 @@ void w_textbox_draw (w_object_t *object)
 	}
 	for (line = 0; !s_list_eol(textbox->lines, line); line++) {
 		s_font_t *font = (s_font_t *) s_list_get(textbox->lines, line);
-		w = MIN(textbox->object->content->w, font->img->w);
+		w = MIN(textbox->object->content->w, font->glyph.img->w);
 		h = MIN(textbox->object->content->h, font->height * textbox->lines->nb_elt);
 		if (!(textbox->properties & TEXTBOX_HCENTER) || textbox->object->content->w == w) { x = 0;
 		} else { x = (textbox->object->content->w - w) / 2; }
@@ -139,19 +139,19 @@ void w_textbox_draw (w_object_t *object)
 		y += textbox->object->content->y;
 		y += font->lineskip * line;
 		if (!(textbox->properties & TEXTBOX_HCENTER)) {
-			d = font->img->w - textbox->object->content->w;
+			d = font->glyph.img->w - textbox->object->content->w;
 			if (d > 0) { x -= d; w += d; }
 		}
-		s_image_get_mat(font->img);
+		s_image_get_mat(font->glyph.img);
 		if ((textbox->frame->style & FRAME_MSHAPE) == FRAME_NOFRAME) {
 			s_putmaskpart(textbox->object->surface->matrix, textbox->object->surface->width, textbox->object->surface->height,
-			              x, y + font->size - font->yMax, w, h, font->img->w, font->img->h,
-			              font->img->mat, 0, 0);
-			s_putboxpartrgb(textbox->object->surface, x, y + font->size - font->yMax, w, h,
-			                font->img->w, font->img->h, font->img->rgba, 0, 0);
+			              x, y + font->size - font->glyph.yMax, w, h, font->glyph.img->w, font->glyph.img->h,
+			              font->glyph.img->mat, 0, 0);
+			s_putboxpartrgb(textbox->object->surface, x, y + font->size - font->glyph.yMax, w, h,
+			                font->glyph.img->w, font->glyph.img->h, font->glyph.img->rgba, 0, 0);
 		} else { 
-			s_putboxpartrgba(textbox->object->surface, x, y + font->size - font->yMax, w, h,
-			                 font->img->w, font->img->h, font->img->rgba, 0, 0);		
+			s_putboxpartrgba(textbox->object->surface, x, y + font->size - font->glyph.yMax, w, h,
+			                 font->glyph.img->w, font->glyph.img->h, font->glyph.img->rgba, 0, 0);		
 		}
 	}
 #if defined(WIDGET_OPTIMIZE_MEMORY)

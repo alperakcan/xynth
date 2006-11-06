@@ -119,7 +119,7 @@ KAFFE_FONT_FUNC_DECL (jint, Java_java_awt_Toolkit_fntStringWidth, jstring jStr)
 	s_font_get_glyph(font);
 	AWT_FREE(str);
 	DEBUGF("Leave");
-	return font->img->w;
+	return font->glyph.img->w;
 }
 
 KAFFE_FONT_FUNC_DECL (jobject, Java_java_awt_Toolkit_fntGetWidths)
@@ -138,7 +138,7 @@ KAFFE_FONT_FUNC_DECL (jobject, Java_java_awt_Toolkit_fntGetWidths)
 		sprintf(str, "%c", n);
 		s_font_set_str(font, str);
 		s_font_get_glyph(font);
-		jw[n] = font->img->w;
+		jw[n] = font->glyph.img->w;
 		jw[n] = (jw[n] < 0) ? 0 : jw[n];
 	}
 	(*env)->ReleaseIntArrayElements(env, widths, jw, 0);

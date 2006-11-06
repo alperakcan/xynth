@@ -65,7 +65,7 @@ void taskbar_progs_draw_client (tbar_progs_t *tbar_progs, s_surface_t *surface, 
 	s_font_set_str(font, text);
 	s_font_set_size(font, h - 8);
 	s_font_get_glyph(font);
-	s_image_get_handler(font->img);
+	s_image_get_handler(font->glyph.img);
 
 	s_fillbox(surface, x, y, w, h, s_rgbcolor(surface, 123, 121, 115));
 
@@ -83,18 +83,18 @@ void taskbar_progs_draw_client (tbar_progs_t *tbar_progs, s_surface_t *surface, 
 
 	y += 5;
 	x += 4;
-	w_ = font->img->w;
+	w_ = font->glyph.img->w;
 
-	if (font->img->w > (w - 8)) {
+	if (font->glyph.img->w > (w - 8)) {
 		w_ = w - 8;
-		_w = font->img->w - (w - 8);
+		_w = font->glyph.img->w - (w - 8);
 	}
 
-	s_putboxpartrgba(surface, x, y, w_, font->img->h, font->img->w, font->img->h, font->img->rgba, 0, 0);
+	s_putboxpartrgba(surface, x, y, w_, font->glyph.img->h, font->glyph.img->w, font->glyph.img->h, font->glyph.img->rgba, 0, 0);
 
 	s_free(text);
-	s_image_uninit(font->img);
-	s_image_init(&(font->img));
+	s_image_uninit(font->glyph.img);
+	s_image_init(&(font->glyph.img));
 }
 
 void taskbar_progs_draw (s_window_t *window)
@@ -315,15 +315,15 @@ void taskbar_clock_handler_o (s_window_t *window, s_event_t *event, s_handler_t 
 	s_font_set_str(font, text);
 	s_font_set_size(font, 12);
 	s_font_get_glyph(font);
-	s_image_get_handler(font->img);
+	s_image_get_handler(font->glyph.img);
 
-	s_window_set_coor(temp, 0, event->mouse->x - font->img->handler->w - 8,
-	                           event->mouse->y - font->img->handler->h - 8,
-	                           font->img->handler->w + 8,
-	                           font->img->handler->h + 8);
+	s_window_set_coor(temp, 0, event->mouse->x - font->glyph.img->handler->w - 8,
+	                           event->mouse->y - font->glyph.img->handler->h - 8,
+	                           font->glyph.img->handler->w + 8,
+	                           font->glyph.img->handler->h + 8);
 	s_fillbox(temp->surface, 0, 0, temp->surface->buf->w, temp->surface->buf->h, s_rgbcolor(temp->surface, 0, 0, 0));
 	s_fillbox(temp->surface, 1, 1, temp->surface->buf->w - 2, temp->surface->buf->h - 2, s_rgbcolor(temp->surface, 255, 255, 222));
-	s_putboxrgba(temp->surface, 4, 4, font->img->w, font->img->h, font->img->rgba);
+	s_putboxrgba(temp->surface, 4, 4, font->glyph.img->w, font->glyph.img->h, font->glyph.img->rgba);
 	s_font_uninit(font);
 	s_free(text);
 
@@ -375,12 +375,12 @@ void taskbar_clock_draw (s_window_t *window, s_timer_t *timer)
 	s_fillbox(srf, 1, 1, tbar_clock->rect.w - 1, tbar_clock->rect.h - 1, c1);
 	s_fillbox(srf, 1, 1, tbar_clock->rect.w - 2, tbar_clock->rect.h - 2, c2);
 
-	w_ = tbar_clock->font->img->w;
-	if (tbar_clock->font->img->w > (tbar_clock->rect.w - 6)) {
+	w_ = tbar_clock->font->glyph.img->w;
+	if (tbar_clock->font->glyph.img->w > (tbar_clock->rect.w - 6)) {
 		w_ = tbar_clock->rect.w - 6;
-		_w = tbar_clock->font->img->w - (tbar_clock->rect.w - 6);
+		_w = tbar_clock->font->glyph.img->w - (tbar_clock->rect.w - 6);
 	}
-	s_putboxpartrgba(srf, 3, 4, w_, tbar_clock->font->img->h, tbar_clock->font->img->w, tbar_clock->font->img->h, tbar_clock->font->img->rgba, 0, 0);
+	s_putboxpartrgba(srf, 3, 4, w_, tbar_clock->font->glyph.img->h, tbar_clock->font->glyph.img->w, tbar_clock->font->glyph.img->h, tbar_clock->font->glyph.img->rgba, 0, 0);
 
         s_putbox(window->surface, tbar_clock->rect.x, tbar_clock->rect.y, tbar_clock->rect.w, tbar_clock->rect.h, srf->vbuf);
         s_free(vbuf);

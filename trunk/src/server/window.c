@@ -99,40 +99,40 @@ void s_server_window_title (int id, char *title)
 		font = server->theme.font[v];
 		s_font_set_str(font, title);
 		s_font_get_glyph(font);
-		s_image_get_mat(font->img);
-		s_image_get_handler(font->img);
+		s_image_get_mat(font->glyph.img);
+		s_image_get_handler(font->glyph.img);
 
-		font->img->buf = (char *) s_calloc(1, font->img->w * font->img->h * server->window->surface->bytesperpixel);
-                s_getsurfacevirtual(srf, font->img->w, font->img->h, server->window->surface->bitsperpixel, font->img->buf);
+		font->glyph.img->buf = (char *) s_calloc(1, font->glyph.img->w * font->glyph.img->h * server->window->surface->bytesperpixel);
+                s_getsurfacevirtual(srf, font->glyph.img->w, font->glyph.img->h, server->window->surface->bitsperpixel, font->glyph.img->buf);
 
-		if ((i = font->img->w / server->theme.form[v][TOP_3].w) > 0) {
+		if ((i = font->glyph.img->w / server->theme.form[v][TOP_3].w) > 0) {
 			while (i--) {
-				yo = server->theme.text_v_off[v] - font->img->handler->y + (server->theme.form[v][TOP_3].handler->h - font->img->handler->h) / 2;
-				if ((font->img->h + yo) > server->theme.form[v][TOP_3].h) {
+				yo = server->theme.text_v_off[v] - font->glyph.img->handler->y + (server->theme.form[v][TOP_3].handler->h - font->glyph.img->handler->h) / 2;
+				if ((font->glyph.img->h + yo) > server->theme.form[v][TOP_3].h) {
 					h = server->theme.form[v][TOP_3].h - yo;
 				} else {
-					h = font->img->h;
+					h = font->glyph.img->h;
 				}
 				s_putboxpart(srf, i * server->theme.form[v][TOP_3].w, 0, server->theme.form[v][TOP_3].w, h, server->theme.form[v][TOP_3].w, server->theme.form[v][TOP_3].h, server->theme.form[v][TOP_3].buf, 0, yo);
 			}
 		}
-		if ((i = font->img->w % server->theme.form[v][TOP_3].w) > 0) {
-				s_putboxpart(srf, font->img->w - server->theme.form[v][TOP_3].w, 0, server->theme.form[v][TOP_3].w, font->img->h, server->theme.form[v][TOP_3].w, server->theme.form[v][TOP_3].h, server->theme.form[v][TOP_3].buf, 0, server->theme.text_v_off[v] - font->img->handler->y + (server->theme.form[v][TOP_3].handler->h - font->img->handler->h) / 2);
+		if ((i = font->glyph.img->w % server->theme.form[v][TOP_3].w) > 0) {
+				s_putboxpart(srf, font->glyph.img->w - server->theme.form[v][TOP_3].w, 0, server->theme.form[v][TOP_3].w, font->glyph.img->h, server->theme.form[v][TOP_3].w, server->theme.form[v][TOP_3].h, server->theme.form[v][TOP_3].buf, 0, server->theme.text_v_off[v] - font->glyph.img->handler->y + (server->theme.form[v][TOP_3].handler->h - font->glyph.img->handler->h) / 2);
 		}
-		s_putboxrgba(srf, 0, 0, font->img->w, font->img->h, font->img->rgba);
+		s_putboxrgba(srf, 0, 0, font->glyph.img->w, font->glyph.img->h, font->glyph.img->rgba);
 
 		s_free(server->client[id].title.img[v].mat);
 		s_free(server->client[id].title.img[v].buf);
-		server->client[id].title.img[v].mat = (unsigned char *) s_malloc(font->img->w * font->img->h);
-		server->client[id].title.img[v].buf = (char *) s_malloc(font->img->w * font->img->h * server->window->surface->bytesperpixel);
-		server->client[id].title.img[v].w = font->img->w;
-		server->client[id].title.img[v].h = font->img->h;
-		server->client[id].title.hy[v] = font->img->handler->y;
-		server->client[id].title.hh[v] = font->img->handler->h;
-		memcpy(server->client[id].title.img[v].mat, font->img->mat, font->img->w * font->img->h);
-		memcpy(server->client[id].title.img[v].buf, font->img->buf, font->img->w * font->img->h * server->window->surface->bytesperpixel);
-		s_image_uninit(font->img);
-		s_image_init(&(font->img));
+		server->client[id].title.img[v].mat = (unsigned char *) s_malloc(font->glyph.img->w * font->glyph.img->h);
+		server->client[id].title.img[v].buf = (char *) s_malloc(font->glyph.img->w * font->glyph.img->h * server->window->surface->bytesperpixel);
+		server->client[id].title.img[v].w = font->glyph.img->w;
+		server->client[id].title.img[v].h = font->glyph.img->h;
+		server->client[id].title.hy[v] = font->glyph.img->handler->y;
+		server->client[id].title.hh[v] = font->glyph.img->handler->h;
+		memcpy(server->client[id].title.img[v].mat, font->glyph.img->mat, font->glyph.img->w * font->glyph.img->h);
+		memcpy(server->client[id].title.img[v].buf, font->glyph.img->buf, font->glyph.img->w * font->glyph.img->h * server->window->surface->bytesperpixel);
+		s_image_uninit(font->glyph.img);
+		s_image_init(&(font->glyph.img));
 	}
 	s_free(srf);
 }

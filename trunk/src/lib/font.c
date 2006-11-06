@@ -52,7 +52,7 @@ int s_font_init (s_font_t **font, char *name)
 		    	}
 		}
 	}
-	if (s_image_init(&((*font)->img))) {
+	if (s_image_init(&((*font)->glyph.img))) {
 		goto err2;
 	}
 	s_free(name_);
@@ -72,7 +72,7 @@ int s_font_uninit (s_font_t *font)
 	if (font == NULL) {
 		return 0;
 	}
-        s_image_uninit(font->img);
+        s_image_uninit(font->glyph.img);
 	FT_Done_Face(font->ft->face);
 	FT_Done_FreeType(font->ft->library);
 	s_free(font->str);
@@ -277,17 +277,17 @@ int s_font_get_glyph (s_font_t *font)
 		bbox.xMax = 0;
 		bbox.yMax = 0;
 	}
-	font->img->w = xmax - xmin;
-	font->img->h = bbox.yMax - bbox.yMin;
-	font->yMin = bbox.yMin;
-	font->yMax = bbox.yMax;
+	font->glyph.img->w = xmax - xmin;
+	font->glyph.img->h = bbox.yMax - bbox.yMin;
+	font->glyph.yMin = bbox.yMin;
+	font->glyph.yMax = bbox.yMax;
 	
-	s_free(font->img->rgba);
-	font->img->rgba  = (unsigned int *) s_calloc(font->img->w * font->img->h, sizeof(unsigned int *));
+	s_free(font->glyph.img->rgba);
+	font->glyph.img->rgba  = (unsigned int *) s_calloc(font->glyph.img->w * font->glyph.img->h, sizeof(unsigned int *));
 
-	n = font->img->w * font->img->h;
+	n = font->glyph.img->w * font->glyph.img->h;
 	while (n--) {
-		font->img->rgba[n] = 255;
+		font->glyph.img->rgba[n] = 255;
 	}
 	
 	for (n = 0; n < num_glyphs; n++) {
@@ -295,11 +295,11 @@ int s_font_get_glyph (s_font_t *font)
 		int j;
 		FT_BitmapGlyph bit = (FT_BitmapGlyph) images[n];
 		x = pens[n].x;
-		y = (pens[n].y - bit->top + font->img->h) - (font->img->h - font->yMax);
+		y = (pens[n].y - bit->top + font->glyph.img->h) - (font->glyph.img->h - font->glyph.yMax);
 		for (i = 0; i < bit->bitmap.rows; i++) {
 			for (j = 0; j < bit->bitmap.width; j++) {
 				if (*(bit->bitmap.buffer + i * bit->bitmap.pitch + j)) {
-					*(font->img->rgba + j + x + ((i + y) * font->img->w)) = ((font->rgb << 8) & 0xFFFFFF00) | (~*(bit->bitmap.buffer + i * bit->bitmap.pitch + j) & 0xFF);
+					*(font->glyph.img->rgba + j + x + ((i + y) * font->glyph.img->w)) = ((font->rgb << 8) & 0xFFFFFF00) | (~*(bit->bitmap.buffer + i * bit->bitmap.pitch + j) & 0xFF);
 				}
 			}
 		}
@@ -321,7 +321,7 @@ int s_font_get_width (s_font_t *font, char *str)
 		ptr = strdup(font->str);
 	s_font_set_str(font, str);
 	s_font_get_glyph(font);
-	w = font->img->w;
+	w = font->glyph.img->w;
 	s_font_set_str(font, ptr);
 	return w;
 }
