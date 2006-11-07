@@ -622,7 +622,6 @@ void node_generate (node_t *node)
 	        "#include <widget.h>\n"
 	        "\n"
 	        "#include <libintl.h>\n"
-	        "#define _(str) gettext(str)\n"
 	        "\n");
 	node_generate_header(node);
 	fprintf(g_header, "\n");
