@@ -174,7 +174,7 @@ int w_textbox_set_rgb (w_object_t *object, int r, int g, int b)
 	w_textbox_t *textbox;
 	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
 	textbox->rgb = ((r & 0xff) << 0x10) | ((g & 0xff) << 0x8) | (b & 0xff);
-	w_textbox_set_str(object, textbox->str);
+	w_textbox_draw(object);
 	return 0;
 }
 
@@ -183,7 +183,7 @@ int w_textbox_set_size (w_object_t *object, int size)
 	w_textbox_t *textbox;
 	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
 	textbox->size = size;
-	w_textbox_set_str(object, textbox->str);
+	w_textbox_draw(object);
 	return 0;
 }
 
