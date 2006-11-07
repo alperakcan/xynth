@@ -5,7 +5,6 @@ echo > objs.txt
 
 for file in `find ../../ -type f -name \*.o`; do
 	echo $file |
-	     grep -v widget |
 	     grep -v tools |
 	     grep -v themes >> objs.txt
 done

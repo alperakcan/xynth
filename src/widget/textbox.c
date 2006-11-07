@@ -28,9 +28,24 @@ void w_textbox_lines_uninit (w_object_t *object)
 	}
 }
 
+#define w_textbox_line_add(fglyph) {\
+	s_font_glyph_t *glyph = (s_font_glyph_t *) s_malloc(sizeof(s_font_glyph_t));\
+	*glyph = fglyph->glyph;\
+	s_list_add(textbox->lines, glyph, -1);\
+	s_image_init(&(fglyph->glyph.img));\
+}
+					
 void w_textbox_lines_calculate (w_object_t *object)
 {
 	char *str;
+	int ptrw;
+	int strw;
+	int limit;
+	int chars;
+	char *tmp;
+	char *ptr;
+	char *strline;
+	char *ptrline;
 	s_font_t *font;
 	w_textbox_t *textbox;
 	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
@@ -42,14 +57,6 @@ void w_textbox_lines_calculate (w_object_t *object)
 	s_font_set_size(font, textbox->size);
 	s_font_set_rgb(font, (textbox->rgb >> 0x10) & 0xff, (textbox->rgb >> 0x8) & 0xff, textbox->rgb & 0xff);
 	if (textbox->properties & TEXTBOX_WRAP) {
-		int ptrw;
-		int strw;
-		int limit;
-		int chars;
-		char *tmp;
-		char *ptr;
-		char *strline;
-		char *ptrline;
 		strline = (char *) s_malloc(sizeof(char *) * (strlen(str) + 1));
 		ptrline = (char *) s_malloc(sizeof(char *) * (strlen(str) + 1));
 		memset(ptrline, 0, strlen(str) + 1);
@@ -63,6 +70,17 @@ void w_textbox_lines_calculate (w_object_t *object)
 				if (textbox->object->content->w <= strw) {
 				    	limit = 1;
 				} else {
+#if 1
+					int charst = 0;
+					int charsp = 0;
+					while ((textbox->object->content->w - font->size) > (strw + charst)) {
+						charst += font->size;
+						charsp++;
+					}
+					if (chars + charsp < strlen(tmp)) {
+						chars += charsp;
+					}
+#endif
 					chars++;
 				}
 			}
@@ -87,21 +105,11 @@ void w_textbox_lines_calculate (w_object_t *object)
 				}
 				s_font_set_str(font, ptrline);
 				s_font_get_glyph(font);
-				{
-					s_font_glyph_t *glyph = (s_font_glyph_t *) s_malloc(sizeof(s_font_glyph_t));
-					*glyph = font->glyph;
-					s_list_add(textbox->lines, glyph, -1);
-					s_image_init(&(font->glyph.img));
-				}
+				w_textbox_line_add(font);
 			} else {
 				s_font_set_str(font, strline);
 				s_font_get_glyph(font);
-				{
-					s_font_glyph_t *glyph = (s_font_glyph_t *) s_malloc(sizeof(s_font_glyph_t));
-					*glyph = font->glyph;
-					s_list_add(textbox->lines, glyph, -1);
-					s_image_init(&(font->glyph.img));
-				}
+				w_textbox_line_add(font);
 				break;
 			}
 		}
@@ -110,12 +118,7 @@ void w_textbox_lines_calculate (w_object_t *object)
 	} else {
 		s_font_set_str(font, textbox->str);
 		s_font_get_glyph(font);
-		{
-			s_font_glyph_t *glyph = (s_font_glyph_t *) s_malloc(sizeof(s_font_glyph_t));
-			*glyph = font->glyph;
-			s_list_add(textbox->lines, glyph, -1);
-			s_image_init(&(font->glyph.img));
-		}
+		w_textbox_line_add(font);
 	}
 	s_font_uninit(font);
 }
