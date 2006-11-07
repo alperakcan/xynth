@@ -16,6 +16,9 @@
 #include "../lib/xynth_.h"
 #include "widget.h"
 
+#include <libintl.h>
+#define _(str) gettext(str)
+					
 void w_textbox_lines_uninit (w_object_t *object)
 {
 	w_textbox_t *textbox;
@@ -34,7 +37,7 @@ void w_textbox_lines_uninit (w_object_t *object)
 	s_list_add(textbox->lines, glyph, -1);\
 	s_image_init(&(fglyph->glyph.img));\
 }
-					
+
 void w_textbox_lines_calculate (w_object_t *object)
 {
 	char *str;
@@ -49,7 +52,7 @@ void w_textbox_lines_calculate (w_object_t *object)
 	s_font_t *font;
 	w_textbox_t *textbox;
 	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
-	if ((str = textbox->str) == NULL) {
+	if ((str = _(textbox->str)) == NULL) {
 		return;
 	}
 	w_textbox_lines_uninit(object);
@@ -116,7 +119,7 @@ void w_textbox_lines_calculate (w_object_t *object)
 		s_free(strline);
 		s_free(ptrline);
 	} else {
-		s_font_set_str(font, textbox->str);
+		s_font_set_str(font, str);
 		s_font_get_glyph(font);
 		w_textbox_line_add(font);
 	}
