@@ -73,7 +73,7 @@ void w_textbox_lines_calculate (w_object_t *object)
 #if 1
 					int charst = 0;
 					int charsp = 0;
-					while ((textbox->object->content->w - font->size) > (strw + charst)) {
+					while ((textbox->object->content->w - font->height) > (strw + charst)) {
 						charst += font->size;
 						charsp++;
 					}
