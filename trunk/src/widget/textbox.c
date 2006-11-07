@@ -133,7 +133,6 @@ void w_textbox_draw (w_object_t *object)
 	int line;
 	w_textbox_t *textbox;
 	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
-
 	if (object->surface->vbuf == NULL) {
 		return;
 	}
@@ -160,8 +159,7 @@ void w_textbox_draw (w_object_t *object)
 		s_image_get_mat(glyph->img);
 		if ((textbox->frame->style & FRAME_MSHAPE) == FRAME_NOFRAME) {
 			s_putmaskpart(textbox->object->surface->matrix, textbox->object->surface->width, textbox->object->surface->height,
-			              x, y + glyph->size - glyph->yMax, w, h, glyph->img->w, glyph->img->h,
-			              glyph->img->mat, 0, 0);
+			              x, y + glyph->size - glyph->yMax, w, h, glyph->img->w, glyph->img->h, glyph->img->mat, 0, 0);
 			s_putboxpartrgb(textbox->object->surface, x, y + glyph->size - glyph->yMax, w, h,
 			                glyph->img->w, glyph->img->h, glyph->img->rgba, 0, 0);
 		} else { 
