@@ -103,9 +103,17 @@ void w_frame_draw_image (w_object_t *object, w_frame_image_t *fimg)
 #else
 			img = (s_image_t *) s_list_get(fimg->images, 0);
 #endif
-			s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
-			              0, 0, img->w, img->h, img->w, img->h, img->mat, 0, 0);
-			s_putboxrgb(object->surface, 0, 0, img->w, img->h, img->rgba);
+			if (fimg->rotation == FRAME_IMAGE_SOLID) {
+				s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
+				              0, 0, img->w, img->h, img->w, img->h, img->mat, 0, 0);
+				s_putboxrgb(object->surface, 0, 0, img->w, img->h, img->rgba);
+			} else if (fimg->rotation == FRAME_IMAGE_VERTICAL) {
+				for (i = 0; i < object->surface->height; i++) {
+					s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
+					              0, i, img->w, img->h, img->w, img->h, img->mat, 0, 0);
+					s_putboxrgb(object->surface, 0, i, img->w, img->h, img->rgba);
+				}
+			}
 #if defined(WIDGET_OPTIMIZE_MEMORY)
 			s_image_uninit(img);
 #endif
