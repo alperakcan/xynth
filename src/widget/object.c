@@ -253,6 +253,30 @@ int w_object_update (w_object_t *object, s_rect_t *coor)
 end:	return 0;
 }
 
+int w_object_draw (w_object_t *object)
+{
+	int pos;
+	w_object_t *tmp;
+	for (pos = 0; !s_list_eol(object->childs, pos); pos++) {
+		tmp = (w_object_t *) s_list_get(object->childs, pos);
+		w_object_draw(tmp);
+	}
+	if (object->draw) {
+		object->draw(object);
+	}
+	return 0;
+}
+
+int w_object_refresh (w_object_t *object)
+{
+	while (object->parent) {
+		object = object->parent;
+	}
+	w_object_draw(object);
+	w_object_update(object, object->surface->win);
+	return 0;
+}
+
 int w_object_set_content (w_object_t *object, int x, int y, int w, int h)
 {
 	object->content->x = x;

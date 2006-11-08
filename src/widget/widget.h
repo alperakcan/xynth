@@ -19,7 +19,7 @@
 /* reduce memory usage, this is a bit hacky
  * some speed consumptions ;|
  */
-#define WIDGET_OPTIMIZE_MEMORY
+//#define WIDGET_OPTIMIZE_MEMORY
 
 typedef struct w_object_s w_object_t;
 
@@ -117,8 +117,9 @@ typedef enum {
 } FRAME_SHADOW;
 
 typedef enum {
-	FRAME_IMAGE_VERTICAL    = 0x0,
-	FRAME_IMAGE_HORIZONTAL  = 0x1,
+	FRAME_IMAGE_SOLID       = 0x0,
+	FRAME_IMAGE_VERTICAL    = 0x1,
+	FRAME_IMAGE_HORIZONTAL  = 0x2,
 } FRAME_IMAGE_ROTATION;
 
 typedef struct w_frame_image_s {
@@ -296,6 +297,8 @@ int w_object_has_effect (w_object_t *effect, w_object_t *object);
 int w_object_effect_apply (s_surface_t *surface, s_rect_t *rect, w_object_t *effect, w_object_t *object);
 int w_object_update_to_surface (w_object_t *object, s_surface_t *surface, s_rect_t *coor, w_object_t *effect, int do_effect);
 int w_object_update (w_object_t *object, s_rect_t *coor);
+int w_object_draw (w_object_t *object);
+int w_object_refresh (w_object_t *object);
 int w_object_set_content (w_object_t *object, int x, int y, int w, int h);
 int w_object_move_correct (w_object_t *object);
 int w_object_move (w_object_t *object, int x, int y, int w, int h);
