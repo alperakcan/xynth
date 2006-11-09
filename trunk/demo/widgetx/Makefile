@@ -7,7 +7,7 @@ LIBDIR  = ../../src/widget ../../src/lib
 LDFLAGS = -lwidget -lxynth
 
 have_widgetc := $(wildcard ../../src/widget/widgetc)
-have_widgetc := $(wildcard ../../src/widget/widgetc.exe)
+have_widgetc += $(wildcard ../../src/widget/widgetc.exe)
 
 ifeq ($(strip $(have_widgetc)),)
 
@@ -35,4 +35,4 @@ ifneq ($(TARGET),)
 	cp -a $(TARGET) ../../$(DISTBINDIR)
 endif
 
-EXTRA_CLEAN = single_widgetx.a widgetx_xml.c widgetx_xml.h widgetx.o widgetx_xml.o
+EXTRA_CLEAN = widgetx single_widgetx.a widgetx_xml.c widgetx_xml.h widgetx.o widgetx_xml.o
