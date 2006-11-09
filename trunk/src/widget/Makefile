@@ -26,16 +26,16 @@ endif
 endif
 
 EXTRA_TARGETS = widgetc
-EXTRA_CLEAN = libwidget.a libwidget.so widgetc.o
+EXTRA_CLEAN = libwidget.a libwidget.so widgetc.o widgetc.exe
 EXTRA_DEPEND_FILES = *.h
 
 include ../../Makefile.rules
 
 widgetc: widgetc.c
 	rm -rf $@
-	PATH=/usr/bin:$PATH gcc -g -Wall $(CFLAGS) $^ -lexpat -o $@
+	PATH=/usr/bin:"${PATH}" gcc -g -Wall $(CFLAGS) $^ -lexpat -o $@
 
 dist: all
-	cp -a widgetc ../../$(DISTBINDIR)
+	cp widgetc ../../$(DISTBINDIR)
 	cp -a widget.h ../../$(DISTINCDIR)
 	cp -a $(TARGET_A) $(TARGET_SO) $(TARGET) ../../$(DISTLIBDIR)
