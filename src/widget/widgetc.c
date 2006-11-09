@@ -819,7 +819,7 @@ usage:			case 'h':
 	
 	XML_ParserFree(p);
 
-	node_parse(g_node);
+//	node_parse(g_node);
 	node_generate(g_node);
 
 	node_uninit(g_node);
