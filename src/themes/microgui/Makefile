@@ -3,7 +3,7 @@ include ../../../Makefile.cfg
 include ../../../Makefile.parse
 
 OBJS          = microgui.o
-INCDIR        = ../../lib/ ../../server
+INCDIR        = ../../lib ../../server
 TARGET_SO     = microgui.so
 
 include ../../../Makefile.rules
