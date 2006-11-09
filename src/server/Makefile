@@ -31,7 +31,7 @@ VLDFLAGS-$(VIDEO_PSPDEV)  += -lm -lpspdebug -lpspdisplay -lpspge -lpspctrl -lpsp
 
 OBJS-$(VIDEO_GDI)         += video/gdi/event.o video/gdi/kbd.o video/gdi/mouse.o video/gdi/server.o
 LIBDIR-$(VIDEO_GDI)       += video/gdi/pthread_w32
-VLDFLAGS-$(VIDEO_GDI)     += -lpthreadGC2 -lgdi32
+VLDFLAGS-$(VIDEO_GDI)     += -lintl -lpthreadGC2 -lgdi32
 TARGET-$(VIDEO_GDI)        = xynth.exe
 
 OBJS-$(VIDEO_GP2X)        += video/gp2x/event.o video/gp2x/kbd.o video/gp2x/mouse.o video/gp2x/server.o
