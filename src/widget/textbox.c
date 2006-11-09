@@ -16,8 +16,12 @@
 #include "../lib/xynth_.h"
 #include "widget.h"
 
+#if 0
 #include <libintl.h>
 #define _(str) gettext(str)
+#else
+#define _(str) str
+#endif
 					
 void w_textbox_lines_uninit (w_object_t *object)
 {
@@ -68,6 +72,8 @@ void w_textbox_lines_calculate (w_object_t *object)
 			for (chars = 0, limit = 0; limit == 0 && chars <= strlen(tmp);) {
 				snprintf(ptrline, chars, "%s", tmp);
 				snprintf(strline, chars + 1, "%s", tmp);
+				ptrline[chars] = '\0';
+				strline[chars + 1] = '\0';
 				ptrw = s_font_get_width(font, ptrline);
 				strw = s_font_get_width(font, strline);
 				if (textbox->object->content->w <= strw) {
@@ -88,6 +94,18 @@ void w_textbox_lines_calculate (w_object_t *object)
 				}
 			}
 			if (limit) {
+				while (ptrline[0] == ' ') {
+					for (ptrw = 0; ptrline[ptrw] && ptrline[ptrw + 1]; ptrw++) {
+						ptrline[ptrw] = ptrline[ptrw + 1];
+					}
+					ptrline[ptrw] = '\0';
+				}
+				while (strline[0] == ' ') {
+					for (strw = 0; strline[strw] && strline[strw + 1]; strw++) {
+						strline[strw] = strline[strw + 1];
+					}
+					strline[strw] = '\0';
+				}
 				ptrw = strlen(ptrline);
 				strw = strlen(strline);
 				if (ptrline[ptrw - 1] != ' ' &&
@@ -106,10 +124,12 @@ void w_textbox_lines_calculate (w_object_t *object)
 				    	}
 				    	s_free(ptr);
 				}
+				fflush(stdout);
 				s_font_set_str(font, ptrline);
 				s_font_get_glyph(font);
 				w_textbox_line_add(font);
 			} else {
+				fflush(stdout);
 				s_font_set_str(font, strline);
 				s_font_get_glyph(font);
 				w_textbox_line_add(font);
