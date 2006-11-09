@@ -105,9 +105,7 @@ void w_window_atevent (s_window_t *window, s_event_t *event)
 		window->surface->height = window->surface->buf->h;
 		s_free(window->surface->vbuf);
 		window->surface->vbuf = (unsigned char *) s_malloc(sizeof(char) * window->surface->bytesperpixel * window->surface->buf->w * window->surface->buf->h);
-#if defined(WIDGET_OPTIMIZE_MEMORY)
 		windoww->object->surface->vbuf = window->surface->vbuf;
-#endif
 		w_object_update(windoww->object, windoww->object->surface->win);
 	}
 	if (event->type & (MOUSE_EVENT | KEYBD_EVENT)) {
@@ -177,21 +175,17 @@ int w_window_set_coor (w_window_t *window, int x, int y, int w, int h)
 {
 	s_window_set_coor(window->window, WINDOW_NOFORM, x, y, w, h);
 	w_object_move(window->object, 0, 0, w, h);
-#if defined(WIDGET_OPTIMIZE_MEMORY)
 	s_free(window->object->surface->vbuf);
 	s_free(window->object->surface->matrix);
 	window->object->surface->vbuf = window->window->surface->vbuf;
 	window->object->surface->matrix = NULL;
-#endif
 	return 0;
 }
 
 int w_window_uninit (w_window_t *window)
 {
-#if defined(WIDGET_OPTIMIZE_MEMORY)
 	window->object->surface->vbuf = NULL;
 	window->object->surface->matrix = NULL;
-#endif
 	w_object_uninit(window->object);
 	s_free(window);
 	return 0;

@@ -86,17 +86,9 @@ int s_image_get_buf (s_surface_t *surface, s_image_t *img)
 		s_image_free_buf(img);
 	}
 
-        img->buf = (char *) s_malloc(img->w * img->h * surface->bytesperpixel + 1);
+	img->buf = (char *) s_malloc(img->w * img->h * surface->bytesperpixel + 1);
 	s_getsurfacevirtual(&s, img->w, img->h, surface->bitsperpixel, img->buf);
-
-	for (y = 0; y < img->h; y++) {
-		for (x = 0; x < img->w; x++) {
-			if (~*d & 0xFF) {
-				s_setpixelrgb(&s, x, y, (*d >> 24) & 0xFF, (*d >> 16) & 0xFF, (*d >> 8) & 0xFF);
-			}
-			d++;
-		}
-	}
+	s_putboxrgb(&s, 0, 0, img->w, img->h, img->rgba);
 
 	return 0;
 }
