@@ -9,7 +9,7 @@ subdirs-Y += fonts
 subdirs-Y += configs
 subdirs-Y += server
 subdirs-$(THEME_PLUGIN)   += themes
-subdirs-$(PYTHON_BINDING) += python
+#subdirs-$(PYTHON_BINDING) += python
 
 all :
 	$(foreach F, $(subdirs-Y), $(MAKE) -C $F || exit 1;)
