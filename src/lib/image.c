@@ -77,10 +77,7 @@ int s_image_get_mat (s_image_t *img)
 
 int s_image_get_buf (s_surface_t *surface, s_image_t *img)
 {
-        int x;
-        int y;
         s_surface_t s;
-        unsigned int *d = img->rgba;
 
         if (img->buf != NULL) {
 		s_image_free_buf(img);
