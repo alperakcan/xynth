@@ -16,7 +16,7 @@
 #include "../lib/xynth_.h"
 #include "widget.h"
 
-#if 0
+#if 1
 #include <libintl.h>
 #define _(str) gettext(str)
 #else
