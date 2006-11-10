@@ -299,12 +299,10 @@ int w_object_move_correct (w_object_t *object)
 	return 0;
 }
 
-int w_object_move (w_object_t *object, int x, int y, int w, int h)
+int w_object_move_silent (w_object_t *object, int x, int y, int w, int h)
 {
-	s_rect_t old;
 	s_rect_t new;
-	s_rect_t *tmp;
-	s_list_t *diff;
+	s_rect_t old;
 	w_object_t *root;
 
 	if (w < 0) { w = 0; }
@@ -383,6 +381,15 @@ int w_object_move (w_object_t *object, int x, int y, int w, int h)
 #endif
 	}
 	
+	return 0;
+}
+
+int w_object_move (w_object_t *object, int x, int y, int w, int h)
+{
+	s_rect_t old;
+	s_rect_t *tmp;
+	s_list_t *diff;
+	w_object_move_silent(object, x, y, w, h);
 	if (object->parent != NULL &&
 	    object->showed == 1) {
 		s_list_init(&diff);
@@ -396,7 +403,6 @@ int w_object_move (w_object_t *object, int x, int y, int w, int h)
 		s_list_uninit(diff);
 		w_object_update(object, object->surface->win);
 	}
-
 	return 0;
 }
 
