@@ -389,6 +389,7 @@ int w_object_move (w_object_t *object, int x, int y, int w, int h)
 	s_rect_t old;
 	s_rect_t *tmp;
 	s_list_t *diff;
+	old = *object->surface->win;
 	w_object_move_silent(object, x, y, w, h);
 	if (object->parent != NULL &&
 	    object->showed == 1) {
