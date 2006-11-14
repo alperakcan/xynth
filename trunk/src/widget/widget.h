@@ -19,7 +19,7 @@
 /* reduce memory usage, this is a bit hacky
  * some speed consumptions ;|
  */
-#define WIDGET_OPTIMIZE_MEMORY
+//#define WIDGET_OPTIMIZE_MEMORY
 
 typedef struct w_object_s w_object_t;
 
