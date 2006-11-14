@@ -317,8 +317,6 @@ void node_generate_code_move (node_t *node)
 		fprintf(g_source, "w_window_set_coor(%s, %s, %s, %s, %s);\n", node_get_parent(node, "window")->id, (x) ? x : "0", (y) ? y : "0", (w) ? w : "w", (h) ? h : "0");
 	} else if (strcmp(node->parent->name, "object") == 0) {
 		fprintf(g_source, "w_object_move(%s->object, %s, %s, %s, %s);\n", node_get_parent(node, "object")->id, (x) ? x : "0", (y) ? y : "0", (w) ? w : "w", (h) ? h : "0");
-	} else if (strcmp(node->parent->name, "element") == 0) {
-		fprintf(g_source, "w_object_move(%s->object, %s, %s, %s, %s);\n", node_get_parent(node, "element")->id, (x) ? x : "0", (y) ? y : "0", (w) ? w : "w", (h) ? h : "0");
 	}
 	if ((tmp = node_get_node(node, "x")) != NULL) { tmp->dontparse = 1; }
 	if ((tmp = node_get_node(node, "y")) != NULL) { tmp->dontparse = 1; }
@@ -366,9 +364,6 @@ void node_generate_code_show (node_t *node)
 		fprintf(g_source, "s_client_main(%s->window);\n", node_get_parent(node, "window")->id);
 	} else if (strcmp(node->parent->name, "object") == 0) {
 		fprintf(g_source, "w_object_show(%s->object);\n", node_get_parent(node, "object")->id);
-	} else if (strcmp(node->parent->name, "element") == 0) {
-		printf("alper\n");
-		fprintf(g_source, "w_object_show(%s->object);\n", node_get_parent(node, "element")->id);
 	}
 }
 
@@ -430,33 +425,15 @@ void node_generate_code_image (node_t *node, char *to)
 	if ((tmp = node_get_node(node, "rotate")) != NULL) { tmp->dontparse = 1; }
 }
 
-void node_generate_code_object_button (node_t *node, node_t *window, node_t *parent)
-{
-	node_t *tmp;
-	fprintf(g_source, "w_button_init(%s, &%s, %s->object);\n", window->id, node->id, parent->id);
-	if ((tmp = node_get_node(node, "style")) != NULL) {
-		node_generate_code_style(tmp);
-		tmp->dontparse = 1;
-	}
-	while ((tmp = node_get_node(node, "image")) != NULL) {
-		node_generate_code_image(tmp, node->id);
-		tmp->dontparse = 1;
-	}
-	if ((tmp = node_get_node(node, "released")) != NULL) {
-		node_generate_code_released(tmp);
-		tmp->dontparse = 1;
-	}
-}
-
-void node_generate_code_object (node_t *node, node_t *window, node_t *parent)
+void node_generate_code_object (node_t *node)
 {
 	node_t *tmp;
 	if (strcmp(node->type, "frame") == 0) {
-		fprintf(g_source, "w_frame_init(%s, &%s, %s, %s->object);\n", window->id, node->id, "0", parent->id);
+		fprintf(g_source, "w_frame_init(%s, &%s, %s, %s->object);\n", node_get_parent(node, "window")->id, node->id, "0", node->parent->id);
 	} else if (strcmp(node->type, "button") == 0) {
-		node_generate_code_object_button(node, window, parent);
+		fprintf(g_source, "w_button_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
 	} else if (strcmp(node->type, "textbox") == 0) {
-		fprintf(g_source, "w_textbox_init(%s, &%s, %s->object);\n", window->id, node->id, parent->id);
+		fprintf(g_source, "w_textbox_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
 		if ((tmp = node_get_node(node, "properties")) != NULL) {
 			fprintf(g_source, "%s->properties = %s;\n", tmp->parent->id, tmp->value);
 			tmp->dontparse = 1;
@@ -473,7 +450,7 @@ void node_generate_code_object (node_t *node, node_t *window, node_t *parent)
 			if ((tmp = node_get_node(node, "color/blue")) != NULL) { tmp->dontparse = 1; }
 		}
 	} else if (strcmp(node->type, "checkbox") == 0) {
-		fprintf(g_source, "w_checkbox_init(%s, &%s, %s->object);\n", window->id, node->id, parent->id);
+		fprintf(g_source, "w_checkbox_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
 		if ((tmp = node_get_node(node, "properties")) != NULL) {
 			fprintf(g_source, "%s->text->properties = %s;\n", tmp->parent->id, tmp->value);
 			tmp->dontparse = 1;
@@ -500,9 +477,9 @@ void node_generate_code_object (node_t *node, node_t *window, node_t *parent)
 			tmp->dontparse = 1;
 		}
 	} else if (strcmp(node->type, "editbox") == 0) {
-		fprintf(g_source, "w_editbox_init(%s, &%s, %s->object);\n", window->id, node->id, parent->id);
+		fprintf(g_source, "w_editbox_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
 	} else if (strcmp(node->type, "progressbar") == 0) {
-		fprintf(g_source, "w_progressbar_init(%s, &%s, %s->object);\n", window->id, node->id, parent->id);
+		fprintf(g_source, "w_progressbar_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
 		while ((tmp = node_get_node(node, "image")) != NULL) {
 			node_generate_code_image(tmp, node->id);
 			tmp->dontparse = 1;
@@ -539,53 +516,17 @@ void node_generate_code_object (node_t *node, node_t *window, node_t *parent)
 	}
 }
 
-void node_parse_clear (node_t *node)
-{
-	int p;
-	node_t *tmp;
-	for (p = 0; !s_list_eol(node->nodes, p); p++) {
-		tmp = (node_t *) s_list_get(node->nodes, p);
-		node_parse_clear(tmp);
-	}
-	node->dontparse = 0;
-}
-
-void node_generate_code_element (node_t *node)
-{
-	int p;
-	node_t *tmp;
-	node_t *window;
-	node_t *parent;
-	window = node_get_parent(node, "window");
-	parent = node->parent;
-	for (p = 0; !s_list_eol(s_node->nodes, p); p++) {
-		tmp = (node_t *) s_list_get(s_node->nodes, p);
-		if (strcmp(node->type, tmp->type) == 0) {
-			tmp = node_get_node(tmp, "object");
-			tmp->id = node->id;
-			node_generate_code_object(tmp, window, parent);
-			node_generate_code_object(node, window, parent);
-			tmp->id = NULL;
-			node_parse_clear(tmp);
-		}
-	}
-}
-
 void node_generate_code (node_t *node)
 {
 	int p;
 	node_t *tmp;
-	node_t *window;
-	node_t *parent;
 	if (node->dontparse != 0) {
 		return;
 	}
-	window = node_get_parent(node, "window");
-	parent = node->parent;
 	if (strcmp(node->name, "window") == 0) {
 		node_generate_code_window(node);
 	} else if (strcmp(node->name, "object") == 0) {
-		node_generate_code_object(node, window, parent);
+		node_generate_code_object(node);
 	} else if (strcmp(node->name, "title") == 0) {
 		node_generate_code_title(node);
 	} else if (strcmp(node->name, "move") == 0) {
@@ -603,11 +544,9 @@ void node_generate_code (node_t *node)
 	} else if (strcmp(node->name, "pressed") == 0) {
 		node_generate_code_pressed(node);
 	} else if (strcmp(node->name, "released") == 0) {
-		node_generate_code_pressed(node);
+		node_generate_code_released(node);
 	} else if (strcmp(node->name, "image") == 0) {
 		node_generate_code_image(node, NULL);
-	} else if (strcmp(node->name, "element") == 0) {
-		node_generate_code_element(node);
 	}
 	g_depth++;
 	p = 0;
@@ -638,16 +577,6 @@ void node_generate_header (node_t *node)
 			fprintf(g_header, "w_editbox_t *%s;\n", node->id);
 		} else if (strcmp(node->type, "progressbar") == 0) {
 			fprintf(g_header, "w_progressbar_t *%s;\n", node->id);
-		}
-	} else if (strcmp(node->name, "element") == 0) {
-		for (p = 0; !s_list_eol(s_node->nodes, p); p++) {
-			tmp = (node_t *) s_list_get(s_node->nodes, p);
-			if (strcmp(node->type, tmp->type) == 0) {
-				tmp = node_get_node(tmp, "object");
-				tmp->id = node->id;
-				node_generate_header(tmp);
-				tmp->id = NULL;
-			}
 		}
 	}
 	g_depth++;
@@ -683,8 +612,134 @@ void node_generate_function (node_t *node)
 	g_depth--;
 }
 
+void node_init (node_t **node)
+{
+	node_t *n;
+	n = (node_t *) malloc(sizeof(node_t));
+	memset(n, 0, sizeof(node_t));
+	s_list_init(&(n->nodes));
+	*node = n;
+}
+
+void node_uninit (node_t *node)
+{
+	node_t *tmp;
+	while (!s_list_eol(node->nodes, 0)) {
+		tmp = (node_t *) s_list_get(node->nodes, 0);
+		s_list_remove(node->nodes, 0);
+		node_uninit(tmp);
+	}
+	s_list_uninit(node->nodes);
+	free(node->id);
+	free(node->name);
+	free(node->type);
+	free(node->value);
+	free(node);
+}
+
+void node_print (node_t *node)
+{
+	int i;
+	for (i = 0; i < g_depth; i++) {
+		printf("  ");
+	}
+	printf("%s : ", node->name);
+	if (node->value) {
+		printf("%s ", node->value);
+	}
+	if (node->id) {
+		printf("[%s] ", node->id);
+	}
+	if (node->type) {
+		printf("[%s] ", node->type);
+	}
+	printf("\n");
+}
+
+void node_parse (node_t *node)
+{
+	int p;
+	node_t *tmp;
+	node_print(node);
+	g_depth++;
+	p = 0;
+	while (!s_list_eol(node->nodes, p)) {
+		tmp = (node_t *) s_list_get(node->nodes, p);
+		node_parse(tmp);
+		p++;
+	}
+	g_depth--;
+}
+
+char * node_strdup (char *str)
+{
+	if (str == NULL) {
+		return NULL;
+	} else {
+		return strdup(str);
+	}
+}
+
+void node_dublicate_ (node_t *node, node_t *dub)
+{
+	int p;
+	node_t *tmp;
+	node_t *dmp;
+	dub->id = node_strdup(node->id);
+	dub->name = node_strdup(node->name);
+	dub->type = node_strdup(node->type);
+	dub->value = node_strdup(node->value);
+	for (p = 0; !s_list_eol(node->nodes, p); p++) {
+    		tmp = (node_t *) s_list_get(node->nodes, p);
+    		node_init(&dmp);
+    		node_dublicate_(tmp, dmp);
+    		s_list_add(dub->nodes, dmp, -1);
+    		dmp->parent = dub;
+	}
+}
+
+void node_dublicate (node_t *node, node_t **dub)
+{
+	node_init(dub);
+	node_dublicate_(node, *dub);
+}
+
+void node_generate_element (node_t *node)
+{
+	int p;
+	node_t *tmp;
+	node_t *dmp;
+	node_t *chl;
+	for (p = 0; !s_list_eol(node->nodes, p); p++) {
+    		tmp = (node_t *) s_list_get(node->nodes, p);
+    		node_generate_element(tmp);
+	}
+	if (strcmp(node->name, "element") == 0 &&
+	    node->type != NULL) {
+	    	for (p = 0; !s_list_eol(s_node->nodes, p); p++) {
+	    		tmp = (node_t *) s_list_get(s_node->nodes, p);
+	    		if (strcmp(tmp->name, "element") == 0 &&
+	    		    strcmp(tmp->id, node->type) == 0) {
+	    		    	node_dublicate(tmp, &dmp);
+	    		    	free(node->name);
+	    		    	free(node->type);
+	    		    	node->name = node_strdup("object");
+	    		    	node->type = node_strdup(dmp->type);
+	    		    	while (!s_list_eol(dmp->nodes, 0)) {
+	    		    		chl = (node_t *) s_list_get(dmp->nodes, dmp->nodes->nb_elt - 1);
+	    		    		chl->parent = node;
+	    		    		s_list_add(node->nodes, chl, 0);
+	    		    		s_list_remove(dmp->nodes, dmp->nodes->nb_elt - 1);
+	    		    	}
+	    		    	node_parse(node);
+	    		}
+	    	}
+	}
+}
+
 void node_generate (node_t *node)
 {
+	node_generate_element(node);
 	fprintf(g_header,
 	        "\n"
 	        "#include <stdio.h>\n"
@@ -715,62 +770,6 @@ void node_generate (node_t *node)
 	fprintf(g_source,
 	        "return 0;\n"
 	        "}\n");
-}
-
-void node_print (node_t *node)
-{
-	int i;
-	for (i = 0; i < g_depth; i++) {
-		printf("  ");
-	}
-	printf("%s : ", node->name);
-	if (node->value) {
-		printf("%s ", node->value);
-	}
-	if (node->type) {
-		printf("[%s] ", node->type);
-	}
-	printf("\n");
-}
-
-void node_parse (node_t *node)
-{
-	int p;
-	node_t *tmp;
-	node_print(node);
-	g_depth++;
-	p = 0;
-	while (!s_list_eol(node->nodes, p)) {
-		tmp = (node_t *) s_list_get(node->nodes, p);
-		node_parse(tmp);
-		p++;
-	}
-	g_depth--;
-}
-
-void node_init (node_t **node)
-{
-	node_t *n;
-	n = (node_t *) malloc(sizeof(node_t));
-	memset(n, 0, sizeof(node_t));
-	s_list_init(&(n->nodes));
-	*node = n;
-}
-
-void node_uninit (node_t *node)
-{
-	node_t *tmp;
-	while (!s_list_eol(node->nodes, 0)) {
-		tmp = (node_t *) s_list_get(node->nodes, 0);
-		s_list_remove(node->nodes, 0);
-		node_uninit(tmp);
-	}
-	s_list_uninit(node->nodes);
-	free(node->id);
-	free(node->name);
-	free(node->type);
-	free(node->value);
-	free(node);
 }
 
 void start (void *xdata, const char *el, const char **attr)
