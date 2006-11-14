@@ -26,6 +26,7 @@ static char *g_source_name = NULL;
 static char *g_header_name = NULL;
 
 static node_t *g_node = NULL;
+static node_t *s_node = NULL;
 static int g_depth = 0;
 static char *g_path = NULL;
 static node_t *g_active = NULL;
@@ -316,6 +317,8 @@ void node_generate_code_move (node_t *node)
 		fprintf(g_source, "w_window_set_coor(%s, %s, %s, %s, %s);\n", node_get_parent(node, "window")->id, (x) ? x : "0", (y) ? y : "0", (w) ? w : "w", (h) ? h : "0");
 	} else if (strcmp(node->parent->name, "object") == 0) {
 		fprintf(g_source, "w_object_move(%s->object, %s, %s, %s, %s);\n", node_get_parent(node, "object")->id, (x) ? x : "0", (y) ? y : "0", (w) ? w : "w", (h) ? h : "0");
+	} else if (strcmp(node->parent->name, "element") == 0) {
+		fprintf(g_source, "w_object_move(%s->object, %s, %s, %s, %s);\n", node_get_parent(node, "element")->id, (x) ? x : "0", (y) ? y : "0", (w) ? w : "w", (h) ? h : "0");
 	}
 	if ((tmp = node_get_node(node, "x")) != NULL) { tmp->dontparse = 1; }
 	if ((tmp = node_get_node(node, "y")) != NULL) { tmp->dontparse = 1; }
@@ -363,6 +366,9 @@ void node_generate_code_show (node_t *node)
 		fprintf(g_source, "s_client_main(%s->window);\n", node_get_parent(node, "window")->id);
 	} else if (strcmp(node->parent->name, "object") == 0) {
 		fprintf(g_source, "w_object_show(%s->object);\n", node_get_parent(node, "object")->id);
+	} else if (strcmp(node->parent->name, "element") == 0) {
+		printf("alper\n");
+		fprintf(g_source, "w_object_show(%s->object);\n", node_get_parent(node, "element")->id);
 	}
 }
 
@@ -424,15 +430,33 @@ void node_generate_code_image (node_t *node, char *to)
 	if ((tmp = node_get_node(node, "rotate")) != NULL) { tmp->dontparse = 1; }
 }
 
-void node_generate_code_object (node_t *node)
+void node_generate_code_object_button (node_t *node, node_t *window, node_t *parent)
+{
+	node_t *tmp;
+	fprintf(g_source, "w_button_init(%s, &%s, %s->object);\n", window->id, node->id, parent->id);
+	if ((tmp = node_get_node(node, "style")) != NULL) {
+		node_generate_code_style(tmp);
+		tmp->dontparse = 1;
+	}
+	while ((tmp = node_get_node(node, "image")) != NULL) {
+		node_generate_code_image(tmp, node->id);
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "released")) != NULL) {
+		node_generate_code_released(tmp);
+		tmp->dontparse = 1;
+	}
+}
+
+void node_generate_code_object (node_t *node, node_t *window, node_t *parent)
 {
 	node_t *tmp;
 	if (strcmp(node->type, "frame") == 0) {
-		fprintf(g_source, "w_frame_init(%s, &%s, %s, %s->object);\n", node_get_parent(node, "window")->id, node->id, "0", node->parent->id);
+		fprintf(g_source, "w_frame_init(%s, &%s, %s, %s->object);\n", window->id, node->id, "0", parent->id);
 	} else if (strcmp(node->type, "button") == 0) {
-		fprintf(g_source, "w_button_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
+		node_generate_code_object_button(node, window, parent);
 	} else if (strcmp(node->type, "textbox") == 0) {
-		fprintf(g_source, "w_textbox_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
+		fprintf(g_source, "w_textbox_init(%s, &%s, %s->object);\n", window->id, node->id, parent->id);
 		if ((tmp = node_get_node(node, "properties")) != NULL) {
 			fprintf(g_source, "%s->properties = %s;\n", tmp->parent->id, tmp->value);
 			tmp->dontparse = 1;
@@ -449,7 +473,7 @@ void node_generate_code_object (node_t *node)
 			if ((tmp = node_get_node(node, "color/blue")) != NULL) { tmp->dontparse = 1; }
 		}
 	} else if (strcmp(node->type, "checkbox") == 0) {
-		fprintf(g_source, "w_checkbox_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
+		fprintf(g_source, "w_checkbox_init(%s, &%s, %s->object);\n", window->id, node->id, parent->id);
 		if ((tmp = node_get_node(node, "properties")) != NULL) {
 			fprintf(g_source, "%s->text->properties = %s;\n", tmp->parent->id, tmp->value);
 			tmp->dontparse = 1;
@@ -476,9 +500,9 @@ void node_generate_code_object (node_t *node)
 			tmp->dontparse = 1;
 		}
 	} else if (strcmp(node->type, "editbox") == 0) {
-		fprintf(g_source, "w_editbox_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
+		fprintf(g_source, "w_editbox_init(%s, &%s, %s->object);\n", window->id, node->id, parent->id);
 	} else if (strcmp(node->type, "progressbar") == 0) {
-		fprintf(g_source, "w_progressbar_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
+		fprintf(g_source, "w_progressbar_init(%s, &%s, %s->object);\n", window->id, node->id, parent->id);
 		while ((tmp = node_get_node(node, "image")) != NULL) {
 			node_generate_code_image(tmp, node->id);
 			tmp->dontparse = 1;
@@ -515,17 +539,53 @@ void node_generate_code_object (node_t *node)
 	}
 }
 
+void node_parse_clear (node_t *node)
+{
+	int p;
+	node_t *tmp;
+	for (p = 0; !s_list_eol(node->nodes, p); p++) {
+		tmp = (node_t *) s_list_get(node->nodes, p);
+		node_parse_clear(tmp);
+	}
+	node->dontparse = 0;
+}
+
+void node_generate_code_element (node_t *node)
+{
+	int p;
+	node_t *tmp;
+	node_t *window;
+	node_t *parent;
+	window = node_get_parent(node, "window");
+	parent = node->parent;
+	for (p = 0; !s_list_eol(s_node->nodes, p); p++) {
+		tmp = (node_t *) s_list_get(s_node->nodes, p);
+		if (strcmp(node->type, tmp->type) == 0) {
+			tmp = node_get_node(tmp, "object");
+			tmp->id = node->id;
+			node_generate_code_object(tmp, window, parent);
+			node_generate_code_object(node, window, parent);
+			tmp->id = NULL;
+			node_parse_clear(tmp);
+		}
+	}
+}
+
 void node_generate_code (node_t *node)
 {
 	int p;
 	node_t *tmp;
+	node_t *window;
+	node_t *parent;
 	if (node->dontparse != 0) {
 		return;
 	}
+	window = node_get_parent(node, "window");
+	parent = node->parent;
 	if (strcmp(node->name, "window") == 0) {
 		node_generate_code_window(node);
 	} else if (strcmp(node->name, "object") == 0) {
-		node_generate_code_object(node);
+		node_generate_code_object(node, window, parent);
 	} else if (strcmp(node->name, "title") == 0) {
 		node_generate_code_title(node);
 	} else if (strcmp(node->name, "move") == 0) {
@@ -543,9 +603,11 @@ void node_generate_code (node_t *node)
 	} else if (strcmp(node->name, "pressed") == 0) {
 		node_generate_code_pressed(node);
 	} else if (strcmp(node->name, "released") == 0) {
-		node_generate_code_released(node);
+		node_generate_code_pressed(node);
 	} else if (strcmp(node->name, "image") == 0) {
 		node_generate_code_image(node, NULL);
+	} else if (strcmp(node->name, "element") == 0) {
+		node_generate_code_element(node);
 	}
 	g_depth++;
 	p = 0;
@@ -576,6 +638,16 @@ void node_generate_header (node_t *node)
 			fprintf(g_header, "w_editbox_t *%s;\n", node->id);
 		} else if (strcmp(node->type, "progressbar") == 0) {
 			fprintf(g_header, "w_progressbar_t *%s;\n", node->id);
+		}
+	} else if (strcmp(node->name, "element") == 0) {
+		for (p = 0; !s_list_eol(s_node->nodes, p); p++) {
+			tmp = (node_t *) s_list_get(s_node->nodes, p);
+			if (strcmp(node->type, tmp->type) == 0) {
+				tmp = node_get_node(tmp, "object");
+				tmp->id = node->id;
+				node_generate_header(tmp);
+				tmp->id = NULL;
+			}
 		}
 	}
 	g_depth++;
@@ -721,10 +793,14 @@ void start (void *xdata, const char *el, const char **attr)
 		}
 		node->parent = g_active;
 		g_active = node;
-		if (node->parent) {
-			s_list_add(node->parent->nodes, node, -1);
+		if (strcmp(node->name, "stylesheet") == 0) {
+			s_node = node;
 		} else {
-			g_node = node;
+			if (node->parent) {
+				s_list_add(node->parent->nodes, node, -1);
+			} else {
+				g_node = node;
+			}
 		}
 	}
 }
@@ -819,10 +895,11 @@ usage:			case 'h':
 	
 	XML_ParserFree(p);
 
-//	node_parse(g_node);
+	node_parse(g_node);
 	node_generate(g_node);
 
 	node_uninit(g_node);
+	node_uninit(s_node);
 	fclose(g_input);
 	fclose(g_source);
 	fclose(g_header);
