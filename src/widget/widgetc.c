@@ -173,15 +173,13 @@ static int s_list_add (s_list_t *li, void *el, int pos)
 	return li->nb_elt;
 }
 
-static node_t * node_get_parent (node_t *node, char *name)
+static char * node_strdup (char *str)
 {
-	while (node->parent) {
-		if (strcmp(node->parent->name, name) == 0) {
-			return node->parent;
-		}
-		node = node->parent;
+	if (str == NULL) {
+		return NULL;
+	} else {
+		return strdup(str);
 	}
-	return NULL;
 }
 
 static int node_path_normalize (char *out, int len)
@@ -242,6 +240,69 @@ static int node_path_normalize (char *out, int len)
 		out[i - 1] = 0;
 
 	return 0;
+}
+
+static void node_init (node_t **node)
+{
+	node_t *n;
+	n = (node_t *) malloc(sizeof(node_t));
+	memset(n, 0, sizeof(node_t));
+	s_list_init(&(n->nodes));
+	*node = n;
+}
+
+static void node_uninit (node_t *node)
+{
+	node_t *tmp;
+	if (node == NULL) {
+		return;
+	}
+	while (!s_list_eol(node->nodes, 0)) {
+		tmp = (node_t *) s_list_get(node->nodes, 0);
+		s_list_remove(node->nodes, 0);
+		node_uninit(tmp);
+	}
+	s_list_uninit(node->nodes);
+	free(node->id);
+	free(node->name);
+	free(node->type);
+	free(node->value);
+	free(node);
+}
+
+static void node_dublicate_ (node_t *node, node_t *dub)
+{
+	int p;
+	node_t *tmp;
+	node_t *dmp;
+	dub->id = node_strdup(node->id);
+	dub->name = node_strdup(node->name);
+	dub->type = node_strdup(node->type);
+	dub->value = node_strdup(node->value);
+	for (p = 0; !s_list_eol(node->nodes, p); p++) {
+    		tmp = (node_t *) s_list_get(node->nodes, p);
+    		node_init(&dmp);
+    		node_dublicate_(tmp, dmp);
+    		s_list_add(dub->nodes, dmp, -1);
+    		dmp->parent = dub;
+	}
+}
+
+static void node_dublicate (node_t *node, node_t **dub)
+{
+	node_init(dub);
+	node_dublicate_(node, *dub);
+}
+
+static node_t * node_get_parent (node_t *node, char *name)
+{
+	while (node->parent) {
+		if (strcmp(node->parent->name, name) == 0) {
+			return node->parent;
+		}
+		node = node->parent;
+	}
+	return NULL;
 }
 
 static node_t * node_get_node_ (node_t *node, char *path)
@@ -309,14 +370,84 @@ static char * node_get_value (node_t *node, char *path)
 	return NULL;
 }
 
-static void node_generate_code_window (node_t *node)
+static void node_print_ (node_t *node)
 {
-	fprintf(g_source, "w_window_init(&%s, %s, NULL);\n", node->id, node->type);
+	int i;
+	for (i = 0; i < g_depth; i++) {
+		printf("  ");
+	}
+	printf("%s : ", node->name);
+	if (node->value) {
+		printf("%s ", node->value);
+	}
+	if (node->id) {
+		printf("[%s] ", node->id);
+	}
+	if (node->type) {
+		printf("[%s] ", node->type);
+	}
+	printf("\n");
 }
 
-static void node_generate_code_title (node_t *node)
+static void node_print (node_t *node)
 {
-	fprintf(g_source, "s_window_set_title(%s->window, \"%s\");\n", node_get_parent(node, "window")->id, node->value);
+	int p;
+	node_t *tmp;
+	node_print_(node);
+	g_depth++;
+	p = 0;
+	while (!s_list_eol(node->nodes, p)) {
+		tmp = (node_t *) s_list_get(node->nodes, p);
+		node_print(tmp);
+		p++;
+	}
+	g_depth--;
+}
+
+static void node_generate_code_style_ (node_t *node, node_t *parent, char *prefix)
+{
+	node_t *shape = node_get_node(node, "shape");
+	node_t *shadow = node_get_node(node, "shadow");
+	fprintf(g_source, "w_%s_set_%sstyle(%s->object, %s, %s);\n",parent->type, (prefix) ? prefix : "", parent->id, (shape) ? shape->value : "0", (shadow) ? shadow->value : "0");
+	if (shape) shape->dontparse = 1;
+	if (shadow) shadow->dontparse = 1;
+}
+
+static void node_generate_code_image_ (node_t *node, node_t *parent, char *prefix)
+{
+	int i;
+	int count;
+	char *shape;
+	char *shadow;
+	char *rotate;
+	char *cntstr;
+	char *imgvar;
+	node_t *tmp;
+	cntstr = (char *) malloc(sizeof(char *) * 255);
+	imgvar = (char *) malloc(sizeof(char *) * 255);
+	sprintf(imgvar, "__imgvar__%u", rand());
+	shape = node_get_value(node, "style/shape");
+	shadow = node_get_value(node, "style/shadow");
+	rotate = node_get_value(node, "rotate");
+	count = atoi(node_get_value(node, "count"));
+	fprintf(g_source, "{\n");
+	fprintf(g_source, "  char *%s[%d] = {\n", imgvar, count);
+	for (i = 0; i < count; i++) {
+		sprintf(cntstr, "image%d", i);
+		fprintf(g_source, "    \"%s\",\n", node_get_value(node, cntstr));
+		tmp = node_get_node(node, cntstr);
+		tmp->dontparse = 1;
+	}
+	fprintf(g_source, "  };\n");
+	fprintf(g_source, "  w_%s_set_%simage(%s->object, %s | %s, %s, %d, %s);\n", parent->type, (prefix) ? prefix : "", parent->id, (shape) ? shape : "0", (shadow) ? shadow : "0", (rotate) ? rotate : "0", count, imgvar);
+	fprintf(g_source, "}\n");
+	if ((tmp = node_get_node(node, "style")) != NULL) { tmp->dontparse = 1; }
+	if ((tmp = node_get_node(node, "style/shape")) != NULL) { tmp->dontparse = 1; }
+	if ((tmp = node_get_node(node, "style/shadow")) != NULL) { tmp->dontparse = 1; }
+	if ((tmp = node_get_node(node, "count")) != NULL) { tmp->dontparse = 1; }
+	if ((tmp = node_get_node(node, "rotate")) != NULL) { tmp->dontparse = 1; }
+	free(cntstr);
+	free(imgvar);
 }
 
 static void node_generate_code_move (node_t *node)
@@ -327,14 +458,208 @@ static void node_generate_code_move (node_t *node)
 	char *w = node_get_value(node, "w");
 	char *h = node_get_value(node, "h");
 	if (strcmp(node->parent->name, "window") == 0) {
-		fprintf(g_source, "w_window_set_coor(%s, %s, %s, %s, %s);\n", node_get_parent(node, "window")->id, (x) ? x : "0", (y) ? y : "0", (w) ? w : "w", (h) ? h : "0");
+		fprintf(g_source, "w_window_set_coor(%s, %s, %s, %s, %s);\n", node->parent->id, (x) ? x : "0", (y) ? y : "0", (w) ? w : "w", (h) ? h : "0");
 	} else if (strcmp(node->parent->name, "object") == 0) {
-		fprintf(g_source, "w_object_move(%s->object, %s, %s, %s, %s);\n", node_get_parent(node, "object")->id, (x) ? x : "0", (y) ? y : "0", (w) ? w : "w", (h) ? h : "0");
+		fprintf(g_source, "w_object_move(%s->object, %s, %s, %s, %s);\n", node->parent->id, (x) ? x : "0", (y) ? y : "0", (w) ? w : "w", (h) ? h : "0");
 	}
+	node->dontparse = 1;
 	if ((tmp = node_get_node(node, "x")) != NULL) { tmp->dontparse = 1; }
 	if ((tmp = node_get_node(node, "y")) != NULL) { tmp->dontparse = 1; }
 	if ((tmp = node_get_node(node, "w")) != NULL) { tmp->dontparse = 1; }
 	if ((tmp = node_get_node(node, "h")) != NULL) { tmp->dontparse = 1; }
+}
+
+static void node_generate_code_window (node_t *node)
+{
+	node_t *tmp;
+	fprintf(g_source, "w_window_init(&%s, %s, NULL);\n", node->id, node->type);
+	if ((tmp = node_get_node(node, "title")) != NULL) {
+		fprintf(g_source, "s_window_set_title(%s->window, \"%s\");\n", node->id, tmp->value);
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "move")) != NULL) {
+		node_generate_code_move(tmp);
+		tmp->dontparse = 1;
+	}
+}
+
+static void node_generate_code_object_frame (node_t *node)
+{
+	node_t *tmp;
+	node_t *window = node_get_parent(node, "window");
+	fprintf(g_source, "w_frame_init(%s, &%s, %s, %s->object);\n", window->id, node->id, "0", node->parent->id);
+	if ((tmp = node_get_node(node, "style")) != NULL) {
+		node_generate_code_style_(tmp, node, NULL);
+		tmp->dontparse = 1;
+	}
+	while ((tmp = node_get_node(node, "image")) != NULL) {
+		node_generate_code_image_(tmp, node, NULL);
+		tmp->dontparse = 1;
+	}
+}
+
+static void node_generate_code_object_button (node_t *node)
+{
+	node_t *tmp;
+	node_t *window = node_get_parent(node, "window");
+	fprintf(g_source, "w_button_init(%s, &%s, %s->object);\n", window->id, node->id, node->parent->id);
+	if ((tmp = node_get_node(node, "style")) != NULL) {
+		node_generate_code_style_(tmp, node, NULL);
+		tmp->dontparse = 1;
+	}
+	while ((tmp = node_get_node(node, "image")) != NULL) {
+		node_generate_code_image_(tmp, node, NULL);
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "pressed")) != NULL) {
+		fprintf(g_source, "w_button_set_pressed(%s->object, %s);\n", node->id, tmp->value);
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "released")) != NULL) {
+		fprintf(g_source, "w_button_set_released(%s->object, %s);\n", node->id, tmp->value);
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "clicked")) != NULL) {
+		fprintf(g_source, "w_button_set_clicked(%s->object, %s);\n", node->id, tmp->value);
+		tmp->dontparse = 1;
+	}
+}
+
+static void node_generate_code_object_textbox (node_t *node)
+{
+	node_t *tmp;
+	fprintf(g_source, "w_textbox_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
+	if ((tmp = node_get_node(node, "style")) != NULL) {
+		node_generate_code_style_(tmp, node, NULL);
+		tmp->dontparse = 1;
+	}
+	while ((tmp = node_get_node(node, "image")) != NULL) {
+		node_generate_code_image_(tmp, node, NULL);
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "properties")) != NULL) {
+		fprintf(g_source, "w_textbox_set_properties(%s->object, %s);\n", node->id, tmp->value);
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "size")) != NULL) {
+		fprintf(g_source, "w_textbox_set_size(%s->object, %s);\n", node->id, tmp->value);
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "color")) != NULL) {
+		fprintf(g_source, "w_textbox_set_rgb(%s->object, %s, %s, %s);\n", node->id, node_get_value(tmp, "red"), node_get_value(tmp, "green"), node_get_value(tmp, "blue"));
+		if ((tmp = node_get_node(node, "color/red")) != NULL) { tmp->dontparse = 1; }
+		if ((tmp = node_get_node(node, "color/green")) != NULL) { tmp->dontparse = 1; }
+		if ((tmp = node_get_node(node, "color/blue")) != NULL) { tmp->dontparse = 1; }
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "string")) != NULL) {
+		fprintf(g_source, "w_textbox_set_str(%s->object, %s);\n", node->id, tmp->value);
+		tmp->dontparse = 1;
+	}
+}
+
+static void node_generate_code_object_editbox (node_t *node)
+{
+	node_t *tmp;
+	fprintf(g_source, "w_editbox_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
+	if ((tmp = node_get_node(node, "style")) != NULL) {
+		node_generate_code_style_(tmp, node, NULL);
+		tmp->dontparse = 1;
+	}
+	while ((tmp = node_get_node(node, "image")) != NULL) {
+		node_generate_code_image_(tmp, node, NULL);
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "properties")) != NULL) {
+		fprintf(g_source, "w_editbox_set_properties(%s->object, %s);\n", node->id, tmp->value);
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "size")) != NULL) {
+		fprintf(g_source, "w_editbox_set_size(%s->object, %s);\n", node->id, tmp->value);
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "color")) != NULL) {
+		fprintf(g_source, "w_editbox_set_rgb(%s->object, %s, %s, %s);\n", node->id, node_get_value(tmp, "red"), node_get_value(tmp, "green"), node_get_value(tmp, "blue"));
+		if ((tmp = node_get_node(node, "color/red")) != NULL) { tmp->dontparse = 1; }
+		if ((tmp = node_get_node(node, "color/green")) != NULL) { tmp->dontparse = 1; }
+		if ((tmp = node_get_node(node, "color/blue")) != NULL) { tmp->dontparse = 1; }
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "string")) != NULL) {
+		fprintf(g_source, "w_editbox_set_str(%s->object, %s);\n", node->id, tmp->value);
+		tmp->dontparse = 1;
+	}
+}
+
+static void node_generate_code_object_checkbox (node_t *node)
+{
+	node_t *tmp;
+	fprintf(g_source, "w_checkbox_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
+	if ((tmp = node_get_node(node, "style")) != NULL) {
+		node_generate_code_style_(tmp, node, NULL);
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "boxstyle")) != NULL) {
+		node_generate_code_style_(tmp, node, "box");
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "properties")) != NULL) {
+		fprintf(g_source, "w_checkbox_set_properties(%s->object, %s);\n", node->id, tmp->value);
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "size")) != NULL) {
+		fprintf(g_source, "w_checkbox_set_size(%s->object, %s);\n", node->id, tmp->value);
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "color")) != NULL) {
+		fprintf(g_source, "w_checkbox_set_rgb(%s->object, %s, %s, %s);\n", node->id, node_get_value(tmp, "red"), node_get_value(tmp, "green"), node_get_value(tmp, "blue"));
+		if ((tmp = node_get_node(node, "color/red")) != NULL) { tmp->dontparse = 1; }
+		if ((tmp = node_get_node(node, "color/green")) != NULL) { tmp->dontparse = 1; }
+		if ((tmp = node_get_node(node, "color/blue")) != NULL) { tmp->dontparse = 1; }
+		tmp->dontparse = 1;
+	}
+	while ((tmp = node_get_node(node, "image")) != NULL) {
+		node_generate_code_image_(tmp, node, NULL);
+		tmp->dontparse = 1;
+	}
+	while ((tmp = node_get_node(node, "boximage")) != NULL) {
+		node_generate_code_image_(tmp, node, "box");
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "changed")) != NULL) {
+		fprintf(g_source, "w_checkbox_set_changed(%s->object, %s);\n", node->id, tmp->value);
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "string")) != NULL) {
+		fprintf(g_source, "w_checkbox_set_str(%s->object, %s);\n", node->id, tmp->value);
+		tmp->dontparse = 1;
+	}
+}
+
+static void node_generate_code_object_progressbar (node_t *node)
+{
+	node_t *tmp;
+	fprintf(g_source, "w_progressbar_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
+	if ((tmp = node_get_node(node, "style")) != NULL) {
+		node_generate_code_style_(tmp, node, NULL);
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "boxstyle")) != NULL) {
+		node_generate_code_style_(tmp, node, "box");
+		tmp->dontparse = 1;
+	}
+	while ((tmp = node_get_node(node, "image")) != NULL) {
+		node_generate_code_image_(tmp, node, NULL);
+		tmp->dontparse = 1;
+	}
+	while ((tmp = node_get_node(node, "boximage")) != NULL) {
+		node_generate_code_image_(tmp, node, "box");
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "changed")) != NULL) {
+		fprintf(g_source, "w_progressbar_set_changed(%s->object, %s);\n", node->id, tmp->value);
+		tmp->dontparse = 1;
+	}
 }
 
 static void node_generate_code_effect (node_t *node)
@@ -343,30 +668,6 @@ static void node_generate_code_effect (node_t *node)
 	char *effect = node_get_value(node, "effect");
 	fprintf(g_source, "%s->object->effect->effect = %s;\n", node->parent->id, (effect) ? effect : "0");
 	if ((tmp = node_get_node(node, "effect")) != NULL) { tmp->dontparse = 1; }
-}
-
-static void node_generate_code_style (node_t *node)
-{
-	node_t *tmp;
-	char *shape = node_get_value(node, "shape");
-	char *shadow = node_get_value(node, "shadow");
-	if (strcmp(node->parent->type, "frame") == 0) {
-		fprintf(g_source, "%s->style = %s | %s;\n", node->parent->id, (shape) ? shape : "0" , (shadow) ? shadow : "0");
-	} else if (strcmp(node->parent->type, "textbox") == 0) {
-		fprintf(g_source, "%s->frame->style = %s | %s;\n", node->parent->id, (shape) ? shape : "0" , (shadow) ? shadow : "0");
-	}
-	if ((tmp = node_get_node(node, "shape")) != NULL) { tmp->dontparse = 1; }
-	if ((tmp = node_get_node(node, "shadow")) != NULL) { tmp->dontparse = 1; }
-}
-
-static void node_generate_code_string (node_t *node)
-{
-	if (strcmp(node->parent->type, "textbox") == 0 ||
-	    strcmp(node->parent->type, "editbox") == 0) {
-		fprintf(g_source, "w_textbox_set_str(%s->object, %s);\n", node->parent->id, node->value);
-	} else if (strcmp(node->parent->type, "checkbox") == 0) {
-		fprintf(g_source, "w_textbox_set_str(%s->text->object, %s);\n", node->parent->id, node->value);
-	}
 }
 
 static void node_generate_code_show (node_t *node)
@@ -385,135 +686,21 @@ static void node_generate_code_draw (node_t *node)
 	fprintf(g_source, "%s->object->draw = %s;\n", node->parent->id, node->value);
 }
 
-static void node_generate_code_pressed (node_t *node)
-{
-	fprintf(g_source, "%s->pressed = %s;\n", node->parent->id, node->value);
-}
-
-static void node_generate_code_released (node_t *node)
-{
-	fprintf(g_source, "%s->released = %s;\n", node->parent->id, node->value);
-}
-
-static void node_generate_code_changed (node_t *node)
-{
-	fprintf(g_source, "%s->changed = %s;\n", node->parent->id, node->value);
-}
-
-static void node_generate_code_image (node_t *node, char *to)
-{
-	int i;
-	int count;
-	char *parent;
-	char *shape;
-	char *shadow;
-	char *rotate;
-	char *cntstr;
-	node_t *tmp;
-	shape = node_get_value(node, "style/shape");
-	shadow = node_get_value(node, "style/shadow");
-	rotate = node_get_value(node, "rotate");
-	count = atoi(node_get_value(node, "count"));
-	if (to) {
-		parent = to;
-	} else if (node_get_parent(node, "object")) {
-		parent = node_get_parent(node, "object")->id;
-	} else {
-		return;
-	}
-	fprintf(g_source, "w_frame_set_image(%s->object, %s | %s, %s, %d", parent, (shape) ? shape : "0", (shadow) ? shadow : "0", (rotate) ? rotate : "0", count);
-	cntstr = (char *) malloc(sizeof(char *) * 255);
-	for (i = 0; i < count; i++) {
-		sprintf(cntstr, "image%d", i);
-		fprintf(g_source, ", \"%s\"", node_get_value(node, cntstr));
-		tmp = node_get_node(node, cntstr);
-		tmp->dontparse = 1;
-	}
-	free(cntstr);
-	fprintf(g_source, ");\n");
-	if ((tmp = node_get_node(node, "style")) != NULL) { tmp->dontparse = 1; }
-	if ((tmp = node_get_node(node, "style/shape")) != NULL) { tmp->dontparse = 1; }
-	if ((tmp = node_get_node(node, "style/shadow")) != NULL) { tmp->dontparse = 1; }
-	if ((tmp = node_get_node(node, "count")) != NULL) { tmp->dontparse = 1; }
-	if ((tmp = node_get_node(node, "rotate")) != NULL) { tmp->dontparse = 1; }
-}
-
 static void node_generate_code_object (node_t *node)
 {
 	node_t *tmp;
 	if (strcmp(node->type, "frame") == 0) {
-		fprintf(g_source, "w_frame_init(%s, &%s, %s, %s->object);\n", node_get_parent(node, "window")->id, node->id, "0", node->parent->id);
+		node_generate_code_object_frame(node);
 	} else if (strcmp(node->type, "button") == 0) {
-		fprintf(g_source, "w_button_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
+		node_generate_code_object_button(node);
 	} else if (strcmp(node->type, "textbox") == 0) {
-		fprintf(g_source, "w_textbox_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
-		if ((tmp = node_get_node(node, "properties")) != NULL) {
-			fprintf(g_source, "%s->properties = %s;\n", tmp->parent->id, tmp->value);
-			tmp->dontparse = 1;
-		}
-		if ((tmp = node_get_node(node, "size")) != NULL) {
-			fprintf(g_source, "w_textbox_set_size(%s->object, %s);\n", tmp->parent->id, tmp->value);
-			tmp->dontparse = 1;
-		}
-		if ((tmp = node_get_node(node, "color")) != NULL) {
-			fprintf(g_source, "w_textbox_set_rgb(%s->object, %s, %s, %s);\n", tmp->parent->id, node_get_value(tmp, "red"), node_get_value(tmp, "green"), node_get_value(tmp, "blue"));
-			tmp->dontparse = 1;
-			if ((tmp = node_get_node(node, "color/red")) != NULL) { tmp->dontparse = 1; }
-			if ((tmp = node_get_node(node, "color/green")) != NULL) { tmp->dontparse = 1; }
-			if ((tmp = node_get_node(node, "color/blue")) != NULL) { tmp->dontparse = 1; }
-		}
+		node_generate_code_object_textbox(node);
 	} else if (strcmp(node->type, "checkbox") == 0) {
-		fprintf(g_source, "w_checkbox_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
-		if ((tmp = node_get_node(node, "properties")) != NULL) {
-			fprintf(g_source, "%s->text->properties = %s;\n", tmp->parent->id, tmp->value);
-			tmp->dontparse = 1;
-		}
-		if ((tmp = node_get_node(node, "size")) != NULL) {
-			fprintf(g_source, "w_textbox_set_size(%s->text->object, %s);\n", tmp->parent->id, tmp->value);
-			tmp->dontparse = 1;
-		}
-		if ((tmp = node_get_node(node, "color")) != NULL) {
-			fprintf(g_source, "w_textbox_set_rgb(%s->text->object, %s, %s, %s);\n", tmp->parent->id, node_get_value(tmp, "red"), node_get_value(tmp, "green"), node_get_value(tmp, "blue"));
-			tmp->dontparse = 1;
-			if ((tmp = node_get_node(node, "color/red")) != NULL) { tmp->dontparse = 1; }
-			if ((tmp = node_get_node(node, "color/green")) != NULL) { tmp->dontparse = 1; }
-			if ((tmp = node_get_node(node, "color/blue")) != NULL) { tmp->dontparse = 1; }
-		}
-		while ((tmp = node_get_node(node, "image")) != NULL) {
-			char str[255];
-			sprintf(str, "%s->box", node->id);
-			node_generate_code_image(tmp, str);
-			tmp->dontparse = 1;
-		}
-		if ((tmp = node_get_node(node, "changed")) != NULL) {
-			node_generate_code_changed(tmp);
-			tmp->dontparse = 1;
-		}
+		node_generate_code_object_checkbox(node);
 	} else if (strcmp(node->type, "editbox") == 0) {
-		fprintf(g_source, "w_editbox_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
+		node_generate_code_object_editbox(node);
 	} else if (strcmp(node->type, "progressbar") == 0) {
-		fprintf(g_source, "w_progressbar_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
-		while ((tmp = node_get_node(node, "image")) != NULL) {
-			node_generate_code_image(tmp, node->id);
-			tmp->dontparse = 1;
-		}
-		if ((tmp = node_get_node(node, "box")) != NULL) {
-			node_t *btmp;
-			while ((btmp = node_get_node(tmp, "image")) != NULL) {
-				char str[255];
-				sprintf(str, "%s->box", node->id);
-				node_generate_code_image(btmp, str);
-				btmp->dontparse = 1;
-			}
-		}
-		if ((tmp = node_get_node(node, "changed")) != NULL) {
-			node_generate_code_changed(tmp);
-			tmp->dontparse = 1;
-		}
-	}
-	if ((tmp = node_get_node(node, "style")) != NULL) {
-		node_generate_code_style(tmp);
-		tmp->dontparse = 1;
+		node_generate_code_object_progressbar(node);
 	}
 	if ((tmp = node_get_node(node, "effect")) != NULL) {
 		node_generate_code_effect(tmp);
@@ -521,10 +708,6 @@ static void node_generate_code_object (node_t *node)
 	}
 	if ((tmp = node_get_node(node, "draw")) != NULL) {
 		node_generate_code_draw(tmp);
-		tmp->dontparse = 1;
-	}
-	while ((tmp = node_get_node(node, "image")) != NULL) {
-		node_generate_code_image(tmp, node->id);
 		tmp->dontparse = 1;
 	}
 }
@@ -540,26 +723,10 @@ static void node_generate_code (node_t *node)
 		node_generate_code_window(node);
 	} else if (strcmp(node->name, "object") == 0) {
 		node_generate_code_object(node);
-	} else if (strcmp(node->name, "title") == 0) {
-		node_generate_code_title(node);
 	} else if (strcmp(node->name, "move") == 0) {
 		node_generate_code_move(node);
-	} else if (strcmp(node->name, "effect") == 0) {
-		node_generate_code_effect(node);
-	} else if (strcmp(node->name, "style") == 0) {
-		node_generate_code_style(node);
-	} else if (strcmp(node->name, "string") == 0) {
-		node_generate_code_string(node);
 	} else if (strcmp(node->name, "show") == 0) {
 		node_generate_code_show(node);
-	} else if (strcmp(node->name, "draw") == 0) {
-		node_generate_code_draw(node);
-	} else if (strcmp(node->name, "pressed") == 0) {
-		node_generate_code_pressed(node);
-	} else if (strcmp(node->name, "released") == 0) {
-		node_generate_code_released(node);
-	} else if (strcmp(node->name, "image") == 0) {
-		node_generate_code_image(node, NULL);
 	}
 	g_depth++;
 	p = 0;
@@ -625,101 +792,6 @@ static void node_generate_function (node_t *node)
 	g_depth--;
 }
 
-static void node_init (node_t **node)
-{
-	node_t *n;
-	n = (node_t *) malloc(sizeof(node_t));
-	memset(n, 0, sizeof(node_t));
-	s_list_init(&(n->nodes));
-	*node = n;
-}
-
-static void node_uninit (node_t *node)
-{
-	node_t *tmp;
-	if (node == NULL) {
-		return;
-	}
-	while (!s_list_eol(node->nodes, 0)) {
-		tmp = (node_t *) s_list_get(node->nodes, 0);
-		s_list_remove(node->nodes, 0);
-		node_uninit(tmp);
-	}
-	s_list_uninit(node->nodes);
-	free(node->id);
-	free(node->name);
-	free(node->type);
-	free(node->value);
-	free(node);
-}
-
-static void node_print (node_t *node)
-{
-	int i;
-	for (i = 0; i < g_depth; i++) {
-		printf("  ");
-	}
-	printf("%s : ", node->name);
-	if (node->value) {
-		printf("%s ", node->value);
-	}
-	if (node->id) {
-		printf("[%s] ", node->id);
-	}
-	if (node->type) {
-		printf("[%s] ", node->type);
-	}
-	printf("\n");
-}
-
-static void node_parse (node_t *node)
-{
-	int p;
-	node_t *tmp;
-	node_print(node);
-	g_depth++;
-	p = 0;
-	while (!s_list_eol(node->nodes, p)) {
-		tmp = (node_t *) s_list_get(node->nodes, p);
-		node_parse(tmp);
-		p++;
-	}
-	g_depth--;
-}
-
-static char * node_strdup (char *str)
-{
-	if (str == NULL) {
-		return NULL;
-	} else {
-		return strdup(str);
-	}
-}
-
-static void node_dublicate_ (node_t *node, node_t *dub)
-{
-	int p;
-	node_t *tmp;
-	node_t *dmp;
-	dub->id = node_strdup(node->id);
-	dub->name = node_strdup(node->name);
-	dub->type = node_strdup(node->type);
-	dub->value = node_strdup(node->value);
-	for (p = 0; !s_list_eol(node->nodes, p); p++) {
-    		tmp = (node_t *) s_list_get(node->nodes, p);
-    		node_init(&dmp);
-    		node_dublicate_(tmp, dmp);
-    		s_list_add(dub->nodes, dmp, -1);
-    		dmp->parent = dub;
-	}
-}
-
-static void node_dublicate (node_t *node, node_t **dub)
-{
-	node_init(dub);
-	node_dublicate_(node, *dub);
-}
-
 static void node_generate_element (node_t *node)
 {
 	int p;
@@ -747,7 +819,6 @@ static void node_generate_element (node_t *node)
 	    		    		s_list_add(node->nodes, chl, 0);
 	    		    		s_list_remove(dmp->nodes, dmp->nodes->nb_elt - 1);
 	    		    	}
-	    		    	node_parse(node);
 	    		}
 	    	}
 	}
@@ -910,7 +981,7 @@ usage:			case 'h':
 	
 	XML_ParserFree(p);
 
-	node_parse(g_node);
+	node_print(g_node);
 	node_generate(g_node);
 
 	node_uninit(g_node);

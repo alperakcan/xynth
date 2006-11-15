@@ -18,6 +18,14 @@
 #include "../lib/xynth_.h"
 #include "widget.h"
 
+int w_frame_set_style (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow)
+{
+        w_frame_t *frame;
+        frame = (w_frame_t *) object->data[OBJECT_FRAME];
+        frame->style = shape | shadow;
+        return 0;
+}
+
 int w_frame_image_init (w_frame_image_t **fimg)
 {
 	*fimg = s_malloc(sizeof(w_frame_image_t));
@@ -47,11 +55,10 @@ int w_frame_image_uninit (w_frame_image_t *fimg)
 	return 0;
 }
 
-int w_frame_set_image (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, ...)
+int w_frame_set_image (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs)
 {
 	int pos;
 	char *file;
-	va_list ap;
 #if defined(WIDGET_OPTIMIZE_MEMORY)
 #else
 	s_image_t *img;
@@ -67,12 +74,11 @@ int w_frame_set_image (w_object_t *object, unsigned int style, unsigned int rota
 			break;
 		}
 	}
-	va_start(ap, nimgs);
 	w_frame_image_init(&fimg);
 	fimg->style = style;
 	fimg->rotation = rotation;
-	for (; nimgs > 0; nimgs--) {
-		file = va_arg(ap, char *);
+	for (pos = 0; pos < nimgs; pos++) {
+		file = imgs[pos];
 #if defined(WIDGET_OPTIMIZE_MEMORY)
 #else
 		s_image_init(&img);
@@ -82,7 +88,6 @@ int w_frame_set_image (w_object_t *object, unsigned int style, unsigned int rota
 #endif
 		s_list_add(fimg->names, strdup(file), -1);
 	}
-	va_end(ap);
 	s_list_add(frame->images, fimg, -1);
 	return 0;
 }

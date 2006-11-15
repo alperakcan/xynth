@@ -16,6 +16,36 @@
 #include "../lib/xynth_.h"
 #include "widget.h"
 
+int w_editbox_set_str (w_object_t *object, char *str)
+{
+	return w_textbox_set_str(object, str);
+}
+
+int w_editbox_set_style (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow)
+{
+	return w_textbox_set_style(object, shape, shadow);
+}
+
+int w_editbox_set_image (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs)
+{
+	return w_textbox_set_image(object, style, rotation, nimgs, imgs);
+}
+
+int w_editbox_set_size (w_object_t *object, int size)
+{
+	return w_textbox_set_size(object, size);
+}
+
+int w_editbox_set_rgb (w_object_t *object, int r, int g, int b)
+{
+	return w_textbox_set_rgb(object, r, g, b);
+}
+
+int w_editbox_set_properties (w_object_t *object, TEXTBOX_PROPERTIES properties)
+{
+	return w_textbox_set_properties(object, properties);
+}
+
 void w_editbox_event (w_object_t *object, s_event_t *event)
 {
 	char *str;

@@ -250,6 +250,11 @@ typedef struct w_combobox_s {
 } w_combobox_t;
 
 /* button.c */
+int w_button_set_pressed (w_object_t *object, void (*pressed) (w_object_t *, int));
+int w_button_set_released (w_object_t *object, void (*released) (w_object_t *, int));
+int w_button_set_clicked (w_object_t *object, void (*clicked) (w_object_t *, int, int));
+int w_button_set_image (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs);
+int w_button_set_style (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow);
 void w_button_event (w_object_t *object, s_event_t *event);
 void w_button_draw (w_object_t *object);
 void w_button_geometry (w_object_t *object);
@@ -266,6 +271,15 @@ int w_button_init (w_window_t *window, w_button_t **button, w_object_t *parent);
 void w_button_uninit (w_object_t *object);
 
 /* checkbox */
+int w_checkbox_set_str (w_object_t *object, char *str);
+int w_checkbox_set_changed (w_object_t *object, void (*changed) (w_object_t *, int));
+int w_checkbox_set_style (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow);
+int w_checkbox_set_image (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs);
+int w_checkbox_set_boxstyle (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow);
+int w_checkbox_set_boximage (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs);
+int w_checkbox_set_rgb (w_object_t *object, int r, int g, int b);
+int w_checkbox_set_size (w_object_t *object, int size);
+int w_checkbox_set_properties (w_object_t *object, TEXTBOX_PROPERTIES properties);
 void w_checkbox_geometry (w_object_t *object);
 void w_checkbox_draw (w_object_t *object);
 void w_checkbox_state (w_object_t *object, int state);
@@ -274,15 +288,22 @@ void w_checkbox_uninit (w_object_t *object);
 int w_checkbox_init (w_window_t *window, w_checkbox_t **checkbox, w_object_t *parent);
 
 /* editbox.c */
+int w_editbox_set_str (w_object_t *object, char *str);
+int w_editbox_set_style (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow);
+int w_editbox_set_image (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs);
+int w_editbox_set_size (w_object_t *object, int size);
+int w_editbox_set_rgb (w_object_t *object, int r, int g, int b);
+int w_editbox_set_properties (w_object_t *object, TEXTBOX_PROPERTIES properties);
 void w_editbox_draw (w_object_t *object);
 void w_editbox_geometry (w_object_t *object);
 int w_editbox_init (w_window_t *window, w_editbox_t **editbox, w_object_t *parent);
 void w_editbox_uninit (w_object_t *object);
 
 /* frame.c */
+int w_frame_set_style (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow);
 int w_frame_image_init (w_frame_image_t **fimg);
 int w_frame_image_uninit (w_frame_image_t *fimg);
-int w_frame_set_image (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, ...);
+int w_frame_set_image (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs);
 void w_frame_draw_image (w_object_t *object, w_frame_image_t *fimg);
 void w_frame_draw (w_object_t *object);
 void w_frame_geometry (w_object_t *object);
@@ -319,6 +340,9 @@ int w_object_init (w_window_t *window, w_object_t **object, void (*draw) (w_obje
 void w_object_uninit (w_object_t *object);
 
 /* textbox.c */
+int w_textbox_set_properties (w_object_t *object, TEXTBOX_PROPERTIES properties);
+int w_textbox_set_image (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs);
+int w_textbox_set_style (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow);
 void w_textbox_draw (w_object_t *object);
 int w_textbox_set_rgb (w_object_t *object, int r, int g, int b);
 int w_textbox_set_size (w_object_t *object, int size);
@@ -329,6 +353,11 @@ void w_textbox_uninit (w_object_t *object);
 void w_textbox_loadimages(w_object_t *object,char *file_left,char *file_middle,char *file_right);
 
 /* progressbar.c */
+int w_progressbar_set_changed (w_object_t *object, void (*changed) (w_object_t *, int));
+int w_progressbar_set_style (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow);
+int w_progressbar_set_image (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs);
+int w_progressbar_set_boxstyle (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow);
+int w_progressbar_set_boximage (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs);
 void w_progressbar_level (w_object_t *object, unsigned int level);
 void w_progressbar_geometry (w_object_t *object);
 int w_progressbar_init (w_window_t *window, w_progressbar_t **progressbar, w_object_t *parent);
