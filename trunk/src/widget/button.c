@@ -16,6 +16,40 @@
 #include "../lib/xynth_.h"
 #include "widget.h"
 
+int w_button_set_pressed (w_object_t *object, void (*pressed) (w_object_t *, int))
+{
+	w_button_t *button;
+	button = (w_button_t *) object->data[OBJECT_BUTTON];
+	button->pressed = pressed;
+	return 0;
+}
+
+int w_button_set_released (w_object_t *object, void (*released) (w_object_t *, int))
+{
+	w_button_t *button;
+	button = (w_button_t *) object->data[OBJECT_BUTTON];
+	button->released = released;
+	return 0;
+}
+
+int w_button_set_clicked (w_object_t *object, void (*clicked) (w_object_t *, int, int))
+{
+	w_button_t *button;
+	button = (w_button_t *) object->data[OBJECT_BUTTON];
+	button->clicked = clicked;
+	return 0;
+}
+
+int w_button_set_image (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs)
+{
+	return w_frame_set_image (object, style, rotation, nimgs, imgs);
+}
+
+int w_button_set_style (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow)
+{
+	return w_frame_set_style(object, shape, shadow);
+}
+
 void w_button_event (w_object_t *object, s_event_t *event)
 {
 	w_button_t *button;

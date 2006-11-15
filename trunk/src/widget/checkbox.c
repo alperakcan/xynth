@@ -16,6 +16,66 @@
 #include "../lib/xynth_.h"
 #include "widget.h"
 
+int w_checkbox_set_str (w_object_t *object, char *str)
+{
+	w_checkbox_t *cb;
+	cb = object->data[OBJECT_CHECKBOX];
+	return w_textbox_set_str(cb->text->object, str);
+}
+
+int w_checkbox_set_changed (w_object_t *object, void (*changed) (w_object_t *, int))
+{
+	w_checkbox_t *cb;
+	cb = object->data[OBJECT_CHECKBOX];
+	cb->changed = changed;
+	return 0;
+}
+
+int w_checkbox_set_style (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow)
+{
+	return w_frame_set_style(object, shape, shadow);
+}
+
+int w_checkbox_set_image (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs)
+{
+	return w_frame_set_image (object, style, rotation, nimgs, imgs);
+}
+
+int w_checkbox_set_boxstyle (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow)
+{
+	w_checkbox_t *cb;
+	cb = object->data[OBJECT_CHECKBOX];
+	return w_frame_set_style(cb->box->object, shape, shadow);
+}
+
+int w_checkbox_set_boximage (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs)
+{
+	w_checkbox_t *cb;
+	cb = object->data[OBJECT_CHECKBOX];
+	return w_frame_set_image (cb->box->object, style, rotation, nimgs, imgs);
+}
+
+int w_checkbox_set_rgb (w_object_t *object, int r, int g, int b)
+{
+	w_checkbox_t *cb;
+	cb = object->data[OBJECT_CHECKBOX];
+	return w_textbox_set_rgb(cb->text->object, r, g, b);
+}
+
+int w_checkbox_set_size (w_object_t *object, int size)
+{
+	w_checkbox_t *cb;
+	cb = object->data[OBJECT_CHECKBOX];
+	return w_textbox_set_size(cb->text->object, size);
+}
+
+int w_checkbox_set_properties (w_object_t *object, TEXTBOX_PROPERTIES properties)
+{
+	w_checkbox_t *cb;
+	cb = object->data[OBJECT_CHECKBOX];
+	return w_textbox_set_properties(cb->text->object, properties);
+}
+
 void w_checkbox_geometry (w_object_t *object)
 {
 	s_rect_t coor;

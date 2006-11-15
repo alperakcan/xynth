@@ -22,7 +22,25 @@
 #else
 #define _(str) str
 #endif
+
+int w_textbox_set_properties (w_object_t *object, TEXTBOX_PROPERTIES properties)
+{
+	w_textbox_t *textbox;
+	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
+	textbox->properties = properties;
+	return 0;
+}
 					
+int w_textbox_set_image (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs)
+{
+	return w_frame_set_image (object, style, rotation, nimgs, imgs);
+}
+
+int w_textbox_set_style (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow)
+{
+	return w_frame_set_style(object, shape, shadow);
+}
+
 void w_textbox_lines_uninit (w_object_t *object)
 {
 	w_textbox_t *textbox;

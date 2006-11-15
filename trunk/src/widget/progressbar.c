@@ -17,6 +17,38 @@
 #include "../lib/xynth_.h"
 #include "widget.h"
 
+int w_progressbar_set_changed (w_object_t *object, void (*changed) (w_object_t *, int))
+{
+	w_progressbar_t *cb;
+	cb = object->data[OBJECT_PROGRESSBAR];
+	cb->changed = changed;
+	return 0;
+}
+
+int w_progressbar_set_style (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow)
+{
+	return w_frame_set_style(object, shape, shadow);
+}
+
+int w_progressbar_set_image (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs)
+{
+	return w_frame_set_image (object, style, rotation, nimgs, imgs);
+}
+
+int w_progressbar_set_boxstyle (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow)
+{
+	w_progressbar_t *cb;
+	cb = object->data[OBJECT_PROGRESSBAR];
+	return w_frame_set_style(cb->box->object, shape, shadow);
+}
+
+int w_progressbar_set_boximage (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs)
+{
+	w_progressbar_t *cb;
+	cb = object->data[OBJECT_PROGRESSBAR];
+	return w_frame_set_image (cb->box->object, style, rotation, nimgs, imgs);
+}
+
 void w_progressbar_level (w_object_t *object, unsigned int level)
 {
 	char str[10];
