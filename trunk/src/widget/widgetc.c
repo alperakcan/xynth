@@ -7,17 +7,17 @@
 #include <unistd.h>
 #include <expat.h>
 
-typedef struct s_list_s s_list_t;
-typedef struct s_list_node_s s_list_node_t;
+typedef struct list_s list_t;
+typedef struct list_node_s list_node_t;
 
-struct s_list_node_s {
+struct list_node_s {
         void *next;
         void *element;
 };
 
-struct s_list_s {
+struct list_s {
         int nb_elt;
-        s_list_node_t *node;
+        list_node_t *node;
 };
 
 typedef struct node_s {
@@ -25,7 +25,7 @@ typedef struct node_s {
 	char *id;
 	char *type;
 	char *value;
-	s_list_t *nodes;
+	list_t *nodes;
 	struct node_s *parent;
 	int dontparse;
 } node_t;
@@ -43,9 +43,9 @@ static int g_depth = 0;
 static char *g_path = NULL;
 static node_t *g_active = NULL;
 
-static int s_list_init (s_list_t **li)
+static int list_init (list_t **li)
 {
-	(*li) = (s_list_t *) malloc(sizeof(s_list_t));
+	(*li) = (list_t *) malloc(sizeof(list_t));
 	if ((*li) == NULL) {
 		return -1;
 	}
@@ -53,13 +53,13 @@ static int s_list_init (s_list_t **li)
 	return 0;
 }
 
-static int s_list_uninit (s_list_t *li)
+static int list_uninit (list_t *li)
 {
 	free(li);
 	return 0;
 }
 
-static int s_list_eol (s_list_t *li, int i)
+static int list_eol (list_t *li, int i)
 {
         if (li == NULL) {
 		return 1;
@@ -72,10 +72,10 @@ static int s_list_eol (s_list_t *li, int i)
 	return 1;
 }
 
-static void * s_list_get (s_list_t *li, int pos)
+static void * list_get (list_t *li, int pos)
 {
 	int i = 0;
-	s_list_node_t *ntmp;
+	list_node_t *ntmp;
 	if ((li == NULL) || (pos < 0) || (pos >= li->nb_elt)) {
 		/* element does not exist */
 		return NULL;
@@ -84,15 +84,15 @@ static void * s_list_get (s_list_t *li, int pos)
 	ntmp = li->node;
 	while (pos > i) {
 		i++;
-		ntmp = (s_list_node_t *) ntmp->next;
+		ntmp = (list_node_t *) ntmp->next;
 	}
 	return ntmp->element;
 }
 
-static int s_list_remove (s_list_t *li, int pos)
+static int list_remove (list_t *li, int pos)
 {
 	int i = 0;
-	s_list_node_t *ntmp;
+	list_node_t *ntmp;
 	if ((li == NULL) || (pos < 0) || (pos >= li->nb_elt)) {
 		/* element does not exist */
 		return -1;
@@ -101,30 +101,30 @@ static int s_list_remove (s_list_t *li, int pos)
 	ntmp = li->node;
 	if ((pos == 0)) {
 		/* special case  */
-		li->node = (s_list_node_t *) ntmp->next;
+		li->node = (list_node_t *) ntmp->next;
 		li->nb_elt--;
 		free(ntmp);
 		return li->nb_elt;
 	}
 	while (pos > (i + 1)) {
 		i++;
-		ntmp = (s_list_node_t *) ntmp->next;
+		ntmp = (list_node_t *) ntmp->next;
 	}
 	/* insert new node */
 	{
-		s_list_node_t *remnode;
-		remnode = (s_list_node_t *) ntmp->next;
-		ntmp->next = ((s_list_node_t *) ntmp->next)->next;
+		list_node_t *remnode;
+		remnode = (list_node_t *) ntmp->next;
+		ntmp->next = ((list_node_t *) ntmp->next)->next;
 		free(remnode);
 		li->nb_elt--;
 	}
 	return li->nb_elt;
 }
 
-static int s_list_add (s_list_t *li, void *el, int pos)
+static int list_add (list_t *li, void *el, int pos)
 {
 	int i = 0;
-	s_list_node_t *ntmp;
+	list_node_t *ntmp;
 	if (li == NULL) {
 		return -1;
 	}
@@ -133,7 +133,7 @@ static int s_list_add (s_list_t *li, void *el, int pos)
 		pos = li->nb_elt;
 	}
 	if (li->nb_elt == 0) {
-		li->node = (s_list_node_t *) malloc(sizeof(s_list_node_t));
+		li->node = (list_node_t *) malloc(sizeof(list_node_t));
 		li->node->element = el;
 		li->nb_elt++;
 		return li->nb_elt;
@@ -141,7 +141,7 @@ static int s_list_add (s_list_t *li, void *el, int pos)
 	/* exist because nb_elt > 0  */
 	ntmp = li->node;
 	if (pos == 0) {
-		li->node = (s_list_node_t *) malloc(sizeof(s_list_node_t));
+		li->node = (list_node_t *) malloc(sizeof(list_node_t));
 		li->node->element = el;
 		li->node->next = ntmp;
 		li->nb_elt++;
@@ -151,21 +151,21 @@ static int s_list_add (s_list_t *li, void *el, int pos)
 	while (pos > (i + 1)) {
 		i++;
 		/* when pos > i next node exist  */
-		ntmp = (s_list_node_t *) ntmp->next;
+		ntmp = (list_node_t *) ntmp->next;
 	}
 	/* if pos == nb_elt next node does not exist  */
 	if (pos == li->nb_elt) {
-		ntmp->next = (s_list_node_t *) malloc(sizeof(s_list_node_t));
-		ntmp = (s_list_node_t *) ntmp->next;
+		ntmp->next = (list_node_t *) malloc(sizeof(list_node_t));
+		ntmp = (list_node_t *) ntmp->next;
 		ntmp->element = el;
 		li->nb_elt++;
 		return li->nb_elt;
 	}
 	/* here pos == i so next node is where we want to insert new node */
 	{
-		s_list_node_t *nextnode = (s_list_node_t *) ntmp->next;
-		ntmp->next = (s_list_node_t *) malloc(sizeof(s_list_node_t));
-		ntmp = (s_list_node_t *) ntmp->next;
+		list_node_t *nextnode = (list_node_t *) ntmp->next;
+		ntmp->next = (list_node_t *) malloc(sizeof(list_node_t));
+		ntmp = (list_node_t *) ntmp->next;
 		ntmp->element = el;
 		ntmp->next = nextnode;
 		li->nb_elt++;
@@ -247,7 +247,7 @@ static void node_init (node_t **node)
 	node_t *n;
 	n = (node_t *) malloc(sizeof(node_t));
 	memset(n, 0, sizeof(node_t));
-	s_list_init(&(n->nodes));
+	list_init(&(n->nodes));
 	*node = n;
 }
 
@@ -257,12 +257,12 @@ static void node_uninit (node_t *node)
 	if (node == NULL) {
 		return;
 	}
-	while (!s_list_eol(node->nodes, 0)) {
-		tmp = (node_t *) s_list_get(node->nodes, 0);
-		s_list_remove(node->nodes, 0);
+	while (!list_eol(node->nodes, 0)) {
+		tmp = (node_t *) list_get(node->nodes, 0);
+		list_remove(node->nodes, 0);
 		node_uninit(tmp);
 	}
-	s_list_uninit(node->nodes);
+	list_uninit(node->nodes);
 	free(node->id);
 	free(node->name);
 	free(node->type);
@@ -279,11 +279,11 @@ static void node_dublicate_ (node_t *node, node_t *dub)
 	dub->name = node_strdup(node->name);
 	dub->type = node_strdup(node->type);
 	dub->value = node_strdup(node->value);
-	for (p = 0; !s_list_eol(node->nodes, p); p++) {
-    		tmp = (node_t *) s_list_get(node->nodes, p);
+	for (p = 0; !list_eol(node->nodes, p); p++) {
+    		tmp = (node_t *) list_get(node->nodes, p);
     		node_init(&dmp);
     		node_dublicate_(tmp, dmp);
-    		s_list_add(dub->nodes, dmp, -1);
+    		list_add(dub->nodes, dmp, -1);
     		dmp->parent = dub;
 	}
 }
@@ -314,8 +314,8 @@ static node_t * node_get_node_ (node_t *node, char *path)
 	node_t *tmp;
 	p = 0;
 	res = NULL;
-	while (!s_list_eol(node->nodes, p)) {
-		tmp = (node_t *) s_list_get(node->nodes, p);
+	while (!list_eol(node->nodes, p)) {
+		tmp = (node_t *) list_get(node->nodes, p);
 		str = strchr(path,  '/');
 		if (str == NULL) {
 			if (strcmp(tmp->name, path) == 0 &&
@@ -396,8 +396,8 @@ static void node_print (node_t *node)
 	node_print_(node);
 	g_depth++;
 	p = 0;
-	while (!s_list_eol(node->nodes, p)) {
-		tmp = (node_t *) s_list_get(node->nodes, p);
+	while (!list_eol(node->nodes, p)) {
+		tmp = (node_t *) list_get(node->nodes, p);
 		node_print(tmp);
 		p++;
 	}
@@ -730,8 +730,8 @@ static void node_generate_code (node_t *node)
 	}
 	g_depth++;
 	p = 0;
-	while (!s_list_eol(node->nodes, p)) {
-		tmp = (node_t *) s_list_get(node->nodes, p);
+	while (!list_eol(node->nodes, p)) {
+		tmp = (node_t *) list_get(node->nodes, p);
 		node_generate_code(tmp);
 		p++;
 	}
@@ -761,8 +761,8 @@ static void node_generate_header (node_t *node)
 	}
 	g_depth++;
 	p = 0;
-	while (!s_list_eol(node->nodes, p)) {
-		tmp = (node_t *) s_list_get(node->nodes, p);
+	while (!list_eol(node->nodes, p)) {
+		tmp = (node_t *) list_get(node->nodes, p);
 		node_generate_header(tmp);
 		p++;
 	}
@@ -784,8 +784,8 @@ static void node_generate_function (node_t *node)
 	}
 	g_depth++;
 	p = 0;
-	while (!s_list_eol(node->nodes, p)) {
-		tmp = (node_t *) s_list_get(node->nodes, p);
+	while (!list_eol(node->nodes, p)) {
+		tmp = (node_t *) list_get(node->nodes, p);
 		node_generate_function(tmp);
 		p++;
 	}
@@ -798,14 +798,14 @@ static void node_generate_element (node_t *node)
 	node_t *tmp;
 	node_t *dmp;
 	node_t *chl;
-	for (p = 0; !s_list_eol(node->nodes, p); p++) {
-    		tmp = (node_t *) s_list_get(node->nodes, p);
+	for (p = 0; !list_eol(node->nodes, p); p++) {
+    		tmp = (node_t *) list_get(node->nodes, p);
     		node_generate_element(tmp);
 	}
 	if (strcmp(node->name, "element") == 0 &&
 	    node->type != NULL) {
-	    	for (p = 0; !s_list_eol(s_node->nodes, p); p++) {
-	    		tmp = (node_t *) s_list_get(s_node->nodes, p);
+	    	for (p = 0; !list_eol(s_node->nodes, p); p++) {
+	    		tmp = (node_t *) list_get(s_node->nodes, p);
 	    		if (strcmp(tmp->name, "element") == 0 &&
 	    		    strcmp(tmp->id, node->type) == 0) {
 	    		    	node_dublicate(tmp, &dmp);
@@ -813,11 +813,11 @@ static void node_generate_element (node_t *node)
 	    		    	free(node->type);
 	    		    	node->name = node_strdup("object");
 	    		    	node->type = node_strdup(dmp->type);
-	    		    	while (!s_list_eol(dmp->nodes, 0)) {
-	    		    		chl = (node_t *) s_list_get(dmp->nodes, dmp->nodes->nb_elt - 1);
+	    		    	while (!list_eol(dmp->nodes, 0)) {
+	    		    		chl = (node_t *) list_get(dmp->nodes, dmp->nodes->nb_elt - 1);
 	    		    		chl->parent = node;
-	    		    		s_list_add(node->nodes, chl, 0);
-	    		    		s_list_remove(dmp->nodes, dmp->nodes->nb_elt - 1);
+	    		    		list_add(node->nodes, chl, 0);
+	    		    		list_remove(dmp->nodes, dmp->nodes->nb_elt - 1);
 	    		    	}
 	    		}
 	    	}
@@ -883,7 +883,7 @@ static void start (void *xdata, const char *el, const char **attr)
 			s_node = node;
 		} else {
 			if (node->parent) {
-				s_list_add(node->parent->nodes, node, -1);
+				list_add(node->parent->nodes, node, -1);
 			} else {
 				g_node = node;
 			}
