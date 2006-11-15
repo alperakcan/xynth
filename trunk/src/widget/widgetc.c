@@ -6,7 +6,19 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <expat.h>
-#include <xynth.h>
+
+typedef struct s_list_s s_list_t;
+typedef struct s_list_node_s s_list_node_t;
+
+struct s_list_node_s {
+        void *next;
+        void *element;
+};
+
+struct s_list_s {
+        int nb_elt;
+        s_list_node_t *node;
+};
 
 typedef struct node_s {
 	char *name;
@@ -31,7 +43,7 @@ static int g_depth = 0;
 static char *g_path = NULL;
 static node_t *g_active = NULL;
 
-int s_list_init (s_list_t **li)
+static int s_list_init (s_list_t **li)
 {
 	(*li) = (s_list_t *) malloc(sizeof(s_list_t));
 	if ((*li) == NULL) {
@@ -41,13 +53,13 @@ int s_list_init (s_list_t **li)
 	return 0;
 }
 
-int s_list_uninit (s_list_t *li)
+static int s_list_uninit (s_list_t *li)
 {
 	free(li);
 	return 0;
 }
 
-int s_list_eol (s_list_t *li, int i)
+static int s_list_eol (s_list_t *li, int i)
 {
         if (li == NULL) {
 		return 1;
@@ -60,7 +72,7 @@ int s_list_eol (s_list_t *li, int i)
 	return 1;
 }
 
-void * s_list_get (s_list_t *li, int pos)
+static void * s_list_get (s_list_t *li, int pos)
 {
 	int i = 0;
 	s_list_node_t *ntmp;
@@ -77,7 +89,7 @@ void * s_list_get (s_list_t *li, int pos)
 	return ntmp->element;
 }
 
-int s_list_remove (s_list_t *li, int pos)
+static int s_list_remove (s_list_t *li, int pos)
 {
 	int i = 0;
 	s_list_node_t *ntmp;
@@ -109,7 +121,7 @@ int s_list_remove (s_list_t *li, int pos)
 	return li->nb_elt;
 }
 
-int s_list_add (s_list_t *li, void *el, int pos)
+static int s_list_add (s_list_t *li, void *el, int pos)
 {
 	int i = 0;
 	s_list_node_t *ntmp;
@@ -161,7 +173,7 @@ int s_list_add (s_list_t *li, void *el, int pos)
 	return li->nb_elt;
 }
 
-node_t * node_get_parent (node_t *node, char *name)
+static node_t * node_get_parent (node_t *node, char *name)
 {
 	while (node->parent) {
 		if (strcmp(node->parent->name, name) == 0) {
@@ -172,7 +184,7 @@ node_t * node_get_parent (node_t *node, char *name)
 	return NULL;
 }
 
-int node_path_normalize (char *out, int len)
+static int node_path_normalize (char *out, int len)
 {
 	int i;
 	int j;
@@ -231,7 +243,8 @@ int node_path_normalize (char *out, int len)
 
 	return 0;
 }
-node_t * node_get_node_ (node_t *node, char *path)
+
+static node_t * node_get_node_ (node_t *node, char *path)
 {
 	int p;
 	char *ptr;
@@ -266,7 +279,7 @@ node_t * node_get_node_ (node_t *node, char *path)
 	return res;
 }
 
-node_t * node_get_node (node_t *node, char *path)
+static node_t * node_get_node (node_t *node, char *path)
 {
 	int len;
 	char *str;
@@ -286,7 +299,7 @@ node_t * node_get_node (node_t *node, char *path)
 	return res;
 }
 
-char * node_get_value (node_t *node, char *path)
+static char * node_get_value (node_t *node, char *path)
 {
 	node_t *res;
 	res = node_get_node(node, path);
@@ -296,17 +309,17 @@ char * node_get_value (node_t *node, char *path)
 	return NULL;
 }
 
-void node_generate_code_window (node_t *node)
+static void node_generate_code_window (node_t *node)
 {
 	fprintf(g_source, "w_window_init(&%s, %s, NULL);\n", node->id, node->type);
 }
 
-void node_generate_code_title (node_t *node)
+static void node_generate_code_title (node_t *node)
 {
 	fprintf(g_source, "s_window_set_title(%s->window, \"%s\");\n", node_get_parent(node, "window")->id, node->value);
 }
 
-void node_generate_code_move (node_t *node)
+static void node_generate_code_move (node_t *node)
 {
 	node_t *tmp;
 	char *x = node_get_value(node, "x");
@@ -324,7 +337,7 @@ void node_generate_code_move (node_t *node)
 	if ((tmp = node_get_node(node, "h")) != NULL) { tmp->dontparse = 1; }
 }
 
-void node_generate_code_effect (node_t *node)
+static void node_generate_code_effect (node_t *node)
 {
 	node_t *tmp;
 	char *effect = node_get_value(node, "effect");
@@ -332,7 +345,7 @@ void node_generate_code_effect (node_t *node)
 	if ((tmp = node_get_node(node, "effect")) != NULL) { tmp->dontparse = 1; }
 }
 
-void node_generate_code_style (node_t *node)
+static void node_generate_code_style (node_t *node)
 {
 	node_t *tmp;
 	char *shape = node_get_value(node, "shape");
@@ -346,7 +359,7 @@ void node_generate_code_style (node_t *node)
 	if ((tmp = node_get_node(node, "shadow")) != NULL) { tmp->dontparse = 1; }
 }
 
-void node_generate_code_string (node_t *node)
+static void node_generate_code_string (node_t *node)
 {
 	if (strcmp(node->parent->type, "textbox") == 0 ||
 	    strcmp(node->parent->type, "editbox") == 0) {
@@ -356,7 +369,7 @@ void node_generate_code_string (node_t *node)
 	}
 }
 
-void node_generate_code_show (node_t *node)
+static void node_generate_code_show (node_t *node)
 {
 	if (strcmp(node->parent->name, "window") == 0) {
 		fprintf(g_source, "w_object_show(%s->object);\n", node_get_parent(node, "window")->id);
@@ -367,27 +380,27 @@ void node_generate_code_show (node_t *node)
 	}
 }
 
-void node_generate_code_draw (node_t *node)
+static void node_generate_code_draw (node_t *node)
 {
 	fprintf(g_source, "%s->object->draw = %s;\n", node->parent->id, node->value);
 }
 
-void node_generate_code_pressed (node_t *node)
+static void node_generate_code_pressed (node_t *node)
 {
 	fprintf(g_source, "%s->pressed = %s;\n", node->parent->id, node->value);
 }
 
-void node_generate_code_released (node_t *node)
+static void node_generate_code_released (node_t *node)
 {
 	fprintf(g_source, "%s->released = %s;\n", node->parent->id, node->value);
 }
 
-void node_generate_code_changed (node_t *node)
+static void node_generate_code_changed (node_t *node)
 {
 	fprintf(g_source, "%s->changed = %s;\n", node->parent->id, node->value);
 }
 
-void node_generate_code_image (node_t *node, char *to)
+static void node_generate_code_image (node_t *node, char *to)
 {
 	int i;
 	int count;
@@ -425,7 +438,7 @@ void node_generate_code_image (node_t *node, char *to)
 	if ((tmp = node_get_node(node, "rotate")) != NULL) { tmp->dontparse = 1; }
 }
 
-void node_generate_code_object (node_t *node)
+static void node_generate_code_object (node_t *node)
 {
 	node_t *tmp;
 	if (strcmp(node->type, "frame") == 0) {
@@ -516,7 +529,7 @@ void node_generate_code_object (node_t *node)
 	}
 }
 
-void node_generate_code (node_t *node)
+static void node_generate_code (node_t *node)
 {
 	int p;
 	node_t *tmp;
@@ -558,7 +571,7 @@ void node_generate_code (node_t *node)
 	g_depth--;
 }
 
-void node_generate_header (node_t *node)
+static void node_generate_header (node_t *node)
 {
 	int p;
 	node_t *tmp;
@@ -589,7 +602,7 @@ void node_generate_header (node_t *node)
 	g_depth--;
 }
 
-void node_generate_function (node_t *node)
+static void node_generate_function (node_t *node)
 {
 	int p;
 	node_t *tmp;
@@ -612,7 +625,7 @@ void node_generate_function (node_t *node)
 	g_depth--;
 }
 
-void node_init (node_t **node)
+static void node_init (node_t **node)
 {
 	node_t *n;
 	n = (node_t *) malloc(sizeof(node_t));
@@ -621,7 +634,7 @@ void node_init (node_t **node)
 	*node = n;
 }
 
-void node_uninit (node_t *node)
+static void node_uninit (node_t *node)
 {
 	node_t *tmp;
 	if (node == NULL) {
@@ -640,7 +653,7 @@ void node_uninit (node_t *node)
 	free(node);
 }
 
-void node_print (node_t *node)
+static void node_print (node_t *node)
 {
 	int i;
 	for (i = 0; i < g_depth; i++) {
@@ -659,7 +672,7 @@ void node_print (node_t *node)
 	printf("\n");
 }
 
-void node_parse (node_t *node)
+static void node_parse (node_t *node)
 {
 	int p;
 	node_t *tmp;
@@ -674,7 +687,7 @@ void node_parse (node_t *node)
 	g_depth--;
 }
 
-char * node_strdup (char *str)
+static char * node_strdup (char *str)
 {
 	if (str == NULL) {
 		return NULL;
@@ -683,7 +696,7 @@ char * node_strdup (char *str)
 	}
 }
 
-void node_dublicate_ (node_t *node, node_t *dub)
+static void node_dublicate_ (node_t *node, node_t *dub)
 {
 	int p;
 	node_t *tmp;
@@ -701,13 +714,13 @@ void node_dublicate_ (node_t *node, node_t *dub)
 	}
 }
 
-void node_dublicate (node_t *node, node_t **dub)
+static void node_dublicate (node_t *node, node_t **dub)
 {
 	node_init(dub);
 	node_dublicate_(node, *dub);
 }
 
-void node_generate_element (node_t *node)
+static void node_generate_element (node_t *node)
 {
 	int p;
 	node_t *tmp;
@@ -740,7 +753,7 @@ void node_generate_element (node_t *node)
 	}
 }
 
-void node_generate (node_t *node)
+static void node_generate (node_t *node)
 {
 	node_generate_element(node);
 	fprintf(g_header,
@@ -775,7 +788,7 @@ void node_generate (node_t *node)
 	        "}\n");
 }
 
-void start (void *xdata, const char *el, const char **attr)
+static void start (void *xdata, const char *el, const char **attr)
 {
 	free(g_path);
 	g_path = strdup(el);
@@ -807,7 +820,7 @@ void start (void *xdata, const char *el, const char **attr)
 	}
 }
 
-void end (void *xdata, const char *el)
+static void end (void *xdata, const char *el)
 {
 	g_depth--;
 	free(g_path);
@@ -815,7 +828,7 @@ void end (void *xdata, const char *el)
 	g_active = g_active->parent;
 }
 
-void char_hndl (void *xdata, const char *txt, int txtlen)
+static void char_hndl (void *xdata, const char *txt, int txtlen)
 {
 	char *str;
 	char *ptr;
