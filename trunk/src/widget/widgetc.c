@@ -404,7 +404,7 @@ static void node_print (node_t *node)
 	g_depth--;
 }
 
-static void node_generate_code_style_ (node_t *node, node_t *parent, char *prefix)
+static void node_generate_code_style (node_t *node, node_t *parent, char *prefix)
 {
 	node_t *shape = node_get_node(node, "shape");
 	node_t *shadow = node_get_node(node, "shadow");
@@ -413,7 +413,7 @@ static void node_generate_code_style_ (node_t *node, node_t *parent, char *prefi
 	if (shadow) shadow->dontparse = 1;
 }
 
-static void node_generate_code_image_ (node_t *node, node_t *parent, char *prefix)
+static void node_generate_code_image (node_t *node, node_t *parent, char *prefix)
 {
 	int i;
 	int count;
@@ -489,11 +489,11 @@ static void node_generate_code_object_frame (node_t *node)
 	node_t *window = node_get_parent(node, "window");
 	fprintf(g_source, "w_frame_init(%s, &%s, %s, %s->object);\n", window->id, node->id, "0", node->parent->id);
 	if ((tmp = node_get_node(node, "style")) != NULL) {
-		node_generate_code_style_(tmp, node, NULL);
+		node_generate_code_style(tmp, node, NULL);
 		tmp->dontparse = 1;
 	}
 	while ((tmp = node_get_node(node, "image")) != NULL) {
-		node_generate_code_image_(tmp, node, NULL);
+		node_generate_code_image(tmp, node, NULL);
 		tmp->dontparse = 1;
 	}
 }
@@ -504,11 +504,11 @@ static void node_generate_code_object_button (node_t *node)
 	node_t *window = node_get_parent(node, "window");
 	fprintf(g_source, "w_button_init(%s, &%s, %s->object);\n", window->id, node->id, node->parent->id);
 	if ((tmp = node_get_node(node, "style")) != NULL) {
-		node_generate_code_style_(tmp, node, NULL);
+		node_generate_code_style(tmp, node, NULL);
 		tmp->dontparse = 1;
 	}
 	while ((tmp = node_get_node(node, "image")) != NULL) {
-		node_generate_code_image_(tmp, node, NULL);
+		node_generate_code_image(tmp, node, NULL);
 		tmp->dontparse = 1;
 	}
 	if ((tmp = node_get_node(node, "pressed")) != NULL) {
@@ -530,11 +530,11 @@ static void node_generate_code_object_textbox (node_t *node)
 	node_t *tmp;
 	fprintf(g_source, "w_textbox_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
 	if ((tmp = node_get_node(node, "style")) != NULL) {
-		node_generate_code_style_(tmp, node, NULL);
+		node_generate_code_style(tmp, node, NULL);
 		tmp->dontparse = 1;
 	}
 	while ((tmp = node_get_node(node, "image")) != NULL) {
-		node_generate_code_image_(tmp, node, NULL);
+		node_generate_code_image(tmp, node, NULL);
 		tmp->dontparse = 1;
 	}
 	if ((tmp = node_get_node(node, "properties")) != NULL) {
@@ -563,11 +563,11 @@ static void node_generate_code_object_editbox (node_t *node)
 	node_t *tmp;
 	fprintf(g_source, "w_editbox_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
 	if ((tmp = node_get_node(node, "style")) != NULL) {
-		node_generate_code_style_(tmp, node, NULL);
+		node_generate_code_style(tmp, node, NULL);
 		tmp->dontparse = 1;
 	}
 	while ((tmp = node_get_node(node, "image")) != NULL) {
-		node_generate_code_image_(tmp, node, NULL);
+		node_generate_code_image(tmp, node, NULL);
 		tmp->dontparse = 1;
 	}
 	if ((tmp = node_get_node(node, "properties")) != NULL) {
@@ -596,11 +596,11 @@ static void node_generate_code_object_checkbox (node_t *node)
 	node_t *tmp;
 	fprintf(g_source, "w_checkbox_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
 	if ((tmp = node_get_node(node, "style")) != NULL) {
-		node_generate_code_style_(tmp, node, NULL);
+		node_generate_code_style(tmp, node, NULL);
 		tmp->dontparse = 1;
 	}
 	if ((tmp = node_get_node(node, "boxstyle")) != NULL) {
-		node_generate_code_style_(tmp, node, "box");
+		node_generate_code_style(tmp, node, "box");
 		tmp->dontparse = 1;
 	}
 	if ((tmp = node_get_node(node, "properties")) != NULL) {
@@ -619,11 +619,11 @@ static void node_generate_code_object_checkbox (node_t *node)
 		tmp->dontparse = 1;
 	}
 	while ((tmp = node_get_node(node, "image")) != NULL) {
-		node_generate_code_image_(tmp, node, NULL);
+		node_generate_code_image(tmp, node, NULL);
 		tmp->dontparse = 1;
 	}
 	while ((tmp = node_get_node(node, "boximage")) != NULL) {
-		node_generate_code_image_(tmp, node, "box");
+		node_generate_code_image(tmp, node, "box");
 		tmp->dontparse = 1;
 	}
 	if ((tmp = node_get_node(node, "changed")) != NULL) {
@@ -641,19 +641,19 @@ static void node_generate_code_object_progressbar (node_t *node)
 	node_t *tmp;
 	fprintf(g_source, "w_progressbar_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
 	if ((tmp = node_get_node(node, "style")) != NULL) {
-		node_generate_code_style_(tmp, node, NULL);
+		node_generate_code_style(tmp, node, NULL);
 		tmp->dontparse = 1;
 	}
 	if ((tmp = node_get_node(node, "boxstyle")) != NULL) {
-		node_generate_code_style_(tmp, node, "box");
+		node_generate_code_style(tmp, node, "box");
 		tmp->dontparse = 1;
 	}
 	while ((tmp = node_get_node(node, "image")) != NULL) {
-		node_generate_code_image_(tmp, node, NULL);
+		node_generate_code_image(tmp, node, NULL);
 		tmp->dontparse = 1;
 	}
 	while ((tmp = node_get_node(node, "boximage")) != NULL) {
-		node_generate_code_image_(tmp, node, "box");
+		node_generate_code_image(tmp, node, "box");
 		tmp->dontparse = 1;
 	}
 	if ((tmp = node_get_node(node, "changed")) != NULL) {
