@@ -624,6 +624,9 @@ void node_init (node_t **node)
 void node_uninit (node_t *node)
 {
 	node_t *tmp;
+	if (node == NULL) {
+		return;
+	}
 	while (!s_list_eol(node->nodes, 0)) {
 		tmp = (node_t *) s_list_get(node->nodes, 0);
 		s_list_remove(node->nodes, 0);
