@@ -1,4 +1,47 @@
 
+Thu 16 Nov 2006 01:24:54 PM EET
+	* M /trunk/Makefile.cfg.mingw,
+	  M /trunk/demo/desktop/desktop.c,
+	  M /trunk/demo/desktop/menu.c,
+	  M /trunk/demo/desktop/taskbar.c,
+	  M /trunk/demo/load/load.c,
+	  M /trunk/demo/onscreenkeyboard/onscreenkeyboard.c,
+	  M /trunk/demo/term/term.c,
+	  M /trunk/demo/widgetx/Makefile,
+	  M /trunk/demo/widgetx/widgetx.xml,
+	  M /trunk/demo/xynthlogout/xynthlogout.c,
+	  M /trunk/ports/kaffe/xynth/font.c,
+	  M /trunk/ports/kaffe/xynth/graphic.c,
+	  M /trunk/src/Makefile,
+	  M /trunk/src/configs/xynth.conf,
+	  M /trunk/src/lib/font.c,
+	  M /trunk/src/lib/grlib.c,
+	  M /trunk/src/lib/image.c,
+	  M /trunk/src/lib/mem.h,
+	  M /trunk/src/lib/rect.c,
+	  M /trunk/src/lib/xynth.h,
+	  M /trunk/src/server/Makefile,
+	  M /trunk/src/server/window.c,
+	  D /trunk/src/templates,
+	  M /trunk/src/themes/keramik/Makefile,
+	  M /trunk/src/themes/microgui/Makefile,
+	  M /trunk/src/themes/silverado/Makefile,
+	  M /trunk/src/widget/Makefile,
+	  M /trunk/src/widget/button.c,
+	  M /trunk/src/widget/checkbox.c,
+	  M /trunk/src/widget/editbox.c,
+	  M /trunk/src/widget/frame.c,
+	  M /trunk/src/widget/object.c,
+	  M /trunk/src/widget/progressbar.c,
+	  M /trunk/src/widget/textbox.c,
+	  M /trunk/src/widget/widget.h,
+	  M /trunk/src/widget/widgetc.c,
+	  M /trunk/src/widget/window.c,
+	  M /trunk/tools/optimize/xynth.sh :
+
+	changes especially for widget lib, and some speed optimizations for
+	grlib, image, rectangle.
+
 Fri 27 Oct 2006 12:42:17 PM EEST
 	* M Makefile.cfg.linux.single,
 	  M Makefile.parse,
