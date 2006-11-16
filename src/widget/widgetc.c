@@ -819,6 +819,7 @@ static void node_generate_element (node_t *node)
 	    		    		list_add(node->nodes, chl, 0);
 	    		    		list_remove(dmp->nodes, dmp->nodes->nb_elt - 1);
 	    		    	}
+	    		    	node_uninit(dmp);
 	    		}
 	    	}
 	}
