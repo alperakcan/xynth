@@ -394,6 +394,7 @@ typedef struct s_font_glyph_s {
 } s_font_glyph_t;
 
 typedef struct s_font_s {
+	char *name;
 	char *str;
 	int size;
 	int ascent;
@@ -1415,6 +1416,8 @@ int s_handlers_uninit (s_window_t *window);
 /** image struct
   */
 struct s_image_s {
+	/** image name */
+	char *name;
 	/** layer x */
 	int x;
 	/** layer y */

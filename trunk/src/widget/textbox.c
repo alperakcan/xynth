@@ -78,7 +78,10 @@ void w_textbox_lines_calculate (w_object_t *object)
 		return;
 	}
 	w_textbox_lines_uninit(object);
-	s_font_init(&font, textbox->font);
+	font = w_window_font_get(object->window, textbox->font);
+	if (font == NULL) {
+		return;
+	}
 	s_font_set_size(font, textbox->size);
 	s_font_set_rgb(font, (textbox->rgb >> 0x10) & 0xff, (textbox->rgb >> 0x8) & 0xff, textbox->rgb & 0xff);
 	if (textbox->properties & TEXTBOX_WRAP) {
@@ -161,7 +164,6 @@ void w_textbox_lines_calculate (w_object_t *object)
 		s_font_get_glyph(font);
 		w_textbox_line_add(font);
 	}
-	s_font_uninit(font);
 }
 
 void w_textbox_draw (w_object_t *object)
@@ -272,6 +274,8 @@ int w_textbox_init (w_window_t *window, w_textbox_t **textbox, w_object_t *paren
 	(*textbox)->object->geometry = w_textbox_geometry;
 	(*textbox)->object->destroy = w_textbox_uninit;
 	(*textbox)->object->data[OBJECT_TEXTBOX] = *textbox;
+
+	w_window_font_add(window, (*textbox)->font);
 
 	return 0;
 err1:	s_list_uninit((*textbox)->lines);

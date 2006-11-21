@@ -27,6 +27,8 @@ typedef struct w_window_s {
 	s_window_t *window;
 	w_object_t *object;
 	w_object_t *focus;
+	s_list_t *images;
+	s_list_t *fonts;
 } w_window_t;
 
 typedef enum {
@@ -369,6 +371,10 @@ void w_window_change_keybd_focus (s_window_t *window, int type);
 void w_window_atevent (s_window_t *window, s_event_t *event);
 int w_window_init (w_window_t **window, S_WINDOW type, w_window_t *parent);
 int w_window_set_coor (w_window_t *window, int x, int y, int w, int h);
+s_image_t * w_window_image_get (w_window_t *window, char *image);
+int w_window_image_add (w_window_t *window, char *image);
+s_font_t * w_window_font_get (w_window_t *window, char *font);
+int w_window_font_add (w_window_t *window, char *font);
 int w_window_uninit (w_window_t *window);
 
 /* scrollbar.c*/

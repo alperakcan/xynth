@@ -19,9 +19,19 @@
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
 
+#define FONT_CACHE_SIZE 256
+
+typedef struct s_font_cache_s {
+	FT_UInt index;
+	FT_BBox bbox;
+	unsigned long int advance_x;
+	FT_Glyph glyph;
+} s_font_cache_t;
+
 struct s_font_ft_s {
-        FT_Face face;
+	FT_Face face;
 	FT_Library library;
+	s_font_cache_t cache[FONT_CACHE_SIZE];
 };
 
 int s_font_init (s_font_t **font, char *name)
@@ -55,6 +65,7 @@ int s_font_init (s_font_t **font, char *name)
 	if (s_image_init(&((*font)->glyph.img))) {
 		goto err2;
 	}
+	(*font)->name = strdup(name);
 	s_free(name_);
 	(*font)->rgb = 0;
 	return 0;
@@ -69,20 +80,26 @@ err0:	s_free((*font)->ft);
 
 int s_font_uninit (s_font_t *font)
 {
+	int i;
 	if (font == NULL) {
 		return 0;
 	}
-        s_image_uninit(font->glyph.img);
+	s_image_uninit(font->glyph.img);
+	for (i = 0; i < FONT_CACHE_SIZE; i++) {
+		FT_Done_Glyph(font->ft->cache[i].glyph);
+	}
 	FT_Done_Face(font->ft->face);
 	FT_Done_FreeType(font->ft->library);
 	s_free(font->str);
 	s_free(font->ft);
+	s_free(font->name);
 	s_free(font);
 	return 0;
 }
 
 int s_font_set_size (s_font_t *font, int size)
 {
+	int i;
 	FT_Fixed scale;
 	
 	if (font->size == size) {
@@ -102,7 +119,10 @@ int s_font_set_size (s_font_t *font, int size)
 	font->lineskip = FT_CEIL(FT_MulFix(font->ft->face->height, scale));
 	font->underline_offset = FT_FLOOR(FT_MulFix(font->ft->face->underline_position, scale));
 	font->underline_height = FT_FLOOR(FT_MulFix(font->ft->face->underline_thickness, scale));
-
+	for (i = 0; i < FONT_CACHE_SIZE; i++) {
+		FT_Done_Glyph(font->ft->cache[i].glyph);
+	}
+	memset(font->ft->cache, 0, sizeof(s_font_cache_t) * FONT_CACHE_SIZE);
 #if 0
 	printf("\nfont:\n");
 	printf("scale   : %d\n", (int) scale);
@@ -167,6 +187,7 @@ int s_font_get_glyph (s_font_t *font)
         int n;
 	int x;
 	int y;
+	int cache;
 	int pen_x;
 	int pen_y;
 	int error;
@@ -179,14 +200,15 @@ int s_font_get_glyph (s_font_t *font)
 	FT_UInt num_glyphs;
 	FT_UInt previous;
 	FT_Vector *pos;
-        FT_Glyph *glyphs;
-        FT_Glyph *images;
+	FT_Glyph glyph;
+	FT_Glyph *images;
 	FT_Vector *pens;
 	FT_BBox bbox;
+	FT_BBox glyph_bbox;
+	FT_UInt glyph_advance_x;
 	
 	num_chars = strlen(font->str);	
 	pos = (FT_Vector *) s_malloc(sizeof(FT_Vector) * num_chars);
-	glyphs = (FT_Glyph *) s_malloc(sizeof(FT_Glyph) * num_chars);
 	images = (FT_Glyph *) s_malloc(sizeof(FT_Glyph) * num_chars);
 	pens = (FT_Vector *) s_malloc(sizeof(FT_Vector) * num_chars);
 
@@ -200,73 +222,97 @@ int s_font_get_glyph (s_font_t *font)
 	s_font_utf8_to_unicode(unicode, font->str, num_chars);
 	for (num_chars = 0; unicode[num_chars] != 0; num_chars++);
 	
+	bbox.xMin = bbox.yMin =  32000;
+	bbox.xMax = bbox.yMax = -32000;
+
+	xmin =  3200;
+	xmax = -3200;
+
 	for (n = 0; n < num_chars; n++) {
-		glyph_index = FT_Get_Char_Index(font->ft->face, unicode[n]);
-		if (glyph_index == 0) {
-//			debugf(0, "Couldnt get glyph index for char: %c[%d]", font->str[n], font->str[n]);
-			continue;
-		}
-		if (use_kerning && previous && glyph_index) {
-			FT_Vector delta;
-			if (FT_Get_Kerning(font->ft->face, previous, glyph_index, FT_KERNING_DEFAULT, &delta)) {
-				debugf(0, "Couldnt get kerning data for char: %c[%d]", font->str[n], font->str[n]);
+		cache = (unicode[n] < FONT_CACHE_SIZE) ? 1 : 0;
+		{ /* get glyph */
+			if (cache &&
+			    font->ft->cache[unicode[n]].glyph) {
+			    	s_font_cache_t *cache = &(font->ft->cache[unicode[n]]);
+			    	glyph = cache->glyph;
+			    	glyph_bbox = cache->bbox;
+			    	glyph_index = cache->index;
+			    	glyph_advance_x = cache->advance_x;
+			} else {
+				glyph_index = FT_Get_Char_Index(font->ft->face, unicode[n]);
+				if (glyph_index == 0) {
+					//debugf(0, "Couldnt get glyph index for char: %c[%d]", font->str[n], font->str[n]);
+					continue;
+				}
+				error = FT_Load_Glyph(font->ft->face, glyph_index, FT_LOAD_DEFAULT);
+				if (error) {
+					debugf(0, "FT_Load_Glyph (%d, 0x%x)", error, error);
+					continue;
+				}
+				error = FT_Get_Glyph(font->ft->face->glyph, &glyph);
+				if (error) {
+					debugf(0, "FT_Get_Glyph (%d, 0x%x)", error, error);
+					continue;
+				}
+				FT_Glyph_Get_CBox(glyph, ft_glyph_bbox_pixels, &glyph_bbox);
+				glyph_advance_x = font->ft->face->glyph->advance.x >> 6;
+				
+				/* cache it */
+				if (cache) {
+					font->ft->cache[unicode[n]].bbox = glyph_bbox;
+					font->ft->cache[unicode[n]].index = glyph_index;
+					font->ft->cache[unicode[n]].glyph = glyph;
+					font->ft->cache[unicode[n]].advance_x = glyph_advance_x;
+				}
 			}
-			pen_x += delta.x >> 6;
 		}
-		pos[num_glyphs].x = pen_x;
-		pos[num_glyphs].y = pen_y;
-		error = FT_Load_Glyph(font->ft->face, glyph_index, FT_LOAD_DEFAULT);
-		if (error) {
-			debugf(0, "FT_Load_Glyph (%d, 0x%x)", error, error);
-			continue;
+		{ /* set pen */
+			if (use_kerning && previous && glyph_index) {
+				FT_Vector delta;
+				if (FT_Get_Kerning(font->ft->face, previous, glyph_index, FT_KERNING_DEFAULT, &delta)) {
+					debugf(0, "Couldnt get kerning data for char: %c[%d]", font->str[n], font->str[n]);
+				}
+				pen_x += delta.x >> 6;
+			}
+			pos[num_glyphs].x = pen_x;
+			pos[num_glyphs].y = pen_y;
+			pen_x += glyph_advance_x;
 		}
-		error = FT_Get_Glyph(font->ft->face->glyph, &glyphs[num_glyphs]);
-		if (error) {
-			debugf(0, "FT_Get_Glyph (%d, 0x%x)", error, error);
-			continue;
+		{ /* set box */
+			glyph_bbox.xMin += pos[num_glyphs].x;
+			glyph_bbox.xMax += pos[num_glyphs].x;
+			glyph_bbox.yMin += pos[num_glyphs].y;
+			glyph_bbox.yMax += pos[num_glyphs].y;
+			if (glyph_bbox.xMin < bbox.xMin) {
+				bbox.xMin = glyph_bbox.xMin;
+			}
+			if (glyph_bbox.yMin < bbox.yMin) {
+				bbox.yMin = glyph_bbox.yMin;
+			}
+			if (glyph_bbox.xMax > bbox.xMax) {
+				bbox.xMax = glyph_bbox.xMax;
+			}
+			if (glyph_bbox.yMax > bbox.yMax) {
+				bbox.yMax = glyph_bbox.yMax;
+			}
 		}
-		pen_x += font->ft->face->glyph->advance.x >> 6;
+		{ /* get images */
+			pens[num_glyphs].x = 0 + pos[num_glyphs].x;
+			pens[num_glyphs].y = 0 + pos[num_glyphs].y;
+			error = FT_Glyph_To_Bitmap(&glyph, ft_render_mode_normal, &pens[num_glyphs], !cache);
+			if (!error) {
+				FT_BitmapGlyph bit = (FT_BitmapGlyph) glyph;
+				x = pens[num_glyphs].x;
+				xmin = MIN(xmin, x);
+				xmax = MAX(xmax, x + bit->bitmap.width);
+			}
+			images[num_glyphs] = glyph;
+		}
 		previous = glyph_index;
 		num_glyphs++;
 	}
 	s_free(unicode);
 
-	bbox.xMin = bbox.yMin =  32000;
-	bbox.xMax = bbox.yMax = -32000;
-	for (n = 0; n < num_glyphs; n++) {
-		FT_BBox glyph_bbox;
-		FT_Glyph_Get_CBox(glyphs[n], ft_glyph_bbox_pixels, &glyph_bbox);
-		glyph_bbox.xMin += pos[n].x;
-		glyph_bbox.xMax += pos[n].x;
-		glyph_bbox.yMin += pos[n].y;
-		glyph_bbox.yMax += pos[n].y;
-		if (glyph_bbox.xMin < bbox.xMin) {
-			bbox.xMin = glyph_bbox.xMin;
-		}
-		if (glyph_bbox.yMin < bbox.yMin) {
-			bbox.yMin = glyph_bbox.yMin;
-		}
-		if (glyph_bbox.xMax > bbox.xMax) {
-			bbox.xMax = glyph_bbox.xMax;
-		}
-		if (glyph_bbox.yMax > bbox.yMax) {
-			bbox.yMax = glyph_bbox.yMax;
-		}
-	}
-	xmin =  3200;
-	xmax = -3200;
-	for (n = 0; n < num_glyphs; n++) {
-		images[n] = glyphs[n];
-		pens[n].x = 0 + pos[n].x;
-		pens[n].y = 0 + pos[n].y;
-		error = FT_Glyph_To_Bitmap(&images[n], ft_render_mode_normal, &pens[n], 1);
-		if (!error) {
-			FT_BitmapGlyph bit = (FT_BitmapGlyph) images[n];
-			x = pens[n].x;
-			xmin = MIN(xmin, x);
-			xmax = MAX(xmax, x + bit->bitmap.width);
-		}
-	}
 	if (xmin > xmax) {
 		xmin = 0;
 		xmax = 0;
@@ -311,7 +357,6 @@ int s_font_get_glyph (s_font_t *font)
 
 	s_free(pos);
 	s_free(pens);
-	s_free(glyphs);
 	s_free(images);
 	return 0;
 }
