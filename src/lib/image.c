@@ -184,11 +184,12 @@ int s_image_uninit (s_image_t *img)
 	if (img == NULL) {
 		return 0;
 	}
-        s_image_free_buf(img);
-        s_image_free_mat(img);
-        s_image_free_rgba(img);
-        s_image_free_handler(img);
+	s_image_free_buf(img);
+	s_image_free_mat(img);
+	s_image_free_rgba(img);
+	s_image_free_handler(img);
 	s_image_layers_uninit(img);
+	s_free(img->name);
 	s_free(img);
 	img = NULL;
 	return 0;
@@ -226,6 +227,7 @@ int s_image_layers_uninit (s_image_t *img)
 
 int s_image_img (char *file, s_image_t *img)
 {
+	img->name = strdup(file);
 	if (!s_image_png_is(file)) {
 		return s_image_png(file, img);
 	} else if (!s_image_xpm_is(file)) {

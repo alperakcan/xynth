@@ -158,19 +158,6 @@ void w_window_atevent (s_window_t *window, s_event_t *event)
 	}
 }
 
-int w_window_init (w_window_t **window, S_WINDOW type, w_window_t *parent)
-{
-	(*window) = (w_window_t *) s_malloc(sizeof(w_window_t));
-	s_client_init(&((*window)->window));
-	s_window_new((*window)->window, type, NULL);
-	s_window_set_resizeable((*window)->window, 0);
-	w_object_init(*window, &((*window)->object), NULL, NULL);
-	(*window)->focus = NULL;
-	s_client_atevent((*window)->window, w_window_atevent);
-	(*window)->window->client->data = (*window);
-	return 0;
-}
-
 int w_window_set_coor (w_window_t *window, int x, int y, int w, int h)
 {
 	s_window_set_coor(window->window, WINDOW_NOFORM, x, y, w, h);
@@ -182,11 +169,87 @@ int w_window_set_coor (w_window_t *window, int x, int y, int w, int h)
 	return 0;
 }
 
+s_image_t * w_window_image_get (w_window_t *window, char *image)
+{
+	int p;
+	s_image_t *img;
+	for (p = 0; !s_list_eol(window->images, p); p++) {
+		img = (s_image_t *) s_list_get(window->images, p);
+		if (strcmp(img->name, image) == 0) {
+			return img;
+		}
+	}
+	return NULL;
+}
+
+int w_window_image_add (w_window_t *window, char *image)
+{
+	s_image_t *img;
+	if ((img = w_window_image_get(window, image)) == NULL) {
+		s_image_init(&img);
+		s_image_img(image, img);
+		s_list_add(window->images, img, -1);
+	}
+	return 0;
+}
+
+s_font_t * w_window_font_get (w_window_t *window, char *font)
+{
+	int p;
+	s_font_t *fnt;
+	for (p = 0; !s_list_eol(window->fonts, p); p++) {
+		fnt = (s_font_t *) s_list_get(window->fonts, p);
+		if (strcmp(fnt->name, font) == 0) {
+			return fnt;
+		}
+	}
+	return NULL;
+}
+
+int w_window_font_add (w_window_t *window, char *font)
+{
+	s_font_t *fnt;
+	if ((fnt = w_window_font_get(window, font)) == NULL) {
+		s_font_init(&fnt, font);
+		s_list_add(window->fonts, fnt, -1);
+	}
+	return 0;
+}
+
 int w_window_uninit (w_window_t *window)
 {
+	s_image_t *img;
+	s_font_t *font;
 	window->object->surface->vbuf = NULL;
 	window->object->surface->matrix = NULL;
 	w_object_uninit(window->object);
+	while (!s_list_eol(window->images, 0)) {
+		img = (s_image_t *) s_list_get(window->images, 0);
+		s_list_remove(window->images, 0);
+		s_image_uninit(img);
+	}
+	s_list_uninit(window->images);
+	while (!s_list_eol(window->fonts, 0)) {
+		font = (s_font_t *) s_list_get(window->fonts, 0);
+		s_list_remove(window->fonts, 0);
+		s_font_uninit(font);
+	}
+	s_list_uninit(window->fonts);
 	s_free(window);
+	return 0;
+}
+
+int w_window_init (w_window_t **window, S_WINDOW type, w_window_t *parent)
+{
+	(*window) = (w_window_t *) s_malloc(sizeof(w_window_t));
+	s_client_init(&((*window)->window));
+	s_window_new((*window)->window, type, NULL);
+	s_window_set_resizeable((*window)->window, 0);
+	w_object_init(*window, &((*window)->object), NULL, NULL);
+	s_list_init(&((*window)->images));
+	s_list_init(&((*window)->fonts));
+	(*window)->focus = NULL;
+	s_client_atevent((*window)->window, w_window_atevent);
+	(*window)->window->client->data = (*window);
 	return 0;
 }
