@@ -368,6 +368,8 @@ int w_object_move_silent (w_object_t *object, int x, int y, int w, int h)
 		/* re prepare matrix and surface buffer */
 		s_free(object->surface->matrix);
 		s_free(object->surface->vbuf);
+		object->surface->matrix = NULL;
+		object->surface->vbuf = NULL;
 		object->surface->width = object->surface->buf->w;
 		object->surface->height = object->surface->buf->h;
 #if defined(WIDGET_OPTIMIZE_MEMORY)
@@ -392,7 +394,11 @@ int w_object_move (w_object_t *object, int x, int y, int w, int h)
 	old = *object->surface->win;
 	w_object_move_silent(object, x, y, w, h);
 	if (object->parent != NULL &&
-	    object->showed == 1) {
+	    object->showed == 1 &&
+	    (old.x != object->surface->win->x ||
+	     old.y != object->surface->win->y ||
+	     old.w != object->surface->win->w ||
+	     old.h != object->surface->win->h)) {
 		s_list_init(&diff);
 		s_rect_difference(&old, object->surface->win, diff);
 		while (!s_list_eol(diff, 0)) {
