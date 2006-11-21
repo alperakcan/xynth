@@ -21,6 +21,7 @@
 #include "xynth_.h"
 
 #undef DEBUG
+#define KERNEL_26
 
 typedef struct load_data_s {
 	int running;
@@ -54,6 +55,7 @@ typedef struct load_data_s {
 	unsigned int s_total;
 	unsigned int s_used;
 	unsigned int s_free;
+	unsigned int s_cached;
 
 	int c_data[4][230];
 	int m_data[2][230];
@@ -235,14 +237,14 @@ static int load_draw_mem_bar (s_surface_t *surface, load_data_t *ldata)
 
 	s_fillbox(surface, x, y, w, h_ * lvl, s_rgbcolor(surface, 0, 0, 0));
 
-	m_used = ldata->m_used / 1000000;
-	m_buffers = ldata->m_buffers / 1000000;
-	m_cached = ldata->m_cached / 1000000;
-	m_total = ldata->m_total / 1000000;
+	m_used = ldata->m_used / 1000;
+	m_buffers = ldata->m_buffers / 1000;
+	m_cached = ldata->m_cached / 1000;
+	m_total = ldata->m_total / 1000;
 	if (!m_total) ++m_total; // ugly
 	m_used = m_used - m_buffers - m_cached;
 	m_used_ = (m_used * 100) / m_total;
-
+	
         i = 0;
 	while (lvl--) {
 		if (i <= m_used_ / 5) {
@@ -443,6 +445,25 @@ static int load_get_load (s_window_t *window)
 	fp = fopen("/proc/meminfo", "r");
 	while (!feof(fp)) {
 		fgets(buf, sizeof(buf), fp);
+#if defined(KERNEL_26)
+		if ((str = strstr(buf, "MemTotal: ")) != NULL) {
+			str = buf + 10; ldata->m_total = strtoul(str, &str, 0);
+		} else if ((str = strstr(buf, "MemFree: ")) != NULL) {
+			str = buf + 9; ldata->m_free = strtoul(str, &str, 0);
+		} else if ((str = strstr(buf, "Buffers: ")) != NULL) {
+			str = buf + 9; ldata->m_buffers = strtoul(str, &str, 0);
+		} else if ((str = strstr(buf, "SwapTotal: ")) != NULL) {
+			str = buf + 11; ldata->s_total = strtoul(str, &str, 0);
+		} else if ((str = strstr(buf, "SwapFree: ")) != NULL) {
+			str = buf + 10; ldata->s_free = strtoul(str, &str, 0);
+		} else if ((str = strstr(buf, "SwapCached: ")) != NULL) {
+			str = buf + 12; ldata->s_cached = strtoul(str, &str, 0);
+		} else if ((str = strstr(buf, "Cached: ")) != NULL) {
+			str = buf + 8; ldata->m_cached = strtoul(str, &str, 0);
+		}
+		ldata->m_used = ldata->m_total - ldata->m_free;
+		ldata->s_used = ldata->s_total - ldata->s_free - ldata->s_cached;
+#else
 		if (strncmp(buf, "Mem: ", 5) == 0) {
 			str = buf + 5;
 			ldata->m_total = strtoul(str, &str, 0);
@@ -457,6 +478,7 @@ static int load_get_load (s_window_t *window)
 			ldata->s_used = strtoul(str, &str, 0);
 			ldata->s_free = strtoul(str, &str, 0);
 		}
+#endif
 	}
 #ifdef DEBUG	
 	printf("Mem: %lu %lu %lu %lu %lu %lu\n", ldata->m_total, ldata->m_used, ldata->m_free, ldata->m_shared, ldata->m_buffers, ldata->m_cached);
