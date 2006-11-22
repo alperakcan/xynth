@@ -145,12 +145,10 @@ void w_textbox_lines_calculate (w_object_t *object)
 				    	}
 				    	s_free(ptr);
 				}
-				fflush(stdout);
 				s_font_set_str(font, ptrline);
 				s_font_get_glyph(font);
 				w_textbox_line_add(font);
 			} else {
-				fflush(stdout);
 				s_font_set_str(font, strline);
 				s_font_get_glyph(font);
 				w_textbox_line_add(font);
