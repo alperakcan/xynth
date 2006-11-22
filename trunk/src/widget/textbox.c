@@ -53,8 +53,10 @@ void w_textbox_lines_uninit (w_object_t *object)
 	}
 }
 
-#define w_textbox_line_add(fglyph) {\
+#define w_textbox_line_add(fglyph, fstr) {\
 	s_font_glyph_t *glyph = (s_font_glyph_t *) s_malloc(sizeof(s_font_glyph_t));\
+	s_font_set_str(font, fstr);\
+	s_font_get_glyph(fglyph);\
 	*glyph = fglyph->glyph;\
 	s_list_add(textbox->lines, glyph, -1);\
 	s_image_init(&(fglyph->glyph.img));\
@@ -145,22 +147,16 @@ void w_textbox_lines_calculate (w_object_t *object)
 				    	}
 				    	s_free(ptr);
 				}
-				s_font_set_str(font, ptrline);
-				s_font_get_glyph(font);
-				w_textbox_line_add(font);
+				w_textbox_line_add(font, ptrline);
 			} else {
-				s_font_set_str(font, strline);
-				s_font_get_glyph(font);
-				w_textbox_line_add(font);
+				w_textbox_line_add(font, strline);
 				break;
 			}
 		}
 		s_free(strline);
 		s_free(ptrline);
 	} else {
-		s_font_set_str(font, str);
-		s_font_get_glyph(font);
-		w_textbox_line_add(font);
+		w_textbox_line_add(font, str);
 	}
 }
 
