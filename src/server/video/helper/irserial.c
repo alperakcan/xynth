@@ -35,7 +35,7 @@ int irserial_init (char *dev, unsigned int brate)
 {
         irserial_fd = open(dev, O_RDWR | O_NOCTTY ); 
         if (irserial_fd < 0) {
-        	printf("could not open file %s\n", dev);
+        	debugf(DSER, "could not open file %s\n", dev);
         	return irserial_fd;
         }
         tcgetattr(irserial_fd, &irserial_oldtio);
