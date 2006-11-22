@@ -24,6 +24,9 @@
 #include <string.h>
 #include <time.h>
 
+#include "../../../lib/xynth_.h"
+#include "../../server.h"
+
 #define IR_CODE_LEN 255
 static int irserial_fd = -1;
 unsigned int irserial_time;
