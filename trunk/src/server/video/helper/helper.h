@@ -23,6 +23,12 @@ int s_video_helper_console_switch (int vt);
 #include "irman.h"
 #endif /* VIDEO_HERLPER_IRMAN */
 
+#if defined(VIDEO_HELPER_IRSERIAL)
+int irserial_init (char *dev, unsigned int brate);
+int irserial_uninit (void);
+char * irserial_getcode (void);
+#endif /* VIDEO_HELPER_IRSERIAL */
+
 #if defined(VIDEO_HELPER_KBD)
 /* kbd.c */
 void s_video_helper_kbd_set_attr (void);
