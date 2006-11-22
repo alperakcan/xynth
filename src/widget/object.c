@@ -232,6 +232,7 @@ end:	return 0;
 
 int w_object_update (w_object_t *object, s_rect_t *coor)
 {
+	s_rect_t rect;
 	s_rect_t clip;
 	w_object_t *effect;
 	if (object == NULL) {
@@ -241,12 +242,19 @@ int w_object_update (w_object_t *object, s_rect_t *coor)
 	while (object->parent != NULL) {
 		object = object->parent;
 	}
+	clip.x = 0;
+	clip.y = 0;
+	clip.w = object->window->window->surface->width;
+	clip.h = object->window->window->surface->height;
+	if (s_rect_intersect(&clip, coor, &rect) != 0) {
+		return 0;
+	}
 	if (object->draw == NULL) {
-		s_fillbox(object->surface, coor->x, coor->y, coor->w, coor->h, 0);
+		s_fillbox(object->surface, rect.x, rect.y, rect.w, rect.h, 0);
 	} else {
 		object->draw(object);
 	}
-	if (s_rect_intersect(coor, object->surface->win, &clip) == 0) {
+	if (s_rect_intersect(&rect, object->surface->win, &clip) == 0) {
 		w_object_update_to_surface(object, object->surface, &clip, effect, EFFECT_SHOW | EFFECT_HIDE);
 		s_putboxpart(object->window->window->surface, clip.x, clip.y, clip.w, clip.h, object->surface->width, object->surface->height, object->surface->vbuf, clip.x, clip.y);
 	}
