@@ -40,13 +40,14 @@ char * w_textdomain (const char * domainname);
 char * w_gettext (const char * msgid);
 
 static FILE *w_gettext_file   = NULL;
-static int w_gettext_category = 0;
 static char *w_gettext_buf    = NULL;
 static char *w_gettext_dir    = NULL;
 static char *w_gettext_domain = NULL;
 static char *w_gettext_locale = NULL;
-static unsigned int w_gettext_count = 0;
 static lang_t *w_gettext_msgs = NULL;
+static int w_gettext_category = 0;
+static unsigned int w_gettext_count = 0;
+static s_thread_mutex_t *w_gettext_mutex = NULL;
 
 static unsigned long int hash_string (const char *str_param)
 {
@@ -93,27 +94,36 @@ static void w_changelocale (void)
 
 void w_gettext_free (void)
 {
+	s_thread_mutex_lock(w_gettext_mutex);
 	s_free(w_gettext_buf);
 	s_free(w_gettext_dir);
 	s_free(w_gettext_domain);
 	s_free(w_gettext_locale);
 	s_free(w_gettext_msgs);
 	if (w_gettext_file) fclose(w_gettext_file);
+	s_thread_mutex_unlock(w_gettext_mutex);
+	s_thread_mutex_destroy(w_gettext_mutex);
 }
 
 char * w_setlocale(int category, const char *locale)
 {
+	if (w_gettext_mutex == NULL) {
+		s_thread_mutex_init(&w_gettext_mutex);
+	}
+	s_thread_mutex_lock(w_gettext_mutex);
 	w_gettext_category = category;
 	if (locale) {
 		s_free(w_gettext_locale);
 		w_gettext_locale = strdup(locale);
 	}
 	w_changelocale();
+	s_thread_mutex_unlock(w_gettext_mutex);
 	return w_gettext_locale;
 }
 
 char * w_bindtextdomain (const char *domainname, const char *dirname)
 {
+	s_thread_mutex_lock(w_gettext_mutex);
 	if (domainname) {
 		s_free(w_gettext_domain);
 		w_gettext_domain = strdup(domainname);
@@ -123,16 +133,19 @@ char * w_bindtextdomain (const char *domainname, const char *dirname)
 		w_gettext_dir = strdup(dirname);
 	}
 	w_changelocale();
+	s_thread_mutex_unlock(w_gettext_mutex);
 	return w_gettext_dir;
 }
 
 char * w_textdomain (const char *domainname)
 {
+	s_thread_mutex_lock(w_gettext_mutex);
 	if (domainname) {
 		s_free(w_gettext_domain);
 		w_gettext_domain = strdup(domainname);
 	}
 	w_changelocale();
+	s_thread_mutex_unlock(w_gettext_mutex);
 	return w_gettext_domain;
 }
 
@@ -140,9 +153,10 @@ char * w_gettext (const char *str)
 {
 	unsigned long int i;
 	unsigned long int h;
+	s_thread_mutex_lock(w_gettext_mutex);
 	if (str == NULL ||
 	    w_gettext_file == NULL) {
-		return (char *) str;
+	    	goto end;
 	}
 	h = hash_string(str);
 	for (i = 0; i < w_gettext_count; i++) {
@@ -154,6 +168,7 @@ char * w_gettext (const char *str)
 			str = w_gettext_buf;
 		}
 	}
+end:	s_thread_mutex_unlock(w_gettext_mutex);
 	return (char *) str;
 }
 
