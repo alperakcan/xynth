@@ -16,11 +16,148 @@
 #include "../lib/xynth_.h"
 #include "widget.h"
 
-#if 1
+#if 0
 #include <libintl.h>
 #define _(str) gettext(str)
 #else
-#define _(str) str
+
+typedef struct lang_header_s {
+	char magic[8];
+	unsigned long int count;
+} lang_header_t;
+
+typedef struct lang_s {
+	unsigned long int hash;
+	unsigned long int id_len;
+	unsigned long int str_len;
+	unsigned long int id_offset;
+	unsigned long int str_offset;
+} lang_t;
+
+char * w_setlocale(int category, const char *locale);
+char * w_bindtextdomain (const char * domainname, const char * dirname);
+char * w_textdomain (const char * domainname);
+char * w_gettext (const char * msgid);
+
+static FILE *w_gettext_file   = NULL;
+static int w_gettext_category = 0;
+static char *w_gettext_buf    = NULL;
+static char *w_gettext_dir    = NULL;
+static char *w_gettext_domain = NULL;
+static char *w_gettext_locale = NULL;
+static unsigned int w_gettext_count = 0;
+static lang_t *w_gettext_msgs = NULL;
+
+static unsigned long int hash_string (const char *str_param)
+{
+	#define HASHWORDBITS 32
+	unsigned long int hval, g;
+	const char *str = str_param;
+	/* Compute the hash value for the given string.  */
+	hval = 0;
+	while (*str != '\0') {
+		hval <<= 4;
+		hval += (unsigned char) *str++;
+		g = hval & ((unsigned long int) 0xf << (HASHWORDBITS - 4));
+		if (g != 0) {
+			hval ^= g >> (HASHWORDBITS - 8);
+			hval ^= g;
+		}
+	}
+	return hval;
+}
+
+static void w_changelocale (void)
+{
+	lang_header_t lheader;
+	if (w_gettext_domain &&
+	    w_gettext_dir) {
+	    	s_free(w_gettext_buf);
+	    	w_gettext_buf = (char *) s_malloc(sizeof(char) * (strlen(w_gettext_dir) + strlen(w_gettext_locale) + strlen(w_gettext_domain) + 40));
+	    	sprintf(w_gettext_buf, "%s/%s/LC_MESSAGES/%s.xo", w_gettext_dir, w_gettext_locale, w_gettext_domain);
+	    	if (w_gettext_file) {
+	    		fclose(w_gettext_file);
+	    	}
+	    	w_gettext_file = fopen(w_gettext_buf, "r");
+	    	if (w_gettext_file == NULL) {
+	    		return;
+	    	}
+		fseek(w_gettext_file, 0, SEEK_SET);
+		fread(&lheader, sizeof(lang_header_t), 1, w_gettext_file);
+		w_gettext_count = lheader.count;
+		s_free(w_gettext_msgs);
+		w_gettext_msgs = (lang_t *) s_malloc(sizeof(lang_t) * w_gettext_count);
+		fread(w_gettext_msgs, sizeof(lang_t), w_gettext_count, w_gettext_file);
+	}
+}
+
+void w_gettext_free (void)
+{
+	s_free(w_gettext_buf);
+	s_free(w_gettext_dir);
+	s_free(w_gettext_domain);
+	s_free(w_gettext_locale);
+	s_free(w_gettext_msgs);
+	if (w_gettext_file) fclose(w_gettext_file);
+}
+
+char * w_setlocale(int category, const char *locale)
+{
+	w_gettext_category = category;
+	if (locale) {
+		s_free(w_gettext_locale);
+		w_gettext_locale = strdup(locale);
+	}
+	w_changelocale();
+	return w_gettext_locale;
+}
+
+char * w_bindtextdomain (const char *domainname, const char *dirname)
+{
+	if (domainname) {
+		s_free(w_gettext_domain);
+		w_gettext_domain = strdup(domainname);
+	}
+	if (dirname) {
+		s_free(w_gettext_dir);
+		w_gettext_dir = strdup(dirname);
+	}
+	w_changelocale();
+	return w_gettext_dir;
+}
+
+char * w_textdomain (const char *domainname)
+{
+	if (domainname) {
+		s_free(w_gettext_domain);
+		w_gettext_domain = strdup(domainname);
+	}
+	w_changelocale();
+	return w_gettext_domain;
+}
+
+char * w_gettext (const char *str)
+{
+	unsigned long int i;
+	unsigned long int h;
+	if (str == NULL ||
+	    w_gettext_file == NULL) {
+		return (char *) str;
+	}
+	h = hash_string(str);
+	for (i = 0; i < w_gettext_count; i++) {
+		if (h == w_gettext_msgs[i].hash) {
+			fseek(w_gettext_file, w_gettext_msgs[i].str_offset, SEEK_SET);
+			s_free(w_gettext_buf);
+			w_gettext_buf = (char *) s_malloc(sizeof(char) * (w_gettext_msgs[i].str_len + 1));
+			fread(w_gettext_buf, sizeof(char), w_gettext_msgs[i].str_len + 1, w_gettext_file);
+			str = w_gettext_buf;
+		}
+	}
+	return (char *) str;
+}
+
+#define _(str) w_gettext(str)
 #endif
 
 int w_textbox_set_properties (w_object_t *object, TEXTBOX_PROPERTIES properties)

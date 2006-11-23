@@ -27,7 +27,7 @@ endif
 include ../../Makefile.rules
 
 widgetx_xml.c: widgetx.xml
-	../../src/widget/widgetc -f widgetx.xml -o widgetx
+	../../src/widget/widgetc -f widgetx.xml -o widgetx -c
 endif
 
 dist: all

@@ -30,6 +30,9 @@ typedef struct node_s {
 	int dontparse;
 } node_t;
 
+static int localization = 0;
+static int sources      = 0;
+
 static FILE *g_input = NULL;
 static FILE *g_source = NULL;
 static FILE *g_header = NULL;
@@ -825,10 +828,176 @@ static void node_generate_element (node_t *node)
 	}
 }
 
-static void node_generate (node_t *node)
+typedef struct lang_header_s {
+	char magic[8];
+	unsigned long int count;
+} lang_header_t;
+
+typedef struct lang_s {
+	unsigned long int hash;
+	unsigned long int id_len;
+	unsigned long int str_len;
+	unsigned long int id_offset;
+	unsigned long int str_offset;
+} lang_t;
+
+typedef struct lmsg_s {
+	char *id;
+	char *str;
+} lmsg_t;
+
+static unsigned long int hash_string (const char *str_param)
+{
+	#define HASHWORDBITS 32
+	unsigned long int hval, g;
+	const char *str = str_param;
+	/* Compute the hash value for the given string.  */
+	hval = 0;
+	while (*str != '\0') {
+		hval <<= 4;
+		hval += (unsigned char) *str++;
+		g = hval & ((unsigned long int) 0xf << (HASHWORDBITS - 4));
+		if (g != 0) {
+			hval ^= g >> (HASHWORDBITS - 8);
+			hval ^= g;
+		}
+	}
+	return hval;
+}
+
+static char * manipulate_string (char *str_param)
+{
+	int i;
+	int j;
+	int s;
+	char *out = str_param;
+	for (s = 0, i = 0; out[i]; i++){
+		if (out[i] == '"') {
+			if (i == 0 ||
+			    out[i - 1] != '\\') {
+			    	s = (s + 1) % 2;
+			    	if (s == 0) {
+			    		while (out[i + 1] && out[i + 1] != '"') {
+						for (j = i + 1; out[j]; j++) {
+							out[j] = out[j + 1];
+						}
+			    		}
+			    	}
+			}
+		}
+	}
+	/* Remove leading " */
+	while (out[0] == '"') {
+		for (j = 0; out[j]; j++) {
+			out[j] = out[j + 1];
+		}
+	}
+	/* Remove lonely " 's */
+	for (i = 0; out[i + 1]; i++) {
+		if (out[i] != '\\' && out[i + 1] == '"') {
+			for (j = i + 1; out[j]; j++)
+				out[j] = out[j + 1];
+			i--;
+		}
+	}
+	/* Convert \" 's to " */
+	for (i = 0; out[i + 1]; i++) {
+		if (out[i] == '\\' && out[i + 1] == '"') {
+			for (j = i; out[j]; j++)
+				out[j] = out[j + 1];
+			i--;
+		}
+	}
+	return out;
+}
+
+static void node_generate_language (node_t *node)
+{
+	int i;
+	unsigned long int offset;
+	node_t *id;
+	node_t *str;
+	node_t *msg;
+	lmsg_t *lmsg;
+	lang_t *lang;
+	list_t *llang;
+	list_t *llmsg;
+	char *fname;
+	FILE *flang;
+	lang_header_t lheader = {{"xynth.xo"}, 3};
+	fname = (char *) malloc(sizeof(char) * (strlen(g_name) + 20));
+	sprintf(fname, "%s.%s.xo", g_name, node->id);
+	flang = fopen(fname, "w+");
+	list_init(&llang);
+	list_init(&llmsg);
+	while ((msg = node_get_node(node, "message")) != NULL) {
+		id = node_get_node(msg, "id");
+		str = node_get_node(msg, "str");
+		if (id && str && id->value && str->value) {
+			lmsg = (lmsg_t *) malloc(sizeof(lmsg_t));
+			lang = (lang_t *) malloc(sizeof(lang_t));
+			manipulate_string(id->value);
+			manipulate_string(str->value);
+			lang->hash = hash_string(id->value);
+			lmsg->id = id->value;
+			lmsg->str = str->value;
+			lang->id_len = strlen(lmsg->id);
+			lang->str_len = strlen(lmsg->str);
+			list_add(llang, lang, -1);
+			list_add(llmsg, lmsg, -1);
+		}
+		msg->dontparse = 1;
+		if (id) id->dontparse = 1;
+		if (str) str->dontparse = 1;
+	}
+	lheader.count = llang->nb_elt;
+	offset = sizeof(lang_header_t);
+	offset += (sizeof(lang_t) * lheader.count);
+	for (i = 0; !list_eol(llmsg, i); i++) {
+		lmsg = (lmsg_t *) list_get(llmsg, i);
+		lang = (lang_t *) list_get(llang, i);
+		lang->id_offset = offset;
+		offset += (strlen(lmsg->id) + 1);
+	}
+	for (i = 0; !list_eol(llmsg, i); i++) {
+		lmsg = (lmsg_t *) list_get(llmsg, i);
+		lang = (lang_t *) list_get(llang, i);
+		lang->str_offset = offset;
+		offset += (strlen(lmsg->str) + 1);
+	}
+	fwrite(&lheader, sizeof(lang_header_t), 1, flang);
+	for (i = 0; !list_eol(llang, i); i++) {
+		lang = (lang_t *) list_get(llang, i);
+		fwrite(lang, sizeof(lang_t), 1, flang);
+	}
+	for (i = 0; !list_eol(llmsg, i); i++) {
+		lmsg = (lmsg_t *) list_get(llmsg, i);
+		fwrite(lmsg->id, 1, strlen(lmsg->id) + 1, flang);
+	}
+	for (i = 0; !list_eol(llmsg, i); i++) {
+		lmsg = (lmsg_t *) list_get(llmsg, i);
+		fwrite(lmsg->str, 1, strlen(lmsg->str) + 1, flang);
+	}
+	free(fname);
+	fclose(flang);
+}
+
+static void node_generate_localization (node_t *node)
+{
+	node_t *lang;
+	node_t *local;
+	while ((local = node_get_node(node, "localization")) != NULL) {
+		while ((lang = node_get_node(local, "language")) != NULL) {
+			node_generate_language(lang);
+			lang->dontparse = 1;
+		}
+		local->dontparse = 1;
+	}
+}
+
+static void node_generate_sources (node_t *node)
 {
 	node_generate_element(node);
-	node_print(node);
 	fprintf(g_header,
 	        "\n"
 	        "#include <stdio.h>\n"
@@ -837,7 +1006,12 @@ static void node_generate (node_t *node)
 	        "#include <xynth.h>\n"
 	        "#include <widget.h>\n"
 	        "\n"
-	        "#include <libintl.h>\n"
+	        "#define LC_ALL      0\n"
+	        "#define LC_MESSAGES 0\n"
+		"char * w_setlocale(int category, const char *locale);\n"
+		"char * w_bindtextdomain (const char *domainname, const char *dirname);\n"
+		"char * w_textdomain (const char *domainname);\n"
+		"void w_gettext_free (void);\n"
 	        "\n");
 	node_generate_header(node);
 	fprintf(g_header, "\n");
@@ -849,14 +1023,15 @@ static void node_generate (node_t *node)
 	        "int main (int argc, char *argv[])\n"
 	        "{\n"
 	        "srand(time(NULL));\n"
-	        "setlocale(LC_ALL, \"\");\n"
-	        "bindtextdomain(\"%s\", \"./lang\");\n"
-	        "textdomain(\"%s\");\n",
+	        "w_setlocale(LC_ALL, \"\");\n"
+	        "w_bindtextdomain(\"%s\", \"./lang\");\n"
+	        "w_textdomain(\"%s\");\n",
 	        g_header_name,
 	        g_name,
 	        g_name);
 	node_generate_code(node);
 	fprintf(g_source,
+		"w_gettext_free();\n"
 	        "return 0;\n"
 	        "}\n");
 }
@@ -915,6 +1090,7 @@ static void char_hndl (void *xdata, const char *txt, int txtlen)
 	end = (char *) malloc(sizeof(char) * (strlen(g_path) + 3 + 1));
 	sprintf(end, "</%s>", g_path);
 	str = strdup(txt);
+#if 0
 	ptr = str + txtlen;
 	if (g_path &&
 	    strncmp(ptr, end, strlen(end)) == 0) {
@@ -923,6 +1099,16 @@ static void char_hndl (void *xdata, const char *txt, int txtlen)
 	    		g_active->value = strdup(str);
 	    	}
 	}
+#else
+	ptr = strstr(str, end);
+	if (g_path &&
+	    ptr) {
+	    	*ptr = '\0';
+	    	if (g_active && g_active->value == NULL) {
+	    		g_active->value = strdup(str);
+	    	}
+	}
+#endif
 	free(str);
 	free(end);
 }
@@ -932,39 +1118,62 @@ int main (int argc, char **argv)
 	int c;
 	int l = 0;
 	char *buf = NULL;
+	char *varo = NULL;
+	char *varf = NULL;
 	struct stat stbuf;
 	
-	while ((c = getopt(argc, argv, "f:o:h")) != -1) {
+	while ((c = getopt(argc, argv, "f:o:clh")) != -1) {
 		switch (c) {
 			case 'f':
-				g_input = fopen(optarg, "r");
-				stat(optarg, &stbuf);
-				l = stbuf.st_size;
-				buf = (char *) malloc(stbuf.st_size + 1);
-				fread(buf, 1, stbuf.st_size, g_input);
+				varf = strdup(optarg);
 				break;
 			case 'o':
-				g_source_name = (char *) malloc(strlen(optarg) + 20);
-				g_header_name = (char *) malloc(strlen(optarg) + 20);
-				g_name = strdup(optarg);
-				sprintf(g_source_name, "%s_xml.c", optarg);
-				sprintf(g_header_name, "%s_xml.h", optarg);
-				g_source = fopen(g_source_name, "w+");
-				g_header = fopen(g_header_name, "w+");
+				varo = strdup(optarg);
+				break;
+			case 'l':
+				localization = 1;
+				break;
+			case 'c':
+				sources = 1;
 				break;
 usage:			case 'h':
 			default:
-				printf("%s -f input_file -o output_name\n", argv[0]);
+				printf("%s -f input_file -o output_name -c -l\n"
+				       "\t-f : input file"
+				       "\t-o : output name"
+				       "\t-c : output source file"
+				       "\t-l : output localization file", argv[0]);
 				exit(1);
 				break;
 		}
 	}
 	
-	if (buf == NULL ||
-	    g_input == NULL ||
-	    g_source == NULL ||
-	    g_header == NULL) {
-	    	goto usage;
+	if (sources == 0 && localization == 0) {
+		goto usage;
+	}
+	
+	if (varf != NULL) {
+		stat(varf, &stbuf);
+		l = stbuf.st_size;
+		buf = (char *) malloc(stbuf.st_size + 1);
+		g_input = fopen(varf, "r");
+		fread(buf, 1, stbuf.st_size, g_input);
+	} else {
+		goto usage;
+	}
+	
+	if (varo != NULL) {
+		g_source_name = (char *) malloc(strlen(varo) + 20);
+		g_header_name = (char *) malloc(strlen(varo) + 20);
+		g_name = strdup(varo);
+		if (sources == 1) {
+			sprintf(g_source_name, "%s_xml.c", varo);
+			sprintf(g_header_name, "%s_xml.h", varo);
+			g_source = fopen(g_source_name, "w+");
+			g_header = fopen(g_header_name, "w+");
+		}
+	} else {
+		goto usage;
 	}
 	
 	XML_Parser p = XML_ParserCreate(NULL);
@@ -983,14 +1192,18 @@ usage:			case 'h':
 	
 	XML_ParserFree(p);
 
-	node_print(g_node);
-	node_generate(g_node);
+	if (localization)
+		node_generate_localization(g_node);
+	if (sources)
+		node_generate_sources(g_node);
 
 	node_uninit(g_node);
 	node_uninit(s_node);
 	fclose(g_input);
-	fclose(g_source);
-	fclose(g_header);
+	if (sources) {
+		fclose(g_source);
+		fclose(g_header);
+	}
 	free(g_name);
 	free(g_source_name);
 	free(g_header_name);
