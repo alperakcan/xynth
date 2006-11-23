@@ -34,4 +34,3 @@ done
 echo -e "\t\t</language>"
 echo -e "\t</localization>"
 echo -e "</application>"
-
