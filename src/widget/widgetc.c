@@ -490,6 +490,9 @@ static void node_generate_code_window (node_t *node)
 {
 	node_t *tmp;
 	fprintf(g_source, "w_window_init(&%s, %s, NULL);\n", node->id, node->type);
+	fprintf(g_source, "s_setlocale(%s->window, 0, \"\");\n"
+	                  "s_bindtextdomain(%s->window, \"%s\", \"./lang\");\n"
+	                  "s_textdomain(%s->window, \"%s\");\n", node->id, node->id, g_name, node->id, g_name);
 	if ((tmp = node_get_node(node, "title")) != NULL) {
 		fprintf(g_source, "s_window_set_title(%s->window, \"%s\");\n", node->id, tmp->value);
 		tmp->dontparse = 1;
@@ -1019,13 +1022,6 @@ static void node_generate_sources (node_t *node)
 	        "#include <time.h>\n"
 	        "#include <xynth.h>\n"
 	        "#include <widget.h>\n"
-	        "\n"
-	        "#define LC_ALL      0\n"
-	        "#define LC_MESSAGES 0\n"
-		"char * w_setlocale(int category, const char *locale);\n"
-		"char * w_bindtextdomain (const char *domainname, const char *dirname);\n"
-		"char * w_textdomain (const char *domainname);\n"
-		"void w_gettext_free (void);\n"
 	        "\n");
 	node_generate_header(node);
 	fprintf(g_header, "\n");
@@ -1036,16 +1032,10 @@ static void node_generate_sources (node_t *node)
 	        "\n"
 	        "int main (int argc, char *argv[])\n"
 	        "{\n"
-	        "srand(time(NULL));\n"
-	        "w_setlocale(LC_ALL, \"\");\n"
-	        "w_bindtextdomain(\"%s\", \"./lang\");\n"
-	        "w_textdomain(\"%s\");\n",
-	        g_header_name,
-	        g_name,
-	        g_name);
+	        "srand(time(NULL));\n",
+	        g_header_name);
 	node_generate_code(node);
 	fprintf(g_source,
-		"w_gettext_free();\n"
 	        "return 0;\n"
 	        "}\n");
 }
