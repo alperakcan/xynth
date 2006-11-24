@@ -18,6 +18,8 @@
 #include "../lib/xynth_.h"
 #include "widget.h"
 
+#define WIDGET_OPTIMIZE_MEMORY
+
 int w_frame_set_style (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow)
 {
         w_frame_t *frame;
