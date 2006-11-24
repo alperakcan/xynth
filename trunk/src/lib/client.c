@@ -29,6 +29,7 @@ int s_client_init (s_window_t **window)
 	if (s_childs_init(w))        { goto err5; }
 	if (s_eventq_init(w))        { goto err6; }
 	if (s_event_init(&w->event)) { goto err7; }
+	if (s_gettext_init(w))       { goto err8; }
 
 	w->running = 1;
 	w->client->id = -1;
@@ -39,9 +40,10 @@ int s_client_init (s_window_t **window)
 	w->client->mouse_entered = 0;
 	*window = w;
 
-        if (s_socket_request(w, SOC_DATA_DISPLAY)) { goto err8; }
+        if (s_socket_request(w, SOC_DATA_DISPLAY)) { goto err9; }
 
 	return 0;
+err9:	s_gettext_uninit(w);
 err8:	s_event_uninit(w->event);
 err7:	s_eventq_uninit(w);
 err6:	s_childs_uninit(w);
@@ -91,6 +93,7 @@ void s_client_uninit (s_window_t *window)
 
 	s_surface_uninit(window);
 	s_event_uninit(window->event);
+	s_gettext_uninit(window);
 
         s_free(window->client->device);
 	s_free(window->client->title);

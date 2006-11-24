@@ -21,6 +21,7 @@
 #endif
 
 typedef struct s_font_ft_s s_font_ft_t;
+typedef struct s_gettext_s s_gettext_t;
 
 typedef struct s_window_s s_window_t;
 
@@ -580,6 +581,8 @@ struct s_window_s {
 
 	s_event_t *event;
 	s_thread_mutex_t *socket_mutex;
+	
+	s_gettext_t *gettext;
 };
 
 typedef struct s_single_app_s {
@@ -823,6 +826,14 @@ int s_font_set_str (s_font_t *font, char *str);
 int s_font_set_rgb (s_font_t *font, int r, int g, int b);
 int s_font_get_glyph (s_font_t *font);
 int s_font_get_width (s_font_t *font, char *str);
+
+/* gettext.c */
+char * s_setlocale(s_window_t *window, int category, const char *locale);
+char * s_bindtextdomain (s_window_t *window, const char *domainname, const char *dirname);
+char * s_textdomain (s_window_t *window, const char *domainname);
+char * s_gettext (s_window_t *window, const char *str);
+void s_gettext_uninit (s_window_t *window);
+int s_gettext_init (s_window_t *window);
 
 /* gettime.c */
 long long s_gettimeofday (void);
