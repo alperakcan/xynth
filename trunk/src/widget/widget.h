@@ -22,14 +22,27 @@
 //#define WIDGET_OPTIMIZE_MEMORY
 
 typedef struct w_object_s w_object_t;
+typedef struct w_button_s w_button_t;
+typedef struct w_checkbox_s w_checkbox_t;
+typedef struct w_editbox_s w_editbox_t;
+typedef struct w_frame_image_s w_frame_image_t;
+typedef struct w_frame_s w_frame_t;
+typedef struct w_progressbar_s w_progressbar_t;
+typedef struct w_scrollbufferbar_s w_scrollbufferbar_t;
+typedef struct w_scrollbuffer_s w_scrollbuffer_t;
+typedef struct w_textbox_s w_textbox_t;
+typedef struct w_window_s w_window_t;
 
-typedef struct w_window_s {
+typedef struct w_effect_s w_effect_t;
+typedef struct w_signal_s w_signal_t;
+
+struct w_window_s {
 	s_window_t *window;
 	w_object_t *object;
 	w_object_t *focus;
 	s_list_t *images;
 	s_list_t *fonts;
-} w_window_t;
+};
 
 typedef enum {
 	EFFECT_NONE    = 0x0,
@@ -41,12 +54,12 @@ typedef enum {
 	EFFECT_HIDE    = (EFFECT_FADEOUT | EFFECT_POPOUT)
 } EFFECT;
 
-typedef struct w_effect_s {
+struct w_effect_s {
 	EFFECT effect;
 	int level;
 	int interval;
 	s_timer_t *timer;
-} w_effect_t;
+};
 
 typedef enum {
 	OBJECT_FRAME   		= 0x0,
@@ -58,7 +71,9 @@ typedef enum {
 	OBJECT_SCROLLBAR	= 0x6,
 	OBJECT_COMBOBOX		= 0x7,
 	OBJECT_CHECKBOX		= 0x8,
-	OBJECT_OBJECTS 		= 0x9
+	OBJECT_SCROLLBUFFER	= 0x9,
+	OBJECT_SCROLLBUFFERBAR	= 0xA,
+	OBJECT_OBJECTS 		= 0xB
 } OBJECT;
 
 struct w_object_s {
@@ -90,6 +105,33 @@ struct w_object_s {
 	w_window_t *window;
 	/** user data */
 	void *data[OBJECT_OBJECTS];
+};
+
+struct w_button_s {
+	w_object_t *object;
+	w_frame_t *frame;
+	s_handler_t *handler_m;
+	s_handler_t *handler_k;
+	void (*pressed) (w_object_t *, int);
+	void (*released) (w_object_t *, int);
+	void (*clicked) (w_object_t *, int, int);
+	int state;
+};
+
+struct w_checkbox_s {
+	w_object_t *object;
+	w_button_t *button;
+	w_frame_t *box;
+	w_textbox_t *text;
+	void (*changed) (w_object_t *, int);
+	int state;
+};
+
+struct w_editbox_s {
+	w_object_t *object;
+	w_textbox_t *textbox;
+	s_handler_t *handler_mouse;
+	s_handler_t *handler_keybd;
 };
 
 typedef enum {
@@ -124,31 +166,20 @@ typedef enum {
 	FRAME_IMAGE_HORIZONTAL  = 0x2,
 } FRAME_IMAGE_ROTATION;
 
-typedef struct w_frame_image_s {
+struct w_frame_image_s {
 	unsigned int style;
 	unsigned int rotation;
 	s_list_t *images;
 	s_list_t *names;
-} w_frame_image_t;
+};
 
-typedef struct w_frame_s {
+struct w_frame_s {
 	w_object_t *object;
 	unsigned int style;
 	unsigned int linewidth;
 	unsigned int midlinewidth;
 	s_list_t *images;
-} w_frame_t;
-
-typedef struct w_button_s {
-	w_object_t *object;
-	w_frame_t *frame;
-	s_handler_t *handler_m;
-	s_handler_t *handler_k;
-	void (*pressed) (w_object_t *, int);
-	void (*released) (w_object_t *, int);
-	void (*clicked) (w_object_t *, int, int);
-	int state;
-} w_button_t;
+};
 
 typedef enum {
 	TEXTBOX_WRAP    = 0x1,
@@ -156,7 +187,7 @@ typedef enum {
 	TEXTBOX_HCENTER = 0x4
 } TEXTBOX_PROPERTIES;
 
-typedef struct w_textbox_s {
+struct w_textbox_s {
 	w_object_t *object;
 	w_frame_t *frame;
 	s_list_t *lines;
@@ -165,34 +196,34 @@ typedef struct w_textbox_s {
 	unsigned int size;
 	unsigned int rgb;
 	TEXTBOX_PROPERTIES properties;
-} w_textbox_t;
+	int offset;
+};
 
-typedef struct w_progressbar_s {
+struct w_progressbar_s {
 	w_object_t *object;
 	w_frame_t *frame;
 	w_frame_t *box;
 	w_textbox_t *text;
 	unsigned int level;
 	void (*changed) (w_object_t *, int);
-} w_progressbar_t;
+};
 
-typedef struct w_editbox_s {
+struct w_scrollbufferbar_s {
 	w_object_t *object;
-	w_textbox_t *textbox;
-	s_handler_t *handler_mouse;
-	s_handler_t *handler_keybd;
-} w_editbox_t;
-
-typedef struct w_checkbox_s {
-	w_object_t *object;
-	w_button_t *button;
+	w_frame_t *frame;
+	w_button_t *add;
+	w_button_t *sub;
 	w_frame_t *box;
-	w_textbox_t *text;
-	void (*changed) (w_object_t *, int);
-	int state;
-} w_checkbox_t;
+};
 
-typedef struct w_signal_s w_signal_t;
+struct w_scrollbuffer_s {
+	w_object_t *object;
+	w_frame_t *frame;
+	w_scrollbufferbar_t *vertical;
+	w_object_t *child;
+	void (*slide) (w_object_t *, int, int);
+};
+
 struct w_signal_s {
 	w_object_t *from;
 	w_object_t *to;
@@ -341,7 +372,32 @@ int w_object_isshownchild (w_object_t *parent, w_object_t *child);
 int w_object_init (w_window_t *window, w_object_t **object, void (*draw) (w_object_t *), w_object_t *parent);
 void w_object_uninit (w_object_t *object);
 
+/* progressbar.c */
+int w_progressbar_set_changed (w_object_t *object, void (*changed) (w_object_t *, int));
+int w_progressbar_set_style (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow);
+int w_progressbar_set_image (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs);
+int w_progressbar_set_boxstyle (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow);
+int w_progressbar_set_boximage (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs);
+void w_progressbar_level (w_object_t *object, unsigned int level);
+void w_progressbar_geometry (w_object_t *object);
+int w_progressbar_init (w_window_t *window, w_progressbar_t **progressbar, w_object_t *parent);
+void w_progressbar_uninit (w_object_t *object);
+
+/* scrollbuffer */
+void w_scrollbuffer_set_slide (w_object_t *object, void (*slide) (w_object_t *, int, int));
+void w_scrollbufferbar_add_pressed (w_object_t *object, int button);
+void w_scrollbufferbar_sub_pressed (w_object_t *object, int button);
+void w_scrollbufferbar_geometry (w_object_t *object);
+void w_scrollbufferbar_uninit (w_object_t *object);
+int w_scrollbufferbar_init (w_window_t *window, w_scrollbufferbar_t **scrollbufferbar, w_object_t *parent);
+void w_scrollbuffer_slide (w_object_t *object, int vertical, int horizontal);
+void w_scrollbuffer_set_child (w_object_t *object, w_object_t *child);
+void w_scrollbuffer_geometry (w_object_t *object);
+void w_scrollbuffer_uninit (w_object_t *object);
+int w_scrollbuffer_init (w_window_t *window, w_scrollbuffer_t **scrollbuffer, w_object_t *parent);
+
 /* textbox.c */
+void w_textbox_slide (w_object_t *object, int vertical, int horizontal);
 int w_textbox_set_properties (w_object_t *object, TEXTBOX_PROPERTIES properties);
 int w_textbox_set_image (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs);
 int w_textbox_set_style (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow);
@@ -353,17 +409,6 @@ void w_textbox_geometry (w_object_t *object);
 int w_textbox_init (w_window_t *window, w_textbox_t **textbox, w_object_t *parent);
 void w_textbox_uninit (w_object_t *object);
 void w_textbox_loadimages(w_object_t *object,char *file_left,char *file_middle,char *file_right);
-
-/* progressbar.c */
-int w_progressbar_set_changed (w_object_t *object, void (*changed) (w_object_t *, int));
-int w_progressbar_set_style (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow);
-int w_progressbar_set_image (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs);
-int w_progressbar_set_boxstyle (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow);
-int w_progressbar_set_boximage (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs);
-void w_progressbar_level (w_object_t *object, unsigned int level);
-void w_progressbar_geometry (w_object_t *object);
-int w_progressbar_init (w_window_t *window, w_progressbar_t **progressbar, w_object_t *parent);
-void w_progressbar_uninit (w_object_t *object);
 
 /* window.c */
 void w_window_focus_change_notify (s_window_t *window, w_object_t *focus);

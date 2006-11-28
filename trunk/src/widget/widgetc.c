@@ -199,6 +199,52 @@ static char * node_strdup (char *str)
 	}
 }
 
+static char * node_string_normalize (char *str_param)
+{
+	int i;
+	int j;
+	int s;
+	char *out = str_param;
+	for (s = 0, i = 0; out[i]; i++){
+		if (out[i] == '"') {
+			if (i == 0 ||
+			    out[i - 1] != '\\') {
+			    	s = (s + 1) % 2;
+			    	if (s == 0) {
+			    		while (out[i + 1] && out[i + 1] != '"') {
+						for (j = i + 1; out[j]; j++) {
+							out[j] = out[j + 1];
+						}
+			    		}
+			    	}
+			}
+		}
+	}
+	/* Remove leading " */
+	while (out[0] == '"') {
+		for (j = 0; out[j]; j++) {
+			out[j] = out[j + 1];
+		}
+	}
+	/* Remove lonely " 's */
+	for (i = 0; out[i + 1]; i++) {
+		if (out[i] != '\\' && out[i + 1] == '"') {
+			for (j = i + 1; out[j]; j++)
+				out[j] = out[j + 1];
+			i--;
+		}
+	}
+	/* Convert \" 's to " */
+	for (i = 0; out[i + 1]; i++) {
+		if (out[i] == '\\' && out[i + 1] == '"') {
+			for (j = i; out[j]; j++)
+				out[j] = out[j + 1];
+			i--;
+		}
+	}
+	return out;
+}
+
 static int node_path_normalize (char *out, int len)
 {
 	int i;
@@ -682,6 +728,26 @@ static void node_generate_code_object_progressbar (node_t *node)
 	}
 }
 
+static void node_generate_code (node_t *node);
+
+static void node_generate_code_object_scrollbuffer (node_t *node)
+{
+	node_t *tmp;
+	fprintf(g_source, "w_scrollbuffer_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
+	while ((tmp = node_get_node(node, "object")) != NULL) {
+		node_generate_code(tmp);
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "child")) != NULL) {
+		fprintf(g_source, "w_scrollbuffer_set_child(%s->object, %s->object);\n", node->id, tmp->value);
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "slide")) != NULL) {
+		fprintf(g_source, "w_scrollbuffer_set_slide(%s->object, %s);\n", node->id, tmp->value);
+		tmp->dontparse = 1;
+	}
+}
+
 static void node_generate_code_effect (node_t *node)
 {
 	node_t *tmp;
@@ -721,6 +787,8 @@ static void node_generate_code_object (node_t *node)
 		node_generate_code_object_editbox(node);
 	} else if (strcmp(node->type, "progressbar") == 0) {
 		node_generate_code_object_progressbar(node);
+	} else if (strcmp(node->type, "scrollbuffer") == 0) {
+		node_generate_code_object_scrollbuffer(node);
 	}
 	if ((tmp = node_get_node(node, "effect")) != NULL) {
 		node_generate_code_effect(tmp);
@@ -777,6 +845,8 @@ static void node_generate_header (node_t *node)
 			fprintf(g_header, "w_editbox_t *%s;\n", node->id);
 		} else if (strcmp(node->type, "progressbar") == 0) {
 			fprintf(g_header, "w_progressbar_t *%s;\n", node->id);
+		} else if (strcmp(node->type, "scrollbuffer") == 0) {
+			fprintf(g_header, "w_scrollbuffer_t *%s;\n", node->id);
 		}
 	}
 	g_depth++;
@@ -882,52 +952,6 @@ static unsigned long int hash_string (const char *str_param)
 	return hval;
 }
 
-static char * manipulate_string (char *str_param)
-{
-	int i;
-	int j;
-	int s;
-	char *out = str_param;
-	for (s = 0, i = 0; out[i]; i++){
-		if (out[i] == '"') {
-			if (i == 0 ||
-			    out[i - 1] != '\\') {
-			    	s = (s + 1) % 2;
-			    	if (s == 0) {
-			    		while (out[i + 1] && out[i + 1] != '"') {
-						for (j = i + 1; out[j]; j++) {
-							out[j] = out[j + 1];
-						}
-			    		}
-			    	}
-			}
-		}
-	}
-	/* Remove leading " */
-	while (out[0] == '"') {
-		for (j = 0; out[j]; j++) {
-			out[j] = out[j + 1];
-		}
-	}
-	/* Remove lonely " 's */
-	for (i = 0; out[i + 1]; i++) {
-		if (out[i] != '\\' && out[i + 1] == '"') {
-			for (j = i + 1; out[j]; j++)
-				out[j] = out[j + 1];
-			i--;
-		}
-	}
-	/* Convert \" 's to " */
-	for (i = 0; out[i + 1]; i++) {
-		if (out[i] == '\\' && out[i + 1] == '"') {
-			for (j = i; out[j]; j++)
-				out[j] = out[j + 1];
-			i--;
-		}
-	}
-	return out;
-}
-
 static void node_generate_language (node_t *node)
 {
 	int i;
@@ -953,8 +977,8 @@ static void node_generate_language (node_t *node)
 		if (id && str && id->value && str->value) {
 			lmsg = (lmsg_t *) malloc(sizeof(lmsg_t));
 			lang = (lang_t *) malloc(sizeof(lang_t));
-			manipulate_string(id->value);
-			manipulate_string(str->value);
+			node_string_normalize(id->value);
+			node_string_normalize(str->value);
 			lang->hash = hash_string(id->value);
 			lmsg->id = id->value;
 			lmsg->str = str->value;
