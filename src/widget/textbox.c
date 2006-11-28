@@ -23,6 +23,15 @@
 #define _(str) s_gettext(object->window->window, str)
 #endif
 
+void w_textbox_slide (w_object_t *object, int vertical, int horizontal)
+{
+	w_textbox_t *textbox;
+	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
+	textbox->offset -= vertical;
+	w_textbox_draw(object);
+	w_object_update(object, object->surface->win);
+}
+
 int w_textbox_set_properties (w_object_t *object, TEXTBOX_PROPERTIES properties)
 {
 	w_textbox_t *textbox;
@@ -169,6 +178,7 @@ void w_textbox_draw (w_object_t *object)
 	int d;
 	int line;
 	w_textbox_t *textbox;
+	s_font_glyph_t *glyph;
 	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
 	if (object->surface->vbuf == NULL) {
 		return;
@@ -178,8 +188,13 @@ void w_textbox_draw (w_object_t *object)
 	if ((textbox->frame->style & FRAME_MSHAPE) == FRAME_NOFRAME) {
 		memset(textbox->object->surface->matrix, 0, textbox->object->surface->width * textbox->object->surface->height);
 	}
+	glyph = (s_font_glyph_t *) s_list_get(textbox->lines, 0);
+	if (glyph) {
+		textbox->offset = MAX(textbox->offset, textbox->object->content->h - (textbox->lines->nb_elt * glyph->lineskip));
+	}
+	textbox->offset = MIN(0, textbox->offset);
 	for (line = 0; !s_list_eol(textbox->lines, line); line++) {
-		s_font_glyph_t *glyph = (s_font_glyph_t *) s_list_get(textbox->lines, line);
+		glyph = (s_font_glyph_t *) s_list_get(textbox->lines, line);
 		w = MIN(textbox->object->content->w, glyph->img->w);
 		h = MIN(textbox->object->content->h, glyph->height * textbox->lines->nb_elt);
 		if (!(textbox->properties & TEXTBOX_HCENTER) || textbox->object->content->w == w) { x = 0;
@@ -189,6 +204,7 @@ void w_textbox_draw (w_object_t *object)
 		x += textbox->object->content->x;
 		y += textbox->object->content->y;
 		y += glyph->lineskip * line;
+		y += textbox->offset;
 		if (!(textbox->properties & TEXTBOX_HCENTER)) {
 			d = glyph->img->w - textbox->object->content->w;
 			if (d > 0) { x -= d; w += d; }
@@ -262,6 +278,7 @@ int w_textbox_init (w_window_t *window, w_textbox_t **textbox, w_object_t *paren
 	(*textbox)->rgb = 0;
 	(*textbox)->font = strdup("arial.ttf");
 	(*textbox)->properties = TEXTBOX_VCENTER | TEXTBOX_HCENTER;
+	(*textbox)->offset = 0;
 
 	(*textbox)->object = (*textbox)->frame->object;
 	(*textbox)->object->draw = w_textbox_draw;
