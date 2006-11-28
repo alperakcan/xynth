@@ -67,6 +67,48 @@ int w_scrollbufferbar_init (w_window_t *window, w_scrollbufferbar_t **scrollbuff
 	return 0;
 }
 
+int w_scrollbuffer_set_boxstyle (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow)
+{
+	w_scrollbuffer_t *sb;
+	sb = object->data[OBJECT_SCROLLBUFFER];
+	return w_frame_set_style(sb->vertical->box->object, shape, shadow);
+}
+
+int w_scrollbuffer_set_boximage (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs)
+{
+	w_scrollbuffer_t *sb;
+	sb = object->data[OBJECT_SCROLLBUFFER];
+	return w_frame_set_image(sb->vertical->box->object, style, rotation, nimgs, imgs);
+}
+
+int w_scrollbuffer_set_addstyle (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow)
+{
+	w_scrollbuffer_t *sb;
+	sb = object->data[OBJECT_SCROLLBUFFER];
+	return w_frame_set_style(sb->vertical->add->object, shape, shadow);
+}
+
+int w_scrollbuffer_set_addimage (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs)
+{
+	w_scrollbuffer_t *sb;
+	sb = object->data[OBJECT_SCROLLBUFFER];
+	return w_frame_set_image(sb->vertical->add->object, style, rotation, nimgs, imgs);
+}
+
+int w_scrollbuffer_set_substyle (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow)
+{
+	w_scrollbuffer_t *sb;
+	sb = object->data[OBJECT_SCROLLBUFFER];
+	return w_frame_set_style(sb->vertical->sub->object, shape, shadow);
+}
+
+int w_scrollbuffer_set_subimage (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs)
+{
+	w_scrollbuffer_t *sb;
+	sb = object->data[OBJECT_SCROLLBUFFER];
+	return w_frame_set_image(sb->vertical->sub->object, style, rotation, nimgs, imgs);
+}
+
 void w_scrollbuffer_slide (w_object_t *object, int vertical, int horizontal)
 {
 	int x;
@@ -80,13 +122,13 @@ void w_scrollbuffer_slide (w_object_t *object, int vertical, int horizontal)
 	if (sb->slide &&
 	    sb->child) {
 		sb->slide(sb->child, vertical, horizontal, &ytotal, &yoffset);
-		x = sb->vertical->object->content->x;
-		y = sb->vertical->object->content->y + 21;
-		w = sb->vertical->object->content->w;
-		h = (sb->child->content->h * (sb->vertical->object->content->h - 42)) / ytotal;
-		y -= (yoffset * (sb->vertical->object->content->h - 42)) / ytotal;
+		x = sb->vertical->object->content->x + 4;
+		y = sb->vertical->object->content->y + 23;
+		w = sb->vertical->object->content->w - 7;
+		h = (sb->child->content->h * (sb->vertical->object->content->h - 46)) / ytotal;
+		y -= (yoffset * (sb->vertical->object->content->h - 49)) / ytotal;
 		if ((ytotal + yoffset - sb->child->content->h) == 0) {
-			y = sb->vertical->object->content->h - 21 - h;
+			y = sb->vertical->object->content->h - 26 - h;
 		}
 		w_object_move(sb->vertical->box->object, x, y, w, h);
 	}
@@ -111,10 +153,10 @@ void w_scrollbuffer_geometry (w_object_t *object)
 	w_scrollbuffer_t *sb;
 	sb = object->data[OBJECT_SCROLLBUFFER];
 	w_frame_geometry(sb->object);
-	w_object_move(sb->vertical->object, sb->object->content->x + sb->object->content->w - 20,
-	                                    sb->object->content->y, 20, sb->object->content->h);
+	w_object_move(sb->vertical->object, sb->object->content->x + sb->object->content->w - 24,
+	                                    sb->object->content->y, 24, sb->object->content->h);
 	if (sb->child) {
-		w_object_move(sb->child, object->content->x, object->content->y, object->content->w - 20, object->content->h);
+		w_object_move(sb->child, object->content->x, object->content->y, object->content->w - 24, object->content->h);
 	}
 	w_scrollbuffer_slide(sb->object, 0, 0);
 }
