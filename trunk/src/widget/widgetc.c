@@ -44,6 +44,24 @@ typedef struct node_s {
 	int dontparse;
 } node_t;
 
+typedef struct lang_header_s {
+	char magic[8];
+	unsigned long int count;
+} lang_header_t;
+
+typedef struct lang_s {
+	unsigned long int hash;
+	unsigned long int id_len;
+	unsigned long int str_len;
+	unsigned long int id_offset;
+	unsigned long int str_offset;
+} lang_t;
+
+typedef struct lmsg_s {
+	char *id;
+	char *str;
+} lmsg_t;
+
 static int localization = 0;
 static int sources      = 0;
 
@@ -59,6 +77,52 @@ static node_t *s_node = NULL;
 static int g_depth = 0;
 static char *g_path = NULL;
 static node_t *g_active = NULL;
+
+static int list_init (list_t **li);
+static int list_uninit (list_t *li);
+static int list_eol (list_t *li, int i);
+static void * list_get (list_t *li, int pos);
+static int list_remove (list_t *li, int pos);
+static int list_add (list_t *li, void *el, int pos);
+static char * node_strdup (char *str);
+static char * node_string_normalize (char *str_param);
+static int node_path_normalize (char *out, int len);
+static void node_init (node_t **node);
+static void node_uninit (node_t *node);
+static void node_dublicate_ (node_t *node, node_t *dub);
+static void node_dublicate (node_t *node, node_t **dub);
+static node_t * node_get_parent (node_t *node, char *name);
+static node_t * node_get_node_ (node_t *node, char *path);
+static node_t * node_get_node (node_t *node, char *path);
+static char * node_get_value (node_t *node, char *path);
+static void node_print_ (node_t *node);
+static void node_print (node_t *node);
+static void node_generate_code_style (node_t *node, node_t *parent, char *prefix);
+static void node_generate_code_image (node_t *node, node_t *parent, char *prefix);
+static void node_generate_code_move (node_t *node);
+static void node_generate_code_window (node_t *node);
+static void node_generate_code_object_frame (node_t *node);
+static void node_generate_code_object_button (node_t *node);
+static void node_generate_code_object_textbox (node_t *node);
+static void node_generate_code_object_editbox (node_t *node);
+static void node_generate_code_object_checkbox (node_t *node);
+static void node_generate_code_object_progressbar (node_t *node);
+static void node_generate_code_object_scrollbuffer (node_t *node);
+static void node_generate_code_effect (node_t *node);
+static void node_generate_code_show (node_t *node);
+static void node_generate_code_draw (node_t *node);
+static void node_generate_code_object (node_t *node);
+static void node_generate_code (node_t *node);
+static void node_generate_header (node_t *node);
+static void node_generate_function (node_t *node);
+static void node_generate_element (node_t *node);
+static unsigned long int hash_string (const char *str_param);
+static void node_generate_language (node_t *node);
+static void node_generate_localization (node_t *node);
+static void node_generate_sources (node_t *node);
+static void start (void *xdata, const char *el, const char **attr);
+static void end (void *xdata, const char *el);
+static void char_hndl (void *xdata, const char *txt, int txtlen);
 
 static int list_init (list_t **li)
 {
@@ -728,8 +792,6 @@ static void node_generate_code_object_progressbar (node_t *node)
 	}
 }
 
-static void node_generate_code (node_t *node);
-
 static void node_generate_code_object_scrollbuffer (node_t *node)
 {
 	node_t *tmp;
@@ -744,6 +806,30 @@ static void node_generate_code_object_scrollbuffer (node_t *node)
 	}
 	if ((tmp = node_get_node(node, "slide")) != NULL) {
 		fprintf(g_source, "w_scrollbuffer_set_slide(%s->object, %s);\n", node->id, tmp->value);
+		tmp->dontparse = 1;
+	}
+	while ((tmp = node_get_node(node, "boxstyle")) != NULL) {
+		node_generate_code_style(tmp, node, "box");
+		tmp->dontparse = 1;
+	}
+	while ((tmp = node_get_node(node, "boximage")) != NULL) {
+		node_generate_code_image(tmp, node, "box");
+		tmp->dontparse = 1;
+	}
+	while ((tmp = node_get_node(node, "addstyle")) != NULL) {
+		node_generate_code_style(tmp, node, "add");
+		tmp->dontparse = 1;
+	}
+	while ((tmp = node_get_node(node, "addimage")) != NULL) {
+		node_generate_code_image(tmp, node, "add");
+		tmp->dontparse = 1;
+	}
+	while ((tmp = node_get_node(node, "substyle")) != NULL) {
+		node_generate_code_style(tmp, node, "sub");
+		tmp->dontparse = 1;
+	}
+	while ((tmp = node_get_node(node, "subimage")) != NULL) {
+		node_generate_code_image(tmp, node, "sub");
 		tmp->dontparse = 1;
 	}
 }
@@ -914,24 +1000,6 @@ static void node_generate_element (node_t *node)
 	    	}
 	}
 }
-
-typedef struct lang_header_s {
-	char magic[8];
-	unsigned long int count;
-} lang_header_t;
-
-typedef struct lang_s {
-	unsigned long int hash;
-	unsigned long int id_len;
-	unsigned long int str_len;
-	unsigned long int id_offset;
-	unsigned long int str_offset;
-} lang_t;
-
-typedef struct lmsg_s {
-	char *id;
-	char *str;
-} lmsg_t;
 
 static unsigned long int hash_string (const char *str_param)
 {
