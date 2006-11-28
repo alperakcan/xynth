@@ -196,7 +196,8 @@ struct w_textbox_s {
 	unsigned int size;
 	unsigned int rgb;
 	TEXTBOX_PROPERTIES properties;
-	int offset;
+	int height;
+	int yoffset;
 };
 
 struct w_progressbar_s {
@@ -221,7 +222,7 @@ struct w_scrollbuffer_s {
 	w_frame_t *frame;
 	w_scrollbufferbar_t *vertical;
 	w_object_t *child;
-	void (*slide) (w_object_t *, int, int);
+	void (*slide) (w_object_t *, int, int, int *, int *);
 };
 
 struct w_signal_s {
@@ -384,7 +385,7 @@ int w_progressbar_init (w_window_t *window, w_progressbar_t **progressbar, w_obj
 void w_progressbar_uninit (w_object_t *object);
 
 /* scrollbuffer */
-void w_scrollbuffer_set_slide (w_object_t *object, void (*slide) (w_object_t *, int, int));
+void w_scrollbuffer_set_slide (w_object_t *object, void (*slide) (w_object_t *, int, int, int *, int *));
 void w_scrollbufferbar_add_pressed (w_object_t *object, int button);
 void w_scrollbufferbar_sub_pressed (w_object_t *object, int button);
 void w_scrollbufferbar_geometry (w_object_t *object);
@@ -397,7 +398,7 @@ void w_scrollbuffer_uninit (w_object_t *object);
 int w_scrollbuffer_init (w_window_t *window, w_scrollbuffer_t **scrollbuffer, w_object_t *parent);
 
 /* textbox.c */
-void w_textbox_slide (w_object_t *object, int vertical, int horizontal);
+void w_textbox_slide (w_object_t *object, int vertical, int horizontal, int *ytotal, int *yoffset);
 int w_textbox_set_properties (w_object_t *object, TEXTBOX_PROPERTIES properties);
 int w_textbox_set_image (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs);
 int w_textbox_set_style (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow);

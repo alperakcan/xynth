@@ -63,16 +63,32 @@ int w_scrollbufferbar_init (w_window_t *window, w_scrollbufferbar_t **scrollbuff
 	w_frame_init(window, &(sbb->box), FRAME_PANEL | FRAME_RAISED, sbb->object);
 	w_object_show(sbb->add->object);
 	w_object_show(sbb->sub->object);
+	w_object_show(sbb->box->object);
 	return 0;
 }
 
 void w_scrollbuffer_slide (w_object_t *object, int vertical, int horizontal)
 {
+	int x;
+	int y;
+	int w;
+	int h;
+	int ytotal;
+	int yoffset;
 	w_scrollbuffer_t *sb;
 	sb = object->data[OBJECT_SCROLLBUFFER];
 	if (sb->slide &&
 	    sb->child) {
-		sb->slide(sb->child, vertical, horizontal);
+		sb->slide(sb->child, vertical, horizontal, &ytotal, &yoffset);
+		x = sb->vertical->object->content->x;
+		y = sb->vertical->object->content->y + 21;
+		w = sb->vertical->object->content->w;
+		h = (sb->child->content->h * (sb->vertical->object->content->h - 42)) / ytotal;
+		y -= (yoffset * (sb->vertical->object->content->h - 42)) / ytotal;
+		if ((ytotal + yoffset - sb->child->content->h) == 0) {
+			y = sb->vertical->object->content->h - 21 - h;
+		}
+		w_object_move(sb->vertical->box->object, x, y, w, h);
 	}
 }
 
@@ -83,7 +99,7 @@ void w_scrollbuffer_set_child (w_object_t *object, w_object_t *child)
 	sb->child = child;
 }
 
-void w_scrollbuffer_set_slide (w_object_t *object, void (*slide) (w_object_t *, int, int))
+void w_scrollbuffer_set_slide (w_object_t *object, void (*slide) (w_object_t *, int, int, int *, int *))
 {
 	w_scrollbuffer_t *sb;
 	sb = object->data[OBJECT_SCROLLBUFFER];
@@ -100,6 +116,7 @@ void w_scrollbuffer_geometry (w_object_t *object)
 	if (sb->child) {
 		w_object_move(sb->child, object->content->x, object->content->y, object->content->w - 20, object->content->h);
 	}
+	w_scrollbuffer_slide(sb->object, 0, 0);
 }
 
 void w_scrollbuffer_uninit (w_object_t *object)
