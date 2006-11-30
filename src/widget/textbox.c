@@ -88,6 +88,9 @@ void w_textbox_lines_calculate (w_object_t *object)
 	s_font_t *font;
 	w_textbox_t *textbox;
 	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
+	if (textbox->object->content->w <= 0) {
+		return;
+	}
 	if ((str = _(textbox->str)) == NULL) {
 		return;
 	}
@@ -184,10 +187,10 @@ void w_textbox_draw (w_object_t *object)
 	w_textbox_t *textbox;
 	s_font_glyph_t *glyph;
 	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
-	if (object->surface->vbuf == NULL) {
-		return;
-	}
 	w_textbox_lines_calculate(object);
+	if (object->surface->vbuf == NULL) {
+		goto end;
+	}
 	w_frame_draw(textbox->object);
 	if ((textbox->frame->style & FRAME_MSHAPE) == FRAME_NOFRAME) {
 		memset(textbox->object->surface->matrix, 0, textbox->object->surface->width * textbox->object->surface->height);
@@ -221,7 +224,7 @@ void w_textbox_draw (w_object_t *object)
 			                 glyph->img->w, glyph->img->h, glyph->img->rgba, 0, 0);		
 		}
 	}
-	w_textbox_lines_uninit(object);
+end:	w_textbox_lines_uninit(object);
 }
 
 int w_textbox_set_rgb (w_object_t *object, int r, int g, int b)
