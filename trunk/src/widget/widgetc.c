@@ -671,7 +671,7 @@ static void node_generate_code_object_textbox (node_t *node)
 		fprintf(g_source, "w_textbox_set_properties(%s->object, %s);\n", node->id, tmp->value);
 		tmp->dontparse = 1;
 	}
-	if ((tmp = node_get_node(node, "size")) != NULL) {
+	while ((tmp = node_get_node(node, "size")) != NULL) {
 		fprintf(g_source, "w_textbox_set_size(%s->object, %s);\n", node->id, tmp->value);
 		tmp->dontparse = 1;
 	}
@@ -704,7 +704,7 @@ static void node_generate_code_object_editbox (node_t *node)
 		fprintf(g_source, "w_editbox_set_properties(%s->object, %s);\n", node->id, tmp->value);
 		tmp->dontparse = 1;
 	}
-	if ((tmp = node_get_node(node, "size")) != NULL) {
+	while ((tmp = node_get_node(node, "size")) != NULL) {
 		fprintf(g_source, "w_editbox_set_size(%s->object, %s);\n", node->id, tmp->value);
 		tmp->dontparse = 1;
 	}
@@ -737,7 +737,7 @@ static void node_generate_code_object_checkbox (node_t *node)
 		fprintf(g_source, "w_checkbox_set_properties(%s->object, %s);\n", node->id, tmp->value);
 		tmp->dontparse = 1;
 	}
-	if ((tmp = node_get_node(node, "size")) != NULL) {
+	while ((tmp = node_get_node(node, "size")) != NULL) {
 		fprintf(g_source, "w_checkbox_set_size(%s->object, %s);\n", node->id, tmp->value);
 		tmp->dontparse = 1;
 	}
