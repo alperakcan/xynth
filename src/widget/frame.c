@@ -18,8 +18,6 @@
 #include "../lib/xynth_.h"
 #include "widget.h"
 
-#define WIDGET_OPTIMIZE_MEMORY
-
 int w_frame_set_style (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow)
 {
         w_frame_t *frame;
@@ -77,7 +75,7 @@ int w_frame_set_image (w_object_t *object, unsigned int style, unsigned int rota
 	fimg->rotation = rotation;
 	for (pos = 0; pos < nimgs; pos++) {
 		file = imgs[pos];
-#if defined(WIDGET_OPTIMIZE_MEMORY)
+#if defined(WIDGET_OPTIMIZE_MEMORY) && WIDGET_OPTIMIZE_MEMORY >= 1
 #else
 		w_window_image_add(object->window, file);
 #endif
@@ -96,7 +94,7 @@ void w_frame_draw_image (w_object_t *object, w_frame_image_t *fimg)
 			char *name;
 			s_image_t *img;
 			name = (char *) s_list_get(fimg->names, 0);
-#if defined(WIDGET_OPTIMIZE_MEMORY)
+#if defined(WIDGET_OPTIMIZE_MEMORY) && WIDGET_OPTIMIZE_MEMORY >= 1
 			s_image_init(&img);
 			s_image_img(name, img);
 #else
@@ -115,7 +113,7 @@ void w_frame_draw_image (w_object_t *object, w_frame_image_t *fimg)
 				}
 			}
 			s_image_free_mat(img);
-#if defined(WIDGET_OPTIMIZE_MEMORY)
+#if defined(WIDGET_OPTIMIZE_MEMORY) && WIDGET_OPTIMIZE_MEMORY >= 1
 			s_image_uninit(img);
 #endif
 			break;	
@@ -127,7 +125,7 @@ void w_frame_draw_image (w_object_t *object, w_frame_image_t *fimg)
 			name[0] = (char *) s_list_get(fimg->names, 0);
 			name[1] = (char *) s_list_get(fimg->names, 1);
 			name[2] = (char *) s_list_get(fimg->names, 2);
-#if defined(WIDGET_OPTIMIZE_MEMORY)
+#if defined(WIDGET_OPTIMIZE_MEMORY) && WIDGET_OPTIMIZE_MEMORY >= 1
 			s_image_init(&imgs[0]);
 			s_image_img(name[0], imgs[0]);
 			s_image_init(&imgs[1]);
@@ -172,7 +170,7 @@ void w_frame_draw_image (w_object_t *object, w_frame_image_t *fimg)
 			s_image_free_mat(imgs[0]);
 			s_image_free_mat(imgs[1]);
 			s_image_free_mat(imgs[2]);
-#if defined(WIDGET_OPTIMIZE_MEMORY)
+#if defined(WIDGET_OPTIMIZE_MEMORY) && WIDGET_OPTIMIZE_MEMORY >= 1
 			s_image_uninit(imgs[0]);
 			s_image_uninit(imgs[1]);
 			s_image_uninit(imgs[2]);
