@@ -18,8 +18,16 @@
 
 /* reduce memory usage, this is a bit hacky
  * some speed consumptions ;|
+ * 
+ * levels;
+ * 	0: no memory optimizations, memory hungary but faster
+ * 	1: disables image caching, reduces memory usage, especially
+ * 	   for the applications that have several images
+ * 	2: will free hided object's and its childs' buffers (vbuf and matrix)
+ * 	   slowers show() hide() processes, but cute.
+ * 	3: much more memory optimization, too slower, draws everthing on the fly,
  */
-//#define WIDGET_OPTIMIZE_MEMORY
+#define WIDGET_OPTIMIZE_MEMORY 2
 
 typedef struct w_object_s w_object_t;
 typedef struct w_button_s w_button_t;

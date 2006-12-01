@@ -16,6 +16,49 @@
 #include "../lib/xynth_.h"
 #include "widget.h"
 
+static void w_object_hide_ (w_object_t *object)
+{
+#if defined(WIDGET_OPTIMIZE_MEMORY) && WIDGET_OPTIMIZE_MEMORY == 2
+	int p;
+	w_object_t *child;
+	if (object->parent) {
+		s_free(object->surface->vbuf);
+		s_free(object->surface->matrix);
+		object->surface->vbuf = NULL;
+		object->surface->matrix = NULL;
+	}
+	for (p = 0; !s_list_eol(object->childs, p); p++) {
+		child = (w_object_t *) s_list_get(object->childs, p);
+		w_object_hide_(child);
+	}
+#else
+#endif
+}
+
+static void w_object_show_ (w_object_t *object)
+{
+#if defined(WIDGET_OPTIMIZE_MEMORY) && WIDGET_OPTIMIZE_MEMORY == 2
+	int p;
+	w_object_t *child;
+	if (object->parent &&
+	    object->showed == 1 &&
+	    object->surface->width > 0 &&
+	    object->surface->height > 0) {
+		object->surface->matrix = (unsigned char *) s_malloc(sizeof(char) * object->surface->width * object->surface->height + 10);
+		object->surface->vbuf = (char *) s_calloc(1, object->surface->width * object->surface->height * object->surface->bytesperpixel + 1);
+		memset(object->surface->matrix, 0xff, sizeof(char) * object->surface->width * object->surface->height);
+		if (object->draw != NULL) {
+			object->draw(object);
+		}
+	}
+	for (p = 0; !s_list_eol(object->shown, p); p++) {
+		child = (w_object_t *) s_list_get(object->shown, p);
+		w_object_show_(child);
+	}
+#else
+#endif
+}
+
 int w_object_effect_stop (w_object_t *object)
 {
 	s_timer_del(object->window->window, object->effect->timer);
@@ -31,6 +74,9 @@ void w_object_effect_timer_cb (s_window_t *window, s_timer_t *timer)
 		s_timer_del(window, timer);
 		if (!object->showed && object->effect->effect & EFFECT_HIDE) {
             		s_list_remove(object->parent->shown, s_list_get_pos(object->parent->shown, object));
+			{
+				w_object_hide_(object);
+			}
 		}
 	}
 	w_object_update(object, object->surface->win);
@@ -189,7 +235,7 @@ int w_object_update_to_surface (w_object_t *object, s_surface_t *surface, s_rect
 		tmp = tmp->parent;
 	}
 
-#if defined(WIDGET_OPTIMIZE_MEMORY)
+#if defined(WIDGET_OPTIMIZE_MEMORY) && WIDGET_OPTIMIZE_MEMORY == 3
 	if (object->parent != NULL) {
 		object->surface->matrix = (unsigned char *) s_malloc(sizeof(char) * object->surface->width * object->surface->height + 10);
 		object->surface->vbuf = (char *) s_calloc(1, object->surface->width * object->surface->height * object->surface->bytesperpixel + 1);
@@ -212,7 +258,7 @@ int w_object_update_to_surface (w_object_t *object, s_surface_t *surface, s_rect
 		}
 	}
 
-#if defined(WIDGET_OPTIMIZE_MEMORY)
+#if defined(WIDGET_OPTIMIZE_MEMORY) && WIDGET_OPTIMIZE_MEMORY == 3
 	if (object->parent != NULL) {
 		s_free(object->surface->vbuf);
 		s_free(object->surface->matrix);
@@ -380,7 +426,7 @@ int w_object_move_silent (w_object_t *object, int x, int y, int w, int h)
 		object->surface->vbuf = NULL;
 		object->surface->width = object->surface->buf->w;
 		object->surface->height = object->surface->buf->h;
-#if defined(WIDGET_OPTIMIZE_MEMORY)
+#if defined(WIDGET_OPTIMIZE_MEMORY) && WIDGET_OPTIMIZE_MEMORY >= 2
 #else
 		object->surface->matrix = (unsigned char *) s_malloc(sizeof(char) * object->surface->width * object->surface->height + 10);
 		object->surface->vbuf = (char *) s_calloc(1, object->surface->width * object->surface->height * object->surface->bytesperpixel + 1);
@@ -436,6 +482,7 @@ int w_object_hide (w_object_t *object)
 	if (object->effect->effect & EFFECT_HIDE) {
 		w_object_effect_start(object);
 	} else {
+		w_object_hide_(object);
 		w_object_update(object, object->surface->win);
 	}
 	return 0;
@@ -449,6 +496,10 @@ int w_object_show (w_object_t *object)
             	s_list_add(object->parent->shown, object, -1);
 	}
 	w_object_effect_stop(object);
+	{
+		w_object_hide_(object);
+		w_object_show_(object);
+	}
 	if (object->effect->effect & EFFECT_SHOW) {
 		w_object_effect_start(object);
 	} else {
