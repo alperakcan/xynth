@@ -603,6 +603,10 @@ static void node_generate_code_window (node_t *node)
 	fprintf(g_source, "s_setlocale(%s->window, 0, \"\");\n"
 	                  "s_bindtextdomain(%s->window, \"%s\", \"./lang\");\n"
 	                  "s_textdomain(%s->window, \"%s\");\n", node->id, node->id, g_name, node->id, g_name);
+	if ((tmp = node_get_node(node, "language")) != NULL) {
+		fprintf(g_source, "s_setlocale(%s->window, 0, %s);\n", node->id, tmp->value);
+		tmp->dontparse = 1;
+	}
 	if ((tmp = node_get_node(node, "title")) != NULL) {
 		fprintf(g_source, "s_window_set_title(%s->window, \"%s\");\n", node->id, tmp->value);
 		tmp->dontparse = 1;
