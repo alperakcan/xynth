@@ -1213,18 +1213,24 @@ int main (int argc, char **argv)
 {
 	int c;
 	int l = 0;
+	FILE *stylesheet;
+	char *tmp = NULL;
 	char *buf = NULL;
 	char *varo = NULL;
 	char *varf = NULL;
+	char *vars = NULL;
 	struct stat stbuf;
 	
-	while ((c = getopt(argc, argv, "f:o:clh")) != -1) {
+	while ((c = getopt(argc, argv, "s:f:o:clh")) != -1) {
 		switch (c) {
 			case 'f':
 				varf = strdup(optarg);
 				break;
 			case 'o':
 				varo = strdup(optarg);
+				break;
+			case 's':
+				vars = strdup(optarg);
 				break;
 			case 'l':
 				localization = 1;
@@ -1248,16 +1254,37 @@ usage:			case 'h':
 		goto usage;
 	}
 	
+	if (vars != NULL) {
+		stat(vars, &stbuf);
+		tmp = (char *) malloc(stbuf.st_size + 1);
+		stylesheet = fopen(vars, "r");
+		fread(tmp, 1, stbuf.st_size, stylesheet);
+		l = stbuf.st_size;
+		XML_Parser p = XML_ParserCreate(NULL);
+		if (!p) {
+			fprintf(stderr, "Couldn't allocate memory for parser\n");
+			exit(-1);
+		}
+		XML_SetElementHandler(p, start, end);
+		XML_SetCharacterDataHandler(p, char_hndl);
+		if (!XML_Parse(p, tmp, l, 1)) {
+			fprintf(stderr, "Parse error at line %d:\n%s\n", XML_GetCurrentLineNumber(p), XML_ErrorString(XML_GetErrorCode(p)));
+			exit(-1);
+		}
+		XML_ParserFree(p);
+		free(tmp);
+	} 
+	
 	if (varf != NULL) {
 		stat(varf, &stbuf);
-		l = stbuf.st_size;
 		buf = (char *) malloc(stbuf.st_size + 1);
 		g_input = fopen(varf, "r");
 		fread(buf, 1, stbuf.st_size, g_input);
+		l = stbuf.st_size;
 	} else {
 		goto usage;
 	}
-	
+
 	if (varo != NULL) {
 		g_source_name = (char *) malloc(strlen(varo) + 20);
 		g_header_name = (char *) malloc(strlen(varo) + 20);
@@ -1277,15 +1304,12 @@ usage:			case 'h':
 		fprintf(stderr, "Couldn't allocate memory for parser\n");
 		exit(-1);
 	}
-
 	XML_SetElementHandler(p, start, end);
 	XML_SetCharacterDataHandler(p, char_hndl);
-
 	if (!XML_Parse(p, buf, l, 1)) {
 		fprintf(stderr, "Parse error at line %d:\n%s\n", XML_GetCurrentLineNumber(p), XML_ErrorString(XML_GetErrorCode(p)));
 		exit(-1);
 	}
-	
 	XML_ParserFree(p);
 
 	if (localization)
