@@ -124,6 +124,19 @@ char * s_textdomain (s_window_t *window, const char *domainname)
 	return window->gettext->domain;
 }
 
+static inline int s_gettext_cmp (char *str, char *ptr)
+{
+	while (*str && *ptr) {
+		if (*str++ != *ptr++) {
+			return -1;
+		}
+	}
+	if (*str || *ptr) {
+		return -1;
+	}
+	return 0;
+}
+
 char * s_gettext (s_window_t *window, const char *str)
 {
 	unsigned long int i;
@@ -136,11 +149,17 @@ char * s_gettext (s_window_t *window, const char *str)
 	h = hash_string(str);
 	for (i = 0; i < window->gettext->count; i++) {
 		if (h == window->gettext->msgs[i].hash) {
-			fseek(window->gettext->file, window->gettext->msgs[i].str_offset, SEEK_SET);
-			s_free(window->gettext->buf);
-			window->gettext->buf = (char *) s_malloc(sizeof(char) * (window->gettext->msgs[i].str_len + 1));
-			fread(window->gettext->buf, sizeof(char), window->gettext->msgs[i].str_len + 1, window->gettext->file);
-			str = window->gettext->buf;
+			fseek(window->gettext->file, window->gettext->msgs[i].id_offset, SEEK_SET);
+			free(window->gettext->buf);
+			window->gettext->buf = (char *) malloc(sizeof(char) * (window->gettext->msgs[i].id_len + 1));
+			fread(window->gettext->buf, sizeof(char), window->gettext->msgs[i].id_len + 1, window->gettext->file);
+			if (s_gettext_cmp((char *) str, window->gettext->buf) == 0) {
+				fseek(window->gettext->file, window->gettext->msgs[i].str_offset, SEEK_SET);
+				s_free(window->gettext->buf);
+				window->gettext->buf = (char *) s_malloc(sizeof(char) * (window->gettext->msgs[i].str_len + 1));
+				fread(window->gettext->buf, sizeof(char), window->gettext->msgs[i].str_len + 1, window->gettext->file);
+				str = window->gettext->buf;
+			}
 		}
 	}
 end:	s_thread_mutex_unlock(window->gettext->mutex);
