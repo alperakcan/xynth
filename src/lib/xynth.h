@@ -561,30 +561,6 @@ typedef struct s_client_s {
 	void *data;
 } s_client_t;
 
-struct s_window_s {
-	int running;
-	int soc;
-	int wsoc;
-	S_WINDOW type;
-
-	s_client_t *client;
-	s_surface_t *surface;
-
-	s_eventq_t *eventq;
-	s_timers_t *timers;
-	s_childs_t *childs;
-	s_pollfds_t *pollfds;
-	s_handlers_t *handlers;
-
-	s_thread_t *tid;
-	s_window_t *parent;
-
-	s_event_t *event;
-	s_thread_mutex_t *socket_mutex;
-	
-	s_gettext_t *gettext;
-};
-
 typedef struct s_single_app_s {
 	int (*fonk) (int argc, char *argv[]);
 	int argc;
@@ -2430,16 +2406,141 @@ int s_timers_uninit (s_window_t *window);
 
 /*@}*/
 
+/** @defgroup window window api
+  * @brief these are simple low-level windows api functions,
+  *        for further information you may look in demo directory.
+  *
+  * @example
+  *
+  * for further information look in demo/ directory
+  *
+  * @code
+  * // simple example will be in here
+    * @endcode
+  */
+
+/** @addtogroup window */
+/*@{*/
+
+/** window struct
+ */
+struct s_window_s {
+	/** is window running */
+	int running;
+	/** window's connection socket to the server */
+	int soc;
+	/** self wake up socket */
+	int wsoc;
+	/** bitwise or'ed window type */
+	S_WINDOW type;
+
+	/** client attached to the window */
+	s_client_t *client;
+	/** surface attached to the window */
+	s_surface_t *surface;
+
+	/** event queue of the window */
+	s_eventq_t *eventq;
+	/** timers list of the window */
+	s_timers_t *timers;
+	/** childs list of the window */
+	s_childs_t *childs;
+	/** pollfds list of the window */
+	s_pollfds_t *pollfds;
+	/** handlers list of the window */
+	s_handlers_t *handlers;
+
+	/** thread id of the event dispatcher thread */
+	s_thread_t *tid;
+	/** points the window's parent window */
+	s_window_t *parent;
+
+	/** most recent event received from the server */
+	s_event_t *event;
+	/** socket request and listen mutex */
+	s_thread_mutex_t *socket_mutex;
+	
+	/** used for self implementation gettext */
+	s_gettext_t *gettext;
+};
+
 /* window.c */
+
+/** @brief sets the cursor for desired window
+  *
+  * @param *window - the window
+  * @param cursor  - the cursor type
+  * @returns no returns
+  */
 void s_window_set_cursor (s_window_t *window, S_MOUSE_CURSOR cursor);
+
+/** @brief sets the title for desired window
+  *
+  * @param *window - the window
+  * @param fmt     - the title
+  * @returns no returns
+  */
 void s_window_set_title (s_window_t *window, char *fmt, ...);
+
+/** @brief redraws the form of the desired window
+  *
+  * @param *window - the window
+  * @returns no returns
+  */
 void s_window_form_draw (s_window_t *window);
+
+/** @brief hides the given window
+  *
+  * @param *window - the window
+  * @returns no returns
+  */
 void s_window_hide (s_window_t *window);
+
+/** @brief shows the given window
+  *
+  * @param *window - the window
+  * @returns no returns
+  */
 void s_window_show (s_window_t *window);
+
+/** @brief moves the given window to the desired coordinates
+  *
+  * @param *window - the window
+  * @param form    - is window form included in given coordinates
+  * @param x       - position x
+  * @param y       - position y
+  * @param w       - width
+  * @param h       - height
+  * @returns no returns
+  */
 void s_window_set_coor (s_window_t *window, int form, int x, int y, int w, int h);
+
+/** @brief sets the resizable property ot the given window
+  *
+  * @param *window    - the window
+  * @param resizeable - 0 (enable) or 1 (disable)
+  * @returns no returns
+  */
 void s_window_set_resizeable (s_window_t *window, int resizeable);
+
+/** @brief sets the always on top property ot the given window
+  *
+  * @param *window     - the window
+  * @param alwaysontop - 0 (regular), 1 (always on top), -1 (always on bottom)
+  * @returns no returns
+  */
 void s_window_set_alwaysontop (s_window_t *window, int alwaysontop);
+
+/** @brief creates a new window with the given type, attached to the window parent.
+  *
+  * @param *window - the window
+  * @param type    - window type
+  * @param parent  - parent window for the given window
+  * @returns no returns
+  */
 int s_window_new (s_window_t *window, S_WINDOW type, s_window_t *parent);
+
+/*@}*/
 
 #ifdef __cplusplus
 	}
