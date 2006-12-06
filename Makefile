@@ -76,7 +76,7 @@ doxy-doc:
 	SRCDIR='.' \
 	PROJECT='xynth' \
 	DOCDIR='doc' \
-	VERSION='0.8.20' \
+	VERSION='0.8.40' \
 	PERL_PATH='perl' \
 	HAVE_DOT='NO' \
 	GENERATE_MAN='NO' \
