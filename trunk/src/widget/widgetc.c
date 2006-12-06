@@ -1176,6 +1176,20 @@ static void end (void *xdata, const char *el)
 	g_active = g_active->parent;
 }
 
+static void char_hndl_fixup (char *out)
+{
+	int i;
+	int j;
+	/* Convert "&amp;" to "&" */
+	for (i = 0; out[i] && out[i + 1] && out[i + 2] && out[i + 3] && out[i + 4]; i++) {
+		if (out[i] == '&' && out[i + 1] == 'a' && out[i + 2] == 'm' && out[i + 3] == 'p' && out[i + 4] == ';') {
+			for (j = i + 1; out[j]; j++)
+				out[j] = out[j + 4];
+			i--;
+		}
+	}
+}
+
 static void char_hndl (void *xdata, const char *txt, int txtlen)
 {
 	char *str;
@@ -1197,6 +1211,7 @@ static void char_hndl (void *xdata, const char *txt, int txtlen)
 	    	str[txtlen] = '\0';
 	    	if (g_active) {
 	    		g_active->value = strdup(str);
+	    		char_hndl_fixup(g_active->value);
 	    	}
 	}
 #else
@@ -1206,6 +1221,7 @@ static void char_hndl (void *xdata, const char *txt, int txtlen)
 	    	*ptr = '\0';
 	    	if (g_active && g_active->value == NULL) {
 	    		g_active->value = strdup(str);
+	    		char_hndl_fixup(g_active->value);
 	    	}
 	}
 #endif
