@@ -31,7 +31,6 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <termios.h>
-#include "irman.h"
 
 /* number of bytes sent back from the IR interface */
 #define IR_CODE_LEN			6
@@ -84,7 +83,21 @@ static char ir_hexdigit[16] = {
 	'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'
 };
 
-int ir_init (char *filename)
+static int ir_init (char *filename);
+static int ir_finish (void);
+static unsigned char * ir_read_code (unsigned long timeout);
+static unsigned char * ir_poll_code (void);
+static int ir_valid_code (char *text);
+static char * ir_code_to_text (unsigned char *code);
+static int ir_open_port (char *filename);
+static int ir_get_portfd (void);
+static int ir_close_port (void);
+static int ir_write_char (unsigned char data);
+static int ir_read_char (long timeout);
+static void ir_clear_buffer (void);
+static void ir_usleep (unsigned long usec);
+
+static int ir_init (char *filename)
 {
 	int rdchar;
 	if (ir_enabled) {
@@ -127,7 +140,7 @@ int ir_init (char *filename)
 }
 
 /* simply a wrapper for ir_close_port() */
-int ir_finish (void)
+static int ir_finish (void)
 {
 	if (!ir_enabled) {
 		errno = ENXIO;
@@ -146,7 +159,7 @@ int ir_finish (void)
  * note esp. that these functions return a pointer to statically defined
  * data.  In the forseeable usage of LIBIRMAN this seems the easiest way.
  */
-unsigned char * ir_read_code (unsigned long timeout)
+static unsigned char * ir_read_code (unsigned long timeout)
 {
 	static unsigned char codebuf[IR_CODE_LEN];
 	int i, datum;
@@ -166,27 +179,7 @@ unsigned char * ir_read_code (unsigned long timeout)
 	return codebuf;
 }
 
-unsigned char * ir_get_code (void)
-{
-	/* well dodgy choice of error here...! */
-	if (!ir_enabled) {
-		errno = ENXIO;
-		return NULL;
-	}
-	return ir_read_code(IR_BLOCKING);
-}
-
-unsigned char * ir_get_code_time (unsigned long timeout)
-{
-	/* well dodgy choice of error here...! */
-	if (!ir_enabled) {
-		errno = ENXIO;
-		return NULL;
-	}
-	return ir_read_code(timeout);
-}
-
-unsigned char * ir_poll_code (void)
+static unsigned char * ir_poll_code (void)
 {
 	if (!ir_enabled) {
 		errno = ENXIO;
@@ -196,7 +189,7 @@ unsigned char * ir_poll_code (void)
 }
 
 /* checks to see if a piece of text is a valid ir code (1 = yes) */
-int ir_valid_code (char *text)
+static int ir_valid_code (char *text)
 {
 	char *c;
 	if (strlen(text) != IR_CODE_LEN * 2) {
@@ -210,7 +203,7 @@ int ir_valid_code (char *text)
 	return 1;
 }
 
-char * ir_code_to_text (unsigned char *code)
+static char * ir_code_to_text (unsigned char *code)
 {
 	static char text[2 * IR_CODE_LEN + 1];
 	int i;
@@ -222,51 +215,6 @@ char * ir_code_to_text (unsigned char *code)
 	}
 	*j = '\0';
 	return text;
-}
-
-int ir_hex_to_int (unsigned char hex)
-{
-	if (hex >= '0' && hex <= '9') {
-		return hex - '0';
-	}
-	hex = tolower(hex);
-	if (hex >= 'a' && hex <= 'f') {
-		return hex - 'a' + 10;
-	}
-	/* error! */
-	return 0;
-}
-
-unsigned char * ir_text_to_code (char *text)
-{
-	static char code[IR_CODE_LEN];
-	int i;
-	char *j;
-	j = text;
-	for (i = 0; i < IR_CODE_LEN; i++) {
-		if (!j[0] || !j[1]) {
-			break;
-		}
-		code[i]  = (ir_hex_to_int(*j++) << 4) & 0xf0;
-		code[i] += (ir_hex_to_int(*j++)     ) & 0x0f;
-	}
-	/* if string isn't long enough, pad with zeros. This is (marginally)
-	 * better than the leaving in the remains of the last conversion
-	 */
-	for ( ; i<IR_CODE_LEN; i++) {
-		code[i] = '\0';
-	}
-	return code;
-}
-
-/* this function should never be called, but maybe someone wants to manually
- * open the ir channel, then use the higher level functions.  If you use this
- * then you deserve any problems you get!  It is only here because I don't
- * believe in unneccesary restrictions.
- */
-void ir_set_enabled (int val)
-{
-	ir_enabled = val;
 }
 
 /*
@@ -289,7 +237,7 @@ void ir_set_enabled (int val)
  * Also check for other names for the serial port as in IRIX -- maybe
  * Solaris does that (I tried ttya)
  */
-int ir_open_port (char *filename)
+static int ir_open_port (char *filename)
 {
 	int parnum = 0;
 	int baudrate = B9600;
@@ -382,13 +330,13 @@ int ir_open_port (char *filename)
 /* return the portfd for the serial port.  don't mess it up, please.
  * returns 0 if port not open
  */
-int ir_get_portfd (void)
+static int ir_get_portfd (void)
 {
 	return portfd;
 }
 
 /* close the port, restoring old settings */
-int ir_close_port (void)
+static int ir_close_port (void)
 {
 	int retval = 0;
 	if (!portfd) {	/* already closed */
@@ -408,7 +356,7 @@ int ir_close_port (void)
 }
 
 /* write a character.  nothing interesting happens here */
-int ir_write_char (unsigned char data)
+static int ir_write_char (unsigned char data)
 {
 	if (write (portfd, &data, 1) != 1) {
 		return -1;
@@ -423,7 +371,7 @@ int ir_write_char (unsigned char data)
  * timeout > 0  -  timeout after `timeout' microseconds
  *                 use the nice macros in irman.h to define sec, msec, usec
  */ 
-int ir_read_char (long timeout)
+static int ir_read_char (long timeout)
 {
 	unsigned char rdchar;
 	int ok;
@@ -455,7 +403,7 @@ int ir_read_char (long timeout)
 } 
 
 /* just about the only function where we don't care about errors! */
-void ir_clear_buffer (void)
+static void ir_clear_buffer (void)
 {
 	while (ir_read_char(IR_GARBAGE_TIMEOUT) >= 0)
 		;
@@ -464,7 +412,7 @@ void ir_clear_buffer (void)
 /* This just makes life easier,
  * hence I have left this function visible (also for irfunc.c)
  */
-void ir_usleep (unsigned long usec)
+static void ir_usleep (unsigned long usec)
 {
 	struct timeval tv;
 	tv.tv_sec=usec / 1000000;
@@ -472,7 +420,7 @@ void ir_usleep (unsigned long usec)
 	(void) select(0, NULL, NULL, NULL, &tv);
 }
 
-int irman_init (char *port)
+int s_video_helper_irman_init (char *port)
 {
 	int ret;
 	ret = ir_open_port(port);
@@ -484,7 +432,7 @@ int irman_init (char *port)
 	return ir_get_portfd();
 }
 
-char * irman_getcode (void)
+char * s_video_helper_irman_getcode (void)
 {
 	int ret;
 	unsigned char *code;
@@ -502,7 +450,7 @@ char * irman_getcode (void)
 	return code_text;
 }
 
-int irman_uninit (void)
+int s_video_helper_irman_uninit (void)
 {
 	ir_finish();
 	return 0;

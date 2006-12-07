@@ -20,14 +20,16 @@ int s_video_helper_console_switch (int vt);
 #endif /* VIDEO_HELPER_CONSOLE */
 
 #if defined(VIDEO_HELPER_IRMAN)
-#include "irman.h"
+int s_video_helper_irman_init (char *port);
+char * s_video_helper_irman_getcode (void);
+int s_video_helper_irman_uninit (void);
 #endif /* VIDEO_HERLPER_IRMAN */
 
-#if defined(VIDEO_HELPER_IRSERIAL)
-int irserial_init (char *dev, unsigned int brate);
-int irserial_uninit (void);
-char * irserial_getcode (void);
-#endif /* VIDEO_HELPER_IRSERIAL */
+#if defined(VIDEO_HELPER_IRIMAF)
+int s_video_helper_irimaf_init (void);
+int s_video_helper_irimaf_uninit (void);
+char * s_video_helper_irimaf_getcode (void);
+#endif /* VIDEO_HELPER_IRIMAF */
 
 #if defined(VIDEO_HELPER_KBD)
 /* kbd.c */
