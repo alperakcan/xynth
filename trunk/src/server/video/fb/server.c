@@ -36,6 +36,13 @@ s_video_input_t s_video_fb_input_mouse = {
 	s_video_helper_mouse_uninit,
 };
 
+s_video_input_t s_video_fb_input_irr = {
+	VIDEO_INPUT_IRR,
+	s_video_helper_irr_init,
+	s_video_helper_irr_update,
+	s_video_helper_irr_uninit,
+};
+
 #if defined(VIDEO_HELPER_TSCREEN)
 s_video_input_t s_video_fb_input_tscreen = {
 	VIDEO_INPUT_MOUSE,
@@ -45,95 +52,12 @@ s_video_input_t s_video_fb_input_tscreen = {
 };
 #endif
 
-#if defined(VIDEO_HELPER_IRSERIAL)
-#include <termios.h>
-
-typedef struct irserial_codes_s {
-	char *code;
-	s_video_input_data_keybd_t keybd;
-} irserial_codes_t;
-
-static irserial_codes_t irserial_codes_sonytv[] = {
-	{"\r\n0094", {KEYBD_PRESSED, 0, 0, 0, 0}}, /* muting */
-	{"\r\n00b6", {KEYBD_PRESSED, 0, 0, 0, 0}}, /* sleep */
-	{"\r\n0095", {KEYBD_PRESSED, 0, 0, 0, 0}}, /* power */
-	{"\r\n00ba", {KEYBD_PRESSED, 0, 0, 0, 0}}, /* display */
-	{"\r\n00a5", {KEYBD_PRESSED, 0, 0, 0, 0}}, /* tv/video */
-	{"\r\n0080", {KEYBD_PRESSED, 0, 0, 0, 0}}, /* 1 */
-	{"\r\n0081", {KEYBD_PRESSED, 0, 0, 0, 0}}, /* 2 */
-	{"\r\n0082", {KEYBD_PRESSED, 0, 0, 0, 0}}, /* 3 */
-	{"\r\n0083", {KEYBD_PRESSED, 0, 0, 0, 0}}, /* 4 */
-	{"\r\n0084", {KEYBD_PRESSED, 0, 0, 0, 0}}, /* 5 */
-	{"\r\n0085", {KEYBD_PRESSED, 0, 0, 0, 0}}, /* 6 */
-	{"\r\n0086", {KEYBD_PRESSED, 0, 0, 0, 0}}, /* 7 */
-	{"\r\n0087", {KEYBD_PRESSED, 0, 0, 0, 0}}, /* 8 */
-	{"\r\n0088", {KEYBD_PRESSED, 0, 0, 0, 0}}, /* 9 */
-	{"\r\n00bb", {KEYBD_PRESSED, 0, 0, 0, 0}}, /* jump */
-	{"\r\n0089", {KEYBD_PRESSED, 0, 0, 0, 0}}, /* 0 */
-	{"\r\n008b", {KEYBD_PRESSED, 0, 0, 0, 0}}, /* enter */
-	{"\r\n0092", {KEYBD_PRESSED, 0, 0, 0, 0}}, /* vol + */
-	{"\r\n0090", {KEYBD_PRESSED, 0, 0, 0, 0}}, /* chan + */
-	{"\r\n0093", {KEYBD_PRESSED, 0, 0, 0, 0}}, /* vol - */
-	{"\r\n0091", {KEYBD_PRESSED, 0, 0, 0, 0}}, /* chan - */
-	{"\r\n0096", {KEYBD_PRESSED, 0, 0, 0, 0}}, /* reset */
-	{"\r\n00e0", {KEYBD_PRESSED, 0, 0, 0, 0}}, /* menu */
-	{"\r\n00f4", {KEYBD_PRESSED, 0, 0, 0, 0}}, /* up */
-	{"\r\n00b4", {KEYBD_PRESSED, S_KEYCODE_TAB, S_KEYCODE_TAB, 0, 0}}, /* left */
-	{"\r\n00e5", {KEYBD_PRESSED, S_KEYCODE_SPACE, S_KEYCODE_SPACE, 0, 0}}, /* ok */
-	{"\r\n00b3", {KEYBD_PRESSED, 0, 0, 0, 0}}, /* right */
-	{"\r\n00f5", {KEYBD_PRESSED, 0, 0, 0, 0}}, /* down */
-	{NULL, {0, 0, 0, 0, 0}},
-};
-
-int s_video_fbdev_irserial_init (s_server_conf_t *cfg)
-{
-	int fd;
-	fd = irserial_init("/dev/ttyS2", B2400);
-	return fd;
-}
-
-int s_video_fbdev_irserial_update (s_video_input_data_t *keybd)
-{
-	char *code;
-	code = irserial_getcode();
-	if (code) {
-		irserial_codes_t *codes;
-		codes = &irserial_codes_sonytv[0];
-		while (codes->code != NULL) {
-			if (strcmp(codes->code, code) == 0) {
-				keybd->keybd.state = codes->keybd.state;
-				keybd->keybd.button = codes->keybd.button;
-				keybd->keybd.keycode = codes->keybd.keycode;
-				return 1;
-			}
-			codes++;
-		}
-	}
-	return 0;
-}
-
-void s_video_fbdev_irserial_uninit (void)
-{
-	irserial_uninit();
-}
-
-s_video_input_t s_video_fb_input_irserial = {
-	VIDEO_INPUT_KEYBD,
-	s_video_fbdev_irserial_init,
-	s_video_fbdev_irserial_update,
-	s_video_fbdev_irserial_uninit,
-};
-#endif
-
-
 s_video_input_t *s_video_fb_input[] = {
 	&s_video_fb_input_keybd,
 	&s_video_fb_input_mouse,
+	&s_video_fb_input_irr,
 #if defined(VIDEO_HELPER_TSCREEN)
 	&s_video_fb_input_tscreen,
-#endif
-#if defined(VIDEO_HELPER_IRSERIAL)
-	&s_video_fb_input_irserial,
 #endif
 	NULL,
 };
