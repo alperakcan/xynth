@@ -167,6 +167,16 @@ int s_server_cfg (s_server_conf_t *config)
 				if (strcasecmp(var->name, "keyboard") == 0) {
 					config->keyboard.keyboard = strdup(var->value);
 				}
+			} else if (strcasecmp(cat->name, "infrared") == 0) {
+				if (strcasecmp(var->name, "type") == 0) {
+					config->irr.type = strdup(var->value);
+				} else if (strcasecmp(var->name, "device") == 0) {
+					config->irr.device = strdup(var->value);
+				} else if (strcasecmp(var->name, "brate") == 0) {
+					config->irr.brate = strdup(var->value);
+				} else if (strncmp(var->name, "S_KEYCODE_", 10) == 0) {
+					s_server_irr_add_code(var->name, var->value);
+				} 
 			} else if (strcasecmp(cat->name, "monitor") == 0) {
 				char *ptr;
 				char *nptr;
@@ -428,6 +438,9 @@ int s_server_init (void)
 				case VIDEO_INPUT_KEYBD:
 					s_server_kbd_init(&config, *input);
 					break;
+				case VIDEO_INPUT_IRR:
+					s_server_irr_init(&config, *input);
+					break;
 				default:
 					break;
 			}
@@ -443,6 +456,9 @@ int s_server_init (void)
 	s_free(config.mouse.type);
 	s_free(config.mouse.device);
 	s_free(config.keyboard.keyboard);
+	s_free(config.irr.type);
+	s_free(config.irr.device);
+	s_free(config.irr.brate);
 
 	server->window->running = 1;
 
