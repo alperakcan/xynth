@@ -10,7 +10,7 @@ TARGET-$(PLATFORM_PSPDEV) = xynth.elf
 TARGET-$(PLATFORM_MINGW)  = xynth.exe
 TARGET-$(PLATFORM_GP2X)   = xynth
 
-OBJS = event.o id.o kbd.o mouse.o priority.o single.o server.o socket.o start.o \
+OBJS = event.o id.o irr.o kbd.o mouse.o priority.o single.o server.o socket.o start.o \
        surface.o theme.o window.o window_handler.o window_move_resize.o
 
 OBJS-$(VIDEO_FBDev)       += video/fb/fb.o video/fb/kbd.o video/fb/server.o video/fb/timing.o
@@ -39,8 +39,8 @@ VLDFLAGS-$(VIDEO_GP2X)    += -lpthread -lm -static
 
 OBJS-$(VIDEO_NULL)        += video/null/kbd.o video/null/mouse.o video/null/server.o
 
-OBJS-$(VIDEO_HELPER)      += video/helper/console.o video/helper/irman.o video/helper/irserial.o video/helper/kbd.o \
-                             video/helper/modes.o video/helper/mouse.o video/helper/mtrr.o video/helper/tscreen.o
+OBJS-$(VIDEO_HELPER)      += video/helper/console.o video/helper/irman.o video/helper/kbd.o video/helper/modes.o \
+                             video/helper/mouse.o video/helper/mtrr.o video/helper/tscreen.o
 
 VLDFLAGS-$(VIDEO_HELPER_TSCREEN) += -lts
 
