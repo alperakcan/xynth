@@ -114,6 +114,11 @@ typedef struct s_server_conf_s {
 		char *keyboard;
 	} keyboard;
 	struct {
+		char *type;
+		char *device;
+		char *brate;
+	} irr;
+	struct {
 		float horizsync_min;
 		float horizsync_max;
 		float vertrefresh_min;
@@ -147,11 +152,13 @@ typedef enum {
 	VIDEO_INPUT_NONE,
 	VIDEO_INPUT_MOUSE,
 	VIDEO_INPUT_KEYBD,
+	VIDEO_INPUT_IRR,
 } VIDEO_INPUT;
 
 typedef union s_video_input_data_u {
-	s_video_input_data_keybd_t keybd;
 	s_video_input_data_mouse_t mouse;
+	s_video_input_data_keybd_t keybd;
+	s_video_input_data_keybd_t irr;
 } s_video_input_data_t;
 
 typedef struct s_video_input_s {
@@ -214,6 +221,15 @@ int s_server_id_get (void);
 int s_server_id_find (int soc);
 void s_server_id_del (int id);
 
+/* irr.c */
+int s_video_helper_irr_init (s_server_conf_t *cfg);
+void s_video_helper_irr_uninit (void);
+int s_video_helper_irr_update (s_video_input_data_t *keybd);
+int s_server_irr_add_code (char *key, char *code);
+int s_server_irr_uninit (s_window_t *window, s_pollfd_t *pfd);
+int s_server_irr_update (s_window_t *window, s_pollfd_t *pfd);
+void s_server_irr_init (s_server_conf_t *cfg, s_video_input_t *irr);
+
 /* kbd.c */
 void s_server_kbd_switch_handler (s_window_t *window, s_event_t *event, s_handler_t *handler);
 void s_server_kbd_window_close_handler (s_window_t *window, s_event_t *event, s_handler_t *handler);
@@ -221,6 +237,7 @@ void s_server_kbd_server_quit_handler (s_window_t *window, s_event_t *event, s_h
 int s_server_kbd_update (s_window_t *window, s_pollfd_t *pfd);
 void s_server_kbd_init (s_server_conf_t *cfg, s_video_input_t *keybd);
 int s_server_kbd_uninit (s_window_t *window, s_pollfd_t *pfd);
+S_KEYCODE_CODE s_server_keyname_to_keycode (char *name);
 
 /* mouse.c */
 void s_server_cursor_uninit (void);
