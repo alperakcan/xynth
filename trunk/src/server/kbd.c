@@ -15,6 +15,7 @@
 
 #include "../lib/xynth_.h"
 #include "server.h"
+#include "kbd_map.h"
 
 void s_server_kbd_switch_handler (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
@@ -145,4 +146,15 @@ int s_server_kbd_uninit (s_window_t *window, s_pollfd_t *pfd)
 	}
         s_server_quit(server->window);
         return 0;
+}
+
+S_KEYCODE_CODE s_server_keyname_to_keycode (char *name)
+{
+	unsigned int i;
+	for (i = 0; i < S_KEYCODE_CODES; i++) {
+		if (strcmp(name, s_keycodes_map[i].name) == 0) {
+			return s_keycodes_map[i].code;
+		}
+	}
+	return 0;
 }
