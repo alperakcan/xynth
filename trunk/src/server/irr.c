@@ -85,6 +85,8 @@ int s_server_irr_uninit (s_window_t *window, s_pollfd_t *pfd)
         if (irr->uninit != NULL) {
 		irr->uninit();
 	}
+	s_free(irr_codes);
+	s_free(irr_codes_size);
 	return 0;
 }
 
