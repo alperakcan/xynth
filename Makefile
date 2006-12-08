@@ -94,9 +94,9 @@ update: clean
 	svn update
 
 strip: dist
-	$(STRIP) $(DISTBINDIR)/*
-	$(STRIP) $(DISTLIBDIR)/*
-	$(STRIP) $(DISTTHEMEDIR)/*
+	$(foreach F, $(wildcard $(DISTBINDIR)/*), $(STRIP) $(F) > /dev/null 2>&1;)
+	$(foreach F, $(wildcard $(DISTLIBDIR)/*), $(STRIP) $(F) > /dev/null 2>&1;)
+	$(foreach F, $(wildcard $(DISTTHEMEDIR)/*), $(STRIP) $(F) > /dev/null 2>&1;)
 
 pspdev:
 	mount /mnt/sda1
