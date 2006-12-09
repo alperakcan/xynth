@@ -38,10 +38,6 @@ extern "C" {
 		m_++;\
 	}
 
-#define memcpyloop3()\
-	while (n--) {\
-		*d++ = *s++;\
-	}
 
 #define memcpyloop4()\
 	while (n--) {\
@@ -379,6 +375,40 @@ static inline void s_memcpy4orgba (unsigned char *m, int id, char *dest, unsigne
 	memcpyloop10();
 }
 
+#if 1
+#define s_memcpy1(dst, src, n) s_memcpy(dst, src, n)
+#define s_memcpy2(dst, src, n) s_memcpy(dst, src, n * sizeof(unsigned short))
+#define s_memcpy4(dst, src, n) s_memcpy(dst, src, n * sizeof(unsigned int))
+static inline void s_memcpy (void *dst, void *src, unsigned int n)
+{
+	unsigned int l;
+	l = n / sizeof(unsigned int);
+	while (l--) {
+		*(unsigned int *) dst = *(unsigned int *) src;
+		dst += sizeof(unsigned int);
+		src += sizeof(unsigned int);
+	}
+	l = n % sizeof(unsigned int);
+	switch (l) {
+		case 1:
+			*(unsigned char *) dst = *(unsigned char *) src;
+			break;
+		case 2:
+			*(unsigned short *) dst = *(unsigned short *) src;
+			break;
+		case 3:
+			*(unsigned short *) dst = *(unsigned short *) src;
+			dst += sizeof(unsigned short);
+			src += sizeof(unsigned short);
+		        *(unsigned char *) dst = *(unsigned char *) src;
+			break;
+	}
+}
+#else
+#define memcpyloop3()\
+	while (n--) {\
+		*d++ = *s++;\
+	}
 static inline void s_memcpy1 (char *dest, char *src, int n)
 {
 	unsigned char *d = (unsigned char *) dest;
@@ -399,6 +429,7 @@ static inline void s_memcpy4 (char *dest, char *src, int n)
 	unsigned int *s = (unsigned int *) src;
 	memcpyloop3();
 }
+#endif
 
 static inline void s_memcpy1m (char *dest, char *src, unsigned char *mask, int n)
 {
