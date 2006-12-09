@@ -426,13 +426,18 @@ int w_object_move_silent (w_object_t *object, int x, int y, int w, int h)
 		object->surface->vbuf = NULL;
 		object->surface->width = object->surface->buf->w;
 		object->surface->height = object->surface->buf->h;
-#if defined(WIDGET_OPTIMIZE_MEMORY) && WIDGET_OPTIMIZE_MEMORY >= 2
+#if defined(WIDGET_OPTIMIZE_MEMORY) && WIDGET_OPTIMIZE_MEMORY == 3
 #else
-		object->surface->matrix = (unsigned char *) s_malloc(sizeof(char) * object->surface->width * object->surface->height + 10);
-		object->surface->vbuf = (char *) s_calloc(1, object->surface->width * object->surface->height * object->surface->bytesperpixel + 1);
-		memset(object->surface->matrix, 0xff, sizeof(char) * object->surface->width * object->surface->height);
-		if (object->draw != NULL) {
-			object->draw(object);
+#if defined(WIDGET_OPTIMIZE_MEMORY) && WIDGET_OPTIMIZE_MEMORY == 2
+		if (object->showed)
+#endif
+		{
+			object->surface->matrix = (unsigned char *) s_malloc(sizeof(char) * object->surface->width * object->surface->height);
+			object->surface->vbuf = (char *) s_calloc(1, object->surface->width * object->surface->height * object->surface->bytesperpixel);
+			memset(object->surface->matrix, 0xff, sizeof(char) * object->surface->width * object->surface->height);
+			if (object->draw != NULL) {
+				object->draw(object);
+			}
 		}
 #endif
 	}
