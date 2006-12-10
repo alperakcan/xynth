@@ -204,7 +204,7 @@ typedef struct s_server_s {
 	int rotate;
 	int origin_w;
 	int origin_h;
-	char *origin_vbuf;
+	unsigned char *origin_vbuf;
 	int rotate_shm_id;
 } s_server_t;
 

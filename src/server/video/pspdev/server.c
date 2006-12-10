@@ -145,8 +145,8 @@ int s_video_pspdev_server_init (s_server_conf_t *cfg)
 #endif
 	server->window->surface->linear_mem_base = (unsigned int) addr;
 	server->window->surface->linear_mem_size = (unsigned int) (sizeof(char) * server->window->surface->width * server->window->surface->height * server->window->surface->bytesperpixel);
-	server->window->surface->vbuf = (char *) addr;
-	server->window->surface->linear_buf = (char *) addr;
+	server->window->surface->vbuf = (unsigned char *) addr;
+	server->window->surface->linear_buf = (unsigned char *) addr;
 
 	priv->event_tid = s_thread_create(&s_video_pspdev_event_parse, (void *) NULL);
 
