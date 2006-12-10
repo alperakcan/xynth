@@ -33,9 +33,9 @@ int s_surface_init (s_window_t *window)
 
 void s_surface_create (s_window_t *window)
 {
-	window->surface->vbuf = (char *) s_calloc(sizeof(char), window->surface->width *
-	                                                        window->surface->height *
-	                                                        window->surface->bytesperpixel + 1);
+	window->surface->vbuf = (unsigned char *) s_calloc(sizeof(char), window->surface->width *
+	                                                                 window->surface->height *
+	                                                                 window->surface->bytesperpixel + 1);
 	window->surface->mode = SURFACE_VIRTUAL;
         if (window->surface->need_expose & SURFACE_NEEDSTREAM) {
 		return;
@@ -108,7 +108,7 @@ void s_surface_linear (s_window_t *window)
 		close(fd);
 	}
 #endif
-	window->surface->linear_buf = (char *) addr;
+	window->surface->linear_buf = (unsigned char *) addr;
 }
 
 void s_surface_uninit (s_window_t *window)
