@@ -525,13 +525,13 @@ typedef struct s_surface_s {
 	/** surface virtual buffer height */
 	int height;
 	/** surface's virtual buffer */
-        char *vbuf;
+        unsigned char *vbuf;
 	/** virtual buffers' seen part on screen */
 	s_rect_t *buf;
 	/** window coordinated that hold surface on screen (if any) */
 	s_rect_t *win;
 	/** memory mapped shared buffer, this is the readl video buffer (usually) */
-	char *linear_buf;
+	unsigned char *linear_buf;
 	/** video buffer width */
 	int linear_buf_width;
 	/** video buffer pitch */
@@ -773,18 +773,18 @@ void bpp_vline (s_surface_t *surface, int x, int y1, int y2, int c);
 void bpp_vline_o (s_surface_t *surface, int id,  int x, int y1, int y2, int c);
 void bpp_fillbox (s_surface_t *surface, int x, int y, int w, int h, int c);
 void bpp_fillbox_o (s_surface_t *surface, int id,  int x, int y, int w, int h, int c);
-void bpp_putbox (s_surface_t *surface, int x, int y, int w, int h, char *sp, int bw);
-void bpp_putbox_mask (s_surface_t *surface, int x, int y, int w, int h, char *sp, unsigned char *sm, int bw);
-void bpp_putbox_alpha (s_surface_t *surface, int x, int y, int w, int h, char *sp, unsigned char *sm, int bw);
+void bpp_putbox (s_surface_t *surface, int x, int y, int w, int h, void *sp, int bw);
+void bpp_putbox_mask (s_surface_t *surface, int x, int y, int w, int h, void *sp, unsigned char *sm, int bw);
+void bpp_putbox_alpha (s_surface_t *surface, int x, int y, int w, int h, void *sp, unsigned char *sm, int bw);
 void bpp_putbox_rgb (s_surface_t *surface, int x, int y, int w, int h, unsigned int *rgb, int bw);
 void bpp_putbox_rgba (s_surface_t *surface, int x, int y, int w, int h, unsigned int *rgba, int bw);
-void bpp_getbox (s_surface_t *surface, int x, int y, int w, int h, char *dp);
-void bpp_putbox_o (s_surface_t *surface, int id,  int x, int y, int w, int h, char *sp, int bw);
-void bpp_putbox_mask_o (s_surface_t *surface, int id,  int x, int y, int w, int h, char *sp, unsigned char *sm, int bw);
-void bpp_putbox_alpha_o (s_surface_t *surface, int id,  int x, int y, int w, int h, char *sp, unsigned char *sm, int bw);
+void bpp_getbox (s_surface_t *surface, int x, int y, int w, int h, void *dp);
+void bpp_putbox_o (s_surface_t *surface, int id,  int x, int y, int w, int h, void *sp, int bw);
+void bpp_putbox_mask_o (s_surface_t *surface, int id,  int x, int y, int w, int h, void *sp, unsigned char *sm, int bw);
+void bpp_putbox_alpha_o (s_surface_t *surface, int id,  int x, int y, int w, int h, void *sp, unsigned char *sm, int bw);
 void bpp_putbox_rgb_o (s_surface_t *surface, int id,  int x, int y, int w, int h, unsigned int *rgb, int bw);
 void bpp_putbox_rgba_o (s_surface_t *surface, int id,  int x, int y, int w, int h, unsigned int *rgba, int bw);
-void bpp_getbox_o (s_surface_t *surface, int id,  int x, int y, int w, int h, char *dp);
+void bpp_getbox_o (s_surface_t *surface, int id,  int x, int y, int w, int h, void *dp);
 
 /* event.c */
 int s_event_mouse_handler_state (s_window_t *window, s_event_t *event, s_handler_mouse_t *mouse, int over);
@@ -978,7 +978,7 @@ void s_fillbox (s_surface_t *surface, int x, int y, int w, int h, int c);
   * @param *sp      - source pixmap
   * @returns no return
   */
-void s_putbox (s_surface_t *surface, int x, int y, int w, int h, char *sp);
+void s_putbox (s_surface_t *surface, int x, int y, int w, int h, void *sp);
 
 /** @brief copy the contents of a memory buffer sp to a rectangular bitmap at position (x, y) with
   *        size (w, h) on to the surface. pixmaps are in row-major order. the source pixmap memory
@@ -1049,7 +1049,7 @@ void s_putboxrgb (s_surface_t *surface, int x, int y, int w, int h, unsigned int
   * @param *dp      - destination pixmap
   * @returns no return
   */
-void s_getbox (s_surface_t *surface, int x, int y, int w, int h, char *dp);
+void s_getbox (s_surface_t *surface, int x, int y, int w, int h, void *dp);
 
 /** @brief copy the contents of a memory buffer sp to a rectangular bitmap at position (x, y) with
   *        size (w, h) on to the surface. however, only a part of size (w, h) starting at offset
@@ -1068,7 +1068,7 @@ void s_getbox (s_surface_t *surface, int x, int y, int w, int h, char *dp);
   * @param yo       - y offset
   * @returns no return
   */
-void s_putboxpart (s_surface_t *surface, int x, int y, int w, int h, int bw, int bh, char *sp, int xo, int yo);
+void s_putboxpart (s_surface_t *surface, int x, int y, int w, int h, int bw, int bh, void *sp, int xo, int yo);
 
 /** @brief copy the contents of a memory buffer sp to a rectangular bitmap at position (x, y) with
   *        size (w, h) on to the surface. however, only a part of size (bw, bh) starting at offset
@@ -1146,7 +1146,7 @@ void s_putboxpartrgba (s_surface_t *surface, int x, int y, int w, int h, int bw,
   * @param yo       - y offset
   * @returns no return
   */
-void s_putboxpartalpha (s_surface_t *surface, int x, int y, int w, int h, int bw, int bh, char *sp, unsigned char *sm, int xo, int yo);
+void s_putboxpartalpha (s_surface_t *surface, int x, int y, int w, int h, int bw, int bh, void *sp, unsigned char *sm, int xo, int yo);
 
 /** @brief copy the rectangular area at (x1, y1) of size (w, h), to (x2, y2) (surface copy).
   *
@@ -1172,7 +1172,7 @@ void s_copybox (s_surface_t *surface, int x1, int y1, int w, int h, int x2, int 
   * @param vbuf   - virtual buffer
   * @return no return
   */
-void s_getsurfacevirtual (s_surface_t *s, int w, int h, int bitspp, char *vbuf);
+void s_getsurfacevirtual (s_surface_t *s, int w, int h, int bitspp, void *vbuf);
 
 /** @brief copies and converts the source buffer (sb) which is sbitspp bitsperpixel, to destination
   *        buffer (db) which is dbitspp bitsperpixel. db will be alocated internally.
@@ -1233,7 +1233,7 @@ void s_scalebox (s_surface_t *surface, int w1, int h1, void *_dp1, int w2, int h
   * @param yo  - y offset
   * @returns no return
   */
-int s_putmaskpart (char *dp, int dw, int dh, int x, int y, int w, int h, int bw, int bh, char *sp, int xo, int yo);
+int s_putmaskpart (unsigned char *dp, int dw, int dh, int x, int y, int w, int h, int bw, int bh, unsigned char *sp, int xo, int yo);
 
 /*@}*/
 
