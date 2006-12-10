@@ -54,7 +54,7 @@ int s_socket_request_display (s_window_t *window, int soc)
 	window->surface->greenlength = data->greenlength;
 	window->surface->redlength = data->redlength;
 
-	window->surface->linear_buf = (char *) data->linear_buf;
+	window->surface->linear_buf = (unsigned char *) data->linear_buf;
 	window->surface->matrix = (unsigned char *) data->matrix;
 
 	window->surface->linear_mem_size = data->linear_mem_size;
