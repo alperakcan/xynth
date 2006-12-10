@@ -33,7 +33,7 @@
 
 void bpp_setpixel (s_surface_t *surface, int x, int y, int c)
 {
-	char *b = surface->vbuf + OFFSE1 * surface->bytesperpixel;
+	unsigned char *b = surface->vbuf + OFFSE1 * surface->bytesperpixel;
 	switch (surface->bytesperpixel) {
 		case 1:	*(unsigned char *) b = (unsigned int) c;	break;
 		case 2:	*(unsigned short int *) b = (unsigned int) c;	break;
@@ -43,7 +43,7 @@ void bpp_setpixel (s_surface_t *surface, int x, int y, int c)
 
 void bpp_setpixel_o (s_surface_t *surface, int id, int x, int y, int c)
 {
-	char *b = surface->linear_buf + OFFSE4P * surface->bytesperpixel;
+	unsigned char *b = surface->linear_buf + OFFSE4P * surface->bytesperpixel;
 	prepare(OFFSE4);
 	if (*m != id) {
 		return;
@@ -57,18 +57,18 @@ void bpp_setpixel_o (s_surface_t *surface, int id, int x, int y, int c)
 
 int bpp_getpixel (s_surface_t *surface, int x, int y)
 {
-	char *b = surface->vbuf + OFFSE1 * surface->bytesperpixel;
+	unsigned char *b = surface->vbuf + OFFSE1 * surface->bytesperpixel;
 	switch (surface->bytesperpixel) {
-		case 1:		return *(unsigned char *) b;
-		case 2:		return *(unsigned short int *) b;
-		case 4:		return *(unsigned int *) b;
-		default:	return -1;
+		case 1:  return *(unsigned char *) b;
+		case 2:  return *(unsigned short int *) b;
+		case 4:  return *(unsigned int *) b;
+		default: return -1;
 	}
 }
 
 int bpp_getpixel_o (s_surface_t *surface, int id,  int x, int y)
 {
-	char *b = surface->linear_buf + OFFSE4P * surface->bytesperpixel;
+	unsigned char *b = surface->linear_buf + OFFSE4P * surface->bytesperpixel;
 	prepare(OFFSE4);
 	if (*m != id) {
 		return -1;
@@ -83,7 +83,7 @@ int bpp_getpixel_o (s_surface_t *surface, int id,  int x, int y)
 
 void bpp_hline (s_surface_t *surface, int x1, int y, int x2, int c)
 {
-	char *d = surface->vbuf + OFFSE3 * surface->bytesperpixel;
+	unsigned char *d = surface->vbuf + OFFSE3 * surface->bytesperpixel;
 	switch (surface->bytesperpixel) {
 		case 1:	s_memset1(d, c, x2 - x1 + 1);	break;
 		case 2:	s_memset2(d, c, x2 - x1 + 1);	break;
@@ -93,7 +93,7 @@ void bpp_hline (s_surface_t *surface, int x1, int y, int x2, int c)
 
 void bpp_hline_o (s_surface_t *surface, int id,  int x1, int y, int x2, int c)
 {
-	char *d = surface->linear_buf + OFFSE6P * surface->bytesperpixel;
+	unsigned char *d = surface->linear_buf + OFFSE6P * surface->bytesperpixel;
 	prepare(OFFSE6);
 	switch (surface->bytesperpixel) {
 		case 1:	s_memset1o(m, id, d, c, x2 - x1 + 1);	break;
@@ -109,9 +109,9 @@ void bpp_hline_o (s_surface_t *surface, int id,  int x1, int y, int x2, int c)
 	}
 void bpp_vline (s_surface_t *surface, int x, int y1, int y2, int c)
 {
-	int i = (y2 > y1) ? (y2 - y1 + 1) : (y1 - y2 + 1);
-	int d_ = surface->width * surface->bytesperpixel;
-	char *d = surface->vbuf + OFFSE2 * surface->bytesperpixel;
+	unsigned int i = (y2 > y1) ? (y2 - y1 + 1) : (y1 - y2 + 1);
+	unsigned int d_ = surface->width * surface->bytesperpixel;
+	unsigned char *d = surface->vbuf + OFFSE2 * surface->bytesperpixel;
 	switch (surface->bytesperpixel) {
 		case 1:	driverloop1(s_memset1);		break;
 		case 2:	driverloop1(s_memset2);		break;
@@ -127,9 +127,9 @@ void bpp_vline (s_surface_t *surface, int x, int y1, int y2, int c)
 	}
 void bpp_vline_o (s_surface_t *surface, int id,  int x, int y1, int y2, int c)
 {
-	int i = (y2 > y1) ? (y2 - y1 + 1) : (y1 - y2 + 1);
-	int d_ = surface->linear_buf_pitch * surface->bytesperpixel;
-	char *d = surface->linear_buf + OFFSE5P * surface->bytesperpixel;
+	unsigned int i = (y2 > y1) ? (y2 - y1 + 1) : (y1 - y2 + 1);
+	unsigned int d_ = surface->linear_buf_pitch * surface->bytesperpixel;
+	unsigned char *d = surface->linear_buf + OFFSE5P * surface->bytesperpixel;
 	prepare(OFFSE5);
 	switch (surface->bytesperpixel) {
 		case 1:	driverloop2(s_memset1o);	break;
@@ -145,9 +145,9 @@ void bpp_vline_o (s_surface_t *surface, int id,  int x, int y1, int y2, int c)
 	}
 void bpp_fillbox (s_surface_t *surface, int x, int y, int w, int h, int c)
 {
-        int i = h;
-        int d_ = surface->width * surface->bytesperpixel;
-	char *d = surface->vbuf + OFFSE1 * surface->bytesperpixel;
+        unsigned int i = h;
+        unsigned int d_ = surface->width * surface->bytesperpixel;
+	unsigned char *d = surface->vbuf + OFFSE1 * surface->bytesperpixel;
 	switch (surface->bytesperpixel) {
 		case 1:	driverloop3(s_memset1);		break;
 		case 2:	driverloop3(s_memset2);		break;
@@ -163,9 +163,9 @@ void bpp_fillbox (s_surface_t *surface, int x, int y, int w, int h, int c)
 	}
 void bpp_fillbox_o (s_surface_t *surface, int id,  int x, int y, int w, int h, int c)
 {
-        int i = h;
-        int d_ = surface->linear_buf_pitch * surface->bytesperpixel;
-	char *d = surface->linear_buf + OFFSE4P * surface->bytesperpixel;
+        unsigned int i = h;
+        unsigned int d_ = surface->linear_buf_pitch * surface->bytesperpixel;
+	unsigned char *d = surface->linear_buf + OFFSE4P * surface->bytesperpixel;
         prepare(OFFSE4);
 	switch (surface->bytesperpixel) {
 		case 1:	driverloop4(s_memset1o);	break;
@@ -180,13 +180,13 @@ void bpp_fillbox_o (s_surface_t *surface, int id,  int x, int y, int w, int h, i
 		s += s_;\
 		d += d_;\
 	}
-void bpp_putbox (s_surface_t *surface, int x, int y, int w, int h, char *sp, int bw)
+void bpp_putbox (s_surface_t *surface, int x, int y, int w, int h, void *sp, int bw)
 {
-	int i = h;
-	int s_ = bw * surface->bytesperpixel;
-	int d_ = surface->width * surface->bytesperpixel;
-	char *d = surface->vbuf + OFFSE1 * surface->bytesperpixel;
-	char *s = sp;
+	unsigned int i = h;
+	unsigned int s_ = bw * surface->bytesperpixel;
+	unsigned int d_ = surface->width * surface->bytesperpixel;
+	unsigned char *d = surface->vbuf + OFFSE1 * surface->bytesperpixel;
+	unsigned char *s = sp;
 	switch (surface->bytesperpixel) {
 		case 1:	driverloop5(s_memcpy1);		break;
 		case 2:	driverloop5(s_memcpy2);		break;
@@ -201,14 +201,14 @@ void bpp_putbox (s_surface_t *surface, int x, int y, int w, int h, char *sp, int
 		d += d_;\
 		m += m_;\
 	}
-void bpp_putbox_mask (s_surface_t *surface, int x, int y, int w, int h, char *sp, unsigned char *sm, int bw)
+void bpp_putbox_mask (s_surface_t *surface, int x, int y, int w, int h, void *sp, unsigned char *sm, int bw)
 {
-	int i = h;
-	int m_ = bw;
-	int s_ = bw * surface->bytesperpixel;
-	int d_ = surface->width * surface->bytesperpixel;
-	char *d = surface->vbuf + OFFSE1 * surface->bytesperpixel;
-	char *s = sp;
+	unsigned int i = h;
+	unsigned int m_ = bw;
+	unsigned int s_ = bw * surface->bytesperpixel;
+	unsigned int d_ = surface->width * surface->bytesperpixel;
+	unsigned char *d = surface->vbuf + OFFSE1 * surface->bytesperpixel;
+	unsigned char *s = sp;
 	unsigned char *m = sm;
 	switch (surface->bytesperpixel) {
 		case 1:	driverloop5m(s_memcpy1m);	break;
@@ -224,14 +224,14 @@ void bpp_putbox_mask (s_surface_t *surface, int x, int y, int w, int h, char *sp
 		d += d_;\
 		m += m_;\
 	}
-void bpp_putbox_alpha (s_surface_t *surface, int x, int y, int w, int h, char *sp, unsigned char *sm, int bw)
+void bpp_putbox_alpha (s_surface_t *surface, int x, int y, int w, int h, void *sp, unsigned char *sm, int bw)
 {
-	int i = h;
-	int m_ = bw;
-	int s_ = bw * surface->bytesperpixel;
-	int d_ = surface->width * surface->bytesperpixel;
-	char *d = surface->vbuf + OFFSE1 * surface->bytesperpixel;
-	char *s = sp;
+	unsigned int i = h;
+	unsigned int m_ = bw;
+	unsigned int s_ = bw * surface->bytesperpixel;
+	unsigned int d_ = surface->width * surface->bytesperpixel;
+	unsigned char *d = surface->vbuf + OFFSE1 * surface->bytesperpixel;
+	unsigned char *s = sp;
 	unsigned char *m = sm;
 	int rl = surface->redlength;
 	int gl = surface->greenlength;
@@ -254,10 +254,10 @@ void bpp_putbox_alpha (s_surface_t *surface, int x, int y, int w, int h, char *s
 	}
 void bpp_putbox_rgb (s_surface_t *surface, int x, int y, int w, int h, unsigned int *rgb, int bw)
 {
-	int i = h;
-	int s_ = bw;
-	int d_ = surface->width * surface->bytesperpixel;
-	char *d = surface->vbuf + OFFSE1 * surface->bytesperpixel;
+	unsigned int i = h;
+	unsigned int s_ = bw;
+	unsigned int d_ = surface->width * surface->bytesperpixel;
+	unsigned char *d = surface->vbuf + OFFSE1 * surface->bytesperpixel;
 	unsigned int *s = rgb;
 	int rl = surface->redlength;
 	int gl = surface->greenlength;
@@ -280,10 +280,10 @@ void bpp_putbox_rgb (s_surface_t *surface, int x, int y, int w, int h, unsigned 
 	}
 void bpp_putbox_rgba (s_surface_t *surface, int x, int y, int w, int h, unsigned int *rgba, int bw)
 {
-	int i = h;
-	int s_ = bw;
-	int d_ = surface->width * surface->bytesperpixel;
-	char *d = surface->vbuf + OFFSE1 * surface->bytesperpixel;
+	unsigned int i = h;
+	unsigned int s_ = bw;
+	unsigned int d_ = surface->width * surface->bytesperpixel;
+	unsigned char *d = surface->vbuf + OFFSE1 * surface->bytesperpixel;
 	unsigned int *s = rgba;
 	int rl = surface->redlength;
 	int gl = surface->greenlength;
@@ -298,20 +298,18 @@ void bpp_putbox_rgba (s_surface_t *surface, int x, int y, int w, int h, unsigned
 	}
 }
 
-void bpp_getbox (s_surface_t *surface, int x, int y, int w, int h, char *dp)
+void bpp_getbox (s_surface_t *surface, int x, int y, int w, int h, void *dp)
 {
-	int i = h;
-	int s_ = surface->width * surface->bytesperpixel;
-	int d_ = w * surface->bytesperpixel;
-	char *s = surface->vbuf + OFFSE1 * surface->bytesperpixel;
-	char *d = dp;
+	unsigned int i = h;
+	unsigned int s_ = surface->width * surface->bytesperpixel;
+	unsigned int d_ = w * surface->bytesperpixel;
+	unsigned char *s = surface->vbuf + OFFSE1 * surface->bytesperpixel;
+	unsigned char *d = dp;
         switch (surface->bytesperpixel) {
 		case 1:	driverloop5(s_memcpy1);		break;
 		case 2:	driverloop5(s_memcpy2);		break;
 		case 4:	driverloop5(s_memcpy4);		break;
 	}
-
-	dp = d;
 }
 
 #define driverloop6(func)\
@@ -321,13 +319,13 @@ void bpp_getbox (s_surface_t *surface, int x, int y, int w, int h, char *dp)
 		d += d_;\
 		m += m_;\
 	}
-void bpp_putbox_o (s_surface_t *surface, int id,  int x, int y, int w, int h, char *sp, int bw)
+void bpp_putbox_o (s_surface_t *surface, int id,  int x, int y, int w, int h, void *sp, int bw)
 {
-	int i = h;
-	int s_ = bw * surface->bytesperpixel;
-	int d_ = surface->linear_buf_pitch * surface->bytesperpixel;
-	char *s = sp;
-	char *d = surface->linear_buf + OFFSE4P * surface->bytesperpixel;
+	unsigned int i = h;
+	unsigned int s_ = bw * surface->bytesperpixel;
+	unsigned int d_ = surface->linear_buf_pitch * surface->bytesperpixel;
+	unsigned char *s = sp;
+	unsigned char *d = surface->linear_buf + OFFSE4P * surface->bytesperpixel;
 	prepare(OFFSE4);
 	switch (surface->bytesperpixel) {
 		case 1:	driverloop6(s_memcpy1o);	break;
@@ -344,15 +342,15 @@ void bpp_putbox_o (s_surface_t *surface, int id,  int x, int y, int w, int h, ch
 		m += m_;\
 		msk += msk_;\
 	}
-void bpp_putbox_mask_o (s_surface_t *surface, int id,  int x, int y, int w, int h, char *sp, unsigned char *sm, int bw)
+void bpp_putbox_mask_o (s_surface_t *surface, int id,  int x, int y, int w, int h, void *sp, unsigned char *sm, int bw)
 {
-	int i = h;
-        int msk_ = bw;
-	int s_ = bw * surface->bytesperpixel;
-	int d_ = surface->linear_buf_pitch * surface->bytesperpixel;
+	unsigned int i = h;
+        unsigned int msk_ = bw;
+	unsigned int s_ = bw * surface->bytesperpixel;
+	unsigned int d_ = surface->linear_buf_pitch * surface->bytesperpixel;
         unsigned char *msk = sm;
-	char *s = sp;
-	char *d = surface->linear_buf + OFFSE4P * surface->bytesperpixel;
+	unsigned char *s = sp;
+	unsigned char *d = surface->linear_buf + OFFSE4P * surface->bytesperpixel;
 	prepare(OFFSE4);
 	switch (surface->bytesperpixel) {
 		case 1:	driverloop6m(s_memcpy1om);	break;
@@ -369,15 +367,15 @@ void bpp_putbox_mask_o (s_surface_t *surface, int id,  int x, int y, int w, int 
 		m += m_;\
 		msk += msk_;\
 	}
-void bpp_putbox_alpha_o (s_surface_t *surface, int id,  int x, int y, int w, int h, char *sp, unsigned char *sm, int bw)
+void bpp_putbox_alpha_o (s_surface_t *surface, int id,  int x, int y, int w, int h, void *sp, unsigned char *sm, int bw)
 {
-	int i = h;
-        int msk_ = bw;
-	int s_ = bw * surface->bytesperpixel;
-	int d_ = surface->linear_buf_pitch * surface->bytesperpixel;
+	unsigned int i = h;
+        unsigned int msk_ = bw;
+	unsigned int s_ = bw * surface->bytesperpixel;
+	unsigned int d_ = surface->linear_buf_pitch * surface->bytesperpixel;
         unsigned char *msk = sm;
-	char *s = sp;
-	char *d = surface->linear_buf + OFFSE4P * surface->bytesperpixel;
+	unsigned char *s = sp;
+	unsigned char *d = surface->linear_buf + OFFSE4P * surface->bytesperpixel;
 	int rl = surface->redlength;
 	int gl = surface->greenlength;
 	int bl = surface->bluelength;
@@ -401,11 +399,11 @@ void bpp_putbox_alpha_o (s_surface_t *surface, int id,  int x, int y, int w, int
 	}
 void bpp_putbox_rgb_o (s_surface_t *surface, int id,  int x, int y, int w, int h, unsigned int *rgb, int bw)
 {
-	int i = h;
-	int s_ = bw * surface->bytesperpixel;
-	int d_ = surface->linear_buf_pitch * surface->bytesperpixel;
+	unsigned int i = h;
+	unsigned int s_ = bw * surface->bytesperpixel;
+	unsigned int d_ = surface->linear_buf_pitch * surface->bytesperpixel;
 	unsigned int *s = rgb;
-	char *d = surface->linear_buf + OFFSE4P * surface->bytesperpixel;
+	unsigned char *d = surface->linear_buf + OFFSE4P * surface->bytesperpixel;
 	int rl = surface->redlength;
 	int gl = surface->greenlength;
 	int bl = surface->bluelength;
@@ -429,11 +427,11 @@ void bpp_putbox_rgb_o (s_surface_t *surface, int id,  int x, int y, int w, int h
 	}
 void bpp_putbox_rgba_o (s_surface_t *surface, int id,  int x, int y, int w, int h, unsigned int *rgba, int bw)
 {
-	int i = h;
-	int s_ = bw * surface->bytesperpixel;
-	int d_ = surface->linear_buf_pitch * surface->bytesperpixel;
+	unsigned int i = h;
+	unsigned int s_ = bw * surface->bytesperpixel;
+	unsigned int d_ = surface->linear_buf_pitch * surface->bytesperpixel;
 	unsigned int *s = rgba;
-	char *d = surface->linear_buf + OFFSE4P * surface->bytesperpixel;
+	unsigned char *d = surface->linear_buf + OFFSE4P * surface->bytesperpixel;
 	int rl = surface->redlength;
 	int gl = surface->greenlength;
 	int bl = surface->bluelength;
@@ -448,13 +446,13 @@ void bpp_putbox_rgba_o (s_surface_t *surface, int id,  int x, int y, int w, int 
 	}
 }
 
-void bpp_getbox_o (s_surface_t *surface, int id,  int x, int y, int w, int h, char *dp)
+void bpp_getbox_o (s_surface_t *surface, int id,  int x, int y, int w, int h, void *dp)
 {
-	int i = h;
-	int s_ = surface->linear_buf_pitch * surface->bytesperpixel;
-	int d_ = w * surface->bytesperpixel;
-	char *s = surface->linear_buf + OFFSE4P * surface->bytesperpixel;
-	char *d = dp;
+	unsigned int i = h;
+	unsigned int s_ = surface->linear_buf_pitch * surface->bytesperpixel;
+	unsigned int d_ = w * surface->bytesperpixel;
+	unsigned char *s = surface->linear_buf + OFFSE4P * surface->bytesperpixel;
+	unsigned char *d = dp;
 	prepare(OFFSE4);
 	switch (surface->bytesperpixel) {
 		case 1:	driverloop6(s_memcpy1o);	break;

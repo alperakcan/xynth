@@ -256,7 +256,7 @@ void s_fillbox (s_surface_t *surface, int x, int y, int w, int h, int c)
 	}
 }
 
-void s_putbox (s_surface_t *surface, int x, int y, int w, int h, char *sp)
+void s_putbox (s_surface_t *surface, int x, int y, int w, int h, void *sp)
 {
 	s_putboxpart(surface, x, y, w, h, w, h, sp, 0, 0);
 }
@@ -281,13 +281,13 @@ void s_putboxrgba (s_surface_t *surface, int x, int y, int w, int h, unsigned in
 	s_putboxpartrgba(surface, x, y, w, h, w, h, rgba, 0, 0);
 }
 
-void s_getbox (s_surface_t *surface, int x, int y, int w, int h, char *dp)
+void s_getbox (s_surface_t *surface, int x, int y, int w, int h, void *dp)
 {
 	clipv(x, y, w, h);
 	bpp_getbox(surface, coor.x, coor.y, coor.w, coor.h, dp + (y0 * w + x0) * surface->bytesperpixel);
 }
 
-void s_putboxpart (s_surface_t *surface, int x, int y, int w, int h, int bw, int bh, char *sp, int xo, int yo)
+void s_putboxpart (s_surface_t *surface, int x, int y, int w, int h, int bw, int bh, void *sp, int xo, int yo)
 {
 	clipb();
 	if (surface->mode & SURFACE_VIRTUAL) {
@@ -317,7 +317,7 @@ void s_putboxpartmask (s_surface_t *surface, int x, int y, int w, int h, int bw,
 	}
 }
 
-void s_putboxpartalpha (s_surface_t *surface, int x, int y, int w, int h, int bw, int bh, char *sp, unsigned char *sm, int xo, int yo)
+void s_putboxpartalpha (s_surface_t *surface, int x, int y, int w, int h, int bw, int bh, void *sp, unsigned char *sm, int xo, int yo)
 {
 	clipb();
 	if (surface->mode & SURFACE_VIRTUAL) {
@@ -371,7 +371,7 @@ void s_copybox (s_surface_t *surface, int x1, int y1, int w, int h, int x2, int 
 	s_free(p);
 }
 
-void s_getsurfacevirtual (s_surface_t *s, int w, int h, int bitspp, char *vbuf)
+void s_getsurfacevirtual (s_surface_t *s, int w, int h, int bitspp, void *vbuf)
 {
         switch (bitspp) {
 		case 8:
@@ -670,7 +670,7 @@ void s_scalebox (s_surface_t *surface, int w1, int h1, void *_dp1, int w2, int h
 	}
 }
 
-int s_putmaskpart (char *dp, int dw, int dh, int x, int y, int w, int h, int bw, int bh, char *sp, int xo, int yo)
+int s_putmaskpart (unsigned char *dp, int dw, int dh, int x, int y, int w, int h, int bw, int bh, unsigned char *sp, int xo, int yo)
 {
 	int x0;
 	int y0;
@@ -713,8 +713,8 @@ int s_putmaskpart (char *dp, int dw, int dh, int x, int y, int w, int h, int bw,
 		int i = coor.h;
 		int s_ = bw;
 		int d_ = dw;
-		char *d = dp + (coor.y * dw + coor.x);
-		char *s = sp + (yo + y0) * bw + xo + x0;
+		unsigned char *d = dp + (coor.y * dw + coor.x);
+		unsigned char *s = sp + (yo + y0) * bw + xo + x0;
 		while (i--) {
 			s_memcpy1(d, s, coor.w);
 			s += s_;
