@@ -586,9 +586,9 @@ static inline void s_memset4o (unsigned char *m, int id, void *dest, int c, int 
 	memsetloop1();
 }
 
-#define s_memset1(dst, c, n) s_memset(dst, c * 0x01010101UL, n * 1)
-#define s_memset2(dst, c, n) s_memset(dst, c * 0x00010001UL, n * 2)
-#define s_memset4(dst, c, n) s_memset(dst, c * 0x00000001UL, n * 4)
+#define s_memset1(dst, c, n) s_memset(dst, (c & 0x000000ff) * 0x01010101UL, n * 1)
+#define s_memset2(dst, c, n) s_memset(dst, (c & 0x0000ffff) * 0x00010001UL, n * 2)
+#define s_memset4(dst, c, n) s_memset(dst, (c & 0xffffffff) * 0x00000001UL, n * 4)
 static inline void s_memset (void *dst, unsigned int c, unsigned int n)
 {
 	unsigned int l;
