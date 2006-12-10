@@ -64,7 +64,7 @@ int main (int argc, char *argv[])
 	s_free(window->surface->vbuf);
 	window->surface->width = w;
 	window->surface->height = h;
-	window->surface->vbuf = (char *) malloc(w * h * window->surface->bytesperpixel);
+	window->surface->vbuf = (unsigned char *) malloc(w * h * window->surface->bytesperpixel);
 
 	s_client_atevent(window, xynthlogout_atevent);
 
