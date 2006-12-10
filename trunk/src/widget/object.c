@@ -45,7 +45,7 @@ static void w_object_show_ (w_object_t *object)
 	    object->surface->width > 0 &&
 	    object->surface->height > 0) {
 		object->surface->matrix = (unsigned char *) s_malloc(sizeof(char) * object->surface->width * object->surface->height + 10);
-		object->surface->vbuf = (char *) s_calloc(1, object->surface->width * object->surface->height * object->surface->bytesperpixel + 1);
+		object->surface->vbuf = (unsigned char *) s_calloc(1, object->surface->width * object->surface->height * object->surface->bytesperpixel + 1);
 		memset(object->surface->matrix, 0xff, sizeof(char) * object->surface->width * object->surface->height);
 		if (object->draw != NULL) {
 			object->draw(object);
@@ -433,7 +433,7 @@ int w_object_move_silent (w_object_t *object, int x, int y, int w, int h)
 #endif
 		{
 			object->surface->matrix = (unsigned char *) s_malloc(sizeof(char) * object->surface->width * object->surface->height);
-			object->surface->vbuf = (char *) s_calloc(1, object->surface->width * object->surface->height * object->surface->bytesperpixel);
+			object->surface->vbuf = (unsigned char *) s_calloc(1, object->surface->width * object->surface->height * object->surface->bytesperpixel);
 			memset(object->surface->matrix, 0xff, sizeof(char) * object->surface->width * object->surface->height);
 			if (object->draw != NULL) {
 				object->draw(object);
