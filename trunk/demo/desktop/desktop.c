@@ -182,7 +182,7 @@ void desktop_start (s_window_t *window, s_config_t *cfg)
 	s_free(window->surface->vbuf);
 	window->surface->width = window->surface->buf->w;
 	window->surface->height = window->surface->buf->h;
-	window->surface->vbuf = (char *) s_malloc(window->surface->width * window->surface->height * window->surface->bytesperpixel);
+	window->surface->vbuf = (unsigned char *) s_malloc(window->surface->width * window->surface->height * window->surface->bytesperpixel);
 
 	dtop_data = (dtop_data_t *) s_calloc(1, sizeof(dtop_data_t));
 	s_list_init(&(dtop_data->progs));

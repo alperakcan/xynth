@@ -190,7 +190,7 @@ void taskbar_start_menu_handler_rh (s_window_t *window, s_event_t *event, s_hand
         tbar_progs = (tbar_progs_t *) tbar_data->tbar_progs;
 
 	srf = (s_surface_t *) s_malloc(sizeof(s_surface_t));
-        srf->vbuf = (char *) s_malloc(window->surface->bytesperpixel * (tbar_smenu->rect.w + tbar_progs->tbar_img->w + 2) * (tbar_smenu->rect.h + 2));
+        srf->vbuf = (unsigned char *) s_malloc(window->surface->bytesperpixel * (tbar_smenu->rect.w + tbar_progs->tbar_img->w + 2) * (tbar_smenu->rect.h + 2));
 	s_getsurfacevirtual(srf, (tbar_smenu->rect.w + tbar_progs->tbar_img->w + 2), (tbar_smenu->rect.h + 2), window->surface->bitsperpixel, srf->vbuf);
 	for (x = 0; x <= tbar_smenu->rect.w + 2; x++) {
 		s_putboxpart(srf, x, 0, tbar_progs->tbar_img->w, tbar_smenu->rect.h + 2, tbar_progs->tbar_img->w, tbar_progs->tbar_img->h, tbar_progs->tbar_img->buf, 0, tbar_smenu->rect.y);
@@ -490,7 +490,7 @@ void taskbar_start (s_window_t *window, s_config_t *cfg)
 	s_free(window->surface->vbuf);
 	window->surface->width = window->surface->buf->w;
 	window->surface->height = window->surface->buf->h;
-	window->surface->vbuf = (char *) s_malloc(window->surface->width * window->surface->height * window->surface->bytesperpixel);
+	window->surface->vbuf = (unsigned char *) s_malloc(window->surface->width * window->surface->height * window->surface->bytesperpixel);
 
         tbar_data = (tbar_data_t *) s_malloc(sizeof(tbar_data_t));
         tbar_data->tbar_clock = (tbar_clock_t *) s_malloc(sizeof(tbar_clock_t));
