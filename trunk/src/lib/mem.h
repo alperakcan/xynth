@@ -181,28 +181,28 @@ extern "C" {
 		m++;\
 	}
 
-static inline void s_memcpy1o (unsigned char *m, int id, char *dest, char *src, int n)
+static inline void s_memcpy1o (unsigned char *m, int id, void *dest, void *src, int n)
 {
 	unsigned char *d = (unsigned char *) dest;
 	unsigned char *s = (unsigned char *) src;
 	memcpyloop1();
 }
 
-static inline void s_memcpy2o (unsigned char *m, int id, char *dest, char *src, int n)
+static inline void s_memcpy2o (unsigned char *m, int id, void *dest, void *src, int n)
 {
 	unsigned short int *d = (unsigned short int *) dest;
 	unsigned short int *s = (unsigned short int *) src;
 	memcpyloop1();
 }
 
-static inline void s_memcpy4o (unsigned char *m, int id, char *dest, char *src, int n)
+static inline void s_memcpy4o (unsigned char *m, int id, void *dest, void *src, int n)
 {
 	unsigned int *d = (unsigned int *) dest;
 	unsigned int *s = (unsigned int *) src;
 	memcpyloop1();
 }
 
-static inline void s_memcpy1om (unsigned char *m, int id, char *dest, char *src, unsigned char *mask, int n)
+static inline void s_memcpy1om (unsigned char *m, int id, void *dest, void *src, unsigned char *mask, int n)
 {
 	unsigned char *d = (unsigned char *) dest;
 	unsigned char *s = (unsigned char *) src;
@@ -210,7 +210,7 @@ static inline void s_memcpy1om (unsigned char *m, int id, char *dest, char *src,
 	memcpyloop2();
 }
 
-static inline void s_memcpy2om (unsigned char *m, int id, char *dest, char *src, unsigned char *mask, int n)
+static inline void s_memcpy2om (unsigned char *m, int id, void *dest, void *src, unsigned char *mask, int n)
 {
 	unsigned short int *d = (unsigned short int *) dest;
 	unsigned short int *s = (unsigned short int *) src;
@@ -218,7 +218,7 @@ static inline void s_memcpy2om (unsigned char *m, int id, char *dest, char *src,
 	memcpyloop2();
 }
 
-static inline void s_memcpy4om (unsigned char *m, int id, char *dest, char *src, unsigned char *mask, int n)
+static inline void s_memcpy4om (unsigned char *m, int id, void *dest, void *src, unsigned char *mask, int n)
 {
 	unsigned int *d = (unsigned int *) dest;
 	unsigned int *s = (unsigned int *) src;
@@ -226,7 +226,7 @@ static inline void s_memcpy4om (unsigned char *m, int id, char *dest, char *src,
 	memcpyloop2();
 }
 
-static inline void s_memcpy1oa (unsigned char *m, int id, char *dest, char *src, unsigned char *mask, int n, int rl, int gl, int bl, int ro, int go, int bo)
+static inline void s_memcpy1oa (unsigned char *m, int id, void *dest, void *src, unsigned char *mask, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
 	unsigned char a;
 	unsigned char sr;
@@ -244,7 +244,7 @@ static inline void s_memcpy1oa (unsigned char *m, int id, char *dest, char *src,
 	memcpyloop6();
 }
 
-static inline void s_memcpy2oa (unsigned char *m, int id, char *dest, char *src, unsigned char *mask, int n, int rl, int gl, int bl, int ro, int go, int bo)
+static inline void s_memcpy2oa (unsigned char *m, int id, void *dest, void *src, unsigned char *mask, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
 	unsigned char a;
 	unsigned char sr;
@@ -262,7 +262,7 @@ static inline void s_memcpy2oa (unsigned char *m, int id, char *dest, char *src,
 	memcpyloop6();
 }
 
-static inline void s_memcpy4oa (unsigned char *m, int id, char *dest, char *src, unsigned char *mask, int n, int rl, int gl, int bl, int ro, int go, int bo)
+static inline void s_memcpy4oa (unsigned char *m, int id, void *dest, void *src, unsigned char *mask, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
 	unsigned char a;
 	unsigned char sr;
@@ -280,7 +280,7 @@ static inline void s_memcpy4oa (unsigned char *m, int id, char *dest, char *src,
 	memcpyloop6();
 }
 
-static inline void s_memcpy1orgb (unsigned char *m, int id, char *dest, unsigned int *rgb, int n, int rl, int gl, int bl, int ro, int go, int bo)
+static inline void s_memcpy1orgb (unsigned char *m, int id, void *dest, unsigned int *rgb, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
 	unsigned char dr;
 	unsigned char dg;
@@ -293,7 +293,7 @@ static inline void s_memcpy1orgb (unsigned char *m, int id, char *dest, unsigned
 	memcpyloop8();
 }
 
-static inline void s_memcpy2orgb (unsigned char *m, int id, char *dest, unsigned int *rgb, int n, int rl, int gl, int bl, int ro, int go, int bo)
+static inline void s_memcpy2orgb (unsigned char *m, int id, void *dest, unsigned int *rgb, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
 	unsigned char dr;
 	unsigned char dg;
@@ -306,7 +306,7 @@ static inline void s_memcpy2orgb (unsigned char *m, int id, char *dest, unsigned
 	memcpyloop8();
 }
 
-static inline void s_memcpy4orgb (unsigned char *m, int id, char *dest, unsigned int *rgb, int n, int rl, int gl, int bl, int ro, int go, int bo)
+static inline void s_memcpy4orgb (unsigned char *m, int id, void *dest, unsigned int *rgb, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
 	unsigned char dr;
 	unsigned char dg;
@@ -319,7 +319,7 @@ static inline void s_memcpy4orgb (unsigned char *m, int id, char *dest, unsigned
 	memcpyloop8();
 }
 
-static inline void s_memcpy1orgba (unsigned char *m, int id, char *dest, unsigned int *rgb, int n, int rl, int gl, int bl, int ro, int go, int bo)
+static inline void s_memcpy1orgba (unsigned char *m, int id, void *dest, unsigned int *rgb, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
 	unsigned char a;
 	unsigned char sr;
@@ -336,7 +336,7 @@ static inline void s_memcpy1orgba (unsigned char *m, int id, char *dest, unsigne
 	memcpyloop10();
 }
 
-static inline void s_memcpy2orgba (unsigned char *m, int id, char *dest, unsigned int *rgb, int n, int rl, int gl, int bl, int ro, int go, int bo)
+static inline void s_memcpy2orgba (unsigned char *m, int id, void *dest, unsigned int *rgb, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
 	unsigned char a;
 	unsigned char sr;
@@ -353,7 +353,7 @@ static inline void s_memcpy2orgba (unsigned char *m, int id, char *dest, unsigne
 	memcpyloop10();
 }
 
-static inline void s_memcpy4orgba (unsigned char *m, int id, char *dest, unsigned int *rgb, int n, int rl, int gl, int bl, int ro, int go, int bo)
+static inline void s_memcpy4orgba (unsigned char *m, int id, void *dest, unsigned int *rgb, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
 	unsigned char a;
 	unsigned char sr;
@@ -370,7 +370,6 @@ static inline void s_memcpy4orgba (unsigned char *m, int id, char *dest, unsigne
 	memcpyloop10();
 }
 
-#if 1
 #define s_memcpy1(dst, src, n) s_memcpy(dst, src, n * 1)
 #define s_memcpy2(dst, src, n) s_memcpy(dst, src, n * 2)
 #define s_memcpy4(dst, src, n) s_memcpy(dst, src, n * 4)
@@ -397,34 +396,8 @@ static inline void s_memcpy (void *dst, void *src, unsigned int n)
 			break;
 	}
 }
-#else
-#define memcpyloop3()\
-	while (n--) {\
-		*d++ = *s++;\
-	}
-static inline void s_memcpy1 (char *dest, char *src, int n)
-{
-	unsigned char *d = (unsigned char *) dest;
-	unsigned char *s = (unsigned char *) src;
-	memcpyloop3();
-}
 
-static inline void s_memcpy2 (char *dest, char *src, int n)
-{
-	unsigned short int *d = (unsigned short int *) dest;
-	unsigned short int *s = (unsigned short int *) src;
-	memcpyloop3();
-}
-
-static inline void s_memcpy4 (char *dest, char *src, int n)
-{
-	unsigned int *d = (unsigned int *) dest;
-	unsigned int *s = (unsigned int *) src;
-	memcpyloop3();
-}
-#endif
-
-static inline void s_memcpy1m (char *dest, char *src, unsigned char *mask, int n)
+static inline void s_memcpy1m (void *dest, void *src, unsigned char *mask, int n)
 {
 	unsigned char *m = (unsigned char *) mask;
 	unsigned char *d = (unsigned char *) dest;
@@ -432,7 +405,7 @@ static inline void s_memcpy1m (char *dest, char *src, unsigned char *mask, int n
 	memcpyloop4();
 }
 
-static inline void s_memcpy2m (char *dest, char *src, unsigned char *mask, int n)
+static inline void s_memcpy2m (void *dest, void *src, unsigned char *mask, int n)
 {
 	unsigned char *m = (unsigned char *) mask;
 	unsigned short int *d = (unsigned short int *) dest;
@@ -440,7 +413,7 @@ static inline void s_memcpy2m (char *dest, char *src, unsigned char *mask, int n
 	memcpyloop4();
 }
 
-static inline void s_memcpy4m (char *dest, char *src, unsigned char *mask, int n)
+static inline void s_memcpy4m (void *dest, void *src, unsigned char *mask, int n)
 {
 	unsigned char *m = (unsigned char *) mask;
 	unsigned int *d = (unsigned int *) dest;
@@ -448,7 +421,7 @@ static inline void s_memcpy4m (char *dest, char *src, unsigned char *mask, int n
 	memcpyloop4();
 }
 
-static inline void s_memcpy1a (char *dest, char *src, unsigned char *mask, int n, int rl, int gl, int bl, int ro, int go, int bo)
+static inline void s_memcpy1a (void *dest, void *src, unsigned char *mask, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
 	unsigned char sr;
 	unsigned char sg;
@@ -466,7 +439,7 @@ static inline void s_memcpy1a (char *dest, char *src, unsigned char *mask, int n
 	memcpyloop5();
 }
 
-static inline void s_memcpy2a (char *dest, char *src, unsigned char *mask, int n, int rl, int gl, int bl, int ro, int go, int bo)
+static inline void s_memcpy2a (void *dest, void *src, unsigned char *mask, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
 	unsigned char sr;
 	unsigned char sg;
@@ -484,7 +457,7 @@ static inline void s_memcpy2a (char *dest, char *src, unsigned char *mask, int n
 	memcpyloop5();
 }
 
-static inline void s_memcpy4a (char *dest, char *src, unsigned char *mask, int n, int rl, int gl, int bl, int ro, int go, int bo)
+static inline void s_memcpy4a (void *dest, void *src, unsigned char *mask, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
 	unsigned char sr;
 	unsigned char sg;
@@ -502,7 +475,7 @@ static inline void s_memcpy4a (char *dest, char *src, unsigned char *mask, int n
 	memcpyloop5();
 }
 
-static inline void s_memcpy1rgb (char *dest, unsigned int *rgb, int n, int rl, int gl, int bl, int ro, int go, int bo)
+static inline void s_memcpy1rgb (void *dest, unsigned int *rgb, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
 	unsigned char dr;
 	unsigned char dg;
@@ -515,7 +488,7 @@ static inline void s_memcpy1rgb (char *dest, unsigned int *rgb, int n, int rl, i
 	memcpyloop7();
 }
 
-static inline void s_memcpy2rgb (char *dest, unsigned int *rgb, int n, int rl, int gl, int bl, int ro, int go, int bo)
+static inline void s_memcpy2rgb (void *dest, unsigned int *rgb, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
 	unsigned char dr;
 	unsigned char dg;
@@ -528,7 +501,7 @@ static inline void s_memcpy2rgb (char *dest, unsigned int *rgb, int n, int rl, i
 	memcpyloop7();
 }
 
-static inline void s_memcpy4rgb (char *dest, unsigned int *rgb, int n, int rl, int gl, int bl, int ro, int go, int bo)
+static inline void s_memcpy4rgb (void *dest, unsigned int *rgb, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
 	unsigned char dr;
 	unsigned char dg;
@@ -541,7 +514,7 @@ static inline void s_memcpy4rgb (char *dest, unsigned int *rgb, int n, int rl, i
 	memcpyloop7();
 }
 
-static inline void s_memcpy1rgba (char *dest, unsigned int *rgba, int n, int rl, int gl, int bl, int ro, int go, int bo)
+static inline void s_memcpy1rgba (void *dest, unsigned int *rgba, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
 	unsigned char a;
 	unsigned char sr;
@@ -558,7 +531,7 @@ static inline void s_memcpy1rgba (char *dest, unsigned int *rgba, int n, int rl,
 	memcpyloop9();
 }
 
-static inline void s_memcpy2rgba (char *dest, unsigned int *rgba, int n, int rl, int gl, int bl, int ro, int go, int bo)
+static inline void s_memcpy2rgba (void *dest, unsigned int *rgba, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
 	unsigned char a;
 	unsigned char sr;
@@ -575,7 +548,7 @@ static inline void s_memcpy2rgba (char *dest, unsigned int *rgba, int n, int rl,
 	memcpyloop9();
 }
 
-static inline void s_memcpy4rgba (char *dest, unsigned int *rgba, int n, int rl, int gl, int bl, int ro, int go, int bo)
+static inline void s_memcpy4rgba (void *dest, unsigned int *rgba, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
 	unsigned char a;
 	unsigned char sr;
@@ -592,28 +565,27 @@ static inline void s_memcpy4rgba (char *dest, unsigned int *rgba, int n, int rl,
 	memcpyloop9();
 }
 
-static inline void s_memset1o (unsigned char *m, int id, char *dest, int c, int n)
+static inline void s_memset1o (unsigned char *m, int id, void *dest, int c, int n)
 {
 	unsigned char dc = (unsigned char) c;
 	unsigned char *d = (unsigned char *) dest;
 	memsetloop1();
 }
 
-static inline void s_memset2o (unsigned char *m, int id, char *dest, int c, int n)
+static inline void s_memset2o (unsigned char *m, int id, void *dest, int c, int n)
 {
 	unsigned short int dc = (unsigned short int) c;
 	unsigned short int *d = (unsigned short int *) dest;
 	memsetloop1();
 }
 
-static inline void s_memset4o (unsigned char *m, int id, char *dest, int c, int n)
+static inline void s_memset4o (unsigned char *m, int id, void *dest, int c, int n)
 {
 	unsigned int dc = (unsigned int) c;
 	unsigned int *d = (unsigned int *) dest;
 	memsetloop1();
 }
 
-#if 1
 #define s_memset1(dst, c, n) s_memset(dst, c * 0x01010101UL, n * 1)
 #define s_memset2(dst, c, n) s_memset(dst, c * 0x00010001UL, n * 2)
 #define s_memset4(dst, c, n) s_memset(dst, c * 0x00000001UL, n * 4)
@@ -639,33 +611,6 @@ static inline void s_memset (void *dst, unsigned int c, unsigned int n)
 			break;
 	}
 }
-#else
-#define memsetloop3()\
-	while (n--) {\
-		*d++ = dc;\
-	}
-
-static inline void s_memset1 (char *dest, int c, int n)
-{
-	unsigned char dc = (unsigned char) c;
-	unsigned char *d = (unsigned char *) dest;
-	memsetloop3();
-}
-
-static inline void s_memset2 (char *dest, int c, int n)
-{
-	unsigned short int dc = (unsigned short int) c;
-	unsigned short int *d = (unsigned short int *) dest;
-	memsetloop3();
-}
-
-static inline void s_memset4 (char *dest, int c, int n)
-{
-	unsigned int dc = (unsigned int) c;
-	unsigned int *d = (unsigned int *) dest;
-	memsetloop3();
-}
-#endif
 
 #ifdef __cplusplus
 }
