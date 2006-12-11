@@ -1036,7 +1036,6 @@ again:
 		for (j = i; !list_eol(list, j); j++) {
 			jng = (lang_t *) list_get(list, j);
 			if (jng->hash < ing->hash) {
-				printf("(%d) %ld < (%d) %ld\n", j, jng->hash, i, ing->hash);
 				list_remove(list, j);
 				list_add(list, jng, i);
 				goto again;
