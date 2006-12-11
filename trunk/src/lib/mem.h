@@ -38,6 +38,10 @@ extern "C" {
 		m_++;\
 	}
 
+#define memcpyloop3()\
+	while (n--) {\
+		*d++ = *s++;\
+	}
 
 #define memcpyloop4()\
 	while (n--) {\
@@ -179,6 +183,11 @@ extern "C" {
 		}\
 		d++;\
 		m++;\
+	}
+
+#define memsetloop3()\
+	while (n--) {\
+		*d++ = dc;\
 	}
 
 static inline void s_memcpy1o (unsigned char *m, int id, void *dest, void *src, int n)
@@ -370,31 +379,25 @@ static inline void s_memcpy4orgba (unsigned char *m, int id, void *dest, unsigne
 	memcpyloop10();
 }
 
-#define s_memcpy1(dst, src, n) s_memcpy(dst, src, n * 1)
-#define s_memcpy2(dst, src, n) s_memcpy(dst, src, n * 2)
-#define s_memcpy4(dst, src, n) s_memcpy(dst, src, n * 4)
-static inline void s_memcpy (void *dst, void *src, unsigned int n)
+static inline void s_memcpy1 (void *dest, void *src, int n)
 {
-	unsigned int l;
-	l = n / sizeof(unsigned int);
-	while (l--) {
-		*(unsigned int *) dst = *(unsigned int *) src;
-		dst += 4;
-		src += 4;
-	}
-	l = n % sizeof(unsigned int);
-	switch (l) {
-		case 1:
-			*(unsigned char *) dst = *(unsigned char *) src;
-			break;
-		case 2:
-			*(unsigned short *) dst = *(unsigned short *) src;
-			break;
-		case 3:
-		        *(unsigned char *) dst++ = *(unsigned char *) src;
-			*(unsigned short *) dst = *(unsigned short *) src;
-			break;
-	}
+	unsigned char *d = (unsigned char *) dest;
+	unsigned char *s = (unsigned char *) src;
+	memcpyloop3();
+}
+
+static inline void s_memcpy2 (void *dest, void *src, int n)
+{
+	unsigned short int *d = (unsigned short int *) dest;
+	unsigned short int *s = (unsigned short int *) src;
+	memcpyloop3();
+}
+
+static inline void s_memcpy4 (void *dest, void *src, int n)
+{
+	unsigned int *d = (unsigned int *) dest;
+	unsigned int *s = (unsigned int *) src;
+	memcpyloop3();
 }
 
 static inline void s_memcpy1m (void *dest, void *src, unsigned char *mask, int n)
@@ -586,30 +589,25 @@ static inline void s_memset4o (unsigned char *m, int id, void *dest, int c, int 
 	memsetloop1();
 }
 
-#define s_memset1(dst, c, n) s_memset(dst, (c & 0x000000ff) * 0x01010101UL, n * 1)
-#define s_memset2(dst, c, n) s_memset(dst, (c & 0x0000ffff) * 0x00010001UL, n * 2)
-#define s_memset4(dst, c, n) s_memset(dst, (c & 0xffffffff) * 0x00000001UL, n * 4)
-static inline void s_memset (void *dst, unsigned int c, unsigned int n)
+static inline void s_memset1 (void *dest, int c, int n)
 {
-	unsigned int l;
-	l = n / sizeof(unsigned int);
-	while (l--) {
-		*(unsigned int *) dst = (unsigned int) c;
-		dst += 4;
-	}
-	l = n % sizeof(unsigned int);
-	switch (l) {
-		case 1:
-			*(unsigned char *) dst = (unsigned char) c;
-			break;
-		case 2:
-			*(unsigned short *) dst = (unsigned short) c;
-			break;
-		case 3:
-		        *(unsigned char *) dst++ = (unsigned char) c;
-			*(unsigned short *) dst = (unsigned short) c;
-			break;
-	}
+	unsigned char dc = (unsigned char) c;
+	unsigned char *d = (unsigned char *) dest;
+	memsetloop3();
+}
+
+static inline void s_memset2 (void *dest, int c, int n)
+{
+	unsigned short int dc = (unsigned short int) c;
+	unsigned short int *d = (unsigned short int *) dest;
+	memsetloop3();
+}
+
+static inline void s_memset4 (void *dest, int c, int n)
+{
+	unsigned int dc = (unsigned int) c;
+	unsigned int *d = (unsigned int *) dest;
+	memsetloop3();
 }
 
 #ifdef __cplusplus
