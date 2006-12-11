@@ -200,7 +200,7 @@ char * s_gettext (s_window_t *window, const char *str)
 	for (i = i; i < window->gettext->count; i++) {
 		if (h == window->gettext->msgs[i].hash) {
 			fseek(window->gettext->file, window->gettext->msgs[i].id_offset, SEEK_SET);
-			free(window->gettext->buf);
+			s_free(window->gettext->buf);
 			window->gettext->buf = (char *) malloc(sizeof(char) * (window->gettext->msgs[i].id_len + 1));
 			fread(window->gettext->buf, sizeof(char), window->gettext->msgs[i].id_len + 1, window->gettext->file);
 			if (s_gettext_cmp((char *) str, window->gettext->buf) == 0) {
@@ -210,6 +210,9 @@ char * s_gettext (s_window_t *window, const char *str)
 				fread(window->gettext->buf, sizeof(char), window->gettext->msgs[i].str_len + 1, window->gettext->file);
 				str = window->gettext->buf;
 				break;
+			} else {
+				s_free(window->gettext->buf);
+				window->gettext->buf = NULL;
 			}
 		}
 	}
