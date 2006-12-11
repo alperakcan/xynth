@@ -1024,6 +1024,27 @@ static unsigned long int hash_string (const char *str_param)
 	return hval;
 }
 
+static void sort_strings (list_t *list)
+{
+	int i;
+	int j;
+	lang_t *ing;
+	lang_t *jng;
+again:
+	for (i = 0; !list_eol(list, i); i++) {
+		ing = (lang_t *) list_get(list, i);
+		for (j = i; !list_eol(list, j); j++) {
+			jng = (lang_t *) list_get(list, j);
+			if (jng->hash < ing->hash) {
+				printf("(%d) %ld < (%d) %ld\n", j, jng->hash, i, ing->hash);
+				list_remove(list, j);
+				list_add(list, jng, i);
+				goto again;
+			}
+		}
+	}
+}
+
 static void node_generate_language (node_t *node)
 {
 	int i;
@@ -1049,6 +1070,8 @@ static void node_generate_language (node_t *node)
 		if (id && str && id->value && str->value) {
 			lmsg = (lmsg_t *) malloc(sizeof(lmsg_t));
 			lang = (lang_t *) malloc(sizeof(lang_t));
+			memset(lmsg, 0, sizeof(lmsg_t));
+			memset(lang, 0, sizeof(lang_t));
 			node_string_normalize(id->value);
 			node_string_normalize(str->value);
 			lang->hash = hash_string(id->value);
@@ -1079,6 +1102,7 @@ static void node_generate_language (node_t *node)
 		offset += (strlen(lmsg->str) + 1);
 	}
 	fwrite(&lheader, sizeof(lang_header_t), 1, flang);
+	sort_strings(llang);
 	for (i = 0; !list_eol(llang, i); i++) {
 		lang = (lang_t *) list_get(llang, i);
 		fwrite(lang, sizeof(lang_t), 1, flang);
