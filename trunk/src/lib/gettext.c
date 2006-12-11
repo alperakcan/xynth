@@ -109,6 +109,7 @@ static void w_changelocale (s_window_t *window)
 		fread(&lheader, sizeof(s_gettext_header_t), 1, window->gettext->file);
 		window->gettext->count = lheader.count;
 		s_free(window->gettext->msgs);
+		s_free(window->gettext->umsgs);
 		window->gettext->msgs = (s_gettext_xo_t *) s_malloc(sizeof(s_gettext_xo_t) * window->gettext->count);
 		fread(window->gettext->msgs, sizeof(s_gettext_xo_t), window->gettext->count, window->gettext->file);
 		w_changelocale_(window);
