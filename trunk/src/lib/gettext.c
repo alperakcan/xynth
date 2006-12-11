@@ -28,6 +28,11 @@ typedef struct s_gettext_xo_s {
 	unsigned long int str_offset;
 } s_gettext_xo_t;
 
+typedef struct s_gettext_msg_s {
+	unsigned int pos;
+	unsigned long int hash;
+} s_gettext_msg_t;
+
 struct s_gettext_s {
 	FILE *file;
 	char *buf;
@@ -37,6 +42,8 @@ struct s_gettext_s {
 	int category;
 	unsigned int count;
 	s_gettext_xo_t *msgs;
+	unsigned int ucount;
+	s_gettext_msg_t *umsgs;
 	s_thread_mutex_t *mutex;
 };
 
@@ -57,6 +64,30 @@ static unsigned long int hash_string (const char *str_param)
 		}
 	}
 	return hval;
+}
+
+static void w_changelocale_ (s_window_t *window)
+{
+	unsigned int i;
+	unsigned int u;
+	unsigned long int h;
+	for (i = 0, u = 0, h = 0; i < window->gettext->count; i++) {
+		if (h != window->gettext->msgs[i].hash) {
+			h = window->gettext->msgs[i].hash;
+			u++;
+		}
+	}
+	window->gettext->ucount = u;
+	window->gettext->umsgs = (s_gettext_msg_t *) malloc(sizeof(s_gettext_msg_t) * u);
+	memset(window->gettext->umsgs, 0, sizeof(s_gettext_msg_t));
+	for (i = 0, u = 0, h = 0; i < window->gettext->count; i++) {
+		if (h != window->gettext->msgs[i].hash) {
+			h = window->gettext->msgs[i].hash;
+			window->gettext->umsgs[u].pos = i;
+			window->gettext->umsgs[u].hash = h;
+			u++;
+		}
+	}
 }
 
 static void w_changelocale (s_window_t *window)
@@ -80,6 +111,7 @@ static void w_changelocale (s_window_t *window)
 		s_free(window->gettext->msgs);
 		window->gettext->msgs = (s_gettext_xo_t *) s_malloc(sizeof(s_gettext_xo_t) * window->gettext->count);
 		fread(window->gettext->msgs, sizeof(s_gettext_xo_t), window->gettext->count, window->gettext->file);
+		w_changelocale_(window);
 	}
 }
 
@@ -137,6 +169,22 @@ static inline int s_gettext_cmp (char *str, char *ptr)
 	return 0;
 }
 
+static inline int s_gettext_binsearch (s_gettext_msg_t *umsgs, unsigned long int hash, int low, int high)
+{
+	unsigned long int mid;
+	while (low <= high) {
+		mid = (low + high) / 2;
+		if (hash > umsgs[mid].hash) {
+			low = mid + 1;
+		} else if (hash < umsgs[mid].hash) {
+			high = mid - 1;
+		} else {
+			return mid;
+		}
+	}
+	return ~0;
+}
+
 char * s_gettext (s_window_t *window, const char *str)
 {
 	unsigned long int i;
@@ -147,7 +195,8 @@ char * s_gettext (s_window_t *window, const char *str)
 	    	goto end;
 	}
 	h = hash_string(str);
-	for (i = 0; i < window->gettext->count; i++) {
+	i = s_gettext_binsearch(window->gettext->umsgs, h, 0, window->gettext->ucount - 1);
+	for (i = i; i < window->gettext->count; i++) {
 		if (h == window->gettext->msgs[i].hash) {
 			fseek(window->gettext->file, window->gettext->msgs[i].id_offset, SEEK_SET);
 			free(window->gettext->buf);
@@ -159,6 +208,7 @@ char * s_gettext (s_window_t *window, const char *str)
 				window->gettext->buf = (char *) s_malloc(sizeof(char) * (window->gettext->msgs[i].str_len + 1));
 				fread(window->gettext->buf, sizeof(char), window->gettext->msgs[i].str_len + 1, window->gettext->file);
 				str = window->gettext->buf;
+				break;
 			}
 		}
 	}
@@ -174,6 +224,7 @@ void s_gettext_uninit (s_window_t *window)
 	s_free(window->gettext->domain);
 	s_free(window->gettext->locale);
 	s_free(window->gettext->msgs);
+	s_free(window->gettext->umsgs);
 	if (window->gettext->file) fclose(window->gettext->file);
 	s_thread_mutex_unlock(window->gettext->mutex);
 	s_thread_mutex_destroy(window->gettext->mutex);
@@ -191,6 +242,8 @@ int s_gettext_init (s_window_t *window)
 	window->gettext->category = 0;
 	window->gettext->count = 0;
 	window->gettext->msgs = NULL;
+	window->gettext->ucount = 0;
+	window->gettext->umsgs = NULL;
 	s_thread_mutex_init(&(window->gettext->mutex));
 	return 0;
 }
