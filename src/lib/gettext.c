@@ -214,6 +214,10 @@ char * s_gettext (s_window_t *window, const char *str)
 				s_free(window->gettext->buf);
 				window->gettext->buf = NULL;
 			}
+		} else {
+			s_free(window->gettext->buf);
+			window->gettext->buf = NULL;
+			break;
 		}
 	}
 end:	s_thread_mutex_unlock(window->gettext->mutex);
