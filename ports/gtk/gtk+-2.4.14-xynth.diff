@@ -1,6 +1,45 @@
-diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/Makefile.am gtk+-2.4.14-xynth/gdk/Makefile.am
+diff -Naur gtk+-2.4.14/README.xynth gtk+-2.4.14-xynth/README.xynth
+--- gtk+-2.4.14/README.xynth	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.4.14-xynth/README.xynth	2006-12-12 13:00:51.000000000 +0200
+@@ -0,0 +1,34 @@
++Xynth gtk+-2.4.14 patch
++
++This port's aim is to show that widget libraries can be easily ported to xynth. 
++First we want to say "We are NOT guru of gtk or gdk."
++
++Xynth port is heavily based on linux framebuffer port of gtk. As you might know
++linux framebuffer is not  working properly in 2.6.x kernel. Also linux 
++framebuffer port of gtk is not supporting multiple gtk applications (clients).
++
++The advantages of Xynth port is lying on these. By using xynth port you can get
++gtk on sdl, vesa, svga and also you can get multiple gtk applications at 
++the same time that is already a windowing system must.
++
++New patches are welcome
++
++How to install:
++
++1- apply the patch
++
++cp gtk+-2.4.14-xynth.diff gtk+-2.4.14/
++cd gtk+-2.4.14
++patch -p1 < gtk+-2.4.14-xynth.diff
++
++2- pass --with-gdktarget=linux-fb option to the configure script and also 
++its better to use prefix not to conflict with other version of gtk library
++
++3- add your prefix library or default /usr/local/lib to ld.so.conf 
++
++4- ldconfig
++
++Than compile your gtk program as usual. You may try demo and tests within the 
++gtk+-2.4.14.
++
++Xynth Team
+\ No newline at end of file
+diff -Naur gtk+-2.4.14/gdk/Makefile.am gtk+-2.4.14-xynth/gdk/Makefile.am
 --- gtk+-2.4.14/gdk/Makefile.am	2003-12-10 15:49:52.000000000 +0200
-+++ gtk+-2.4.14-xynth/gdk/Makefile.am	2005-12-08 18:05:04.000000000 +0200
++++ gtk+-2.4.14-xynth/gdk/Makefile.am	2006-12-12 13:00:51.000000000 +0200
 @@ -131,7 +131,7 @@
  
  libgdk_linux_fb_2_0_la_SOURCES = $(common_sources) gdkkeynames.c
@@ -10,9 +49,9 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/Makefile.am gtk+-2.4.14-xynth/gdk/Makefile
  libgdk_linux_fb_2_0_la_LDFLAGS = $(LDADD)
  
  libgdk_win32_2_0_la_SOURCES = $(common_sources) gdkkeynames.c
-diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/Makefile.in gtk+-2.4.14-xynth/gdk/Makefile.in
+diff -Naur gtk+-2.4.14/gdk/Makefile.in gtk+-2.4.14-xynth/gdk/Makefile.in
 --- gtk+-2.4.14/gdk/Makefile.in	2004-12-03 05:55:46.000000000 +0200
-+++ gtk+-2.4.14-xynth/gdk/Makefile.in	2005-12-08 18:05:04.000000000 +0200
++++ gtk+-2.4.14-xynth/gdk/Makefile.in	2006-12-12 13:00:51.000000000 +0200
 @@ -412,7 +412,7 @@
  
  libgdk_linux_fb_2_0_la_SOURCES = $(common_sources) gdkkeynames.c
@@ -22,9 +61,9 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/Makefile.in gtk+-2.4.14-xynth/gdk/Makefile
  
  libgdk_linux_fb_2_0_la_LDFLAGS = $(LDADD)
  
-diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkcursor-fb.c gtk+-2.4.14-xynth/gdk/linux-fb/gdkcursor-fb.c
+diff -Naur gtk+-2.4.14/gdk/linux-fb/gdkcursor-fb.c gtk+-2.4.14-xynth/gdk/linux-fb/gdkcursor-fb.c
 --- gtk+-2.4.14/gdk/linux-fb/gdkcursor-fb.c	2004-03-06 05:37:04.000000000 +0200
-+++ gtk+-2.4.14-xynth/gdk/linux-fb/gdkcursor-fb.c	2005-12-08 18:05:04.000000000 +0200
++++ gtk+-2.4.14-xynth/gdk/linux-fb/gdkcursor-fb.c	2006-12-12 12:48:04.000000000 +0200
 @@ -288,251 +288,41 @@
    g_free (private);
  }
@@ -40,8 +79,7 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkcursor-fb.c gtk+-2.4.14-xynth/
 -
 -static GdkFBDrawingContext *
 -gdk_fb_cursor_dc_reset (void)
-+void gdk_fb_cursor_hide (void)
- {
+-{
 -  if (gdk_fb_cursor_dc)
 -    gdk_fb_drawing_context_finalize (gdk_fb_cursor_dc);
 -
@@ -53,12 +91,11 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkcursor-fb.c gtk+-2.4.14-xynth/
 -			       FALSE);
 -
 -  return gdk_fb_cursor_dc;
- }
- 
+-}
+-
 -void
 -gdk_fb_cursor_hide (void)
-+void gdk_fb_cursor_invalidate (void)
- {
+-{
 -  GdkFBDrawingContext *mydc = gdk_fb_cursor_dc;
 -
 -  cursor_visibility_count--;
@@ -87,8 +124,8 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkcursor-fb.c gtk+-2.4.14-xynth/
 -			    last_location.x + last_contents_size.x,
 -			    last_location.y + last_contents_size.y);
 -    }
- }
- 
+-}
+-
 -void
 -gdk_fb_cursor_invalidate (void)
 -{
@@ -101,8 +138,7 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkcursor-fb.c gtk+-2.4.14-xynth/
 -
 -void
 -gdk_fb_cursor_unhide()
-+void gdk_fb_cursor_unhide()
- {
+-{
 -  GdkFBDrawingContext *mydc = gdk_fb_cursor_dc;
 -  GdkCursorPrivateFB *last_private;
 -  GdkDrawableFBData *pixmap_last;
@@ -166,12 +202,11 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkcursor-fb.c gtk+-2.4.14-xynth/
 -    }
 -  else
 -    gdk_fb_cursor_invalidate ();
- }
- 
+-}
+-
 -gboolean
 -gdk_fb_cursor_region_need_hide (GdkRegion *region)
-+gboolean gdk_fb_cursor_region_need_hide (GdkRegion *region)
- {
+-{
 -  GdkRectangle testme;
 -
 -  if (!last_cursor)
@@ -183,13 +218,11 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkcursor-fb.c gtk+-2.4.14-xynth/
 -  testme.height = GDK_DRAWABLE_IMPL_FBDATA (GDK_CURSOR_FB (last_cursor)->cursor)->height;
 -
 -  return (gdk_region_rect_in (region, &testme) != GDK_OVERLAP_RECTANGLE_OUT);
-+	return FALSE;
- }
- 
+-}
+-
 -gboolean
 -gdk_fb_cursor_need_hide (GdkRectangle *rect)
-+gboolean gdk_fb_cursor_need_hide (GdkRectangle *rect)
- {
+-{
 -  GdkRectangle testme;
 -
 -  if (!last_cursor)
@@ -201,13 +234,11 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkcursor-fb.c gtk+-2.4.14-xynth/
 -  testme.height = GDK_DRAWABLE_IMPL_FBDATA (GDK_CURSOR_FB (last_cursor)->cursor)->height;
 -
 -  return gdk_rectangle_intersect (rect, &testme, &testme);
-+	return FALSE;
- }
- 
+-}
+-
 -void
 -gdk_fb_get_cursor_rect (GdkRectangle *rect)
-+void gdk_fb_get_cursor_rect (GdkRectangle *rect)
- {
+-{
 -  if (last_cursor)
 -    {
 -      rect->x = last_location.x;
@@ -220,12 +251,11 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkcursor-fb.c gtk+-2.4.14-xynth/
 -      rect->x = rect->y = -1;
 -      rect->width = rect->height = 0;
 -    }
- }
- 
+-}
+-
 -void
 -gdk_fb_cursor_move (gint x, gint y, GdkWindow *in_window)
-+void gdk_fb_cursor_move (gint x, gint y, GdkWindow *in_window)
- {
+-{
 -  GdkCursor *the_cursor;
 -
 -  if (!cursor_gc)
@@ -269,17 +299,47 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkcursor-fb.c gtk+-2.4.14-xynth/
 -  last_cursor = the_cursor;
 -
 -  gdk_fb_cursor_unhide ();
- }
- 
+-}
+-
 -void
 -gdk_fb_cursor_reset(void)
-+void gdk_fb_cursor_reset(void)
- {
+-{
 -  GdkWindow *win = gdk_window_at_pointer (NULL, NULL);
 -  gint x, y;
--
++void gdk_fb_cursor_hide (void)
++{
++}
++
++void gdk_fb_cursor_invalidate (void)
++{
++}
++
++void gdk_fb_cursor_unhide()
++{
++}
++
++gboolean gdk_fb_cursor_region_need_hide (GdkRegion *region)
++{
++	return FALSE;
++}
+ 
 -  gdk_fb_mouse_get_info (&x, &y, NULL);
 -  gdk_fb_cursor_move (x, y, win);
++gboolean gdk_fb_cursor_need_hide (GdkRectangle *rect)
++{
++	return FALSE;
++}
++
++void gdk_fb_get_cursor_rect (GdkRectangle *rect)
++{
++}
++
++void gdk_fb_cursor_move (gint x, gint y, GdkWindow *in_window)
++{
++}
++
++void gdk_fb_cursor_reset(void)
++{
  }
  
 -GdkDisplay *
@@ -289,9 +349,9 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkcursor-fb.c gtk+-2.4.14-xynth/
 -  return gdk_display_get_default ();
 +  return gdk_display_get_default();
  }
-diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkdrawable-fb2.c gtk+-2.4.14-xynth/gdk/linux-fb/gdkdrawable-fb2.c
+diff -Naur gtk+-2.4.14/gdk/linux-fb/gdkdrawable-fb2.c gtk+-2.4.14-xynth/gdk/linux-fb/gdkdrawable-fb2.c
 --- gtk+-2.4.14/gdk/linux-fb/gdkdrawable-fb2.c	2004-03-06 05:37:04.000000000 +0200
-+++ gtk+-2.4.14-xynth/gdk/linux-fb/gdkdrawable-fb2.c	2005-12-08 18:05:04.000000000 +0200
++++ gtk+-2.4.14-xynth/gdk/linux-fb/gdkdrawable-fb2.c	2006-12-12 12:48:04.000000000 +0200
 @@ -1,3 +1,9 @@
 +/*
 + * Gtk-Xynth port is based on linux-fb port
@@ -405,9 +465,9 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkdrawable-fb2.c gtk+-2.4.14-xyn
      }
  }
  
-diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkevents-fb.c gtk+-2.4.14-xynth/gdk/linux-fb/gdkevents-fb.c
+diff -Naur gtk+-2.4.14/gdk/linux-fb/gdkevents-fb.c gtk+-2.4.14-xynth/gdk/linux-fb/gdkevents-fb.c
 --- gtk+-2.4.14/gdk/linux-fb/gdkevents-fb.c	2004-03-06 05:37:04.000000000 +0200
-+++ gtk+-2.4.14-xynth/gdk/linux-fb/gdkevents-fb.c	2005-12-08 18:05:04.000000000 +0200
++++ gtk+-2.4.14-xynth/gdk/linux-fb/gdkevents-fb.c	2006-12-12 12:48:04.000000000 +0200
 @@ -23,6 +23,12 @@
   * files for a list of changes.  These files are distributed with
   * GTK+ at ftp://ftp.gtk.org/pub/gtk/. 
@@ -449,9 +509,11 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkevents-fb.c gtk+-2.4.14-xynth/
 +static gboolean fb_events_dispatch (GSource *source, GSourceFunc callback, gpointer user_data)
  {
 -  GdkEvent *event;
--
++	GdkEvent *event;
+ 
 -  GDK_THREADS_ENTER ();
--
++	GDK_THREADS_ENTER();
+ 
 -  while ((event = _gdk_event_unqueue (gdk_display_get_default ())))
 -    {
 -      if (event->type == GDK_EXPOSE &&
@@ -464,12 +526,10 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkevents-fb.c gtk+-2.4.14-xynth/
 -
 -      else if (_gdk_event_func)
 -	(*_gdk_event_func) (event, _gdk_event_data);
-+	GdkEvent *event;
- 
+-
 -      gdk_event_free (event);
 -    }
-+	GDK_THREADS_ENTER();
- 
+-
 -  GDK_THREADS_LEAVE ();
 +	while ((event = _gdk_event_unqueue(gdk_display_get_default()))) {
 +		if (event->type == GDK_CONFIGURE) {
@@ -503,9 +563,9 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkevents-fb.c gtk+-2.4.14-xynth/
  }
  
  /*
-diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkgeometry-fb.c gtk+-2.4.14-xynth/gdk/linux-fb/gdkgeometry-fb.c
+diff -Naur gtk+-2.4.14/gdk/linux-fb/gdkgeometry-fb.c gtk+-2.4.14-xynth/gdk/linux-fb/gdkgeometry-fb.c
 --- gtk+-2.4.14/gdk/linux-fb/gdkgeometry-fb.c	2004-03-06 05:37:04.000000000 +0200
-+++ gtk+-2.4.14-xynth/gdk/linux-fb/gdkgeometry-fb.c	2005-12-08 18:05:04.000000000 +0200
++++ gtk+-2.4.14-xynth/gdk/linux-fb/gdkgeometry-fb.c	2006-12-12 12:48:04.000000000 +0200
 @@ -49,9 +49,7 @@
  			      dest_rect.x, dest_rect.y,
  			      dest_rect.width, dest_rect.height,
@@ -517,17 +577,17 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkgeometry-fb.c gtk+-2.4.14-xynt
      }
    
    gdk_window_invalidate_region (window, invalidate_region, TRUE);
-diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkglobals-fb.c gtk+-2.4.14-xynth/gdk/linux-fb/gdkglobals-fb.c
+diff -Naur gtk+-2.4.14/gdk/linux-fb/gdkglobals-fb.c gtk+-2.4.14-xynth/gdk/linux-fb/gdkglobals-fb.c
 --- gtk+-2.4.14/gdk/linux-fb/gdkglobals-fb.c	2004-03-06 06:00:07.000000000 +0200
-+++ gtk+-2.4.14-xynth/gdk/linux-fb/gdkglobals-fb.c	2005-12-08 18:05:04.000000000 +0200
++++ gtk+-2.4.14-xynth/gdk/linux-fb/gdkglobals-fb.c	2006-12-12 12:48:04.000000000 +0200
 @@ -45,4 +45,3 @@
  GdkGC *_gdk_fb_screen_gc = NULL;
  GdkAtom _gdk_selection_property;
  GdkFBAngle _gdk_fb_screen_angle = GDK_FB_0_DEGREES;
 -volatile gboolean _gdk_fb_is_active_vt = FALSE;
-diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkkeyboard-fb.c gtk+-2.4.14-xynth/gdk/linux-fb/gdkkeyboard-fb.c
+diff -Naur gtk+-2.4.14/gdk/linux-fb/gdkkeyboard-fb.c gtk+-2.4.14-xynth/gdk/linux-fb/gdkkeyboard-fb.c
 --- gtk+-2.4.14/gdk/linux-fb/gdkkeyboard-fb.c	2004-03-06 05:37:04.000000000 +0200
-+++ gtk+-2.4.14-xynth/gdk/linux-fb/gdkkeyboard-fb.c	2005-12-08 18:05:04.000000000 +0200
++++ gtk+-2.4.14-xynth/gdk/linux-fb/gdkkeyboard-fb.c	2006-12-12 12:48:04.000000000 +0200
 @@ -16,6 +16,12 @@
   * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
   * Boston, MA 02111-1307, USA.
@@ -676,13 +736,10 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkkeyboard-fb.c gtk+-2.4.14-xynt
 -		   gchar *string,
 -		   gint string_length,
 -		   gboolean key_up)
-+void gdk_fb_handle_key (guint hw_keycode, guint keyval, guint modifier_state, guint8 group, gchar *string, gint string_length, gboolean key_up)
- {
+-{
 -  GdkWindow *win;
 -  GdkEvent *event;
-+	GdkWindow *win;
-+	GdkEvent *event;
- 
+-
 -  /* handle some magic keys */
 -  if (key_up &&
 -      (modifier_state & GDK_CONTROL_MASK) &&
@@ -692,23 +749,16 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkkeyboard-fb.c gtk+-2.4.14-xynt
 -	{
 -	  ioctl (gdk_display->tty_fd, KDSKBMODE, K_XLATE);
 -	  exit (1);
-+	win = gdk_fb_keyboard_event_window (gdk_fb_window_find_focus (), key_up ? GDK_KEY_RELEASE : GDK_KEY_PRESS);
-+	if (win) {
-+		event = gdk_event_make (win, key_up ? GDK_KEY_RELEASE : GDK_KEY_PRESS, TRUE);
-+		event->key.state = modifier_state;
-+		event->key.keyval = keyval;
-+		event->key.string = string;
-+		event->key.length = string_length;
-+		event->key.hardware_keycode = hw_keycode;
-+		event->key.group = group;
-+	} else {
-+		g_free (string);
- 	}
+-	}
 -	  
 -      if (keyval == GDK_Return)
 -	gdk_fb_redraw_all ();
 -    }
--
++void gdk_fb_handle_key (guint hw_keycode, guint keyval, guint modifier_state, guint8 group, gchar *string, gint string_length, gboolean key_up)
++{
++	GdkWindow *win;
++	GdkEvent *event;
+ 
 -  win = gdk_fb_keyboard_event_window (gdk_fb_window_find_focus (),
 -				      key_up ? GDK_KEY_RELEASE : GDK_KEY_PRESS);
 -  if (win)
@@ -726,6 +776,18 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkkeyboard-fb.c gtk+-2.4.14-xynt
 -    }
 -  else
 -    g_free (string);
++	win = gdk_fb_keyboard_event_window (gdk_fb_window_find_focus (), key_up ? GDK_KEY_RELEASE : GDK_KEY_PRESS);
++	if (win) {
++		event = gdk_event_make (win, key_up ? GDK_KEY_RELEASE : GDK_KEY_PRESS, TRUE);
++		event->key.state = modifier_state;
++		event->key.keyval = keyval;
++		event->key.string = string;
++		event->key.length = string_length;
++		event->key.hardware_keycode = hw_keycode;
++		event->key.group = group;
++	} else {
++		g_free (string);
++	}
  }
  
 -/******************************************************
@@ -1161,9 +1223,9 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkkeyboard-fb.c gtk+-2.4.14-xynt
        if (keys)
          *keys = NULL;
  
-diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkmain-fb.c gtk+-2.4.14-xynth/gdk/linux-fb/gdkmain-fb.c
+diff -Naur gtk+-2.4.14/gdk/linux-fb/gdkmain-fb.c gtk+-2.4.14-xynth/gdk/linux-fb/gdkmain-fb.c
 --- gtk+-2.4.14/gdk/linux-fb/gdkmain-fb.c	2004-03-06 05:37:04.000000000 +0200
-+++ gtk+-2.4.14-xynth/gdk/linux-fb/gdkmain-fb.c	2005-12-08 18:05:04.000000000 +0200
++++ gtk+-2.4.14-xynth/gdk/linux-fb/gdkmain-fb.c	2006-12-12 12:48:04.000000000 +0200
 @@ -23,6 +23,12 @@
   * files for a list of changes.  These files are distributed with
   * GTK+ at ftp://ftp.gtk.org/pub/gtk/. 
@@ -1220,7 +1282,7 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkmain-fb.c gtk+-2.4.14-xynth/gd
 -  FALSE                 /* symbol_2_token */,
 -  FALSE                 /* scope_0_fallback */,
 -};
- 
+-
 -enum {
 -  FB_MODE,
 -  FB_ENDMODE,
@@ -1815,7 +1877,7 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkmain-fb.c gtk+-2.4.14-xynth/gd
 -      gdk_shadow_fb_update (0, 0,
 -			    gdk_display->fb_width,
 -			    gdk_display->fb_height);
--
+ 
 -      if (!gdk_fb_keyboard_open ())
 -        g_warning ("Failed to re-initialize keyboard");
 -
@@ -1892,7 +1954,9 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkmain-fb.c gtk+-2.4.14-xynth/gd
 -      g_free (display);
 -      return NULL;
 -    }
--
++	s_window_t *window;
++	GdkFBDisplay *display;
+ 
 -  /* set up switch signals */
 -  if (ioctl (display->tty_fd, VT_GETMODE, &vtm) >= 0)
 -    {
@@ -1918,8 +1982,7 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkmain-fb.c gtk+-2.4.14-xynth/gd
 -      return NULL;
 -    }
 -  g_free (fb_filename);
-+	s_window_t *window;
-+	GdkFBDisplay *display;
++	display = g_new0(GdkFBDisplay, 1);
  
 -  if (gdk_fb_set_mode (display) < 0)
 -    {
@@ -1929,15 +1992,31 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkmain-fb.c gtk+-2.4.14-xynth/gd
 -      g_free (display);
 -      return NULL;
 -    }
-+	display = g_new0(GdkFBDisplay, 1);
- 
+-
 -  /* Disable normal text on the console */
 -  ioctl (display->fb_fd, KDSETMODE, KD_GRAPHICS);
+-
+-  ioctl (display->fb_fd, FBIOBLANK, 0);
+-
+-  /* We used to use sinfo.smem_len, but that seemed to be broken in many cases */
+-  display->fb_mmap = mmap (NULL,
+-			   display->modeinfo.yres * display->sinfo.line_length,
+-			   PROT_READ|PROT_WRITE,
+-			   MAP_SHARED,
+-			   display->fb_fd,
+-			   0);
+-  g_assert (display->fb_mmap != MAP_FAILED);
+-
+-  if (display->sinfo.visual == FB_VISUAL_TRUECOLOR)
+-    {
+-      display->red_byte = display->modeinfo.red.offset >> 3;
+-      display->green_byte = display->modeinfo.green.offset >> 3;
+-      display->blue_byte = display->modeinfo.blue.offset >> 3;
+-    }
 +	s_client_init(&window);
 +	s_window_new(window, WINDOW_MAIN | WINDOW_NOFORM, NULL);
 +	s_window_set_coor(window, 0, 0, 0, window->surface->width, window->surface->height);
- 
--  ioctl (display->fb_fd, FBIOBLANK, 0);
++
 +	display->modeinfo.red.length		= window->surface->redlength;
 +	display->modeinfo.green.length		= window->surface->greenlength;
 +	display->modeinfo.blue.length		= window->surface->bluelength;
@@ -1952,23 +2031,9 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkmain-fb.c gtk+-2.4.14-xynth/gd
 +	display->sinfo.line_length		= window->surface->width * window->surface->bytesperpixel;
 +	display->sinfo.smem_len			= window->surface->width * window->surface->bytesperpixel;
 +	display->sinfo.visual			= FB_VISUAL_TRUECOLOR;
- 
--  /* We used to use sinfo.smem_len, but that seemed to be broken in many cases */
--  display->fb_mmap = mmap (NULL,
--			   display->modeinfo.yres * display->sinfo.line_length,
--			   PROT_READ|PROT_WRITE,
--			   MAP_SHARED,
--			   display->fb_fd,
--			   0);
--  g_assert (display->fb_mmap != MAP_FAILED);
++
 +	display->fb_mmap = window->surface->vbuf;
- 
--  if (display->sinfo.visual == FB_VISUAL_TRUECOLOR)
--    {
--      display->red_byte = display->modeinfo.red.offset >> 3;
--      display->green_byte = display->modeinfo.green.offset >> 3;
--      display->blue_byte = display->modeinfo.blue.offset >> 3;
--    }
++
 +	display->red_byte = display->modeinfo.red.offset >> 3;
 +	display->green_byte = display->modeinfo.green.offset >> 3;
 +	display->blue_byte = display->modeinfo.blue.offset >> 3;
@@ -2047,9 +2112,9 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkmain-fb.c gtk+-2.4.14-xynth/gd
    gdk_fb_display_destroy (gdk_display);
    
    gdk_display = NULL;
-diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkmouse-fb.c gtk+-2.4.14-xynth/gdk/linux-fb/gdkmouse-fb.c
+diff -Naur gtk+-2.4.14/gdk/linux-fb/gdkmouse-fb.c gtk+-2.4.14-xynth/gdk/linux-fb/gdkmouse-fb.c
 --- gtk+-2.4.14/gdk/linux-fb/gdkmouse-fb.c	2004-03-06 05:37:04.000000000 +0200
-+++ gtk+-2.4.14-xynth/gdk/linux-fb/gdkmouse-fb.c	2005-12-08 18:05:04.000000000 +0200
++++ gtk+-2.4.14-xynth/gdk/linux-fb/gdkmouse-fb.c	2006-12-12 12:48:04.000000000 +0200
 @@ -16,6 +16,12 @@
   * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
   * Boston, MA 02111-1307, USA.
@@ -2538,8 +2603,7 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkmouse-fb.c gtk+-2.4.14-xynth/g
 -static gboolean
 -gdk_fb_mouse_ms_packet (GdkFBMouse   *mouse,
 -			gboolean     *got_motion)
-+gboolean gdk_fb_mouse_init (gboolean open_dev)
- {
+-{
 -  int dx=0, dy=0;
 -  gboolean new_button1, new_button2, new_button3;
 -  guchar *buf;
@@ -2601,15 +2665,11 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkmouse-fb.c gtk+-2.4.14-xynth/g
 -    *got_motion = TRUE;
 -
 -  return TRUE;
-+	gdk_fb_mouse = g_new0 (GdkFBMouse, 1);
-+	gdk_fb_mouse->x = gdk_display->fb_width / 2;
-+	gdk_fb_mouse->y = gdk_display->fb_height / 2;
-+	return TRUE;
- }
- 
+-}
+-
 -static gboolean
 -gdk_fb_mouse_fidmour_open (GdkFBMouse   *mouse)
-+gboolean gdk_fb_mouse_open (void)
++gboolean gdk_fb_mouse_init (gboolean open_dev)
  {
 -  gint fd;
 -
@@ -2622,11 +2682,21 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkmouse-fb.c gtk+-2.4.14-xynth/g
 -
 -  mouse->fd = fd;
 -  return TRUE;
-+	return TRUE;
- }
- 
+-}
+-
 -static void
 -gdk_fb_mouse_fidmour_close (GdkFBMouse   *mouse)
++	gdk_fb_mouse = g_new0 (GdkFBMouse, 1);
++	gdk_fb_mouse->x = gdk_display->fb_width / 2;
++	gdk_fb_mouse->y = gdk_display->fb_height / 2;
++	return TRUE;
++}
++
++gboolean gdk_fb_mouse_open (void)
++{
++	return TRUE;
++}
++
 +void gdk_fb_mouse_close (void)
  {
 -  close (mouse->fd);
@@ -2635,8 +2705,7 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkmouse-fb.c gtk+-2.4.14-xynth/g
 -static gboolean
 -gdk_fb_mouse_fidmour_packet (GdkFBMouse   *mouse,
 -			     gboolean     *got_motion)
-+void gdk_s_handler_mouse_ (s_event_t *event)
- {
+-{
 -  int n;
 -  gboolean btn_down = 0;
 -  gdouble x = 0.0, y = 0.0;
@@ -2704,6 +2773,8 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkmouse-fb.c gtk+-2.4.14-xynth/g
 -	     via handle_mouse_input */
 -	  *got_motion = FALSE;
 -	  handle_mouse_movement (mouse);
++void gdk_s_handler_mouse_ (s_event_t *event)
++{
 +        int state = 0;
 +        int button = 0;
 +        
@@ -2752,9 +2823,9 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkmouse-fb.c gtk+-2.4.14-xynth/g
 -  
 -  return TRUE;
  }
-diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkprivate-fb.h gtk+-2.4.14-xynth/gdk/linux-fb/gdkprivate-fb.h
+diff -Naur gtk+-2.4.14/gdk/linux-fb/gdkprivate-fb.h gtk+-2.4.14-xynth/gdk/linux-fb/gdkprivate-fb.h
 --- gtk+-2.4.14/gdk/linux-fb/gdkprivate-fb.h	2004-07-28 19:06:54.000000000 +0300
-+++ gtk+-2.4.14-xynth/gdk/linux-fb/gdkprivate-fb.h	2005-12-08 18:05:04.000000000 +0200
++++ gtk+-2.4.14-xynth/gdk/linux-fb/gdkprivate-fb.h	2006-12-12 13:00:51.000000000 +0200
 @@ -28,6 +28,12 @@
   * Private uninstalled header defining things local to X windowing code
   */
@@ -2830,9 +2901,9 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkprivate-fb.h gtk+-2.4.14-xynth
 +void gdk_fb_handle_key (guint hw_keycode, guint keyval, guint modifier_state, guint8 group, gchar *string, gint string_length, gboolean key_up);
 +
  #endif /* __GDK_PRIVATE_FB_H__ */
-diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkrender-fb.c gtk+-2.4.14-xynth/gdk/linux-fb/gdkrender-fb.c
+diff -Naur gtk+-2.4.14/gdk/linux-fb/gdkrender-fb.c gtk+-2.4.14-xynth/gdk/linux-fb/gdkrender-fb.c
 --- gtk+-2.4.14/gdk/linux-fb/gdkrender-fb.c	2004-03-06 05:37:04.000000000 +0200
-+++ gtk+-2.4.14-xynth/gdk/linux-fb/gdkrender-fb.c	2005-12-08 18:05:04.000000000 +0200
++++ gtk+-2.4.14-xynth/gdk/linux-fb/gdkrender-fb.c	2006-12-12 12:50:26.000000000 +0200
 @@ -1,3 +1,9 @@
 +/*
 + * Gtk-Xynth port is based on linux-fb port
@@ -3018,10 +3089,10 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkrender-fb.c gtk+-2.4.14-xynth/
 -    return;
 -
 -  depth = gdk_display->modeinfo.bits_per_pixel / 8;
--
+ 
 -  dst = gdk_display->fb_mmap + x * depth + gdk_display->sinfo.line_length * y;
 -  src = gdk_display->fb_mem + x * depth + gdk_display->fb_stride * y;
- 
+-
 -  width = width*depth;
 -  while (height>0)
 -    {
@@ -3081,22 +3152,6 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkrender-fb.c gtk+-2.4.14-xynth/
 -
 -  src = gdk_display->fb_mem + x * depth + gdk_display->fb_stride * y;
 -  dst = gdk_display->fb_mmap + (gdk_display->fb_width - x - 1) * depth + gdk_display->sinfo.line_length * (gdk_display->fb_height - y - 1) ;
--
--  while (height>0)
--    {
--      w = width;
--      pdst = dst;
--      while (w>0) {
--	for (i = 0; i < depth; i++)
--	  *pdst++ = *src++;
--	pdst -= 2 * depth;
--	w--;
--      }
--      dst -= gdk_display->sinfo.line_length;
--      src += gdk_display->fb_stride - width * depth;
--      height--;
--    }
--}
 +	int x11 = r1->x;
 +	int x12 = r1->x + r1->w - 1;
 +	int y11 = r1->y;
@@ -3107,30 +3162,18 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkrender-fb.c gtk+-2.4.14-xynth/
 +	int y23 = r2->y + r2->h - 1;
 +	int x31, x32;
 +	int y31, y33;
- 
--static void
--gdk_shadow_fb_copy_rect_270 (gint x, gint y, gint width, gint height)
--{
--  guchar *dst, *src, *pdst;
--  gint depth;
--  gint w;
--  gint i;
++
 +	x31 = ((x11 > x21) ? x11 : x21);
 +	x32 = ((x12 < x22) ? x12 : x22);
- 
--  if (!_gdk_fb_is_active_vt)
--    return;
++
 +	y31 = ((y11 > y21) ? y11 : y21);
 +	y33 = ((y13 < y23) ? y13 : y23);
- 
--  depth = gdk_display->modeinfo.bits_per_pixel / 8;
++
 +	r->x = x31;
 +	r->y = y31;
 +	r->w = x32 - x31 + 1;
 +	r->h = y33 - y31 + 1;
- 
--  src = gdk_display->fb_mem + x * depth + gdk_display->fb_stride * y;
--  dst = gdk_display->fb_mmap + (gdk_display->fb_height - y - 1) * depth + gdk_display->sinfo.line_length * x;
++
 +	if ((r->w > 0) &&
 +	    (r->h > 0) &&
 +	    (r->x >= r1->x) &&
@@ -3148,6 +3191,40 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkrender-fb.c gtk+-2.4.14-xynth/
 -      while (w>0) {
 -	for (i = 0; i < depth; i++)
 -	  *pdst++ = *src++;
+-	pdst -= 2 * depth;
+-	w--;
+-      }
+-      dst -= gdk_display->sinfo.line_length;
+-      src += gdk_display->fb_stride - width * depth;
+-      height--;
+-    }
++	return -1;
+ }
+ 
+-static void
+-gdk_shadow_fb_copy_rect_270 (gint x, gint y, gint width, gint height)
++static void gdk_shadow_fb_copy_rect_0_ (s_window_t *window, gint x, gint y, gint width, gint height)
+ {
+-  guchar *dst, *src, *pdst;
+-  gint depth;
+-  gint w;
+-  gint i;
+-
+-  if (!_gdk_fb_is_active_vt)
+-    return;
+-
+-  depth = gdk_display->modeinfo.bits_per_pixel / 8;
+-
+-  src = gdk_display->fb_mem + x * depth + gdk_display->fb_stride * y;
+-  dst = gdk_display->fb_mmap + (gdk_display->fb_height - y - 1) * depth + gdk_display->sinfo.line_length * x;
+-
+-  while (height>0)
+-    {
+-      w = width;
+-      pdst = dst;
+-      while (w>0) {
+-	for (i = 0; i < depth; i++)
+-	  *pdst++ = *src++;
 -	pdst += gdk_display->sinfo.line_length - depth;
 -	w--;
 -      }
@@ -3155,7 +3232,9 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkrender-fb.c gtk+-2.4.14-xynth/
 -      src += gdk_display->fb_stride - width * depth;
 -      height--;
 -    }
-+	return -1;
++        s_putboxpart(window->surface, x - GDK_DRAWABLE_IMPL_FBDATA((GdkWindow *) window->client->data)->abs_x,
++                                      y - GDK_DRAWABLE_IMPL_FBDATA((GdkWindow *) window->client->data)->abs_y,
++                                      width, height, window->surface->width, window->surface->height, gdk_display->fb_mem, x, y);
  }
  
 -static void (*shadow_copy_rect[4]) (gint x, gint y, gint width, gint height);
@@ -3166,10 +3245,14 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkrender-fb.c gtk+-2.4.14-xynth/
 -
 -static void
 -gdk_shadow_fb_refresh (int signum)
-+static void gdk_shadow_fb_copy_rect_0_ (s_window_t *window, gint x, gint y, gint width, gint height)
++int gdk_s_client_child_find (s_window_t *parent, s_window_t *window, int x, int y, int w, int h)
  {
 -  gint minx, miny, maxx, maxy;
--
++        int p = 0;
++        s_rect_t r;
++        s_rect_t i;
++        s_window_t *win;
+ 
 -  if (!refresh_queued)
 -    {
 -      struct itimerval timeout;
@@ -3209,15 +3292,15 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkrender-fb.c gtk+-2.4.14-xynth/
 -  }
 -  
 -  (*shadow_copy_rect[_gdk_fb_screen_angle]) (minx, miny, maxx - minx + 1, maxy - miny + 1);
-+        s_putboxpart(window->surface, x - GDK_DRAWABLE_IMPL_FBDATA((GdkWindow *) window->client->data)->abs_x,
-+                                      y - GDK_DRAWABLE_IMPL_FBDATA((GdkWindow *) window->client->data)->abs_y,
-+                                      width, height, window->surface->width, window->surface->height, gdk_display->fb_mem, x, y);
- }
+-}
++        r.x = x;
++        r.y = y;
++        r.w = w;
++        r.h = h;
  
 -void
 -gdk_shadow_fb_stop_updates (void)
-+int gdk_s_client_child_find (s_window_t *parent, s_window_t *window, int x, int y, int w, int h)
- {
+-{
 -  struct itimerval timeout;
 -
 -  refresh_queued = 0;
@@ -3231,33 +3314,25 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkrender-fb.c gtk+-2.4.14-xynth/
 -
 -  refresh_queued = 0;
 -}
-+        int p = 0;
-+        s_rect_t r;
-+        s_rect_t i;
-+        s_window_t *win;
- 
+-
 -void
 -gdk_shadow_fb_init (void)
 -{
 -  struct sigaction action;
-+        r.x = x;
-+        r.y = y;
-+        r.w = w;
-+        r.h = h;
- 
+-
 -  action.sa_handler = gdk_shadow_fb_refresh;
 -  sigemptyset (&action.sa_mask);
 -  action.sa_flags = 0;
 -  
 -  sigaction (SIGALRM, &action, NULL);
-+        if (!gdk_s_rect_intersect(&(parent->surface->buf), &r, &i)) {
++        if (!gdk_s_rect_intersect(parent->surface->buf, &r, &i)) {
 +		gdk_shadow_fb_copy_rect_0_(parent, i.x, i.y, i.w, i.h);
 +	}
 +		
 +	s_thread_mutex_lock(window->childs->mut);
 +	while (!s_list_eol(window->childs->list, p)) {
 +		win = (s_window_t *) s_list_get(window->childs->list, p);
-+		if (!gdk_s_rect_intersect(&(win->surface->buf), &r, &i)) {
++		if (!gdk_s_rect_intersect(win->surface->buf, &r, &i)) {
 +			gdk_shadow_fb_copy_rect_0_(win, i.x, i.y, i.w, i.h);
 +		}
 +		gdk_s_client_child_find(parent, win, x, y, w, h);
@@ -3336,29 +3411,29 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkrender-fb.c gtk+-2.4.14-xynth/
 -  
 -}
 -#else
--
--void
--gdk_shadow_fb_stop_updates (void)
--{
--}
  
 -void
--gdk_shadow_fb_update (gint minx, gint miny, gint maxx, gint maxy)
+-gdk_shadow_fb_stop_updates (void)
 -{
 +	gdk_s_client_child_find(gdk_display->xynth_root, gdk_display->xynth_root, minx, miny, maxx - minx + 1, maxy - miny + 1);
  }
  
 -void
--gdk_shadow_fb_init (void)
+-gdk_shadow_fb_update (gint minx, gint miny, gint maxx, gint maxy)
 +void gdk_shadow_fb_init (void)
  {
  }
 -
+-void
+-gdk_shadow_fb_init (void)
+-{
+-}
+-
 -#endif
 -
-diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkwindow-fb.c gtk+-2.4.14-xynth/gdk/linux-fb/gdkwindow-fb.c
+diff -Naur gtk+-2.4.14/gdk/linux-fb/gdkwindow-fb.c gtk+-2.4.14-xynth/gdk/linux-fb/gdkwindow-fb.c
 --- gtk+-2.4.14/gdk/linux-fb/gdkwindow-fb.c	2004-07-28 19:06:54.000000000 +0300
-+++ gtk+-2.4.14-xynth/gdk/linux-fb/gdkwindow-fb.c	2005-12-08 18:05:04.000000000 +0200
++++ gtk+-2.4.14-xynth/gdk/linux-fb/gdkwindow-fb.c	2006-12-12 12:53:59.000000000 +0200
 @@ -23,6 +23,12 @@
   * files for a list of changes.  These files are distributed with
   * GTK+ at ftp://ftp.gtk.org/pub/gtk/. 
@@ -3412,7 +3487,7 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkwindow-fb.c gtk+-2.4.14-xynth/
 +			                       window->surface->buf->w, window->surface->buf->h);
 +		}
 +	/* Change focus event coming from xynth */
-+	if ((event->expose->change & EXPOSE_CHNGF) && (GDK_WINDOW_TYPE(gwindow)==GDK_WINDOW_TOPLEVEL)){
++	if ((event->type & FOCUS_EVENT) && (GDK_WINDOW_TYPE(gwindow)==GDK_WINDOW_TOPLEVEL)){
 +	if (window->client->pri == 0)
 +	{
 +	GdkEventFocus *gevent;
@@ -3617,13 +3692,7 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkwindow-fb.c gtk+-2.4.14-xynth/
 +        impl->drawable_data.mem = gdk_display->fb_mem;
 +        impl->drawable_data.rowstride = gdk_display->fb_stride;
 +        gdk_window_move_resize(window, x, y, impl->drawable_data.width, impl->drawable_data.height);
- 
--  if (impl->drawable_data.colormap)
--    gdk_colormap_ref (impl->drawable_data.colormap);
--  
--  gdk_window_set_cursor (window, ((attributes_mask & GDK_WA_CURSOR) ?
--				  (attributes->cursor) :
--				  NULL));
++
 +        switch (impl->drawable_data.window_type) {
 +                case GDK_WINDOW_ROOT:
 +                	{
@@ -3637,11 +3706,7 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkwindow-fb.c gtk+-2.4.14-xynth/
 +	
 +        if (attributes->wclass == GDK_INPUT_OUTPUT) {
 +		depth = visual->depth;
- 
--  if (parent_private)
--    parent_private->children = g_list_prepend (parent_private->children, window);
--  
--  return window;
++
 +		private->input_only = FALSE;
 +		private->depth = impl->drawable_data.depth;
 +
@@ -3650,7 +3715,13 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkwindow-fb.c gtk+-2.4.14-xynth/
 +		} else {
 +			impl->drawable_data.colormap = gdk_colormap_get_system();
 +		}
-+
+ 
+-  if (impl->drawable_data.colormap)
+-    gdk_colormap_ref (impl->drawable_data.colormap);
+-  
+-  gdk_window_set_cursor (window, ((attributes_mask & GDK_WA_CURSOR) ?
+-				  (attributes->cursor) :
+-				  NULL));
 +		switch (impl->drawable_data.window_type) {
 +		case GDK_WINDOW_TOPLEVEL:
 +				{
@@ -3712,7 +3783,11 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkwindow-fb.c gtk+-2.4.14-xynth/
 +        if (impl->drawable_data.colormap) {
 +		gdk_colormap_ref(impl->drawable_data.colormap);
 +	}
-+
+ 
+-  if (parent_private)
+-    parent_private->children = g_list_prepend (parent_private->children, window);
+-  
+-  return window;
 +	gdk_window_set_cursor(window, ((attributes_mask & GDK_WA_CURSOR) ? (attributes->cursor) : NULL));
 +
 +	if (parent_private) {
@@ -3893,7 +3968,7 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkwindow-fb.c gtk+-2.4.14-xynth/
 +	
 +	s_window_t *win;
 +   	win = GDK_DRAWABLE_IMPL_FBDATA(window)->xynth_window;
-+     	s_window_set_title(win, title);
++     	s_window_set_title(win, (char *) title);
  }
  
  void          
@@ -3969,9 +4044,9 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gdk/linux-fb/gdkwindow-fb.c gtk+-2.4.14-xynth/
 +{
 +}
 +
-diff -U 3 -H -d -r -N gtk+-2.4.14/gtk/gtkwindow-decorate.c gtk+-2.4.14-xynth/gtk/gtkwindow-decorate.c
+diff -Naur gtk+-2.4.14/gtk/gtkwindow-decorate.c gtk+-2.4.14-xynth/gtk/gtkwindow-decorate.c
 --- gtk+-2.4.14/gtk/gtkwindow-decorate.c	2004-03-06 05:38:37.000000000 +0200
-+++ gtk+-2.4.14-xynth/gtk/gtkwindow-decorate.c	2005-12-08 18:05:04.000000000 +0200
++++ gtk+-2.4.14-xynth/gtk/gtkwindow-decorate.c	2006-12-12 13:00:51.000000000 +0200
 @@ -28,7 +28,7 @@
  
  
@@ -3981,42 +4056,3 @@ diff -U 3 -H -d -r -N gtk+-2.4.14/gtk/gtkwindow-decorate.c gtk+-2.4.14-xynth/gtk
  #endif
  
  #ifdef DECORATE_WINDOWS
-diff -U 3 -H -d -r -N gtk+-2.4.14/README.xynth gtk+-2.4.14-xynth/README.xynth
---- gtk+-2.4.14/README.xynth	1970-01-01 02:00:00.000000000 +0200
-+++ gtk+-2.4.14-xynth/README.xynth	2005-12-08 17:52:58.000000000 +0200
-@@ -0,0 +1,34 @@
-+Xynth gtk+-2.4.14 patch
-+
-+This port's aim is to show that widget libraries can be easily ported to xynth. 
-+First we want to say "We are NOT guru of gtk or gdk."
-+
-+Xynth port is heavily based on linux framebuffer port of gtk. As you might know
-+linux framebuffer is not  working properly in 2.6.x kernel. Also linux 
-+framebuffer port of gtk is not supporting multiple gtk applications (clients).
-+
-+The advantages of Xynth port is lying on these. By using xynth port you can get
-+gtk on sdl, vesa, svga and also you can get multiple gtk applications at 
-+the same time that is already a windowing system must.
-+
-+New patches are welcome
-+
-+How to install:
-+
-+1- apply the patch
-+
-+cp gtk+-2.4.14-xynth.diff gtk+-2.4.14/
-+cd gtk+-2.4.14
-+patch -p1 < gtk+-2.4.14-xynth.diff
-+
-+2- pass --with-gdktarget=linux-fb option to the configure script and also 
-+its better to use prefix not to conflict with other version of gtk library
-+
-+3- add your prefix library or default /usr/local/lib to ld.so.conf 
-+
-+4- ldconfig
-+
-+Than compile your gtk program as usual. You may try demo and tests within the 
-+gtk+-2.4.14.
-+
-+Xynth Team
-\ No newline at end of file
