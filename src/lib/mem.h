@@ -426,13 +426,13 @@ static inline void s_memcpy4m (void *dest, void *src, unsigned char *mask, int n
 
 static inline void s_memcpy1a (void *dest, void *src, unsigned char *mask, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
+	unsigned char a;
 	unsigned char sr;
 	unsigned char sg;
 	unsigned char sb;
 	unsigned char dr;
 	unsigned char dg;
 	unsigned char db;
-	unsigned char a;
 	unsigned char *m = (unsigned char *) mask;
 	unsigned char *d = (unsigned char *) dest;
 	unsigned char *s = (unsigned char *) src;
@@ -444,13 +444,13 @@ static inline void s_memcpy1a (void *dest, void *src, unsigned char *mask, int n
 
 static inline void s_memcpy2a (void *dest, void *src, unsigned char *mask, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
+	unsigned char a;
 	unsigned char sr;
 	unsigned char sg;
 	unsigned char sb;
 	unsigned char dr;
 	unsigned char dg;
 	unsigned char db;
-	unsigned char a;
 	unsigned char *m = (unsigned char *) mask;
 	unsigned short int *d = (unsigned short int *) dest;
 	unsigned short int *s = (unsigned short int *) src;
@@ -462,13 +462,13 @@ static inline void s_memcpy2a (void *dest, void *src, unsigned char *mask, int n
 
 static inline void s_memcpy4a (void *dest, void *src, unsigned char *mask, int n, int rl, int gl, int bl, int ro, int go, int bo)
 {
+	unsigned char a;
 	unsigned char sr;
 	unsigned char sg;
 	unsigned char sb;
 	unsigned char dr;
 	unsigned char dg;
 	unsigned char db;
-	unsigned char a;
 	unsigned char *m = (unsigned char *) mask;
 	unsigned int *d = (unsigned int *) dest;
 	unsigned int *s = (unsigned int *) src;
