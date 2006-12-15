@@ -59,13 +59,6 @@ typedef enum {
 } S_SOC_DATA;
 
 typedef enum {
-        WINDOW_NEW        = 0x0001,
-	WINDOW_COOR       = 0x0002,
-	WINDOW_DRAW       = 0x0004,
-	WINDOW_SHOW       = 0x0008,
-	WINDOW_TITLE      = 0x0010,
-	WINDOW_RESIZEABLE = 0x0020,
-
 	WINDOW_NOFORM     = 0x0040,
 	WINDOW_MAIN       = 0x0080,
 	WINDOW_TEMP       = 0x0100,
