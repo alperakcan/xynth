@@ -84,6 +84,23 @@ typedef enum {
 	OBJECT_OBJECTS 		= 0xB
 } OBJECT;
 
+/** @defgroup widget_object Widget Library - Object API
+  * @brief
+  * 
+  * @example
+  *
+  * for further information look in demo/ directory
+  *
+  * @code
+  * // simple example will be in here
+  * @endcode
+  */
+
+/** @addtogroup widget_object */
+/*@{*/
+
+/** object struct
+ */
 struct w_object_s {
 	/** child list */
 	s_list_t *childs;
@@ -114,6 +131,8 @@ struct w_object_s {
 	/** user data */
 	void *data[OBJECT_OBJECTS];
 };
+
+/*@}*/
 
 struct w_button_s {
 	w_object_t *object;
