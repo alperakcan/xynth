@@ -55,7 +55,7 @@ extern "C" {
 
 #define memcpyloop5()\
 	while (n--) {\
-		a = ~(*m & 0xff);\
+		a = ~*m;\
 		if (a != 0xff) {\
 			if (a == 0x00) {\
 				*d = *s;\
@@ -79,7 +79,7 @@ extern "C" {
 
 #define memcpyloop6()\
 	while (n--) {\
-		a = ~(*m_ & 0xff);\
+		a = ~*m_;\
 		if ((*m == id) && (a != 0xff)) {\
 			if (a == 0x00) {\
 				*d = *s;\
@@ -104,9 +104,9 @@ extern "C" {
 
 #define memcpyloop7()\
 	while (n--) {\
-		dr = (*s >> 0x18) & 0xff;\
-		dg = (*s >> 0x10) & 0xff;\
-		db = (*s >> 0x08) & 0xff;\
+		dr = *s >> 0x18;\
+		dg = *s >> 0x10;\
+		db = *s >> 0x08;\
 		*d = ((dr >> rl) << ro) | ((dg >> gl) << go) | ((db >> bl) << bo);\
 		d++;\
 		s++;\
@@ -115,9 +115,9 @@ extern "C" {
 #define memcpyloop8()\
 	while (n--) {\
 		if (*m == id) {\
-			dr = (*s >> 0x18) & 0xff;\
-			dg = (*s >> 0x10) & 0xff;\
-			db = (*s >> 0x08) & 0xff;\
+			dr = *s >> 0x18;\
+			dg = *s >> 0x10;\
+			db = *s >> 0x08;\
 			*d = ((dr >> rl) << ro) | ((dg >> gl) << go) | ((db >> bl) << bo);\
 		}\
 		d++;\
@@ -127,11 +127,11 @@ extern "C" {
 
 #define memcpyloop9()\
 	while (n--) {\
-		a = (*s & 0xff);\
+		a = *s;\
 		if (a != 0xff) {\
-			sr = (*s >> 0x18) & 0xff;\
-			sg = (*s >> 0x10) & 0xff;\
-			sb = (*s >> 0x08) & 0xff;\
+			sr = *s >> 0x18;\
+			sg = *s >> 0x10;\
+			sb = *s >> 0x08;\
 			if (a == 0x00) {\
 				dr = sr;\
 				dg = sg;\
@@ -152,11 +152,11 @@ extern "C" {
 
 #define memcpyloop10()\
 	while (n--) {\
-		a = (*s & 0xff);\
+		a = *s;\
 		if ((*m == id) && (a != 0xff)) {\
-			sr = (*s >> 0x18) & 0xff;\
-			sg = (*s >> 0x10) & 0xff;\
-			sb = (*s >> 0x08) & 0xff;\
+			sr = *s >> 0x18;\
+			sg = *s >> 0x10;\
+			sb = *s >> 0x08;\
 			if (a == 0x00) {\
 				dr = sr;\
 				dg = sg;\
