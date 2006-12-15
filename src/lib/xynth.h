@@ -605,7 +605,7 @@ void * s_client_main (void *arg);
 void s_client_atevent (s_window_t *window, void (*f) (s_window_t *, s_event_t *));
 void s_client_atexit (s_window_t *window, void (*f) (s_window_t *));
 
-/** @defgroup config config api
+/** @defgroup client_config Client Library - Config API
   * @brief detailed description
   *
   * @example
@@ -667,7 +667,7 @@ void s_client_atexit (s_window_t *window, void (*f) (s_window_t *));
   * @endcode
   */
 
-/** @addtogroup config */
+/** @addtogroup client_config */
 /*@{*/
 
 /** config variable struct
@@ -827,7 +827,7 @@ int s_gettext_init (s_window_t *window);
 /* gettime.c */
 long long s_gettimeofday (void);
 
-/** @defgroup grlib graphics api
+/** @defgroup client_grlib Client Library - Graphics API
   * @brief these are simple low-level graphics api functions, for further information
   *        you may look in demo, and the server source codes.
   *
@@ -837,7 +837,7 @@ long long s_gettimeofday (void);
   * @endcode
   */
 
-/** @addtogroup grlib */
+/** @addtogroup client_grlib */
 /*@{*/
 
 /* grlib.c */
@@ -1237,7 +1237,7 @@ int s_putmaskpart (unsigned char *dp, int dw, int dh, int x, int y, int w, int h
 
 /*@}*/
 
-/** @defgroup handler handlers api
+/** @defgroup client_handler Client Library - Handlers API
   * @brief this api is used for setting and processing handlers, and callback for input events.
   *
   * @example
@@ -1246,7 +1246,7 @@ int s_putmaskpart (unsigned char *dp, int dw, int dh, int x, int y, int w, int h
   * @endcode
   */
 
-/** @addtogroup handler */
+/** @addtogroup client_handler */
 /*@{*/
 
 /** keyboard handler struct
@@ -1368,7 +1368,7 @@ int s_handlers_uninit (s_window_t *window);
 
 /*@}*/
 
-/** @defgroup image image api
+/** @defgroup client_image Client Library - Image API
   * @brief detailed description
   *
   * @example
@@ -1410,7 +1410,7 @@ int s_handlers_uninit (s_window_t *window);
   * @endcode
   */
 
-/** @addtogroup image */
+/** @addtogroup client_image */
 /*@{*/
 
 /** image struct
@@ -1603,7 +1603,7 @@ int s_image_xpm (char *file, s_image_t *img);
 
 /*@}*/
 
-/** @defgroup list list api
+/** @defgroup client_list Client Library - List API
   * @brief detailed description
   *
   * @example
@@ -1663,7 +1663,7 @@ int s_image_xpm (char *file, s_image_t *img);
   * @endcode
   */
 
-/** @addtogroup list */
+/** @addtogroup client_list */
 /*@{*/
 
 /** list node struct
@@ -1753,7 +1753,7 @@ int s_list_get_pos (s_list_t *list, void *node);
 
 /*@}*/
 
-/** @defgroup pollfd pollfd api
+/** @defgroup client_pollfd Client Library - Pollfd API
   * @brief detailed description
   *
   * @example
@@ -1802,7 +1802,7 @@ int s_list_get_pos (s_list_t *list, void *node);
   * @endcode
   */
 
-/** @addtogroup pollfd */
+/** @addtogroup client_pollfd */
 /*@{*/
 
 /** polfd struct
@@ -1886,7 +1886,7 @@ int s_pollfds_uninit (s_window_t *window);
 
 /*@}*/
 
-/** @defgroup rect rect api
+/** @defgroup client_rect Client Library - Rect API
   * @brief s_rect_* api is designed for rectangular operations.
   *
   * @example
@@ -1928,7 +1928,7 @@ int s_pollfds_uninit (s_window_t *window);
   * @endcode
   */
 
-/** @addtogroup rect */
+/** @addtogroup client_rect */
 /*@{*/
 
 /** rect struct
@@ -2044,7 +2044,7 @@ void s_surface_linear (s_window_t *window);
 void s_surface_uninit (s_window_t *window);
 void s_surface_changed (s_window_t *window, s_rect_t *changed);
 
-/** @defgroup thread thread api
+/** @defgroup client_thread Client Library - Thread API
   * @brief s_thread_* api is an abstract layer for system calls.
   *        programmer should not use s_thread_sem_* calls, becouse
   *        they are designed to be used internally - especially for
@@ -2128,7 +2128,7 @@ void s_surface_changed (s_window_t *window, s_rect_t *changed);
   * @endcode
   */
 
-/** @addtogroup thread */
+/** @addtogroup client_thread */
 /*@{*/
 
 /* thread.c */
@@ -2289,7 +2289,7 @@ void s_thread_exit (void *ret);
 
 /*@}*/
 
-/** @defgroup timer timer api
+/** @defgroup client_timer Client Library - Timer API
   * @brief s_timer_* api calls is designed for setting timers,
   *        and timer callbacks for any window.
   *        programmers should use these timers rather than using signals
@@ -2335,7 +2335,7 @@ void s_thread_exit (void *ret);
   * @endcode
   */
 
-/** @addtogroup timer */
+/** @addtogroup client_timer */
 /*@{*/
 
 /** timer struct
@@ -2419,7 +2419,7 @@ int s_timers_uninit (s_window_t *window);
 
 /*@}*/
 
-/** @defgroup window window api
+/** @defgroup client_window Client Library - Window API
   * @brief these are simple low-level windows api functions,
   *        for further information you may look in demo directory.
   *
@@ -2429,10 +2429,10 @@ int s_timers_uninit (s_window_t *window);
   *
   * @code
   * // simple example will be in here
-    * @endcode
+  * @endcode
   */
 
-/** @addtogroup window */
+/** @addtogroup client_window */
 /*@{*/
 
 /** window struct

@@ -53,7 +53,11 @@ int s_pollfd_add (s_window_t *window, s_pollfd_t *pfd)
 	int ret = 0;
 	s_thread_mutex_lock(window->pollfds->mut);
 	if (s_list_get_pos(window->pollfds->list, pfd) < 0) {
+#if 0
 		ret = s_list_add(window->pollfds->list, pfd, -1);
+#else
+		ret = s_list_add(window->pollfds->list, pfd, 2);
+#endif
 	}
 	s_thread_mutex_unlock(window->pollfds->mut);
 	s_client_wakeup(window);
