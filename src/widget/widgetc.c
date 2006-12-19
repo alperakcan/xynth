@@ -1184,6 +1184,9 @@ static void start (void *xdata, const char *el, const char **attr)
 		g_active = node;
 		if (strcmp(node->name, "stylesheet") == 0) {
 			s_node = node;
+			if (node->parent) {
+				list_add(node->parent->nodes, node, -1);
+			}
 		} else {
 			if (node->parent) {
 				list_add(node->parent->nodes, node, -1);
@@ -1219,17 +1222,27 @@ static void char_hndl_fixup (char *out)
 static void char_hndl (void *xdata, const char *txt, int txtlen)
 {
 	char *str;
-	char *ptr;
-	char *end;
+	unsigned int total = 0;
+	unsigned int total_old = 0;
 	if (txtlen > 0 &&
 	    txt &&
 	    g_path) {
 	} else {
 	    return;
 	}
-	end = (char *) malloc(sizeof(char) * (strlen(g_path) + 3 + 1));
-	sprintf(end, "</%s>", g_path);
-	str = strdup(txt);
+	if (g_active == NULL) {
+		return;
+	}
+	if (g_active->value != NULL) {
+		total_old = strlen(g_active->value);
+	}
+	total = (total_old + txtlen + 1) * sizeof(char *);
+	g_active->value = (char *) realloc(g_active->value, total);
+	if (total_old == 0) {
+		g_active->value[0] = '\0';
+	}
+	strncat(g_active->value, txt, txtlen); 
+	str = g_active->value;
 #if 0
 	ptr = str + txtlen;
 	if (g_path &&
@@ -1241,18 +1254,12 @@ static void char_hndl (void *xdata, const char *txt, int txtlen)
 	    	}
 	}
 #else
-	ptr = strstr(str, end);
-	if (g_path &&
-	    ptr) {
-	    	*ptr = '\0';
-	    	if (g_active && g_active->value == NULL) {
-	    		g_active->value = strdup(str);
+	if (g_path) {
+	    	if (g_active && g_active->value) {
 	    		char_hndl_fixup(g_active->value);
 	    	}
 	}
 #endif
-	free(str);
-	free(end);
 }
 
 int main (int argc, char **argv)
@@ -1320,6 +1327,7 @@ usage:			case 'h':
 		}
 		XML_ParserFree(p);
 		free(tmp);
+		fclose(stylesheet);
 	} 
 	
 	if (varf != NULL) {
