@@ -34,7 +34,7 @@ int axtoi (char *hex)
 	int count;
 	int intvalue = 0;
 	int digit[5];
-	while (n < 4) {
+	while (n < 8) {
 		if (hex[n]=='\0')
 			break;
 		if (hex[n] > 0x29 && hex[n] < 0x40)
@@ -50,7 +50,7 @@ int axtoi (char *hex)
 	count = n;
 	m = n - 1;
 	n = 0;
-	while(n < count) {
+	while (n < count) {
 		intvalue = intvalue | (digit[n] << (m << 2));
 		m--;
 		n++;
