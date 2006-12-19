@@ -978,6 +978,9 @@ static void node_generate_element (node_t *node)
 	node_t *tmp;
 	node_t *dmp;
 	node_t *chl;
+	if (s_node == NULL) {
+		return;
+	}
 	for (p = 0; !list_eol(node->nodes, p); p++) {
     		tmp = (node_t *) list_get(node->nodes, p);
     		node_generate_element(tmp);
@@ -1256,6 +1259,7 @@ int main (int argc, char **argv)
 {
 	int c;
 	int l = 0;
+	node_t *root;
 	FILE *stylesheet;
 	char *tmp = NULL;
 	char *buf = NULL;
@@ -1267,13 +1271,13 @@ int main (int argc, char **argv)
 	while ((c = getopt(argc, argv, "s:f:o:clh")) != -1) {
 		switch (c) {
 			case 'f':
-				varf = strdup(optarg);
+				varf = optarg;
 				break;
 			case 'o':
-				varo = strdup(optarg);
+				varo = optarg;
 				break;
 			case 's':
-				vars = strdup(optarg);
+				vars = optarg;
 				break;
 			case 'l':
 				localization = 1;
@@ -1360,8 +1364,10 @@ usage:			case 'h':
 	if (sources)
 		node_generate_sources(g_node);
 
-	node_uninit(g_node);
-	node_uninit(s_node);
+	for (root = g_node; root && root->parent; root = root->parent);
+	node_uninit(root);
+	for (root = s_node; root && root->parent; root = root->parent);
+	node_uninit(root);
 	fclose(g_input);
 	if (sources) {
 		fclose(g_source);
