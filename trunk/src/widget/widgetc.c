@@ -1243,23 +1243,11 @@ static void char_hndl (void *xdata, const char *txt, int txtlen)
 	}
 	strncat(g_active->value, txt, txtlen); 
 	str = g_active->value;
-#if 0
-	ptr = str + txtlen;
-	if (g_path &&
-	    strncmp(ptr, end, strlen(end)) == 0) {
-	    	str[txtlen] = '\0';
-	    	if (g_active) {
-	    		g_active->value = strdup(str);
-	    		char_hndl_fixup(g_active->value);
-	    	}
-	}
-#else
 	if (g_path) {
 	    	if (g_active && g_active->value) {
 	    		char_hndl_fixup(g_active->value);
 	    	}
 	}
-#endif
 }
 
 int main (int argc, char **argv)
