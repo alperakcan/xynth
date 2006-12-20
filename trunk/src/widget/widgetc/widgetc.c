@@ -25,6 +25,7 @@
 #include "node.h"
 #include "lang.h"
 #include "gen_code.h"
+#include "gen_header.h"
 
 static int localization = 0;
 static int sources      = 0;
@@ -42,70 +43,12 @@ static int g_depth = 0;
 static char *g_path = NULL;
 static node_t *g_active = NULL;
 
-static void node_generate_header (node_t *node);
-static void node_generate_function (node_t *node);
 static void node_generate_element (node_t *node);
 static void node_generate_localization (node_t *node);
 static void node_generate_sources (node_t *node);
 static void start (void *xdata, const char *el, const char **attr);
 static void end (void *xdata, const char *el);
 static void char_hndl (void *xdata, const char *txt, int txtlen);
-
-static void node_generate_header (node_t *node)
-{
-	int p;
-	node_t *tmp;
-	if (strcmp(node->name, "window") == 0) {
-		fprintf(g_header, "w_window_t *%s;\n", node->id);
-	} else if (strcmp(node->name, "object") == 0) {
-		if (strcmp(node->type, "frame") == 0) {
-			fprintf(g_header, "w_frame_t *%s;\n", node->id);
-		} else if (strcmp(node->type, "button") == 0) {
-			fprintf(g_header, "w_button_t *%s;\n", node->id);
-		} else if (strcmp(node->type, "textbox") == 0) {
-			fprintf(g_header, "w_textbox_t *%s;\n", node->id);
-		} else if (strcmp(node->type, "checkbox") == 0) {
-			fprintf(g_header, "w_checkbox_t *%s;\n", node->id);
-		} else if (strcmp(node->type, "editbox") == 0) {
-			fprintf(g_header, "w_editbox_t *%s;\n", node->id);
-		} else if (strcmp(node->type, "progressbar") == 0) {
-			fprintf(g_header, "w_progressbar_t *%s;\n", node->id);
-		} else if (strcmp(node->type, "scrollbuffer") == 0) {
-			fprintf(g_header, "w_scrollbuffer_t *%s;\n", node->id);
-		}
-	}
-	g_depth++;
-	p = 0;
-	while (!list_eol(node->nodes, p)) {
-		tmp = (node_t *) list_get(node->nodes, p);
-		node_generate_header(tmp);
-		p++;
-	}
-	g_depth--;
-}
-
-static void node_generate_function (node_t *node)
-{
-	int p;
-	node_t *tmp;
-	if (strcmp(node->name, "draw") == 0) {
-		fprintf(g_header, "void %s (w_object_t *object);\n", node->value);
-	} else if (strcmp(node->name, "pressed") == 0) {
-		fprintf(g_header, "void %s (w_object_t *object, int button);\n", node->value);
-	} else if (strcmp(node->name, "released") == 0) {
-		fprintf(g_header, "void %s (w_object_t *object, int button);\n", node->value);
-	} else if (strcmp(node->name, "changed") == 0) {
-		fprintf(g_header, "void %s (w_object_t *object, int state);\n", node->value);
-	}
-	g_depth++;
-	p = 0;
-	while (!list_eol(node->nodes, p)) {
-		tmp = (node_t *) list_get(node->nodes, p);
-		node_generate_function(tmp);
-		p++;
-	}
-	g_depth--;
-}
 
 static void node_generate_localization (node_t *node)
 {
@@ -130,9 +73,9 @@ static void node_generate_sources (node_t *node)
 	        "#include <xynth.h>\n"
 	        "#include <widget.h>\n"
 	        "\n");
-	node_generate_header(node);
+	node_generate_header(node, g_header);
 	fprintf(g_header, "\n");
-	node_generate_function(node);
+	node_generate_function(node, g_header);
 	fprintf(g_source,
 	        "\n"
 	        "#include \"%s\"\n"

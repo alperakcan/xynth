@@ -4,7 +4,7 @@ include ../../../Makefile.parse
 
 LDFLAGS = -lexpat
 
-OBJS = widgetc.o list.o node.o lang.o gen_code.o
+OBJS = widgetc.o list.o node.o lang.o gen_code.o gen_header.o
 
 TARGET = widgetc
 
