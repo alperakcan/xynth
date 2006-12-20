@@ -37,12 +37,7 @@ static char *g_name = NULL;
 static char *g_source_name = NULL;
 static char *g_header_name = NULL;
 
-static node_t *g_node = NULL;
-static node_t *s_node = NULL;
-static char *g_path = NULL;
-static node_t *g_active = NULL;
-
-static void node_generate_element (node_t *node);
+static void node_generate_element (node_t *node, node_t *s_node);
 static void node_generate_localization (node_t *node);
 static void node_generate_sources (node_t *node);
 static void start (void *xdata, const char *el, const char **attr);
@@ -89,7 +84,7 @@ static void node_generate_sources (node_t *node)
 	        "}\n");
 }
 
-static void node_generate_element (node_t *node)
+static void node_generate_element (node_t *node, node_t *s_node)
 {
 	int p;
 	node_t *tmp;
@@ -100,7 +95,7 @@ static void node_generate_element (node_t *node)
 	}
 	for (p = 0; !list_eol(node->nodes, p); p++) {
     		tmp = (node_t *) list_get(node->nodes, p);
-    		node_generate_element(tmp);
+    		node_generate_element(tmp, s_node);
 	}
 	if (strcmp(node->name, "element") == 0 &&
 	    node->type != NULL) {
@@ -125,10 +120,18 @@ static void node_generate_element (node_t *node)
 	}
 }
 
-static void start (void *xdata, const char *el, const char **attr)
+typedef struct xml_data_s {
+	char *path;
+	node_t *active;
+	node_t *root;
+	node_t *elem;
+} xml_data_t;
+	
+static void start (void *x_data, const char *el, const char **attr)
 {
-	free(g_path);
-	g_path = strdup(el);
+	xml_data_t *xdata = (xml_data_t *) x_data;
+	free(xdata->path);
+	xdata->path = strdup(el);
 	
 	{
 		int p;
@@ -142,10 +145,10 @@ static void start (void *xdata, const char *el, const char **attr)
 				node->id = strdup(attr[p + 1]);
 			}
 		}
-		node->parent = g_active;
-		g_active = node;
+		node->parent = xdata->active;
+		xdata->active = node;
 		if (strcmp(node->name, "stylesheet") == 0) {
-			s_node = node;
+			xdata->elem = node;
 			if (node->parent) {
 				list_add(node->parent->nodes, node, -1);
 			}
@@ -153,17 +156,18 @@ static void start (void *xdata, const char *el, const char **attr)
 			if (node->parent) {
 				list_add(node->parent->nodes, node, -1);
 			} else {
-				g_node = node;
+				xdata->root = node;
 			}
 		}
 	}
 }
 
-static void end (void *xdata, const char *el)
+static void end (void *x_data, const char *el)
 {
-	free(g_path);
-	g_path = NULL;
-	g_active = g_active->parent;
+	xml_data_t *xdata = (xml_data_t *) x_data;
+	free(xdata->path);
+	xdata->path = NULL;
+	xdata->active = xdata->active->parent;
 }
 
 static void char_hndl_fixup (char *out)
@@ -180,33 +184,34 @@ static void char_hndl_fixup (char *out)
 	}
 }
 
-static void char_hndl (void *xdata, const char *txt, int txtlen)
+static void char_hndl (void *x_data, const char *txt, int txtlen)
 {
 	char *str;
 	unsigned int total = 0;
 	unsigned int total_old = 0;
+	xml_data_t *xdata = (xml_data_t *) x_data;
 	if (txtlen > 0 &&
 	    txt &&
-	    g_path) {
+	    xdata->path) {
 	} else {
 	    return;
 	}
-	if (g_active == NULL) {
+	if (xdata->active == NULL) {
 		return;
 	}
-	if (g_active->value != NULL) {
-		total_old = strlen(g_active->value);
+	if (xdata->active->value != NULL) {
+		total_old = strlen(xdata->active->value);
 	}
 	total = (total_old + txtlen + 1) * sizeof(char *);
-	g_active->value = (char *) realloc(g_active->value, total);
+	xdata->active->value = (char *) realloc(xdata->active->value, total);
 	if (total_old == 0) {
-		g_active->value[0] = '\0';
+		xdata->active->value[0] = '\0';
 	}
-	strncat(g_active->value, txt, txtlen); 
-	str = g_active->value;
-	if (g_path) {
-	    	if (g_active && g_active->value) {
-	    		char_hndl_fixup(g_active->value);
+	strncat(xdata->active->value, txt, txtlen); 
+	str = xdata->active->value;
+	if (xdata->path) {
+	    	if (xdata->active && xdata->active->value) {
+	    		char_hndl_fixup(xdata->active->value);
 	    	}
 	}
 }
@@ -223,6 +228,7 @@ int main (int argc, char **argv)
 	char *varf = NULL;
 	char *vars = NULL;
 	struct stat stbuf;
+	xml_data_t *xdata;
 	
 	while ((c = getopt(argc, argv, "s:f:o:clh")) != -1) {
 		switch (c) {
@@ -257,6 +263,9 @@ usage:			case 'h':
 		goto usage;
 	}
 	
+	xdata = (xml_data_t *) malloc(sizeof(xml_data_t));
+	memset(xdata, 0, sizeof(xml_data_t));
+
 	if (vars != NULL) {
 		stat(vars, &stbuf);
 		tmp = (char *) malloc(stbuf.st_size + 1);
@@ -268,6 +277,7 @@ usage:			case 'h':
 			fprintf(stderr, "Couldn't allocate memory for parser\n");
 			exit(-1);
 		}
+		XML_SetUserData(p, xdata);
 		XML_SetElementHandler(p, start, end);
 		XML_SetCharacterDataHandler(p, char_hndl);
 		if (!XML_Parse(p, tmp, l, 1)) {
@@ -308,6 +318,7 @@ usage:			case 'h':
 		fprintf(stderr, "Couldn't allocate memory for parser\n");
 		exit(-1);
 	}
+	XML_SetUserData(p, xdata);
 	XML_SetElementHandler(p, start, end);
 	XML_SetCharacterDataHandler(p, char_hndl);
 	if (!XML_Parse(p, buf, l, 1)) {
@@ -316,22 +327,25 @@ usage:			case 'h':
 	}
 	XML_ParserFree(p);
 
-	node_generate_element(g_node);
-	for (root = s_node; root && root->parent; root = root->parent);
-	node_uninit(root);
+	node_generate_element(xdata->root, xdata->elem);
 
 	if (localization)
-		node_generate_localization(g_node);
+		node_generate_localization(xdata->root);
 	if (sources)
-		node_generate_sources(g_node);
+		node_generate_sources(xdata->root);
 
-	for (root = g_node; root && root->parent; root = root->parent);
+	for (root = xdata->root; root && root->parent; root = root->parent);
 	node_uninit(root);
+	for (root = xdata->elem; root && root->parent; root = root->parent);
+	node_uninit(root);
+
 	fclose(g_input);
 	if (sources) {
 		fclose(g_source);
 		fclose(g_header);
 	}
+	
+	free(xdata);
 	free(g_name);
 	free(g_source_name);
 	free(g_header_name);
