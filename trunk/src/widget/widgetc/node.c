@@ -34,6 +34,7 @@ char * node_string_normalize (char *str_param)
 	int j;
 	int s;
 	char *out = str_param;
+	/* Remove white spaces */
 	for (s = 0, i = 0; out[i]; i++){
 		if (out[i] == '"') {
 			if (i == 0 ||
