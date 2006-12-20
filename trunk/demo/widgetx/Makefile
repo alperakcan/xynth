@@ -6,8 +6,9 @@ INCDIR  = ../../src/lib ../../src/widget
 LIBDIR  = ../../src/widget ../../src/lib
 LDFLAGS = -lwidget -lxynth
 
-have_widgetc := $(wildcard ../../src/widget/widgetc)
-have_widgetc += $(wildcard ../../src/widget/widgetc.exe)
+WIDGETC = ../../src/widget/widgetc/widgetc
+
+have_widgetc := $(wildcard $(WIDGETC))
 
 ifeq ($(strip $(have_widgetc)),)
 
@@ -27,7 +28,7 @@ endif
 include ../../Makefile.rules
 
 widgetx_xml.c: widgetx.xml
-	../../src/widget/widgetc -f widgetx.xml -o widgetx -c
+	$(WIDGETC) -f widgetx.xml -o widgetx -c
 endif
 
 dist: all
