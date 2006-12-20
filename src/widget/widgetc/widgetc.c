@@ -39,7 +39,6 @@ static char *g_header_name = NULL;
 
 static node_t *g_node = NULL;
 static node_t *s_node = NULL;
-static int g_depth = 0;
 static char *g_path = NULL;
 static node_t *g_active = NULL;
 
@@ -130,7 +129,6 @@ static void start (void *xdata, const char *el, const char **attr)
 {
 	free(g_path);
 	g_path = strdup(el);
-	g_depth++;
 	
 	{
 		int p;
@@ -163,7 +161,6 @@ static void start (void *xdata, const char *el, const char **attr)
 
 static void end (void *xdata, const char *el)
 {
-	g_depth--;
 	free(g_path);
 	g_path = NULL;
 	g_active = g_active->parent;
