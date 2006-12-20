@@ -10,6 +10,7 @@ LDFLAGS  := $(addprefix -L,$(LIBDIR)) $(LDFLAGS)
 DEPEND   := Makefile.depend
 
 all: $(EXTRA_TARGETS) $(TARGET) $(TARGET_A) $(TARGET_SO)
+	$(foreach F, $(SUBDIR-Y), $(MAKE) -C $F || exit 1;)
 
 ifdef TARGET
 $(TARGET): $(OBJS) $(EXTRA_OBJS)
@@ -42,4 +43,7 @@ $(DEPEND): $(EXTRA_DEPEND_FILES) $(OBJS:.o=.c)
 -include $(DEPEND)
 
 clean:
+	$(foreach F, $(SUBDIR-Y), $(MAKE) clean -C $F || exit 1;)
+	$(foreach F, $(SUBDIR-N), $(MAKE) clean -C $F || exit 1;)
+	$(foreach F, $(SUBDIR-), $(MAKE) clean -C $F || exit 1;)
 	rm -f $(TARGET) $(TARGET_A) $(TARGET_SO) $(EXTRA_CLEAN) $(OBJS) $(EXTRA_TARGETS) $(DEPEND)
