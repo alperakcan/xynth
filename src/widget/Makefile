@@ -33,7 +33,6 @@ SUBDIR-Y = widgetc
 include ../../Makefile.rules
 
 dist: all
-	cp widgetc ../../$(DISTBINDIR)
-	cp widgetr ../../$(DISTBINDIR)
+	cp widgetc/widgetc ../../$(DISTBINDIR)
 	cp -a widget.h ../../$(DISTINCDIR)
 	cp -a $(TARGET_A) $(TARGET_SO) $(TARGET) ../../$(DISTLIBDIR)
