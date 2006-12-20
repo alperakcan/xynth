@@ -1,5 +1,5 @@
 
-#include "../lib/xynth_.h"
+#include "xynth_.h"
 #include "widget.h"
 #include <getopt.h>
 
