@@ -22,13 +22,7 @@
 #include <expat.h>
 
 #include "node.h"
-
-typedef struct xml_data_s {
-	char *path;
-	node_t *active;
-	node_t *root;
-	node_t *elem;
-} xml_data_t;
+#include "parse.h"
 
 void parse_xml_start (void *x_data, const char *el, const char **attr)
 {
