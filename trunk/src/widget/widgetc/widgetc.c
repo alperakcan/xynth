@@ -27,8 +27,12 @@
 #include "gen_code.h"
 #include "gen_header.h"
 
-static int localization = 0;
-static int sources      = 0;
+typedef struct xml_data_s {
+	char *path;
+	node_t *active;
+	node_t *root;
+	node_t *elem;
+} xml_data_t;
 
 static FILE *g_input = NULL;
 static FILE *g_source = NULL;
@@ -119,13 +123,6 @@ static void node_generate_element (node_t *node, node_t *elem)
 	    	}
 	}
 }
-
-typedef struct xml_data_s {
-	char *path;
-	node_t *active;
-	node_t *root;
-	node_t *elem;
-} xml_data_t;
 	
 static void start (void *x_data, const char *el, const char **attr)
 {
@@ -229,6 +226,8 @@ int main (int argc, char **argv)
 	char *vars = NULL;
 	struct stat stbuf;
 	xml_data_t *xdata;
+	int localization = 0;
+	int sources      = 0;
 	
 	while ((c = getopt(argc, argv, "s:f:o:clh")) != -1) {
 		switch (c) {
