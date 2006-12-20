@@ -32,35 +32,34 @@ typedef struct xml_data_s {
 
 void parse_xml_start (void *x_data, const char *el, const char **attr)
 {
+	int p;
+	node_t *node;
 	xml_data_t *xdata = (xml_data_t *) x_data;
+
 	free(xdata->path);
 	xdata->path = strdup(el);
 	
-	{
-		int p;
-		node_t *node;
-		node_init(&node);
-		node->name = strdup(el);
-		for (p = 0; attr[p]; p += 2) {
-			if (strcmp(attr[p], "type") == 0) {
-				node->type = strdup(attr[p + 1]);
-			} else if (strcmp(attr[p], "id") == 0) {
-				node->id = strdup(attr[p + 1]);
-			}
+	node_init(&node);
+	node->name = strdup(el);
+	for (p = 0; attr[p]; p += 2) {
+		if (strcmp(attr[p], "type") == 0) {
+			node->type = strdup(attr[p + 1]);
+		} else if (strcmp(attr[p], "id") == 0) {
+			node->id = strdup(attr[p + 1]);
 		}
-		node->parent = xdata->active;
-		xdata->active = node;
-		if (strcmp(node->name, "stylesheet") == 0) {
-			xdata->elem = node;
-			if (node->parent) {
-				list_add(node->parent->nodes, node, -1);
-			}
+	}
+	node->parent = xdata->active;
+	xdata->active = node;
+	if (strcmp(node->name, "stylesheet") == 0) {
+		xdata->elem = node;
+		if (node->parent) {
+			list_add(node->parent->nodes, node, -1);
+		}
+	} else {
+		if (node->parent) {
+			list_add(node->parent->nodes, node, -1);
 		} else {
-			if (node->parent) {
-				list_add(node->parent->nodes, node, -1);
-			} else {
-				xdata->root = node;
-			}
+			xdata->root = node;
 		}
 	}
 }
