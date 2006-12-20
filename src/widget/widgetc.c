@@ -972,42 +972,6 @@ static void node_generate_function (node_t *node)
 	g_depth--;
 }
 
-static void node_generate_element (node_t *node)
-{
-	int p;
-	node_t *tmp;
-	node_t *dmp;
-	node_t *chl;
-	if (s_node == NULL) {
-		return;
-	}
-	for (p = 0; !list_eol(node->nodes, p); p++) {
-    		tmp = (node_t *) list_get(node->nodes, p);
-    		node_generate_element(tmp);
-	}
-	if (strcmp(node->name, "element") == 0 &&
-	    node->type != NULL) {
-	    	for (p = 0; !list_eol(s_node->nodes, p); p++) {
-	    		tmp = (node_t *) list_get(s_node->nodes, p);
-	    		if (strcmp(tmp->name, "element") == 0 &&
-	    		    strcmp(tmp->id, node->type) == 0) {
-	    		    	node_dublicate(tmp, &dmp);
-	    		    	free(node->name);
-	    		    	free(node->type);
-	    		    	node->name = node_strdup("object");
-	    		    	node->type = node_strdup(dmp->type);
-	    		    	while (!list_eol(dmp->nodes, 0)) {
-	    		    		chl = (node_t *) list_get(dmp->nodes, dmp->nodes->nb_elt - 1);
-	    		    		chl->parent = node;
-	    		    		list_add(node->nodes, chl, 0);
-	    		    		list_remove(dmp->nodes, dmp->nodes->nb_elt - 1);
-	    		    	}
-	    		    	node_uninit(dmp);
-	    		}
-	    	}
-	}
-}
-
 static unsigned long int hash_string (const char *str_param)
 {
 	#define HASHWORDBITS 32
@@ -1136,7 +1100,6 @@ static void node_generate_localization (node_t *node)
 
 static void node_generate_sources (node_t *node)
 {
-	node_generate_element(node);
 	fprintf(g_header,
 	        "\n"
 	        "#include <stdio.h>\n"
@@ -1160,6 +1123,42 @@ static void node_generate_sources (node_t *node)
 	fprintf(g_source,
 	        "return 0;\n"
 	        "}\n");
+}
+
+static void node_generate_element (node_t *node)
+{
+	int p;
+	node_t *tmp;
+	node_t *dmp;
+	node_t *chl;
+	if (s_node == NULL) {
+		return;
+	}
+	for (p = 0; !list_eol(node->nodes, p); p++) {
+    		tmp = (node_t *) list_get(node->nodes, p);
+    		node_generate_element(tmp);
+	}
+	if (strcmp(node->name, "element") == 0 &&
+	    node->type != NULL) {
+	    	for (p = 0; !list_eol(s_node->nodes, p); p++) {
+	    		tmp = (node_t *) list_get(s_node->nodes, p);
+	    		if (strcmp(tmp->name, "element") == 0 &&
+	    		    strcmp(tmp->id, node->type) == 0) {
+	    		    	node_dublicate(tmp, &dmp);
+	    		    	free(node->name);
+	    		    	free(node->type);
+	    		    	node->name = node_strdup("object");
+	    		    	node->type = node_strdup(dmp->type);
+	    		    	while (!list_eol(dmp->nodes, 0)) {
+	    		    		chl = (node_t *) list_get(dmp->nodes, dmp->nodes->nb_elt - 1);
+	    		    		chl->parent = node;
+	    		    		list_add(node->nodes, chl, 0);
+	    		    		list_remove(dmp->nodes, dmp->nodes->nb_elt - 1);
+	    		    	}
+	    		    	node_uninit(dmp);
+	    		}
+	    	}
+	}
 }
 
 static void start (void *xdata, const char *el, const char **attr)
@@ -1355,14 +1354,16 @@ usage:			case 'h':
 	}
 	XML_ParserFree(p);
 
+	node_generate_element(g_node);
+	for (root = s_node; root && root->parent; root = root->parent);
+	node_uninit(root);
+
 	if (localization)
 		node_generate_localization(g_node);
 	if (sources)
 		node_generate_sources(g_node);
 
 	for (root = g_node; root && root->parent; root = root->parent);
-	node_uninit(root);
-	for (root = s_node; root && root->parent; root = root->parent);
 	node_uninit(root);
 	fclose(g_input);
 	if (sources) {
