@@ -70,18 +70,19 @@ struct w_effect_s {
 };
 
 typedef enum {
-	OBJECT_FRAME   		= 0x0,
-	OBJECT_BUTTON  		= 0x1,
-	OBJECT_TEXTBOX 		= 0x2,
-	OBJECT_EDITBOX 		= 0x3,
-	OBJECT_LISTBOX 		= 0x4,
-	OBJECT_PROGRESSBAR 	= 0x5,
-	OBJECT_SCROLLBAR	= 0x6,
-	OBJECT_COMBOBOX		= 0x7,
-	OBJECT_CHECKBOX		= 0x8,
-	OBJECT_SCROLLBUFFER	= 0x9,
-	OBJECT_SCROLLBUFFERBAR	= 0xA,
-	OBJECT_OBJECTS 		= 0xB
+	OBJECT_OBJECT           = 0x0,
+	OBJECT_FRAME   		= 0x1,
+	OBJECT_BUTTON  		= 0x2,
+	OBJECT_TEXTBOX 		= 0x3,
+	OBJECT_EDITBOX 		= 0x4,
+	OBJECT_LISTBOX 		= 0x5,
+	OBJECT_PROGRESSBAR 	= 0x6,
+	OBJECT_SCROLLBAR	= 0x7,
+	OBJECT_COMBOBOX		= 0x8,
+	OBJECT_CHECKBOX		= 0x9,
+	OBJECT_SCROLLBUFFER	= 0xa,
+	OBJECT_SCROLLBUFFERBAR	= 0xb,
+	OBJECT_OBJECTS 		= 0xc
 } OBJECT;
 
 /** @defgroup widget_object Widget Library - Object API
@@ -102,6 +103,8 @@ typedef enum {
 /** object struct
  */
 struct w_object_s {
+	/** object type */
+	OBJECT type;
 	/** child list */
 	s_list_t *childs;
 	/** shown list */
