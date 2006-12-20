@@ -34,7 +34,7 @@ int axtoi (char *hex)
 	int m = 0;
 	int count;
 	int intvalue = 0;
-	int digit[5];
+	int digit[8];
 	while (n < 8) {
 		if (hex[n]=='\0')
 			break;
