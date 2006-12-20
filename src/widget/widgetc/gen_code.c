@@ -19,8 +19,8 @@
 
 #include "gen_code.h"
 
-static FILE *g_source;
 static char *g_name;
+static FILE *g_source;
 
 void node_generate_code_style (node_t *node, node_t *parent, char *prefix)
 {
