@@ -16,8 +16,8 @@
 			<move>
 				<x>0</x>
 				<y>0</y>
-				<w>demo->window->surface->buf->w</w>
-				<h>demo->window->surface->buf->h</h>
+				<w>500</w>
+				<h>400</h>
 			</move>
 			<show>yes</show>
 			<object id="button_hide" type="button">
