@@ -3,6 +3,7 @@
 #include "widget.h"
 #include <getopt.h>
 
+#include "parse.h"
 #include "table.h"
 
 typedef struct w_widgetr_s w_widgetr_t;
@@ -49,11 +50,13 @@ int main (int argc, char *argv[])
 	char c;
 	char *hex;
 	unsigned int i;
+	xml_data_t *xdata;
 	w_widgetr_t *widgetr;
 	unsigned int option_index = 0;
 	struct option long_options[] = {
 		{"depth", 1, 0, 0},
 		{"mask", 1, 0, 0},
+		{"file", 1, 0, 0},
 		{"help", 0, 0, 0},
 		{0, 0, 0, 0},
 	};
@@ -61,16 +64,26 @@ int main (int argc, char *argv[])
 	widgetr = (w_widgetr_t *) s_malloc(sizeof(w_widgetr_t));
 	memset(widgetr, 0, sizeof(w_widgetr_t));
 	
-	while ((c = getopt_long(argc, argv, "d:m:h", long_options, &option_index)) != -1) {
+	while ((c = getopt_long(argc, argv, "f:d:m:h", long_options, &option_index)) != -1) {
 		switch (c) {
 			case 0:
 				if (strcmp("depth", long_options[option_index].name) == 0) {
 					goto option_tables;
 				} else if (strcmp("mask", long_options[option_index].name) == 0) {
 					goto option_mask;
+				} else if (strcmp("file", long_options[option_index].name) == 0) {
+					goto option_file;
 				} else if (strcmp("help", long_options[option_index].name) == 0) {
 					goto option_help;
 				}
+				break;
+			case 'f':
+option_file:
+				xdata = (xml_data_t *) s_malloc(sizeof(xml_data_t));
+				memset(xdata, 0, sizeof(xml_data_t));
+				parse_xml_file(xdata, optarg);
+				node_print(xdata->root);
+				s_free(xdata);
 				break;
 			case 'm':
 option_mask:
@@ -87,9 +100,10 @@ option_tables:
 			case 'h':
 option_help:
 				printf("%s usage;\n"
-			       "\t-t / --tables : tables depth\n"
-			       "\t-m / --mask   : bit mask\n",
-			       argv[0]);
+				       "\t-f / --file   : xml file to parse\n"
+				       "\t-t / --tables : tables depth\n"
+				       "\t-m / --mask   : bit mask\n",
+				       argv[0]);
 				exit(1);
 		}
 	}
