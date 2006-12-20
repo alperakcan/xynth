@@ -118,7 +118,9 @@ int parse_xml_file (xml_data_t *xdata, char *name)
 	FILE *fp;
 	char *tmp;
 	struct stat stbuf;
-	stat(name, &stbuf);
+	if (stat(name, &stbuf)) {
+		return -1;
+	}
 	tmp = (char *) malloc(stbuf.st_size + 1);
 	fp = fopen(name, "r");
 	fread(tmp, 1, stbuf.st_size, fp);
