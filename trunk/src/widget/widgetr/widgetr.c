@@ -97,6 +97,7 @@ option_file:
 				memset(xdata, 0, sizeof(xml_data_t));
 				parse_xml_file(xdata, optarg);
 				node_print(xdata->root);
+//				node_uninit(xdata->root);
 				s_free(xdata);
 				break;
 			case 'm':
