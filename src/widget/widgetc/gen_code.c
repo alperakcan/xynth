@@ -381,13 +381,15 @@ void node_generate_code_object (node_t *node)
 	}
 }
 
-void node_generate_code (node_t *node, FILE *g_source, char *g_name)
+void node_generate_code (node_t *node, FILE *source, char *name)
 {
 	int p;
 	node_t *tmp;
 	if (node->dontparse != 0) {
 		return;
 	}
+	g_name = name;
+	g_source = source;
 	if (strcmp(node->name, "window") == 0) {
 		node_generate_code_window(node);
 	} else if (strcmp(node->name, "object") == 0) {
@@ -400,7 +402,7 @@ void node_generate_code (node_t *node, FILE *g_source, char *g_name)
 	p = 0;
 	while (!list_eol(node->nodes, p)) {
 		tmp = (node_t *) list_get(node->nodes, p);
-		node_generate_code(tmp, g_source, g_name);
+		node_generate_code(tmp, source, name);
 		p++;
 	}
 }
