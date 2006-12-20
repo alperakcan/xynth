@@ -6,7 +6,7 @@ INCDIR = ../ ../../lib
 LIBDIR = ../ ../../lib
 LDFLAGS = -lwidget -lxynth -lexpat
 
-OBJS = widgetr.o
+OBJS = widgetr.o table.o
 
 TARGET = widgetr
 
