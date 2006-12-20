@@ -26,15 +26,8 @@
 #include "lang.h"
 #include "gen_code.h"
 #include "gen_header.h"
+#include "parse.h"
 
-typedef struct xml_data_s {
-	char *path;
-	node_t *active;
-	node_t *root;
-	node_t *elem;
-} xml_data_t;
-
-static FILE *g_input = NULL;
 static FILE *g_source = NULL;
 static FILE *g_header = NULL;
 static char *g_name = NULL;
@@ -44,9 +37,6 @@ static char *g_header_name = NULL;
 static void node_generate_element (node_t *node, node_t *s_node);
 static void node_generate_localization (node_t *node);
 static void node_generate_sources (node_t *node);
-static void start (void *xdata, const char *el, const char **attr);
-static void end (void *xdata, const char *el);
-static void char_hndl (void *xdata, const char *txt, int txtlen);
 
 static void node_generate_localization (node_t *node)
 {
@@ -124,107 +114,13 @@ static void node_generate_element (node_t *node, node_t *elem)
 	}
 }
 	
-static void start (void *x_data, const char *el, const char **attr)
-{
-	xml_data_t *xdata = (xml_data_t *) x_data;
-	free(xdata->path);
-	xdata->path = strdup(el);
-	
-	{
-		int p;
-		node_t *node;
-		node_init(&node);
-		node->name = strdup(el);
-		for (p = 0; attr[p]; p += 2) {
-			if (strcmp(attr[p], "type") == 0) {
-				node->type = strdup(attr[p + 1]);
-			} else if (strcmp(attr[p], "id") == 0) {
-				node->id = strdup(attr[p + 1]);
-			}
-		}
-		node->parent = xdata->active;
-		xdata->active = node;
-		if (strcmp(node->name, "stylesheet") == 0) {
-			xdata->elem = node;
-			if (node->parent) {
-				list_add(node->parent->nodes, node, -1);
-			}
-		} else {
-			if (node->parent) {
-				list_add(node->parent->nodes, node, -1);
-			} else {
-				xdata->root = node;
-			}
-		}
-	}
-}
-
-static void end (void *x_data, const char *el)
-{
-	xml_data_t *xdata = (xml_data_t *) x_data;
-	free(xdata->path);
-	xdata->path = NULL;
-	xdata->active = xdata->active->parent;
-}
-
-static void char_hndl_fixup (char *out)
-{
-	int i;
-	int j;
-	/* Convert "&amp;" to "&" */
-	for (i = 0; out[i] && out[i + 1] && out[i + 2] && out[i + 3] && out[i + 4]; i++) {
-		if (out[i] == '&' && out[i + 1] == 'a' && out[i + 2] == 'm' && out[i + 3] == 'p' && out[i + 4] == ';') {
-			for (j = i + 1; out[j]; j++)
-				out[j] = out[j + 4];
-			i--;
-		}
-	}
-}
-
-static void char_hndl (void *x_data, const char *txt, int txtlen)
-{
-	char *str;
-	unsigned int total = 0;
-	unsigned int total_old = 0;
-	xml_data_t *xdata = (xml_data_t *) x_data;
-	if (txtlen > 0 &&
-	    txt &&
-	    xdata->path) {
-	} else {
-	    return;
-	}
-	if (xdata->active == NULL) {
-		return;
-	}
-	if (xdata->active->value != NULL) {
-		total_old = strlen(xdata->active->value);
-	}
-	total = (total_old + txtlen + 1) * sizeof(char *);
-	xdata->active->value = (char *) realloc(xdata->active->value, total);
-	if (total_old == 0) {
-		xdata->active->value[0] = '\0';
-	}
-	strncat(xdata->active->value, txt, txtlen); 
-	str = xdata->active->value;
-	if (xdata->path) {
-	    	if (xdata->active && xdata->active->value) {
-	    		char_hndl_fixup(xdata->active->value);
-	    	}
-	}
-}
-
 int main (int argc, char **argv)
 {
 	int c;
-	int l = 0;
 	node_t *root;
-	FILE *stylesheet;
-	char *tmp = NULL;
-	char *buf = NULL;
 	char *varo = NULL;
 	char *varf = NULL;
 	char *vars = NULL;
-	struct stat stbuf;
 	xml_data_t *xdata;
 	int localization = 0;
 	int sources      = 0;
@@ -266,34 +162,15 @@ usage:			case 'h':
 	memset(xdata, 0, sizeof(xml_data_t));
 
 	if (vars != NULL) {
-		stat(vars, &stbuf);
-		tmp = (char *) malloc(stbuf.st_size + 1);
-		stylesheet = fopen(vars, "r");
-		fread(tmp, 1, stbuf.st_size, stylesheet);
-		l = stbuf.st_size;
-		XML_Parser p = XML_ParserCreate(NULL);
-		if (!p) {
-			fprintf(stderr, "Couldn't allocate memory for parser\n");
-			exit(-1);
+		if (parse_xml_file(xdata, vars)) {
+			exit(1);
 		}
-		XML_SetUserData(p, xdata);
-		XML_SetElementHandler(p, start, end);
-		XML_SetCharacterDataHandler(p, char_hndl);
-		if (!XML_Parse(p, tmp, l, 1)) {
-			fprintf(stderr, "Parse error at line %d:\n%s\n", XML_GetCurrentLineNumber(p), XML_ErrorString(XML_GetErrorCode(p)));
-			exit(-1);
-		}
-		XML_ParserFree(p);
-		free(tmp);
-		fclose(stylesheet);
 	} 
 	
 	if (varf != NULL) {
-		stat(varf, &stbuf);
-		buf = (char *) malloc(stbuf.st_size + 1);
-		g_input = fopen(varf, "r");
-		fread(buf, 1, stbuf.st_size, g_input);
-		l = stbuf.st_size;
+		if (parse_xml_file(xdata, varf)) {
+			exit(1);
+		}
 	} else {
 		goto usage;
 	}
@@ -312,20 +189,6 @@ usage:			case 'h':
 		goto usage;
 	}
 	
-	XML_Parser p = XML_ParserCreate(NULL);
-	if (!p) {
-		fprintf(stderr, "Couldn't allocate memory for parser\n");
-		exit(-1);
-	}
-	XML_SetUserData(p, xdata);
-	XML_SetElementHandler(p, start, end);
-	XML_SetCharacterDataHandler(p, char_hndl);
-	if (!XML_Parse(p, buf, l, 1)) {
-		fprintf(stderr, "Parse error at line %d:\n%s\n", XML_GetCurrentLineNumber(p), XML_ErrorString(XML_GetErrorCode(p)));
-		exit(-1);
-	}
-	XML_ParserFree(p);
-
 	node_generate_element(xdata->root, xdata->elem);
 
 	if (localization)
@@ -338,7 +201,6 @@ usage:			case 'h':
 	for (root = xdata->elem; root && root->parent; root = root->parent);
 	node_uninit(root);
 
-	fclose(g_input);
 	if (sources) {
 		fclose(g_source);
 		fclose(g_header);
@@ -348,7 +210,6 @@ usage:			case 'h':
 	free(g_name);
 	free(g_source_name);
 	free(g_header_name);
-	free(buf);
 	
 	return 0;
 }
