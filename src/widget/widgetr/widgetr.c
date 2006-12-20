@@ -19,6 +19,7 @@
 
 #include "parse.h"
 #include "table.h"
+#include "code.h"
 
 typedef struct w_widgetr_s w_widgetr_t;
 
@@ -64,6 +65,7 @@ int main (int argc, char *argv[])
 	char c;
 	char *hex;
 	unsigned int i;
+	char *varf = NULL;
 	xml_data_t *xdata;
 	w_widgetr_t *widgetr;
 	unsigned int option_index = 0;
@@ -93,12 +95,7 @@ int main (int argc, char *argv[])
 				break;
 			case 'f':
 option_file:
-				xdata = (xml_data_t *) s_malloc(sizeof(xml_data_t));
-				memset(xdata, 0, sizeof(xml_data_t));
-				parse_xml_file(xdata, optarg);
-				node_print(xdata->root);
-				node_uninit(xdata->root);
-				s_free(xdata);
+				varf = optarg;
 				break;
 			case 'm':
 option_mask:
@@ -143,15 +140,31 @@ option_help:
 	
 	table_init(&widgetr->table, widgetr->mask + 1);
 
+#if 0
 	for (i = 1; i < argc; i++) {
 		table_add(widgetr->table, widgetr->depth, widgetr->mask, argv[i], NULL);
 	}
+#endif
 	
+	if (varf != NULL) {
+		xdata = (xml_data_t *) s_malloc(sizeof(xml_data_t));
+		memset(xdata, 0, sizeof(xml_data_t));
+		if (parse_xml_file(xdata, varf)) {
+			exit(1);
+		}
+		parse_xml_file(xdata, optarg);
+//		node_print(xdata->root);
+		code_parse(widgetr->table, widgetr->depth, widgetr->mask, xdata->root, xdata->elem);
+		node_uninit(xdata->root);
+		s_free(xdata);
+	}
+
 	table_print(widgetr->table, widgetr->mask + 1);
-	
+#if 0	
 	table_get_data(widgetr->table, widgetr->depth, widgetr->mask, "to");
 	table_del(widgetr->table, widgetr->depth, widgetr->mask, "alper");
 	table_get_data(widgetr->table, widgetr->depth, widgetr->mask, "to");
+#endif
 	
 	table_uninit(widgetr->table, widgetr->mask + 1);
 	s_free(widgetr);
