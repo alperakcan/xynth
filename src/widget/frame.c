@@ -407,6 +407,7 @@ int w_frame_init (w_window_t *window, w_frame_t **frame, unsigned int style, w_o
 	if (w_object_init(window, &((*frame)->object), w_frame_draw, parent)) {
 		goto err0;
 	}
+	(*frame)->object->type = OBJECT_FRAME;
 	(*frame)->object->data[OBJECT_FRAME] = *frame;
 	(*frame)->object->geometry = w_frame_geometry;
 	(*frame)->object->destroy = w_frame_uninit;

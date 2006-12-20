@@ -693,6 +693,7 @@ int w_object_ischild (w_object_t *parent, w_object_t *child)
 int w_object_init (w_window_t *window, w_object_t **object, void (*draw) (w_object_t *), w_object_t *parent)
 {
 	(*object) = (w_object_t *) s_malloc(sizeof(w_object_t));
+	(*object)->type = OBJECT_OBJECT;
 	(*object)->surface = (s_surface_t *) s_malloc(sizeof(s_surface_t));
 	(*object)->surface->buf = (s_rect_t *) s_malloc(sizeof(s_rect_t));
 	(*object)->surface->win = (s_rect_t *) s_malloc(sizeof(s_rect_t));
@@ -743,6 +744,8 @@ int w_object_init (w_window_t *window, w_object_t **object, void (*draw) (w_obje
 	(*object)->content->y = (*object)->surface->buf->y;
 	(*object)->content->w = (*object)->surface->buf->w;
 	(*object)->content->h = (*object)->surface->buf->h;
+	
+	(*object)->data[OBJECT_OBJECT] = *object;
 	
 	return 0;
 }
