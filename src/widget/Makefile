@@ -34,5 +34,6 @@ include ../../Makefile.rules
 
 dist: all
 	cp widgetc/widgetc ../../$(DISTBINDIR)
+	cp widgetr/widgetr ../../$(DISTBINDIR)
 	cp -a widget.h ../../$(DISTINCDIR)
 	cp -a $(TARGET_A) $(TARGET_SO) $(TARGET) ../../$(DISTLIBDIR)
