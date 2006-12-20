@@ -84,23 +84,23 @@ static void node_generate_sources (node_t *node)
 	        "}\n");
 }
 
-static void node_generate_element (node_t *node, node_t *s_node)
+static void node_generate_element (node_t *node, node_t *elem)
 {
 	int p;
 	node_t *tmp;
 	node_t *dmp;
 	node_t *chl;
-	if (s_node == NULL) {
+	if (elem == NULL) {
 		return;
 	}
 	for (p = 0; !list_eol(node->nodes, p); p++) {
     		tmp = (node_t *) list_get(node->nodes, p);
-    		node_generate_element(tmp, s_node);
+    		node_generate_element(tmp, elem);
 	}
 	if (strcmp(node->name, "element") == 0 &&
 	    node->type != NULL) {
-	    	for (p = 0; !list_eol(s_node->nodes, p); p++) {
-	    		tmp = (node_t *) list_get(s_node->nodes, p);
+	    	for (p = 0; !list_eol(elem->nodes, p); p++) {
+	    		tmp = (node_t *) list_get(elem->nodes, p);
 	    		if (strcmp(tmp->name, "element") == 0 &&
 	    		    strcmp(tmp->id, node->type) == 0) {
 	    		    	node_dublicate(tmp, &dmp);
