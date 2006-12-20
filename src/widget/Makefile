@@ -28,7 +28,7 @@ endif
 EXTRA_CLEAN = libwidget.a libwidget.so
 EXTRA_DEPEND_FILES = *.h
 
-SUBDIR-Y = widgetc
+SUBDIR-Y = widgetc widgetr
 
 include ../../Makefile.rules
 
