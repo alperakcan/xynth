@@ -28,22 +28,6 @@ typedef struct ctable_s {
 	unsigned int mask;
 	w_table_t *table;
 } ctable_t;
- 
-static inline void code_get_style (ctable_t *ctable, node_t *node, FRAME_SHAPE *fshape, FRAME_SHADOW *fshadow)
-{
-	node_t *shape = node_get_node(node, "shape");
-	node_t *shadow = node_get_node(node, "shadow");
-	*fshape = FRAME_NOFRAME;
-	*fshadow = FRAME_PLAIN;
-	if (shape) {
-		*fshape = (FRAME_SHAPE) TGD(shape->value);
-		shape->dontparse = 1;
-	}
-	if (shadow) {
-		*fshadow = (FRAME_SHADOW) TGD(shadow->value);
-		shadow->dontparse = 1;
-	}
-}
 
 static inline char * code_trim_quota (char *value)
 {
@@ -106,6 +90,35 @@ static inline void code_tokenize (char *value, char token, int *n, char ***token
 	*tokens = tok;
 	
 	return;
+}
+
+static inline void code_get_properties (ctable_t *ctable, node_t *node, TEXTBOX_PROPERTIES *prop)
+{
+	int i;
+	int tok_count;
+	char **tok_vals;
+	*prop = 0;
+	code_tokenize(node->value, '|', &tok_count, &tok_vals);
+	for (i = 0; i < tok_count; i++) {
+		*prop |= (TEXTBOX_PROPERTIES) TGD(code_trim_space(tok_vals[i]));
+	}
+	s_free(tok_vals);
+}
+ 
+static inline void code_get_style (ctable_t *ctable, node_t *node, FRAME_SHAPE *fshape, FRAME_SHADOW *fshadow)
+{
+	node_t *shape = node_get_node(node, "shape");
+	node_t *shadow = node_get_node(node, "shadow");
+	*fshape = FRAME_NOFRAME;
+	*fshadow = FRAME_PLAIN;
+	if (shape) {
+		*fshape = (FRAME_SHAPE) TGD(shape->value);
+		shape->dontparse = 1;
+	}
+	if (shadow) {
+		*fshadow = (FRAME_SHADOW) TGD(shadow->value);
+		shadow->dontparse = 1;
+	}
 }
 
 void code_parse_element (node_t *node, node_t *elem)
@@ -276,17 +289,10 @@ void code_generate_object_textbox (ctable_t *ctable, node_t *node)
 		tmp->dontparse = 1;
 	}
 	while ((tmp = node_get_node(node, "properties")) != NULL) {
-		int i;
-		int tok_count;
-		char **tok_vals;
-		TEXTBOX_PROPERTIES prop = 0;
-		code_tokenize(tmp->value, '|', &tok_count, &tok_vals);
-		for (i = 0; i < tok_count; i++) {
-			prop |= (TEXTBOX_PROPERTIES) TGD(code_trim_space(tok_vals[i]));
-		}
+		TEXTBOX_PROPERTIES prop;
+		code_get_properties(ctable, tmp, &prop);
 		w_textbox_set_properties(textbox->object, prop);
 		tmp->dontparse = 1;
-		s_free(tok_vals);
 	}
 	while ((tmp = node_get_node(node, "size")) != NULL) {
 		int size = atoi(tmp->value);
@@ -328,17 +334,10 @@ void code_generate_object_editbox (ctable_t *ctable, node_t *node)
 		tmp->dontparse = 1;
 	}
 	while ((tmp = node_get_node(node, "properties")) != NULL) {
-		int i;
-		int tok_count;
-		char **tok_vals;
-		TEXTBOX_PROPERTIES prop = 0;
-		code_tokenize(tmp->value, '|', &tok_count, &tok_vals);
-		for (i = 0; i < tok_count; i++) {
-			prop |= (TEXTBOX_PROPERTIES) TGD(code_trim_space(tok_vals[i]));
-		}
+		TEXTBOX_PROPERTIES prop;
+		code_get_properties(ctable, tmp, &prop);
 		w_editbox_set_properties(editbox->object, prop);
 		tmp->dontparse = 1;
-		s_free(tok_vals);
 	}
 	while ((tmp = node_get_node(node, "size")) != NULL) {
 		int size = atoi(tmp->value);
