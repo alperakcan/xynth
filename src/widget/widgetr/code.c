@@ -20,12 +20,94 @@
 #include "code.h"
 #include "table.h"
 
+#define TAD(__key, __data) table_add(ctable->table, ctable->depth, ctable->mask, __key, __data);
+#define TGD(__key) table_get_data(ctable->table, ctable->depth, ctable->mask, __key)
+
 typedef struct ctable_s {
 	unsigned int depth;
 	unsigned int mask;
 	w_table_t *table;
 } ctable_t;
  
+static inline void code_get_style (ctable_t *ctable, node_t *node, FRAME_SHAPE *fshape, FRAME_SHADOW *fshadow)
+{
+	node_t *shape = node_get_node(node, "shape");
+	node_t *shadow = node_get_node(node, "shadow");
+	*fshape = FRAME_NOFRAME;
+	*fshadow = FRAME_PLAIN;
+	if (shape) {
+		*fshape = (FRAME_SHAPE) TGD(shape->value);
+		shape->dontparse = 1;
+	}
+	if (shadow) {
+		*fshadow = (FRAME_SHADOW) TGD(shadow->value);
+		shadow->dontparse = 1;
+	}
+}
+
+static inline char * code_trim_quota (char *value)
+{
+	char *ptr = value;
+	/* strip trailing white space, returns, etc */
+	while ((*ptr != '\0') && (ptr[strlen(ptr) - 1] == '"')) {
+		ptr[strlen(ptr) - 1] = '\0';
+	}
+	/* strip leading white space, returns, etc */
+	while (*ptr && (*ptr == '"')) {
+		ptr++;
+	}
+	return ptr;
+}
+
+static inline char * code_trim_space (char *value)
+{
+	char *ptr = value;
+	/* strip trailing white space, returns, etc */
+	while ((*ptr != '\0') && (ptr[strlen(ptr) - 1] < 33)) {
+		ptr[strlen(ptr) - 1] = '\0';
+	}
+	/* strip leading white space, returns, etc */
+	while (*ptr && (*ptr < 33)) {
+		ptr++;
+	}
+	return ptr;
+}
+
+static inline void code_tokenize (char *value, char token, int *n, char ***tokens)
+{
+	char *tmp;
+	char **tok;
+	unsigned int nt;
+	unsigned int count;
+	for (count = 0, tmp = value; *tmp != 0; tmp++) {
+		if (*tmp == token) {
+			count++;
+		}
+	}
+	tok = (char **) malloc(sizeof(char **) * (count + 1));
+	if (tok == NULL) {
+		*n = 0;
+		return;
+	}
+	nt = 0;
+	tmp = value;
+	tok[nt] = tmp;
+	for (; *tmp != 0; tmp++) {
+		if (*tmp == token) {
+			*tmp++ = '\0';
+			if (*tmp == 0) {
+				break;
+			} else {
+				tok[++nt] = tmp;
+			}
+		}
+	}
+	*n = nt + 1;
+	*tokens = tok;
+	
+	return;
+}
+
 void code_parse_element (node_t *node, node_t *elem)
 {
 	int p;
@@ -79,11 +161,11 @@ void code_generate_move (ctable_t *ctable, node_t *node)
 	if (w) wi = atoi(w);
 	if (h) hi = atoi(h);
 	if (strcmp(node->parent->name, "window") == 0) {
-		if ((object = (w_object_t *) table_get_data(ctable->table, ctable->depth, ctable->mask, node->parent->id)) != NULL) {
+		if ((object = (w_object_t *) TGD(node->parent->id)) != NULL) {
 			w_window_set_coor(object->window, xi, yi, wi, hi);
 		}
 	} else if (strcmp(node->parent->name, "object") == 0) {
-		if ((object = (w_object_t *) table_get_data(ctable->table, ctable->depth, ctable->mask, node->parent->id)) != NULL) {
+		if ((object = (w_object_t *) TGD(node->parent->id)) != NULL) {
 			w_object_move(object, xi, yi, wi, hi);
 		}
 	}
@@ -98,8 +180,8 @@ void code_generate_window (ctable_t *ctable, node_t *node)
 {
 	node_t *tmp;
 	w_window_t *window;
-	w_window_init(&window, WINDOW_MAIN, NULL);
-	table_add(ctable->table, ctable->depth, ctable->mask, node->id, window->object);
+	w_window_init(&window, (S_WINDOW) TGD(node->type), NULL);
+	TAD(node->id, window->object);
 	if ((tmp = node_get_node(node, "title")) != NULL) {
 		s_window_set_title(window->window, tmp->value);
 		tmp->dontparse = 1;
@@ -114,13 +196,13 @@ void code_generate_show (ctable_t *ctable, node_t *node)
 {
 	w_object_t *object;
 	if (strcmp(node->parent->name, "window") == 0) {
-		if ((object = (w_object_t *) table_get_data(ctable->table, ctable->depth, ctable->mask, node_get_parent(node, "window")->id)) != NULL) {
+		if ((object = (w_object_t *) TGD(node_get_parent(node, "window")->id)) != NULL) {
 			w_object_show(object);
 			s_window_show(object->window->window);
 			s_client_main(object->window->window);
 		}
 	} else if (strcmp(node->parent->name, "object") == 0) {
-		if ((object = (w_object_t *) table_get_data(ctable->table, ctable->depth, ctable->mask, node_get_parent(node, "object")->id)) != NULL) {
+		if ((object = (w_object_t *) TGD(node_get_parent(node, "object")->id)) != NULL) {
 			w_object_show(object);
 		}
 	}
@@ -133,14 +215,148 @@ void code_generate_object_frame (ctable_t *ctable, node_t *node)
 	w_object_t *pobject;
 	w_object_t *wobject;
 	node_t *window = node_get_parent(node, "window");
-	wobject = (w_object_t *) table_get_data(ctable->table, ctable->depth, ctable->mask, window->id);
-	pobject = (w_object_t *) table_get_data(ctable->table, ctable->depth, ctable->mask, node->parent->id);
+	wobject = (w_object_t *) TGD(window->id);
+	pobject = (w_object_t *) TGD(node->parent->id);
 	w_frame_init(wobject->window, &frame, 0, pobject);
-	table_add(ctable->table, ctable->depth, ctable->mask, node->id, frame->object);
+	TAD(node->id, frame->object);
 	while ((tmp = node_get_node(node, "style")) != NULL) {
-		node_t *shape = node_get_node(node, "shape");
-		node_t *shadow = node_get_node(node, "shadow");
-		w_frame_set_style(frame->object, FRAME_PANEL, FRAME_RAISED); 
+		FRAME_SHAPE fshape;
+		FRAME_SHADOW fshadow;
+		code_get_style(ctable, tmp, &fshape, &fshadow);
+		w_frame_set_style(frame->object, fshape, fshadow); 
+		tmp->dontparse = 1;
+	}
+}
+
+void code_generate_object_button (ctable_t *ctable, node_t *node)
+{
+	node_t *tmp;
+	w_button_t *button;
+	w_object_t *pobject;
+	w_object_t *wobject;
+	node_t *window = node_get_parent(node, "window");
+	wobject = (w_object_t *) TGD(window->id);
+	pobject = (w_object_t *) TGD(node->parent->id);
+	w_button_init(wobject->window, &button, pobject);
+	TAD(node->id, button->object);
+	while ((tmp = node_get_node(node, "style")) != NULL) {
+		FRAME_SHAPE fshape;
+		FRAME_SHADOW fshadow;
+		code_get_style(ctable, tmp, &fshape, &fshadow);
+		w_button_set_style(button->object, fshape, fshadow); 
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "pressed")) != NULL) {
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "released")) != NULL) {
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "clicked")) != NULL) {
+		tmp->dontparse = 1;
+	}
+}
+
+void code_generate_object_textbox (ctable_t *ctable, node_t *node)
+{
+	node_t *tmp;
+	w_textbox_t *textbox;
+	w_object_t *pobject;
+	w_object_t *wobject;
+	node_t *window = node_get_parent(node, "window");
+	wobject = (w_object_t *) TGD(window->id);
+	pobject = (w_object_t *) TGD(node->parent->id);
+	w_textbox_init(wobject->window, &textbox, pobject);
+	TAD(node->id, textbox->object);
+	while ((tmp = node_get_node(node, "style")) != NULL) {
+		FRAME_SHAPE fshape;
+		FRAME_SHADOW fshadow;
+		code_get_style(ctable, tmp, &fshape, &fshadow);
+		w_textbox_set_style(textbox->object, fshape, fshadow); 
+		tmp->dontparse = 1;
+	}
+	while ((tmp = node_get_node(node, "properties")) != NULL) {
+		int i;
+		int tok_count;
+		char **tok_vals;
+		TEXTBOX_PROPERTIES prop = 0;
+		code_tokenize(tmp->value, '|', &tok_count, &tok_vals);
+		for (i = 0; i < tok_count; i++) {
+			prop |= (TEXTBOX_PROPERTIES) TGD(code_trim_space(tok_vals[i]));
+		}
+		w_textbox_set_properties(textbox->object, prop);
+		tmp->dontparse = 1;
+		s_free(tok_vals);
+	}
+	while ((tmp = node_get_node(node, "size")) != NULL) {
+		int size = atoi(tmp->value);
+		w_textbox_set_size(textbox->object, size);
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "color")) != NULL) {
+		int cr = atoi(node_get_value(tmp, "red"));
+		int cg = atoi(node_get_value(tmp, "green"));
+		int cb = atoi(node_get_value(tmp, "blue"));
+		w_textbox_set_rgb(textbox->object, cr, cg, cb);
+		if ((tmp = node_get_node(node, "color/red")) != NULL) { tmp->dontparse = 1; }
+		if ((tmp = node_get_node(node, "color/green")) != NULL) { tmp->dontparse = 1; }
+		if ((tmp = node_get_node(node, "color/blue")) != NULL) { tmp->dontparse = 1; }
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "string")) != NULL) {
+		w_textbox_set_str(textbox->object, code_trim_quota(tmp->value));
+		tmp->dontparse = 1;
+	}
+}
+
+void code_generate_object_editbox (ctable_t *ctable, node_t *node)
+{
+	node_t *tmp;
+	w_editbox_t *editbox;
+	w_object_t *pobject;
+	w_object_t *wobject;
+	node_t *window = node_get_parent(node, "window");
+	wobject = (w_object_t *) TGD(window->id);
+	pobject = (w_object_t *) TGD(node->parent->id);
+	w_editbox_init(wobject->window, &editbox, pobject);
+	TAD(node->id, editbox->object);
+	while ((tmp = node_get_node(node, "style")) != NULL) {
+		FRAME_SHAPE fshape;
+		FRAME_SHADOW fshadow;
+		code_get_style(ctable, tmp, &fshape, &fshadow);
+		w_editbox_set_style(editbox->object, fshape, fshadow); 
+		tmp->dontparse = 1;
+	}
+	while ((tmp = node_get_node(node, "properties")) != NULL) {
+		int i;
+		int tok_count;
+		char **tok_vals;
+		TEXTBOX_PROPERTIES prop = 0;
+		code_tokenize(tmp->value, '|', &tok_count, &tok_vals);
+		for (i = 0; i < tok_count; i++) {
+			prop |= (TEXTBOX_PROPERTIES) TGD(code_trim_space(tok_vals[i]));
+		}
+		w_editbox_set_properties(editbox->object, prop);
+		tmp->dontparse = 1;
+		s_free(tok_vals);
+	}
+	while ((tmp = node_get_node(node, "size")) != NULL) {
+		int size = atoi(tmp->value);
+		w_editbox_set_size(editbox->object, size);
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "color")) != NULL) {
+		int cr = atoi(node_get_value(tmp, "red"));
+		int cg = atoi(node_get_value(tmp, "green"));
+		int cb = atoi(node_get_value(tmp, "blue"));
+		w_editbox_set_rgb(editbox->object, cr, cg, cb);
+		if ((tmp = node_get_node(node, "color/red")) != NULL) { tmp->dontparse = 1; }
+		if ((tmp = node_get_node(node, "color/green")) != NULL) { tmp->dontparse = 1; }
+		if ((tmp = node_get_node(node, "color/blue")) != NULL) { tmp->dontparse = 1; }
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "string")) != NULL) {
+		w_editbox_set_str(editbox->object, code_trim_quota(tmp->value));
 		tmp->dontparse = 1;
 	}
 }
@@ -149,6 +365,12 @@ void code_generate_object (ctable_t *ctable, node_t *node)
 {
 	if (strcmp(node->type, "frame") == 0) {
 		code_generate_object_frame(ctable, node);
+	} else if (strcmp(node->type, "button") == 0) {
+		code_generate_object_button(ctable, node);
+	} else if (strcmp(node->type, "textbox") == 0) {
+		code_generate_object_textbox(ctable, node);
+	} else if (strcmp(node->type, "editbox") == 0) {
+		code_generate_object_editbox(ctable, node);
 	}
 }
 
@@ -178,10 +400,43 @@ void code_parse_generate (ctable_t *ctable, node_t *node)
 
 void code_parse (w_table_t *table, unsigned int depth, unsigned int mask, node_t *node, node_t *elem)
 {
-	ctable_t ctable;
-	ctable.table = table;
-	ctable.depth = depth;
-	ctable.mask = mask;
+	ctable_t *ctable;
+	ctable = (ctable_t *) s_malloc(sizeof(ctable_t));
+	ctable->table = table;
+	ctable->depth = depth;
+	ctable->mask = mask;
+	
+	TAD("WINDOW_NOFORM", (void *) WINDOW_NOFORM);
+	TAD("WINDOW_MAIN", (void *) WINDOW_MAIN);
+	TAD("WINDOW_TEMP", (void *) WINDOW_TEMP);
+	TAD("WINDOW_CHILD", (void *) WINDOW_CHILD);
+	TAD("WINDOW_DESKTOP", (void *) WINDOW_DESKTOP);
+
+	TAD("FRAME_NOFRAME", (void *) FRAME_NOFRAME);
+	TAD("FRAME_BOX", (void *) FRAME_BOX);
+	TAD("FRAME_PANEL", (void *) FRAME_PANEL);
+	TAD("FRAME_WINPANEL", (void *) FRAME_WINPANEL);
+	TAD("FRAME_HLINE", (void *) FRAME_HLINE);
+	TAD("FRAME_VLINE", (void *) FRAME_VLINE);
+	TAD("FRAME_STYLEDPANEL", (void *) FRAME_STYLEDPANEL);
+	TAD("FRAME_POPUPPANEL", (void *) FRAME_POPUPPANEL);
+	TAD("FRAME_MENUBARPANEL", (void *) FRAME_MENUBARPANEL);
+	TAD("FRAME_TOOLBARPANEL", (void *) FRAME_TOOLBARPANEL);
+	TAD("FRAME_LINEEDITPANEL", (void *) FRAME_LINEEDITPANEL);
+	TAD("FRAME_TABWIDGETPANEL", (void *) FRAME_TABWIDGETPANEL);
+	TAD("FRAME_GROUPBOXPANEL", (void *) FRAME_GROUPBOXPANEL);
+	TAD("FRAME_EMPTY", (void *) FRAME_EMPTY);
+	TAD("FRAME_PLAIN", (void *) FRAME_PLAIN);
+	TAD("FRAME_RAISED", (void *) FRAME_RAISED);
+	TAD("FRAME_SUNKEN", (void *) FRAME_SUNKEN);
+	TAD("FRAME_FOCUSED", (void *) FRAME_FOCUSED);
+
+	TAD("TEXTBOX_WRAP", (void *) TEXTBOX_WRAP);
+	TAD("TEXTBOX_VCENTER", (void *) TEXTBOX_VCENTER);
+	TAD("TEXTBOX_HCENTER", (void *) TEXTBOX_HCENTER);
+
 	code_parse_element(node, elem);
-	code_parse_generate(&ctable, node);
+	code_parse_generate(ctable, node);
+	
+	s_free(ctable);
 }
