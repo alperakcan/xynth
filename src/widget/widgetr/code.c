@@ -105,6 +105,19 @@ static inline void code_get_properties (ctable_t *ctable, node_t *node, TEXTBOX_
 	s_free(tok_vals);
 }
  
+static inline void code_get_window (ctable_t *ctable, char *val, S_WINDOW *prop)
+{
+	int i;
+	int tok_count;
+	char **tok_vals;
+	*prop = 0;
+	code_tokenize(val, '|', &tok_count, &tok_vals);
+	for (i = 0; i < tok_count; i++) {
+		*prop |= (S_WINDOW) TGD(code_trim_space(tok_vals[i]));
+	}
+	s_free(tok_vals);
+}
+ 
 static inline void code_get_style (ctable_t *ctable, node_t *node, FRAME_SHAPE *fshape, FRAME_SHADOW *fshadow)
 {
 	node_t *shape = node_get_node(node, "shape");
@@ -192,8 +205,10 @@ void code_generate_move (ctable_t *ctable, node_t *node)
 void code_generate_window (ctable_t *ctable, node_t *node)
 {
 	node_t *tmp;
+	S_WINDOW prop;
 	w_window_t *window;
-	w_window_init(&window, (S_WINDOW) TGD(node->type), NULL);
+	code_get_window(ctable, node->type, &prop);
+	w_window_init(&window, prop, NULL);
 	TAD(node->id, window->object);
 	if ((tmp = node_get_node(node, "title")) != NULL) {
 		s_window_set_title(window->window, tmp->value);
