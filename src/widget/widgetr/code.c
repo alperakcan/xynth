@@ -259,6 +259,9 @@ void code_generate_object_button (ctable_t *ctable, node_t *node)
 		w_button_set_style(button->object, fshape, fshadow); 
 		tmp->dontparse = 1;
 	}
+	while ((tmp = node_get_node(node, "image")) != NULL) {
+		tmp->dontparse = 1;
+	}
 	if ((tmp = node_get_node(node, "pressed")) != NULL) {
 		tmp->dontparse = 1;
 	}
@@ -286,6 +289,9 @@ void code_generate_object_textbox (ctable_t *ctable, node_t *node)
 		FRAME_SHADOW fshadow;
 		code_get_style(ctable, tmp, &fshape, &fshadow);
 		w_textbox_set_style(textbox->object, fshape, fshadow); 
+		tmp->dontparse = 1;
+	}
+	while ((tmp = node_get_node(node, "image")) != NULL) {
 		tmp->dontparse = 1;
 	}
 	while ((tmp = node_get_node(node, "properties")) != NULL) {
@@ -333,6 +339,9 @@ void code_generate_object_editbox (ctable_t *ctable, node_t *node)
 		w_editbox_set_style(editbox->object, fshape, fshadow); 
 		tmp->dontparse = 1;
 	}
+	while ((tmp = node_get_node(node, "image")) != NULL) {
+		tmp->dontparse = 1;
+	}
 	while ((tmp = node_get_node(node, "properties")) != NULL) {
 		TEXTBOX_PROPERTIES prop;
 		code_get_properties(ctable, tmp, &prop);
@@ -360,6 +369,67 @@ void code_generate_object_editbox (ctable_t *ctable, node_t *node)
 	}
 }
 
+void code_generate_object_checkbox (ctable_t *ctable, node_t *node)
+{
+	node_t *tmp;
+	w_checkbox_t *checkbox;
+	w_object_t *pobject;
+	w_object_t *wobject;
+	node_t *window = node_get_parent(node, "window");
+	wobject = (w_object_t *) TGD(window->id);
+	pobject = (w_object_t *) TGD(node->parent->id);
+	w_checkbox_init(wobject->window, &checkbox, pobject);
+	TAD(node->id, checkbox->object);
+	while ((tmp = node_get_node(node, "style")) != NULL) {
+		FRAME_SHAPE fshape;
+		FRAME_SHADOW fshadow;
+		code_get_style(ctable, tmp, &fshape, &fshadow);
+		w_checkbox_set_style(checkbox->object, fshape, fshadow); 
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "boxstyle")) != NULL) {
+		FRAME_SHAPE fshape;
+		FRAME_SHADOW fshadow;
+		code_get_style(ctable, tmp, &fshape, &fshadow);
+		w_checkbox_set_boxstyle(checkbox->object, fshape, fshadow); 
+		tmp->dontparse = 1;
+	}
+	while ((tmp = node_get_node(node, "properties")) != NULL) {
+		TEXTBOX_PROPERTIES prop;
+		code_get_properties(ctable, tmp, &prop);
+		w_checkbox_set_properties(checkbox->object, prop);
+		tmp->dontparse = 1;
+	}
+	while ((tmp = node_get_node(node, "size")) != NULL) {
+		int size = atoi(tmp->value);
+		w_checkbox_set_size(checkbox->object, size);
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "color")) != NULL) {
+		int cr = atoi(node_get_value(tmp, "red"));
+		int cg = atoi(node_get_value(tmp, "green"));
+		int cb = atoi(node_get_value(tmp, "blue"));
+		w_checkbox_set_rgb(checkbox->object, cr, cg, cb);
+		if ((tmp = node_get_node(node, "color/red")) != NULL) { tmp->dontparse = 1; }
+		if ((tmp = node_get_node(node, "color/green")) != NULL) { tmp->dontparse = 1; }
+		if ((tmp = node_get_node(node, "color/blue")) != NULL) { tmp->dontparse = 1; }
+		tmp->dontparse = 1;
+	}
+	while ((tmp = node_get_node(node, "image")) != NULL) {
+		tmp->dontparse = 1;
+	}
+	while ((tmp = node_get_node(node, "boximage")) != NULL) {
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "changed")) != NULL) {
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "string")) != NULL) {
+		w_checkbox_set_str(checkbox->object, code_trim_quota(tmp->value));
+		tmp->dontparse = 1;
+	}
+}
+
 void code_generate_object (ctable_t *ctable, node_t *node)
 {
 	if (strcmp(node->type, "frame") == 0) {
@@ -370,6 +440,8 @@ void code_generate_object (ctable_t *ctable, node_t *node)
 		code_generate_object_textbox(ctable, node);
 	} else if (strcmp(node->type, "editbox") == 0) {
 		code_generate_object_editbox(ctable, node);
+	} else if (strcmp(node->type, "checkbox") == 0) {
+		code_generate_object_checkbox(ctable, node);
 	}
 }
 
