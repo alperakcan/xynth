@@ -148,12 +148,6 @@ option_help:
 	
 	table_init(&widgetr->table, widgetr->mask + 1);
 
-#if 0
-	for (i = 1; i < argc; i++) {
-		table_add(widgetr->table, widgetr->depth, widgetr->mask, argv[i], NULL);
-	}
-#endif
-	
 	if (varf != NULL) {
 		xdata = (xml_data_t *) s_malloc(sizeof(xml_data_t));
 		memset(xdata, 0, sizeof(xml_data_t));
@@ -170,13 +164,6 @@ option_help:
 		s_free(xdata);
 	}
 
-	table_print(widgetr->table, widgetr->mask + 1);
-#if 0	
-	table_get_data(widgetr->table, widgetr->depth, widgetr->mask, "to");
-	table_del(widgetr->table, widgetr->depth, widgetr->mask, "alper");
-	table_get_data(widgetr->table, widgetr->depth, widgetr->mask, "to");
-#endif
-	
 	table_uninit(widgetr->table, widgetr->mask + 1);
 	s_free(widgetr);
 	
