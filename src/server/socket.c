@@ -119,7 +119,8 @@ int s_server_socket_listen_configure (int id)
 	}
 
 	if (strlen(data->title) > 0) {
-		if ((j = strcmp(server->client[id].title.str, data->title)) != 0) {
+		if ((server->client[id].title.str == NULL) ||
+		    (j = strcmp(server->client[id].title.str, data->title)) != 0) {
 			s_free(server->client[id].title.str);
 			server->client[id].title.str = strdup(data->title);
 			s_server_window_title(id, server->client[id].title.str);
