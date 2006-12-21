@@ -92,20 +92,7 @@ static inline void code_tokenize (char *value, char token, int *n, char ***token
 	return;
 }
 
-static inline void code_get_properties (ctable_t *ctable, node_t *node, TEXTBOX_PROPERTIES *prop)
-{
-	int i;
-	int tok_count;
-	char **tok_vals;
-	*prop = 0;
-	code_tokenize(node->value, '|', &tok_count, &tok_vals);
-	for (i = 0; i < tok_count; i++) {
-		*prop |= (TEXTBOX_PROPERTIES) TGD(code_trim_space(tok_vals[i]));
-	}
-	s_free(tok_vals);
-}
- 
-static inline void code_get_window (ctable_t *ctable, char *val, S_WINDOW *prop)
+static inline void code_get_enum (ctable_t *ctable, char *val, unsigned int *prop)
 {
 	int i;
 	int tok_count;
@@ -113,11 +100,11 @@ static inline void code_get_window (ctable_t *ctable, char *val, S_WINDOW *prop)
 	*prop = 0;
 	code_tokenize(val, '|', &tok_count, &tok_vals);
 	for (i = 0; i < tok_count; i++) {
-		*prop |= (S_WINDOW) TGD(code_trim_space(tok_vals[i]));
+		*prop |= (unsigned int) TGD(code_trim_space(tok_vals[i]));
 	}
 	s_free(tok_vals);
 }
- 
+
 static inline void code_get_style (ctable_t *ctable, node_t *node, FRAME_SHAPE *fshape, FRAME_SHADOW *fshadow)
 {
 	node_t *shape = node_get_node(node, "shape");
@@ -125,11 +112,11 @@ static inline void code_get_style (ctable_t *ctable, node_t *node, FRAME_SHAPE *
 	*fshape = FRAME_NOFRAME;
 	*fshadow = FRAME_PLAIN;
 	if (shape) {
-		*fshape = (FRAME_SHAPE) TGD(shape->value);
+		code_get_enum(ctable, shape->value, fshape);
 		shape->dontparse = 1;
 	}
 	if (shadow) {
-		*fshadow = (FRAME_SHADOW) TGD(shadow->value);
+		code_get_enum(ctable, shadow->value, fshadow);
 		shadow->dontparse = 1;
 	}
 }
@@ -207,7 +194,7 @@ void code_generate_window (ctable_t *ctable, node_t *node)
 	node_t *tmp;
 	S_WINDOW prop;
 	w_window_t *window;
-	code_get_window(ctable, node->type, &prop);
+	code_get_enum(ctable, node->type, &prop);
 	w_window_init(&window, prop, NULL);
 	TAD(node->id, window->object);
 	if ((tmp = node_get_node(node, "title")) != NULL) {
@@ -311,7 +298,7 @@ void code_generate_object_textbox (ctable_t *ctable, node_t *node)
 	}
 	while ((tmp = node_get_node(node, "properties")) != NULL) {
 		TEXTBOX_PROPERTIES prop;
-		code_get_properties(ctable, tmp, &prop);
+		code_get_enum(ctable, tmp->value, &prop);
 		w_textbox_set_properties(textbox->object, prop);
 		tmp->dontparse = 1;
 	}
@@ -359,7 +346,7 @@ void code_generate_object_editbox (ctable_t *ctable, node_t *node)
 	}
 	while ((tmp = node_get_node(node, "properties")) != NULL) {
 		TEXTBOX_PROPERTIES prop;
-		code_get_properties(ctable, tmp, &prop);
+		code_get_enum(ctable, tmp->value, &prop);
 		w_editbox_set_properties(editbox->object, prop);
 		tmp->dontparse = 1;
 	}
@@ -411,7 +398,7 @@ void code_generate_object_checkbox (ctable_t *ctable, node_t *node)
 	}
 	while ((tmp = node_get_node(node, "properties")) != NULL) {
 		TEXTBOX_PROPERTIES prop;
-		code_get_properties(ctable, tmp, &prop);
+		code_get_enum(ctable, tmp->value, &prop);
 		w_checkbox_set_properties(checkbox->object, prop);
 		tmp->dontparse = 1;
 	}
