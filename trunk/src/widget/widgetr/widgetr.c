@@ -66,6 +66,7 @@ int main (int argc, char *argv[])
 	char *hex;
 	unsigned int i;
 	char *varf = NULL;
+	char *vars = NULL;
 	xml_data_t *xdata;
 	w_widgetr_t *widgetr;
 	unsigned int option_index = 0;
@@ -73,6 +74,7 @@ int main (int argc, char *argv[])
 		{"depth", 1, 0, 0},
 		{"mask", 1, 0, 0},
 		{"file", 1, 0, 0},
+		{"style", 1, 0, 0},
 		{"help", 0, 0, 0},
 		{0, 0, 0, 0},
 	};
@@ -80,7 +82,7 @@ int main (int argc, char *argv[])
 	widgetr = (w_widgetr_t *) s_malloc(sizeof(w_widgetr_t));
 	memset(widgetr, 0, sizeof(w_widgetr_t));
 	
-	while ((c = getopt_long(argc, argv, "f:d:m:h", long_options, &option_index)) != -1) {
+	while ((c = getopt_long(argc, argv, "s:f:d:m:h", long_options, &option_index)) != -1) {
 		switch (c) {
 			case 0:
 				if (strcmp("depth", long_options[option_index].name) == 0) {
@@ -89,9 +91,15 @@ int main (int argc, char *argv[])
 					goto option_mask;
 				} else if (strcmp("file", long_options[option_index].name) == 0) {
 					goto option_file;
+				} else if (strcmp("style", long_options[option_index].name) == 0) {
+					goto option_style;
 				} else if (strcmp("help", long_options[option_index].name) == 0) {
 					goto option_help;
 				}
+				break;
+			case 's':
+option_style:
+				vars = optarg;
 				break;
 			case 'f':
 option_file:
@@ -149,11 +157,14 @@ option_help:
 	if (varf != NULL) {
 		xdata = (xml_data_t *) s_malloc(sizeof(xml_data_t));
 		memset(xdata, 0, sizeof(xml_data_t));
+		if (vars != NULL) {
+			if (parse_xml_file(xdata, vars)) {
+				exit(1);
+			}
+		}
 		if (parse_xml_file(xdata, varf)) {
 			exit(1);
 		}
-		parse_xml_file(xdata, optarg);
-//		node_print(xdata->root);
 		code_parse(widgetr->table, widgetr->depth, widgetr->mask, xdata->root, xdata->elem);
 		node_uninit(xdata->root);
 		s_free(xdata);
