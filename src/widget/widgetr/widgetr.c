@@ -64,6 +64,7 @@ int main (int argc, char *argv[])
 {
 	char c;
 	char *hex;
+	node_t *root;
 	unsigned int i;
 	char *varf = NULL;
 	char *vars = NULL;
@@ -160,7 +161,10 @@ option_help:
 			exit(1);
 		}
 		code_parse(widgetr->table, widgetr->depth, widgetr->mask, xdata->root, xdata->elem);
-		node_uninit(xdata->root);
+		for (root = xdata->root; root && root->parent; root = root->parent);
+		node_uninit(root);
+		for (root = xdata->elem; root && root->parent; root = root->parent);
+		node_uninit(root);
 		s_free(xdata);
 	}
 
