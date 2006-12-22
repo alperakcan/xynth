@@ -98,6 +98,9 @@ static inline void code_get_enum (ctable_t *ctable, char *val, unsigned int *pro
 	int tok_count;
 	char **tok_vals;
 	*prop = 0;
+	if (val == NULL) {
+		return;
+	}
 	code_tokenize(val, '|', &tok_count, &tok_vals);
 	for (i = 0; i < tok_count; i++) {
 		*prop |= (unsigned int) TGD(code_trim_space(tok_vals[i]));
@@ -111,6 +114,9 @@ static inline void code_get_style (ctable_t *ctable, node_t *node, FRAME_SHAPE *
 	node_t *shadow = node_get_node(node, "shadow");
 	*fshape = FRAME_NOFRAME;
 	*fshadow = FRAME_PLAIN;
+	if (node == NULL) {
+		return;
+	}
 	if (shape) {
 		code_get_enum(ctable, shape->value, fshape);
 		shape->dontparse = 1;
@@ -119,6 +125,46 @@ static inline void code_get_style (ctable_t *ctable, node_t *node, FRAME_SHAPE *
 		code_get_enum(ctable, shadow->value, fshadow);
 		shadow->dontparse = 1;
 	}
+}
+
+void code_get_image (ctable_t *ctable, node_t *node, unsigned int *istyle, unsigned int *irotate, unsigned int *icount, char ***ivar)
+{
+	int i;
+	int count;
+	char **var;
+	char *cntstr;
+	node_t *tmp;
+	FRAME_SHAPE shape;
+	FRAME_SHADOW shadow;
+	FRAME_IMAGE_ROTATION rotate;
+	*istyle = 0;
+	*irotate = 0;
+	*icount = 0;
+	*ivar = NULL;
+	count = atoi(node_get_value(node, "count"));
+	if (count == 0) {
+		return;
+	}
+	code_get_enum(ctable, node_get_value(node, "rotate"), &rotate);
+	code_get_style(ctable, node_get_node(node, "style"), &shape, &shadow);
+	cntstr = (char *) s_malloc(sizeof(char *) * 255);
+	var = (char **) s_malloc(sizeof(char **) * count);
+	for (i = 0; i < count; i++) {
+		sprintf(cntstr, "image%d", i);
+		tmp = node_get_node(node, cntstr);
+		var[i] = strdup(tmp->value);
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "style")) != NULL) { tmp->dontparse = 1; }
+	if ((tmp = node_get_node(node, "style/shape")) != NULL) { tmp->dontparse = 1; }
+	if ((tmp = node_get_node(node, "style/shadow")) != NULL) { tmp->dontparse = 1; }
+	if ((tmp = node_get_node(node, "count")) != NULL) { tmp->dontparse = 1; }
+	if ((tmp = node_get_node(node, "rotate")) != NULL) { tmp->dontparse = 1; }
+	s_free(cntstr);
+	*istyle = shape | shadow;
+	*irotate = rotate;
+	*icount = count;
+	*ivar = var;
 }
 
 void code_parse_element (node_t *node, node_t *elem)
@@ -241,6 +287,19 @@ void code_generate_object_frame (ctable_t *ctable, node_t *node)
 		w_frame_set_style(frame->object, fshape, fshadow); 
 		tmp->dontparse = 1;
 	}
+	while ((tmp = node_get_node(node, "image")) != NULL) {
+		char **var;
+		unsigned int count;
+		unsigned int style;
+		unsigned int rotate;
+		code_get_image(ctable, tmp, &style, &rotate, &count, &var);
+		if (var != NULL) {
+			w_frame_set_image(frame->object, style, rotate, count, var);
+			while (count--) s_free(var[count]);
+			s_free(var);
+		}
+		tmp->dontparse = 1;
+	}
 }
 
 void code_generate_object_button (ctable_t *ctable, node_t *node)
@@ -262,6 +321,16 @@ void code_generate_object_button (ctable_t *ctable, node_t *node)
 		tmp->dontparse = 1;
 	}
 	while ((tmp = node_get_node(node, "image")) != NULL) {
+		char **var;
+		unsigned int count;
+		unsigned int style;
+		unsigned int rotate;
+		code_get_image(ctable, tmp, &style, &rotate, &count, &var);
+		if (var != NULL) {
+			w_button_set_image(button->object, style, rotate, count, var);
+			while (count--) s_free(var[count]);
+			s_free(var);
+		}
 		tmp->dontparse = 1;
 	}
 	if ((tmp = node_get_node(node, "pressed")) != NULL) {
@@ -294,6 +363,16 @@ void code_generate_object_textbox (ctable_t *ctable, node_t *node)
 		tmp->dontparse = 1;
 	}
 	while ((tmp = node_get_node(node, "image")) != NULL) {
+		char **var;
+		unsigned int count;
+		unsigned int style;
+		unsigned int rotate;
+		code_get_image(ctable, tmp, &style, &rotate, &count, &var);
+		if (var != NULL) {
+			w_textbox_set_image(textbox->object, style, rotate, count, var);
+			while (count--) s_free(var[count]);
+			s_free(var);
+		}
 		tmp->dontparse = 1;
 	}
 	while ((tmp = node_get_node(node, "properties")) != NULL) {
@@ -342,6 +421,16 @@ void code_generate_object_editbox (ctable_t *ctable, node_t *node)
 		tmp->dontparse = 1;
 	}
 	while ((tmp = node_get_node(node, "image")) != NULL) {
+		char **var;
+		unsigned int count;
+		unsigned int style;
+		unsigned int rotate;
+		code_get_image(ctable, tmp, &style, &rotate, &count, &var);
+		if (var != NULL) {
+			w_editbox_set_image(editbox->object, style, rotate, count, var);
+			while (count--) s_free(var[count]);
+			s_free(var);
+		}
 		tmp->dontparse = 1;
 	}
 	while ((tmp = node_get_node(node, "properties")) != NULL) {
@@ -396,6 +485,19 @@ void code_generate_object_checkbox (ctable_t *ctable, node_t *node)
 		w_checkbox_set_boxstyle(checkbox->object, fshape, fshadow); 
 		tmp->dontparse = 1;
 	}
+	while ((tmp = node_get_node(node, "image")) != NULL) {
+		char **var;
+		unsigned int count;
+		unsigned int style;
+		unsigned int rotate;
+		code_get_image(ctable, tmp, &style, &rotate, &count, &var);
+		if (var != NULL) {
+			w_checkbox_set_image(checkbox->object, style, rotate, count, var);
+			while (count--) s_free(var[count]);
+			s_free(var);
+		}
+		tmp->dontparse = 1;
+	}
 	while ((tmp = node_get_node(node, "properties")) != NULL) {
 		TEXTBOX_PROPERTIES prop;
 		code_get_enum(ctable, tmp->value, &prop);
@@ -417,9 +519,6 @@ void code_generate_object_checkbox (ctable_t *ctable, node_t *node)
 		if ((tmp = node_get_node(node, "color/blue")) != NULL) { tmp->dontparse = 1; }
 		tmp->dontparse = 1;
 	}
-	while ((tmp = node_get_node(node, "image")) != NULL) {
-		tmp->dontparse = 1;
-	}
 	while ((tmp = node_get_node(node, "boximage")) != NULL) {
 		tmp->dontparse = 1;
 	}
@@ -428,6 +527,101 @@ void code_generate_object_checkbox (ctable_t *ctable, node_t *node)
 	}
 	if ((tmp = node_get_node(node, "string")) != NULL) {
 		w_checkbox_set_str(checkbox->object, code_trim_quota(tmp->value));
+		tmp->dontparse = 1;
+	}
+}
+
+void code_generate_object_progressbar (ctable_t *ctable, node_t *node)
+{
+	node_t *tmp;
+	w_progressbar_t *progressbar;
+	w_object_t *pobject;
+	w_object_t *wobject;
+	node_t *window = node_get_parent(node, "window");
+	wobject = (w_object_t *) TGD(window->id);
+	pobject = (w_object_t *) TGD(node->parent->id);
+	w_progressbar_init(wobject->window, &progressbar, pobject);
+	TAD(node->id, progressbar->object);
+	while ((tmp = node_get_node(node, "style")) != NULL) {
+		FRAME_SHAPE fshape;
+		FRAME_SHADOW fshadow;
+		code_get_style(ctable, tmp, &fshape, &fshadow);
+		w_progressbar_set_style(progressbar->object, fshape, fshadow); 
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "boxstyle")) != NULL) {
+		FRAME_SHAPE fshape;
+		FRAME_SHADOW fshadow;
+		code_get_style(ctable, tmp, &fshape, &fshadow);
+		w_progressbar_set_boxstyle(progressbar->object, fshape, fshadow); 
+		tmp->dontparse = 1;
+	}
+	while ((tmp = node_get_node(node, "image")) != NULL) {
+		char **var;
+		unsigned int count;
+		unsigned int style;
+		unsigned int rotate;
+		code_get_image(ctable, tmp, &style, &rotate, &count, &var);
+		if (var != NULL) {
+			w_progressbar_set_image(progressbar->object, style, rotate, count, var);
+			while (count--) s_free(var[count]);
+			s_free(var);
+		}
+		tmp->dontparse = 1;
+	}
+	while ((tmp = node_get_node(node, "boximage")) != NULL) {
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "changed")) != NULL) {
+		tmp->dontparse = 1;
+	}
+}
+
+void code_parse_generate (ctable_t *ctable, node_t *node);
+
+void code_generate_object_scrollbuffer (ctable_t *ctable, node_t *node)
+{
+	node_t *tmp;
+	w_scrollbuffer_t *scrollbuffer;
+	w_object_t *pobject;
+	w_object_t *wobject;
+	node_t *window = node_get_parent(node, "window");
+	wobject = (w_object_t *) TGD(window->id);
+	pobject = (w_object_t *) TGD(node->parent->id);
+	w_scrollbuffer_init(wobject->window, &scrollbuffer, pobject);
+	TAD(node->id, scrollbuffer->object);
+	while ((tmp = node_get_node(node, "object")) != NULL) {
+		code_parse_generate(ctable, tmp);
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "child")) != NULL) {
+		w_object_t *cobject = (w_object_t *) TGD(tmp->value);
+		w_scrollbuffer_set_child(scrollbuffer->object, cobject);
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "slide")) != NULL) {
+		tmp->dontparse = 1;
+	}
+	while ((tmp = node_get_node(node, "boxstyle")) != NULL) {
+		FRAME_SHAPE fshape;
+		FRAME_SHADOW fshadow;
+		code_get_style(ctable, tmp, &fshape, &fshadow);
+		w_scrollbuffer_set_boxstyle(scrollbuffer->object, fshape, fshadow); 
+		tmp->dontparse = 1;
+	}
+	while ((tmp = node_get_node(node, "boximage")) != NULL) {
+		tmp->dontparse = 1;
+	}
+	while ((tmp = node_get_node(node, "addstyle")) != NULL) {
+		tmp->dontparse = 1;
+	}
+	while ((tmp = node_get_node(node, "addimage")) != NULL) {
+		tmp->dontparse = 1;
+	}
+	while ((tmp = node_get_node(node, "substyle")) != NULL) {
+		tmp->dontparse = 1;
+	}
+	while ((tmp = node_get_node(node, "subimage")) != NULL) {
 		tmp->dontparse = 1;
 	}
 }
@@ -444,6 +638,10 @@ void code_generate_object (ctable_t *ctable, node_t *node)
 		code_generate_object_editbox(ctable, node);
 	} else if (strcmp(node->type, "checkbox") == 0) {
 		code_generate_object_checkbox(ctable, node);
+	} else if (strcmp(node->type, "progressbar") == 0) {
+		code_generate_object_progressbar(ctable, node);
+	} else if (strcmp(node->type, "scrollbuffer") == 0) {
+		code_generate_object_scrollbuffer(ctable, node);
 	}
 }
 
@@ -507,6 +705,10 @@ void code_parse (w_table_t *table, unsigned int depth, unsigned int mask, node_t
 	TAD("TEXTBOX_WRAP", (void *) TEXTBOX_WRAP);
 	TAD("TEXTBOX_VCENTER", (void *) TEXTBOX_VCENTER);
 	TAD("TEXTBOX_HCENTER", (void *) TEXTBOX_HCENTER);
+	
+	TAD("FRAME_IMAGE_SOLID", (void *) FRAME_IMAGE_SOLID);
+	TAD("FRAME_IMAGE_VERTICAL", (void *) FRAME_IMAGE_VERTICAL);
+	TAD("FRAME_IMAGE_HORIZONTAL", (void *) FRAME_IMAGE_HORIZONTAL);	
 
 	code_parse_element(node, elem);
 	code_parse_generate(ctable, node);
