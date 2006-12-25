@@ -15,7 +15,7 @@
 
 #include "../lib/xynth_.h"
 #include "server/server.h"
-#include "cursor.h"
+#include "server/cursor.h"
 
 void s_server_cursor_uninit (void)
 {

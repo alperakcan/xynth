@@ -19,7 +19,7 @@
 #if defined(THEME_PLUGIN)
 	#include <dlfcn.h>
 #else
-	#include "theme_static.h"
+	#include "server/theme_static.h"
 #endif
 
 void s_server_theme_set (char *name)
