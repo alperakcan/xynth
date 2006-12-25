@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "list.h"
 #include "node.h"
 
 char * node_strdup (char *str)

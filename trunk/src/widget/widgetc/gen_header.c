@@ -17,6 +17,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "list.h"
+#include "node.h"
 #include "gen_header.h"
 
 void node_generate_header (node_t *node, FILE *g_header)

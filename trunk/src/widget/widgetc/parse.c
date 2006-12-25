@@ -21,6 +21,7 @@
 #include <string.h>
 #include <expat.h>
 
+#include "list.h"
 #include "node.h"
 #include "parse.h"
 
