@@ -16,7 +16,7 @@
 #if defined(VIDEO_GP2X)
 
 #include "../../../lib/xynth_.h"
-#include "../../server.h"
+#include "server/server.h"
 #include "gp2x.h"
 
 #define MOUSE_ACCELL	3

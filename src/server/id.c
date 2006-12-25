@@ -14,7 +14,7 @@
  ***************************************************************************/
 
 #include "../lib/xynth_.h"
-#include "server.h"
+#include "server/server.h"
 
 int s_server_id_get (void)
 {

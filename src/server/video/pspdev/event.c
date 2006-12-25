@@ -16,7 +16,7 @@
 #if defined(VIDEO_PSPDEV)
 
 #include "../../../lib/xynth_.h"
-#include "../../server.h"
+#include "server/server.h"
 #include "pspdev.h"
 
 #define MOUSE_ACCELL	3

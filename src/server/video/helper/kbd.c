@@ -24,7 +24,7 @@
 #include <unistd.h>
 
 #include "../../../lib/xynth_.h"
-#include "../../server.h"
+#include "server/server.h"
 #include "kbd.h"
 #include "helper.h"
 

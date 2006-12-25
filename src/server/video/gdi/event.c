@@ -16,7 +16,7 @@
 #if defined(VIDEO_GDI)
 
 #include "../../../lib/xynth_.h"
-#include "../../server.h"
+#include "server/server.h"
 #include "gdi.h"
 
 LRESULT CALLBACK MainWndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)

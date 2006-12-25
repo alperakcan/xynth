@@ -16,7 +16,7 @@
 #if defined(SINGLE_APP)
 
 #include "../lib/xynth_.h"
-#include "server.h"
+#include "server/server.h"
 
 #if defined(DEMO_DESKTOP)
 	extern s_single_app_t single_desktop;

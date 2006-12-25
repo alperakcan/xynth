@@ -2,7 +2,7 @@
 include ../../Makefile.cfg
 include ../../Makefile.parse
 
-INCDIR += ../lib
+INCDIR += ../../include ../lib
 LIBDIR += ../lib
 
 TARGET-$(PLATFORM_LINUX)  = xynth

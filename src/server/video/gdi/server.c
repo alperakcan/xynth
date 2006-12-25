@@ -16,7 +16,7 @@
 #if defined(VIDEO_GDI)
 
 #include "../../../lib/xynth_.h"
-#include "../../server.h"
+#include "server/server.h"
 #include "../helper/helper.h"
 #include "gdi.h"
 

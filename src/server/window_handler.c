@@ -14,7 +14,7 @@
  ***************************************************************************/
 
 #include "../lib/xynth_.h"
-#include "server.h"
+#include "server/server.h"
 
 #define s_server_window_btn_y(a)\
 	int id = s_server_pri_id(0);\

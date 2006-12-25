@@ -13,8 +13,9 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef SSERVER_H
-#define SSERVER_H
+#ifndef SERVER_H_
+#define SERVER_H_
+
 
 typedef enum {
 	TOP_L	= 0x0,
@@ -403,4 +404,4 @@ void s_server_theme_init (void);
 void s_server_theme_set (char *name);
 void s_server_theme_uninit (void);
 
-#endif
+#endif /*SERVER_H_*/
