@@ -2,7 +2,7 @@
 include ../../Makefile.cfg
 include ../../Makefile.parse
 
-INCDIR  = ../../src/lib ../../src/widget
+INCDIR  = ../../src/lib ../../include/widget
 LIBDIR  = ../../src/widget ../../src/lib
 LDFLAGS = -lwidget -lxynth
 
