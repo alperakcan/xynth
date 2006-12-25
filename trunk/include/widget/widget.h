@@ -44,14 +44,14 @@ typedef struct w_window_s w_window_t;
 typedef struct w_effect_s w_effect_t;
 typedef struct w_signal_s w_signal_t;
 
-#include "object.h"
-#include "frame.h"
-#include "button.h"
-#include "textbox.h"
-#include "editbox.h"
-#include "checkbox.h"
-#include "progressbar.h"
-#include "scrollbuffer.h"
-#include "window.h"
+#include "widget/object.h"
+#include "widget/frame.h"
+#include "widget/button.h"
+#include "widget/textbox.h"
+#include "widget/editbox.h"
+#include "widget/checkbox.h"
+#include "widget/progressbar.h"
+#include "widget/scrollbuffer.h"
+#include "widget/window.h"
 
 #endif /*WIDGET_H_*/
