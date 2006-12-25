@@ -17,17 +17,12 @@
 #include "widget.h"
 #include <getopt.h>
 
+#include "list.h"
+#include "node.h"
 #include "parse.h"
 #include "table.h"
+#include "widgetr.h"
 #include "code.h"
-
-typedef struct w_widgetr_s w_widgetr_t;
-
-struct w_widgetr_s {
-	unsigned int depth;
-	unsigned int mask;
-	w_table_t *table;
-};
 
 int axtoi (char *hex)
 {
@@ -68,22 +63,26 @@ int main (int argc, char *argv[])
 	unsigned int i;
 	char *varf = NULL;
 	char *vars = NULL;
+	char *varc = NULL;
+	char *vare = NULL;
 	xml_data_t *xdata;
-	w_widgetr_t *widgetr;
+	ctable_t *widgetr;
 	unsigned int option_index = 0;
 	struct option long_options[] = {
 		{"depth", 1, 0, 0},
 		{"mask", 1, 0, 0},
 		{"file", 1, 0, 0},
 		{"style", 1, 0, 0},
+		{"script", 1, 0, 0},
+		{"engine", 1, 0, 0},
 		{"help", 0, 0, 0},
 		{0, 0, 0, 0},
 	};
 
-	widgetr = (w_widgetr_t *) s_malloc(sizeof(w_widgetr_t));
-	memset(widgetr, 0, sizeof(w_widgetr_t));
+	widgetr = (ctable_t *) s_malloc(sizeof(ctable_t));
+	memset(widgetr, 0, sizeof(ctable_t));
 	
-	while ((c = getopt_long(argc, argv, "s:f:d:m:h", long_options, &option_index)) != -1) {
+	while ((c = getopt_long(argc, argv, "e:c:s:f:d:m:h", long_options, &option_index)) != -1) {
 		switch (c) {
 			case 0:
 				if (strcmp("depth", long_options[option_index].name) == 0) {
@@ -94,9 +93,21 @@ int main (int argc, char *argv[])
 					goto option_file;
 				} else if (strcmp("style", long_options[option_index].name) == 0) {
 					goto option_style;
+				} else if (strcmp("script", long_options[option_index].name) == 0) {
+					goto option_script;
+				} else if (strcmp("engine", long_options[option_index].name) == 0) {
+					goto option_engine;
 				} else if (strcmp("help", long_options[option_index].name) == 0) {
 					goto option_help;
 				}
+				break;
+			case 'e':
+option_engine:
+				vare = optarg;
+				break;
+			case 'c':
+option_script:
+				varc = optarg;
 				break;
 			case 's':
 option_style:
@@ -160,7 +171,7 @@ option_help:
 		if (parse_xml_file(xdata, varf)) {
 			exit(1);
 		}
-		code_parse(widgetr->table, widgetr->depth, widgetr->mask, xdata->root, xdata->elem);
+		code_parse(widgetr->table, widgetr->depth, widgetr->mask, xdata->root, xdata->elem, varc, vare);
 		for (root = xdata->root; root && root->parent; root = root->parent);
 		node_uninit(root);
 		for (root = xdata->elem; root && root->parent; root = root->parent);
