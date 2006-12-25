@@ -133,6 +133,7 @@ struct w_object_s {
 	w_window_t *window;
 	/** user data */
 	void *data[OBJECT_OBJECTS];
+	void *priv;
 };
 
 /*@}*/
