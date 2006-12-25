@@ -15,7 +15,7 @@
 
 #include "../lib/xynth_.h"
 #include "server/server.h"
-#include "kbd_map.h"
+#include "server/kbd_map.h"
 
 void s_server_kbd_switch_handler (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
