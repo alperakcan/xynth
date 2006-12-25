@@ -2,7 +2,7 @@
 include ../../../Makefile.cfg
 include ../../../Makefile.parse
 
-#WIDGET_SCRIPT_ENGINE_JS = Y
+WIDGET_SCRIPT_ENGINE_JS = Y
 
 ifdef WIDGET_SCRIPT_ENGINE_JS
 SPIDER_MONKEY = ../../../../../src/mozilla/js/
