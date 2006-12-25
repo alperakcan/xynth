@@ -16,20 +16,29 @@
 #include "xynth_.h"
 #include "widget.h"
 
+#include "list.h"
 #include "node.h"
-#include "code.h"
 #include "table.h"
+#include "widgetr.h"
+#include "code.h"
+
+#ifdef WIDGET_SCRIPT_ENGINE_JS
+extern code_script_t js_script;
+#endif
+
+code_script_t *code_scripts[] = {
+#ifdef WIDGET_SCRIPT_ENGINE_JS
+	&js_script,
+#endif
+	NULL,
+};
+
+code_script_t *g_engine = NULL;
 
 #define TAD(__key, __data) table_add(ctable->table, ctable->depth, ctable->mask, __key, __data);
 #define TGD(__key) table_get_data(ctable->table, ctable->depth, ctable->mask, __key)
 
-typedef struct ctable_s {
-	unsigned int depth;
-	unsigned int mask;
-	w_table_t *table;
-} ctable_t;
-
-static inline char * code_trim_quota (char *value)
+char * code_trim_quota (char *value)
 {
 	char *ptr = value;
 	/* strip trailing white space, returns, etc */
@@ -43,7 +52,7 @@ static inline char * code_trim_quota (char *value)
 	return ptr;
 }
 
-static inline char * code_trim_space (char *value)
+char * code_trim_space (char *value)
 {
 	char *ptr = value;
 	/* strip trailing white space, returns, etc */
@@ -57,7 +66,7 @@ static inline char * code_trim_space (char *value)
 	return ptr;
 }
 
-static inline void code_tokenize (char *value, char token, int *n, char ***tokens)
+void code_tokenize (char *value, char token, int *n, char ***tokens)
 {
 	char *tmp;
 	char **tok;
@@ -92,7 +101,7 @@ static inline void code_tokenize (char *value, char token, int *n, char ***token
 	return;
 }
 
-static inline void code_get_enum (ctable_t *ctable, char *val, unsigned int *prop)
+void code_get_enum (ctable_t *ctable, char *val, unsigned int *prop)
 {
 	int i;
 	int tok_count;
@@ -108,7 +117,20 @@ static inline void code_get_enum (ctable_t *ctable, char *val, unsigned int *pro
 	s_free(tok_vals);
 }
 
-static inline void code_get_style (ctable_t *ctable, node_t *node, FRAME_SHAPE *fshape, FRAME_SHADOW *fshadow)
+void code_get_effect (ctable_t *ctable, node_t *node, EFFECT *effect)
+{
+	node_t *t_effect = node_get_node(node, "effect");
+	*effect = EFFECT_NONE;
+	if (node == NULL) {
+		return;
+	}
+	if (t_effect) {
+		code_get_enum(ctable, t_effect->value, effect);
+		t_effect->dontparse = 1;
+	}
+}
+
+void code_get_style (ctable_t *ctable, node_t *node, FRAME_SHAPE *fshape, FRAME_SHADOW *fshadow)
 {
 	node_t *shape = node_get_node(node, "shape");
 	node_t *shadow = node_get_node(node, "shadow");
@@ -273,6 +295,7 @@ void code_generate_object_frame (ctable_t *ctable, node_t *node)
 {
 	node_t *tmp;
 	w_frame_t *frame;
+	code_priv_t *priv;
 	w_object_t *pobject;
 	w_object_t *wobject;
 	node_t *window = node_get_parent(node, "window");
@@ -300,11 +323,26 @@ void code_generate_object_frame (ctable_t *ctable, node_t *node)
 		}
 		tmp->dontparse = 1;
 	}
+	priv = (code_priv_t *) s_malloc(sizeof(code_priv_t));
+	memset(priv, 0, sizeof(code_priv_t));
+	if ((tmp = node_get_node(node, "effect")) != NULL) {
+		EFFECT effect;
+		code_get_effect(ctable, tmp, &effect);
+		frame->object->effect->effect = effect;
+		tmp->dontparse = 1;
+	}
+	if ((tmp = node_get_node(node, "draw")) != NULL) {
+		priv->draw = strdup(tmp->value);
+		if (g_engine) frame->object->draw = g_engine->object_draw;
+		tmp->dontparse = 1;
+	}
+	frame->object->priv = priv;
 }
 
 void code_generate_object_button (ctable_t *ctable, node_t *node)
 {
 	node_t *tmp;
+	code_priv_t *priv;
 	w_button_t *button;
 	w_object_t *pobject;
 	w_object_t *wobject;
@@ -333,15 +371,29 @@ void code_generate_object_button (ctable_t *ctable, node_t *node)
 		}
 		tmp->dontparse = 1;
 	}
+	priv = (code_priv_t *) s_malloc(sizeof(code_priv_t));
+	memset(priv, 0, sizeof(code_priv_t));
 	if ((tmp = node_get_node(node, "pressed")) != NULL) {
+		priv->pressed = strdup(tmp->value);
+		if (g_engine) w_button_set_pressed(button->object, g_engine->button_pressed);
 		tmp->dontparse = 1;
 	}
 	if ((tmp = node_get_node(node, "released")) != NULL) {
+		priv->released = strdup(tmp->value);
+		if (g_engine) w_button_set_released(button->object, g_engine->button_released);
 		tmp->dontparse = 1;
 	}
 	if ((tmp = node_get_node(node, "clicked")) != NULL) {
+		priv->clicked = strdup(tmp->value);
+		if (g_engine) w_button_set_clicked(button->object, g_engine->button_clicked);
 		tmp->dontparse = 1;
 	}
+	if ((tmp = node_get_node(node, "draw")) != NULL) {
+		priv->draw = strdup(tmp->value);
+		if (g_engine) button->object->draw = g_engine->object_draw;
+		tmp->dontparse = 1;
+	}
+	button->object->priv = priv;
 }
 
 void code_generate_object_textbox (ctable_t *ctable, node_t *node)
@@ -498,6 +550,19 @@ void code_generate_object_checkbox (ctable_t *ctable, node_t *node)
 		}
 		tmp->dontparse = 1;
 	}
+	while ((tmp = node_get_node(node, "boximage")) != NULL) {
+		char **var;
+		unsigned int count;
+		unsigned int style;
+		unsigned int rotate;
+		code_get_image(ctable, tmp, &style, &rotate, &count, &var);
+		if (var != NULL) {
+			w_checkbox_set_boximage(checkbox->object, style, rotate, count, var);
+			while (count--) s_free(var[count]);
+			s_free(var);
+		}
+		tmp->dontparse = 1;
+	}
 	while ((tmp = node_get_node(node, "properties")) != NULL) {
 		TEXTBOX_PROPERTIES prop;
 		code_get_enum(ctable, tmp->value, &prop);
@@ -517,9 +582,6 @@ void code_generate_object_checkbox (ctable_t *ctable, node_t *node)
 		if ((tmp = node_get_node(node, "color/red")) != NULL) { tmp->dontparse = 1; }
 		if ((tmp = node_get_node(node, "color/green")) != NULL) { tmp->dontparse = 1; }
 		if ((tmp = node_get_node(node, "color/blue")) != NULL) { tmp->dontparse = 1; }
-		tmp->dontparse = 1;
-	}
-	while ((tmp = node_get_node(node, "boximage")) != NULL) {
 		tmp->dontparse = 1;
 	}
 	if ((tmp = node_get_node(node, "changed")) != NULL) {
@@ -576,8 +638,6 @@ void code_generate_object_progressbar (ctable_t *ctable, node_t *node)
 		tmp->dontparse = 1;
 	}
 }
-
-void code_parse_generate (ctable_t *ctable, node_t *node);
 
 void code_generate_object_scrollbuffer (ctable_t *ctable, node_t *node)
 {
@@ -669,9 +729,11 @@ void code_parse_generate (ctable_t *ctable, node_t *node)
 	}
 }
 
-void code_parse (w_table_t *table, unsigned int depth, unsigned int mask, node_t *node, node_t *elem)
+void code_parse (w_table_t *table, unsigned int depth, unsigned int mask, node_t *node, node_t *elem, char *script, char *engine)
 {
 	ctable_t *ctable;
+	code_script_t **sengine;
+	
 	ctable = (ctable_t *) s_malloc(sizeof(ctable_t));
 	ctable->table = table;
 	ctable->depth = depth;
@@ -708,10 +770,25 @@ void code_parse (w_table_t *table, unsigned int depth, unsigned int mask, node_t
 	
 	TAD("FRAME_IMAGE_SOLID", (void *) FRAME_IMAGE_SOLID);
 	TAD("FRAME_IMAGE_VERTICAL", (void *) FRAME_IMAGE_VERTICAL);
-	TAD("FRAME_IMAGE_HORIZONTAL", (void *) FRAME_IMAGE_HORIZONTAL);	
+	TAD("FRAME_IMAGE_HORIZONTAL", (void *) FRAME_IMAGE_HORIZONTAL);
+
+	TAD("EFFECT_NONE", (void *) EFFECT_NONE);
+	TAD("EFFECT_FADEIN", (void *) EFFECT_FADEIN);
+	TAD("EFFECT_FADEOUT", (void *) EFFECT_FADEOUT);
+	TAD("EFFECT_POPIN", (void *) EFFECT_POPIN);
+	TAD("EFFECT_POPOUT", (void *) EFFECT_POPOUT);
+
+	for (sengine = code_scripts; *sengine && engine; sengine++) {
+		if (strcmp((*sengine)->name, engine) == 0) {
+			g_engine = *sengine;
+		} 
+	}
+	if (g_engine) g_engine->init(ctable, script);	
 
 	code_parse_element(node, elem);
 	code_parse_generate(ctable, node);
+	
+	if (g_engine) g_engine->uninit();
 	
 	s_free(ctable);
 }
