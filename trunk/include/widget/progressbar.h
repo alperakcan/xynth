@@ -1,5 +1,20 @@
-#ifndef PROGRESSBAR_H_
-#define PROGRESSBAR_H_
+/***************************************************************************
+    begin                : Mon Sep 20 2004
+    copyright            : (C) 2004 - 2006 by Alper Akcan
+    email                : distchx@yahoo.com
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU Lesser General Public License as        *
+ *   published by the Free Software Foundation; either version 2.1 of the  *
+ *   License, or (at your option) any later version.                       *
+ *                                                                         *
+ ***************************************************************************/
+
+#ifndef W_PROGRESSBAR_H_
+#define W_PROGRESSBAR_H_
 
 struct w_progressbar_s {
 	w_object_t *object;
@@ -21,4 +36,4 @@ void w_progressbar_geometry (w_object_t *object);
 int w_progressbar_init (w_window_t *window, w_progressbar_t **progressbar, w_object_t *parent);
 void w_progressbar_uninit (w_object_t *object);
 
-#endif /*PROGRESSBAR_H_*/
+#endif /* W_PROGRESSBAR_H_ */

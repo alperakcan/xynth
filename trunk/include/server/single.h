@@ -13,8 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef SINGLE_H_
-#define SINGLE_H_
+#ifndef S_SINGLE_H_
+#define S_SINGLE_H_
 
 /* single.c */
 #if defined(SINGLE_APP)
@@ -23,4 +23,4 @@ void s_server_single_start (void);
 void s_server_single_stop (void);
 #endif
 
-#endif /*SINGLE_H_*/
+#endif /* S_SINGLE_H_ */

@@ -13,8 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef WINDOW_MODE_RESIZE_H_
-#define WINDOW_MODE_RESIZE_H_
+#ifndef S_WINDOW_MOVE_RESIZE_H_
+#define S_WINDOW_MOVE_RESIZE_H_
 
 /* window_move_resize.c */
 void s_server_window_lines_draw_ (s_rect_t *coor, s_rect_t *rect, int c);
@@ -33,4 +33,4 @@ void s_server_window_resize_down_right (s_window_t *window);
 void s_server_window_resize_right (s_window_t *window);
 void s_server_window_resize_up_right (s_window_t *window);
 
-#endif /*WINDOW_MODE_RESIZE_H_*/
+#endif /* S_WINDOW_MOVE_RESIZE_H_ */

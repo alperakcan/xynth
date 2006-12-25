@@ -13,8 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef MOUSE_H_
-#define MOUSE_H_
+#ifndef S_MOUSE_H_
+#define S_MOUSE_H_
 
 struct s_cursor_s {
 	int sw;
@@ -44,4 +44,4 @@ int s_server_mouse_uninit (s_window_t *window, s_pollfd_t *pfd);
 int s_server_mouse_update (s_window_t *window, s_pollfd_t *pfd);
 void s_server_mouse_init (s_server_conf_t *cfg, s_video_input_t *mouse);
 
-#endif /*MOUSE_H_*/
+#endif /* S_MOUSE_H_ */

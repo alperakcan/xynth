@@ -13,8 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef SOCKET_H_
-#define SOCKET_H_
+#ifndef S_SOCKET_H_
+#define S_SOCKET_H_
 
 /* socket.c */
 int s_server_socket_listen_new (int id);
@@ -42,4 +42,4 @@ int s_server_socket_init_tcp (void);
 int s_server_socket_init_pipe (void);
 void s_server_socket_init (void);
 
-#endif /*SOCKET_H_*/
+#endif /* S_SOCKET_H_ */

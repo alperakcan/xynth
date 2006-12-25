@@ -13,8 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef THEME_H_
-#define THEME_H_
+#ifndef S_THEME_H_
+#define S_THEME_H_
 
 typedef enum {
 	TOP_L	= 0x0,
@@ -65,4 +65,4 @@ void s_server_theme_init (void);
 void s_server_theme_set (char *name);
 void s_server_theme_uninit (void);
 
-#endif /*THEME_H_*/
+#endif /* S_THEME_H_ */

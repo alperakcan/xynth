@@ -1,5 +1,20 @@
-#ifndef TEXTBOX_H_
-#define TEXTBOX_H_
+/***************************************************************************
+    begin                : Mon Sep 20 2004
+    copyright            : (C) 2004 - 2006 by Alper Akcan
+    email                : distchx@yahoo.com
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU Lesser General Public License as        *
+ *   published by the Free Software Foundation; either version 2.1 of the  *
+ *   License, or (at your option) any later version.                       *
+ *                                                                         *
+ ***************************************************************************/
+
+#ifndef W_TEXTBOX_H_
+#define W_TEXTBOX_H_
 
 typedef enum {
 	TEXTBOX_WRAP    = 0x1,
@@ -34,4 +49,4 @@ int w_textbox_init (w_window_t *window, w_textbox_t **textbox, w_object_t *paren
 void w_textbox_uninit (w_object_t *object);
 void w_textbox_loadimages(w_object_t *object,char *file_left,char *file_middle,char *file_right);
 
-#endif /*TEXTBOX_H_*/
+#endif /* W_TEXTBOX_H_ */

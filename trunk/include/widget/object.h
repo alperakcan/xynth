@@ -13,8 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef OBJECT_H_
-#define OBJECT_H_
+#ifndef W_OBJECT_H_
+#define W_OBJECT_H_
 
 typedef enum {
 	OBJECT_OBJECT		= 0x0,
@@ -138,4 +138,4 @@ int w_object_isshownchild (w_object_t *parent, w_object_t *child);
 int w_object_init (w_window_t *window, w_object_t **object, void (*draw) (w_object_t *), w_object_t *parent);
 void w_object_uninit (w_object_t *object);
 
-#endif /*OBJECT_H_*/
+#endif /* W_OBJECT_H_ */

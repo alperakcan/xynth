@@ -13,8 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef CHECKBOX_H_
-#define CHECKBOX_H_
+#ifndef W_CHECKBOX_H_
+#define W_CHECKBOX_H_
 
 struct w_checkbox_s {
 	w_object_t *object;
@@ -42,4 +42,4 @@ void w_checkbox_released (w_object_t *object, int btn);
 void w_checkbox_uninit (w_object_t *object);
 int w_checkbox_init (w_window_t *window, w_checkbox_t **checkbox, w_object_t *parent);
 
-#endif /*CHECKBOX_H_*/
+#endif /* W_CHECKBOX_H_ */

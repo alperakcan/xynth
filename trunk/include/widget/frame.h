@@ -13,8 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef FRAME_H_
-#define FRAME_H_
+#ifndef W_FRAME_H_
+#define W_FRAME_H_
 
 typedef enum {
 	FRAME_NOFRAME		= 0x00,
@@ -74,4 +74,4 @@ void w_frame_geometry (w_object_t *object);
 int w_frame_init (w_window_t *window, w_frame_t **frame, unsigned int style, w_object_t *parent);
 void w_frame_uninit (w_object_t *object);
 
-#endif /*FRAME_H_*/
+#endif /* W_FRAME_H_ */

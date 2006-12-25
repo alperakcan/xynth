@@ -13,8 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef SURFACE_H_
-#define SURFACE_H_
+#ifndef S_SURFACE_H_
+#define S_SURFACE_H_
 
 /* surface.c */
 void s_server_surface_matrix_find (s_rect_t *coor, int *dm);
@@ -28,4 +28,4 @@ void s_server_surface_background (s_rect_t *coor);
 void s_server_surface_lock_real (void);
 void s_server_surface_refresh (void);
 
-#endif /*SURFACE_H_*/
+#endif /* S_SURFACE_H_ */
