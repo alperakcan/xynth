@@ -2,7 +2,7 @@
 include ../../Makefile.cfg
 include ../../Makefile.parse
 
-INCDIR  = ../../src/lib ../../include/widget
+INCDIR  = ../../src/lib ../../include
 LIBDIR  = ../../src/widget ../../src/lib
 LDFLAGS = -lwidget -lxynth
 
@@ -27,7 +27,7 @@ endif
 
 include ../../Makefile.rules
 
-widgetx_xml.c: widgetx.xml
+widgetx_xml.c: widgetx.xml $(WIDGETC)
 	$(WIDGETC) -f widgetx.xml -o widgetx -c
 endif
 
