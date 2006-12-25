@@ -227,6 +227,7 @@ void w_button_cb_kr (s_window_t *window, s_event_t *event, s_handler_t *handler)
 int w_button_init (w_window_t *window, w_button_t **button, w_object_t *parent)
 {
 	(*button) = (w_button_t *) s_malloc(sizeof(w_button_t));
+	memset(*button, 0, sizeof(w_button_t));
 	if (w_frame_init(window, &((*button)->frame), FRAME_PANEL | FRAME_RAISED, parent)) {
 		goto err0;
 	}
