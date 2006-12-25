@@ -19,7 +19,7 @@
 #if defined(VIDEO_HELPER_TSCREEN)
 
 #include "../../../lib/xynth_.h"
-#include "../../server.h"
+#include "server/server.h"
 #include <tslib.h>
  
 static struct tsdev *ts = NULL;

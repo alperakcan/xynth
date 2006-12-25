@@ -21,7 +21,7 @@
 #include <sys/mman.h>
 
 #include "../../../lib/xynth_.h"
-#include "../../server.h"
+#include "server/server.h"
 #include "../helper/helper.h"
 #include "gp2x.h"
 

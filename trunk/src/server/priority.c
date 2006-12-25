@@ -14,7 +14,7 @@
  ***************************************************************************/
 
 #include "../lib/xynth_.h"
-#include "server.h"
+#include "server/server.h"
 
 void s_server_pri_set (S_SURFACE_CHNGF flag, ...)
 {

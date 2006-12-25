@@ -16,7 +16,7 @@
 #if defined(VIDEO_SDL)
 
 #include "../../../lib/xynth_.h"
-#include "../../server.h"
+#include "server/server.h"
 #include "sdl.h"
 #include "../helper/helper.h"
 

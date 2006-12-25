@@ -18,7 +18,7 @@
 #include <math.h>
 
 #include "../../../lib/xynth_.h"
-#include "../../server.h"
+#include "server/server.h"
 #include "../helper/helper.h"
 #include "fbdev.h"
 
