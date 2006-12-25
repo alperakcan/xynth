@@ -16,7 +16,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "xynth_.h"
-#include "widget.h"
+#include "widget/widget.h"
 
 #include "table.h"
 

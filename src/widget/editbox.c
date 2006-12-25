@@ -14,7 +14,7 @@
  ***************************************************************************/
 
 #include "../lib/xynth_.h"
-#include "widget.h"
+#include "widget/widget.h"
 
 int w_editbox_set_str (w_object_t *object, char *str)
 {

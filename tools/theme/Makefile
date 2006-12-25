@@ -2,7 +2,7 @@
 include ../../Makefile.cfg
 include ../../Makefile.parse
 
-INCDIR  = ../../src/lib ../../src/server
+INCDIR  = ../../src/lib ../../include
 LIBDIR  = ../../src/lib
 LDFLAGS = $(LIBDIR)/libxynth.a -lpthread -lm
 
