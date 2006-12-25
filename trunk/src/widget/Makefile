@@ -2,7 +2,7 @@
 include ../../Makefile.cfg
 include ../../Makefile.parse
 
-INCDIR = ../../include/widget ../lib ./
+INCDIR = ../../include ../lib ./
 
 OBJS = button.o checkbox.o editbox.o frame.o object.o progressbar.o scrollbuffer.o textbox.o window.o
 

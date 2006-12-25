@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 #include "../lib/xynth_.h"
-#include "widget.h"
+#include "widget/widget.h"
 
 int w_progressbar_set_changed (w_object_t *object, void (*changed) (w_object_t *, int))
 {

@@ -16,7 +16,7 @@
 #include <stdarg.h>
 
 #include "../lib/xynth_.h"
-#include "widget.h"
+#include "widget/widget.h"
 
 int w_frame_set_style (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow)
 {

@@ -14,7 +14,7 @@
  ***************************************************************************/
 
 #include "../lib/xynth_.h"
-#include "widget.h"
+#include "widget/widget.h"
 
 void w_scrollbufferbar_add_pressed (w_object_t *object, int button)
 {

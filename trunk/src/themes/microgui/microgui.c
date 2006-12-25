@@ -7,7 +7,7 @@
 #include <string.h>
 
 #include "xynth_.h"
-#include "server.h"
+#include "server/server.h"
 
 static void theme_set (s_image_t *img, unsigned int *data, int a, int b)
 {
