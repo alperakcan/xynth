@@ -107,6 +107,9 @@
 				<show>yes</show>
 			</object>
 			<object id="area" type="frame">
+				<effect>
+					<effect>EFFECT_FADEIN | EFFECT_FADEOUT</effect>
+				</effect>
 				<style>
 					<shape>FRAME_PANEL</shape>
 					<shadow>FRAME_SUNKEN</shadow>
