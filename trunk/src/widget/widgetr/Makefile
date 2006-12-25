@@ -2,6 +2,8 @@
 include ../../../Makefile.cfg
 include ../../../Makefile.parse
 
+WIDGET_SCRIPT_ENGINE_JS = Y
+
 ifdef WIDGET_SCRIPT_ENGINE_JS
 SPIDER_MONKEY = ../../../../../src/mozilla/js/
 SPIDER_MONKEY_CFLAGS = -DWIDGET_SCRIPT_ENGINE_JS -Wno-format -DGCC_OPT_BUG -g -DXP_UNIX -DSVR4 -DSYSV -D_BSD_SOURCE -DPOSIX_SOURCE -DHAVE_LOCALTIME_R -DX86_LINUX  -DDEBUG -DDEBUG_root -DEDITLINE

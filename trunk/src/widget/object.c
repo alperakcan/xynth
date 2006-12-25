@@ -215,9 +215,11 @@ int w_object_effect_apply (s_surface_t *surface, s_rect_t *rect, w_object_t *eff
 
 int w_object_update_to_surface (w_object_t *object, s_surface_t *surface, s_rect_t *coor, w_object_t *effect, int do_effect)
 {
-        int pos = 0;
+	int pos = 0;
+	s_rect_t rtmp;
 	s_rect_t bound;
 	s_rect_t update;
+	s_rect_t content;
 	w_object_t *tmp;
         
 	if (object == NULL) {
@@ -228,7 +230,14 @@ int w_object_update_to_surface (w_object_t *object, s_surface_t *surface, s_rect
 	}
 	tmp = object;
 	while (tmp->parent) {
-		if (s_rect_intersect(&bound, tmp->parent->surface->win, &update)) {
+		rtmp.x = tmp->parent->content->x + tmp->parent->surface->win->x;
+		rtmp.y = tmp->parent->content->y + tmp->parent->surface->win->y;
+		rtmp.w = tmp->parent->content->w;
+		rtmp.h = tmp->parent->content->h;
+		if (s_rect_intersect(&rtmp, tmp->parent->surface->win, &content)) {
+			goto end;
+		}
+		if (s_rect_intersect(&bound, &content, &update)) {
 			goto end;
 		}
 		bound = update;
