@@ -13,8 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef PRIORITY_H_
-#define PRIORITY_H_
+#ifndef S_PRIORITY_H_
+#define S_PRIORITY_H_
 
 typedef enum {
 	SURFACE_CLOSE	 = 0x1,
@@ -31,4 +31,4 @@ int s_server_id_pri (int id);
 int s_server_pri_id (int pri);
 void s_server_pri_del (int id);
 
-#endif /*PRIORITY_H_*/
+#endif /* S_PRIORITY_H_ */

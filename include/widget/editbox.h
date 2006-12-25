@@ -13,8 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef EDITBOX_H_
-#define EDITBOX_H_
+#ifndef W_EDITBOX_H_
+#define W_EDITBOX_H_
 
 struct w_editbox_s {
 	w_object_t *object;
@@ -35,4 +35,4 @@ void w_editbox_geometry (w_object_t *object);
 int w_editbox_init (w_window_t *window, w_editbox_t **editbox, w_object_t *parent);
 void w_editbox_uninit (w_object_t *object);
 
-#endif /*EDITBOX_H_*/
+#endif /* W_EDITBOX_H_ */

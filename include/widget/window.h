@@ -13,8 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef WINDOW_H_
-#define WINDOW_H_
+#ifndef W_WINDOW_H_
+#define W_WINDOW_H_
 
 struct w_window_s {
 	s_window_t *window;
@@ -36,4 +36,4 @@ s_font_t * w_window_font_get (w_window_t *window, char *font);
 int w_window_font_add (w_window_t *window, char *font);
 int w_window_uninit (w_window_t *window);
 
-#endif /*WINDOW_H_*/
+#endif /* W_WINDOW_H_ */

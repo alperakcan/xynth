@@ -13,12 +13,12 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef ID_H_
-#define ID_H_
+#ifndef S_ID_H_
+#define S_ID_H_
 
 /* id.c */
 int s_server_id_get (void);
 int s_server_id_find (int soc);
 void s_server_id_del (int id);
 
-#endif /*ID_H_*/
+#endif /* S_ID_H_ */

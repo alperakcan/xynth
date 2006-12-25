@@ -1,5 +1,20 @@
-#ifndef KBD_MAP_H_
-#define KBD_MAP_H_
+/***************************************************************************
+    begin                : Sun Feb 16 2003
+    copyright            : (C) 2003 - 2006 by Alper Akcan
+    email                : distchx@yahoo.com
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU Lesser General Public License as        *
+ *   published by the Free Software Foundation; either version 2.1 of the  *
+ *   License, or (at your option) any later version.                       *
+ *                                                                         *
+ ***************************************************************************/
+
+#ifndef S_KBD_MAP_H_
+#define S_KBD_MAP_H_
 
 typedef struct s_keycode_map_s {
 	char *name;
@@ -223,4 +238,4 @@ static s_keycode_map_t s_keycodes_map[] = {
 	{"S_KEYCODE_CODES", S_KEYCODE_CODES},
 };
 
-#endif /*KBD_MAP_H_*/
+#endif /* S_KBD_MAP_H_ */

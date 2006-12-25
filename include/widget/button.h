@@ -13,8 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef BUTTON_H_
-#define BUTTON_H_
+#ifndef W_BUTTON_H_
+#define W_BUTTON_H_
 
 struct w_button_s {
 	w_object_t *object;
@@ -48,4 +48,4 @@ void w_button_cb_hoh (s_window_t *window, s_event_t *event, s_handler_t *handler
 int w_button_init (w_window_t *window, w_button_t **button, w_object_t *parent);
 void w_button_uninit (w_object_t *object);
 
-#endif /*BUTTON_H_*/
+#endif /* W_BUTTON_H_ */

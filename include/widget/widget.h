@@ -13,8 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef WIDGET_H_
-#define WIDGET_H_
+#ifndef W_WIDGET_H_
+#define W_WIDGET_H_
 
 /* reduce memory usage, this is a bit hacky
  * some speed consumptions ;|
@@ -54,4 +54,4 @@ typedef struct w_signal_s w_signal_t;
 #include "widget/scrollbuffer.h"
 #include "widget/window.h"
 
-#endif /*WIDGET_H_*/
+#endif /* W_WIDGET_H_ */

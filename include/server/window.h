@@ -13,8 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef WINDOW_H_
-#define WINDOW_H_
+#ifndef S_WINDOW_H_
+#define S_WINDOW_H_
 
 /* window.c */
 void s_server_window_new (int id);
@@ -37,4 +37,4 @@ void s_server_window_close (s_window_t *window);
 void s_server_window_move_resize (int id, s_rect_t *new);
 void s_server_window_maximize (s_window_t *window);
 
-#endif /*WINDOW_H_*/
+#endif /* S_WINDOW_H_ */

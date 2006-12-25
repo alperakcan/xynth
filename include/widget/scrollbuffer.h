@@ -13,8 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef SCROLLBUFFER_H_
-#define SCROLLBUFFER_H_
+#ifndef W_SCROLLBUFFER_H_
+#define W_SCROLLBUFFER_H_
 
 struct w_scrollbufferbar_s {
 	w_object_t *object;
@@ -51,4 +51,4 @@ void w_scrollbuffer_geometry (w_object_t *object);
 void w_scrollbuffer_uninit (w_object_t *object);
 int w_scrollbuffer_init (w_window_t *window, w_scrollbuffer_t **scrollbuffer, w_object_t *parent);
 
-#endif /*SCROLLBUFFER_H_*/
+#endif /* W_SCROLLBUFFER_H_ */

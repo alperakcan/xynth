@@ -13,8 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef WINDOW_HANDLER_H_
-#define WINDOW_HANDLER_H_
+#ifndef S_WINDOW_HANDLER_H_
+#define S_WINDOW_HANDLER_H_
 
 /* window_handler.c */
 void s_server_window_btn_resize_oh (s_window_t *window, s_event_t *event, s_handler_t *handler);
@@ -54,4 +54,4 @@ void s_server_window_btn_resize_down_right (s_window_t *window, s_event_t *event
 void s_server_window_handlers_del_mouse (void);
 void s_server_window_handlers_add_mouse (int id);
 
-#endif /*WINDOW_HANDLER_H_*/
+#endif /* S_WINDOW_HANDLER_H_ */

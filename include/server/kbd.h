@@ -13,8 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef KBD_H_
-#define KBD_H_
+#ifndef S_KBD_H_
+#define S_KBD_H_
 
 /* kbd.c */
 void s_server_kbd_switch_handler (s_window_t *window, s_event_t *event, s_handler_t *handler);
@@ -25,4 +25,4 @@ void s_server_kbd_init (s_server_conf_t *cfg, s_video_input_t *keybd);
 int s_server_kbd_uninit (s_window_t *window, s_pollfd_t *pfd);
 S_KEYCODE_CODE s_server_keyname_to_keycode (char *name);
 
-#endif /*KBD_H_*/
+#endif /* S_KBD_H_ */

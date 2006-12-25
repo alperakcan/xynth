@@ -13,8 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef EVENT_H_
-#define EVENT_H_
+#ifndef S_EVENT_H_
+#define S_EVENT_H_
 
 /* event.c */
 void s_server_event_parse_keyboard (s_video_input_data_keybd_t *keybd);
@@ -22,4 +22,4 @@ int s_server_event_parse_mouse (s_video_input_data_mouse_t *mouse);
 int s_event_changed_ (s_window_t *window);
 void s_server_event_changed (void);
 
-#endif /*EVENT_H_*/
+#endif /* S_EVENT_H_ */

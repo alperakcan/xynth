@@ -13,8 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef IRR_H_
-#define IRR_H_
+#ifndef S_IRR_H_
+#define S_IRR_H_
 
 /* irr.c */
 int s_video_helper_irr_init (s_server_conf_t *cfg);
@@ -25,4 +25,4 @@ int s_server_irr_uninit (s_window_t *window, s_pollfd_t *pfd);
 int s_server_irr_update (s_window_t *window, s_pollfd_t *pfd);
 void s_server_irr_init (s_server_conf_t *cfg, s_video_input_t *irr);
 
-#endif /*IRR_H_*/
+#endif /* S_IRR_H_ */
