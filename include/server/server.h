@@ -16,89 +16,83 @@
 #ifndef SERVER_H_
 #define SERVER_H_
 
-typedef enum {
-	TOP_L	= 0x0,
-	TOP_1,
-	TOP_2,
-	TOP_3,
-	TOP_4,
-	TOP_5,
-	TOP_R,
-	LEFT,
-	RIGHT,
-	BTM_L,
-	BTM,
-	BTM_R,
-	FORM_MAX
-} THEME_FORM;
+typedef struct s_cursor_s s_cursor_t;
+typedef struct s_theme_s s_theme_t;
+typedef struct s_video_input_data_mouse_s s_video_input_data_mouse_t;
+typedef struct s_video_input_data_keybd_s s_video_input_data_keybd_t;
+typedef union s_video_input_data_u s_video_input_data_t;
+typedef struct s_video_input_s s_video_input_t;
+typedef struct s_video_driver_s s_video_driver_t;
+typedef struct s_server_conf_s s_server_conf_t;
+typedef struct s_clients_s s_clients_t;
+typedef struct s_server_s s_server_t;
+
+#include "server/event.h"
+#include "server/id.h"
+#include "server/irr.h"
+#include "server/kbd.h"
+#include "server/mouse.h"
+#include "server/priority.h"
+#include "server/single.h"
+#include "server/socket.h"
+#include "server/surface.h"
+#include "server/window.h"
+#include "server/window_handler.h"
+#include "server/window_move_resize.h"
+#include "server/theme.h"
 
 typedef enum {
-	CLOSE	= 0x0,
-	MAXIMIZE,
-	HIDE,
-	MENU,
-	BTNS_MAX
-} THEME_BTN;
+	VIDEO_INPUT_NONE,
+	VIDEO_INPUT_MOUSE,
+	VIDEO_INPUT_KEYBD,
+	VIDEO_INPUT_IRR,
+} VIDEO_INPUT;
 
-typedef enum {
-	INACTIVE,
-	ACTIVE,
-	PRESSED
-} THEME_STATE;
-
-typedef struct s_theme_s {
-	int title_full;
-	int text_color[2];
-	int text_v_off[2];
-	s_image_t form[2][FORM_MAX];
-	s_image_t button[3][BTNS_MAX];
-	struct {
-		int h;
-		int w;
-		int w_;
-	} form_min;
-	s_font_t *font[2];
-} s_theme_t;
-
-typedef enum {
-	SURFACE_CLOSE	 = 0x1,
-	SURFACE_FOCUS	 = 0x2,
-	SURFACE_REDRAW	 = 0x3,
-	SURFACE_REFRESH	 = 0x4,
-	SURFACE_CHANGED	 = 0x5
-} S_SURFACE_CHNGF;
-
-typedef struct s_clients_s {
-	int soc;
-	int pid; /* parent id */
-	int resizeable;
-	int alwaysontop;
-	S_MOUSE_CURSOR cursor;
-	S_WINDOW type;
-	s_rect_t buf;
-	s_rect_t win;
-	/* theme related */
-	struct {
-		char *str;
-		int hy[2];
-		int hh[2];
-		s_image_t img[2];
-	} title;
-	s_rect_t form[FORM_MAX];
-	s_rect_t button[BTNS_MAX];
-} s_clients_t;
-
-typedef struct s_cursor_s {
-	int sw;
+struct s_video_input_data_mouse_s {
 	int x;
 	int y;
-	int xyid;
-	int xyid_old;
-	s_image_t *img;
-	s_image_t images[MOUSE_CURSOR_MAX];
-} s_cursor_t;
+	int buttons;
+};
 
-typedef struct s_server_conf_s {
+struct s_video_input_data_keybd_s {
+	int state;
+	int button;
+	int keycode;
+	int scancode;
+	int ascii;
+};
+
+union s_video_input_data_u {
+	s_video_input_data_mouse_t mouse;
+	s_video_input_data_keybd_t keybd;
+	s_video_input_data_keybd_t irr;
+};
+
+struct s_video_input_s {
+	VIDEO_INPUT type;
+	int (*init) (s_server_conf_t *cfg);
+	int (*update) (s_video_input_data_t *idata);
+	void (*uninit) (void);
+};
+
+struct s_video_driver_s {
+	char *driver;
+	char *device;
+
+	s_video_input_t **input;
+
+	int (*server_init) (s_server_conf_t *cfg);
+	void (*server_uninit) (void);
+	void (*server_goto_back) (void);
+	void (*server_comefrom_back) (void);
+	void (*server_restore) (void);
+	void (*server_surface_update) (s_rect_t *coor);
+	void (*server_fullscreen) (void);
+
+	void *driver_data;
+};
+
+struct s_server_conf_s {
 	struct {
 		char *driver;
 		char *mode;
@@ -132,60 +126,29 @@ typedef struct s_server_conf_s {
 		unsigned int vsync_len;
 		unsigned int vmode;
 	} monitor;
-} s_server_conf_t;
+};
 
-typedef struct s_video_input_data_mouse_s {
-	int x;
-	int y;
-	int buttons;
-} s_video_input_data_mouse_t;
+struct s_clients_s {
+	int soc;
+	int pid; /* parent id */
+	int resizeable;
+	int alwaysontop;
+	S_MOUSE_CURSOR cursor;
+	S_WINDOW type;
+	s_rect_t buf;
+	s_rect_t win;
+	/* theme related */
+	struct {
+		char *str;
+		int hy[2];
+		int hh[2];
+		s_image_t img[2];
+	} title;
+	s_rect_t form[FORM_MAX];
+	s_rect_t button[BTNS_MAX];
+};
 
-typedef struct s_video_input_data_keybd_s {
-	int state;
-	int button;
-	int keycode;
-	int scancode;
-	int ascii;
-} s_video_input_data_keybd_t;
-
-typedef enum {
-	VIDEO_INPUT_NONE,
-	VIDEO_INPUT_MOUSE,
-	VIDEO_INPUT_KEYBD,
-	VIDEO_INPUT_IRR,
-} VIDEO_INPUT;
-
-typedef union s_video_input_data_u {
-	s_video_input_data_mouse_t mouse;
-	s_video_input_data_keybd_t keybd;
-	s_video_input_data_keybd_t irr;
-} s_video_input_data_t;
-
-typedef struct s_video_input_s {
-	VIDEO_INPUT type;
-	int (*init) (s_server_conf_t *cfg);
-	int (*update) (s_video_input_data_t *idata);
-	void (*uninit) (void);
-} s_video_input_t;
-
-typedef struct s_video_driver_s {
-	char *driver;
-	char *device;
-
-	s_video_input_t **input;
-
-	int (*server_init) (s_server_conf_t *cfg);
-	void (*server_uninit) (void);
-	void (*server_goto_back) (void);
-	void (*server_comefrom_back) (void);
-	void (*server_restore) (void);
-	void (*server_surface_update) (s_rect_t *coor);
-	void (*server_fullscreen) (void);
-
-	void *driver_data;
-} s_video_driver_t;
-
-typedef struct s_server_s {
+struct s_server_s {
 	int mode;
 	int id[S_CLIENTS_MAX];
 	int pri[S_CLIENTS_MAX];
@@ -206,23 +169,9 @@ typedef struct s_server_s {
 	int origin_h;
 	unsigned char *origin_vbuf;
 	int rotate_shm_id;
-} s_server_t;
+};
 
 s_server_t *server;
-
-#include "server/event.h"
-#include "server/id.h"
-#include "server/irr.h"
-#include "server/kbd.h"
-#include "server/mouse.h"
-#include "server/priority.h"
-#include "server/single.h"
-#include "server/socket.h"
-#include "server/surface.h"
-#include "server/window.h"
-#include "server/window_handler.h"
-#include "server/window_move_resize.h"
-#include "server/theme.h"
 
 /* server.c */
 int s_server_cfg_check_digit (char *ptr, char *digits);

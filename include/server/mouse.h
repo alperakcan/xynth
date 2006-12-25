@@ -16,6 +16,16 @@
 #ifndef MOUSE_H_
 #define MOUSE_H_
 
+struct s_cursor_s {
+	int sw;
+	int x;
+	int y;
+	int xyid;
+	int xyid_old;
+	s_image_t *img;
+	s_image_t images[MOUSE_CURSOR_MAX];
+};
+
 /* mouse.c */
 void s_server_cursor_uninit (void);
 void s_server_cursor_init (void);

@@ -16,6 +16,14 @@
 #ifndef PRIORITY_H_
 #define PRIORITY_H_
 
+typedef enum {
+	SURFACE_CLOSE	 = 0x1,
+	SURFACE_FOCUS	 = 0x2,
+	SURFACE_REDRAW	 = 0x3,
+	SURFACE_REFRESH	 = 0x4,
+	SURFACE_CHANGED	 = 0x5
+} S_SURFACE_CHNGF;
+
 /* priority.c */
 void s_server_pri_set (S_SURFACE_CHNGF flag, ...);
 void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1);
