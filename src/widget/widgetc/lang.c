@@ -17,6 +17,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "list.h"
+#include "node.h"
 #include "lang.h"
 
 static unsigned long int hash_string (const char *str_param)

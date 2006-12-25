@@ -16,8 +16,6 @@
 #ifndef PARSE_H_
 #define PARSE_H_
 
-#include "node.h"
-
 typedef struct xml_data_s {
 	char *path;
 	node_t *active;

@@ -16,8 +16,6 @@
 #ifndef LANG_H_
 #define LANG_H_
 
-#include "node.h"
-
 typedef struct lang_header_s {
 	char magic[8];
 	unsigned long int count;

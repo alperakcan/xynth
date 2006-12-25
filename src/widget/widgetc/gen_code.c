@@ -17,6 +17,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "list.h"
+#include "node.h"
 #include "gen_code.h"
 
 static char *g_name;

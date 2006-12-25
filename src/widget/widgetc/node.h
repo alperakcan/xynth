@@ -16,8 +16,6 @@
 #ifndef NODE_H_
 #define NODE_H_
 
-#include "list.h"
-
 typedef struct node_s {
 	char *name;
 	char *id;

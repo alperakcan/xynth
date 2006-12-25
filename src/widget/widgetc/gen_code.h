@@ -16,8 +16,6 @@
 #ifndef GEN_CODE_H_
 #define GEN_CODE_H_
 
-#include "node.h"
-
 void node_generate_code_style (node_t *node, node_t *parent, char *prefix);
 void node_generate_code_image (node_t *node, node_t *parent, char *prefix);
 void node_generate_code_move (node_t *node);
