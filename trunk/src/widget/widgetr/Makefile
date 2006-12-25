@@ -12,8 +12,8 @@ SPIDER_MONKEY_LIB = $(SPIDER_MONKEY)/src/Linux_All_DBG.OBJ/libjs.a  -lm  $(SPIDE
 endif
 
 CFLAGS += $(SPIDER_MONKEY_CFLAGS)
-INCDIR = ../ ../../lib $(SPIDER_MONKEY_INC)
-LIBDIR = ../ ../../lib
+INCDIR = ../../../include/widget/widgetr ../../lib $(SPIDER_MONKEY_INC)
+LIBDIR = ../../lib
 LDFLAGS = -lwidget -lxynth -lexpat -lm $(SPIDER_MONKEY_LIB)
 
 OBJS = widgetr.o table.o parse.o node.o list.o code.o js.o

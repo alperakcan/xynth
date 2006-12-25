@@ -3,6 +3,7 @@ include ../../../Makefile.cfg
 include ../../../Makefile.parse
 
 LDFLAGS = -lexpat
+INCDIR = ../../../include/widget/widgetc
 
 OBJS = widgetc.o list.o node.o lang.o gen_code.o gen_header.o parse.o
 
