@@ -405,21 +405,6 @@ int w_object_atposition (w_object_t *root, int x, int y, w_object_t **object)
 	return 0;
 }
 
-void w_object_signal (w_object_t *from, w_object_t *to, void (*func) (w_signal_t *), void *arg)
-{
-	s_event_t *event;
-	w_signal_t *signal;
-	s_event_init(&event);
-	event->type = SIGNAL_EVENT;
-	signal = (w_signal_t *) s_malloc(sizeof(w_signal_t));
-	signal->from = from;
-	signal->to  = to;
-	signal->func = func;
-	signal->arg = arg;
-	event->data = (void *) signal;
-	s_eventq_add(to->window->window, event);
-}
-
 int w_object_level_get_ (w_object_t *parent, w_object_t **object, int *level)
 {
 	int pos = 0;
@@ -608,24 +593,7 @@ int w_object_init (w_window_t *window, w_object_t **object, void (*draw) (w_obje
 
 void w_object_uninit (w_object_t *object)
 {
-	int pos;
-	s_event_t *event;
-	w_signal_t *signal;
-        s_thread_mutex_lock(object->window->window->eventq->mut);
-	pos = 0;
-	while (!s_list_eol(object->window->window->eventq->queue, pos)) {
-		event = (s_event_t *) s_list_get(object->window->window->eventq->queue, pos);
-		signal = (w_signal_t *) event->data;
-		if ((event->type == SIGNAL_EVENT) &&
-		    ((signal->from == object) || (signal->to == object))) {
-			s_list_remove(object->window->window->eventq->queue, pos);
-			s_free(signal);
-			s_event_uninit(event);
-		} else {
-			pos++;
-		}
-	}
-	s_thread_mutex_unlock(object->window->window->eventq->mut);
+	w_signal_delete(object);
         if (object->parent != NULL) {
 		int pos = 0;
 		while (!s_list_eol(object->parent->childs, pos)) {
