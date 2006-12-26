@@ -44,30 +44,16 @@ typedef struct w_window_s w_window_t;
 typedef struct w_effect_s w_effect_t;
 typedef struct w_signal_s w_signal_t;
 
-/* object.c */
-typedef enum {
-	OBJECT_OBJECT		= 0x0,
-	OBJECT_FRAME   		= 0x1,
-	OBJECT_BUTTON  		= 0x2,
-	OBJECT_TEXTBOX 		= 0x3,
-	OBJECT_EDITBOX 		= 0x4,
-	OBJECT_LISTBOX 		= 0x5,
-	OBJECT_PROGRESSBAR 	= 0x6,
-	OBJECT_SCROLLBAR	= 0x7,
-	OBJECT_COMBOBOX		= 0x8,
-	OBJECT_CHECKBOX		= 0x9,
-	OBJECT_SCROLLBUFFER	= 0xa,
-	OBJECT_SCROLLBUFFERBAR	= 0xb,
-	OBJECT_WINDOW		= 0xc,
-	OBJECT_OBJECTS 		= 0xd
-} OBJECT;
-
+/* signal.c */
 struct w_signal_s {
 	w_object_t *from;
 	w_object_t *to;
 	void (*func) (w_signal_t *);
 	void *arg;
 };
+
+void w_signal_send (w_object_t *from, w_object_t *to, void (*func) (w_signal_t *), void *arg);
+void w_signal_delete (w_object_t *object);
 
 /* effect .c */
 typedef enum {
@@ -91,6 +77,24 @@ int w_effect_stop (w_object_t *object);
 int w_effect_start (w_object_t *object);
 void w_effect_timer_cb (s_window_t *window, s_timer_t *timer);
 int w_effect_apply (s_surface_t *surface, s_rect_t *rect, w_object_t *effect, w_object_t *object);
+
+/* object.c */
+typedef enum {
+	OBJECT_OBJECT		= 0x0,
+	OBJECT_FRAME   		= 0x1,
+	OBJECT_BUTTON  		= 0x2,
+	OBJECT_TEXTBOX 		= 0x3,
+	OBJECT_EDITBOX 		= 0x4,
+	OBJECT_LISTBOX 		= 0x5,
+	OBJECT_PROGRESSBAR 	= 0x6,
+	OBJECT_SCROLLBAR	= 0x7,
+	OBJECT_COMBOBOX		= 0x8,
+	OBJECT_CHECKBOX		= 0x9,
+	OBJECT_SCROLLBUFFER	= 0xa,
+	OBJECT_SCROLLBUFFERBAR	= 0xb,
+	OBJECT_WINDOW		= 0xc,
+	OBJECT_OBJECTS 		= 0xd
+} OBJECT;
 
 /** @defgroup widget_object Widget Library - Object API
   * @brief

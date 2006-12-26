@@ -117,7 +117,7 @@ static void button1_pressed (w_object_t *object, int button)
 		w_object_move(obj, (rand() + 1) % (w - 10), (rand() + 1) % (h - 100),
 		                   (rand() + 1) % (w - 10), (rand() + 1) % (h - 100));
 	}
-	w_object_signal(object, object, button1_signal_func, NULL);
+	w_signal_send(object, object, button1_signal_func, NULL);
 }
 
 static void button1_destroy (w_object_t *object)
