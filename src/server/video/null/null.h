@@ -16,11 +16,11 @@
 #if defined(VIDEO_NULL)
 
 int s_video_null_kbd_init (s_server_conf_t *cfg);
-void s_video_null_kbd_update (s_video_input_data_keybd_t *keybd);
+int s_video_null_kbd_update (s_video_input_data_t *keybd);
 void s_video_null_kbd_uninit (void);
 
 int s_video_null_mouse_init (s_server_conf_t *cfg);
-int s_video_null_mouse_update (s_video_input_data_mouse_t *mouse);
+int s_video_null_mouse_update (s_video_input_data_t *mouse);
 void s_video_null_mouse_uninit (void);
 
 void s_video_null_server_goto_back (void);
