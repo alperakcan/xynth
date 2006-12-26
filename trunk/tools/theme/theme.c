@@ -19,7 +19,7 @@
 #include <unistd.h>
 
 #include "xynth_.h"
-#include "server/server.h"
+#include "server.h"
 
 #define MAX(a, b)	((a) > (b) ? (a) : (b))
 

@@ -14,7 +14,7 @@
  ***************************************************************************/
 
 #include "../lib/xynth_.h"
-#include "server/server.h"
+#include "server.h"
 
 #if defined(THEME_PLUGIN)
 	#include <dlfcn.h>

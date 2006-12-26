@@ -14,7 +14,7 @@
  ***************************************************************************/
 
 #include "../lib/xynth_.h"
-#include "server/server.h"
+#include "server.h"
 
 void s_server_surface_matrix_find (s_rect_t *coor, int *dm)
 {

@@ -16,7 +16,7 @@
 #if defined(VIDEO_HELPER_MODES)
 
 #include "../../../lib/xynth_.h"
-#include "server/server.h"
+#include "server.h"
 #include "helper.h"
 
 static s_video_helper_mode_info_t s_video_helper_modetable[MAX_MODES] =

@@ -14,7 +14,7 @@
  ***************************************************************************/
 
 #include "../lib/xynth_.h"
-#include "server/server.h"
+#include "server.h"
 
 #if defined(PLATFORM_LINUX)
 	#include <fcntl.h>

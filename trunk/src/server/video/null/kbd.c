@@ -16,7 +16,7 @@
 #if defined(VIDEO_NULL)
 
 #include "../../../lib/xynth_.h"
-#include "server/server.h"
+#include "server.h"
 #include "null.h"
 
 int s_video_null_kbd_init (s_server_conf_t *cfg)

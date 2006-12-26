@@ -14,7 +14,7 @@
  ***************************************************************************/
 
 #include "../lib/xynth_.h"
-#include "server/server.h"
+#include "server.h"
 
 void s_server_event_parse_keyboard (s_video_input_data_keybd_t *keybd)
 {

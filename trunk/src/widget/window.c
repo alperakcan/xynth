@@ -14,7 +14,7 @@
  ***************************************************************************/
 
 #include "../lib/xynth_.h"
-#include "widget/widget.h"
+#include "widget.h"
 
 void w_window_focus_change_notify (s_window_t *window, w_object_t *focus)
 {

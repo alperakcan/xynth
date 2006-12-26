@@ -3,7 +3,7 @@ include ../../../Makefile.cfg
 include ../../../Makefile.parse
 
 OBJS          = silverado.o
-INCDIR        = ../../lib ../../../include
+INCDIR        = ../../lib ../../server
 TARGET_SO     = silverado.so
 
 include ../../../Makefile.rules

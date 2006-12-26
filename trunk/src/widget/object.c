@@ -14,7 +14,7 @@
  ***************************************************************************/
 
 #include "../lib/xynth_.h"
-#include "widget/widget.h"
+#include "widget.h"
 
 static void w_object_hide_ (w_object_t *object)
 {

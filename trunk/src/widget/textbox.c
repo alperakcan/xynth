@@ -14,7 +14,7 @@
  ***************************************************************************/
 
 #include "../lib/xynth_.h"
-#include "widget/widget.h"
+#include "widget.h"
 
 #if 0
 #include <libintl.h>

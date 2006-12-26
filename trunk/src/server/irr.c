@@ -1,6 +1,6 @@
 
 #include "../lib/xynth_.h"
-#include "server/server.h"
+#include "server.h"
 #include "video/helper/helper.h"
 
 typedef enum {
