@@ -52,7 +52,8 @@ int w_scrollbufferbar_init (w_window_t *window, w_scrollbufferbar_t **scrollbuff
 	sbb = (w_scrollbufferbar_t *) s_malloc(sizeof(w_scrollbufferbar_t));
 	(*scrollbufferbar) = sbb;
 	w_frame_init(window, &(sbb->frame), FRAME_EMPTY, parent);
-	sbb->object =  sbb->frame->object;
+	sbb->object = sbb->frame->object;
+	sbb->object->type = OBJECT_SCROLLBUFFERBAR;
 	sbb->object->data[OBJECT_SCROLLBUFFERBAR] = sbb;
 	sbb->object->geometry = w_scrollbufferbar_geometry;
 	sbb->object->destroy = w_scrollbufferbar_uninit;
@@ -179,9 +180,10 @@ int w_scrollbuffer_init (w_window_t *window, w_scrollbuffer_t **scrollbuffer, w_
 	sb = (w_scrollbuffer_t *) s_malloc(sizeof(w_scrollbuffer_t));
 	(*scrollbuffer) = sb;
 	w_frame_init(window, &(sb->frame), FRAME_EMPTY, parent);
-	sb->object = sb->frame->object;
 	sb->child = NULL;
 	sb->slide = NULL;
+	sb->object = sb->frame->object;
+	sb->object->type = OBJECT_SCROLLBUFFER;
 	sb->object->geometry = w_scrollbuffer_geometry;
 	sb->object->destroy = w_scrollbuffer_uninit;
 	sb->object->data[OBJECT_SCROLLBUFFER] = sb;

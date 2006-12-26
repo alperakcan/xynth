@@ -16,7 +16,7 @@
 #include "../lib/xynth_.h"
 #include "widget.h"
 
-static void w_object_hide_ (w_object_t *object)
+void w_object_hide_ (w_object_t *object)
 {
 #if defined(WIDGET_OPTIMIZE_MEMORY) && WIDGET_OPTIMIZE_MEMORY == 2
 	int p;
@@ -35,7 +35,7 @@ static void w_object_hide_ (w_object_t *object)
 #endif
 }
 
-static void w_object_show_ (w_object_t *object)
+void w_object_show_ (w_object_t *object)
 {
 #if defined(WIDGET_OPTIMIZE_MEMORY) && WIDGET_OPTIMIZE_MEMORY == 2
 	int p;

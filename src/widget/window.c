@@ -251,8 +251,8 @@ int w_window_init (w_window_t **window, S_WINDOW type, w_window_t *parent)
 	(*window)->focus = NULL;
 	s_client_atevent((*window)->window, w_window_atevent);
 	(*window)->window->client->data = (*window);
-	(*window)->object->type = OBJECT_OBJECT;
+	(*window)->object->type = OBJECT_WINDOW;
 	(*window)->object->window = *window;
-	(*window)->object->data[OBJECT_OBJECT] = *window;
+	(*window)->object->data[OBJECT_WINDOW] = *window;
 	return 0;
 }

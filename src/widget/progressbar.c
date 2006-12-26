@@ -93,6 +93,7 @@ int w_progressbar_init (w_window_t *window, w_progressbar_t **progressbar, w_obj
 	w_object_show(pb->text->object);
 	pb->changed = NULL;
 	pb->object = pb->frame->object;
+	pb->object->type = OBJECT_PROGRESSBAR;
 	pb->object->geometry = w_progressbar_geometry;
 	pb->object->destroy = w_progressbar_uninit;
 	pb->object->data[OBJECT_PROGRESSBAR] = pb;
