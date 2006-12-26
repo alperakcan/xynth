@@ -474,7 +474,7 @@ typedef struct s_event_s {
 } s_event_t;
 
 /** event queue */
-typedef struct s_eventq {
+typedef struct s_eventq_s {
 	/** dispatcher thread`s id */
 	s_thread_t *tid;
 	/** queue list holds s_event_t */
