@@ -19,20 +19,20 @@
 
 static void timer1_cb (s_window_t *window, s_timer_t *timer)
 {
-	debugf(DCLI, "[%d]", window->client->id);
+	debugf(DCLI, "[%d]", window->id);
 	s_thread_mutex_lock(window->timers->mut);
 	if (s_list_get_pos(window->timers->timers, timer) >= 0) {
-		debugf(DCLI, "[%d] found!", window->client->id);
+		debugf(DCLI, "[%d] found!", window->id);
 	}
 	s_thread_mutex_unlock(window->timers->mut);
 }
 
 static void timer0_cb (s_window_t *window, s_timer_t *timer)
 {
-	debugf(DCLI, "[%d]", window->client->id);
+	debugf(DCLI, "[%d]", window->id);
 	s_thread_mutex_lock(window->timers->mut);
 	if (s_list_get_pos(window->timers->timers, timer) >= 0) {
-		debugf(DCLI, "[%d] found!", window->client->id);
+		debugf(DCLI, "[%d] found!", window->id);
 	}
 	s_thread_mutex_unlock(window->timers->mut);
 	s_timer_del(window, timer);
@@ -61,7 +61,7 @@ int main (int argc, char *argv[])
 	s_handler_t *hndl;
 	s_window_t *window;
 
-	s_client_init(&window);
+	s_window_init(&window);
 
 	s_window_new(window, WINDOW_MAIN, NULL);
 	mw = window->surface->width;
@@ -103,7 +103,7 @@ int main (int argc, char *argv[])
 	s_timer_add(window, timer);
 
 	s_window_show(window);
-	s_client_main(window);
+	s_window_main(window);
 
 	return 0;
 }

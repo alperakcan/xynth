@@ -24,7 +24,7 @@ static void temp_handler (s_window_t *window, s_event_t *event, s_handler_t *han
 
 	s_handler_t *hndl;
 	s_window_t *child;
-	s_client_init(&child);
+	s_window_init(&child);
 	s_window_new(child, WINDOW_TEMP | WINDOW_NOFORM, window);
 	s_window_set_coor(child, 0, window->surface->buf->x + 30,
 	                            window->surface->buf->y + 30,
@@ -52,7 +52,7 @@ static void temp_handler (s_window_t *window, s_event_t *event, s_handler_t *han
 	s_handler_add(child, hndl);
 
 	s_window_show(child);
-	s_client_main(child);
+	s_window_main(child);
 }
 
 int main (int argc, char *argv[])
@@ -66,7 +66,7 @@ int main (int argc, char *argv[])
 	s_handler_t *hndl;
 	s_window_t *window;
 
-	s_client_init(&window);
+	s_window_init(&window);
 
 	s_window_new(window, WINDOW_MAIN, NULL);
 	mw = window->surface->width;
@@ -93,7 +93,7 @@ int main (int argc, char *argv[])
 	s_handler_add(window, hndl);
 
 	s_window_show(window);
-	s_client_main(window);
+	s_window_main(window);
 
 	return 0;
 }

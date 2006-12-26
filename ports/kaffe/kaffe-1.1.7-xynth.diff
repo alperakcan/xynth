@@ -1253,9 +1253,9 @@ diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/toolkit.c kaffe-1.1.7-xynth/libr
 +	xynth->eventq = (xynth_eventq_t *) AWT_MALLOC(sizeof(xynth_eventq_t));
 +	s_list_init(&(xynth->eventq->list));
 +	s_thread_mutex_init(&(xynth->eventq->mut));
-+	s_client_init(&(xynth->root));
++	s_window_init(&(xynth->root));
 +	s_window_new(xynth->root, WINDOW_MAIN, NULL);
-+	s_thread_create(s_client_main, xynth->root);
++	s_thread_create(s_window_main, xynth->root);
 +	xynth->nwindows = XYNTH_NWINDOWS;
 +	xynth->windows = AWT_CALLOC(xynth->nwindows, sizeof(window_rec_t));
 +	DEBUGF("Leave");
@@ -1523,13 +1523,13 @@ diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/window.c kaffe-1.1.7-xynth/libra
 +	jobject jwindow;
 +	DEBUGF("Enter");
 +	str = java2CString(env, jTitle);
-+	s_client_init(&window);
++	s_window_init(&window);
 +	s_window_new(window, WINDOW_CHILD, xynth->root);
 +	s_window_set_coor(window, WINDOW_NOFORM, x, y, width, height);
 +	s_window_set_title(window, str);
 +	s_fillbox(window->surface, 0, 0, window->surface->width, window->surface->height, clrBack);
-+	s_client_atevent(window, xynth_kaffe_atevent);
-+	s_client_main(window);
++	s_window_atevent(window, xynth_kaffe_atevent);
++	s_window_main(window);
 +	jwindow = JCL_NewRawDataObject(env, window);
 +	source_idx_register(xynth, UNVEIL_WINDOW(jwindow), xynth->root);
 +	DEBUGF("title: %s, x: %d, y: %d, w: %d, h: %d, cursor: %d, clrback: %d, resize: %d", str, x, y, width, height, clrBack, isResizable);
@@ -1545,12 +1545,12 @@ diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/window.c kaffe-1.1.7-xynth/libra
 +	s_window_t *window;
 +	DEBUGF("Enter");
 +	owner = UNVEIL_WINDOW(nowner);
-+	s_client_init(&window);
++	s_window_init(&window);
 +	s_window_new(window, WINDOW_CHILD | WINDOW_NOFORM, owner);
 +	s_window_set_coor(window, WINDOW_NOFORM, x, y, width, height);
 +	s_fillbox(window->surface, 0, 0, window->surface->width, window->surface->height, clrBack);
-+	s_client_atevent(window, xynth_kaffe_atevent);
-+	s_client_main(window);
++	s_window_atevent(window, xynth_kaffe_atevent);
++	s_window_main(window);
 +	jwindow = JCL_NewRawDataObject(env, window);
 +	source_idx_register(xynth, UNVEIL_WINDOW(jwindow), owner);
 +	DEBUGF("Leave");
@@ -1566,13 +1566,13 @@ diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/window.c kaffe-1.1.7-xynth/libra
 +	DEBUGF("Enter");
 +	str = java2CString(env, jTitle);
 +	owner = UNVEIL_WINDOW(nowner);
-+	s_client_init(&window);
++	s_window_init(&window);
 +	s_window_new(window, WINDOW_CHILD, owner);
 +	s_window_set_coor(window, WINDOW_NOFORM, x, y, width, height);
 +	s_window_set_title(window, str);
 +	s_fillbox(window->surface, 0, 0, window->surface->width, window->surface->height, clrBack);
-+	s_client_atevent(window, xynth_kaffe_atevent);
-+	s_client_main(window);
++	s_window_atevent(window, xynth_kaffe_atevent);
++	s_window_main(window);
 +	jwindow = JCL_NewRawDataObject(env, window);
 +	source_idx_register(xynth, UNVEIL_WINDOW(jwindow), owner);
 +	AWT_FREE(str);
@@ -1634,7 +1634,7 @@ diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/window.c kaffe-1.1.7-xynth/libra
 +		DEBUGF("Could not find idx for window");
 +		return;
 +	}
-+	s_client_quit(window);
++	s_window_quit(window);
 +	DEBUGF("Leave");
 +}
 diff -Naur kaffe-1.1.7/libraries/javalib/Makefile.am.in kaffe-1.1.7-xynth/libraries/javalib/Makefile.am.in

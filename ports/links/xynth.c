@@ -352,7 +352,7 @@ static unsigned char * lxynth_init_driver (unsigned char *param, unsigned char *
 	s_thread_mutex_init(&(lxynth_root->gd->mut));
 	lxynth_root->gd->active = NULL;
 
-	s_client_init(&(lxynth_root->window));
+	s_window_init(&(lxynth_root->window));
 	s_window_new(lxynth_root->window, WINDOW_MAIN, NULL);
 	s_window_set_coor(lxynth_root->window, WINDOW_NOFORM, 50, 50,
 	                                                      (lxynth_root->window->surface->width * 2) / 3,
@@ -366,9 +366,9 @@ static unsigned char * lxynth_init_driver (unsigned char *param, unsigned char *
 	xynth_driver.depth = (bpp << 3) | Bpp;
 
 	s_window_show(lxynth_root->window);
-	lxynth_root->tid = s_thread_create(s_client_main, lxynth_root->window);
-	s_client_atevent(lxynth_root->window, lxynth_atevent);
-	s_client_atexit(lxynth_root->window, lxynth_atexit);
+	lxynth_root->tid = s_thread_create(s_window_main, lxynth_root->window);
+	s_window_atevent(lxynth_root->window, lxynth_atevent);
+	s_window_atexit(lxynth_root->window, lxynth_atexit);
 	lxynth_root->running = 1;
 
 	install_timer(20, lxynth_timer, NULL);
@@ -468,7 +468,7 @@ static void lxynth_shutdown_driver (void)
 
         if (lxynth_root->running) {
 		lxynth_root->running = 0;
-		s_client_quit(lxynth_root->window);
+		s_window_quit(lxynth_root->window);
 		s_thread_join(lxynth_root->tid, NULL);
 		kill_timer(lxynth_root->timerid);
 	}

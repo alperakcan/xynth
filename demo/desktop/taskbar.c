@@ -25,7 +25,7 @@ void taskbar_progs_handler_r (s_window_t *window, s_event_t *event, s_handler_t 
         tbar_progs_t *tbar_progs;
         s_desktop_client_t *desktopc;
 
-        tbar_data = (tbar_data_t *) window->client->data;
+        tbar_data = (tbar_data_t *) window->data;
         tbar_progs = (tbar_progs_t *) tbar_data->tbar_progs;
 
 	px = event->mouse->x - tbar_progs->rect.x;
@@ -109,7 +109,7 @@ void taskbar_progs_draw (s_window_t *window)
         s_desktop_client_t *desktopc;
 
         pos = 0;
-        tbar_data = (tbar_data_t *) window->client->data;
+        tbar_data = (tbar_data_t *) window->data;
         tbar_progs = (tbar_progs_t *) tbar_data->tbar_progs;
 
 	if (tbar_progs->desktop->clients->nb_elt > 0) {
@@ -142,7 +142,7 @@ void taskbar_start_menu_icon (s_window_t *window)
         tbar_data_t *tbar_data;
         tbar_smenu_t *tbar_smenu;
 
-        tbar_data = (tbar_data_t *) window->client->data;
+        tbar_data = (tbar_data_t *) window->data;
         tbar_smenu = (tbar_smenu_t *) tbar_data->tbar_smenu;
 
 	srf = (s_surface_t *) s_malloc(sizeof(s_surface_t));
@@ -161,7 +161,7 @@ void taskbar_start_menu_handler_p (s_window_t *window, s_event_t *event, s_handl
         tbar_data_t *tbar_data;
         tbar_smenu_t *tbar_smenu;
 
-        tbar_data = (tbar_data_t *) window->client->data;
+        tbar_data = (tbar_data_t *) window->data;
         tbar_smenu = (tbar_smenu_t *) tbar_data->tbar_smenu;
 
         while (tbar_data->tbar_smenu->running) {
@@ -185,7 +185,7 @@ void taskbar_start_menu_handler_rh (s_window_t *window, s_event_t *event, s_hand
         tbar_progs_t *tbar_progs;
         tbar_smenu_t *tbar_smenu;
 
-        tbar_data = (tbar_data_t *) window->client->data;
+        tbar_data = (tbar_data_t *) window->data;
         tbar_smenu = (tbar_smenu_t *) tbar_data->tbar_smenu;
         tbar_progs = (tbar_progs_t *) tbar_data->tbar_progs;
 
@@ -205,7 +205,7 @@ void taskbar_clock_popup_atexit (s_window_t *window)
 {
         tbar_data_t *tbar_data;
         tbar_clock_t *tbar_clock;
-        tbar_data = (tbar_data_t *) window->parent->client->data;
+        tbar_data = (tbar_data_t *) window->parent->data;
         tbar_clock = (tbar_clock_t *) tbar_data->tbar_clock;
 	tbar_clock->clock = NULL;
 }
@@ -217,7 +217,7 @@ void taskbar_clock_popup_atevent (s_window_t *window, s_event_t *event)
 	tbar_data_t *tbar_data;
 	tbar_clock_t *tbar_clock;
 	if (event->type & MOUSE_EVENT) {
-		tbar_data = (tbar_data_t *) window->parent->client->data;
+		tbar_data = (tbar_data_t *) window->parent->data;
 		tbar_clock = (tbar_clock_t *) tbar_data->tbar_clock;
 		x = event->mouse->x - window->parent->surface->buf->x;
 		y = event->mouse->y - window->parent->surface->buf->y;
@@ -225,7 +225,7 @@ void taskbar_clock_popup_atevent (s_window_t *window, s_event_t *event)
 		      (y >= tbar_clock->rect.y) &&
 		      (x <= (tbar_clock->rect.x + tbar_clock->rect.w - 1)) &&
 		      (y <= (tbar_clock->rect.y + tbar_clock->rect.h - 1)))) {
-			s_client_quit(window);
+			s_window_quit(window);
 		}
 	}
 }
@@ -234,12 +234,12 @@ void taskbar_clock_handler_oh (s_window_t *window, s_event_t *event, s_handler_t
 {
         tbar_data_t *tbar_data;
         tbar_clock_t *tbar_clock;
-	tbar_data = (tbar_data_t *) window->client->data;
+	tbar_data = (tbar_data_t *) window->data;
 	tbar_clock = tbar_data->tbar_clock;
 	if (tbar_clock->clock == NULL) {
 		return;
 	}
-	s_client_quit(tbar_clock->clock);
+	s_window_quit(tbar_clock->clock);
 }
 
 void taskbar_clock_handler_o (s_window_t *window, s_event_t *event, s_handler_t *handler)
@@ -257,7 +257,7 @@ void taskbar_clock_handler_o (s_window_t *window, s_event_t *event, s_handler_t 
 	char *mons[] = {"January", "February", "March", "April", "May", "June", "July",
 	                "August", "September", "October", "November", "December"};
 
-	tbar_data = (tbar_data_t *) window->client->data;
+	tbar_data = (tbar_data_t *) window->data;
 	tbar_clock = tbar_data->tbar_clock;
 
 	if (tbar_clock->clock != NULL) {
@@ -268,7 +268,7 @@ void taskbar_clock_handler_o (s_window_t *window, s_event_t *event, s_handler_t 
         t = localtime(&t_);
 	text = (char *) s_malloc(sizeof(char) * 256);
 
-	s_client_init(&temp);
+	s_window_init(&temp);
         s_window_new(temp, WINDOW_TEMP | WINDOW_NOFORM, window);
         s_window_set_alwaysontop(temp, 1);
 
@@ -327,11 +327,11 @@ void taskbar_clock_handler_o (s_window_t *window, s_event_t *event, s_handler_t 
 	s_font_uninit(font);
 	s_free(text);
 
-	s_client_atevent(temp, taskbar_clock_popup_atevent);
-	s_client_atexit(temp, taskbar_clock_popup_atexit);
+	s_window_atevent(temp, taskbar_clock_popup_atevent);
+	s_window_atexit(temp, taskbar_clock_popup_atexit);
 
 	s_window_show(temp);
-	s_client_main(temp);
+	s_window_main(temp);
 
 	tbar_clock->clock = temp;
 }
@@ -350,7 +350,7 @@ void taskbar_clock_draw (s_window_t *window, s_timer_t *timer)
 	int c1 = s_rgbcolor(window->surface, 255, 255, 255);
 	int c2 = s_rgbcolor(window->surface, 220, 220, 220);
 
-	tbar_data = (tbar_data_t *) window->client->data;
+	tbar_data = (tbar_data_t *) window->data;
 	tbar_clock = tbar_data->tbar_clock;
 
 	t_ = time(NULL);
@@ -411,7 +411,7 @@ void taskbar_atexit (s_window_t *window)
         tbar_clock_t *tbar_clock;
         s_desktop_client_t *desktopc;
 
-        tbar_data = (tbar_data_t *) window->client->data;
+        tbar_data = (tbar_data_t *) window->data;
         tbar_progs = (tbar_progs_t *) tbar_data->tbar_progs;
         tbar_clock = (tbar_clock_t *) tbar_data->tbar_clock;
 
@@ -452,7 +452,7 @@ void taskbar_atevent (s_window_t *window, s_event_t *event)
 		return;
 	}
 
-        tbar_data = (tbar_data_t *) window->client->data;
+        tbar_data = (tbar_data_t *) window->data;
         tbar_progs = (tbar_progs_t *) tbar_data->tbar_progs;
 
 	while (!s_list_eol(tbar_progs->desktop->clients, 0)) {
@@ -463,8 +463,8 @@ void taskbar_atevent (s_window_t *window, s_event_t *event)
 	}
 	while (!s_list_eol(event->desktop->clients, pos)) {
 		desktopc = (s_desktop_client_t *) s_list_get(event->desktop->clients, pos);
-		if ((desktopc->id != window->client->id) &&
-		    (desktopc->id != window->parent->client->id)) {
+		if ((desktopc->id != window->id) &&
+		    (desktopc->id != window->parent->id)) {
 			s_list_remove(event->desktop->clients, pos);
 			s_list_add(tbar_progs->desktop->clients, desktopc, -1);
 		} else {
@@ -484,8 +484,8 @@ void taskbar_start (s_window_t *window, s_config_t *cfg)
 	s_window_set_coor(window, WINDOW_NOFORM, 0, window->surface->height - 30, window->surface->width, 30);
 	s_window_set_alwaysontop(window, 1);
 	s_window_set_resizeable(window, 0);
-	s_client_atevent(window, taskbar_atevent);
-	s_client_atexit(window, taskbar_atexit);
+	s_window_atevent(window, taskbar_atevent);
+	s_window_atexit(window, taskbar_atexit);
 
 	s_free(window->surface->vbuf);
 	window->surface->width = window->surface->buf->w;
@@ -519,7 +519,7 @@ void taskbar_start (s_window_t *window, s_config_t *cfg)
 	s_image_img(DESKTOPDIR "/img/widget/button3.png", tbar_data->tbar_progs->prog_img[1]);
 	s_image_get_buf(window->surface, tbar_data->tbar_progs->prog_img[1]);
 
-	window->client->data = (void *) tbar_data;
+	window->data = (void *) tbar_data;
 
 	s_fillbox(window->surface, 0, 0, window->surface->buf->w, window->surface->buf->h, s_rgbcolor(window->surface, 255, 255, 255));
 	s_fillbox(window->surface, 1, 1, window->surface->buf->w - 1, window->surface->buf->h - 1, s_rgbcolor(window->surface, 115, 117, 115));
@@ -587,5 +587,5 @@ void taskbar_start (s_window_t *window, s_config_t *cfg)
 	taskbar_clock_draw(window, timer);
 	
 	s_window_show(window);
-	s_client_main(window);
+	s_window_main(window);
 }

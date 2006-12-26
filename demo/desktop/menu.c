@@ -18,7 +18,7 @@
 void start_menu_atexit (s_window_t *window)
 {
 	tbar_data_t *tbar_data;
-	tbar_data = (tbar_data_t *) window->client->data;
+	tbar_data = (tbar_data_t *) window->data;
 	if (window->parent->type & WINDOW_CHILD) {
 		taskbar_start_menu_handler_rh(window->parent, NULL, NULL);
 	}
@@ -52,7 +52,7 @@ void start_menu_handler (s_window_t *window, s_event_t *event, s_handler_t *hand
 	tbar_data_t *tbar_data;
 
 	sprog = (smenu_prog_t *) handler->data;
-	tbar_data = (tbar_data_t *) window->client->data;
+	tbar_data = (tbar_data_t *) window->data;
 	
 	if (sprog->type == SMENU_PROG) {
 		desktop_self_system(sprog->exec);
@@ -85,11 +85,11 @@ void start_menu_start (s_window_t *pwindow, s_list_t *progs, int wx, int wy)
 	fy = 22;
 	fw = 160;
 	fh = progs->nb_elt * fy + 13;
-        tbar_data = (tbar_data_t *) pwindow->client->data;
+        tbar_data = (tbar_data_t *) pwindow->data;
 
 	tbar_data->tbar_smenu->running = 1;
 
-	s_client_init(&temp);
+	s_window_init(&temp);
         s_window_new(temp, WINDOW_TEMP | WINDOW_NOFORM, pwindow);
         s_window_set_coor(temp, 0, wx, wy - fh - 1, fw, fh);
 
@@ -150,11 +150,11 @@ void start_menu_start (s_window_t *pwindow, s_list_t *progs, int wx, int wy)
 
 	s_font_uninit(font);
 
-	s_client_atexit(temp, start_menu_atexit);
-	temp->client->data = tbar_data;
+	s_window_atexit(temp, start_menu_atexit);
+	temp->data = tbar_data;
 
 	s_window_show(temp);
-	s_client_main(temp);
+	s_window_main(temp);
 }
 
 void start_menu_setup (s_window_t *twindow, s_config_t *cfg)
@@ -169,7 +169,7 @@ void start_menu_setup (s_window_t *twindow, s_config_t *cfg)
 	smenu_prog_t *sprog;
         tbar_data_t *tbar_data;
 
-        tbar_data = (tbar_data_t *) twindow->client->data;
+        tbar_data = (tbar_data_t *) twindow->data;
 
 	i = 0;
 	while (!s_list_eol(cfg->category, i)) {

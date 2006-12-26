@@ -1043,7 +1043,7 @@ static void term (s_window_t *window)
 	pfd->pf_in = pfd_in;
 	pfd->pf_err = pfd_err;
 
-	s_client_atevent(window, atevent);
+	s_window_atevent(window, atevent);
 	s_pollfd_add(window, pfd);
 
 	close(slave);
@@ -1087,7 +1087,7 @@ int main (int argc, char *argv[])
 	
 	clean_vars();
 
-	s_client_init(&window);
+	s_window_init(&window);
 
 	s_window_new(window, WINDOW_MAIN, NULL);
 
@@ -1112,7 +1112,7 @@ int main (int argc, char *argv[])
 
 	s_window_show(window);
 
-	s_client_main(window);
+	s_window_main(window);
 
 	s_font_uninit(font);
 

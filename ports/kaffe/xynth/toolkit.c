@@ -25,9 +25,9 @@ jboolean Java_java_awt_Toolkit_tlkInit (JNIEnv *env UNUSED, jclass clazz UNUSED,
 	xynth->eventq = (xynth_eventq_t *) AWT_MALLOC(sizeof(xynth_eventq_t));
 	s_list_init(&(xynth->eventq->list));
 	s_thread_mutex_init(&(xynth->eventq->mut));
-	s_client_init(&(xynth->root));
+	s_window_init(&(xynth->root));
 	s_window_new(xynth->root, WINDOW_MAIN, NULL);
-	s_thread_create(s_client_main, xynth->root);
+	s_thread_create(s_window_main, xynth->root);
 	xynth->nwindows = XYNTH_NWINDOWS;
 	xynth->windows = AWT_CALLOC(xynth->nwindows, sizeof(window_rec_t));
 	

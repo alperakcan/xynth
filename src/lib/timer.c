@@ -31,7 +31,7 @@ int s_timer_timeval (s_window_t *window, s_timer_t *timer, int timeval)
 	timer->timeval = timeval;
 	timer->interval = timeval;
 	s_thread_mutex_unlock(window->timers->mut);
-	s_client_wakeup(window);
+	s_window_wakeup(window);
 	return 0;
 }
 
@@ -68,7 +68,7 @@ int s_timer_del (s_window_t *window, s_timer_t *timer)
 	s_thread_mutex_lock(window->timers->mut);
 	r = s_list_remove(window->timers->timers, s_list_get_pos(window->timers->timers, timer));
 	s_thread_mutex_unlock(window->timers->mut);
-	s_client_wakeup(window);
+	s_window_wakeup(window);
 
 	return r;
 }
@@ -88,7 +88,7 @@ int s_timer_add (s_window_t *window, s_timer_t *timer)
 		ret = s_list_add(window->timers->timers, timer, -1);
 	}
 	s_thread_mutex_unlock(window->timers->mut);
-	s_client_wakeup(window);
+	s_window_wakeup(window);
 
 end:	return ret;
 }

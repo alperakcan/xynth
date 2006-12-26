@@ -21,7 +21,7 @@ static void xynthlogout_atevent (s_window_t *window, s_event_t *event)
 {
 	/* never loose focus */
 	if (event->type & FOCUS_EVENT) {
-		if (window->client->pri > 0) {
+		if (window->pri > 0) {
 			s_window_show(window);
 		}
 	}
@@ -29,7 +29,7 @@ static void xynthlogout_atevent (s_window_t *window, s_event_t *event)
 
 static void xynthlogout_cancel (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
-	s_client_quit(window);
+	s_window_quit(window);
 }
 
 static void xynthlogout_logout (s_window_t *window, s_event_t *event, s_handler_t *handler)
@@ -47,7 +47,7 @@ int main (int argc, char *argv[])
 	s_handler_t *hndl;
 	s_window_t *window;
 
-	s_client_init(&window);
+	s_window_init(&window);
 
 	s_window_new(window, WINDOW_MAIN | WINDOW_NOFORM | WINDOW_DESKTOP, NULL);
 
@@ -66,7 +66,7 @@ int main (int argc, char *argv[])
 	window->surface->height = h;
 	window->surface->vbuf = (unsigned char *) malloc(w * h * window->surface->bytesperpixel);
 
-	s_client_atevent(window, xynthlogout_atevent);
+	s_window_atevent(window, xynthlogout_atevent);
 
 	s_fillbox(window->surface, 0, 0, w, h, s_rgbcolor(window->surface, 0, 0, 0));
 	for (y = 2; y < h - 2; y++) {
@@ -128,7 +128,7 @@ int main (int argc, char *argv[])
 	s_handler_add(window, hndl);
 
 	s_window_show(window);
-	s_client_main(window);
+	s_window_main(window);
 	
 	return 0;
 }

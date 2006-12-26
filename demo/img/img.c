@@ -34,7 +34,7 @@ static void img_show (s_window_t *window)
 	s_surface_t *srf;
 	img_data_t *imgd;
 
-	imgd = window->client->data;
+	imgd = window->data;
 
 	name = (char *) s_list_get(imgd->imgl, imgd->imgp);
 	if (name == NULL) {
@@ -73,7 +73,7 @@ static void img_show (s_window_t *window)
 static void img_atevent (s_window_t *window, s_event_t *event)
 {
 	img_data_t *imgd;
-	imgd = window->client->data;
+	imgd = window->data;
 
 	if (event->type & CONFIG_EVENT) {
 		if (event->type & (CONFIG_CHNGW |  CONFIG_CHNGH)) {
@@ -85,7 +85,7 @@ static void img_atevent (s_window_t *window, s_event_t *event)
 		switch (event->keybd->button) {
 			case S_KEYCODE_q:
 			case S_KEYCODE_Q:
-				s_client_quit(window);
+				s_window_quit(window);
 				break;
 			case S_KEYCODE_r:
 			case S_KEYCODE_R:
@@ -145,11 +145,11 @@ int main (int argc, char *argv[])
 
 	imgd = (img_data_t *) s_malloc(sizeof(img_data_t));
 
-	s_client_init(&window);
+	s_window_init(&window);
 	s_window_new(window, WINDOW_MAIN, NULL);
         s_window_set_title(window, "Demo - %s ", argv[0]);
 
-        window->client->data = imgd;
+        window->data = imgd;
 
         imgd->imgf = 0;
         imgd->imgp = 0;
@@ -166,10 +166,10 @@ int main (int argc, char *argv[])
                                                  window->surface->height / 2);
 	img_show(window);
 	
-	s_client_atevent(window, img_atevent);
+	s_window_atevent(window, img_atevent);
 	
 	s_window_show(window);
-        s_client_main(window);
+        s_window_main(window);
 
         while (!s_list_eol(imgd->imgl, 0)) {
 		char *tmp = (char *) s_list_get(imgd->imgl, 0);

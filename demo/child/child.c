@@ -24,7 +24,7 @@ static int i = 0;
 static void child_atevent (s_window_t *window, s_event_t *event)
 {
 	if (event->type & FOCUS_EVENT) {
-		debugf(DCLI, "[%d] %s focus", window->client->id, (window->client->pri == 0) ? "gained" : "lost");
+		debugf(DCLI, "[%d] %s focus", window->id, (window->pri == 0) ? "gained" : "lost");
 	}
 }
 
@@ -62,7 +62,7 @@ static void child_handler_open (s_window_t *window, s_event_t *event, s_handler_
 
 	s_window_t *child;
 
-	s_client_init(&child);
+	s_window_init(&child);
 
         s_window_new(child, WINDOW_CHILD, window);
 
@@ -118,9 +118,9 @@ static void child_handler_open (s_window_t *window, s_event_t *event, s_handler_
 	s_handler_add(child, hndl);
 
 	s_window_show(child);
-	s_client_atevent(child, child_atevent);
+	s_window_atevent(child, child_atevent);
 
-	s_client_main(child);
+	s_window_main(child);
 }
 
 int main (int argc, char *argv[])
@@ -138,7 +138,7 @@ int main (int argc, char *argv[])
 
 	srand(time(NULL));
 
-	s_client_init(&window);
+	s_window_init(&window);
 
 	s_window_new(window, WINDOW_MAIN, NULL);
 	mw = window->surface->width;
@@ -190,9 +190,9 @@ int main (int argc, char *argv[])
 
 	s_window_show(window);
 
-	s_client_atevent(window, child_atevent);
+	s_window_atevent(window, child_atevent);
 
-	s_client_main(window);
+	s_window_main(window);
 
 	return 0;
 }

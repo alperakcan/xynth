@@ -284,7 +284,7 @@ int main (int argc, char *argv[])
 	w_object_show(window->object);
 
 	s_window_show(window->window);
-	s_client_main(window->window);
+	s_window_main(window->window);
 
 	return 0;
 }
