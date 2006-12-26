@@ -20,7 +20,7 @@
 #include <unistd.h>
 
 #include "../../../lib/xynth_.h"
-#include "server/server.h"
+#include "server.h"
 #include "../helper/helper.h"
 #include "fbdev.h"
 

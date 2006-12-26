@@ -14,7 +14,7 @@
  ***************************************************************************/
 
 #include "xynth_.h"
-#include "widget/widget.h"
+#include "widget.h"
 #include <getopt.h>
 
 #include "list.h"

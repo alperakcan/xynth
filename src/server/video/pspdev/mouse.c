@@ -16,7 +16,7 @@
 #if defined(VIDEO_PSPDEV)
 
 #include "../../../lib/xynth_.h"
-#include "server/server.h"
+#include "server.h"
 #include "../helper/helper.h"
 #include "pspdev.h"
 

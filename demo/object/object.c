@@ -18,7 +18,7 @@
 #include <unistd.h>
 #include <time.h>
 #include "xynth_.h"
-#include "widget/widget.h"
+#include "widget.h"
 
 static int area_hide = 0;
 static w_frame_t *area;

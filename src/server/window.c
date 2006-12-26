@@ -14,7 +14,7 @@
  ***************************************************************************/
 
 #include "../lib/xynth_.h"
-#include "server/server.h"
+#include "server.h"
 
 void s_server_window_new (int id)
 {

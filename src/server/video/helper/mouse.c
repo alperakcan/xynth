@@ -16,7 +16,7 @@
 #if defined(VIDEO_HELPER_MOUSE)
 
 #include "../../../lib/xynth_.h"
-#include "server/server.h"
+#include "server.h"
 #include "mouse.h"
 #include "mouse_1.c"
 #include "helper.h"

@@ -26,7 +26,7 @@
 #include <errno.h>
 
 #include "../../../lib/xynth_.h"
-#include "server/server.h"
+#include "server.h"
 #include "helper.h"
 
 extern char * strsignal (int v);

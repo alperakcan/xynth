@@ -16,7 +16,7 @@
 #if defined(VIDEO_SVGALib)
 
 #include "../../../lib/xynth_.h"
-#include "server/server.h"
+#include "server.h"
 #include "svga.h"
 #include "../helper/helper.h"
 

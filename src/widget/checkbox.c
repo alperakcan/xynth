@@ -14,7 +14,7 @@
  ***************************************************************************/
 
 #include "../lib/xynth_.h"
-#include "widget/widget.h"
+#include "widget.h"
 
 int w_checkbox_set_str (w_object_t *object, char *str)
 {

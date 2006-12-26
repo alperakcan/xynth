@@ -20,7 +20,7 @@
 #include <fcntl.h>
 
 #include "../../../lib/xynth_.h"
-#include "server/server.h"
+#include "server.h"
 #include "helper.h"
 
 void s_video_helper_mtrr_add (unsigned int base, unsigned int size)

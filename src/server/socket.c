@@ -15,7 +15,7 @@
 
 #include <sys/stat.h>
 #include "../lib/xynth_.h"
-#include "server/server.h"
+#include "server.h"
 
 #if !defined(IPC_UDS) && !defined(IPC_TCP) && !defined(IPC_PIPE)
 	#error "You must select at least one of IPC_UDS, IPC_TCP, IPC_PIPE"

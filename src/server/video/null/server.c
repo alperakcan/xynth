@@ -16,7 +16,7 @@
 #if defined(VIDEO_NULL)
 
 #include "../../../lib/xynth_.h"
-#include "server/server.h"
+#include "server.h"
 #include "null.h"
 
 s_video_input_t s_video_null_input_keybd = {

@@ -14,7 +14,7 @@
  ***************************************************************************/
 
 #include "../lib/xynth_.h"
-#include "server/server.h"
+#include "server.h"
 
 static void s_server_handler_fullscreen (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {

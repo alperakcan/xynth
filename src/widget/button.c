@@ -14,7 +14,7 @@
  ***************************************************************************/
 
 #include "xynth_.h"
-#include "widget/widget.h"
+#include "widget.h"
 
 int w_button_set_pressed (w_object_t *object, void (*pressed) (w_object_t *, int))
 {

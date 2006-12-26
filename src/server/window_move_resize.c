@@ -14,7 +14,7 @@
  ***************************************************************************/
 
 #include "../lib/xynth_.h"
-#include "server/server.h"
+#include "server.h"
 
 void s_server_window_lines_draw_ (s_rect_t *coor, s_rect_t *rect, int c)
 {

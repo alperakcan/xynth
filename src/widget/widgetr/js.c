@@ -45,7 +45,7 @@
 #include "jsscript.h"
 
 #include "xynth_.h"
-#include "widget/widget.h"
+#include "widget.h"
 
 #include "list.h"
 #include "node.h"
