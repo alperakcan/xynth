@@ -62,6 +62,14 @@ typedef enum {
 	OBJECT_OBJECTS 		= 0xd
 } OBJECT;
 
+struct w_signal_s {
+	w_object_t *from;
+	w_object_t *to;
+	void (*func) (w_signal_t *);
+	void *arg;
+};
+
+/* effect .c */
 typedef enum {
 	EFFECT_NONE    = 0x0,
 	EFFECT_FADEIN  = 0x1,
@@ -79,12 +87,10 @@ struct w_effect_s {
 	s_timer_t *timer;
 };
 
-struct w_signal_s {
-	w_object_t *from;
-	w_object_t *to;
-	void (*func) (w_signal_t *);
-	void *arg;
-};
+int w_effect_stop (w_object_t *object);
+int w_effect_start (w_object_t *object);
+void w_effect_timer_cb (s_window_t *window, s_timer_t *timer);
+int w_effect_apply (s_surface_t *surface, s_rect_t *rect, w_object_t *effect, w_object_t *object);
 
 /** @defgroup widget_object Widget Library - Object API
   * @brief
@@ -142,11 +148,6 @@ struct w_object_s {
 
 void w_object_hide_ (w_object_t *object);
 void w_object_show_ (w_object_t *object);
-int w_object_effect_stop (w_object_t *object);
-void w_object_effect_timer_cb (s_window_t *window, s_timer_t *timer);
-int w_object_effect_start (w_object_t *object);
-int w_object_has_effect (w_object_t *effect, w_object_t *object);
-int w_object_effect_apply (s_surface_t *surface, s_rect_t *rect, w_object_t *effect, w_object_t *object);
 int w_object_update_to_surface (w_object_t *object, s_surface_t *surface, s_rect_t *coor, w_object_t *effect, int do_effect);
 int w_object_update (w_object_t *object, s_rect_t *coor);
 int w_object_draw (w_object_t *object);

@@ -4,7 +4,7 @@ include ../../Makefile.parse
 
 INCDIR = ./ ../lib
 
-OBJS = button.o checkbox.o editbox.o frame.o object.o progressbar.o scrollbuffer.o textbox.o window.o
+OBJS = button.o checkbox.o editbox.o effect.o frame.o object.o progressbar.o scrollbuffer.o textbox.o window.o
 
 ifeq ($(PLATFORM_LINUX), Y)
 TARGET_A  = libwidget.a
