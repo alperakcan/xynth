@@ -58,7 +58,7 @@ static void node_generate_sources (node_t *node)
 	        "#include <stdlib.h>\n"
 	        "#include <time.h>\n"
 	        "#include <xynth.h>\n"
-	        "#include <widget/widget.h>\n"
+	        "#include <widget.h>\n"
 	        "\n");
 	node_generate_header(node, g_header);
 	fprintf(g_header, "\n");
