@@ -2400,7 +2400,7 @@ int s_timers_uninit (s_window_t *window);
 /*@{*/
 
 /** window struct
- */
+  */
 struct s_window_s {
 	/** is window running */
 	int running;
@@ -2539,16 +2539,76 @@ void s_window_set_alwaysontop (s_window_t *window, int alwaysontop);
   */
 int s_window_new (s_window_t *window, S_WINDOW type, s_window_t *parent);
 
+/** @brief initiliazes the window struct, creates a connection to the server.
+  *
+  * @param **window - pointer to window pointer
+  * @returns 0 on success
+  */ 
 int s_window_init (s_window_t **window);
+
+/** @brief uninitializes the window struct.
+  *
+  * @param *window - pointer to window struct
+  * @returns no return
+  */ 
 void s_window_uninit (s_window_t *window);
+
+/** @brief exits the client window
+  *
+  * @param *window - pointer to window struct
+  * @returns no return
+  */ 
 void s_window_exit (s_window_t *window);
+
+/** @brief quits the client window
+  *
+  * @param *window - pointer to window struct
+  * @returns no return
+  */ 
 void s_window_quit (s_window_t *window);
+
+/** @brief wakes up the window
+  *
+  * @param *window - pointer to window struct
+  * @returns 0 on success
+  */ 
 int s_window_wakeup (s_window_t *window);
-int s_window_child_find (s_window_t *parent, s_window_t *window, s_event_t *event);
+
+/** @brief event loop thread function.
+  *
+  * @param *arg - thread argument
+  * @returns no return
+  */
 void * s_window_loop_event (void *arg);
+
+/** @brief main loop thread function, starts the even tool thread
+  *
+  * @param *arg - thread argument
+  * @returns no return
+  */
 void * s_window_loop (void *arg);
+
+/** @brief main functions that creates or tarts the loop function.
+  *
+  * @param *arg - thread argument
+  * @returns no return
+  */
 void * s_window_main (void *arg);
+
+/** @brief sets the atevent callback function for given window
+  *
+  * @param *window - the window
+  * @param *f      - callback function
+  * @returns no return
+  */
 void s_window_atevent (s_window_t *window, void (*f) (s_window_t *, s_event_t *));
+
+/** @brief sets the atexit callback function for given window
+  *
+  * @param *window - the window
+  * @param *f      - callback function
+  * @returns no return
+  */
 void s_window_atexit (s_window_t *window, void (*f) (s_window_t *));
 
 /*@}*/
