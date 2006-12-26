@@ -38,6 +38,7 @@ typedef struct s_list_node_s s_list_node_t;
 typedef struct s_pollfd_s s_pollfd_t;
 typedef struct s_pollfds_s s_pollfds_t;
 typedef struct s_rect_s s_rect_t;
+typedef struct s_surface_s s_surface_t;
 typedef struct s_thread_s s_thread_t;
 typedef struct s_thread_sem_s s_thread_sem_t;
 typedef struct s_thread_cond_s s_thread_cond_t;
@@ -65,13 +66,6 @@ typedef enum {
 	WINDOW_CHILD      = 0x0200,
 	WINDOW_DESKTOP    = 0x0400
 } S_WINDOW;
-
-typedef enum {
-	SURFACE_REAL       = 0x1,
-	SURFACE_VIRTUAL    = 0x2,
-	SURFACE_NEEDEXPOSE = 0x4,
-	SURFACE_NEEDSTREAM = 0x8
-} S_SURFACE_MODE;
 
 typedef enum {
 	MOUSE_CURSOR_WAIT    = 0x0,
@@ -489,67 +483,6 @@ typedef struct s_childs_s {
 	s_list_t *list;
 	s_thread_mutex_t *mut;
 } s_childs_t;
-
-/** surface struct
-  */
-typedef struct s_surface_s {
-	/** bitwise ored SURFACE_REAL, SURFACE_VIRTUAL */
-       	S_SURFACE_MODE mode;
-	/** surface buytes per pixel */
-	int bytesperpixel;
-	/** surface bits per pixel */
-	int bitsperpixel;
-	/** number of colors */
-	int colors;
-	/** blue color offset */
-	int blueoffset;
-	/** green color offset */
-	int greenoffset;
-	/** red color offset */
-	int redoffset;
-	/** blue color length */
-	int bluelength;
-	/** green color length */
-	int greenlength;
-	/** red color length */
-	int redlength;
-	/** surface virtual buffer width */
-	int width;
-	/** surface virtual buffer height */
-	int height;
-	/** surface's virtual buffer */
-        unsigned char *vbuf;
-	/** virtual buffers' seen part on screen */
-	s_rect_t *buf;
-	/** window coordinated that hold surface on screen (if any) */
-	s_rect_t *win;
-	/** memory mapped shared buffer, this is the readl video buffer (usually) */
-	unsigned char *linear_buf;
-	/** video buffer width */
-	int linear_buf_width;
-	/** video buffer pitch */
-	int linear_buf_pitch;
-	/** video buffer height */
-	int linear_buf_height;
-	/** video buffer linear mem base */
-	unsigned int linear_mem_base;
-	/** video buffer linear mem size */
-	unsigned int linear_mem_size;
-	/** shared memory id for screen matrix */
-	int shm_mid;
-	/** shared memory buffer for screen matrix */
-	unsigned char *matrix;
-	/** shared video memory id */
-        int shm_sid;
-	/** this is either, 0, SURFACE_NEEDSTREAM, or SURFACE_NEEDEXPOSE */
-	S_SURFACE_MODE need_expose;
-	/** device name */
-	char *device;
-	/** ugly hack for overlay operations, window->surface->id = &(window->client->id) */
-        int *id;
-	/** ugly hack, window->surface->window = window */
-        s_window_t *window;
-} s_surface_t;
 
 typedef struct s_single_app_s {
 	int (*fonk) (int argc, char *argv[]);
@@ -2000,13 +1933,138 @@ int s_socket_init_tcp (s_window_t *window);
 int s_socket_init_wakeup (s_window_t *window);
 int s_socket_init (s_window_t *window);
 
+/** @defgroup client_surface Client Library - Surface API
+  * @brief s_surface_* api is very internal, and is used for initializing the video buffer,
+  *        that will print on. the initialization method is choosen by the server - linear
+  *        video buffer, linear shadow buffer, streaming buffer -. programmers do not need
+  *        to use these functions unless they do not want to change the behaviour of server/
+  *        client interraction.
+  * 
+  */
+
+/** @addtogroup client_surface */
+/*@{*/
+
+/** surface modes
+  */
+typedef enum {
+	/** graphics will be drawn on real buffer */
+	SURFACE_REAL       = 0x1,
+	/** graphics will be drawn on virtual buffer */
+	SURFACE_VIRTUAL    = 0x2,
+	/** window will send expose event (just the rectangular area) to the server */
+	SURFACE_NEEDEXPOSE = 0x4,
+	/** window will send expose event (rectanglar area, and the buffer) to the server */
+	SURFACE_NEEDSTREAM = 0x8
+} S_SURFACE_MODE;
+
+/** surface struct
+  */
+struct s_surface_s {
+	/** bitwise ored SURFACE_REAL, SURFACE_VIRTUAL */
+	S_SURFACE_MODE mode;
+	/** surface buytes per pixel */
+	int bytesperpixel;
+	/** surface bits per pixel */
+	int bitsperpixel;
+	/** number of colors */
+	int colors;
+	/** blue color offset */
+	int blueoffset;
+	/** green color offset */
+	int greenoffset;
+	/** red color offset */
+	int redoffset;
+	/** blue color length */
+	int bluelength;
+	/** green color length */
+	int greenlength;
+	/** red color length */
+	int redlength;
+	/** surface virtual buffer width */
+	int width;
+	/** surface virtual buffer height */
+	int height;
+	/** surface's virtual buffer */
+        unsigned char *vbuf;
+	/** virtual buffers' seen part on screen */
+	s_rect_t *buf;
+	/** window coordinated that hold surface on screen (if any) */
+	s_rect_t *win;
+	/** memory mapped shared buffer, this is the readl video buffer (usually) */
+	unsigned char *linear_buf;
+	/** video buffer width */
+	int linear_buf_width;
+	/** video buffer pitch */
+	int linear_buf_pitch;
+	/** video buffer height */
+	int linear_buf_height;
+	/** video buffer linear mem base */
+	unsigned int linear_mem_base;
+	/** video buffer linear mem size */
+	unsigned int linear_mem_size;
+	/** shared memory id for screen matrix */
+	int shm_mid;
+	/** shared memory buffer for screen matrix */
+	unsigned char *matrix;
+	/** shared video memory id */
+        int shm_sid;
+	/** this is either, 0, SURFACE_NEEDSTREAM, or SURFACE_NEEDEXPOSE */
+	S_SURFACE_MODE need_expose;
+	/** device name */
+	char *device;
+	/** ugly hack for overlay operations, window->surface->id = &(window->client->id) */
+        int *id;
+	/** ugly hack, window->surface->window = window */
+        s_window_t *window;
+};
+
 /* surface.c */
+
+/** @brief initialize the main video buffer surface struct
+  *
+  * @param *window - the window
+  * @returns 0 on success 
+  */
 int s_surface_init (s_window_t *window);
+
+/** @brief create and attach the device buffer to surface
+  *
+  * @param *window - the window
+  * @returns no return
+  */
 void s_surface_create (s_window_t *window);
+
+/** @brief attach to the matrix buffer
+  *
+  * @param *window - the window
+  * @returns no return
+  */
 void s_surface_shm_attach (s_window_t *window);
+
+/** @brief attach to the video buffer
+  *
+  * @param *window - the window
+  * @returns no return
+  */
 void s_surface_linear (s_window_t *window);
+
+/** @brief uninitialize the surface struct
+  *
+  * @param *window - the window
+  * @returns no return
+  */
 void s_surface_uninit (s_window_t *window);
+
+/** @brief expose event handler
+  *
+  * @param *window  - the window
+  * @param *changed - the rectangular area that will be updated 
+  * @returns no return
+  */
 void s_surface_changed (s_window_t *window, s_rect_t *changed);
+
+/*@}*/
 
 /** @defgroup client_thread Client Library - Thread API
   * @brief s_thread_* api is an abstract layer for system calls.
