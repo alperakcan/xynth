@@ -282,7 +282,7 @@ void code_generate_show (ctable_t *ctable, node_t *node)
 		if ((object = (w_object_t *) TGD(node_get_parent(node, "window")->id)) != NULL) {
 			w_object_show(object);
 			s_window_show(object->window->window);
-			s_client_main(object->window->window);
+			s_window_main(object->window->window);
 		}
 	} else if (strcmp(node->parent->name, "object") == 0) {
 		if ((object = (w_object_t *) TGD(node_get_parent(node, "object")->id)) != NULL) {

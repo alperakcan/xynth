@@ -26,7 +26,7 @@ int s_surface_init (s_window_t *window)
 	window->surface = (s_surface_t *) s_calloc(1, sizeof(s_surface_t));
 	window->surface->buf = (s_rect_t *) s_calloc(1, sizeof(s_rect_t));
 	window->surface->win = (s_rect_t *) s_calloc(1, sizeof(s_rect_t));
-	window->surface->id = &(window->client->id);
+	window->surface->id = &(window->id);
 	window->surface->window = window;
 	return 0;
 }
@@ -59,7 +59,7 @@ void s_surface_shm_attach (s_window_t *window)
 	addr = (void *) window->surface->matrix;
 #else
         if ((addr = (void *) shmat(window->surface->shm_mid, NULL, SHM_RDONLY)) < 0) {
-		debugf(DCLI | DFAT | DSYS, "[%d] Can not attach the shared memory", window->client->id);
+		debugf(DCLI | DFAT | DSYS, "[%d] Can not attach the shared memory", window->id);
         }
 #endif
         window->surface->matrix = (unsigned char *) addr;
@@ -85,13 +85,13 @@ void s_surface_linear (s_window_t *window)
 #else
 	if (window->surface->need_expose & SURFACE_NEEDEXPOSE) {
 		if ((addr = (void *) shmat(window->surface->shm_sid, NULL, 0)) < 0) {
-			debugf(DCLI | DFAT | DSYS, "[%d] Can not attach the shared memory", window->client->id);
+			debugf(DCLI | DFAT | DSYS, "[%d] Can not attach the shared memory", window->id);
 		}
 		window->surface->linear_buf = (char *) addr;
 	} else {
-		fd = open(window->client->device, O_RDWR);
+		fd = open(window->surface->device, O_RDWR);
 		if (fd < 0) {
-			debugf(DCLI | DSYS | DFAT, "[%d] open(%s, O_RDWR) failed", window->client->device);
+			debugf(DCLI | DSYS | DFAT, "[%d] open(%s, O_RDWR) failed", window->surface->device);
 		}
 		if (window->surface->linear_mem_size){
 			addr = (void *) mmap((caddr_t) 0, window->surface->linear_mem_size,
@@ -100,10 +100,10 @@ void s_surface_linear (s_window_t *window)
 						          fd,
 						          (off_t) window->surface->linear_mem_base);
 			if (addr == MAP_FAILED) {
-				debugf(DCLI | DFAT | DSYS, "[%d] mmap failed", window->client->id);
+				debugf(DCLI | DFAT | DSYS, "[%d] mmap failed", window->id);
 			}
 		} else {
-			debugf(DCLI | DFAT, "[%d] mmap failed", window->client->id);
+			debugf(DCLI | DFAT, "[%d] mmap failed", window->id);
 		}
 		close(fd);
 	}
@@ -128,6 +128,7 @@ void s_surface_uninit (s_window_t *window)
 	s_free(window->surface->buf);
 	s_free(window->surface->win);
 	s_free(window->surface->vbuf);
+        s_free(window->surface->device);
 	s_free(window->surface);
 	window->surface = NULL;
 }
@@ -151,7 +152,7 @@ void s_surface_changed (s_window_t *window, s_rect_t *changed)
 	if (window->surface->need_expose & SURFACE_NEEDSTREAM) {
 		s_socket_request(window, SOC_DATA_EXPOSE, &coor);
 	} else {
-		bpp_putbox_o(window->surface, window->client->id, coor.x, coor.y, coor.w, coor.h,
+		bpp_putbox_o(window->surface, window->id, coor.x, coor.y, coor.w, coor.h,
 		             window->surface->vbuf + ((coor.y * window->surface->width) + coor.x) * window->surface->bytesperpixel,
 		             window->surface->width);
 		if (window->surface->need_expose & SURFACE_NEEDEXPOSE) {

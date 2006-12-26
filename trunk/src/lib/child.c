@@ -81,7 +81,7 @@ int s_childs_uninit (s_window_t *window)
 		w = (s_window_t *) s_list_get(chl->list, 0);
 		s_list_remove(chl->list, 0);
 		t = w->tid;
-		s_client_quit(w);
+		s_window_quit(w);
 		s_thread_mutex_unlock(chl->mut);
 		s_thread_join(t, NULL);
 	}

@@ -118,7 +118,7 @@ SDL_VideoDevice *sdl_xynth_CreateDevice(int devindex)
  */
 int sdl_xynth_VideoInit(_THIS, SDL_PixelFormat *vformat)
 {
-	if (s_client_init(&this->hidden->window)) {
+	if (s_window_init(&this->hidden->window)) {
 		fprintf(stderr, "Could not connect to Xynth!\n");
 		exit(1);
 	}
@@ -181,10 +181,10 @@ SDL_Surface * sdl_xynth_SetVideoMode(_THIS, SDL_Surface *current, int width, int
 	s_window_set_title(this->hidden->window, "Xynth - SDL");
 	s_window_show(this->hidden->window);
 
-	s_client_atexit(this->hidden->window, sdl_xynth_atexit);
-	s_client_atevent(this->hidden->window, sdl_xynth_atevent);
+	s_window_atexit(this->hidden->window, sdl_xynth_atexit);
+	s_window_atevent(this->hidden->window, sdl_xynth_atevent);
 
-	this->hidden->tid = s_thread_create((void * (*) (void *)) &s_client_main, this->hidden->window);
+	this->hidden->tid = s_thread_create((void * (*) (void *)) &s_window_main, this->hidden->window);
 	sdl_xynth_running = 1;
 
 	return current ;
@@ -274,7 +274,7 @@ void sdl_xynth_VideoQuit(_THIS)
 	}
 	
 	if (sdl_xynth_running) {
-		s_client_quit(this->hidden->window);
+		s_window_quit(this->hidden->window);
 		s_thread_join(this->hidden->tid, NULL);
 	}
 	sdl_xynth_running = 0;

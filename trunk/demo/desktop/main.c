@@ -88,8 +88,8 @@ int main (int argc, char *argv[])
 	s_config_init(&cfg);
 	s_config_parse(cfg, DESKTOPDIR "/cfg/desktop.cfg");
 
-	s_client_init(&desktop);
-	s_client_init(&taskbar);
+	s_window_init(&desktop);
+	s_window_init(&taskbar);
 
 	s_window_new(desktop, WINDOW_MAIN | WINDOW_NOFORM, NULL);
 	s_window_new(taskbar, WINDOW_CHILD | WINDOW_NOFORM | WINDOW_DESKTOP, desktop);

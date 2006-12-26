@@ -23,10 +23,10 @@ static int c = MOUSE_CURSOR_ARROW;
 static void simple_atevent (s_window_t *window, s_event_t *event)
 {
         if (event->type & KEYBD_EVENT) {
-		debugf(DCLI, "[%d] event: 0x%08X, f: 0x%08X, b: %d, a:%c", window->client->id, event->type, event->keybd->flag, event->keybd->button, event->keybd->ascii);
+		debugf(DCLI, "[%d] event: 0x%08X, f: 0x%08X, b: %d, a:%c", window->id, event->type, event->keybd->flag, event->keybd->button, event->keybd->ascii);
 	}
 	if (event->type & MOUSE_EVENT) {
-		debugf(DCLI, "[%d] event->type : 0x%08X, button : 0x%08X, buttons : 0x%08X", window->client->id, event->type, event->mouse->b, event->mouse->buttons);
+		debugf(DCLI, "[%d] event->type : 0x%08X, button : 0x%08X, buttons : 0x%08X", window->id, event->type, event->mouse->b, event->mouse->buttons);
 	}
 }
 
@@ -37,7 +37,7 @@ static void simple_handler1o (s_window_t *window, s_event_t *event, s_handler_t 
 
 static void simple_handler1c (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
-	debugf(DCLI, "[%d] click count : %d", window->client->id, event->mouse->clicks);
+	debugf(DCLI, "[%d] click count : %d", window->id, event->mouse->clicks);
 }
 
 static void simple_handler1p (s_window_t *window, s_event_t *event, s_handler_t *handler)
@@ -81,7 +81,7 @@ int main (int argc, char *argv[])
 	s_handler_t *hndl;
 	s_window_t *window;
 
-	s_client_init(&window);
+	s_window_init(&window);
 
 	s_window_new(window, WINDOW_MAIN, NULL);
 	
@@ -143,13 +143,13 @@ int main (int argc, char *argv[])
 	hndl->mouse.button = MOUSE_RIGHTBUTTON;
 	s_handler_add(window, hndl);
 
-	s_client_atevent(window, simple_atevent);
+	s_window_atevent(window, simple_atevent);
 
 	s_window_show(window);
 
-	debugf(DCLI, "[%d] window->surface->need_expose == %d", window->client->id, window->surface->need_expose);
+	debugf(DCLI, "[%d] window->surface->need_expose == %d", window->id, window->surface->need_expose);
 
-	s_client_main(window);
+	s_window_main(window);
 
 	return 0;
 }

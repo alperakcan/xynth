@@ -478,7 +478,7 @@ err0:	s_free(config.general.driver);
 
 void s_server_quit (s_window_t *window)
 {
-	s_client_quit(window);
+	s_window_quit(window);
 }
 
 void s_server_uninit (void)

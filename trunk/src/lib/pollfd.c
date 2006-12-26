@@ -60,7 +60,7 @@ int s_pollfd_add (s_window_t *window, s_pollfd_t *pfd)
 #endif
 	}
 	s_thread_mutex_unlock(window->pollfds->mut);
-	s_client_wakeup(window);
+	s_window_wakeup(window);
 	return ret;
 }
 
@@ -70,7 +70,7 @@ int s_pollfd_del (s_window_t *window, s_pollfd_t *pfd)
 	s_thread_mutex_lock(window->pollfds->mut);
 	ret = s_list_remove(window->pollfds->list, s_list_get_pos(window->pollfds->list, pfd));
 	s_thread_mutex_unlock(window->pollfds->mut);
-	s_client_wakeup(window);
+	s_window_wakeup(window);
 	return ret;
 }
 

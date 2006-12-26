@@ -60,7 +60,7 @@ int main (int argc, char *argv[])
 
 	srand(time(NULL));
 
-	s_client_init(&window);
+	s_window_init(&window);
 
 	s_window_new(window, WINDOW_MAIN, NULL);
 	mw = window->surface->width;
@@ -80,7 +80,7 @@ int main (int argc, char *argv[])
 	s_timer_add(window, timer);
 
 	s_window_show(window);
-	s_client_main(window);
+	s_window_main(window);
 
 	return 0;
 }

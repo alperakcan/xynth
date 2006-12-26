@@ -4,7 +4,7 @@ include ../../Makefile.parse
 
 INCDIR += ./libz ./libpng ./freetype2/include
 
-OBJS = alloc.o child.o client.o config.o debug.o driver.o event.o eventq.o font.o \
+OBJS = alloc.o child.o config.o debug.o driver.o event.o eventq.o font.o \
        gettext.o gettime.o grlib.o handler.o image.o image_gif.o image_png.o \
        image_xpm.o list.o pipe_api.o pollfd.o rect.o socket.o socket_api.o surface.o \
        thread.o timer.o window.o

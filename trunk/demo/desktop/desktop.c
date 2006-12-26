@@ -26,7 +26,7 @@ void desktop_background (s_window_t *window, char *file)
         s_image_t *img;
         dtop_data_t *dtop_data;
 	
-        dtop_data = (dtop_data_t *) window->client->data;
+        dtop_data = (dtop_data_t *) window->data;
 
 	s_image_init(&img);
 	s_image_img(file, img);
@@ -63,10 +63,10 @@ void desktop_icon_handler (s_window_t *window, s_event_t *event, s_handler_t *ha
 	int p = 0;
 	dtop_prog_t *dtopp;
         dtop_data_t *dtop_data;
-        dtop_data = (dtop_data_t *) window->client->data;
+        dtop_data = (dtop_data_t *) window->data;
 
 #if 0
-        s_client_quit(window);
+        s_window_quit(window);
         return;
 #endif
 
@@ -89,7 +89,7 @@ void desktop_icon (s_window_t *window, dtop_prog_t *dtopp, s_font_t *font)
 	s_handler_t *hndl;
         dtop_data_t *dtopd;
 
-        dtopd = (dtop_data_t *) window->client->data;
+        dtopd = (dtop_data_t *) window->data;
 
 	file = (char *) s_malloc(sizeof(char) * (strlen(DESKTOPDIR "/img/icons/") + strlen(dtopp->icon) + 1));
 	sprintf(file, "%s/img/icons/%s", DESKTOPDIR, dtopp->icon);
@@ -124,7 +124,7 @@ void desktop_icons (s_window_t *window)
 	s_font_t *font;
 	dtop_prog_t *dtopp;
         dtop_data_t *dtop_data;
-        dtop_data = (dtop_data_t *) window->client->data;
+        dtop_data = (dtop_data_t *) window->data;
 
        	s_font_init(&font, "arial.ttf");
 	s_font_set_size(font, 11);
@@ -143,7 +143,7 @@ void desktop_icons (s_window_t *window)
 void desktop_atexit (s_window_t *window)
 {
 	dtop_data_t *dtop_data;
-	dtop_data = (dtop_data_t *) window->client->data;
+	dtop_data = (dtop_data_t *) window->data;
 	while (!s_list_eol(dtop_data->progs, 0)) {
 		dtop_prog_t *dtopp = (dtop_prog_t *) s_list_get(dtop_data->progs, 0);
 		s_free(dtopp->name);
@@ -262,8 +262,8 @@ void desktop_start (s_window_t *window, s_config_t *cfg)
 		}
 	}
 
-	window->client->data = (void *) dtop_data;
-	s_client_atexit(window, desktop_atexit);
+	window->data = (void *) dtop_data;
+	s_window_atexit(window, desktop_atexit);
 	
 	s_fillbox(window->surface, 0, 0,
 	                           window->surface->width, window->surface->height,
@@ -297,5 +297,5 @@ void desktop_start (s_window_t *window, s_config_t *cfg)
 	if (dtop_data->show_desktop == 1) {
 		s_window_show(window);
 	}
-	s_client_main(window);
+	s_window_main(window);
 }

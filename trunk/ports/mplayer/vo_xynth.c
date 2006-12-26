@@ -72,12 +72,12 @@ static int preinit(const char *arg)
 {
 	getch2_disable();
 	
-	if (s_client_init(&window)) {
+	if (s_window_init(&window)) {
 		printf("%s:%d\n", __FILE__, __LINE__);
 		exit(0);
 	}
 	
-	s_client_atexit(window, atexit_handler);
+	s_window_atexit(window, atexit_handler);
 	
 	return 0;
 }
@@ -186,7 +186,7 @@ static int config (uint32_t width, uint32_t height, uint32_t d_width,
 		window->surface->vbuf = (char *) s_malloc(window->surface->width *
 		                                          window->surface->height *
 		                                          window->surface->bytesperpixel);
-		tid = s_thread_create(s_client_main, window);
+		tid = s_thread_create(s_window_main, window);
 		running = 1;
 
 #if defined(XYNTH_DOUBLEBUFFER)
@@ -277,7 +277,7 @@ static void check_events (void)
 static void uninit (void)
 {
 	if (running) {
-		s_client_quit(window);
+		s_window_quit(window);
 		s_thread_join(tid, NULL);
 	}
 	running = 0;

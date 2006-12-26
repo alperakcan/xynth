@@ -534,7 +534,7 @@ int main (int argc, char *argv[])
 	int h;
 	s_window_t *window;
 
-	s_client_init(&window);
+	s_window_init(&window);
 	s_window_new(window, WINDOW_MAIN /*| WINDOW_NOFORM*/, NULL);
 	s_window_set_title(window, "Demo - %s ", argv[0]);
 	s_window_set_resizeable(window, 0);
@@ -566,7 +566,7 @@ int main (int argc, char *argv[])
 	handler_set(window, S_KEYCODE_l, handler_set_right);
 
 	s_window_show(window);
-	s_client_main(window);
+	s_window_main(window);
 	
 	return 0;
 }

@@ -357,7 +357,7 @@ static int load_draw_load (s_window_t *window)
         load_data_t *ldata;
 	s_surface_t surface;
 
-	ldata = (load_data_t *) window->client->data;
+	ldata = (load_data_t *) window->data;
 
 	vbuf = (char *) s_malloc(ldata->width * ldata->height * window->surface->bytesperpixel);
 	s_getsurfacevirtual(&surface, ldata->width, ldata->height, window->surface->bitsperpixel, vbuf);
@@ -387,7 +387,7 @@ static int load_get_load (s_window_t *window)
 	unsigned long long int c_sys_;
 	unsigned long long int c_idle_;
 
-	ldata = (load_data_t *) window->client->data;
+	ldata = (load_data_t *) window->data;
 
 	fp = fopen("/proc/stat", "r");
 	while (!feof(fp)) {
@@ -494,7 +494,7 @@ static int load_get_load (s_window_t *window)
 static void load_timer (s_window_t *window, s_timer_t *timer)
 {
 	load_data_t *ldata;
-	ldata = (load_data_t *) window->client->data;
+	ldata = (load_data_t *) window->data;
 	if (ldata->running) {
 		load_get_load(window);
 	}
@@ -504,7 +504,7 @@ static void load_atexit (s_window_t *window)
 {
 	load_data_t *ldata;
 
-	ldata = (load_data_t *) window->client->data;
+	ldata = (load_data_t *) window->data;
 	ldata->running = 0;
 	s_free(ldata);
 }
@@ -515,7 +515,7 @@ int main (int argc, char *argv[])
 	s_window_t *window;
 	load_data_t *ldata;
 
-	s_client_init(&window);
+	s_window_init(&window);
 	s_window_new(window, WINDOW_MAIN, NULL);
 	s_window_set_coor(window, WINDOW_NOFORM, 100, 100, 300, 300);
 	s_window_set_resizeable(window, 0);
@@ -526,10 +526,10 @@ int main (int argc, char *argv[])
 	window->surface->height = window->surface->buf->h;
 	window->surface->vbuf = (char *) s_malloc(window->surface->width * window->surface->height * window->surface->bytesperpixel);
 
-	s_client_atexit(window, load_atexit);
+	s_window_atexit(window, load_atexit);
 
 	ldata = (load_data_t *) s_calloc(1, sizeof(load_data_t));
-	window->client->data = (void *) ldata;
+	window->data = (void *) ldata;
 
 	ldata->running = 1;
 	ldata->width = 300;
@@ -557,7 +557,7 @@ int main (int argc, char *argv[])
 	s_timer_add(window, timer);
 
 	s_window_show(window);
-	s_client_main(window);
+	s_window_main(window);
 
 	return 0;
 }

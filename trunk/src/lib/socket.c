@@ -25,7 +25,7 @@
 int s_socket_request_new (s_window_t *window, int soc)
 {
 	int pid;
-	pid = (window->type & (WINDOW_TEMP | WINDOW_CHILD)) ? window->parent->client->id : -1;
+	pid = (window->type & (WINDOW_TEMP | WINDOW_CHILD)) ? window->parent->id : -1;
 	s_socket_send(soc, &window->type, sizeof(S_WINDOW));
 	s_socket_send(soc, &pid, sizeof(int));
 	s_socket_send(soc, window->surface->buf, sizeof(s_rect_t));
@@ -63,12 +63,12 @@ int s_socket_request_display (s_window_t *window, int soc)
 	window->surface->linear_buf_pitch = data->linear_buf_pitch;
 	window->surface->linear_buf_height = data->linear_buf_height;
 	window->surface->shm_mid = data->shm_mid;
-	window->client->id = data->id;
+	window->id = data->id;
 
 	window->surface->shm_sid = data->shm_sid;
 	window->surface->need_expose = data->need_expose;
 
-	window->client->device = strdup(data->device);
+	window->surface->device = strdup(data->device);
 
 	s_free(data);
 	return 0;
@@ -81,11 +81,11 @@ int s_socket_request_configure (s_window_t *window, int soc, S_WINDOW form)
 
 	data->form = (form & WINDOW_NOFORM);
 	data->rnew = *(window->surface->buf);
-	data->resizeable = window->client->resizeable;
-	data->alwaysontop = window->client->alwaysontop;
-	data->cursor = window->client->cursor;
-	if (window->client->title != NULL) {
-		strncpy(data->title, window->client->title, S_TITLE_MAX);
+	data->resizeable = window->resizeable;
+	data->alwaysontop = window->alwaysontop;
+	data->cursor = window->cursor;
+	if (window->title != NULL) {
+		strncpy(data->title, window->title, S_TITLE_MAX);
 	}
 	data->title[S_TITLE_MAX - 1] = '\0';
 	
@@ -195,11 +195,11 @@ again:	if (window->running <= 0) {
 		goto again;
 	}
 	if (pollfd.revents != POLLOUT) {
-		debugf(DCLI, "[%d] Error occured when requesting (%d) from server", window->client->id, req);
+		debugf(DCLI, "[%d] Error occured when requesting (%d) from server", window->id, req);
 		goto err0;
 	}
 	if (s_socket_api_send(pollfd.fd, &req, sizeof(req)) != sizeof(req)) {
-		debugf(DCLI, "[%d] Error occured when requesting (%d) from server", window->client->id, req);
+		debugf(DCLI, "[%d] Error occured when requesting (%d) from server", window->id, req);
 		goto err0;
 	}
 
@@ -262,8 +262,8 @@ int s_socket_listen_event (s_window_t *window, int soc)
 	dtype = data->type & (MOUSE_ENTERED | MOUSE_EXITED);
 	if ((dtype == 0) ||
 	    ((dtype != 0) &&
-	     (dtype != window->client->mouse_entered))) {
-		window->client->mouse_entered = dtype;
+	     (dtype != window->mouse_entered))) {
+		window->mouse_entered = dtype;
 		window->event->type = data->type;
 		*(window->event->mouse) = data->mouse;
 		*(window->event->keybd) = data->keybd;
@@ -293,10 +293,10 @@ int s_socket_listen_expose (s_window_t *window, int soc)
 		return -1;
 	}
 
-	p_old = window->client->pri;
+	p_old = window->pri;
 	r_old = *(window->surface->win);
 
-	window->client->pri = data->pri;
+	window->pri = data->pri;
 	*(window->surface->buf) = data->buf;
 	*(window->surface->win) = data->win;
 	window->surface->linear_buf_width = data->linear_buf_width;
@@ -318,10 +318,10 @@ int s_socket_listen_expose (s_window_t *window, int soc)
 		s_event_changed(window);
 	}
 	/* focus event */
-	if ((p_old != window->client->pri) &&
-	    ((p_old == 0) || (window->client->pri == 0))) {
+	if ((p_old != window->pri) &&
+	    ((p_old == 0) || (window->pri == 0))) {
 		window->event->type = FOCUS_EVENT;
-		window->event->type |= (window->client->pri == 0) ? FOCUSIN_EVENT : FOCUSOUT_EVENT;
+		window->event->type |= (window->pri == 0) ? FOCUSIN_EVENT : FOCUSOUT_EVENT;
 		window->event->expose->rect->x = window->surface->win->x;
 		window->event->expose->rect->y = window->surface->win->y;
 		window->event->expose->rect->w = window->surface->win->w;
@@ -540,7 +540,7 @@ int s_socket_in_f (s_window_t *window, s_pollfd_t *pfd)
 
 int s_socket_ierr_f (s_window_t *window, s_pollfd_t *pfd)
 {
-	debugf(DCLI, "[%d] Server side closed the connection", window->client->id);
+	debugf(DCLI, "[%d] Server side closed the connection", window->id);
 	return -1;
 }
 

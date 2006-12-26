@@ -344,7 +344,7 @@ void node_generate_code_show (node_t *node)
 	if (strcmp(node->parent->name, "window") == 0) {
 		fprintf(g_source, "w_object_show(%s->object);\n", node_get_parent(node, "window")->id);
 		fprintf(g_source, "s_window_show(%s->window);\n", node_get_parent(node, "window")->id);
-		fprintf(g_source, "s_client_main(%s->window);\n", node_get_parent(node, "window")->id);
+		fprintf(g_source, "s_window_main(%s->window);\n", node_get_parent(node, "window")->id);
 	} else if (strcmp(node->parent->name, "object") == 0) {
 		fprintf(g_source, "w_object_show(%s->object);\n", node_get_parent(node, "object")->id);
 	}

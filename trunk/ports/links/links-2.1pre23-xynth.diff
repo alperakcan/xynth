@@ -100,7 +100,7 @@ diff -Naur links-2.1pre23/configure links-2.1pre23-xynth/configure
 +#include <xynth.h>
 +int main() {
 +s_window_t *w;
-+s_client_init(&w)
++s_window_init(&w)
 +; return 0; }
 +EOF
 +if { (eval echo configure:5241: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
@@ -153,7 +153,7 @@ diff -Naur links-2.1pre23/configure.in links-2.1pre23-xynth/configure.in
 +		LIBS="$LIBS -lxynth"
 +		CFLAGS_X="$CFLAGS"
 +		CFLAGS="$CFLAGS `freetype-config --cflags`"
-+		AC_TRY_LINK([#include <xynth.h>], [s_client_init((s_client_t **) NULL)], ac_cv_have_xynth=yes, ac_cv_have_xynth=no)
++		AC_TRY_LINK([#include <xynth.h>], [s_window_init((s_window_t **) NULL)], ac_cv_have_xynth=yes, ac_cv_have_xynth=no)
 +		LIBS="$LIBS_X"
 +		CFLAGS="$CFLAGS_X"
 +	)
@@ -550,7 +550,7 @@ diff -Naur links-2.1pre23/xynth.c links-2.1pre23-xynth/xynth.c
 +	s_thread_mutex_init(&(lxynth_root->gd->mut));
 +	lxynth_root->gd->active = NULL;
 +
-+	s_client_init(&(lxynth_root->window));
++	s_window_init(&(lxynth_root->window));
 +	s_window_new(lxynth_root->window, WINDOW_MAIN, NULL);
 +	s_window_set_coor(lxynth_root->window, WINDOW_NOFORM, 50, 50,
 +	                                                      (lxynth_root->window->surface->width * 2) / 3,
@@ -564,9 +564,9 @@ diff -Naur links-2.1pre23/xynth.c links-2.1pre23-xynth/xynth.c
 +	xynth_driver.depth = (bpp << 3) | Bpp;
 +
 +	s_window_show(lxynth_root->window);
-+	lxynth_root->tid = s_thread_create(s_client_main, lxynth_root->window);
-+	s_client_atevent(lxynth_root->window, lxynth_atevent);
-+	s_client_atexit(lxynth_root->window, lxynth_atexit);
++	lxynth_root->tid = s_thread_create(s_window_main, lxynth_root->window);
++	s_window_atevent(lxynth_root->window, lxynth_atevent);
++	s_window_atexit(lxynth_root->window, lxynth_atexit);
 +	lxynth_root->running = 1;
 +
 +	install_timer(20, lxynth_timer, NULL);
@@ -666,7 +666,7 @@ diff -Naur links-2.1pre23/xynth.c links-2.1pre23-xynth/xynth.c
 +
 +        if (lxynth_root->running) {
 +		lxynth_root->running = 0;
-+		s_client_quit(lxynth_root->window);
++		s_window_quit(lxynth_root->window);
 +		s_thread_join(lxynth_root->tid, NULL);
 +		kill_timer(lxynth_root->timerid);
 +	}

@@ -543,29 +543,13 @@ typedef struct s_surface_s {
         int shm_sid;
 	/** this is either, 0, SURFACE_NEEDSTREAM, or SURFACE_NEEDEXPOSE */
 	S_SURFACE_MODE need_expose;
+	/** device name */
+	char *device;
 	/** ugly hack for overlay operations, window->surface->id = &(window->client->id) */
         int *id;
 	/** ugly hack, window->surface->window = window */
         s_window_t *window;
 } s_surface_t;
-
-typedef struct s_client_s {
-	int id;
-	int pri;
-	char *title;
-
-	char *device;
-
-	int resizeable;
-	int alwaysontop;
-	S_MOUSE_CURSOR cursor;
-	int mouse_entered;
-
-	void (*atevent) (s_window_t *, s_event_t *);
-	void (*atexit) (s_window_t *);
-
-	void *data;
-} s_client_t;
 
 typedef struct s_single_app_s {
 	int (*fonk) (int argc, char *argv[]);
@@ -584,19 +568,6 @@ int s_child_add (s_window_t *window, s_window_t *child);
 int s_child_del (s_window_t *window, s_window_t *child);
 int s_childs_init (s_window_t *window);
 int s_childs_uninit (s_window_t *window);
-
-/* client.c */
-int s_client_init (s_window_t **window);
-void s_client_uninit (s_window_t *window);
-void s_client_exit (s_window_t *window);
-void s_client_quit (s_window_t *window);
-int s_client_wakeup (s_window_t *window);
-int s_client_child_find (s_window_t *parent, s_window_t *window, s_event_t *event);
-void * s_client_loop_event (void *arg);
-void * s_client_loop (void *arg);
-void * s_client_main (void *arg);
-void s_client_atevent (s_window_t *window, void (*f) (s_window_t *, s_event_t *));
-void s_client_atexit (s_window_t *window, void (*f) (s_window_t *));
 
 /** @defgroup client_config Client Library - Config API
   * @brief detailed description
@@ -2440,8 +2411,22 @@ struct s_window_s {
 	/** bitwise or'ed window type */
 	S_WINDOW type;
 
-	/** client attached to the window */
-	s_client_t *client;
+	/** window id */
+	int id;
+	/** window priority */
+	int pri;
+	/** window title */
+	char *title;
+
+	/** window resizeable property */
+	int resizeable;
+	/** window always ontop property, 0: normal, 1: ontop, -1:on buttom */
+	int alwaysontop;
+	/** window cursor */
+	S_MOUSE_CURSOR cursor;
+	/** is mouse over */
+	int mouse_entered;
+
 	/** surface attached to the window */
 	s_surface_t *surface;
 
@@ -2468,6 +2453,14 @@ struct s_window_s {
 	
 	/** used for self implementation gettext */
 	s_gettext_t *gettext;
+
+	/** atevent event callback */
+	void (*atevent) (s_window_t *, s_event_t *);
+	/** atexit callback */
+	void (*atexit) (s_window_t *);
+
+	/** user data */
+	void *data;
 };
 
 /* window.c */
@@ -2545,6 +2538,18 @@ void s_window_set_alwaysontop (s_window_t *window, int alwaysontop);
   * @returns no returns
   */
 int s_window_new (s_window_t *window, S_WINDOW type, s_window_t *parent);
+
+int s_window_init (s_window_t **window);
+void s_window_uninit (s_window_t *window);
+void s_window_exit (s_window_t *window);
+void s_window_quit (s_window_t *window);
+int s_window_wakeup (s_window_t *window);
+int s_window_child_find (s_window_t *parent, s_window_t *window, s_event_t *event);
+void * s_window_loop_event (void *arg);
+void * s_window_loop (void *arg);
+void * s_window_main (void *arg);
+void s_window_atevent (s_window_t *window, void (*f) (s_window_t *, s_event_t *));
+void s_window_atexit (s_window_t *window, void (*f) (s_window_t *));
 
 /*@}*/
 

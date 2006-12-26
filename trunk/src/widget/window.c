@@ -20,7 +20,7 @@ void w_window_focus_change_notify (s_window_t *window, w_object_t *focus)
 {
 	s_event_t *event;
 	w_window_t *windoww;
-	windoww = (w_window_t *) window->client->data;
+	windoww = (w_window_t *) window->data;
 	if (windoww->focus != focus) {
 		s_event_init(&event);
 		event->type = FOCUS_EVENT | FOCUSOUT_EVENT;
@@ -57,7 +57,7 @@ void w_window_change_keybd_focus (s_window_t *window, int type)
 	w_object_t *root;
 	w_window_t *windoww;
 
-	windoww = (w_window_t *) window->client->data;
+	windoww = (w_window_t *) window->data;
 	
 	if (type == 0 || windoww->focus == NULL) {
 		/* focus next object */
@@ -99,7 +99,7 @@ void w_window_atevent (s_window_t *window, s_event_t *event)
 	w_object_t *objectn;
 	w_object_t *objectp;
 	w_window_t *windoww;
-	windoww = (w_window_t *) window->client->data;
+	windoww = (w_window_t *) window->data;
 	if (event->type & (CONFIG_CHNGW | CONFIG_CHNGH)) {
 		window->surface->width = window->surface->buf->w;
 		window->surface->height = window->surface->buf->h;
@@ -242,15 +242,15 @@ int w_window_uninit (w_window_t *window)
 int w_window_init (w_window_t **window, S_WINDOW type, w_window_t *parent)
 {
 	(*window) = (w_window_t *) s_malloc(sizeof(w_window_t));
-	s_client_init(&((*window)->window));
+	s_window_init(&((*window)->window));
 	s_window_new((*window)->window, type, NULL);
 	s_window_set_resizeable((*window)->window, 0);
 	w_object_init(*window, &((*window)->object), NULL, NULL);
 	s_list_init(&((*window)->images));
 	s_list_init(&((*window)->fonts));
 	(*window)->focus = NULL;
-	s_client_atevent((*window)->window, w_window_atevent);
-	(*window)->window->client->data = (*window);
+	s_window_atevent((*window)->window, w_window_atevent);
+	(*window)->window->data = (*window);
 	(*window)->object->type = OBJECT_WINDOW;
 	(*window)->object->window = *window;
 	(*window)->object->data[OBJECT_WINDOW] = *window;

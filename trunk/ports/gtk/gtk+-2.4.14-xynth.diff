@@ -2013,7 +2013,7 @@ diff -Naur gtk+-2.4.14/gdk/linux-fb/gdkmain-fb.c gtk+-2.4.14-xynth/gdk/linux-fb/
 -      display->green_byte = display->modeinfo.green.offset >> 3;
 -      display->blue_byte = display->modeinfo.blue.offset >> 3;
 -    }
-+	s_client_init(&window);
++	s_window_init(&window);
 +	s_window_new(window, WINDOW_MAIN | WINDOW_NOFORM, NULL);
 +	s_window_set_coor(window, 0, 0, 0, window->surface->width, window->surface->height);
 +
@@ -2071,7 +2071,7 @@ diff -Naur gtk+-2.4.14/gdk/linux-fb/gdkmain-fb.c gtk+-2.4.14-xynth/gdk/linux-fb/
 +	display->fb_height = display->modeinfo.yres;
 +	display->fb_stride = display->sinfo.line_length;
  #endif
-+	s_thread_create(&s_client_loop, window);
++	s_thread_create(&s_window_loop, window);
  
 -  return display;
 +        display->xynth_root = window;
@@ -3245,7 +3245,7 @@ diff -Naur gtk+-2.4.14/gdk/linux-fb/gdkrender-fb.c gtk+-2.4.14-xynth/gdk/linux-f
 -
 -static void
 -gdk_shadow_fb_refresh (int signum)
-+int gdk_s_client_child_find (s_window_t *parent, s_window_t *window, int x, int y, int w, int h)
++int gdk_s_window_child_find (s_window_t *parent, s_window_t *window, int x, int y, int w, int h)
  {
 -  gint minx, miny, maxx, maxy;
 +        int p = 0;
@@ -3335,7 +3335,7 @@ diff -Naur gtk+-2.4.14/gdk/linux-fb/gdkrender-fb.c gtk+-2.4.14-xynth/gdk/linux-f
 +		if (!gdk_s_rect_intersect(win->surface->buf, &r, &i)) {
 +			gdk_shadow_fb_copy_rect_0_(win, i.x, i.y, i.w, i.h);
 +		}
-+		gdk_s_client_child_find(parent, win, x, y, w, h);
++		gdk_s_window_child_find(parent, win, x, y, w, h);
 +		p++;
 +	}
 +	s_thread_mutex_unlock(window->childs->mut);
@@ -3415,7 +3415,7 @@ diff -Naur gtk+-2.4.14/gdk/linux-fb/gdkrender-fb.c gtk+-2.4.14-xynth/gdk/linux-f
 -void
 -gdk_shadow_fb_stop_updates (void)
 -{
-+	gdk_s_client_child_find(gdk_display->xynth_root, gdk_display->xynth_root, minx, miny, maxx - minx + 1, maxy - miny + 1);
++	gdk_s_window_child_find(gdk_display->xynth_root, gdk_display->xynth_root, minx, miny, maxx - minx + 1, maxy - miny + 1);
  }
  
 -void
@@ -3726,17 +3726,17 @@ diff -Naur gtk+-2.4.14/gdk/linux-fb/gdkwindow-fb.c gtk+-2.4.14-xynth/gdk/linux-f
 +		case GDK_WINDOW_TOPLEVEL:
 +				{
 +					s_window_t *window_tl;
-+					s_client_init(&window_tl);
++					s_window_init(&window_tl);
 +					s_window_new(window_tl, WINDOW_CHILD, gdk_display->xynth_root);
 +					if (attributes->title != NULL) {
 +						title = attributes->title;
 +					} else {
 +						title = get_default_title();
 +					}
-+					s_client_atevent(window_tl, gdk_client_atevent);
-+					s_client_atexit(window_tl, gdk_client_atexit);
++					s_window_atevent(window_tl, gdk_client_atevent);
++					s_window_atexit(window_tl, gdk_client_atexit);
 +					window_tl->client->data = window;
-+	        s_client_main(window_tl);
++	        s_window_main(window_tl);
 +          impl->drawable_data.running = 1;
 +          impl->drawable_data.th_id = window_tl->tid;
 +					impl->drawable_data.xynth_window = window_tl;
@@ -3749,11 +3749,11 @@ diff -Naur gtk+-2.4.14/gdk/linux-fb/gdkwindow-fb.c gtk+-2.4.14-xynth/gdk/linux-f
 +			 if ( GDK_WINDOW_TYPE (parent) == GDK_WINDOW_ROOT )
 +				{
 +				s_window_t *window_tmp;
-+				s_client_init(&window_tmp);
++				s_window_init(&window_tmp);
 +				//s_window_new(window_tmp, WINDOW_TEMP | WINDOW_NOFORM, gdk_display->xynth_root);
 +				s_window_new(window_tmp, WINDOW_CHILD | WINDOW_NOFORM , gdk_display->xynth_root);
-+				s_client_atevent(window_tmp, gdk_client_atevent);
-+				s_client_atexit(window_tmp, gdk_client_atexit);
++				s_window_atevent(window_tmp, gdk_client_atevent);
++				s_window_atexit(window_tmp, gdk_client_atexit);
 +				window_tmp->client->data = window;
 +			
 +				GDK_DRAWABLE_IMPL_FBDATA(window)->running = 1;
@@ -3761,7 +3761,7 @@ diff -Naur gtk+-2.4.14/gdk/linux-fb/gdkwindow-fb.c gtk+-2.4.14-xynth/gdk/linux-f
 +				GDK_DRAWABLE_IMPL_FBDATA(window)->xynth_window = window_tmp;
 +				GDK_DRAWABLE_IMPL_FBDATA(window)->mem = window_tmp->surface->vbuf;
 +				
-+				s_client_main(window_tmp);	
++				s_window_main(window_tmp);	
 +			  }
 +			default:
 +				break;
@@ -3815,7 +3815,7 @@ diff -Naur gtk+-2.4.14/gdk/linux-fb/gdkwindow-fb.c gtk+-2.4.14-xynth/gdk/linux-f
 +	|| (GDK_DRAWABLE_IMPL_FBDATA(window)->window_type ==GDK_WINDOW_TEMP))
 +	{
 +		if (GDK_DRAWABLE_IMPL_FBDATA(window)->running) {
-+			s_client_quit(GDK_DRAWABLE_IMPL_FBDATA(window)->xynth_window);
++			s_window_quit(GDK_DRAWABLE_IMPL_FBDATA(window)->xynth_window);
 +			s_thread_join(GDK_DRAWABLE_IMPL_FBDATA(window)->th_id, NULL);
 +		}
 +	}
