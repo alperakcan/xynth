@@ -2392,7 +2392,42 @@ int s_timers_uninit (s_window_t *window);
   * for further information look in demo/ directory
   *
   * @code
-  * // simple example will be in here
+  * void simple_atevent (s_window_t *window, s_event_t *event)
+  * {
+  * 	if (event->type & KEYBD_EVENT) {
+  * 		debugf(DCLI, "[%d] event: 0x%08X, f: 0x%08X, b: %d, a:%c", window->id, event->type, event->keybd->flag, event->keybd->button, event->keybd->ascii);
+  * 	}
+  * 	if (event->type & MOUSE_EVENT) {
+  * 		debugf(DCLI, "[%d] event->type : 0x%08X, button : 0x%08X, buttons : 0x%08X", window->id, event->type, event->mouse->b, event->mouse->buttons);
+  * 	}
+  * }
+  * 
+  * void simple_atexit (s_window_t *window)
+  * {
+  * 	debugf(DCLI, "[%d] exited", window->id);
+  * }
+  * 
+  * int main (int argc, char *argv[])
+  * {
+  * 	int x = 60;
+  * 	int y = 60;
+  * 	int w = 400;
+  * 	int h = 300;
+  * 	int mw = 1000;
+  * 	int mh = 1000;
+  * 	s_window_t *window;
+  * 	s_window_init(&window);
+  * 	s_window_new(window, WINDOW_MAIN, NULL);
+  * 	mw = window->surface->width;
+  * 	mh = window->surface->height;
+  * 	s_window_set_title(window, "Demo - %s", argv[0]);
+  * 	s_window_set_coor(window, 0, x, y, MIN(mw, w), MIN(mh, h));
+  *   	s_window_atevent(window, simple_atevent);
+  * 	s_window_atexit(window, simple_atexit);
+  * 	s_window_show(window);
+  *   	s_window_main(window);
+  * 	return 0;
+  * }
   * @endcode
   */
 
