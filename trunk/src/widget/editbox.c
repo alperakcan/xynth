@@ -102,6 +102,7 @@ int w_editbox_init (w_window_t *window, w_editbox_t **editbox, w_object_t *paren
 	(*editbox)->textbox->properties = TEXTBOX_VCENTER;
 	(*editbox)->textbox->frame->style = FRAME_LINEEDITPANEL | FRAME_SUNKEN;
 	(*editbox)->object = (*editbox)->textbox->frame->object;
+	(*editbox)->object->type = OBJECT_EDITBOX;
 	(*editbox)->object->data[OBJECT_EDITBOX] = *editbox;
 	(*editbox)->object->geometry = w_editbox_geometry;
 	(*editbox)->object->draw = w_editbox_draw;

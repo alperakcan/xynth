@@ -13,7 +13,7 @@ endif
 
 CFLAGS += $(SPIDER_MONKEY_CFLAGS)
 INCDIR = ./ ../ ../../lib $(SPIDER_MONKEY_INC)
-LIBDIR = ../../lib
+LIBDIR = ../../lib ../../widget
 LDFLAGS = -lwidget -lxynth -lexpat -lm $(SPIDER_MONKEY_LIB)
 
 OBJS = widgetr.o table.o parse.o node.o list.o code.o js.o

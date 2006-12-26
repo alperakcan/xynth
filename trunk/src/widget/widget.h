@@ -58,7 +58,8 @@ typedef enum {
 	OBJECT_CHECKBOX		= 0x9,
 	OBJECT_SCROLLBUFFER	= 0xa,
 	OBJECT_SCROLLBUFFERBAR	= 0xb,
-	OBJECT_OBJECTS 		= 0xc
+	OBJECT_WINDOW		= 0xc,
+	OBJECT_OBJECTS 		= 0xd
 } OBJECT;
 
 typedef enum {
@@ -139,6 +140,8 @@ struct w_object_s {
 
 /*@}*/
 
+void w_object_hide_ (w_object_t *object);
+void w_object_show_ (w_object_t *object);
 int w_object_effect_stop (w_object_t *object);
 void w_object_effect_timer_cb (s_window_t *window, s_timer_t *timer);
 int w_object_effect_start (w_object_t *object);
@@ -150,6 +153,7 @@ int w_object_draw (w_object_t *object);
 int w_object_refresh (w_object_t *object);
 int w_object_set_content (w_object_t *object, int x, int y, int w, int h);
 int w_object_move_correct (w_object_t *object);
+int w_object_move_silent (w_object_t *object, int x, int y, int w, int h);
 int w_object_move (w_object_t *object, int x, int y, int w, int h);
 int w_object_hide (w_object_t *object);
 int w_object_show (w_object_t *object);
@@ -162,8 +166,8 @@ int w_object_level_count_ (w_object_t *parent, int *level);
 int w_object_level_count (w_object_t *parent, int *level);
 int w_object_level_find_ (w_object_t *parent, w_object_t *object, int *level);
 int w_object_level_find (w_object_t *parent, w_object_t *object, int *level);
-int w_object_ischild (w_object_t *parent, w_object_t *child);
 int w_object_isshownchild (w_object_t *parent, w_object_t *child);
+int w_object_ischild (w_object_t *parent, w_object_t *child);
 int w_object_init (w_window_t *window, w_object_t **object, void (*draw) (w_object_t *), w_object_t *parent);
 void w_object_uninit (w_object_t *object);
 

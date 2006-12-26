@@ -286,6 +286,7 @@ int w_textbox_init (w_window_t *window, w_textbox_t **textbox, w_object_t *paren
 	(*textbox)->yoffset = 0;
 
 	(*textbox)->object = (*textbox)->frame->object;
+	(*textbox)->object->type = OBJECT_TEXTBOX;
 	(*textbox)->object->draw = w_textbox_draw;
 	(*textbox)->object->geometry = w_textbox_geometry;
 	(*textbox)->object->destroy = w_textbox_uninit;

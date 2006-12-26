@@ -153,6 +153,7 @@ int w_checkbox_init (w_window_t *window, w_checkbox_t **checkbox, w_object_t *pa
 	w_object_show(cb->box->object);
 	
 	cb->object = cb->button->object;
+	cb->object->type = OBJECT_CHECKBOX;
 	cb->object->data[OBJECT_CHECKBOX] = cb;
 	cb->button->released = w_checkbox_released;
 	cb->object->draw = w_checkbox_draw;

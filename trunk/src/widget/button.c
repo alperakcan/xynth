@@ -260,6 +260,7 @@ int w_button_init (w_window_t *window, w_button_t **button, w_object_t *parent)
 	(*button)->handler_k->data = *button;	
 
 	(*button)->object = (*button)->frame->object;
+	(*button)->object->type = OBJECT_BUTTON;
 	(*button)->object->data[OBJECT_BUTTON] = *button;
 	(*button)->object->draw = w_button_draw;
 	(*button)->object->event = w_button_event;
