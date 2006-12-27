@@ -110,6 +110,11 @@ endif
 ifeq ($(VIDEO_NULL), Y)
 	CFLAGS += -DVIDEO_NULL
 endif
+ifeq ($(VIDEO_CACA), Y)
+	VIDEO_HELPER         = Y
+	VIDEO_HELPER_MODES   = Y
+	CFLAGS += -DVIDEO_CACA
+endif
 ifeq ($(VIDEO_HELPER), Y)
 	CFLAGS += -DVIDEO_HELPER
 	ifeq ($(VIDEO_HELPER_CONSOLE), Y)
