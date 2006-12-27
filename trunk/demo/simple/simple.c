@@ -53,7 +53,7 @@ static void simple_handler1r (s_window_t *window, s_event_t *event, s_handler_t 
 static void simple_handler2p (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
 //	s_window_set_coor(window, WINDOW_NOFORM, 0, 0, 200, 300);
-	s_window_set_cursor(window, ++c);
+	s_window_set_cursor(window, c++);
 	if (c >= MOUSE_CURSOR_MAX) {
 		c = MOUSE_CURSOR_ARROW;
 	}
