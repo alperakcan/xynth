@@ -44,6 +44,9 @@
 #if defined(VIDEO_GP2X)
 	extern s_video_driver_t s_video_gp2x;
 #endif
+#if defined(VIDEO_CACA)
+	extern s_video_driver_t s_video_caca;
+#endif
 #if defined(VIDEO_NULL)
 	extern s_video_driver_t s_video_null;
 #endif
@@ -69,6 +72,9 @@ static s_video_driver_t *video_drivers[] = {
 #endif
 #if defined(VIDEO_GP2X)
 	&s_video_gp2x,
+#endif
+#if defined(VIDEO_CACA)
+	&s_video_caca,
 #endif
 #if defined(VIDEO_NULL)
 	&s_video_null,

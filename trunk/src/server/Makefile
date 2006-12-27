@@ -37,6 +37,9 @@ TARGET-$(VIDEO_GDI)        = xynth.exe
 OBJS-$(VIDEO_GP2X)        += video/gp2x/event.o video/gp2x/kbd.o video/gp2x/mouse.o video/gp2x/server.o
 VLDFLAGS-$(VIDEO_GP2X)    += -lpthread -lm -static
 
+OBJS-$(VIDEO_CACA)        += video/caca/event.o video/caca/kbd.o video/caca/mouse.o video/caca/server.o
+VLDFLAGS-$(VIDEO_CACA)    += -lcaca -lslang -lX11 -L/usr/X11R6/lib -lncurses -lncurses  -lm
+
 OBJS-$(VIDEO_NULL)        += video/null/kbd.o video/null/mouse.o video/null/server.o
 
 OBJS-$(VIDEO_HELPER)      += video/helper/console.o video/helper/irman.o video/helper/kbd.o video/helper/modes.o \

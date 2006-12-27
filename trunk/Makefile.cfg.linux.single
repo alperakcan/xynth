@@ -37,6 +37,7 @@ VIDEO_SDL       = Y
 VIDEO_PSPDEV    = N
 VIDEO_GDI       = N
 VIDEO_GP2X      = N
+VIDEO_CACA      = N
 VIDEO_NULL      = N
 
 # Thread Support
