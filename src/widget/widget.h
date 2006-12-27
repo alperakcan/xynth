@@ -79,22 +79,6 @@ void w_effect_timer_cb (s_window_t *window, s_timer_t *timer);
 int w_effect_apply (s_surface_t *surface, s_rect_t *rect, w_object_t *effect, w_object_t *object);
 
 /* object.c */
-typedef enum {
-	OBJECT_OBJECT		= 0x0,
-	OBJECT_FRAME   		= 0x1,
-	OBJECT_BUTTON  		= 0x2,
-	OBJECT_TEXTBOX 		= 0x3,
-	OBJECT_EDITBOX 		= 0x4,
-	OBJECT_LISTBOX 		= 0x5,
-	OBJECT_PROGRESSBAR 	= 0x6,
-	OBJECT_SCROLLBAR	= 0x7,
-	OBJECT_COMBOBOX		= 0x8,
-	OBJECT_CHECKBOX		= 0x9,
-	OBJECT_SCROLLBUFFER	= 0xa,
-	OBJECT_SCROLLBUFFERBAR	= 0xb,
-	OBJECT_WINDOW		= 0xc,
-	OBJECT_OBJECTS 		= 0xd
-} OBJECT;
 
 /** @defgroup widget_object Widget Library - Object API
   * @brief
@@ -110,6 +94,33 @@ typedef enum {
 
 /** @addtogroup widget_object */
 /*@{*/
+
+/** object widget types
+  */
+typedef enum {
+	/** widget is object */
+	OBJECT_OBJECT		= 0x0,
+	/** widget is frame */
+	OBJECT_FRAME   		= 0x1,
+	/** widget is button */
+	OBJECT_BUTTON  		= 0x2,
+	/** widget is textbox */
+	OBJECT_TEXTBOX 		= 0x3,
+	/** widget is editbox */
+	OBJECT_EDITBOX 		= 0x4,
+	/** widget is progressbar */
+	OBJECT_PROGRESSBAR 	= 0x5,
+	/** widget is checkbox */
+	OBJECT_CHECKBOX		= 0x6,
+	/** widget is scrollbuffer */
+	OBJECT_SCROLLBUFFER	= 0x7,
+	/** widget is scrollbufferbar */
+	OBJECT_SCROLLBUFFERBAR	= 0x8,
+	/** widget is window */
+	OBJECT_WINDOW		= 0x9,
+	/** number of widgets */
+	OBJECT_OBJECTS 		= 0xa
+} OBJECT;
 
 /** object struct
  */
