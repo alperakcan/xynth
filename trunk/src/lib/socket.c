@@ -74,12 +74,12 @@ int s_socket_request_display (s_window_t *window, int soc)
 	return 0;
 }
 
-int s_socket_request_configure (s_window_t *window, int soc, S_WINDOW form)
+int s_socket_request_configure (s_window_t *window, int soc, int form)
 {
 	s_soc_data_configure_t *data;
 	data = (s_soc_data_configure_t *) s_calloc(1, sizeof(s_soc_data_configure_t));
 
-	data->form = (form & WINDOW_NOFORM);
+	data->form = (form) ? WINDOW_NOFORM : 0;
 	data->rnew = *(window->surface->buf);
 	data->resizeable = window->resizeable;
 	data->alwaysontop = window->alwaysontop;
@@ -213,7 +213,7 @@ again:	if (window->running <= 0) {
 		case SOC_DATA_CONFIGURE:
 			va_start(ap, req);
 			form = (S_WINDOW) va_arg(ap, S_WINDOW);
-			ret = s_socket_request_configure(window, pollfd.fd, form);
+			ret = s_socket_request_configure(window, pollfd.fd, (form) ? 1 : 0);
 			va_end(ap);
 			break;
 		case SOC_DATA_EXPOSE:
