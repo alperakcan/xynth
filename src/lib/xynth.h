@@ -47,27 +47,6 @@ typedef struct s_timer_s s_timer_t;
 typedef struct s_timers_s s_timers_t;
 
 typedef enum {
-	SOC_DATA_NOTHING   = 0x0,
-	SOC_DATA_NEW       = 0x1,
-	SOC_DATA_SHOW      = 0x2,
-	SOC_DATA_CLOSE     = 0x3,
-	SOC_DATA_EVENT     = 0x4,
-	SOC_DATA_EXPOSE    = 0x5,
-	SOC_DATA_DISPLAY   = 0x6,
-	SOC_DATA_FORMDRAW  = 0x7,
-	SOC_DATA_CONFIGURE = 0x8,
-	SOC_DATA_DESKTOP   = 0x9,
-} S_SOC_DATA;
-
-typedef enum {
-	WINDOW_NOFORM     = 0x0040,
-	WINDOW_MAIN       = 0x0080,
-	WINDOW_TEMP       = 0x0100,
-	WINDOW_CHILD      = 0x0200,
-	WINDOW_DESKTOP    = 0x0400
-} S_WINDOW;
-
-typedef enum {
 	MOUSE_CURSOR_WAIT    = 0x0,
 	MOUSE_CURSOR_CROSS   = 0x1,
 	MOUSE_CURSOR_IBEAM   = 0x2,
@@ -1138,8 +1117,37 @@ int s_putmaskpart (unsigned char *dp, int dw, int dh, int x, int y, int w, int h
   * @brief this api is used for setting and processing handlers, and callback for input events.
   *
   * @example
+  * 
+  * for further information look in demo/ directory
+  * 
   * @code
-  * // simple example code will be in here
+  * void simpe_handle_onover (s_window_t *window, s_event_t *event, s_handler_t *handler)
+  * {
+  * }
+  * void simpe_handle_pressed (s_window_t *window, s_event_t *event, s_handler_t *handler)
+  * {
+  * }
+  * void simpe_handle_released (s_window_t *window, s_event_t *event, s_handler_t *handler)
+  * {
+  * }
+  * void simpe_handle_clicked (s_window_t *window, s_event_t *event, s_handler_t *handler)
+  * {
+  * }
+  * {
+  * 	s_handler_t *hndl;
+  * 	s_handler_init(&hndl);
+  * 	hndl->type = MOUSE_HANDLER;
+  * 	hndl->mouse.x = 0;
+  * 	hndl->mouse.y = 0;
+  * 	hndl->mouse.w = 20;
+  * 	hndl->mouse.h = 20;
+  * 	hndl->mouse.o = simpe_handle_onover;
+  * 	hndl->mouse.c = simpe_handle_clicked;
+  * 	hndl->mouse.p = simpe_handle_pressed;
+  * 	hndl->mouse.r = simpe_handle_released;
+  * 	hndl->mouse.button = MOUSE_LEFTBUTTON;
+  * 	s_handler_add(window, hndl);
+  * }
   * @endcode
   */
 
@@ -1909,29 +1917,223 @@ int s_rect_difference (s_rect_t *r1, s_rect_t *r0, s_list_t *list);
 
 /*@}*/
 
+/** @defgroup client_socket Client Library - Socket API
+  * @brief s_socket_* api is very internal, and is used for server / client
+  *        interaction. every message type has its own function both for
+  *        sending and receiving. programmers do not need to use these
+  *        functions unless they do not want to modify or expand the inter
+  *        messaging sub system. additionaly, the comminication initializations
+  *        is alsa done by this api calls.
+  */
+
+/** @addtogroup client_socket */
+/*@{*/
+
+/** socket data types
+  */  
+typedef enum {
+	/** nothing ;) */
+	SOC_DATA_NOTHING   = 0x0,
+	/** new window */
+	SOC_DATA_NEW       = 0x1,
+	/** show, hide */
+	SOC_DATA_SHOW      = 0x2,
+	/** close me request */
+	SOC_DATA_CLOSE     = 0x3,
+	/** event */
+	SOC_DATA_EVENT     = 0x4,
+	/** expose */
+	SOC_DATA_EXPOSE    = 0x5,
+	/** display properties */
+	SOC_DATA_DISPLAY   = 0x6,
+	/** request to re draw window form */
+	SOC_DATA_FORMDRAW  = 0x7,
+	/** configure */
+	SOC_DATA_CONFIGURE = 0x8,
+	/** special data for desktop windows' */
+	SOC_DATA_DESKTOP   = 0x9,
+} S_SOC_DATA;
+
 /* socket.c */
+
+/** @brief send new window request to server
+  *
+  * @param *window - the window
+  * @param soc     - window socket
+  * @return 0 on success
+  */
 int s_socket_request_new (s_window_t *window, int soc);
+
+/** @brief send display request to server
+  *
+  * @param *window - the window
+  * @param soc     - window socket
+  * @return 0 on success
+  */
 int s_socket_request_display (s_window_t *window, int soc);
-int s_socket_request_configure (s_window_t *window, int soc, S_WINDOW form);
+
+/** @brief configure request to server
+  *
+  * @param *window - the window
+  * @param soc     - window socket
+  * @param form    - is form area will be calculated
+  * @return 0 on success
+  */
+int s_socket_request_configure (s_window_t *window, int soc, int form);
+
+/** @brief stream request to server
+  *
+  * @param *window - the window
+  * @param soc     - window socket
+  * @param coor    - coordinates to be updated
+  * @return 0 on success
+  */
 int s_socket_request_stream (s_window_t *window, int soc, s_rect_t *coor);
+
+/** @brief show request to server
+  *
+  * @param *window - the window
+  * @param soc     - window socket
+  * @param id      - requested window id
+  * @param show    - 1: show, 0: hide
+  * @return 0 on success
+  */
 int s_socket_request_show (s_window_t *window, int soc, int id, int show);
+
+/** @brief send event request to server
+  *
+  * @param *window - the window
+  * @param soc     - window socket
+  * @param *event  - event data to send
+  * @return 0 on success
+  */
 int s_socket_request_event (s_window_t *window, int soc, s_event_t *event);
+
+/** @brief send request to server
+  *
+  * @param *window - the window
+  * @param req     - reuest type, followed with request params -if any-.
+  * @return 0 on success
+  */
 int s_socket_request (s_window_t *window, S_SOC_DATA req, ...);
+
+/** @brief recv, parse end process event data
+  *
+  * @param *window - the window
+  * @param soc     - window socket
+  * @returns 0 on success
+  */
 int s_socket_listen_event (s_window_t *window, int soc);
+
+/** @brief recv, parse end process expose data
+  *
+  * @param *window - the window
+  * @param soc     - window socket
+  * @returns 0 on success
+  */
 int s_socket_listen_expose (s_window_t *window, int soc);
+
+/** @brief recv, parse end process desktop data
+  *
+  * @param *window - the window
+  * @param soc     - window socket
+  * @returns 0 on success
+  */
 int s_socket_listen_desktop (s_window_t *window, int soc);
+
+/** @brief recv, and call the processing function
+  *
+  * @param *window - the window
+  * @param soc     - window socket
+  * @returns 0 on success
+  */
 int s_socket_listen_parse (s_window_t *window, int soc);
+
+/** @brief waits until any event occurs on socket, or timeout.
+  *
+  * @param *window - the window
+  * @param timeout - timeout value in mili seconds
+  * @returns 0 on success
+  */
 int s_socket_listen_wait (s_window_t *window, int timeout);
+
+/** @brief uninitialize window socket
+  *
+  * @param *window - the window
+  * @param *pfd    - pollfd handler for window socket
+  * @returns 0 on success
+  */
 int s_socket_uninit (s_window_t *window, s_pollfd_t *pfd);
+
+/** @brief pollfd in data call back function for window socket
+  *
+  * @param *window - the window
+  * @param *pfd    - pollfd handler for window socket
+  * @returns 0 on success
+  */
 int s_socket_in_f (s_window_t *window, s_pollfd_t *pfd);
+
+/** @brief pollfd error call back function for window socket
+  *
+  * @param *window - the window
+  * @param *pfd    - pollfd handler for window socket
+  * @returns 0 on success
+  */
 int s_socket_ierr_f (s_window_t *window, s_pollfd_t *pfd);
+
+/** @brief pollfd in data call back function for window wakeup socket
+  *
+  * @param *window - the window
+  * @param *pfd    - pollfd handler for window socket
+  * @returns 0 on success
+  */
 int s_socket_inw_f (s_window_t *window, s_pollfd_t *pfd);
+
+/** @brief pollfd error call back function for window wakeup socket
+  *
+  * @param *window - the window
+  * @param *pfd    - pollfd handler for window socket
+  * @returns 0 on success
+  */
 int s_socket_ierrw_f (s_window_t *window, s_pollfd_t *pfd);
+
+/** @brief pollfd close call back function for window wakeup socket
+  *
+  * @param *window - the window
+  * @param *pfd    - pollfd handler for window socket
+  * @returns 0 on success
+  */
 int s_socket_closew_f (s_window_t *window, s_pollfd_t *pfd);	
+
+/** @brief initialize uds socket connection between server and window
+  *
+  * @param *window - the window
+  * @returns 0 on success
+  */
 int s_socket_init_uds (s_window_t *window);
+
+/** @brief initialize tcp socket connection between server and window
+  *
+  * @param *window - the window
+  * @returns 0 on success
+  */
 int s_socket_init_tcp (s_window_t *window);
+
+/** @brief initialize wakeup socket for window
+  *
+  * @param *window - the window
+  * @returns 0 on success
+  */
 int s_socket_init_wakeup (s_window_t *window);
+
+/** @brief initialize socket connection between server and window
+  *
+  * @param *window - the window
+  * @returns 0 on success
+  */
 int s_socket_init (s_window_t *window);
+
+/*@}*/
 
 /** @defgroup client_surface Client Library - Surface API
   * @brief s_surface_* api is very internal, and is used for initializing the video buffer,
@@ -1939,7 +2141,6 @@ int s_socket_init (s_window_t *window);
   *        video buffer, linear shadow buffer, streaming buffer -. programmers do not need
   *        to use these functions unless they do not want to change the behaviour of server/
   *        client interraction.
-  * 
   */
 
 /** @addtogroup client_surface */
@@ -2491,6 +2692,21 @@ int s_timers_uninit (s_window_t *window);
 
 /** @addtogroup client_window */
 /*@{*/
+
+/** window types
+  */
+typedef enum {
+	/** dont calculate form area, for requested action */
+	WINDOW_NOFORM     = 0x0040,
+	/** window main */
+	WINDOW_MAIN       = 0x0080,
+	/** window temp */
+	WINDOW_TEMP       = 0x0100,
+	/** window child */
+	WINDOW_CHILD      = 0x0200,
+	/** window desktop, this is a bitwise or'ed property */
+	WINDOW_DESKTOP    = 0x0400
+} S_WINDOW;
 
 /** window struct
   */
