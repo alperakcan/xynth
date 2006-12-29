@@ -700,8 +700,24 @@ char * s_gettext (s_window_t *window, const char *str);
 void s_gettext_uninit (s_window_t *window);
 int s_gettext_init (s_window_t *window);
 
+/** @defgroup client_time Client Library - Time API
+  * @brief this is a layer to operating systems time api.
+  */
+
+/** @addtogroup client_time */
+/*@{*/
+
 /* gettime.c */
+
+/** @brief resolution is miliseconds, and is enough for any gui related work.
+  *        if you need a high presicion you should not use this function,
+  *        consider looking to your system specs.
+  * 
+  * @returns the time value in miliseconds
+  */
 long long s_gettimeofday (void);
+
+/*@}*/
 
 /** @defgroup client_grlib Client Library - Graphics API
   * @brief these are simple low-level graphics api functions, for further information
