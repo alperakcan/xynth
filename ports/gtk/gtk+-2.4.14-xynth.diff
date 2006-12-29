@@ -3232,8 +3232,8 @@ diff -Naur gtk+-2.4.14/gdk/linux-fb/gdkrender-fb.c gtk+-2.4.14-xynth/gdk/linux-f
 -      src += gdk_display->fb_stride - width * depth;
 -      height--;
 -    }
-+        s_putboxpart(window->surface, x - GDK_DRAWABLE_IMPL_FBDATA((GdkWindow *) window->client->data)->abs_x,
-+                                      y - GDK_DRAWABLE_IMPL_FBDATA((GdkWindow *) window->client->data)->abs_y,
++        s_putboxpart(window->surface, x - GDK_DRAWABLE_IMPL_FBDATA((GdkWindow *) window->data)->abs_x,
++                                      y - GDK_DRAWABLE_IMPL_FBDATA((GdkWindow *) window->data)->abs_y,
 +                                      width, height, window->surface->width, window->surface->height, gdk_display->fb_mem, x, y);
  }
  
@@ -3474,21 +3474,21 @@ diff -Naur gtk+-2.4.14/gdk/linux-fb/gdkwindow-fb.c gtk+-2.4.14-xynth/gdk/linux-f
 +void gdk_client_atevent (s_window_t *window, s_event_t *event)
  {
 -  GdkWindow *window;
-+GdkWindow *gwindow = window->client->data;
++GdkWindow *gwindow = window->data;
 +GdkWindowObject *private = (GdkWindowObject *) gwindow;
 +
 +	if (event->type & EXPOSE_EVENT) {
-+		if ((((GdkWindowObject *) window->client->data)->x != window->surface->buf->x) ||
-+		    (((GdkWindowObject *) window->client->data)->y != window->surface->buf->y) ||
-+		    (GDK_DRAWABLE_IMPL_FBDATA((GdkWindowObject *) window->client->data)->width != window->surface->buf->w) ||
-+		    (GDK_DRAWABLE_IMPL_FBDATA((GdkWindowObject *) window->client->data)->height != window->surface->buf->h)) {
-+			gdk_window_move_resize((GdkWindow *) window->client->data,
++		if ((((GdkWindowObject *) window->data)->x != window->surface->buf->x) ||
++		    (((GdkWindowObject *) window->data)->y != window->surface->buf->y) ||
++		    (GDK_DRAWABLE_IMPL_FBDATA((GdkWindowObject *) window->data)->width != window->surface->buf->w) ||
++		    (GDK_DRAWABLE_IMPL_FBDATA((GdkWindowObject *) window->data)->height != window->surface->buf->h)) {
++			gdk_window_move_resize((GdkWindow *) window->data,
 +			                       window->surface->buf->x, window->surface->buf->y,
 +			                       window->surface->buf->w, window->surface->buf->h);
 +		}
 +	/* Change focus event coming from xynth */
 +	if ((event->type & FOCUS_EVENT) && (GDK_WINDOW_TYPE(gwindow)==GDK_WINDOW_TOPLEVEL)){
-+	if (window->client->pri == 0)
++	if (window->pri == 0)
 +	{
 +	GdkEventFocus *gevent;
 +	gevent = (GdkEventFocus *)gdk_event_make (gwindow, GDK_FOCUS_CHANGE, TRUE);
@@ -3524,7 +3524,7 @@ diff -Naur gtk+-2.4.14/gdk/linux-fb/gdkwindow-fb.c gtk+-2.4.14-xynth/gdk/linux-f
 -  GdkVisual *visual;
 -  GdkWindowFBData *impl;
 +	GdkEvent *event;
-+	GdkWindow *destroy_window = (GdkWindow *) window->client->data;
++	GdkWindow *destroy_window = (GdkWindow *) window->data;
  
 -  int x, y, depth;
 -  
@@ -3697,7 +3697,7 @@ diff -Naur gtk+-2.4.14/gdk/linux-fb/gdkwindow-fb.c gtk+-2.4.14-xynth/gdk/linux-f
 +                case GDK_WINDOW_ROOT:
 +                	{
 +				GDK_DRAWABLE_IMPL_FBDATA(window)->xynth_window = gdk_display->xynth_root;
-+				gdk_display->xynth_root->client->data = window;
++				gdk_display->xynth_root->data = window;
 +			}
 +			break;
 +		default:
@@ -3735,7 +3735,7 @@ diff -Naur gtk+-2.4.14/gdk/linux-fb/gdkwindow-fb.c gtk+-2.4.14-xynth/gdk/linux-f
 +					}
 +					s_window_atevent(window_tl, gdk_client_atevent);
 +					s_window_atexit(window_tl, gdk_client_atexit);
-+					window_tl->client->data = window;
++					window_tl->data = window;
 +	        s_window_main(window_tl);
 +          impl->drawable_data.running = 1;
 +          impl->drawable_data.th_id = window_tl->tid;
@@ -3754,7 +3754,7 @@ diff -Naur gtk+-2.4.14/gdk/linux-fb/gdkwindow-fb.c gtk+-2.4.14-xynth/gdk/linux-f
 +				s_window_new(window_tmp, WINDOW_CHILD | WINDOW_NOFORM , gdk_display->xynth_root);
 +				s_window_atevent(window_tmp, gdk_client_atevent);
 +				s_window_atexit(window_tmp, gdk_client_atexit);
-+				window_tmp->client->data = window;
++				window_tmp->data = window;
 +			
 +				GDK_DRAWABLE_IMPL_FBDATA(window)->running = 1;
 +				GDK_DRAWABLE_IMPL_FBDATA(window)->th_id = window_tmp->tid;
