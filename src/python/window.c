@@ -1,6 +1,6 @@
 /***************************************************************************
     begin                : Sat Jul 2 2005
-    copyright            : (C) 2005 - 2006 by Alper Akcan
+    copyright            : (C) 2005 - 2007 by Alper Akcan
     email                : distchx@yahoo.com
  ***************************************************************************/
 
@@ -87,7 +87,7 @@ PyTypeObject p_window_type = {
 void p_window_dealloc (PyObject *obj)
 {
 	p_window_t *window = (p_window_t *) obj;
-	s_client_exit(window->window);
+	s_window_exit(window->window);
 	obj->ob_type->tp_free(obj);
 }
 
@@ -117,7 +117,7 @@ PyObject * p_window_show (PyObject *self, PyObject *args)
 PyObject * p_window_main (PyObject *self, PyObject *args)
 {
 	p_window_t *window = (p_window_t *) self;
-	s_client_main(window->window);
+	s_window_main(window->window);
 	return Py_BuildValue("i", 0);
 }
 
@@ -212,7 +212,7 @@ void p_client_atexit (s_window_t *xwin)
 	PyObject *res;
 	p_window_t *pwi;
 
-	pwi = (p_window_t *) xwin->client->data;
+	pwi = (p_window_t *) xwin->data;
 	arg = Py_BuildValue("(O)", pwi);
 	if (pwi->atexit != NULL) {
 		res = PyEval_CallObject(pwi->atexit, arg);
@@ -227,7 +227,7 @@ void p_client_atevent (s_window_t *xwin, s_event_t *xevn)
 	PyObject *res;
 	p_window_t *pwi;
 
-	pwi = (p_window_t *) xwin->client->data;
+	pwi = (p_window_t *) xwin->data;
 	arg = Py_BuildValue("(OO)", pwi, xevn);
 	if (pwi->atevent != NULL) {
 		res = PyEval_CallObject(pwi->atevent, arg);
@@ -250,9 +250,9 @@ PyObject * wrap_window (PyObject *self, PyObject *args)
 	window->atevent = NULL;
 	window->atexit = NULL;
 	
-	res = s_client_init(&(window->window));
+	res = s_window_init(&(window->window));
 	if (res) {
-		PyErr_SetString(PyExc_TypeError, "s_client_init failed.");
+		PyErr_SetString(PyExc_TypeError, "s_window_init failed.");
 		return NULL;
 	}
 	res = s_window_new(window->window, wtype, NULL);
@@ -261,10 +261,10 @@ PyObject * wrap_window (PyObject *self, PyObject *args)
 		Py_DECREF((PyObject *) window);
 		return NULL;
 	}
-	window->window->client->data = window;
+	window->window->data = window;
 
-	s_client_atexit(window->window, p_client_atexit);
-	s_client_atevent(window->window, p_client_atevent);
+	s_window_atexit(window->window, p_client_atexit);
+	s_window_atevent(window->window, p_client_atevent);
 	
 	return (PyObject *) window;
 }
