@@ -69,6 +69,13 @@ void w_button_event (w_object_t *object, s_event_t *event)
 		s_event_parse_keybd_handler(object->window->window, event, button->handler_k);
 		s_thread_mutex_unlock(object->window->window->handlers->mut);
 	}
+	if (event->type & FOCUSOUT_EVENT) {
+		button->state = 0;
+		button->frame->style = (button->frame->style & FRAME_MSHAPE) | FRAME_RAISED;
+		button->frame->style |= (button->frame->object->focused) ? FRAME_FOCUSED : 0;
+		object->draw(object);
+		w_object_update(object, object->surface->win);
+	}
 }
 
 void w_button_draw (w_object_t *object)
