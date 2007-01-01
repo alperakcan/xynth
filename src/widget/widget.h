@@ -301,6 +301,9 @@ void w_textbox_slide (w_object_t *object, int vertical, int horizontal, int *yto
 int w_textbox_set_properties (w_object_t *object, TEXTBOX_PROPERTIES properties);
 int w_textbox_set_image (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs);
 int w_textbox_set_style (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow);
+void w_textbox_lines_uninit (w_object_t *object);
+void w_textbox_lines_calculate (w_object_t *object);
+void w_textbox_draw_ (w_object_t *object);
 void w_textbox_draw (w_object_t *object);
 int w_textbox_set_rgb (w_object_t *object, int r, int g, int b);
 int w_textbox_set_size (w_object_t *object, int size);

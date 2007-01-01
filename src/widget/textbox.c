@@ -28,7 +28,7 @@ void w_textbox_slide (w_object_t *object, int vertical, int horizontal, int *yto
 	w_textbox_t *textbox;
 	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
 	textbox->yoffset -= vertical;
-	w_textbox_draw(object);
+	w_textbox_draw_(object);
 	w_object_update(object, object->surface->win);
 	(*ytotal) = textbox->height;
 	(*yoffset) = textbox->yoffset;
@@ -176,7 +176,7 @@ void w_textbox_lines_calculate (w_object_t *object)
 	}
 }
 
-void w_textbox_draw (w_object_t *object)
+void w_textbox_draw_ (w_object_t *object)
 {
 	int x;
 	int y;
@@ -187,7 +187,6 @@ void w_textbox_draw (w_object_t *object)
 	w_textbox_t *textbox;
 	s_font_glyph_t *glyph;
 	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
-//	w_textbox_lines_calculate(object);
 	if (object->surface->vbuf == NULL) {
 		goto end;
 	}
@@ -211,8 +210,6 @@ void w_textbox_draw (w_object_t *object)
 		} else {
 			y = (object->content->h - h) / 2;
 		}
-//		x += object->content->x;
-//		y += object->content->y;
 		y += glyph->lineskip * line;
 		y += textbox->yoffset;
 		if (!(textbox->properties & TEXTBOX_HCENTER)) {
@@ -234,6 +231,12 @@ void w_textbox_draw (w_object_t *object)
 		}
 	}
 end:	;
+}
+
+void w_textbox_draw (w_object_t *object)
+{
+	w_textbox_lines_calculate(object);
+	w_textbox_draw_(object);
 //	w_textbox_lines_uninit(object);
 }
 
@@ -242,7 +245,6 @@ int w_textbox_set_rgb (w_object_t *object, int r, int g, int b)
 	w_textbox_t *textbox;
 	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
 	textbox->rgb = ((r & 0xff) << 0x10) | ((g & 0xff) << 0x8) | (b & 0xff);
-	w_textbox_lines_calculate(object);
 	w_textbox_draw(object);
 	return 0;
 }
@@ -252,7 +254,6 @@ int w_textbox_set_size (w_object_t *object, int size)
 	w_textbox_t *textbox;
 	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
 	textbox->size = size;
-	w_textbox_lines_calculate(object);
 	w_textbox_draw(object);
 	return 0;
 }
@@ -268,7 +269,6 @@ int w_textbox_set_str (w_object_t *object, char *str)
 	}
 	s_free(textbox->str);
 	textbox->str = str;
-	w_textbox_lines_calculate(object);
 	w_textbox_draw(object);
 	return 0;
 }
@@ -276,7 +276,6 @@ int w_textbox_set_str (w_object_t *object, char *str)
 void w_textbox_geometry (w_object_t *object)
 {
 	w_frame_geometry(object);
-	w_textbox_lines_calculate(object);
 	w_textbox_draw(object);
 }
 
