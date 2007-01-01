@@ -1,8 +1,8 @@
 /***************************************************************************
     begin                : Fri Sep 8 2006
-    copyright            : (C) 2006 by Alper Akcan
+    copyright            : (C) 2006 - 2007 by Alper Akcan
     email                : distchx@yahoo.com
-  **************************************************************************/
+ **************************************************************************/
 
 /***************************************************************************
  *                                                                         *
@@ -422,7 +422,7 @@ void w_frame_uninit (w_object_t *object)
 	w_frame_t *frame;
 	w_frame_image_t *fimg;
 	frame = (w_frame_t *) object->data[OBJECT_FRAME];
-	w_object_uninit(frame->object);
+	w_object_uninit(object);
 	while (!s_list_eol(frame->images, 0)) {
 		fimg = s_list_get(frame->images, 0);
 		s_list_remove(frame->images, 0);

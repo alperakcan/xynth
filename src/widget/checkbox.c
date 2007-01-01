@@ -1,8 +1,8 @@
 /***************************************************************************
     begin                : Tue Oct 10 2006
-    copyright            : (C) 2006 by Alper Akcan
+    copyright            : (C) 2006 - 2007 by Alper Akcan
     email                : distchx@yahoo.com
-  ***************************************************************************/
+ ***************************************************************************/
 
 /***************************************************************************
  *                                                                         *
@@ -38,7 +38,7 @@ int w_checkbox_set_style (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW sh
 
 int w_checkbox_set_image (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs)
 {
-	return w_frame_set_image (object, style, rotation, nimgs, imgs);
+	return w_frame_set_image(object, style, rotation, nimgs, imgs);
 }
 
 int w_checkbox_set_boxstyle (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow)
@@ -52,7 +52,7 @@ int w_checkbox_set_boximage (w_object_t *object, unsigned int style, unsigned in
 {
 	w_checkbox_t *cb;
 	cb = object->data[OBJECT_CHECKBOX];
-	return w_frame_set_image (cb->box->object, style, rotation, nimgs, imgs);
+	return w_frame_set_image(cb->box->object, style, rotation, nimgs, imgs);
 }
 
 int w_checkbox_set_rgb (w_object_t *object, int r, int g, int b)
@@ -131,7 +131,7 @@ void w_checkbox_uninit (w_object_t *object)
 	cb = object->data[OBJECT_CHECKBOX];
 	w_textbox_uninit(cb->text->object);
 	w_frame_uninit(cb->box->object);
-	w_button_uninit(cb->object);
+	w_button_uninit(object);
 	s_free(cb);
 }
 

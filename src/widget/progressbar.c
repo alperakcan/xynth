@@ -1,9 +1,9 @@
 /***************************************************************************
     begin                : Fri Sep 8 2006
-    copyright            : (C) 2006 by Alper Akcan
+    copyright            : (C) 2006 - 2007 by Alper Akcan
     email		 : distchx@yahoo.com, computationutku@yahoo.com
     file author          : Alper Akcan, Utku Bulkan
-  ***************************************************************************/
+ ***************************************************************************/
 
 /***************************************************************************
  *                                                                         *
@@ -19,9 +19,9 @@
 
 int w_progressbar_set_changed (w_object_t *object, void (*changed) (w_object_t *, int))
 {
-	w_progressbar_t *cb;
-	cb = object->data[OBJECT_PROGRESSBAR];
-	cb->changed = changed;
+	w_progressbar_t *pb;
+	pb = object->data[OBJECT_PROGRESSBAR];
+	pb->changed = changed;
 	return 0;
 }
 
@@ -32,21 +32,21 @@ int w_progressbar_set_style (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW
 
 int w_progressbar_set_image (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs)
 {
-	return w_frame_set_image (object, style, rotation, nimgs, imgs);
+	return w_frame_set_image(object, style, rotation, nimgs, imgs);
 }
 
 int w_progressbar_set_boxstyle (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow)
 {
-	w_progressbar_t *cb;
-	cb = object->data[OBJECT_PROGRESSBAR];
-	return w_frame_set_style(cb->box->object, shape, shadow);
+	w_progressbar_t *pb;
+	pb = object->data[OBJECT_PROGRESSBAR];
+	return w_frame_set_style(pb->box->object, shape, shadow);
 }
 
 int w_progressbar_set_boximage (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs)
 {
-	w_progressbar_t *cb;
-	cb = object->data[OBJECT_PROGRESSBAR];
-	return w_frame_set_image (cb->box->object, style, rotation, nimgs, imgs);
+	w_progressbar_t *pb;
+	pb = object->data[OBJECT_PROGRESSBAR];
+	return w_frame_set_image(pb->box->object, style, rotation, nimgs, imgs);
 }
 
 void w_progressbar_level (w_object_t *object, unsigned int level)
@@ -58,9 +58,9 @@ void w_progressbar_level (w_object_t *object, unsigned int level)
 	pb->level = MIN(100, pb->level);
 	pb->level = MAX(0, pb->level);
 	sprintf(str, "%% %d", pb->level);
-	w_progressbar_geometry(pb->object);
+	w_progressbar_geometry(object);
 	w_textbox_set_str(pb->text->object, str);
-	w_object_update(pb->object, pb->object->surface->win);
+	w_object_update(object, object->surface->win);
 	if (pb->changed) {
 		pb->changed(object, pb->level);
 	}
@@ -107,6 +107,6 @@ void w_progressbar_uninit (w_object_t *object)
 	pb = object->data[OBJECT_PROGRESSBAR];
 	w_frame_uninit(pb->box->object);
 	w_textbox_uninit(pb->text->object);
-	w_frame_uninit(pb->object);
+	w_frame_uninit(object);
 	s_free(pb);
 }
