@@ -1,8 +1,8 @@
 /***************************************************************************
     begin                : Tue Nov 28 2006
-    copyright            : (C) 2006 by Alper Akcan
+    copyright            : (C) 2006 - 2007 by Alper Akcan
     email                : distchx@yahoo.com
-  ***************************************************************************/
+ ***************************************************************************/
 
 /***************************************************************************
  *                                                                         *
@@ -30,9 +30,9 @@ void w_scrollbufferbar_geometry (w_object_t *object)
 {
 	w_scrollbufferbar_t *sbb;
 	sbb = object->data[OBJECT_SCROLLBUFFERBAR];
-	w_frame_geometry(sbb->object);
-	w_object_move(sbb->add->object, sbb->object->content->x, sbb->object->content->y, sbb->object->content->w, sbb->object->content->w);
-	w_object_move(sbb->sub->object, sbb->object->content->x, sbb->object->content->y + sbb->object->content->h - sbb->object->content->w, sbb->object->content->w, sbb->object->content->w);
+	w_frame_geometry(object);
+	w_object_move(sbb->add->object, object->content->x, object->content->y, object->content->w, object->content->w);
+	w_object_move(sbb->sub->object, object->content->x, object->content->y + object->content->h - object->content->w, object->content->w, object->content->w);
 }
 
 void w_scrollbufferbar_uninit (w_object_t *object)
@@ -42,7 +42,7 @@ void w_scrollbufferbar_uninit (w_object_t *object)
 	w_frame_uninit(sbb->box->object);
 	w_button_uninit(sbb->add->object);
 	w_button_uninit(sbb->sub->object);
-	w_frame_uninit(sbb->object);
+	w_frame_uninit(object);
 	s_free(sbb);
 }
 
@@ -156,13 +156,13 @@ void w_scrollbuffer_geometry (w_object_t *object)
 {
 	w_scrollbuffer_t *sb;
 	sb = object->data[OBJECT_SCROLLBUFFER];
-	w_frame_geometry(sb->object);
-	w_object_move(sb->vertical->object, sb->object->content->x + sb->object->content->w - 24,
-	                                    sb->object->content->y, 24, sb->object->content->h);
+	w_frame_geometry(object);
+	w_object_move(sb->vertical->object, object->content->x + object->content->w - 24,
+	                                    object->content->y, 24, object->content->h);
 	if (sb->child) {
 		w_object_move(sb->child, object->content->x, object->content->y, object->content->w - 24, object->content->h);
 	}
-	w_scrollbuffer_slide(sb->object, 0, 0);
+	w_scrollbuffer_slide(object, 0, 0);
 }
 
 void w_scrollbuffer_uninit (w_object_t *object)
@@ -170,7 +170,7 @@ void w_scrollbuffer_uninit (w_object_t *object)
 	w_scrollbuffer_t *sb;
 	sb = object->data[OBJECT_SCROLLBUFFER];
 	w_scrollbufferbar_uninit(sb->vertical->object);
-	w_frame_uninit(sb->object);
+	w_frame_uninit(object);
 	s_free(sb);
 }
 

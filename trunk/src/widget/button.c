@@ -1,8 +1,8 @@
 /***************************************************************************
     begin                : Fri Sep 8 2006
-    copyright            : (C) 2006 by Alper Akcan
+    copyright            : (C) 2006 - 2007 by Alper Akcan
     email                : distchx@yahoo.com
-  ***************************************************************************/
+ ***************************************************************************/
 
 /***************************************************************************
  *                                                                         *
@@ -42,7 +42,7 @@ int w_button_set_clicked (w_object_t *object, void (*clicked) (w_object_t *, int
 
 int w_button_set_image (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs)
 {
-	return w_frame_set_image (object, style, rotation, nimgs, imgs);
+	return w_frame_set_image(object, style, rotation, nimgs, imgs);
 }
 
 int w_button_set_style (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow)
@@ -61,7 +61,7 @@ void w_button_event (w_object_t *object, s_event_t *event)
 		event->mouse->py += object->window->window->surface->buf->y;
 		s_thread_mutex_lock(object->window->window->handlers->mut);
 		s_event_parse_handler_over(button->frame->object->window->window, event, button->handler_m);
-		s_event_parse_handler_notover(button->object->window->window, event, button->handler_m);
+		s_event_parse_handler_notover(object->window->window, event, button->handler_m);
 		s_thread_mutex_unlock(object->window->window->handlers->mut);
 	}
 	if (event->type & KEYBD_EVENT) {
@@ -93,37 +93,37 @@ void w_button_cb_o (s_window_t *window, s_event_t *event, s_handler_t *handler)
 
 void w_button_cb_p (s_window_t *window, s_event_t *event, s_handler_t *handler)
 { /* pressed */
-	w_button_t *button;
-	button = (w_button_t *) handler->data;
+	w_button_t *button = (w_button_t *) handler->data;
+	w_object_t *object = button->object;
 	if ((button->state == 0) &&
 	    (event->mouse->buttons == event->mouse->b)) {
 		button->state |= event->mouse->b;
 		button->frame->style = (button->frame->style & FRAME_MSHAPE) | FRAME_SUNKEN;
 		button->frame->style |= (button->frame->object->focused) ? FRAME_FOCUSED : 0;
-		button->object->draw(button->object);
-		w_object_update(button->object, button->object->surface->win);
+		object->draw(object);
+		w_object_update(object, object->surface->win);
 		if (button->pressed != NULL) {
-			button->pressed(button->object, event->mouse->b);
+			button->pressed(object, event->mouse->b);
 		}
 	}
 }
 
 void w_button_cb_c (s_window_t *window, s_event_t *event, s_handler_t *handler)
 { /* clicked */
-	w_button_t *button;
-	button = (w_button_t *) handler->data;
+	w_button_t *button = (w_button_t *) handler->data;
+	w_object_t *object = button->object;
 	if ((button->state != 0) &&
 	    (button->state == event->mouse->b)) {
 		button->state = 0;
 		button->frame->style = (button->frame->style & FRAME_MSHAPE) | FRAME_RAISED;
 		button->frame->style |= (button->frame->object->focused) ? FRAME_FOCUSED : 0;
-		button->object->draw(button->object);
-		w_object_update(button->object, button->object->surface->win);
+		object->draw(object);
+		w_object_update(object, object->surface->win);
 		if (button->released != NULL) {
-			button->released(button->object, event->mouse->b);
+			button->released(object, event->mouse->b);
 		}
 		if (button->clicked != NULL) {
-			button->clicked(button->object, event->mouse->b, event->mouse->clicks);
+			button->clicked(object, event->mouse->b, event->mouse->clicks);
 		}
 	}
 	
@@ -131,17 +131,17 @@ void w_button_cb_c (s_window_t *window, s_event_t *event, s_handler_t *handler)
 
 void w_button_cb_r (s_window_t *window, s_event_t *event, s_handler_t *handler)
 { /* released */
-	w_button_t *button;
-	button = (w_button_t *) handler->data;
+	w_button_t *button = (w_button_t *) handler->data;
+	w_object_t *object = button->object;
 	if ((button->state != 0) &&
 	    (button->state == event->mouse->b)) {
 		button->state = 0;
 		button->frame->style = (button->frame->style & FRAME_MSHAPE) | FRAME_RAISED;
 		button->frame->style |= (button->frame->object->focused) ? FRAME_FOCUSED : 0;
-		button->object->draw(button->object);
-		w_object_update(button->object, button->object->surface->win);
+		object->draw(object);
+		w_object_update(object, object->surface->win);
 		if (button->released != NULL) {
-			button->released(button->object, event->mouse->b);
+			button->released(object, event->mouse->b);
 		}
 	}
 }
@@ -156,70 +156,70 @@ void w_button_cb_rh (s_window_t *window, s_event_t *event, s_handler_t *handler)
 
 void w_button_cb_ho (s_window_t *window, s_event_t *event, s_handler_t *handler)
 { /* on over, but mouse button is still pressed */
-	w_button_t *button;
-	button = (w_button_t *) handler->data;
+	w_button_t *button = (w_button_t *) handler->data;
+	w_object_t *object = button->object;
 	if (!(button->frame->style & FRAME_SUNKEN)) {
 		if (button->state != 0) {
 			button->frame->style = (button->frame->style & FRAME_MSHAPE) | FRAME_SUNKEN;
 			button->frame->style |= (button->frame->object->focused) ? FRAME_FOCUSED : 0;
-			button->object->draw(button->object);
-			w_object_update(button->object, button->object->surface->win);
+			object->draw(object);
+			w_object_update(object, object->surface->win);
 		}
 	}
 }
 
 void w_button_cb_oh (s_window_t *window, s_event_t *event, s_handler_t *handler)
 { /* not on over, but was on over */
-	w_button_t *button;
-	button = (w_button_t *) handler->data;
+	w_button_t *button = (w_button_t *) handler->data;
+	w_object_t *object = button->object;
 	if (!(button->frame->style & FRAME_RAISED)) {
 		button->frame->style = (button->frame->style & FRAME_MSHAPE) | FRAME_RAISED;
 		button->frame->style |= (button->frame->object->focused) ? FRAME_FOCUSED : 0;
-		button->object->draw(button->object);
-		w_object_update(button->object, button->object->surface->win);
+		object->draw(object);
+		w_object_update(object, object->surface->win);
 	}
 }
 
 void w_button_cb_hoh (s_window_t *window, s_event_t *event, s_handler_t *handler)
 { /* not on over, but was on over. and button is still pressed */
-	w_button_t *button;
-	button = (w_button_t *) handler->data;
+	w_button_t *button = (w_button_t *) handler->data;
+	w_object_t *object = button->object;
 	if (!(button->frame->style & FRAME_RAISED)) {
 		button->frame->style = (button->frame->style & FRAME_MSHAPE) | FRAME_RAISED;
 		button->frame->style |= (button->frame->object->focused) ? FRAME_FOCUSED : 0;
-		button->object->draw(button->object);
-		w_object_update(button->object, button->object->surface->win);
+		object->draw(object);
+		w_object_update(object, object->surface->win);
 	}
 }
 
 void w_button_cb_kp (s_window_t *window, s_event_t *event, s_handler_t *handler)
 { /* pressed */
-	w_button_t *button;
-	button = (w_button_t *) handler->data;
+	w_button_t *button = (w_button_t *) handler->data;
+	w_object_t *object = button->object;
 	if (button->state == 0) {
 		button->state |= MOUSE_LEFTBUTTON;
 		button->frame->style = (button->frame->style & FRAME_MSHAPE) | FRAME_SUNKEN;
 		button->frame->style |= (button->frame->object->focused) ? FRAME_FOCUSED : 0;
-		button->object->draw(button->object);
-		w_object_update(button->object, button->object->surface->win);
+		object->draw(object);
+		w_object_update(object, object->surface->win);
 		if (button->pressed != NULL) {
-			button->pressed(button->object, MOUSE_LEFTBUTTON);
+			button->pressed(object, MOUSE_LEFTBUTTON);
 		}
 	}
 }
 
 void w_button_cb_kr (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
-	w_button_t *button;
-	button = (w_button_t *) handler->data;
+	w_button_t *button = (w_button_t *) handler->data;
+	w_object_t *object = button->object;
 	if (button->state != 0) {
 		button->state = 0;
 		button->frame->style = (button->frame->style & FRAME_MSHAPE) | FRAME_RAISED;
 		button->frame->style |= (button->frame->object->focused) ? FRAME_FOCUSED : 0;
-		button->object->draw(button->object);
-		w_object_update(button->object, button->object->surface->win);
+		object->draw(object);
+		w_object_update(object, object->surface->win);
 		if (button->released != NULL) {
-			button->released(button->object, MOUSE_LEFTBUTTON);
+			button->released(object, MOUSE_LEFTBUTTON);
 		}
 	}
 }
@@ -280,7 +280,7 @@ void w_button_uninit (w_object_t *object)
 {
 	w_button_t *button;
 	button = (w_button_t *) object->data[OBJECT_BUTTON];
-	w_frame_uninit(button->object);
+	w_frame_uninit(object);
 	s_handler_uninit(button->handler_m);
 	s_handler_uninit(button->handler_k);
 	s_free(button);

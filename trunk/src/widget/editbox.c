@@ -1,8 +1,8 @@
 /***************************************************************************
     begin                : Tue Sep 14 2006
-    copyright            : (C) 2006 by Alper Akcan
+    copyright            : (C) 2006 - 2007 by Alper Akcan
     email                : distchx@yahoo.com
-  ***************************************************************************/
+ ***************************************************************************/
 
 /***************************************************************************
  *                                                                         *
@@ -59,8 +59,8 @@ void w_editbox_event (w_object_t *object, s_event_t *event)
 					if (strlen(str) > 0) {
 						*(str + strlen(str) - 1) = '\0';
 					}
-					w_textbox_set_str(editbox->object, str);
-					w_object_update(editbox->object, editbox->object->surface->win);
+					w_textbox_set_str(object, str);
+					w_object_update(object, object->surface->win);
 					s_free(str);
 			} else {
 				if (event->keybd->ascii) {
@@ -71,8 +71,8 @@ void w_editbox_event (w_object_t *object, s_event_t *event)
 					}
 					ptr = (char *) s_malloc(sizeof(char *) * (strlen(str) + 1 + 1));
 					sprintf(ptr, "%s%c", str, event->keybd->ascii);
-					w_textbox_set_str(editbox->object, ptr);
-					w_object_update(editbox->object, editbox->object->surface->win);
+					w_textbox_set_str(object, ptr);
+					w_object_update(object, object->surface->win);
 					s_free(str);
 					s_free(ptr);
 				}
@@ -115,7 +115,7 @@ void w_editbox_uninit (w_object_t *object)
 {
 	w_editbox_t *editbox;
 	editbox = (w_editbox_t *) object->data[OBJECT_EDITBOX];
-	w_textbox_uninit(editbox->object);
+	w_textbox_uninit(object);
 	s_handler_uninit(editbox->handler_mouse);
 	s_handler_uninit(editbox->handler_keybd);
 	s_free(editbox);
