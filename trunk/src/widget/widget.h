@@ -175,7 +175,6 @@ int w_object_hide (w_object_t *object);
 int w_object_show (w_object_t *object);
 int w_object_childatposition (w_object_t *object, int x, int y, w_object_t **child);
 int w_object_atposition (w_object_t *root, int x, int y, w_object_t **object);
-void w_object_signal (w_object_t *from, w_object_t *to, void (*func) (w_signal_t *), void *arg);
 int w_object_level_get_ (w_object_t *parent, w_object_t **object, int *level);
 int w_object_level_get (w_object_t *parent, w_object_t **object, int level);
 int w_object_level_count_ (w_object_t *parent, int *level);

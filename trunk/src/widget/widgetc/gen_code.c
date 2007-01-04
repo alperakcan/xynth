@@ -402,8 +402,8 @@ void node_generate_code (node_t *node, FILE *source, char *name)
 		node_generate_code_show(node);
 	}
 	p = 0;
-	while (!list_eol(node->nodes, p)) {
-		tmp = (node_t *) list_get(node->nodes, p);
+	while (!s_list_eol(node->nodes, p)) {
+		tmp = (node_t *) s_list_get(node->nodes, p);
 		node_generate_code(tmp, source, name);
 		p++;
 	}

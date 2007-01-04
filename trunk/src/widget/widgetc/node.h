@@ -21,7 +21,7 @@ typedef struct node_s {
 	char *id;
 	char *type;
 	char *value;
-	list_t *nodes;
+	s_list_t *nodes;
 	struct node_s *parent;
 	int dontparse;
 } node_t;

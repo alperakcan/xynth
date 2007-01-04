@@ -45,8 +45,8 @@ void node_generate_header (node_t *node, FILE *g_header)
 		}
 	}
 	p = 0;
-	while (!list_eol(node->nodes, p)) {
-		tmp = (node_t *) list_get(node->nodes, p);
+	while (!s_list_eol(node->nodes, p)) {
+		tmp = (node_t *) s_list_get(node->nodes, p);
 		node_generate_header(tmp, g_header);
 		p++;
 	}
@@ -66,8 +66,8 @@ void node_generate_function (node_t *node, FILE *g_header)
 		fprintf(g_header, "void %s (w_object_t *object, int state);\n", node->value);
 	}
 	p = 0;
-	while (!list_eol(node->nodes, p)) {
-		tmp = (node_t *) list_get(node->nodes, p);
+	while (!s_list_eol(node->nodes, p)) {
+		tmp = (node_t *) s_list_get(node->nodes, p);
 		node_generate_function(tmp, g_header);
 		p++;
 	}

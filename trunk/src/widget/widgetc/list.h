@@ -16,24 +16,24 @@
 #ifndef LIST_H_
 #define LIST_H_
 
-typedef struct list_s list_t;
-typedef struct list_node_s list_node_t;
+typedef struct s_list_s s_list_t;
+typedef struct s_list_node_s s_list_node_t;
 
-struct list_node_s {
+struct s_list_node_s {
         void *next;
         void *element;
 };
 
-struct list_s {
+struct s_list_s {
         int nb_elt;
-        list_node_t *node;
+        s_list_node_t *node;
 };
 
-int list_init (list_t **li);
-int list_uninit (list_t *li);
-int list_eol (list_t *li, int i);
-void * list_get (list_t *li, int pos);
-int list_remove (list_t *li, int pos);
-int list_add (list_t *li, void *el, int pos);
+int s_list_init (s_list_t **li);
+int s_list_uninit (s_list_t *li);
+int s_list_eol (s_list_t *li, int i);
+void * s_list_get (s_list_t *li, int pos);
+int s_list_remove (s_list_t *li, int pos);
+int s_list_add (s_list_t *li, void *el, int pos);
 
 #endif /*LIST_H_*/

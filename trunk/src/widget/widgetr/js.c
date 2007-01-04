@@ -47,7 +47,6 @@
 #include "xynth_.h"
 #include "widget.h"
 
-#include "list.h"
 #include "node.h"
 #include "table.h"
 #include "widgetr.h"
