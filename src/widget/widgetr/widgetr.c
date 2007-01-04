@@ -17,7 +17,6 @@
 #include "widget.h"
 #include <getopt.h>
 
-#include "list.h"
 #include "node.h"
 #include "parse.h"
 #include "table.h"

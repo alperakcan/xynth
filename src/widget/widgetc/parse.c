@@ -48,11 +48,11 @@ void parse_xml_start (void *x_data, const char *el, const char **attr)
 	if (strcmp(node->name, "stylesheet") == 0) {
 		xdata->elem = node;
 		if (node->parent) {
-			list_add(node->parent->nodes, node, -1);
+			s_list_add(node->parent->nodes, node, -1);
 		}
 	} else {
 		if (node->parent) {
-			list_add(node->parent->nodes, node, -1);
+			s_list_add(node->parent->nodes, node, -1);
 		} else {
 			xdata->root = node;
 		}

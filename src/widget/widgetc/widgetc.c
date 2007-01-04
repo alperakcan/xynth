@@ -86,14 +86,14 @@ static void node_generate_element (node_t *node, node_t *elem)
 	if (elem == NULL) {
 		return;
 	}
-	for (p = 0; !list_eol(node->nodes, p); p++) {
-    		tmp = (node_t *) list_get(node->nodes, p);
+	for (p = 0; !s_list_eol(node->nodes, p); p++) {
+    		tmp = (node_t *) s_list_get(node->nodes, p);
     		node_generate_element(tmp, elem);
 	}
 	if (strcmp(node->name, "element") == 0 &&
 	    node->type != NULL) {
-	    	for (p = 0; !list_eol(elem->nodes, p); p++) {
-	    		tmp = (node_t *) list_get(elem->nodes, p);
+	    	for (p = 0; !s_list_eol(elem->nodes, p); p++) {
+	    		tmp = (node_t *) s_list_get(elem->nodes, p);
 	    		if (strcmp(tmp->name, "element") == 0 &&
 	    		    strcmp(tmp->id, node->type) == 0) {
 	    		    	node_dublicate(tmp, &dmp);
@@ -101,11 +101,11 @@ static void node_generate_element (node_t *node, node_t *elem)
 	    		    	free(node->type);
 	    		    	node->name = node_strdup("object");
 	    		    	node->type = node_strdup(dmp->type);
-	    		    	while (!list_eol(dmp->nodes, 0)) {
-	    		    		chl = (node_t *) list_get(dmp->nodes, dmp->nodes->nb_elt - 1);
+	    		    	while (!s_list_eol(dmp->nodes, 0)) {
+	    		    		chl = (node_t *) s_list_get(dmp->nodes, dmp->nodes->nb_elt - 1);
 	    		    		chl->parent = node;
-	    		    		list_add(node->nodes, chl, 0);
-	    		    		list_remove(dmp->nodes, dmp->nodes->nb_elt - 1);
+	    		    		s_list_add(node->nodes, chl, 0);
+	    		    		s_list_remove(dmp->nodes, dmp->nodes->nb_elt - 1);
 	    		    	}
 	    		    	node_uninit(dmp);
 	    		}

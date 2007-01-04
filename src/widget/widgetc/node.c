@@ -141,7 +141,7 @@ void node_init (node_t **node)
 	node_t *n;
 	n = (node_t *) malloc(sizeof(node_t));
 	memset(n, 0, sizeof(node_t));
-	list_init(&(n->nodes));
+	s_list_init(&(n->nodes));
 	*node = n;
 }
 
@@ -151,12 +151,12 @@ void node_uninit (node_t *node)
 	if (node == NULL) {
 		return;
 	}
-	while (!list_eol(node->nodes, 0)) {
-		tmp = (node_t *) list_get(node->nodes, 0);
-		list_remove(node->nodes, 0);
+	while (!s_list_eol(node->nodes, 0)) {
+		tmp = (node_t *) s_list_get(node->nodes, 0);
+		s_list_remove(node->nodes, 0);
 		node_uninit(tmp);
 	}
-	list_uninit(node->nodes);
+	s_list_uninit(node->nodes);
 	free(node->id);
 	free(node->name);
 	free(node->type);
@@ -173,11 +173,11 @@ void node_dublicate_ (node_t *node, node_t *dub)
 	dub->name = node_strdup(node->name);
 	dub->type = node_strdup(node->type);
 	dub->value = node_strdup(node->value);
-	for (p = 0; !list_eol(node->nodes, p); p++) {
-    		tmp = (node_t *) list_get(node->nodes, p);
+	for (p = 0; !s_list_eol(node->nodes, p); p++) {
+    		tmp = (node_t *) s_list_get(node->nodes, p);
     		node_init(&dmp);
     		node_dublicate_(tmp, dmp);
-    		list_add(dub->nodes, dmp, -1);
+    		s_list_add(dub->nodes, dmp, -1);
     		dmp->parent = dub;
 	}
 }
@@ -208,8 +208,8 @@ node_t * node_get_node_ (node_t *node, char *path)
 	node_t *tmp;
 	p = 0;
 	res = NULL;
-	while (!list_eol(node->nodes, p)) {
-		tmp = (node_t *) list_get(node->nodes, p);
+	while (!s_list_eol(node->nodes, p)) {
+		tmp = (node_t *) s_list_get(node->nodes, p);
 		str = strchr(path,  '/');
 		if (str == NULL) {
 			if (strcmp(tmp->name, path) == 0 &&
@@ -290,8 +290,8 @@ void node_print_ (node_t *node, unsigned int *depth)
 	node_print_node(node, depth);
 	(*depth)++;
 	p = 0;
-	while (!list_eol(node->nodes, p)) {
-		tmp = (node_t *) list_get(node->nodes, p);
+	while (!s_list_eol(node->nodes, p)) {
+		tmp = (node_t *) s_list_get(node->nodes, p);
 		node_print_(tmp, depth);
 		p++;
 	}
