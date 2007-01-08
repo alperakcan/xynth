@@ -1138,23 +1138,6 @@ diff -Naur gtk+-2.6.10/gdk/xynth/gdk-xynth.c gtk+-2.6.10-xynth/gdk/xynth/gdk-xyn
 +{
 +	NIY();
 +}
-diff -Naur gtk+-2.6.10/gdk/xynth/gdk-xynth.h gtk+-2.6.10-xynth/gdk/xynth/gdk-xynth.h
---- gtk+-2.6.10/gdk/xynth/gdk-xynth.h	1970-01-01 02:00:00.000000000 +0200
-+++ gtk+-2.6.10-xynth/gdk/xynth/gdk-xynth.h	2007-01-08 11:50:58.000000000 +0200
-@@ -0,0 +1,13 @@
-+
-+#include <config.h>
-+#include "gdk.h"
-+#include "gdkprivate.h"
-+#include "gdkalias.h"
-+
-+#define NIY() {\
-+	static int niy = 1;\
-+	if (niy) {\
-+		printf("NIY: %s (%s:%d)\n", __FUNCTION__, __FILE__, __LINE__);\
-+		niy = 0;\
-+	}\
-+}
 diff -Naur gtk+-2.6.10/gtk/Makefile.am gtk+-2.6.10-xynth/gtk/Makefile.am
 --- gtk+-2.6.10/gtk/Makefile.am	2005-08-18 17:10:56.000000000 +0300
 +++ gtk+-2.6.10-xynth/gtk/Makefile.am	2007-01-08 11:50:58.000000000 +0200
@@ -1195,3 +1178,28 @@ diff -Naur gtk+-2.6.10/README.xynth gtk+-2.6.10-xynth/README.xynth
 +cd build-xynth
 +../configure --with-gdktarget=xynth --prefix=/opt/gtk --disable-visibility
 +make
+diff -Naur gtk+-2.6.10/gdk/xynth/gdk-xynth.h gtk+-2.6.10-xynth/gdk/xynth/gdk-xynth.h
+--- gtk+-2.6.10/gdk/xynth/gdk-xynth.h	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.6.10-xynth/gdk/xynth/gdk-xynth.h	2007-01-08 11:50:58.000000000 +0200
+@@ -0,0 +1,21 @@
++
++#include <config.h>
++#include "gdk.h"
++#include "gdkprivate.h"
++#include "gdkalias.h"
++
++#define NIY() {\
++	static int niy = 1;\
++	if (niy) {\
++		printf("NIY: %s (%s:%d)\n", __FUNCTION__, __FILE__, __LINE__);\
++		niy = 0;\
++	}\
++}
++
++#define ENT() {\
++	printf("ENT: %s (%s:%d)\n", __FUNCTION__, __FILE__, __LINE__);\
++}
++
++#define LEV() {\
++	printf("LEV: %s (%s:%d)\n", __FUNCTION__, __FILE__, __LINE__);\
++}
