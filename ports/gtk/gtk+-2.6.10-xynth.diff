@@ -1,16 +1,18 @@
-diff -Naur gtk+-2.6.10/README.xynth gtk+-2.6.10-xynth/README.xynth
---- gtk+-2.6.10/README.xynth	1970-01-01 02:00:00.000000000 +0200
-+++ gtk+-2.6.10-xynth/README.xynth	2007-01-06 02:14:29.000000000 +0200
-@@ -0,0 +1,6 @@
-+
-+aclocal && automake && autoconf
-+mkdir build-xynth
-+cd build-xynth
-+../configure --with-gdktarget=xynth --prefix=/opt/gtk --disable-visibility
-+make
+diff -Naur gtk+-2.6.10/Makefile.am gtk+-2.6.10-xynth/Makefile.am
+--- gtk+-2.6.10/Makefile.am	2005-08-18 17:10:54.000000000 +0300
++++ gtk+-2.6.10-xynth/Makefile.am	2007-01-08 13:33:59.000000000 +0200
+@@ -1,7 +1,7 @@
+ ## Makefile.am for GTK+
+ 
+ SRC_SUBDIRS = gdk-pixbuf gdk gtk modules demos tests contrib
+-SUBDIRS = po po-properties $(SRC_SUBDIRS) docs build m4macros
++SUBDIRS = po po-properties $(SRC_SUBDIRS) build m4macros
+ 
+ # require automake 1.4
+ AUTOMAKE_OPTIONS = 1.7
 diff -Naur gtk+-2.6.10/configure.in gtk+-2.6.10-xynth/configure.in
 --- gtk+-2.6.10/configure.in	2005-08-18 17:10:54.000000000 +0300
-+++ gtk+-2.6.10-xynth/configure.in	2007-01-06 01:29:43.000000000 +0200
++++ gtk+-2.6.10-xynth/configure.in	2007-01-08 11:50:58.000000000 +0200
 @@ -223,13 +223,13 @@
  fi
  ])
@@ -97,7 +99,7 @@ diff -Naur gtk+-2.6.10/configure.in gtk+-2.6.10-xynth/configure.in
  gtk/gtkversion.h
 diff -Naur gtk+-2.6.10/gdk/Makefile.am gtk+-2.6.10-xynth/gdk/Makefile.am
 --- gtk+-2.6.10/gdk/Makefile.am	2005-08-18 17:10:55.000000000 +0300
-+++ gtk+-2.6.10-xynth/gdk/Makefile.am	2007-01-06 01:29:43.000000000 +0200
++++ gtk+-2.6.10-xynth/gdk/Makefile.am	2007-01-08 11:50:58.000000000 +0200
 @@ -1,7 +1,7 @@
  ## Makefile.am for gtk+/gdk
  
@@ -130,7 +132,7 @@ diff -Naur gtk+-2.6.10/gdk/Makefile.am gtk+-2.6.10-xynth/gdk/Makefile.am
    gdkmarshalers.h gdkmarshalers.c gdkalias.h gdkaliasdef.c
 diff -Naur gtk+-2.6.10/gdk/xynth/Makefile.am gtk+-2.6.10-xynth/gdk/xynth/Makefile.am
 --- gtk+-2.6.10/gdk/xynth/Makefile.am	1970-01-01 02:00:00.000000000 +0200
-+++ gtk+-2.6.10-xynth/gdk/xynth/Makefile.am	2007-01-06 01:29:43.000000000 +0200
++++ gtk+-2.6.10-xynth/gdk/xynth/Makefile.am	2007-01-08 11:50:58.000000000 +0200
 @@ -0,0 +1,23 @@
 +## Process this file with automake to produce Makefile.in
 +
@@ -157,8 +159,8 @@ diff -Naur gtk+-2.6.10/gdk/xynth/Makefile.am gtk+-2.6.10-xynth/gdk/xynth/Makefil
 +	gdk-xynth.h
 diff -Naur gtk+-2.6.10/gdk/xynth/gdk-xynth.c gtk+-2.6.10-xynth/gdk/xynth/gdk-xynth.c
 --- gtk+-2.6.10/gdk/xynth/gdk-xynth.c	1970-01-01 02:00:00.000000000 +0200
-+++ gtk+-2.6.10-xynth/gdk/xynth/gdk-xynth.c	2007-01-06 02:12:21.000000000 +0200
-@@ -0,0 +1,937 @@
++++ gtk+-2.6.10-xynth/gdk/xynth/gdk-xynth.c	2007-01-08 13:31:12.000000000 +0200
+@@ -0,0 +1,977 @@
 +
 +#include "gdk-xynth.h"
 +
@@ -1096,9 +1098,49 @@ diff -Naur gtk+-2.6.10/gdk/xynth/gdk-xynth.c gtk+-2.6.10-xynth/gdk/xynth/gdk-xyn
 +{
 +	NIY();
 +}
++
++G_CONST_RETURN gchar * gdk_display_get_name (GdkDisplay * display)
++{
++	NIY();
++}
++
++void gdk_window_get_root_origin (GdkWindow *window, gint *x, gint *y)
++{
++	NIY();
++}
++
++void gdk_window_shape_combine_region (GdkWindow *window, GdkRegion *shape_region, gint offset_x, gint offset_y)
++{
++	NIY();
++}
++
++void gdk_window_set_icon_name (GdkWindow *window, const gchar *name)
++{
++	NIY();
++}
++
++void gdk_window_set_functions (GdkWindow *window, GdkWMFunction functions)
++{
++	NIY();
++}
++
++gboolean gdk_device_get_history (GdkDevice *device, GdkWindow *window, guint32 start, guint32 stop, GdkTimeCoord ***events, gint *n_events)
++{
++	NIY();
++}
++
++void gdk_device_free_history (GdkTimeCoord **events, gint n_events)
++{
++	NIY();
++}
++
++void gdk_device_get_state (GdkDevice *device, GdkWindow *window, gdouble *axes, GdkModifierType *mask)
++{
++	NIY();
++}
 diff -Naur gtk+-2.6.10/gdk/xynth/gdk-xynth.h gtk+-2.6.10-xynth/gdk/xynth/gdk-xynth.h
 --- gtk+-2.6.10/gdk/xynth/gdk-xynth.h	1970-01-01 02:00:00.000000000 +0200
-+++ gtk+-2.6.10-xynth/gdk/xynth/gdk-xynth.h	2007-01-06 01:29:43.000000000 +0200
++++ gtk+-2.6.10-xynth/gdk/xynth/gdk-xynth.h	2007-01-08 11:50:58.000000000 +0200
 @@ -0,0 +1,13 @@
 +
 +#include <config.h>
@@ -1115,7 +1157,7 @@ diff -Naur gtk+-2.6.10/gdk/xynth/gdk-xynth.h gtk+-2.6.10-xynth/gdk/xynth/gdk-xyn
 +}
 diff -Naur gtk+-2.6.10/gtk/Makefile.am gtk+-2.6.10-xynth/gtk/Makefile.am
 --- gtk+-2.6.10/gtk/Makefile.am	2005-08-18 17:10:56.000000000 +0300
-+++ gtk+-2.6.10-xynth/gtk/Makefile.am	2007-01-06 01:29:43.000000000 +0200
++++ gtk+-2.6.10-xynth/gtk/Makefile.am	2007-01-08 11:50:58.000000000 +0200
 @@ -658,20 +658,23 @@
  libgtk_x11_2_0_la_SOURCES = $(gtk_c_sources) $(gtk_plug_c_sources)
  libgtk_linux_fb_2_0_la_SOURCES = $(gtk_c_sources)
@@ -1141,3 +1183,15 @@ diff -Naur gtk+-2.6.10/gtk/Makefile.am gtk+-2.6.10-xynth/gtk/Makefile.am
  
  install-exec-hook: 
  if DISABLE_EXPLICIT_DEPS
+diff -Naur gtk+-2.6.10/README.xynth gtk+-2.6.10-xynth/README.xynth
+--- gtk+-2.6.10/README.xynth	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.6.10-xynth/README.xynth	2007-01-08 11:50:58.000000000 +0200
+@@ -0,0 +1,8 @@
++
++export PKG_CONFIG_PATH /opt/gtk/lib/pkgconfig
++export LD_LIBRARY_PATH /opt/gtk/lib
++aclocal && automake && autoconf
++mkdir build-xynth
++cd build-xynth
++../configure --with-gdktarget=xynth --prefix=/opt/gtk --disable-visibility
++make
