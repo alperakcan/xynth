@@ -1188,8 +1188,8 @@ diff -Naur gtk+-2.6.10/README.xynth gtk+-2.6.10-xynth/README.xynth
 +++ gtk+-2.6.10-xynth/README.xynth	2007-01-08 11:50:58.000000000 +0200
 @@ -0,0 +1,8 @@
 +
-+export PKG_CONFIG_PATH /opt/gtk/lib/pkgconfig
-+export LD_LIBRARY_PATH /opt/gtk/lib
++export PKG_CONFIG_PATH=/opt/gtk/lib/pkgconfig
++export LD_LIBRARY_PATH=/opt/gtk/lib
 +aclocal && automake && autoconf
 +mkdir build-xynth
 +cd build-xynth
