@@ -27,13 +27,13 @@ dist: all
 ifneq ($(TARGET),)
 	cp -a $(TARGET) ../../$(DISTBINDIR)
 endif
-	mkdir -p ../../$(DISTTOPDIR)/$(SHAREDIR)/desktop
-	mkdir -p ../../$(DISTTOPDIR)/$(SHAREDIR)/desktop/cfg/
-	mkdir -p ../../$(DISTTOPDIR)/$(SHAREDIR)/desktop/img/
-	mkdir -p ../../$(DISTTOPDIR)/$(SHAREDIR)/desktop/img/icons
-	mkdir -p ../../$(DISTTOPDIR)/$(SHAREDIR)/desktop/img/widget
-	mkdir -p ../../$(DISTTOPDIR)/$(SHAREDIR)/desktop/img/wpaper
-	cp cfg/*.cfg ../../$(DISTTOPDIR)/$(SHAREDIR)/desktop/cfg
-	cp img/icons/*.png ../../$(DISTTOPDIR)/$(SHAREDIR)/desktop/img/icons
-	cp img/widget/*.png ../../$(DISTTOPDIR)/$(SHAREDIR)/desktop/img/widget
-	cp img/wpaper/*.png ../../$(DISTTOPDIR)/$(SHAREDIR)/desktop/img/wpaper
+	mkdir -p ../../$(DISTSHAREDIR)/desktop
+	mkdir -p ../../$(DISTSHAREDIR)/desktop/cfg/
+	mkdir -p ../../$(DISTSHAREDIR)/desktop/img/
+	mkdir -p ../../$(DISTSHAREDIR)/desktop/img/icons
+	mkdir -p ../../$(DISTSHAREDIR)/desktop/img/widget
+	mkdir -p ../../$(DISTSHAREDIR)/desktop/img/wpaper
+	cp cfg/*.cfg ../../$(DISTSHAREDIR)/desktop/cfg
+	cp img/icons/*.png ../../$(DISTSHAREDIR)/desktop/img/icons
+	cp img/widget/*.png ../../$(DISTSHAREDIR)/desktop/img/widget
+	cp img/wpaper/*.png ../../$(DISTSHAREDIR)/desktop/img/wpaper
