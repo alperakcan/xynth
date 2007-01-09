@@ -28,7 +28,8 @@ endif
 
 EXTRA_CLEAN = libwidget.a libwidget.so
 
-SUBDIR-Y = widgetc widgetr
+SUBDIR-Y += widgetc
+SUBDIR-Y += widgetr
 
 include ../../Makefile.rules
 
