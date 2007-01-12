@@ -17,9 +17,14 @@ INCLUDES = 				\
 noinst_LTLIBRARIES = libgdk-xynth.la
 
 libgdk_xynth_la_SOURCES = \
+	gdkcolormap-xynth.c \
 	gdkdisplay-xynth.c \
+	gdkdrawable-xynth.c \
 	gdkmain-xynth.c \
 	gdkproperty-xynth.c \
+	gdkscreen-xynth.c \
+	gdkvisual-xynth.c \
+	gdkwindow-xynth.c \
 	gdk-xynth.c
 
 libgdkinclude_HEADERS =  \

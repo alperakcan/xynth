@@ -17,22 +17,12 @@ gint gdk_colormap_alloc_colors (GdkColormap *colormap, GdkColor *colors, gint nc
 	NIY();
 }
 
-void gdk_colormap_change (GdkColormap *colormap, gint ncolors)
-{
-	NIY();
-}
-
 void gdk_colormap_free_colors (GdkColormap *colormap, GdkColor *colors, gint ncolors)
 {
 	NIY();
 }
 
 GdkScreen * gdk_colormap_get_screen (GdkColormap *cmap)
-{
-	NIY();
-}
-
-GType gdk_colormap_get_type (void)
 {
 	NIY();
 }
@@ -432,17 +422,7 @@ gboolean gdk_screen_get_setting (GdkScreen *screen, const gchar *name, GValue *v
 	NIY();
 }
 
-GdkColormap * gdk_screen_get_system_colormap (GdkScreen *screen)
-{
-	NIY();
-}
-
 gint gdk_screen_get_width (GdkScreen *screen)
-{
-	NIY();
-}
-
-void gdk_screen_set_default_colormap (GdkScreen *screen, GdkColormap *colormap)
 {
 	NIY();
 }
@@ -841,11 +821,6 @@ GOptionEntry _gdk_windowing_args[] = {
   { NULL }
 };
 
-GType _gdk_window_impl_get_type (void)
-{
-	NIY();
-}
-
 GdkWindow * _gdk_windowing_window_at_pointer (GdkDisplay *display, gint *win_x, gint *win_y)
 {
 	NIY();
@@ -872,11 +847,6 @@ guint32 gdk_drag_get_protocol_for_display (GdkDisplay *display, guint32 xid, Gdk
 }
 
 GdkScreen * gdk_visual_get_screen (GdkVisual *visual)
-{
-	NIY();
-}
-
-GdkVisual * gdk_screen_get_system_visual (GdkScreen * screen)
 {
 	NIY();
 }
