@@ -37,3 +37,37 @@ void gdk_screen_set_default_colormap (GdkScreen *screen, GdkColormap *colormap)
 	}
 	LEV();
 }
+
+GdkColormap * gdk_screen_get_default_colormap (GdkScreen *screen)
+{
+	ENT();
+	LEV();
+	return _gdk_colormap;
+}
+
+gboolean gdk_screen_get_setting (GdkScreen *screen, const gchar *name, GValue *value)
+{
+	ENT();
+	LEV();
+	return FALSE;
+}
+
+gint gdk_screen_get_number (GdkScreen *screen)
+{
+	g_return_val_if_fail(GDK_IS_SCREEN(screen), 0);  
+	return 0;
+}
+
+GdkDisplay * gdk_screen_get_display (GdkScreen *screen)
+{
+	ENT();
+	LEV();
+	return _gdk_display;
+}
+
+GdkWindow * gdk_screen_get_root_window (GdkScreen *screen)
+{
+	ENT();
+	LEV();
+	return _gdk_parent_root;
+}

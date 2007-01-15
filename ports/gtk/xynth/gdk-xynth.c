@@ -52,11 +52,6 @@ GdkCursor * gdk_cursor_new_from_pixmap (GdkPixmap *source, GdkPixmap *mask, cons
 	NIY();
 }
 
-GType gdk_device_get_type (void)
-{
-	NIY();
-}
-
 void gdk_device_set_axis_use (GdkDevice *device, guint index, GdkAxisUse use)
 {
 	NIY();
@@ -78,11 +73,6 @@ void gdk_display_beep (GdkDisplay * display)
 }
 
 void gdk_display_flush (GdkDisplay *display)
-{
-	NIY();
-}
-
-GdkScreen * gdk_display_get_default_screen (GdkDisplay * display)
 {
 	NIY();
 }
@@ -148,11 +138,6 @@ void gdk_drag_abort (GdkDragContext *context, guint32 time)
 }
 
 GdkDragContext * gdk_drag_begin (GdkWindow *window, GList *targets)
-{
-	NIY();
-}
-
-GType gdk_drag_context_get_type (void)
 {
 	NIY();
 }
@@ -342,11 +327,6 @@ void gdk_notify_startup_complete (void)
 	NIY();
 }
 
-PangoContext * gdk_pango_context_get_for_screen (GdkScreen *screen)
-{
-	NIY();
-}
-
 GdkPixmap * gdk_pixmap_new (GdkDrawable *drawable, gint width, gint height, gint depth)
 {
 	NIY();
@@ -382,16 +362,6 @@ void gdk_screen_broadcast_client_message (GdkScreen *screen, GdkEvent *event)
 	NIY();
 }
 
-GdkColormap * gdk_screen_get_default_colormap (GdkScreen *screen)
-{
-	NIY();
-}
-
-GdkDisplay * gdk_screen_get_display (GdkScreen *screen)
-{
-	NIY();
-}
-
 gint gdk_screen_get_height (GdkScreen *screen)
 {
 	NIY();
@@ -403,21 +373,6 @@ void gdk_screen_get_monitor_geometry (GdkScreen *screen, gint monitor_num, GdkRe
 }
 
 gint gdk_screen_get_n_monitors (GdkScreen *screen)
-{
-	NIY();
-}
-
-gint gdk_screen_get_number (GdkScreen *screen)
-{
-	NIY();
-}
-
-GdkWindow * gdk_screen_get_root_window (GdkScreen *screen)
-{
-	NIY();
-}
-
-gboolean gdk_screen_get_setting (GdkScreen *screen, const gchar *name, GValue *value)
 {
 	NIY();
 }
@@ -587,11 +542,6 @@ void gdk_window_move_resize (GdkWindow *window, gint x, gint y, gint width, gint
 	NIY();
 }
 
-GdkWindow * gdk_window_new (GdkWindow *parent, GdkWindowAttr *attributes, gint attributes_mask)
-{
-	NIY();
-}
-
 void gdk_window_raise (GdkWindow *window)
 {
 	NIY();
@@ -638,11 +588,6 @@ void gdk_window_set_cursor (GdkWindow *window, GdkCursor *cursor)
 }
 
 void gdk_window_set_decorations (GdkWindow *window, GdkWMDecoration decorations)
-{
-	NIY();
-}
-
-void gdk_window_set_events (GdkWindow *window, GdkEventMask event_mask)
 {
 	NIY();
 }
@@ -783,11 +728,6 @@ GList * gdk_screen_list_visuals (GdkScreen *screen)
 }
 
 void _gdk_windowing_window_clear_area_e (GdkWindow *window, gint x, gint y, gint width, gint height)
-{
-	NIY();
-}
-
-void _gdk_windowing_set_default_display (GdkDisplay *display)
 {
 	NIY();
 }

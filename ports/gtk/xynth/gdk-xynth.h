@@ -25,12 +25,18 @@
 	__ent__--;\
 	printf("LEV [%d]: %s (%s:%d)\n", __ent__, __FUNCTION__, __FILE__, __LINE__);
 
+#define DBG(dbg...) \
+	printf("DBG ");\
+	printf(dbg);\
+	printf(" [%s (%s:%d)]\n", __FUNCTION__, __FILE__, __LINE__);
+
 typedef struct _GdkDisplayXynth           GdkDisplayXynth;
 typedef struct _GdkDisplayXynthClass      GdkDisplayXynthClass;
 typedef struct _GdkDrawableImplXynth      GdkDrawableImplXynth;
 typedef struct _GdkDrawableImplXynthClass GdkDrawableImplXynthClass;
 typedef struct _GdkWindowImplXynth        GdkWindowImplXynth;
 typedef struct _GdkWindowImplXynthClass   GdkWindowImplXynthClass;
+typedef struct _GdkDevicePrivate          GdkDevicePrivate;
 
 struct _GdkDisplayXynth {
 	GdkDisplay parent;
@@ -47,6 +53,7 @@ struct _GdkVisualClass {
 
 struct _GdkDrawableImplXynth {
 	GdkDrawable parent_object;
+	GdkWindow *wrapper;
 };
 
 struct _GdkDrawableImplXynthClass {
@@ -64,6 +71,15 @@ struct _GdkWindowImplXynth {
 
 struct _GdkWindowImplXynthClass {
 	GdkDrawableImplXynthClass parent_class;
+};
+
+struct _GdkDevicePrivate {
+  GdkDevice  info;
+};
+
+struct _GdkDeviceClass
+{
+  GObjectClass parent_class;
 };
 
 #define GDK_TYPE_DISPLAY_XYNTH                  (gdk_display_xynth_get_type())
@@ -86,6 +102,11 @@ GdkVisual   *_gdk_visual;
 GdkColormap *_gdk_colormap;
 GdkWindow   *_gdk_parent_root;
 
-void _gdk_visual_init (GdkDisplay *display);
+void _gdk_windowing_visual_init (GdkDisplay *display);
 void _gdk_windowing_window_init (GdkDisplay *display);
-GType gdk_window_impl_xynth_get_type (void);
+void _gdk_windowing_image_init (GdkDisplay *display);
+void _gdk_windowing_event_init (GdkDisplay *display);
+void _gdk_windowing_input_init (GdkDisplay *display);
+void _gdk_windowing_dnd_init (GdkDisplay *display);
+
+GType _gdk_drawable_impl_xynth_get_type (void);
