@@ -56,3 +56,44 @@ void gdk_colormap_change (GdkColormap *colormap, gint ncolors)
 	ENT();
 	LEV();
 }
+
+gint gdk_colormap_alloc_colors (GdkColormap *colormap, GdkColor *colors, gint ncolors, gboolean writeable, gboolean best_match, gboolean *success)
+{
+	GdkVisual *visual;
+	gint i;
+	gint nremaining = 0;
+	ENT();
+	g_return_val_if_fail(colormap != NULL, FALSE);
+	g_return_val_if_fail(colors != NULL, FALSE);
+	for (i = 0; i < ncolors; i++) {
+		success[i] = FALSE;
+	}
+	visual = colormap->visual;
+	switch (visual->type) {
+		case GDK_VISUAL_PSEUDO_COLOR:
+		case GDK_VISUAL_GRAYSCALE:
+		case GDK_VISUAL_STATIC_GRAY:
+		case GDK_VISUAL_STATIC_COLOR:
+		case GDK_VISUAL_DIRECT_COLOR:
+			NIY();
+			break;
+		case GDK_VISUAL_TRUE_COLOR:
+			for (i = 0; i < ncolors; i++) {
+				colors[i].pixel = (((colors[i].red >> (16 - visual->red_prec)) << visual->red_shift) +
+				                   ((colors[i].green >> (16 - visual->green_prec)) << visual->green_shift) +
+				                   ((colors[i].blue >> (16 - visual->blue_prec)) << visual->blue_shift));
+				success[i] = TRUE;
+			}
+			break;
+	}
+	LEV();
+	return nremaining;
+}
+
+GdkScreen * gdk_colormap_get_screen (GdkColormap *cmap)
+{
+	ENT();
+	g_return_val_if_fail(cmap != NULL, NULL);
+	LEV();
+	return gdk_screen_get_default();
+}

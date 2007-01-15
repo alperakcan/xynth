@@ -12,17 +12,7 @@ GdkPixmap * gdk_bitmap_create_from_data (GdkDrawable *drawable, const gchar *dat
 }
 
 
-gint gdk_colormap_alloc_colors (GdkColormap *colormap, GdkColor *colors, gint ncolors, gboolean writeable, gboolean best_match, gboolean *success)
-{
-	NIY();
-}
-
 void gdk_colormap_free_colors (GdkColormap *colormap, GdkColor *colors, gint ncolors)
-{
-	NIY();
-}
-
-GdkScreen * gdk_colormap_get_screen (GdkColormap *cmap)
 {
 	NIY();
 }
@@ -327,11 +317,6 @@ void gdk_notify_startup_complete (void)
 	NIY();
 }
 
-GdkPixmap * gdk_pixmap_new (GdkDrawable *drawable, gint width, gint height, gint depth)
-{
-	NIY();
-}
-
 GdkGrabStatus gdk_pointer_grab (GdkWindow *window, gboolean owner_events, GdkEventMask event_mask, GdkWindow *confine_to, GdkCursor *cursor, guint32 time)
 {
 	NIY();
@@ -462,11 +447,6 @@ void gdk_window_deiconify (GdkWindow *window)
 	NIY();
 }
 
-void gdk_window_enable_synchronized_configure (GdkWindow *window)
-{
-	NIY();
-}
-
 void gdk_window_focus (GdkWindow *window, guint32 timestamp)
 {
 	NIY();
@@ -537,11 +517,6 @@ void gdk_window_move (GdkWindow *window, gint x, gint y)
 	NIY();
 }
 
-void gdk_window_move_resize (GdkWindow *window, gint x, gint y, gint width, gint height)
-{
-	NIY();
-}
-
 void gdk_window_raise (GdkWindow *window)
 {
 	NIY();
@@ -584,7 +559,10 @@ void gdk_window_set_background (GdkWindow *window, const GdkColor *color)
 
 void gdk_window_set_cursor (GdkWindow *window, GdkCursor *cursor)
 {
-	NIY();
+	ENT();
+	DBG("What da fuck");
+	LEV();
+//	NIY();
 }
 
 void gdk_window_set_decorations (GdkWindow *window, GdkWMDecoration decorations)
@@ -638,11 +616,6 @@ void gdk_window_set_skip_pager_hint (GdkWindow *window, gboolean skips_pager)
 }
 
 void gdk_window_set_skip_taskbar_hint (GdkWindow *window, gboolean skips_taskbar)
-{
-	NIY();
-}
-
-void gdk_window_set_title (GdkWindow *window, const gchar *title)
 {
 	NIY();
 }
