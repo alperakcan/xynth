@@ -60,7 +60,16 @@ static void gdk_xynth_draw_lines (GdkDrawable *drawable, GdkGC *gc, GdkPoint *po
 
 static GdkColormap * gdk_xynth_get_colormap (GdkDrawable *drawable)
 {
-	NIY();
+	GdkColormap *retval;
+	GdkDrawableImplXynth *draw_impl;
+	ENT();
+	draw_impl = GDK_DRAWABLE_IMPL_XYNTH(drawable);
+	retval = draw_impl->colormap;
+	if (!retval) {
+		retval = gdk_colormap_get_system();
+	}
+	LEV();
+	return retval;
 }
 
 static void gdk_xynth_set_colormap (GdkDrawable *drawable, GdkColormap *colormap)

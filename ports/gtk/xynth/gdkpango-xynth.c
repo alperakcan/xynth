@@ -1,5 +1,6 @@
 
 #include "gdk-xynth.h"
+#include <pango/pangoft2.h>
 
 PangoContext * gdk_pango_context_get_for_screen (GdkScreen *screen)
 {

@@ -26,6 +26,7 @@ libgdk_xynth_la_SOURCES = \
 	gdkinput-xynth.c \
 	gdkmain-xynth.c \
 	gdkpango-xynth.c \
+	gdkpixmap.c \
 	gdkproperty-xynth.c \
 	gdkscreen-xynth.c \
 	gdkvisual-xynth.c \

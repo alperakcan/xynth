@@ -53,7 +53,10 @@ struct _GdkVisualClass {
 
 struct _GdkDrawableImplXynth {
 	GdkDrawable parent_object;
+
 	GdkWindow *wrapper;
+	GdkWindowType window_type;
+	GdkColormap *colormap;
 };
 
 struct _GdkDrawableImplXynthClass {
@@ -67,6 +70,8 @@ struct _GdkWindowImplXynth {
 	int height;
 	
 	GdkRectangle clip;
+	
+	w_window_t *window;
 };
 
 struct _GdkWindowImplXynthClass {
