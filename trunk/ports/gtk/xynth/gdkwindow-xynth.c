@@ -30,6 +30,7 @@ static void gdk_window_impl_xynth_finalize (GObject *object)
 	GdkDrawableImplXynth *draw_impl;
 	GdkWindowImplXynth *window_impl;
 	ENT();
+	GType gdk_window_impl_xynth_get_type (void);
 	g_return_if_fail(GDK_IS_WINDOW_IMPL_XYNTH(object));
 	draw_impl = GDK_DRAWABLE_IMPL_XYNTH(object);
 	window_impl = GDK_WINDOW_IMPL_XYNTH(object);
@@ -96,5 +97,75 @@ void _gdk_windowing_window_init (GdkDisplay *display)
 	private->depth = gdk_visual_get_system()->depth;
 	window_impl->width = display_xynth->window->window->surface->linear_buf_width;
 	window_impl->height = display_xynth->window->window->surface->linear_buf_height; 
+	LEV();
+}
+
+void gdk_window_set_events (GdkWindow *window, GdkEventMask event_mask)
+{
+	ENT();
+	g_return_if_fail(window != NULL);
+	g_return_if_fail(GDK_IS_WINDOW (window));
+	if (event_mask & GDK_BUTTON_MOTION_MASK) {
+		event_mask |= GDK_BUTTON1_MOTION_MASK | GDK_BUTTON2_MOTION_MASK | GDK_BUTTON3_MOTION_MASK;
+	}
+	GDK_WINDOW_OBJECT(window)->event_mask = GDK_STRUCTURE_MASK | event_mask;
+	LEV();
+}
+GdkWindow * gdk_window_new (GdkWindow *parent, GdkWindowAttr *attributes, gint attributes_mask)
+{
+	int x;
+	int y;
+	GdkVisual *visual;
+	GdkWindow *window;
+	GdkWindowObject *private;
+	GdkWindowObject *parent_private;
+	GdkWindowImplXynth *window_impl;
+	GdkDrawableImplXynth *draw_impl;
+
+	ENT();
+
+	g_return_val_if_fail(attributes != NULL, NULL);
+
+	if (!parent ||
+	    (attributes->window_type != GDK_WINDOW_CHILD &&
+	     attributes->window_type != GDK_WINDOW_TEMP)) {
+		parent = _gdk_parent_root;
+	}
+	
+	window = (GdkWindow *) g_object_new(GDK_TYPE_WINDOW, NULL);
+	private = (GdkWindowObject *) window;
+	parent_private = (GdkWindowObject*) parent;
+	draw_impl = GDK_DRAWABLE_IMPL_XYNTH(private->impl);
+	window_impl = GDK_WINDOW_IMPL_XYNTH(private->impl);
+
+	private->parent = parent_private;
+	private->accept_focus = TRUE;
+	private->focus_on_map = TRUE;
+
+	if (attributes_mask & GDK_WA_X) {
+		x = attributes->x;
+	} else {
+		x = 0;
+	}
+	if (attributes_mask & GDK_WA_Y) {
+		y = attributes->y;
+	} else {
+		y = 0;
+	}
+	
+	DBG("x: %d, y: %d", x, y);
+	
+	gdk_window_set_events (window, attributes->event_mask);
+	
+	if (attributes_mask & GDK_WA_VISUAL) {
+		visual = attributes->visual;
+	} else {
+		visual = gdk_visual_get_system();
+	}
+
+	private->x = x;
+	private->y = y;
+	draw_impl->wrapper = window;
+	NIY();
 	LEV();
 }

@@ -19,8 +19,13 @@ noinst_LTLIBRARIES = libgdk-xynth.la
 libgdk_xynth_la_SOURCES = \
 	gdkcolormap-xynth.c \
 	gdkdisplay-xynth.c \
+	gdkdnd-xynth.c \
 	gdkdrawable-xynth.c \
+	gdkevent-xynth.c \
+	gdkimage-xynth.c \
+	gdkinput-xynth.c \
 	gdkmain-xynth.c \
+	gdkpango-xynth.c \
 	gdkproperty-xynth.c \
 	gdkscreen-xynth.c \
 	gdkvisual-xynth.c \

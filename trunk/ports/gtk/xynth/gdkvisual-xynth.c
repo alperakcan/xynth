@@ -37,7 +37,7 @@ GType gdk_visual_get_type (void)
 	return object_type;
 }
 
-void _gdk_visual_init (GdkDisplay *display)
+void _gdk_windowing_visual_init (GdkDisplay *display)
 {
 	GdkDisplayXynth *display_xynth;
 	

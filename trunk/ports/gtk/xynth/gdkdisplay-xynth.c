@@ -43,15 +43,33 @@ GdkDisplay * gdk_display_open (const gchar *display_name)
 	w_window_init(&(display_xynth->window), WINDOW_MAIN | WINDOW_NOFORM, NULL);
 	w_window_set_coor(display_xynth->window, 0, 0, display_xynth->window->window->surface->linear_buf_width, display_xynth->window->window->surface->linear_buf_height);
 
-	_gdk_visual_init(display);
+	_gdk_windowing_visual_init(display);
 	gdk_screen_set_default_colormap(screen, gdk_screen_get_system_colormap(screen));
 	_gdk_windowing_window_init(display);
+	_gdk_windowing_image_init(display);
+	_gdk_windowing_event_init(display);
+	_gdk_windowing_input_init(display);
+	_gdk_windowing_dnd_init(display);
 	
 	_gdk_screen = screen;
 	_gdk_display = display;
+
+	g_signal_emit_by_name(gdk_display_manager_get(), "display_opened", _gdk_display);
 
 	LEV();
 	
 	return display;
 }
 
+void _gdk_windowing_set_default_display (GdkDisplay *display)
+{
+	ENT();
+	LEV();
+}
+
+GdkScreen * gdk_display_get_default_screen (GdkDisplay * display)
+{
+	ENT();
+	LEV();
+	return _gdk_screen;
+}
