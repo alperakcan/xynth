@@ -37,6 +37,10 @@ typedef struct _GdkDrawableImplXynthClass GdkDrawableImplXynthClass;
 typedef struct _GdkWindowImplXynth        GdkWindowImplXynth;
 typedef struct _GdkWindowImplXynthClass   GdkWindowImplXynthClass;
 typedef struct _GdkDevicePrivate          GdkDevicePrivate;
+typedef struct _GdkPixmapImplXynth        GdkPixmapImplXynth;
+typedef struct _GdkPixmapImplXynthClass   GdkPixmapImplXynthClass;
+typedef struct _GdkGCXynth                GdkGCXynth;
+typedef struct _GdkGCXynthClass           GdkGCXynthClass;
 
 struct _GdkDisplayXynth {
 	GdkDisplay parent;
@@ -56,6 +60,7 @@ struct _GdkDrawableImplXynth {
 	GdkDrawable *wrapper;
 	GdkWindowType window_type;
 	GdkColormap *colormap;
+	w_object_t *object;
 };
 
 struct _GdkDrawableImplXynthClass {
@@ -76,18 +81,48 @@ struct _GdkWindowImplXynthClass {
 };
 
 struct _GdkDevicePrivate {
-  GdkDevice  info;
+	GdkDevice  info;
 };
 
-struct _GdkDeviceClass
-{
-  GObjectClass parent_class;
+struct _GdkDeviceClass {
+	GObjectClass parent_class;
+};
+
+struct _GdkPixmapImplXynth {
+	GdkDrawableImplXynth parent_instance;
+	gint width;
+	gint height;
+	guint is_foreign;
+};
+ 
+struct _GdkPixmapImplXynthClass {
+	GdkDrawableImplXynthClass parent_class;
+};
+
+struct _GdkGCXynth {
+	GdkGC parent_instance;
+	int depth;
+	GdkGCValues values;
+	GdkGCValuesMask values_mask;
+	GdkRegion *clip_region;
+	gchar *dash_list;
+	gint dash_offset;
+	gushort dash_list_len;
+};
+
+struct _GdkGCXynthClass {
+	GdkGCClass parent_class;
 };
 
 #define GDK_TYPE_DISPLAY_XYNTH                  (gdk_display_xynth_get_type())
 #define GDK_DISPLAY_XYNTH(object)               (G_TYPE_CHECK_INSTANCE_CAST ((object), GDK_TYPE_DISPLAY_XYNTH, GdkDisplayXynth))
+
 #define GDK_TYPE_DRAWABLE_IMPL_XYNTH            (_gdk_drawable_impl_xynth_get_type())
 #define GDK_DRAWABLE_IMPL_XYNTH(object)         (G_TYPE_CHECK_INSTANCE_CAST ((object), GDK_TYPE_DRAWABLE_IMPL_XYNTH, GdkDrawableImplXynth))
+#define GDK_DRAWABLE_IMPL_XYNTH_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GDK_TYPE_DRAWABLE_IMPL_XYNTH, GdkDrawableImplXynthClass))
+#define GDK_IS_DRAWABLE_IMPL_XYNTH(object)      (G_TYPE_CHECK_INSTANCE_TYPE ((object), GDK_TYPE_DRAWABLE_IMPL_XYNTH))
+#define GDK_IS_DRAWABLE_IMPL_XYNTH_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GDK_TYPE_DRAWABLE_IMPL_XYNTH))
+#define GDK_DRAWABLE_IMPL_XYNTH_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GDK_TYPE_DRAWABLE_IMPL_XYNTH, GdkDrawableImplXynthClass))
 
 #define GDK_TYPE_WINDOW_IMPL_XYNTH              (gdk_window_impl_xynth_get_type())
 #define GDK_WINDOW_IMPL_XYNTH(object)           (G_TYPE_CHECK_INSTANCE_CAST ((object), GDK_TYPE_WINDOW_IMPL_XYNTH, GdkWindowImplXynth))
@@ -95,6 +130,20 @@ struct _GdkDeviceClass
 #define GDK_IS_WINDOW_IMPL_XYNTH(object)        (G_TYPE_CHECK_INSTANCE_TYPE ((object), GDK_TYPE_WINDOW_IMPL_XYNTH))
 #define GDK_IS_WINDOW_IMPL_XYNTH_CLASS(klass)   (G_TYPE_CHECK_CLASS_TYPE ((klass), GDK_TYPE_WINDOW_IMPL_XYNTH))
 #define GDK_WINDOW_IMPL_XYNTH_GET_CLASS(obj)    (G_TYPE_INSTANCE_GET_CLASS ((obj), GDK_TYPE_WINDOW_IMPL_XYNTH, GdkWindowImplXynthClass))
+
+#define GDK_TYPE_PIXMAP_IMPL_XYNTH              (gdk_pixmap_impl_xynth_get_type ())
+#define GDK_PIXMAP_IMPL_XYNTH(object)           (G_TYPE_CHECK_INSTANCE_CAST ((object), GDK_TYPE_PIXMAP_IMPL_XYNTH, GdkPixmapImplXynth))
+#define GDK_PIXMAP_IMPL_XYNTH_CLASS(klass)      (G_TYPE_CHECK_CLASS_CAST ((klass), GDK_TYPE_PIXMAP_IMPL_XYNTH, GdkPixmapImplXynthClass))
+#define GDK_IS_PIXMAP_IMPL_XYNTH(object)        (G_TYPE_CHECK_INSTANCE_TYPE ((object), GDK_TYPE_PIXMAP_IMPL_XYNTH))
+#define GDK_IS_PIXMAP_IMPL_XYNTH_CLASS(klass)   (G_TYPE_CHECK_CLASS_TYPE ((klass), GDK_TYPE_PIXMAP_IMPL_XYNTH))
+#define GDK_PIXMAP_IMPL_XYNTH_GET_CLASS(obj)    (G_TYPE_INSTANCE_GET_CLASS ((obj), GDK_TYPE_PIXMAP_IMPL_XYNTH, GdkPixmapImplXynthClass))
+
+#define GDK_TYPE_GC_XYNTH                       (_gdk_gc_xynth_get_type())
+#define GDK_GC_XYNTH(object)                    (G_TYPE_CHECK_INSTANCE_CAST ((object), GDK_TYPE_GC_XYNTH, GdkGCXynth))
+#define GDK_GC_XYNTH_CLASS(klass)               (G_TYPE_CHECK_CLASS_CAST ((klass), GDK_TYPE_GC_XYNTH, GdkGCXynthClass))
+#define GDK_IS_GC_XYNTH(object)                 (G_TYPE_CHECK_INSTANCE_TYPE ((object), GDK_TYPE_GC_XYNTH))
+#define GDK_IS_GC_XYNTH_CLASS(klass)            (G_TYPE_CHECK_CLASS_TYPE ((klass), GDK_TYPE_GC_XYNTH))
+#define GDK_GC_XYNTH_GET_CLASS(obj)             (G_TYPE_INSTANCE_GET_CLASS ((obj), GDK_TYPE_GC_XYNTH, GdkGCXynthClass))
 
 GdkAtom _gdk_selection_property;
 
@@ -112,3 +161,5 @@ void _gdk_windowing_input_init (GdkDisplay *display);
 void _gdk_windowing_dnd_init (GdkDisplay *display);
 
 GType _gdk_drawable_impl_xynth_get_type (void);
+GType gdk_window_impl_xynth_get_type (void);
+GdkGC * gdk_xynth_gc_new (GdkDrawable *drawable, GdkGCValues *values, GdkGCValuesMask values_mask);
