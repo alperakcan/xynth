@@ -95,10 +95,11 @@ void _gdk_windowing_window_init (GdkDisplay *display)
 	window_impl = GDK_WINDOW_IMPL_XYNTH(private->impl);
 	private->window_type = GDK_WINDOW_ROOT;
 	private->depth = gdk_visual_get_system()->depth;
-	draw_impl->wrapper = _gdk_parent_root;
+	draw_impl->wrapper = GDK_DRAWABLE(private);
 	window_impl->width = display_xynth->window->window->surface->linear_buf_width;
 	window_impl->height = display_xynth->window->window->surface->linear_buf_height; 
 	window_impl->window = display_xynth->window;
+	window_impl->wrapper = _gdk_parent_root;
 	LEV();
 }
 
@@ -135,6 +136,7 @@ void gdk_window_move_resize (GdkWindow *window, gint x, gint y, gint width, gint
 	draw_impl = GDK_DRAWABLE_IMPL_XYNTH(private->impl);
 	window_impl = GDK_WINDOW_IMPL_XYNTH(private->impl);
 	w_window_set_coor(window_impl->window, x, y, width, height);
+	DBG("x:%d, y:%d, w:%d, h:%d", x, y, width, height);
 	LEV();
 }
 
@@ -147,7 +149,8 @@ void gdk_window_set_title (GdkWindow *window, const gchar *title)
 	private = (GdkWindowObject *) window;
 	draw_impl = GDK_DRAWABLE_IMPL_XYNTH(private->impl);
 	window_impl = GDK_WINDOW_IMPL_XYNTH(private->impl);
-	s_window_set_title(window_impl->window->window, title);
+	s_window_set_title(window_impl->window->window, (char *) title);
+	DBG("title: %s", title);
 	LEV();
 }
 
@@ -210,10 +213,11 @@ GdkWindow * gdk_window_new (GdkWindow *parent, GdkWindowAttr *attributes, gint a
 	private->x = x;
 	private->y = y;
 	private->window_type = attributes->window_type;
-	draw_impl->wrapper = window;
+	draw_impl->wrapper = GDK_DRAWABLE(private);
 	draw_impl->window_type = attributes->window_type;
 	window_impl->width = (attributes->width > 1) ? (attributes->width) : (1);
 	window_impl->height = (attributes->height > 1) ? (attributes->height) : (1);
+	window_impl->wrapper = window;
 	
 	if (attributes->wclass == GDK_INPUT_OUTPUT) {
 		depth = visual->depth;
@@ -262,7 +266,7 @@ GdkWindow * gdk_window_new (GdkWindow *parent, GdkWindowAttr *attributes, gint a
 			if (attributes_mask & GDK_WA_TITLE) {
 				title = attributes->title;
 			} else {
-				title = get_default_title();
+				title = (gchar *) get_default_title();
 			}
 			gdk_window_set_title(window, title);
 			break;
