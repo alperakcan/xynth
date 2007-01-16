@@ -5,7 +5,28 @@ static gpointer parent_class = NULL;
 
 static void gdk_xynth_draw_rectangle (GdkDrawable *drawable, GdkGC *gc, gboolean filled, gint x, gint y, gint width, gint height)
 {
-	NIY();
+	GdkColor color;
+	GdkDrawableImplXynth *draw_impl;
+	ENT();
+	draw_impl = GDK_DRAWABLE_IMPL_XYNTH(drawable);
+	if (GDK_GC_XYNTH(gc)->values_mask & GDK_GC_FOREGROUND) {
+		color = GDK_GC_XYNTH(gc)->values.foreground;
+	} else if (GDK_IS_WINDOW(draw_impl->wrapper)) {
+		color = ((GdkWindowObject *) (draw_impl->wrapper))->bg_color;
+	} else {
+		color.pixel = 0;
+	}
+	DBG("filled:%d, x:%d, y:%d, w:%d, h:%d c:%d(%d, %d, %d)", filled, x, y, width, height, color.pixel, color.red, color.green, color.blue);
+	if (filled) {
+		s_fillbox(draw_impl->object->surface, x, y, width, height, color.pixel);
+		DBG("OBJ: %p buf:%d %d %d %d win:%d %d %d %d", draw_impl->object,
+		draw_impl->object->surface->buf->x,draw_impl->object->surface->buf->y,draw_impl->object->surface->buf->w,draw_impl->object->surface->buf->h,
+		draw_impl->object->surface->win->x,draw_impl->object->surface->win->y,draw_impl->object->surface->win->w,draw_impl->object->surface->win->h);
+		w_object_update(draw_impl->object, draw_impl->object->surface->win);
+	} else {
+		NIY();
+	}
+	LEV();
 }
 
 static void gdk_xynth_draw_arc (GdkDrawable *drawable, GdkGC *gc, gboolean filled, gint x, gint y, gint width, gint height, gint angle1, gint angle2)
@@ -74,17 +95,34 @@ static GdkColormap * gdk_xynth_get_colormap (GdkDrawable *drawable)
 
 static void gdk_xynth_set_colormap (GdkDrawable *drawable, GdkColormap *colormap)
 {
-	NIY();
+	GdkDrawableImplXynth *impl;
+	ENT();
+	impl = GDK_DRAWABLE_IMPL_XYNTH(drawable);
+	if (impl->colormap == colormap) {
+		return;
+	}
+	if (impl->colormap) {
+		g_object_unref(impl->colormap);
+	}
+	impl->colormap = colormap;
+	if (impl->colormap) {
+		g_object_ref(impl->colormap);
+	}
+	LEV();
 }
 
 static gint gdk_xynth_get_depth (GdkDrawable *drawable)
 {
-	NIY();
+	ENT();
+	LEV();
+	return gdk_drawable_get_depth(GDK_DRAWABLE_IMPL_XYNTH(drawable)->wrapper);
 }
 
 static GdkScreen * gdk_xynth_get_screen (GdkDrawable *drawable)
 {
-	NIY();
+	ENT();
+	LEV();
+	return gdk_screen_get_default();
 }
 
 static GdkVisual * gdk_xynth_get_visual (GdkDrawable *drawable)
@@ -92,17 +130,20 @@ static GdkVisual * gdk_xynth_get_visual (GdkDrawable *drawable)
 	NIY();
 }
 
-static void gdk_xynth_get_size (GdkDrawable *d, gint *width, gint *height)
+static void gdk_xynth_get_size (GdkDrawable *drawable, gint *width, gint *height)
 {
-	NIY();
+	ENT();
+	g_return_if_fail(GDK_IS_WINDOW_IMPL_XYNTH(drawable));
+	if (width) {
+		*width = GDK_WINDOW_IMPL_XYNTH(drawable)->width;
+	}
+	if (height) {
+		*height = GDK_WINDOW_IMPL_XYNTH(drawable)->height;
+	}
+	LEV();
 }
 
 static GdkImage * gdk_xynth_copy_to_image (GdkDrawable *drawable, GdkImage *image, gint src_x, gint src_y, gint dest_x, gint dest_y, gint width, gint height)
-{
-	NIY();
-}
-
-static GdkGC * gdk_xynth_gc_new (GdkDrawable *drawable, GdkGCValues *values, GdkGCValuesMask values_mask)
 {
 	NIY();
 }

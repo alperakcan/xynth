@@ -312,11 +312,6 @@ gint gdk_mbstowcs (GdkWChar *dest, const gchar *src, gint dest_max)
 	NIY();
 }
 
-void gdk_notify_startup_complete (void)
-{
-	NIY();
-}
-
 GdkGrabStatus gdk_pointer_grab (GdkWindow *window, gboolean owner_events, GdkEventMask event_mask, GdkWindow *confine_to, GdkCursor *cursor, guint32 time)
 {
 	NIY();
@@ -442,11 +437,6 @@ void gdk_window_configure_finished (GdkWindow *window)
 	NIY();
 }
 
-void gdk_window_deiconify (GdkWindow *window)
-{
-	NIY();
-}
-
 void gdk_window_focus (GdkWindow *window, guint32 timestamp)
 {
 	NIY();
@@ -542,17 +532,7 @@ void gdk_window_scroll (GdkWindow *window, gint dx, gint dy)
 	NIY();
 }
 
-void gdk_window_set_accept_focus (GdkWindow *window, gboolean accept_focus)
-{
-	NIY();
-}
-
 void gdk_window_set_back_pixmap (GdkWindow *window, GdkPixmap *pixmap, gboolean parent_relative)
-{
-	NIY();
-}
-
-void gdk_window_set_background (GdkWindow *window, const GdkColor *color)
 {
 	NIY();
 }
@@ -566,41 +546,6 @@ void gdk_window_set_cursor (GdkWindow *window, GdkCursor *cursor)
 }
 
 void gdk_window_set_decorations (GdkWindow *window, GdkWMDecoration decorations)
-{
-	NIY();
-}
-
-void gdk_window_set_focus_on_map (GdkWindow *window, gboolean focus_on_map)
-{
-	NIY();
-}
-
-void gdk_window_set_geometry_hints (GdkWindow *window, GdkGeometry *geometry, GdkWindowHints geom_mask)
-{
-	NIY();
-}
-
-void gdk_window_set_icon (GdkWindow *window, GdkWindow *icon_window, GdkPixmap *pixmap, GdkBitmap *mask)
-{
-	NIY();
-}
-
-void gdk_window_set_icon_list (GdkWindow *window, GList *pixbufs)
-{
-	NIY();
-}
-
-void gdk_window_set_keep_above (GdkWindow *window, gboolean setting)
-{
-	NIY();
-}
-
-void gdk_window_set_keep_below (GdkWindow *window, gboolean setting)
-{
-	NIY();
-}
-
-void gdk_window_set_modal_hint (GdkWindow *window, gboolean modal)
 {
 	NIY();
 }
@@ -625,17 +570,7 @@ void gdk_window_set_transient_for (GdkWindow *window, GdkWindow *parent)
 	NIY();
 }
 
-void gdk_window_set_type_hint (GdkWindow *window, GdkWindowTypeHint hint)
-{
-	NIY();
-}
-
 void gdk_window_shape_combine_mask (GdkWindow *window, GdkBitmap *mask, gint x, gint y)
-{
-	NIY();
-}
-
-void gdk_window_show (GdkWindow *window)
 {
 	NIY();
 }
@@ -646,21 +581,6 @@ void gdk_window_show_unraised (GdkWindow *window)
 }
 
 void gdk_window_stick (GdkWindow *window)
-{
-	NIY();
-}
-
-void gdk_window_unfullscreen (GdkWindow *window)
-{
-	NIY();
-}
-
-void gdk_window_unmaximize (GdkWindow *window)
-{
-	NIY();
-}
-
-void gdk_window_unstick (GdkWindow *window)
 {
 	NIY();
 }
@@ -701,16 +621,6 @@ GList * gdk_screen_list_visuals (GdkScreen *screen)
 }
 
 void _gdk_windowing_window_clear_area_e (GdkWindow *window, gint x, gint y, gint width, gint height)
-{
-	NIY();
-}
-
-void _gdk_windowing_window_get_offsets (GdkWindow *window, gint *x_offset, gint *y_offset)
-{
-	NIY();
-}
-
-GType _gdk_pixmap_impl_get_type (void)
 {
 	NIY();
 }
