@@ -232,16 +232,6 @@ void gdk_gc_copy (GdkGC *dst_gc, GdkGC *src_gc)
 	NIY();
 }
 
-void gdk_gc_set_clip_rectangle (GdkGC *gc, GdkRectangle *rectangle)
-{
-	NIY();
-}
-
-void gdk_gc_set_clip_region (GdkGC *gc, GdkRegion *region)
-{
-	NIY();
-}
-
 guint32 gdk_image_get_pixel (GdkImage *image, gint x, gint y)
 {
 	NIY();
@@ -680,11 +670,6 @@ void _gdk_windowing_get_pointer (GdkDisplay *display, GdkScreen **screen, gint *
 }
 
 gint gdk_string_to_compound_text_for_display (GdkDisplay *display, const gchar *str, GdkAtom *encoding, gint *format, guchar **ctext, gint *length)
-{
-	NIY();
-}
-
-gboolean _gdk_windowing_window_queue_antiexpose (GdkWindow *window, GdkRegion *area)
 {
 	NIY();
 }

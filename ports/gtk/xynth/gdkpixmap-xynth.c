@@ -5,12 +5,14 @@ static gpointer parent_class = NULL;
 
 static void gdk_pixmap_impl_xynth_get_size (GdkDrawable *drawable, gint *width, gint *height)
 {
+	ENT();
 	if (width) {
 		*width = GDK_PIXMAP_IMPL_XYNTH(drawable)->width;
 	}
 	if (height) {
 		*height = GDK_PIXMAP_IMPL_XYNTH(drawable)->height;
 	}
+	LEV();
 }
 
 static void gdk_pixmap_impl_xynth_finalize (GObject *object)
@@ -66,6 +68,7 @@ GdkPixmap * gdk_pixmap_new (GdkDrawable *drawable, gint width, gint height, gint
 	GdkColormap *cmap;
 	GdkPixmap *pixmap;
 	GdkPixmapImplXynth *pix_impl;
+	GdkDisplayXynth *display_xynth;
 	GdkDrawableImplXynth *draw_impl;
 	ENT();
 	g_return_val_if_fail (drawable == NULL || GDK_IS_DRAWABLE (drawable), NULL);
@@ -89,6 +92,10 @@ GdkPixmap * gdk_pixmap_new (GdkDrawable *drawable, gint width, gint height, gint
 	pix_impl = GDK_PIXMAP_IMPL_XYNTH(GDK_PIXMAP_OBJECT(pixmap)->impl);
 	draw_impl->wrapper = GDK_DRAWABLE(pixmap);
 	
+	display_xynth = GDK_DISPLAY_XYNTH(_gdk_display);
+	w_object_init(display_xynth->window, &(draw_impl->object), NULL, NULL);
+	w_object_move(draw_impl->object, 0, 0, width, height);
+
 	DBG("w:%d, h:%d, d:%d, wd:%d", width, height, depth, window_depth);
 
 	pix_impl->is_foreign = FALSE;

@@ -1,20 +1,44 @@
 
 #include "gdk-xynth.h"
+#include "gdkinternals.h"
 
 static gpointer parent_class = NULL;
 
 static GdkRegion * gdk_window_impl_xynth_get_visible_region (GdkDrawable *drawable)
 {
-	GdkWindowImplXynth *impl = GDK_WINDOW_IMPL_XYNTH(drawable);
+	GdkDrawableImplXynth *draw_impl = GDK_DRAWABLE_IMPL_XYNTH(drawable);
+	GdkWindowImplXynth *window_impl = GDK_WINDOW_IMPL_XYNTH(drawable);
 	GdkRectangle result_rect;
 	ENT();
 	result_rect.x = 0;
 	result_rect.y = 0;
-	result_rect.width = impl->width;
-	result_rect.height = impl->height;
-	gdk_rectangle_intersect(&result_rect, &impl->clip, &result_rect);
+	result_rect.width = window_impl->width;
+	result_rect.height = window_impl->height;
+	DBG("Rect: %d %d, %d %d", result_rect.x, result_rect.y, result_rect.width, result_rect.height);
+//	gdk_rectangle_intersect(&result_rect, &window_impl->clip, &result_rect);
+	switch (draw_impl->window_type) {
+		case GDK_WINDOW_TOPLEVEL:
+			DBG("GDK_WINDOW_TOPLEVEL");
+			break;
+		case GDK_WINDOW_CHILD:
+			DBG("GDK_WINDOW_CHILD");
+			break;
+		case GDK_WINDOW_DIALOG:
+			DBG("GDK_WINDOW_DIALOG");
+			break;
+		case GDK_WINDOW_TEMP:
+			DBG("GDK_WINDOW_TEMP");
+			break;
+		case GDK_WINDOW_ROOT:
+			DBG("GDK_WINDOW_ROOT");
+			break;
+		default:
+			DBG("GDK_WINDOW_UNKNOWN");
+			break;
+	}
+	DBG("Rect: %d %d, %d %d", result_rect.x, result_rect.y, result_rect.width, result_rect.height);
 	LEV();
-	return gdk_region_rectangle (&result_rect);
+	return gdk_region_rectangle(&result_rect);
 }
 
 static void gdk_window_impl_xynth_init (GdkWindowImplXynth *impl)
@@ -93,6 +117,8 @@ void _gdk_windowing_window_init (GdkDisplay *display)
 	private = (GdkWindowObject *) _gdk_parent_root;
 	draw_impl = GDK_DRAWABLE_IMPL_XYNTH(private->impl);
 	window_impl = GDK_WINDOW_IMPL_XYNTH(private->impl);
+	window_impl->window = display_xynth->window;
+	w_object_init(window_impl->window, &(draw_impl->object), NULL, NULL);
 	private->window_type = GDK_WINDOW_ROOT;
 	private->depth = gdk_visual_get_system()->depth;
 	draw_impl->wrapper = GDK_DRAWABLE(private);
@@ -135,11 +161,16 @@ void gdk_window_move_resize (GdkWindow *window, gint x, gint y, gint width, gint
 	private = (GdkWindowObject *) window;
 	draw_impl = GDK_DRAWABLE_IMPL_XYNTH(private->impl);
 	window_impl = GDK_WINDOW_IMPL_XYNTH(private->impl);
+        private->state = 0;
 	DBG("x:%d, y:%d, w:%d, h:%d", x, y, width, height);
 	switch (draw_impl->window_type) {
 		case GDK_WINDOW_DIALOG:
 		case GDK_WINDOW_TOPLEVEL:
 		case GDK_WINDOW_TEMP:
+			private->x = x;
+			private->y = y;
+			window_impl->width = width;
+			window_impl->height = height;
 			w_object_move(draw_impl->object, 0, 0, width, height);
 			w_window_set_coor(window_impl->window, x, y, width, height);
 			break;
@@ -251,7 +282,11 @@ GdkWindow * gdk_window_new (GdkWindow *parent, GdkWindowAttr *attributes, gint a
 			DBG("GDK_WINDOW_UNKNOWN");
 			break;
 	}
-	
+	if (attributes->wclass == GDK_INPUT_OUTPUT) {
+		DBG("GDK_INPUT_OUTPUT");
+	} else {
+		DBG("GDK_INPUT_OUNLY");
+	}	
 	if (attributes->wclass == GDK_INPUT_OUTPUT) {
 		depth = visual->depth;
 		private->input_only = FALSE;
@@ -263,8 +298,9 @@ GdkWindow * gdk_window_new (GdkWindow *parent, GdkWindowAttr *attributes, gint a
 		}
 	} else {
 		depth = 0;
+		private->depth = 0;
 		private->input_only = TRUE;
-		draw_impl->colormap = NULL;
+		draw_impl->colormap = gdk_screen_get_system_colormap(_gdk_screen);
 	}
 
 	switch (draw_impl->window_type) {
@@ -314,6 +350,7 @@ GdkWindow * gdk_window_new (GdkWindow *parent, GdkWindowAttr *attributes, gint a
 	if (pprivate) {
 		pprivate->children = g_list_prepend(pprivate->children, window);
 	}
+	g_object_ref(window);
 
 	LEV();
 
@@ -468,6 +505,36 @@ void gdk_window_show (GdkWindow *window)
 	private = (GdkWindowObject *) window;
 	draw_impl = GDK_DRAWABLE_IMPL_XYNTH(private->impl);
 	window_impl = GDK_WINDOW_IMPL_XYNTH(private->impl);
+	if (private->destroyed) {
+		return;
+	}
+	if (!GDK_WINDOW_IS_MAPPED(window)) {
+		gdk_synthesize_window_state(window, GDK_WINDOW_STATE_WITHDRAWN, 0);
+        }
+        g_assert(GDK_WINDOW_IS_MAPPED(window));
+        
+	switch (draw_impl->window_type) {
+		case GDK_WINDOW_TOPLEVEL:
+			DBG("GDK_WINDOW_TOPLEVEL");
+			break;
+		case GDK_WINDOW_CHILD:
+			DBG("GDK_WINDOW_CHILD");
+			break;
+		case GDK_WINDOW_DIALOG:
+			DBG("GDK_WINDOW_DIALOG");
+			break;
+		case GDK_WINDOW_TEMP:
+			DBG("GDK_WINDOW_TEMP");
+			break;
+		case GDK_WINDOW_ROOT:
+			DBG("GDK_WINDOW_ROOT");
+			break;
+		default:
+			DBG("GDK_WINDOW_UNKNOWN");
+			break;
+	}
+	gdk_window_invalidate_rect(window, NULL, TRUE);
+
 	w_object_show(draw_impl->object);
 	switch (draw_impl->window_type) {
 		case GDK_WINDOW_DIALOG:
@@ -479,4 +546,11 @@ void gdk_window_show (GdkWindow *window)
 			break;
 	}
 	LEV();
+}
+
+gboolean _gdk_windowing_window_queue_antiexpose (GdkWindow *window, GdkRegion *area)
+{
+	ENT();
+	LEV();
+	return FALSE;
 }

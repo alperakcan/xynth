@@ -201,3 +201,46 @@ GdkGC * gdk_xynth_gc_new (GdkDrawable *drawable, GdkGCValues *values, GdkGCValue
 	LEV();
 	return gc;
 }
+
+void gdk_gc_set_clip_region (GdkGC *gc, GdkRegion *region)
+{
+	GdkGCXynth *xgc;
+	gboolean had_region = FALSE;
+	ENT();
+	g_return_if_fail(GDK_IS_GC(gc));
+	xgc = GDK_GC_XYNTH(gc);
+	if (xgc->clip_region) {
+		had_region = TRUE;
+		gdk_region_destroy(xgc->clip_region);
+	}
+	if (region) {
+		xgc->clip_region = gdk_region_copy(region);
+	} else {
+		xgc->clip_region = NULL;
+	}
+	gc->clip_x_origin = 0;
+	gc->clip_y_origin = 0;
+	LEV();
+}
+
+void gdk_gc_set_clip_rectangle (GdkGC *gc, GdkRectangle *rectangle)
+{
+	GdkGCXynth *xgc;
+	gboolean had_region = FALSE;
+	ENT();
+	g_return_if_fail(GDK_IS_GC(gc));
+	xgc = GDK_GC_XYNTH(gc);
+	if (xgc->clip_region) {
+		had_region = TRUE;
+		gdk_region_destroy(xgc->clip_region);
+	}
+	if (rectangle) {
+		xgc->clip_region = gdk_region_rectangle(rectangle);
+	} else {
+		xgc->clip_region = NULL;
+	}
+	gc->clip_x_origin = 0;
+	gc->clip_y_origin = 0;
+	LEV();
+}
+

@@ -3,6 +3,8 @@
 #include "gdk.h"
 #include "gdkprivate.h"
 #include "gdkalias.h"
+#include "gdktypes.h"
+#include "gdkregion-generic.h"
 
 #include <xynth.h>
 #include <widget.h>
@@ -21,9 +23,13 @@
 	printf("ENT [%d]: %s (%s:%d)\n", __ent__, __FUNCTION__, __FILE__, __LINE__);\
 	__ent__++;
 
+#if 1
 #define LEV() \
 	__ent__--;\
 	printf("LEV [%d]: %s (%s:%d)\n", __ent__, __FUNCTION__, __FILE__, __LINE__);
+#else
+#define LEV()
+#endif
 
 #define DBG(dbg...) \
 	printf("DBG ");\
@@ -163,3 +169,4 @@ void _gdk_windowing_dnd_init (GdkDisplay *display);
 GType _gdk_drawable_impl_xynth_get_type (void);
 GType gdk_window_impl_xynth_get_type (void);
 GdkGC * gdk_xynth_gc_new (GdkDrawable *drawable, GdkGCValues *values, GdkGCValuesMask values_mask);
+GdkEvent * gdk_event_make (GdkWindow *window, GdkEventType type, gboolean append_to_queue);
