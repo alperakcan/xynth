@@ -5,9 +5,12 @@ static gpointer parent_class = NULL;
 
 static void gdk_xynth_draw_rectangle (GdkDrawable *drawable, GdkGC *gc, gboolean filled, gint x, gint y, gint width, gint height)
 {
+	int i;
 	GdkColor color;
+	GdkGCXynth *gc_impl;
 	GdkDrawableImplXynth *draw_impl;
 	ENT();
+	gc_impl = GDK_GC_XYNTH(gc);
 	draw_impl = GDK_DRAWABLE_IMPL_XYNTH(drawable);
 	if (GDK_GC_XYNTH(gc)->values_mask & GDK_GC_FOREGROUND) {
 		color = GDK_GC_XYNTH(gc)->values.foreground;
@@ -15,6 +18,14 @@ static void gdk_xynth_draw_rectangle (GdkDrawable *drawable, GdkGC *gc, gboolean
 		color = ((GdkWindowObject *) (draw_impl->wrapper))->bg_color;
 	} else {
 		color.pixel = 0;
+	}
+	if (gc_impl->clip_region) {
+		DBG("clip_region->size: %d, numRects: %d", gc_impl->clip_region->size, gc_impl->clip_region->numRects);
+		for (i = 0; i < gc_impl->clip_region->numRects; i++) {
+			DBG("rect: %d %d %d %d", gc_impl->clip_region->rects[i].x1, gc_impl->clip_region->rects[i].y1,
+			                         gc_impl->clip_region->rects[i].x2 - gc_impl->clip_region->rects[i].x1,
+			                         gc_impl->clip_region->rects[i].y2 - gc_impl->clip_region->rects[i].y1);
+		}
 	}
 	DBG("filled:%d, x:%d, y:%d, w:%d, h:%d c:%d(%d, %d, %d)", filled, x, y, width, height, color.pixel, color.red, color.green, color.blue);
 	if (filled) {
@@ -71,7 +82,32 @@ static void gdk_xynth_draw_points (GdkDrawable *drawable, GdkGC *gc, GdkPoint *p
 
 static void gdk_xynth_draw_segments (GdkDrawable *drawable, GdkGC *gc, GdkSegment *segs, gint nsegs)
 {
-	NIY();
+	int i;
+	GdkColor color;
+	GdkGCXynth *gc_impl;
+	GdkDrawableImplXynth *draw_impl;
+	ENT();
+	gc_impl = GDK_GC_XYNTH(gc);
+	draw_impl = GDK_DRAWABLE_IMPL_XYNTH(drawable);
+	if (GDK_GC_XYNTH(gc)->values_mask & GDK_GC_FOREGROUND) {
+		color = GDK_GC_XYNTH(gc)->values.foreground;
+	} else if (GDK_IS_WINDOW(draw_impl->wrapper)) {
+		color = ((GdkWindowObject *) (draw_impl->wrapper))->bg_color;
+	} else {
+		color.pixel = 0;
+	}
+	if (gc_impl->clip_region) {
+		DBG("clip_region->size: %d, numRects: %d", gc_impl->clip_region->size, gc_impl->clip_region->numRects);
+		for (i = 0; i < gc_impl->clip_region->numRects; i++) {
+			DBG("rect: %d %d %d %d", gc_impl->clip_region->rects[i].x1, gc_impl->clip_region->rects[i].y1,
+			                         gc_impl->clip_region->rects[i].x2 - gc_impl->clip_region->rects[i].x1,
+			                         gc_impl->clip_region->rects[i].y2 - gc_impl->clip_region->rects[i].y1);
+		}
+	}
+	for(i = 0; i < nsegs; i++) {
+		s_line(draw_impl->object->surface, segs[i].x1, segs[i].y1, segs[i].x2, segs[i].y2, color.pixel);
+	}
+	LEV();
 }
 
 static void gdk_xynth_draw_lines (GdkDrawable *drawable, GdkGC *gc, GdkPoint *points, gint npoints)
@@ -140,6 +176,7 @@ static void gdk_xynth_get_size (GdkDrawable *drawable, gint *width, gint *height
 	if (height) {
 		*height = GDK_WINDOW_IMPL_XYNTH(drawable)->height;
 	}
+	DBG("width:%d, height:%d", *width, *height);
 	LEV();
 }
 

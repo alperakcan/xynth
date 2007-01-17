@@ -75,6 +75,7 @@ gint gdk_colormap_alloc_colors (GdkColormap *colormap, GdkColor *colors, gint nc
 		case GDK_VISUAL_STATIC_GRAY:
 		case GDK_VISUAL_STATIC_COLOR:
 		case GDK_VISUAL_DIRECT_COLOR:
+		default:
 			NIY();
 			break;
 		case GDK_VISUAL_TRUE_COLOR:
