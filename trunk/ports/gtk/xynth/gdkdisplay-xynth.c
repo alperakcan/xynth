@@ -73,3 +73,10 @@ GdkScreen * gdk_display_get_default_screen (GdkDisplay * display)
 	LEV();
 	return _gdk_screen;
 }
+
+void gdk_display_flush (GdkDisplay *display)
+{
+	ENT();
+	LEV();
+}
+

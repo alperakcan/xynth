@@ -117,8 +117,6 @@ void _gdk_windowing_window_init (GdkDisplay *display)
 	private = (GdkWindowObject *) _gdk_parent_root;
 	draw_impl = GDK_DRAWABLE_IMPL_XYNTH(private->impl);
 	window_impl = GDK_WINDOW_IMPL_XYNTH(private->impl);
-	window_impl->window = display_xynth->window;
-	w_object_init(window_impl->window, &(draw_impl->object), NULL, NULL);
 	private->window_type = GDK_WINDOW_ROOT;
 	private->depth = gdk_visual_get_system()->depth;
 	draw_impl->wrapper = GDK_DRAWABLE(private);
@@ -533,18 +531,20 @@ void gdk_window_show (GdkWindow *window)
 			DBG("GDK_WINDOW_UNKNOWN");
 			break;
 	}
-	gdk_window_invalidate_rect(window, NULL, TRUE);
 
-	w_object_show(draw_impl->object);
 	switch (draw_impl->window_type) {
 		case GDK_WINDOW_DIALOG:
 		case GDK_WINDOW_TOPLEVEL:
 		case GDK_WINDOW_TEMP:
+			w_object_show(draw_impl->object);
 			s_window_show(window_impl->window->window);
 			break;
 		default:
 			break;
 	}
+
+	gdk_window_invalidate_rect(window, NULL, TRUE);
+
 	LEV();
 }
 

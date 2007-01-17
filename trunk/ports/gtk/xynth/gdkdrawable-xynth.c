@@ -67,7 +67,54 @@ static void gdk_xynth_draw_glyphs (GdkDrawable *drawable, GdkGC *gc, PangoFont *
 
 static void gdk_xynth_draw_drawable (GdkDrawable *drawable, GdkGC *gc, GdkPixmap *src, gint xsrc, gint ysrc, gint xdest, gint ydest, gint width, gint height)
 {
-	NIY();
+	int i;
+	GdkGCXynth *gc_impl;
+	GdkDrawableImplXynth *draw_impl;
+	GdkDrawableImplXynth *pdraw_impl;
+	ENT();
+	DBG("xsrc:%d, ysrc:%d, xdest:%d, ydest:%d, width:%d, height:%d", xsrc, ysrc, xdest, ydest, width, height);
+	gc_impl = GDK_GC_XYNTH(gc);
+	draw_impl = GDK_DRAWABLE_IMPL_XYNTH(drawable);
+	pdraw_impl = GDK_DRAWABLE_IMPL_XYNTH(GDK_PIXMAP_OBJECT(src)->impl);
+	if (draw_impl == pdraw_impl) {
+		DBG("draw_impl == pdraw_impl");
+		NIY();
+	}
+	switch (draw_impl->window_type) {
+		case GDK_WINDOW_TOPLEVEL:
+			DBG("GDK_WINDOW_TOPLEVEL");
+			break;
+		case GDK_WINDOW_CHILD:
+			DBG("GDK_WINDOW_CHILD");
+			break;
+		case GDK_WINDOW_DIALOG:
+			DBG("GDK_WINDOW_DIALOG");
+			break;
+		case GDK_WINDOW_TEMP:
+			DBG("GDK_WINDOW_TEMP");
+			break;
+		case GDK_WINDOW_ROOT:
+			DBG("GDK_WINDOW_ROOT");
+			break;
+		default:
+			DBG("GDK_WINDOW_UNKNOWN");
+			break;
+	}
+	if (gc_impl->clip_region) {
+		DBG("clip_region->size: %d, numRects: %d", gc_impl->clip_region->size, gc_impl->clip_region->numRects);
+		for (i = 0; i < gc_impl->clip_region->numRects; i++) {
+			DBG("rect: %d %d %d %d", gc_impl->clip_region->rects[i].x1, gc_impl->clip_region->rects[i].y1,
+			                         gc_impl->clip_region->rects[i].x2 - gc_impl->clip_region->rects[i].x1,
+			                         gc_impl->clip_region->rects[i].y2 - gc_impl->clip_region->rects[i].y1);
+		}
+	}
+	DBG("OBJ: %p buf:%d %d %d %d win:%d %d %d %d", draw_impl->object,
+	draw_impl->object->surface->buf->x,draw_impl->object->surface->buf->y,draw_impl->object->surface->buf->w,draw_impl->object->surface->buf->h,
+	draw_impl->object->surface->win->x,draw_impl->object->surface->win->y,draw_impl->object->surface->win->w,draw_impl->object->surface->win->h);
+	w_object_update(draw_impl->object, draw_impl->object->surface->win);
+	s_putboxpart(draw_impl->object->surface, xdest, ydest, width, height, pdraw_impl->object->surface->width, pdraw_impl->object->surface->height, pdraw_impl->object->surface->vbuf, xsrc, ysrc);
+	w_object_update(draw_impl->object, draw_impl->object->surface->win);
+	LEV();
 }
 
 static void gdk_xynth_draw_image (GdkDrawable *drawable, GdkGC *gc, GdkImage *image, gint xsrc, gint ysrc, gint xdest, gint ydest, gint width, gint height)
@@ -96,6 +143,10 @@ static void gdk_xynth_draw_segments (GdkDrawable *drawable, GdkGC *gc, GdkSegmen
 	} else {
 		color.pixel = 0;
 	}
+	DBG("OBJ: %p buf:%d %d %d %d win:%d %d %d %d", draw_impl->object,
+	draw_impl->object->surface->buf->x,draw_impl->object->surface->buf->y,draw_impl->object->surface->buf->w,draw_impl->object->surface->buf->h,
+	draw_impl->object->surface->win->x,draw_impl->object->surface->win->y,draw_impl->object->surface->win->w,draw_impl->object->surface->win->h);
+	w_object_update(draw_impl->object, draw_impl->object->surface->win);
 	if (gc_impl->clip_region) {
 		DBG("clip_region->size: %d, numRects: %d", gc_impl->clip_region->size, gc_impl->clip_region->numRects);
 		for (i = 0; i < gc_impl->clip_region->numRects; i++) {
@@ -105,6 +156,7 @@ static void gdk_xynth_draw_segments (GdkDrawable *drawable, GdkGC *gc, GdkSegmen
 		}
 	}
 	for(i = 0; i < nsegs; i++) {
+		DBG("srect: %d %d %d %d, %d", segs[i].x1, segs[i].y1, segs[i].x2, segs[i].y2, color.pixel);
 		s_line(draw_impl->object->surface, segs[i].x1, segs[i].y1, segs[i].x2, segs[i].y2, color.pixel);
 	}
 	LEV();
