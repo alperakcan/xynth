@@ -62,11 +62,6 @@ void gdk_display_beep (GdkDisplay * display)
 	NIY();
 }
 
-void gdk_display_flush (GdkDisplay *display)
-{
-	NIY();
-}
-
 gint gdk_display_get_n_screens (GdkDisplay * display)
 {
 	NIY();
