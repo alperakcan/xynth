@@ -216,6 +216,13 @@ int w_window_font_add (w_window_t *window, char *font)
 	return 0;
 }
 
+int w_window_main (w_window_t *window)
+{
+	s_window_show(window->window);
+	s_window_main(window->window);
+	return 0;
+}
+
 int w_window_uninit (w_window_t *window)
 {
 	s_image_t *img;
@@ -243,7 +250,7 @@ int w_window_init (w_window_t **window, S_WINDOW type, w_window_t *parent)
 {
 	(*window) = (w_window_t *) s_malloc(sizeof(w_window_t));
 	s_window_init(&((*window)->window));
-	s_window_new((*window)->window, type, NULL);
+	s_window_new((*window)->window, type, (parent) ? parent->window : NULL);
 	s_window_set_resizeable((*window)->window, 0);
 	w_object_init(*window, &((*window)->object), NULL, NULL);
 	s_list_init(&((*window)->images));

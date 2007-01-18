@@ -196,6 +196,13 @@ void s_line (s_surface_t *surface, int x1, int y1, int x2, int y2, int c)
 	int deltay;
 	int curpixel;
 	int numpixels;
+	if (x1 == x2) {
+		s_vline(surface, x1, y1, y2, c);
+		return;
+	} else if (y1 == y2) {
+		s_hline(surface, x1, y1, x2, c);
+		return;
+	}
 	x = x1;
 	y = y1;
 	deltax = abs(x2 - x1);
