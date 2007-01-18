@@ -176,6 +176,7 @@ void gdk_window_move_resize (GdkWindow *window, gint x, gint y, gint width, gint
 			w_object_move(draw_impl->object, x, y, width, height);
 			break;
 	}
+	gdk_window_invalidate_rect(window, NULL, TRUE);
 	LEV();
 }
 
@@ -542,8 +543,6 @@ void gdk_window_show (GdkWindow *window)
 		default:
 			break;
 	}
-
-	gdk_window_invalidate_rect(window, NULL, TRUE);
 
 	LEV();
 }
