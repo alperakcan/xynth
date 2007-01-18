@@ -59,8 +59,8 @@ void gdk_colormap_change (GdkColormap *colormap, gint ncolors)
 
 gint gdk_colormap_alloc_colors (GdkColormap *colormap, GdkColor *colors, gint ncolors, gboolean writeable, gboolean best_match, gboolean *success)
 {
-	GdkVisual *visual;
 	gint i;
+	GdkVisual *visual;
 	gint nremaining = 0;
 	ENT();
 	g_return_val_if_fail(colormap != NULL, FALSE);

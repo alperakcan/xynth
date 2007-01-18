@@ -16,26 +16,7 @@ static GdkRegion * gdk_window_impl_xynth_get_visible_region (GdkDrawable *drawab
 	result_rect.height = window_impl->height;
 	DBG("Rect: %d %d, %d %d", result_rect.x, result_rect.y, result_rect.width, result_rect.height);
 //	gdk_rectangle_intersect(&result_rect, &window_impl->clip, &result_rect);
-	switch (draw_impl->window_type) {
-		case GDK_WINDOW_TOPLEVEL:
-			DBG("GDK_WINDOW_TOPLEVEL");
-			break;
-		case GDK_WINDOW_CHILD:
-			DBG("GDK_WINDOW_CHILD");
-			break;
-		case GDK_WINDOW_DIALOG:
-			DBG("GDK_WINDOW_DIALOG");
-			break;
-		case GDK_WINDOW_TEMP:
-			DBG("GDK_WINDOW_TEMP");
-			break;
-		case GDK_WINDOW_ROOT:
-			DBG("GDK_WINDOW_ROOT");
-			break;
-		default:
-			DBG("GDK_WINDOW_UNKNOWN");
-			break;
-	}
+	DBG_WINDOW_TYPE();
 	DBG("Rect: %d %d, %d %d", result_rect.x, result_rect.y, result_rect.width, result_rect.height);
 	LEV();
 	return gdk_region_rectangle(&result_rect);
@@ -192,7 +173,6 @@ void gdk_window_set_title (GdkWindow *window, const gchar *title)
 	draw_impl = GDK_DRAWABLE_IMPL_XYNTH(private->impl);
 	window_impl = GDK_WINDOW_IMPL_XYNTH(private->impl);
 	s_window_set_title(window_impl->window->window, (char *) title);
-	DBG("title: %s", title);
 	LEV();
 }
 
@@ -263,26 +243,7 @@ GdkWindow * gdk_window_new (GdkWindow *parent, GdkWindowAttr *attributes, gint a
 	window_impl->height = (attributes->height > 1) ? (attributes->height) : (1);
 	window_impl->wrapper = window;
 	
-	switch (draw_impl->window_type) {
-		case GDK_WINDOW_TOPLEVEL:
-			DBG("GDK_WINDOW_TOPLEVEL");
-			break;
-		case GDK_WINDOW_CHILD:
-			DBG("GDK_WINDOW_CHILD");
-			break;
-		case GDK_WINDOW_DIALOG:
-			DBG("GDK_WINDOW_DIALOG");
-			break;
-		case GDK_WINDOW_TEMP:
-			DBG("GDK_WINDOW_TEMP");
-			break;
-		case GDK_WINDOW_ROOT:
-			DBG("GDK_WINDOW_ROOT");
-			break;
-		default:
-			DBG("GDK_WINDOW_UNKNOWN");
-			break;
-	}
+	DBG_WINDOW_TYPE();
 	if (attributes->wclass == GDK_INPUT_OUTPUT) {
 		DBG("GDK_INPUT_OUTPUT");
 	} else {
@@ -404,8 +365,9 @@ void gdk_window_set_accept_focus (GdkWindow *window, gboolean accept_focus)
 	g_return_if_fail(GDK_IS_WINDOW (window));
 	private = (GdkWindowObject *)window;  
 	accept_focus = accept_focus != FALSE;
-	if (private->accept_focus != accept_focus)
+	if (private->accept_focus != accept_focus) {
 		private->accept_focus = accept_focus;
+	}
 	LEV();
 }
 
@@ -417,8 +379,9 @@ void gdk_window_set_focus_on_map (GdkWindow *window, gboolean focus_on_map)
 	g_return_if_fail(GDK_IS_WINDOW (window));
 	private = (GdkWindowObject *)window;  
 	focus_on_map = focus_on_map != FALSE;
-	if (private->focus_on_map != focus_on_map)
+	if (private->focus_on_map != focus_on_map) {
 		private->focus_on_map = focus_on_map;
+	}
 	LEV();
 }
 
@@ -514,37 +477,24 @@ void gdk_window_show (GdkWindow *window)
         }
         g_assert(GDK_WINDOW_IS_MAPPED(window));
         
-	switch (draw_impl->window_type) {
-		case GDK_WINDOW_TOPLEVEL:
-			DBG("GDK_WINDOW_TOPLEVEL");
-			break;
-		case GDK_WINDOW_CHILD:
-			DBG("GDK_WINDOW_CHILD");
-			break;
-		case GDK_WINDOW_DIALOG:
-			DBG("GDK_WINDOW_DIALOG");
-			break;
-		case GDK_WINDOW_TEMP:
-			DBG("GDK_WINDOW_TEMP");
-			break;
-		case GDK_WINDOW_ROOT:
-			DBG("GDK_WINDOW_ROOT");
-			break;
-		default:
-			DBG("GDK_WINDOW_UNKNOWN");
-			break;
+        DBG_WINDOW_TYPE();
+        
+	if (private->input_only == TRUE) {
+		return;
 	}
 
+	w_object_show(draw_impl->object);
 	switch (draw_impl->window_type) {
 		case GDK_WINDOW_DIALOG:
 		case GDK_WINDOW_TOPLEVEL:
 		case GDK_WINDOW_TEMP:
-			w_object_show(draw_impl->object);
 			s_window_show(window_impl->window->window);
 			break;
 		default:
 			break;
 	}
+
+	gdk_window_invalidate_rect(window, NULL, TRUE);
 
 	LEV();
 }

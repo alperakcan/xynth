@@ -19,16 +19,16 @@ static void gdk_pixmap_impl_xynth_finalize (GObject *object)
 {
 	GdkPixmapImplXynth *impl = GDK_PIXMAP_IMPL_XYNTH(object);
 	ENT();
-	G_OBJECT_CLASS (parent_class)->finalize(object);
+	G_OBJECT_CLASS(parent_class)->finalize(object);
 	LEV();
 }
 
 static void gdk_pixmap_impl_xynth_class_init (GdkPixmapImplXynthClass *klass)
 {
-	GObjectClass *object_class = G_OBJECT_CLASS (klass);
-	GdkDrawableClass *drawable_class = GDK_DRAWABLE_CLASS (klass);
+	GObjectClass *object_class = G_OBJECT_CLASS(klass);
+	GdkDrawableClass *drawable_class = GDK_DRAWABLE_CLASS(klass);
 	ENT();
-	parent_class = g_type_class_peek_parent (klass);
+	parent_class = g_type_class_peek_parent(klass);
 	object_class->finalize = gdk_pixmap_impl_xynth_finalize;
 	drawable_class->get_size = gdk_pixmap_impl_xynth_get_size;
 	LEV();
@@ -70,15 +70,18 @@ GdkPixmap * gdk_pixmap_new (GdkDrawable *drawable, gint width, gint height, gint
 	GdkPixmapImplXynth *pix_impl;
 	GdkDisplayXynth *display_xynth;
 	GdkDrawableImplXynth *draw_impl;
+
 	ENT();
-	g_return_val_if_fail (drawable == NULL || GDK_IS_DRAWABLE (drawable), NULL);
-	g_return_val_if_fail (drawable != NULL || depth != -1, NULL);
-	g_return_val_if_fail (width > 0 && height > 0, NULL);
-	
+
+	g_return_val_if_fail(drawable == NULL || GDK_IS_DRAWABLE(drawable), NULL);
+	g_return_val_if_fail(drawable != NULL || depth != -1, NULL);
+	g_return_val_if_fail(width > 0 && height > 0, NULL);
+
 	if (!drawable) {
 		drawable = gdk_screen_get_root_window(gdk_screen_get_default());
 	}
-	if (GDK_IS_WINDOW (drawable) && GDK_WINDOW_DESTROYED (drawable)) {
+
+	if (GDK_IS_WINDOW(drawable) && GDK_WINDOW_DESTROYED(drawable)) {
 		return NULL;
 	}
 
@@ -86,22 +89,22 @@ GdkPixmap * gdk_pixmap_new (GdkDrawable *drawable, gint width, gint height, gint
 	if (depth == -1) {
 		depth = window_depth;
 	}
-	
+
 	pixmap = g_object_new(gdk_pixmap_get_type(), NULL);
 	draw_impl = GDK_DRAWABLE_IMPL_XYNTH(GDK_PIXMAP_OBJECT(pixmap)->impl);
 	pix_impl = GDK_PIXMAP_IMPL_XYNTH(GDK_PIXMAP_OBJECT(pixmap)->impl);
 	draw_impl->wrapper = GDK_DRAWABLE(pixmap);
 	
-	if (draw_impl->object) {
+	if (draw_impl->object ||
+	    depth != window_depth) {
 		NIY();
 	}
+
 	display_xynth = GDK_DISPLAY_XYNTH(_gdk_display);
 	w_object_init(display_xynth->window, &(draw_impl->object), NULL, NULL);
 	w_object_move(draw_impl->object, 0, 0, width, height);
 	w_object_show(draw_impl->object);
 	s_fillbox(draw_impl->object->surface, 0, 0, width, height, 255);
-
-	DBG("w:%d, h:%d, d:%d, wd:%d", width, height, depth, window_depth);
 
 	pix_impl->is_foreign = FALSE;
 	pix_impl->width = width;
@@ -116,5 +119,6 @@ GdkPixmap * gdk_pixmap_new (GdkDrawable *drawable, gint width, gint height, gint
 	}
 
 	LEV();
+
 	return pixmap;
 }
