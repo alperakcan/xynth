@@ -84,6 +84,82 @@ static void gdk_xynth_draw_glyphs (GdkDrawable *drawable, GdkGC *gc, PangoFont *
 	NIY();
 }
 
+#include <pango/pangoft2.h>
+#include <freetype/ftglyph.h>
+static void gdk_xynth_draw_glyphs_transformed (GdkDrawable *drawable, GdkGC *gc, PangoMatrix *matrix, PangoFont *font, gint x, gint y, PangoGlyphString *glyphs)
+{
+	int i;
+	int _x;
+	int _y;
+	int xpos;
+	int ypos;
+	FT_Face face;
+	FT_UInt glyph_index;
+	PangoGlyphInfo *glyph_info;
+	GdkDrawableImplXynth *draw_impl;
+	ENT();
+	
+	g_return_if_fail(font);
+
+	draw_impl = GDK_DRAWABLE_IMPL_XYNTH(drawable);
+	switch (draw_impl->window_type) {
+		case GDK_WINDOW_TOPLEVEL:
+			DBG("GDK_WINDOW_TOPLEVEL");
+			break;
+		case GDK_WINDOW_CHILD:
+			DBG("GDK_WINDOW_CHILD");
+			break;
+		case GDK_WINDOW_DIALOG:
+			DBG("GDK_WINDOW_DIALOG");
+			break;
+		case GDK_WINDOW_TEMP:
+			DBG("GDK_WINDOW_TEMP");
+			break;
+		case GDK_WINDOW_ROOT:
+			DBG("GDK_WINDOW_ROOT");
+			break;
+		default:
+			DBG("GDK_WINDOW_UNKNOWN");
+			break;
+	}
+	DBG("OBJ: %p buf:%d %d %d %d win:%d %d %d %d", draw_impl->object,
+	draw_impl->object->surface->buf->x,draw_impl->object->surface->buf->y,draw_impl->object->surface->buf->w,draw_impl->object->surface->buf->h,
+	draw_impl->object->surface->win->x,draw_impl->object->surface->win->y,draw_impl->object->surface->win->w,draw_impl->object->surface->win->h);
+	DBG("matrix: %p, x: %d(%d), y: %d(%d)", matrix, x,  PANGO_PIXELS(x), y, PANGO_PIXELS(y));
+	if (matrix) {
+		DBG("Matrix:: xx: %d, xy: %d, yx: %d, yy: %d", matrix->xx, matrix->xy, matrix->yx, matrix->yy);
+		NIY();
+	}
+	x =  PANGO_PIXELS(x);
+	y =  PANGO_PIXELS(y);
+	glyph_info = glyphs->glyphs;
+	for (i = 0, xpos = 0; i < glyphs->num_glyphs; i++, glyph_info++) {
+		if (glyph_info->glyph) {
+			glyph_index = glyph_info->glyph;
+			face = pango_ft2_font_get_face (font);
+			if (face) {
+				FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT);
+				if (face->glyph->format != ft_glyph_format_bitmap)
+					FT_Render_Glyph(face->glyph, ft_render_mode_normal);
+				
+				ypos = y - face->glyph->bitmap_top + 1;
+
+				for (_y = 0; _y < face->glyph->bitmap.rows; _y++) {
+					for (_x = 0; _x < face->glyph->bitmap.width; _x++) {
+						s_setpixelrgba(draw_impl->object->surface,
+						(x + PANGO_PIXELS(xpos) + face->glyph->bitmap_left + _x),
+						(ypos + _y),
+						255, 0, 0,
+						(~*(face->glyph->bitmap.buffer + _y * face->glyph->bitmap.pitch + _x) & 0xFF));						
+					}
+				}
+			}
+		}
+		xpos += glyphs->glyphs[i].geometry.width;
+	}
+	//NIY();
+}
+
 static void gdk_xynth_draw_drawable (GdkDrawable *drawable, GdkGC *gc, GdkPixmap *src, gint xsrc, gint ysrc, gint xdest, gint ydest, gint width, gint height)
 {
 	int i;
@@ -301,6 +377,7 @@ static void gdk_drawable_impl_xynth_class_init (GdkDrawableImplXynthClass *klass
 	drawable_class->draw_segments = gdk_xynth_draw_segments;
 	drawable_class->draw_lines = gdk_xynth_draw_lines;
 	drawable_class->draw_glyphs = gdk_xynth_draw_glyphs;
+	drawable_class->draw_glyphs_transformed = gdk_xynth_draw_glyphs_transformed;
 	drawable_class->draw_image = gdk_xynth_draw_image;
 	drawable_class->set_colormap = gdk_xynth_set_colormap;
 	drawable_class->get_colormap = gdk_xynth_get_colormap;
