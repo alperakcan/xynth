@@ -281,7 +281,7 @@ int main (int argc, char *argv[])
 	w_object_move(checkbox->object, 300, 2, 85, 20);
 	w_object_show(checkbox->object);
 	
-	w_object_show(window->object);
+//	w_object_show(window->object);
 
 	s_window_show(window->window);
 	s_window_main(window->window);
