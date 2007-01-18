@@ -89,35 +89,33 @@ static const gint xatoms_offset[] = {
 static void ensure_atom_tables (void)
 {
 	int i;
-	
+	ENT();
 	if (names_to_atoms)
 		return;
-	
 	names_to_atoms = g_hash_table_new(g_str_hash, g_str_equal);
 	atoms_to_names = g_ptr_array_sized_new(G_N_ELEMENTS(xatoms_offset));
-	
 	for (i = 0; i < G_N_ELEMENTS(xatoms_offset); i++) {
 		g_hash_table_insert(names_to_atoms, (gchar *) xatoms_string + xatoms_offset[i], GINT_TO_POINTER(i));
 		g_ptr_array_add(atoms_to_names, (gchar *) xatoms_string + xatoms_offset[i]);
 	}
+	LEV();
 }
 
 static GdkAtom intern_atom_internal (const gchar *atom_name, gboolean allocate)
 {
 	gchar *name;
 	gpointer result;
+	ENT();
 	g_return_val_if_fail(atom_name != NULL, GDK_NONE);
-	
 	ensure_atom_tables();
-	
-	if (g_hash_table_lookup_extended(names_to_atoms, atom_name, NULL, &result))
+	if (g_hash_table_lookup_extended(names_to_atoms, atom_name, NULL, &result)) {
 		return result;
-	
+	}
 	result = GINT_TO_POINTER(atoms_to_names->len);
 	name = allocate ? g_strdup(atom_name) : (gchar *) atom_name;
 	g_hash_table_insert(names_to_atoms, name, result);
 	g_ptr_array_add(atoms_to_names, name);
-	
+	LEV();
 	return result;  
 }
 

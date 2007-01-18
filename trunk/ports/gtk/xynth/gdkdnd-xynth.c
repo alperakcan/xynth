@@ -45,7 +45,7 @@ static void gdk_drag_context_finalize (GObject *object)
 		context->windowing_data = NULL;
 	}
 	contexts = g_list_remove(contexts, context);
-	G_OBJECT_CLASS (parent_class)->finalize(object);
+	G_OBJECT_CLASS(parent_class)->finalize(object);
 	LEV();
 }
 

@@ -36,6 +36,17 @@
 	printf(dbg);\
 	printf(" [%s (%s:%d)]\n", __FUNCTION__, __FILE__, __LINE__);
 
+#define DBG_WINDOW_TYPE() \
+	switch (draw_impl->window_type) { \
+		case GDK_WINDOW_TOPLEVEL: DBG("GDK_WINDOW_TOPLEVEL"); break; \ 
+		case GDK_WINDOW_CHILD:    DBG("GDK_WINDOW_CHILD");    break; \
+		case GDK_WINDOW_DIALOG:   DBG("GDK_WINDOW_DIALOG");   break; \
+		case GDK_WINDOW_TEMP:     DBG("GDK_WINDOW_TEMP");     break; \
+		case GDK_WINDOW_ROOT:     DBG("GDK_WINDOW_ROOT");     break; \
+		default:                  DBG("GDK_WINDOW_UNKNOWN");  break; \
+	}
+
+
 typedef struct _GdkDisplayXynth           GdkDisplayXynth;
 typedef struct _GdkDisplayXynthClass      GdkDisplayXynthClass;
 typedef struct _GdkDrawableImplXynth      GdkDrawableImplXynth;

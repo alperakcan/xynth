@@ -54,6 +54,8 @@ gboolean gdk_screen_get_setting (GdkScreen *screen, const gchar *name, GValue *v
 
 gint gdk_screen_get_number (GdkScreen *screen)
 {
+	ENT();
+	LEV();
 	g_return_val_if_fail(GDK_IS_SCREEN(screen), 0);  
 	return 0;
 }

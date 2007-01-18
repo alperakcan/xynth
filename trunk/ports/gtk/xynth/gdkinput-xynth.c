@@ -38,7 +38,7 @@ void _gdk_windowing_input_init (GdkDisplay *display)
 static void gdk_device_finalize (GObject *object)
 {
 	ENT();
-	g_error ("A GdkDevice object was finalized. This should not happen");
+	g_error("A GdkDevice object was finalized. This should not happen");
 	LEV();
 }
 

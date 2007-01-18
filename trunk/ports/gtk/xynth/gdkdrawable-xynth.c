@@ -21,26 +21,7 @@ static void gdk_xynth_draw_rectangle (GdkDrawable *drawable, GdkGC *gc, gboolean
 	} else {
 		color.pixel = 0;
 	}
-	switch (draw_impl->window_type) {
-		case GDK_WINDOW_TOPLEVEL:
-			DBG("GDK_WINDOW_TOPLEVEL");
-			break;
-		case GDK_WINDOW_CHILD:
-			DBG("GDK_WINDOW_CHILD");
-			break;
-		case GDK_WINDOW_DIALOG:
-			DBG("GDK_WINDOW_DIALOG");
-			break;
-		case GDK_WINDOW_TEMP:
-			DBG("GDK_WINDOW_TEMP");
-			break;
-		case GDK_WINDOW_ROOT:
-			DBG("GDK_WINDOW_ROOT");
-			break;
-		default:
-			DBG("GDK_WINDOW_UNKNOWN");
-			break;
-	}
+	DBG_WINDOW_TYPE();
 	if (gc_impl->clip_region) {
 		DBG("clip_region->size: %d, numRects: %d", gc_impl->clip_region->size, gc_impl->clip_region->numRects);
 		for (i = 0; i < gc_impl->clip_region->numRects; i++) {
@@ -115,26 +96,7 @@ static void gdk_xynth_draw_glyphs_transformed (GdkDrawable *drawable, GdkGC *gc,
 		color.green = 0;
 		color.blue = 0;
 	}
-	switch (draw_impl->window_type) {
-		case GDK_WINDOW_TOPLEVEL:
-			DBG("GDK_WINDOW_TOPLEVEL");
-			break;
-		case GDK_WINDOW_CHILD:
-			DBG("GDK_WINDOW_CHILD");
-			break;
-		case GDK_WINDOW_DIALOG:
-			DBG("GDK_WINDOW_DIALOG");
-			break;
-		case GDK_WINDOW_TEMP:
-			DBG("GDK_WINDOW_TEMP");
-			break;
-		case GDK_WINDOW_ROOT:
-			DBG("GDK_WINDOW_ROOT");
-			break;
-		default:
-			DBG("GDK_WINDOW_UNKNOWN");
-			break;
-	}
+	DBG_WINDOW_TYPE();
 	DBG("OBJ: %p buf:%d %d %d %d win:%d %d %d %d", draw_impl->object,
 	draw_impl->object->surface->buf->x,draw_impl->object->surface->buf->y,draw_impl->object->surface->buf->w,draw_impl->object->surface->buf->h,
 	draw_impl->object->surface->win->x,draw_impl->object->surface->win->y,draw_impl->object->surface->win->w,draw_impl->object->surface->win->h);
@@ -188,26 +150,7 @@ static void gdk_xynth_draw_drawable (GdkDrawable *drawable, GdkGC *gc, GdkPixmap
 		DBG("draw_impl == pdraw_impl");
 		NIY();
 	}
-	switch (draw_impl->window_type) {
-		case GDK_WINDOW_TOPLEVEL:
-			DBG("GDK_WINDOW_TOPLEVEL");
-			break;
-		case GDK_WINDOW_CHILD:
-			DBG("GDK_WINDOW_CHILD");
-			break;
-		case GDK_WINDOW_DIALOG:
-			DBG("GDK_WINDOW_DIALOG");
-			break;
-		case GDK_WINDOW_TEMP:
-			DBG("GDK_WINDOW_TEMP");
-			break;
-		case GDK_WINDOW_ROOT:
-			DBG("GDK_WINDOW_ROOT");
-			break;
-		default:
-			DBG("GDK_WINDOW_UNKNOWN");
-			break;
-	}
+	DBG_WINDOW_TYPE();
 	if (gc_impl->clip_region) {
 		DBG("clip_region->size: %d, numRects: %d", gc_impl->clip_region->size, gc_impl->clip_region->numRects);
 		for (i = 0; i < gc_impl->clip_region->numRects; i++) {
@@ -250,26 +193,7 @@ static void gdk_xynth_draw_segments (GdkDrawable *drawable, GdkGC *gc, GdkSegmen
 	} else {
 		color.pixel = 0;
 	}
-	switch (draw_impl->window_type) {
-		case GDK_WINDOW_TOPLEVEL:
-			DBG("GDK_WINDOW_TOPLEVEL");
-			break;
-		case GDK_WINDOW_CHILD:
-			DBG("GDK_WINDOW_CHILD");
-			break;
-		case GDK_WINDOW_DIALOG:
-			DBG("GDK_WINDOW_DIALOG");
-			break;
-		case GDK_WINDOW_TEMP:
-			DBG("GDK_WINDOW_TEMP");
-			break;
-		case GDK_WINDOW_ROOT:
-			DBG("GDK_WINDOW_ROOT");
-			break;
-		default:
-			DBG("GDK_WINDOW_UNKNOWN");
-			break;
-	}
+	DBG_WINDOW_TYPE();
 	DBG("OBJ: %p buf:%d %d %d %d win:%d %d %d %d (%dx%d)", draw_impl->object,
 	draw_impl->object->surface->buf->x,draw_impl->object->surface->buf->y,draw_impl->object->surface->buf->w,draw_impl->object->surface->buf->h,
 	draw_impl->object->surface->win->x,draw_impl->object->surface->win->y,draw_impl->object->surface->win->w,draw_impl->object->surface->win->h,
