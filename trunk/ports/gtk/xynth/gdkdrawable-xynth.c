@@ -1,5 +1,7 @@
 
 #include "gdk-xynth.h"
+#include <pango/pangoft2.h>
+#include <freetype/ftglyph.h>
 
 static gpointer parent_class = NULL;
 
@@ -84,8 +86,6 @@ static void gdk_xynth_draw_glyphs (GdkDrawable *drawable, GdkGC *gc, PangoFont *
 	NIY();
 }
 
-#include <pango/pangoft2.h>
-#include <freetype/ftglyph.h>
 static void gdk_xynth_draw_glyphs_transformed (GdkDrawable *drawable, GdkGC *gc, PangoMatrix *matrix, PangoFont *font, gint x, gint y, PangoGlyphString *glyphs)
 {
 	int i;
@@ -94,6 +94,8 @@ static void gdk_xynth_draw_glyphs_transformed (GdkDrawable *drawable, GdkGC *gc,
 	int xpos;
 	int ypos;
 	FT_Face face;
+	GdkColor color;
+	GdkGCXynth *gc_impl;
 	FT_UInt glyph_index;
 	PangoGlyphInfo *glyph_info;
 	GdkDrawableImplXynth *draw_impl;
@@ -101,7 +103,18 @@ static void gdk_xynth_draw_glyphs_transformed (GdkDrawable *drawable, GdkGC *gc,
 	
 	g_return_if_fail(font);
 
+	gc_impl = GDK_GC_XYNTH(gc);
 	draw_impl = GDK_DRAWABLE_IMPL_XYNTH(drawable);
+	if (GDK_GC_XYNTH(gc)->values_mask & GDK_GC_FOREGROUND) {
+		color = GDK_GC_XYNTH(gc)->values.foreground;
+	} else if (GDK_IS_WINDOW(draw_impl->wrapper)) {
+		color = ((GdkWindowObject *) (draw_impl->wrapper))->bg_color;
+	} else {
+		color.pixel = 0;
+		color.red = 0;
+		color.green = 0;
+		color.blue = 0;
+	}
 	switch (draw_impl->window_type) {
 		case GDK_WINDOW_TOPLEVEL:
 			DBG("GDK_WINDOW_TOPLEVEL");
@@ -149,7 +162,7 @@ static void gdk_xynth_draw_glyphs_transformed (GdkDrawable *drawable, GdkGC *gc,
 						s_setpixelrgba(draw_impl->object->surface,
 						(x + PANGO_PIXELS(xpos) + face->glyph->bitmap_left + _x),
 						(ypos + _y),
-						255, 0, 0,
+						color.red, color.green, color.blue,
 						(~*(face->glyph->bitmap.buffer + _y * face->glyph->bitmap.pitch + _x) & 0xFF));						
 					}
 				}
@@ -157,7 +170,7 @@ static void gdk_xynth_draw_glyphs_transformed (GdkDrawable *drawable, GdkGC *gc,
 		}
 		xpos += glyphs->glyphs[i].geometry.width;
 	}
-	//NIY();
+	LEV();
 }
 
 static void gdk_xynth_draw_drawable (GdkDrawable *drawable, GdkGC *gc, GdkPixmap *src, gint xsrc, gint ysrc, gint xdest, gint ydest, gint width, gint height)
