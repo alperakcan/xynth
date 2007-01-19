@@ -103,6 +103,8 @@ void w_window_atevent (s_window_t *window, s_event_t *event)
 	if (event->type & (CONFIG_CHNGW | CONFIG_CHNGH)) {
 		window->surface->width = window->surface->buf->w;
 		window->surface->height = window->surface->buf->h;
+		windoww->object->surface->width = window->surface->buf->w;
+		windoww->object->surface->height = window->surface->buf->h;
 		s_free(window->surface->vbuf);
 		window->surface->vbuf = (unsigned char *) s_malloc(sizeof(char) * window->surface->bytesperpixel * window->surface->buf->w * window->surface->buf->h);
 		windoww->object->surface->vbuf = window->surface->vbuf;
