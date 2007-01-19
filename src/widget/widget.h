@@ -419,6 +419,7 @@ struct w_window_s {
 	w_object_t *focus;
 	s_list_t *images;
 	s_list_t *fonts;
+	void *data;
 };
 
 void w_window_focus_change_notify (s_window_t *window, w_object_t *focus);
