@@ -249,20 +249,28 @@ int s_event_parse_timer (s_window_t *window, s_event_t *event)
 	return 0;
 }
 
+int s_event_copy (s_event_t *event, s_event_t **nevent)
+{
+	s_event_t *tmp;
+	if (s_event_init(&tmp)) {
+		return -1;
+	}
+	tmp->type = event->type;
+	memcpy(tmp->mouse, event->mouse, sizeof(s_mouse_t));
+	memcpy(tmp->keybd, event->keybd, sizeof(s_keybd_t));
+	memcpy(tmp->expose->rect, event->expose->rect, sizeof(s_rect_t));
+	*nevent = tmp;
+	return 0;
+}
+
 int s_event_changed (s_window_t *window)
 {
 	s_event_t *event;
-
 	if (window->event->type & EVENT_MASK) {
-		if (!s_event_init(&event)) {
-			event->type = window->event->type;
-			memcpy(event->mouse, window->event->mouse, sizeof(s_mouse_t));
-			memcpy(event->keybd, window->event->keybd, sizeof(s_keybd_t));
-			memcpy(event->expose->rect, window->event->expose->rect, sizeof(s_rect_t));
+		if (!s_event_copy(window->event, &event)) {
 			s_eventq_add(window, event);
 		}
 	}
-
 	return 0;
 }
 

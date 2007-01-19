@@ -672,6 +672,7 @@ int s_event_parse_keybd (s_window_t *window, s_event_t *event);
 int s_event_parse_expos (s_window_t *window, s_event_t *event);
 int s_event_parse_config (s_window_t *window, s_event_t *event);
 int s_event_parse_timer (s_window_t *window, s_event_t *event);
+int s_event_copy (s_event_t *event, s_event_t **nevent);
 int s_event_changed (s_window_t *window);
 int s_event_init (s_event_t **event);
 int s_event_uninit (s_event_t *event);
