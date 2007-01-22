@@ -103,11 +103,14 @@ void w_window_atevent (s_window_t *window, s_event_t *event)
 	if (event->type & (CONFIG_CHNGW | CONFIG_CHNGH)) {
 		window->surface->width = window->surface->buf->w;
 		window->surface->height = window->surface->buf->h;
-		windoww->object->surface->width = window->surface->buf->w;
-		windoww->object->surface->height = window->surface->buf->h;
 		s_free(window->surface->vbuf);
 		window->surface->vbuf = (unsigned char *) s_malloc(sizeof(char) * window->surface->bytesperpixel * window->surface->buf->w * window->surface->buf->h);
-		windoww->object->surface->vbuf = window->surface->vbuf;
+		windoww->object->surface->vbuf = NULL;
+		w_object_move(windoww->object, 0, 0, window->surface->buf->w, window->surface->buf->h);
+		s_free(windoww->object->surface->vbuf);
+		s_free(windoww->object->surface->matrix);
+		windoww->object->surface->matrix = NULL;
+		windoww->object->surface->vbuf = windoww->window->surface->vbuf;
 		w_object_update(windoww->object, windoww->object->surface->win);
 	}
 	if (event->type & (MOUSE_EVENT | KEYBD_EVENT)) {
@@ -163,11 +166,6 @@ void w_window_atevent (s_window_t *window, s_event_t *event)
 int w_window_set_coor (w_window_t *window, int x, int y, int w, int h)
 {
 	s_window_set_coor(window->window, WINDOW_NOFORM, x, y, w, h);
-	w_object_move(window->object, 0, 0, w, h);
-	s_free(window->object->surface->vbuf);
-	s_free(window->object->surface->matrix);
-	window->object->surface->vbuf = window->window->surface->vbuf;
-	window->object->surface->matrix = NULL;
 	return 0;
 }
 
@@ -253,7 +251,7 @@ int w_window_init (w_window_t **window, S_WINDOW type, w_window_t *parent)
 	(*window) = (w_window_t *) s_malloc(sizeof(w_window_t));
 	s_window_init(&((*window)->window));
 	s_window_new((*window)->window, type, (parent) ? parent->window : NULL);
-	s_window_set_resizeable((*window)->window, 0);
+//	s_window_set_resizeable((*window)->window, 0);
 	w_object_init(*window, &((*window)->object), NULL, NULL);
 	s_list_init(&((*window)->images));
 	s_list_init(&((*window)->fonts));

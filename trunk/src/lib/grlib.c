@@ -99,17 +99,13 @@ void s_setpixelrgba (s_surface_t *surface, int x, int y, int r, int g, int b, in
 	int ag;
 	int ab;
 	unsigned char a_ = (unsigned char) (a & 0xFF);
-
 	if (a_ == 0xff) {
 		return;
 	}
-
 	s_getpixelrgb(surface, x, y, &br, &bg, &bb);
-
 	ar  = (a_ * (br - r) >> 8) + r;
 	ag  = (a_ * (bg - g) >> 8) + g;
 	ab  = (a_ * (bb - b) >> 8) + b;
-
 	s_setpixelrgb(surface, x, y, ar, ag, ab);
 }
 
