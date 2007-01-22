@@ -417,11 +417,6 @@ void gdk_window_begin_resize_drag (GdkWindow *window, GdkWindowEdge edge, gint b
 	NIY();
 }
 
-void gdk_window_configure_finished (GdkWindow *window)
-{
-	NIY();
-}
-
 void gdk_window_focus (GdkWindow *window, guint32 timestamp)
 {
 	NIY();

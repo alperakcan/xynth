@@ -102,9 +102,10 @@ GdkPixmap * gdk_pixmap_new (GdkDrawable *drawable, gint width, gint height, gint
 
 	display_xynth = GDK_DISPLAY_XYNTH(_gdk_display);
 	w_object_init(display_xynth->window, &(draw_impl->object), NULL, NULL);
-	w_object_move(draw_impl->object, 0, 0, width, height);
+	DBG("width:%d, height: %d", width, height);
+	w_object_move_silent(draw_impl->object, 0, 0, width, height);
 	w_object_show(draw_impl->object);
-	s_fillbox(draw_impl->object->surface, 0, 0, width, height, 255);
+	s_fillbox(draw_impl->object->surface, 0, 0, draw_impl->object->surface->width, draw_impl->object->surface->height, 0);
 
 	pix_impl->is_foreign = FALSE;
 	pix_impl->width = width;

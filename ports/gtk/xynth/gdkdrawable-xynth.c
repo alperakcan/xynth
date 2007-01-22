@@ -5,6 +5,26 @@
 
 static gpointer parent_class = NULL;
 
+static GdkColor gdk_xynth_gc_get_color (GdkDrawable *drawable, GdkGC *gc)
+{
+	GdkColor color;
+	GdkDrawableImplXynth *draw_impl;
+	ENT();
+	draw_impl = GDK_DRAWABLE_IMPL_XYNTH(drawable);
+	if (GDK_GC_XYNTH(gc)->values_mask & GDK_GC_FOREGROUND) {
+		color = GDK_GC_XYNTH(gc)->values.foreground;
+	} else if (GDK_IS_WINDOW(draw_impl->wrapper)) {
+		color = ((GdkWindowObject *) (draw_impl->wrapper))->bg_color;
+	} else {
+		color.pixel = 0;
+		color.red = 0;
+		color.green = 0;
+		color.blue = 0;
+	}
+	LEV();
+	return color;
+}
+
 static void gdk_xynth_draw_rectangle (GdkDrawable *drawable, GdkGC *gc, gboolean filled, gint x, gint y, gint width, gint height)
 {
 	int i;
@@ -14,13 +34,7 @@ static void gdk_xynth_draw_rectangle (GdkDrawable *drawable, GdkGC *gc, gboolean
 	ENT();
 	gc_impl = GDK_GC_XYNTH(gc);
 	draw_impl = GDK_DRAWABLE_IMPL_XYNTH(drawable);
-	if (GDK_GC_XYNTH(gc)->values_mask & GDK_GC_FOREGROUND) {
-		color = GDK_GC_XYNTH(gc)->values.foreground;
-	} else if (GDK_IS_WINDOW(draw_impl->wrapper)) {
-		color = ((GdkWindowObject *) (draw_impl->wrapper))->bg_color;
-	} else {
-		color.pixel = 0;
-	}
+	color = gdk_xynth_gc_get_color(drawable, gc);
 	DBG_WINDOW_TYPE();
 	if (gc_impl->clip_region) {
 		DBG("clip_region->size: %d, numRects: %d", gc_impl->clip_region->size, gc_impl->clip_region->numRects);
@@ -81,22 +95,19 @@ static void gdk_xynth_draw_glyphs_transformed (GdkDrawable *drawable, GdkGC *gc,
 	PangoGlyphInfo *glyph_info;
 	GdkDrawableImplXynth *draw_impl;
 	ENT();
-	
 	g_return_if_fail(font);
-
 	gc_impl = GDK_GC_XYNTH(gc);
 	draw_impl = GDK_DRAWABLE_IMPL_XYNTH(drawable);
-	if (GDK_GC_XYNTH(gc)->values_mask & GDK_GC_FOREGROUND) {
-		color = GDK_GC_XYNTH(gc)->values.foreground;
-	} else if (GDK_IS_WINDOW(draw_impl->wrapper)) {
-		color = ((GdkWindowObject *) (draw_impl->wrapper))->bg_color;
-	} else {
-		color.pixel = 0;
-		color.red = 0;
-		color.green = 0;
-		color.blue = 0;
-	}
+	color = gdk_xynth_gc_get_color(drawable, gc);
 	DBG_WINDOW_TYPE();
+	if (gc_impl->clip_region) {
+		DBG("clip_region->size: %d, numRects: %d", gc_impl->clip_region->size, gc_impl->clip_region->numRects);
+		for (i = 0; i < gc_impl->clip_region->numRects; i++) {
+			DBG("rect: %d %d %d %d", gc_impl->clip_region->rects[i].x1, gc_impl->clip_region->rects[i].y1,
+			                         gc_impl->clip_region->rects[i].x2 - gc_impl->clip_region->rects[i].x1,
+			                         gc_impl->clip_region->rects[i].y2 - gc_impl->clip_region->rects[i].y1);
+		}
+	}
 	DBG("OBJ: %p buf:%d %d %d %d win:%d %d %d %d", draw_impl->object,
 	draw_impl->object->surface->buf->x,draw_impl->object->surface->buf->y,draw_impl->object->surface->buf->w,draw_impl->object->surface->buf->h,
 	draw_impl->object->surface->win->x,draw_impl->object->surface->win->y,draw_impl->object->surface->win->w,draw_impl->object->surface->win->h);
@@ -105,8 +116,8 @@ static void gdk_xynth_draw_glyphs_transformed (GdkDrawable *drawable, GdkGC *gc,
 		DBG("Matrix:: xx: %d, xy: %d, yx: %d, yy: %d", matrix->xx, matrix->xy, matrix->yx, matrix->yy);
 		NIY();
 	}
-	x =  PANGO_PIXELS(x);
-	y =  PANGO_PIXELS(y);
+	x = PANGO_PIXELS(x);
+	y = PANGO_PIXELS(y);
 	glyph_info = glyphs->glyphs;
 	for (i = 0, xpos = 0; i < glyphs->num_glyphs; i++, glyph_info++) {
 		if (glyph_info->glyph) {
@@ -114,18 +125,17 @@ static void gdk_xynth_draw_glyphs_transformed (GdkDrawable *drawable, GdkGC *gc,
 			face = pango_ft2_font_get_face (font);
 			if (face) {
 				FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT);
-				if (face->glyph->format != ft_glyph_format_bitmap)
+				if (face->glyph->format != ft_glyph_format_bitmap) {
 					FT_Render_Glyph(face->glyph, ft_render_mode_normal);
-				
+				}
 				ypos = y - face->glyph->bitmap_top + 1;
-
 				for (_y = 0; _y < face->glyph->bitmap.rows; _y++) {
 					for (_x = 0; _x < face->glyph->bitmap.width; _x++) {
 						s_setpixelrgba(draw_impl->object->surface,
-						(x + PANGO_PIXELS(xpos) + face->glyph->bitmap_left + _x),
-						(ypos + _y),
-						color.red, color.green, color.blue,
-						(~*(face->glyph->bitmap.buffer + _y * face->glyph->bitmap.pitch + _x) & 0xFF));						
+						               x + PANGO_PIXELS(xpos) + face->glyph->bitmap_left + _x,
+							       ypos + _y,
+							       color.red, color.green, color.blue,
+							       ~*(face->glyph->bitmap.buffer + _y * face->glyph->bitmap.pitch + _x) & 0xFF);
 					}
 				}
 			}
@@ -162,7 +172,11 @@ static void gdk_xynth_draw_drawable (GdkDrawable *drawable, GdkGC *gc, GdkPixmap
 	DBG("OBJ: %p buf:%d %d %d %d win:%d %d %d %d", draw_impl->object,
 	draw_impl->object->surface->buf->x,draw_impl->object->surface->buf->y,draw_impl->object->surface->buf->w,draw_impl->object->surface->buf->h,
 	draw_impl->object->surface->win->x,draw_impl->object->surface->win->y,draw_impl->object->surface->win->w,draw_impl->object->surface->win->h);
-	s_putboxpart(draw_impl->object->surface, xdest, ydest, width, height, pdraw_impl->object->surface->width, pdraw_impl->object->surface->height, pdraw_impl->object->surface->vbuf, xsrc, ysrc);
+	DBG("POBJ: %p buf:%d %d %d %d win:%d %d %d %d", pdraw_impl->object,
+	pdraw_impl->object->surface->buf->x,pdraw_impl->object->surface->buf->y,pdraw_impl->object->surface->buf->w,pdraw_impl->object->surface->buf->h,
+	pdraw_impl->object->surface->win->x,pdraw_impl->object->surface->win->y,pdraw_impl->object->surface->win->w,pdraw_impl->object->surface->win->h);
+	DBG("src: %d %d, dst: %d %d, %d %d", xsrc, ysrc, xdest, ydest, width, height);
+	s_putboxpart(draw_impl->object->surface, xdest, ydest, pdraw_impl->object->surface->width, pdraw_impl->object->surface->height, pdraw_impl->object->surface->width, pdraw_impl->object->surface->height, pdraw_impl->object->surface->vbuf, xsrc, ysrc);
 	w_object_update(draw_impl->object, draw_impl->object->surface->win);
 	LEV();
 }
@@ -186,13 +200,7 @@ static void gdk_xynth_draw_segments (GdkDrawable *drawable, GdkGC *gc, GdkSegmen
 	ENT();
 	gc_impl = GDK_GC_XYNTH(gc);
 	draw_impl = GDK_DRAWABLE_IMPL_XYNTH(drawable);
-	if (GDK_GC_XYNTH(gc)->values_mask & GDK_GC_FOREGROUND) {
-		color = GDK_GC_XYNTH(gc)->values.foreground;
-	} else if (GDK_IS_WINDOW(draw_impl->wrapper)) {
-		color = ((GdkWindowObject *) (draw_impl->wrapper))->bg_color;
-	} else {
-		color.pixel = 0;
-	}
+	color = gdk_xynth_gc_get_color(drawable, gc);
 	DBG_WINDOW_TYPE();
 	DBG("OBJ: %p buf:%d %d %d %d win:%d %d %d %d (%dx%d)", draw_impl->object,
 	draw_impl->object->surface->buf->x,draw_impl->object->surface->buf->y,draw_impl->object->surface->buf->w,draw_impl->object->surface->buf->h,
@@ -271,7 +279,9 @@ static GdkVisual * gdk_xynth_get_visual (GdkDrawable *drawable)
 
 static void gdk_xynth_get_size (GdkDrawable *drawable, gint *width, gint *height)
 {
+	GdkDrawableImplXynth *draw_impl;
 	ENT();
+	draw_impl = GDK_DRAWABLE_IMPL_XYNTH(drawable);
 	g_return_if_fail(GDK_IS_WINDOW_IMPL_XYNTH(drawable));
 	if (width) {
 		*width = GDK_WINDOW_IMPL_XYNTH(drawable)->width;
@@ -279,6 +289,7 @@ static void gdk_xynth_get_size (GdkDrawable *drawable, gint *width, gint *height
 	if (height) {
 		*height = GDK_WINDOW_IMPL_XYNTH(drawable)->height;
 	}
+	DBG_WINDOW_TYPE();
 	DBG("width:%d, height:%d", *width, *height);
 	LEV();
 }
@@ -292,7 +303,7 @@ static void gdk_xynth_drawable_finalize (GObject *object)
 {
 	ENT();
 	gdk_drawable_set_colormap(GDK_DRAWABLE(object), NULL);
-	G_OBJECT_CLASS (parent_class)->finalize (object);
+	G_OBJECT_CLASS(parent_class)->finalize(object);
 	LEV();
 }
 

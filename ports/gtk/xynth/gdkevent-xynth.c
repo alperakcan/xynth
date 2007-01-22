@@ -4,13 +4,23 @@
 
 static gboolean xynth_events_dispatch (GSource *source, GSourceFunc callback, gpointer user_data)
 {
+	S_EVENT foo;
 	GdkEvent *event;
+	GdkDisplayXynth *display_xynth;
 	ENT();
 	GDK_THREADS_ENTER();
-	while ((event = _gdk_event_unqueue (gdk_display_get_default()))) {
-		if (_gdk_event_func)
-			(*_gdk_event_func) (event, _gdk_event_data);
-		gdk_event_free (event);
+	display_xynth = GDK_DISPLAY_XYNTH(_gdk_display);
+	if (display_xynth->event_pollfd.revents & G_IO_IN) {
+		read(display_xynth->event_pipe[0], &foo, sizeof(S_EVENT));
+		if (foo & CONFIG_EVENT) {
+			DBG("foo: 0x%08x", foo);
+		}
+	}
+	while ((event = _gdk_event_unqueue(gdk_display_get_default()))) {
+		if (_gdk_event_func) {
+			(*_gdk_event_func)(event, _gdk_event_data);
+		}
+		gdk_event_free(event);
 	}
 	GDK_THREADS_LEAVE();
 	LEV();
@@ -20,9 +30,14 @@ static gboolean xynth_events_dispatch (GSource *source, GSourceFunc callback, gp
 static gboolean xynth_events_check (GSource *source)
 {
 	gboolean retval;
+	GdkDisplayXynth *display_xynth;
 	ENT();
 	GDK_THREADS_ENTER();
+	display_xynth = GDK_DISPLAY_XYNTH(_gdk_display);
 	retval = (_gdk_event_queue_find_first(gdk_display_get_default()) != NULL);
+	if (display_xynth->event_pollfd.revents & G_IO_IN) {
+		retval = TRUE;
+	}
 	GDK_THREADS_LEAVE();
 	LEV();
 	return retval;
@@ -46,11 +61,17 @@ static GSourceFuncs xynth_events_funcs = {
 void _gdk_windowing_event_init (GdkDisplay *display)
 {
 	GSource *source;
+	GdkDisplayXynth *display_xynth;
 	ENT();
+	display_xynth = GDK_DISPLAY_XYNTH(display);
+	pipe(display_xynth->event_pipe);
+	display_xynth->event_pollfd.fd = display_xynth->event_pipe[0];
+	display_xynth->event_pollfd.events = G_IO_IN;
 	source = g_source_new(&xynth_events_funcs, sizeof(GSource));
 	g_source_set_priority(source, GDK_PRIORITY_EVENTS);
-	g_source_set_can_recurse (source, TRUE);
-	g_source_attach (source, NULL);
+	g_source_add_poll(source, &(display_xynth->event_pollfd));
+	g_source_set_can_recurse(source, TRUE);
+	g_source_attach(source, NULL);
 	LEV();
 }
 
@@ -119,5 +140,6 @@ GdkEvent * gdk_event_make (GdkWindow *window, GdkEventType type, gboolean append
 	if (append_to_queue) {
 		_gdk_event_queue_append(gdk_display_get_default(), event);
 	}
+	LEV();
 	return event;
 }

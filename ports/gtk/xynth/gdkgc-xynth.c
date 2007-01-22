@@ -13,6 +13,7 @@ static void gdk_xynth_gc_set_dashes (GdkGC *gc, gint dash_offset, gint8 dash_lis
 	if (n) {
 		private->dash_list = g_realloc(private->dash_list, n);
 		memcpy(private->dash_list, dash_list, n);
+		NIY();
 	} else {
 		g_free(private->dash_list);
 		private->dash_list = NULL;
@@ -34,15 +35,19 @@ static void gdk_xynth_gc_set_values (GdkGC *gc, GdkGCValues *values, GdkGCValues
 	GdkGCXynth *private;
 	ENT();
 	private = GDK_GC_XYNTH(gc);
+	DBG("values_mask : 0x%08x (%d)", values_mask, values_mask);
 	if (values_mask & GDK_GC_FOREGROUND) {
+		DBG("GDK_GC_FOREGROUND");
 		private->values.foreground = values->foreground;
 		private->values_mask |= GDK_GC_FOREGROUND;
 	}
 	if (values_mask & GDK_GC_BACKGROUND) {
+		DBG("GDK_GC_BACKGROUND");
 		private->values.background = values->background;
 		private->values_mask |= GDK_GC_BACKGROUND;
 	}
 	if (values_mask & GDK_GC_FONT) {
+		DBG("GDK_GC_FONT");
 		oldf = private->values.font;
 		private->values.font = gdk_font_ref (values->font);
 		private->values_mask |= GDK_GC_FONT;
@@ -51,14 +56,17 @@ static void gdk_xynth_gc_set_values (GdkGC *gc, GdkGCValues *values, GdkGCValues
 		}
 	}
 	if (values_mask & GDK_GC_FUNCTION) {
+		DBG("GDK_GC_FUNCTION");
 		private->values.function = values->function;
 		private->values_mask |= GDK_GC_FUNCTION;
 	}
 	if (values_mask & GDK_GC_FILL) {
+		DBG("GDK_GC_FILL");
 		private->values.fill = values->fill;
 		private->values_mask |= GDK_GC_FILL;
 	}
 	if (values_mask & GDK_GC_TILE) {
+		DBG("GDK_GC_TILE");
 		oldpm = private->values.tile;
 		private->values.tile = values->tile ? g_object_ref(values->tile) : NULL;
 		private->values_mask |= GDK_GC_TILE;
@@ -67,6 +75,7 @@ static void gdk_xynth_gc_set_values (GdkGC *gc, GdkGCValues *values, GdkGCValues
 		}
 	}
 	if (values_mask & GDK_GC_STIPPLE) {
+		DBG("GDK_GC_STIPPLE");
 		oldpm = private->values.stipple;
 		private->values.stipple = values->stipple ? g_object_ref(values->stipple) : NULL;
 		private->values_mask |= GDK_GC_STIPPLE;
@@ -75,6 +84,7 @@ static void gdk_xynth_gc_set_values (GdkGC *gc, GdkGCValues *values, GdkGCValues
 		}
 	}
 	if (values_mask & GDK_GC_CLIP_MASK) {
+		DBG("GDK_GC_CLIP_MASK");
 		oldpm = private->values.clip_mask;
 		private->values.clip_mask = values->clip_mask ? g_object_ref(values->clip_mask) : NULL;
 		private->values_mask |= GDK_GC_CLIP_MASK;
@@ -87,42 +97,52 @@ static void gdk_xynth_gc_set_values (GdkGC *gc, GdkGCValues *values, GdkGCValues
 		}
 	}
 	if (values_mask & GDK_GC_SUBWINDOW) {
+		DBG("GDK_GC_SUBWINDOW");
 		private->values.subwindow_mode = values->subwindow_mode;
 		private->values_mask |= GDK_GC_SUBWINDOW;
 	}
 	if (values_mask & GDK_GC_TS_X_ORIGIN) {
+		DBG("GDK_GC_TS_X_ORIGIN: %d", values->ts_x_origin);
 		private->values.ts_x_origin = values->ts_x_origin;
 		private->values_mask |= GDK_GC_TS_X_ORIGIN;
 	}
 	if (values_mask & GDK_GC_TS_Y_ORIGIN) {
+		DBG("GDK_GC_TS_Y_ORIGIN: %d", values->ts_y_origin);
 		private->values.ts_y_origin = values->ts_y_origin;
 		private->values_mask |= GDK_GC_TS_Y_ORIGIN;
 	}
 	if (values_mask & GDK_GC_CLIP_X_ORIGIN) {
+		DBG("GDK_GC_CLIP_X_ORIGIN: %d", values->clip_x_origin);
 		private->values.clip_x_origin = gc->clip_x_origin = values->clip_x_origin;
 		private->values_mask |= GDK_GC_CLIP_X_ORIGIN;
 	}
 	if (values_mask & GDK_GC_CLIP_Y_ORIGIN) {
+		DBG("GDK_GC_CLIP_Y_ORIGIN: %d", values->clip_y_origin);
 		private->values.clip_y_origin = gc->clip_y_origin = values->clip_y_origin;
 		private->values_mask |= GDK_GC_CLIP_Y_ORIGIN;
 	}
 	if (values_mask & GDK_GC_EXPOSURES) {
+		DBG("GDK_GC_EXPOSURES");
 		private->values.graphics_exposures = values->graphics_exposures;
 		private->values_mask |= GDK_GC_EXPOSURES;
 	}
 	if (values_mask & GDK_GC_LINE_WIDTH) {
+		DBG("GDK_GC_LINE_WIDTH");
 		private->values.line_width = values->line_width;
 		private->values_mask |= GDK_GC_LINE_WIDTH;
 	}
 	if (values_mask & GDK_GC_LINE_STYLE) {
+		DBG("GDK_GC_LINE_STYLE");
 		private->values.line_style = values->line_style;
 		private->values_mask |= GDK_GC_LINE_STYLE;
 	}
 	if (values_mask & GDK_GC_CAP_STYLE) {
+		DBG("GDK_GC_CAP_STYLE");
 		private->values.cap_style = values->cap_style;
 		private->values_mask |= GDK_GC_CAP_STYLE;
 	}
 	if (values_mask & GDK_GC_JOIN_STYLE) {
+		DBG("GDK_GC_JOIN_STYLE");
 		private->values.join_style = values->join_style;
 		private->values_mask |= GDK_GC_JOIN_STYLE;
 	}
@@ -215,6 +235,14 @@ void gdk_gc_set_clip_region (GdkGC *gc, GdkRegion *region)
 	}
 	if (region) {
 		xgc->clip_region = gdk_region_copy(region);
+		{
+			int i;
+			for (i = 0; i < region->numRects; i++) {
+				DBG("rect: %d %d %d %d", region->rects[i].x1, region->rects[i].y1,
+				                         region->rects[i].x2 - region->rects[i].x1,
+				                         region->rects[i].y2 - region->rects[i].y1);
+			}
+		}
 	} else {
 		xgc->clip_region = NULL;
 	}
