@@ -1,4 +1,5 @@
 
+#include <unistd.h>
 #include <config.h>
 #include "gdk.h"
 #include "gdkprivate.h"
@@ -46,6 +47,15 @@
 		default:                  DBG("GDK_WINDOW_UNKNOWN");  break; \
 	}
 
+#define DBG_PWINDOW_TYPE() \
+	switch (pdraw_impl->window_type) { \
+		case GDK_WINDOW_TOPLEVEL: DBG("GDK_WINDOW_TOPLEVEL"); break; \ 
+		case GDK_WINDOW_CHILD:    DBG("GDK_WINDOW_CHILD");    break; \
+		case GDK_WINDOW_DIALOG:   DBG("GDK_WINDOW_DIALOG");   break; \
+		case GDK_WINDOW_TEMP:     DBG("GDK_WINDOW_TEMP");     break; \
+		case GDK_WINDOW_ROOT:     DBG("GDK_WINDOW_ROOT");     break; \
+		default:                  DBG("GDK_WINDOW_UNKNOWN");  break; \
+	}
 
 typedef struct _GdkDisplayXynth           GdkDisplayXynth;
 typedef struct _GdkDisplayXynthClass      GdkDisplayXynthClass;
@@ -62,6 +72,8 @@ typedef struct _GdkGCXynthClass           GdkGCXynthClass;
 struct _GdkDisplayXynth {
 	GdkDisplay parent;
 	w_window_t *window;
+	int event_pipe[2];
+	GPollFD event_pollfd;
 };
 
 struct _GdkDisplayXynthClass {

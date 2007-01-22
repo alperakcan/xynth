@@ -14,10 +14,9 @@ static GdkRegion * gdk_window_impl_xynth_get_visible_region (GdkDrawable *drawab
 	result_rect.y = 0;
 	result_rect.width = window_impl->width;
 	result_rect.height = window_impl->height;
-	DBG("Rect: %d %d, %d %d", result_rect.x, result_rect.y, result_rect.width, result_rect.height);
-//	gdk_rectangle_intersect(&result_rect, &window_impl->clip, &result_rect);
+	gdk_rectangle_intersect(&result_rect, &window_impl->clip, &result_rect);
 	DBG_WINDOW_TYPE();
-	DBG("Rect: %d %d, %d %d", result_rect.x, result_rect.y, result_rect.width, result_rect.height);
+	DBG("%p, Rect: %d %d, %d %d", window_impl, result_rect.x, result_rect.y, result_rect.width, result_rect.height);
 	LEV();
 	return gdk_region_rectangle(&result_rect);
 }
@@ -141,20 +140,27 @@ void gdk_window_move_resize (GdkWindow *window, gint x, gint y, gint width, gint
 	draw_impl = GDK_DRAWABLE_IMPL_XYNTH(private->impl);
 	window_impl = GDK_WINDOW_IMPL_XYNTH(private->impl);
         private->state = 0;
+	private->x = x;
+	private->y = y;
+	window_impl->width = width;
+	window_impl->height = height;
+	window_impl->clip.x = 0;
+	window_impl->clip.y = 0;
+	window_impl->clip.width = width;
+	window_impl->clip.height = height;
+	DBG_WINDOW_TYPE();
 	DBG("x:%d, y:%d, w:%d, h:%d", x, y, width, height);
 	switch (draw_impl->window_type) {
 		case GDK_WINDOW_DIALOG:
 		case GDK_WINDOW_TOPLEVEL:
 		case GDK_WINDOW_TEMP:
-			private->x = x;
-			private->y = y;
-			window_impl->width = width;
-			window_impl->height = height;
-			w_object_move(draw_impl->object, 0, 0, width, height);
+			w_object_move_silent(draw_impl->object, 0, 0, width, height);
+			s_fillbox(draw_impl->object->surface, 0, 0, draw_impl->object->surface->width, draw_impl->object->surface->height, 0);
 			w_window_set_coor(window_impl->window, x, y, width, height);
 			break;
 		default:
-			w_object_move(draw_impl->object, x, y, width, height);
+			w_object_move_silent(draw_impl->object, x, y, width, height);
+			s_fillbox(draw_impl->object->surface, 0, 0, draw_impl->object->surface->width, draw_impl->object->surface->height, 0);
 			break;
 	}
 	if (private->input_only == FALSE) {
@@ -174,6 +180,44 @@ void gdk_window_set_title (GdkWindow *window, const gchar *title)
 	window_impl = GDK_WINDOW_IMPL_XYNTH(private->impl);
 	s_window_set_title(window_impl->window->window, (char *) title);
 	LEV();
+}
+
+void gdk_window_xynth_atevent (s_window_t *window, s_event_t *event)
+{
+	GdkEvent *gevent;
+	GdkWindow *gwindow;
+	w_window_t *wwindow;
+	GdkWindowObject *gprivate;
+	GdkDisplayXynth *display_xynth;
+	GdkDrawableImplXynth *draw_impl;
+	GdkWindowImplXynth *window_impl;
+	GDK_THREADS_ENTER();
+	//ENT();
+	wwindow = (w_window_t *) window->data;
+	gwindow = (GdkWindow *) wwindow->data;
+	gprivate = (GdkWindowObject *) gwindow;
+	draw_impl = GDK_DRAWABLE_IMPL_XYNTH(gprivate->impl);
+	window_impl = GDK_WINDOW_IMPL_XYNTH(gprivate->impl);
+	display_xynth = GDK_DISPLAY_XYNTH(_gdk_display);
+	w_window_atevent(window, event);
+	if ((event->type & CONFIG_EVENT) &&
+	    (event->type & CONFIG_CHNGX ||
+	     event->type & CONFIG_CHNGY ||
+	     event->type & CONFIG_CHNGW ||
+	     event->type & CONFIG_CHNGH)) {
+		DBG_WINDOW_TYPE();
+		DBG("%p x: %d, y: %d, w: %d, h: %d", window_impl, window->surface->buf->x, window->surface->buf->y, window->surface->buf->w, window->surface->buf->h);
+		gdk_window_move_resize(gwindow, window->surface->buf->x, window->surface->buf->y, window->surface->buf->w, window->surface->buf->h);
+	     	gevent = gdk_event_make(gwindow, GDK_CONFIGURE, TRUE);
+	     	gevent->configure.window = gwindow;
+		gevent->configure.x = window->surface->buf->x;
+		gevent->configure.y = window->surface->buf->y;
+		gevent->configure.width = window->surface->buf->w;
+		gevent->configure.height = window->surface->buf->h;
+		write(display_xynth->event_pipe[1], &event->type, sizeof(S_EVENT));
+	}
+	//LEV();
+	GDK_THREADS_LEAVE();
 }
 
 GdkWindow * gdk_window_new (GdkWindow *parent, GdkWindowAttr *attributes, gint attributes_mask)
@@ -247,8 +291,8 @@ GdkWindow * gdk_window_new (GdkWindow *parent, GdkWindowAttr *attributes, gint a
 	if (attributes->wclass == GDK_INPUT_OUTPUT) {
 		DBG("GDK_INPUT_OUTPUT");
 	} else {
-		DBG("GDK_INPUT_OUNLY");
-	}	
+		DBG("GDK_INPUT_ONLY");
+	}
 	if (attributes->wclass == GDK_INPUT_OUTPUT) {
 		depth = visual->depth;
 		private->input_only = FALSE;
@@ -264,30 +308,31 @@ GdkWindow * gdk_window_new (GdkWindow *parent, GdkWindowAttr *attributes, gint a
 		private->input_only = TRUE;
 		draw_impl->colormap = gdk_screen_get_system_colormap(_gdk_screen);
 	}
-
 	switch (draw_impl->window_type) {
 		case GDK_WINDOW_TOPLEVEL:
 			w_window_init(&(window_impl->window), WINDOW_CHILD, pwindow_impl->window);
+			window_impl->window->data = window;
 			w_object_init(window_impl->window, &(draw_impl->object), NULL, window_impl->window->object);
+			s_window_atevent(window_impl->window->window, gdk_window_xynth_atevent);
 			s_window_main(window_impl->window->window);
 			break;
 		case GDK_WINDOW_CHILD:
-			w_object_init(pwindow_impl->window, &(draw_impl->object), NULL, pdraw_impl->object);
-			break;
-		case GDK_WINDOW_DIALOG:
-			break;
-		case GDK_WINDOW_TEMP:
+			window_impl->window = pwindow_impl->window;
+			w_object_init(window_impl->window, &(draw_impl->object), NULL, pdraw_impl->object);
 			break;
 		case GDK_WINDOW_ROOT:
 			if (_gdk_parent_root) {
 				g_error("cannot make windows of type GDK_WINDOW_ROOT");
 			}
 			break;
+		case GDK_WINDOW_DIALOG:
+		case GDK_WINDOW_TEMP:
+			NIY();
+			break;
 		default:
 			g_error("cannot make windows of type GDK_WINDOW_UNKNOWN");
 			break;
 	}
-
 	gdk_window_move_resize(window, x, y, window_impl->width, window_impl->height);
 	switch (draw_impl->window_type) {
 		case GDK_WINDOW_DIALOG:
@@ -495,7 +540,8 @@ void gdk_window_show (GdkWindow *window)
 	}
 
 	gdk_window_invalidate_rect(window, NULL, TRUE);
-
+	gdk_event_make(window, GDK_MAP, TRUE);
+	
 	LEV();
 }
 
@@ -505,3 +551,19 @@ gboolean _gdk_windowing_window_queue_antiexpose (GdkWindow *window, GdkRegion *a
 	LEV();
 	return FALSE;
 }
+
+void gdk_window_configure_finished (GdkWindow *window)
+{
+	GdkWindowObject *private;
+	GdkDrawableImplXynth *draw_impl;
+	GdkWindowImplXynth *window_impl;
+	ENT();
+	private = (GdkWindowObject *) window;
+	draw_impl = GDK_DRAWABLE_IMPL_XYNTH(private->impl);
+	window_impl = GDK_WINDOW_IMPL_XYNTH(private->impl);
+        DBG_WINDOW_TYPE();
+//	gdk_window_invalidate_rect(window, NULL, TRUE);
+	LEV();
+//	NIY();
+}
+
