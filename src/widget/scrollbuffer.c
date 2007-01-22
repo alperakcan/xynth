@@ -129,7 +129,11 @@ void w_scrollbuffer_slide (w_object_t *object, int vertical, int horizontal)
 		x = sb->vertical->object->content->x + 4;
 		y = sb->vertical->object->content->y + 23;
 		w = sb->vertical->object->content->w - 7;
-		h = (sb->child->content->h * (sb->vertical->object->content->h - 46)) / ytotal;
+		if (ytotal < sb->child->content->h) {
+			h = sb->vertical->object->content->h - 49;
+		} else {
+			h = (sb->child->content->h * (sb->vertical->object->content->h - 46)) / ytotal;
+		}
 		y -= (yoffset * (sb->vertical->object->content->h - 49)) / ytotal;
 		if ((ytotal + yoffset - sb->child->content->h) == 0) {
 			y = sb->vertical->object->content->h - 26 - h;

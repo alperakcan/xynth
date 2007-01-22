@@ -331,6 +331,22 @@ void node_generate_code_object_scrollbuffer (node_t *node)
 	}
 }
 
+void node_generate_code_object_listbox (node_t *node)
+{
+	node_t *tmp;
+	node_t *tnm;
+	fprintf(g_source, "w_listbox_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
+	while ((tmp = node_get_node(node, "item")) != NULL) {
+		fprintf(g_source, "w_listbox_item_init(%s->object, &%s);\n", node->id, tmp->id);
+		while ((tnm = node_get_node(tmp, "name")) != NULL) {
+			fprintf(g_source, "w_listbox_item_name_set(%s->object, %s, %s);\n", node->id, tmp->id, tnm->value);
+			tnm->dontparse = 1;
+		}
+		fprintf(g_source, "w_listbox_item_add(%s->object, %s);\n", node->id, tmp->id);
+		tmp->dontparse = 1; 
+	}
+}
+
 void node_generate_code_effect (node_t *node)
 {
 	node_t *tmp;
@@ -372,6 +388,8 @@ void node_generate_code_object (node_t *node)
 		node_generate_code_object_progressbar(node);
 	} else if (strcmp(node->type, "scrollbuffer") == 0) {
 		node_generate_code_object_scrollbuffer(node);
+	} else if (strcmp(node->type, "listbox") == 0) {
+		node_generate_code_object_listbox(node);
 	}
 	if ((tmp = node_get_node(node, "effect")) != NULL) {
 		node_generate_code_effect(tmp);

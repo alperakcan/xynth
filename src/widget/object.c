@@ -44,6 +44,8 @@ void w_object_show_ (w_object_t *object)
 	    object->showed == 1 &&
 	    object->surface->width > 0 &&
 	    object->surface->height > 0) {
+		s_free(object->surface->vbuf);
+		s_free(object->surface->matrix);
 		object->surface->matrix = (unsigned char *) s_malloc(sizeof(char) * object->surface->width * object->surface->height + 10);
 		object->surface->vbuf = (unsigned char *) s_calloc(1, object->surface->width * object->surface->height * object->surface->bytesperpixel + 1);
 		memset(object->surface->matrix, 0xff, sizeof(char) * object->surface->width * object->surface->height);

@@ -42,6 +42,14 @@ void node_generate_header (node_t *node, FILE *g_header)
 			fprintf(g_header, "w_progressbar_t *%s;\n", node->id);
 		} else if (strcmp(node->type, "scrollbuffer") == 0) {
 			fprintf(g_header, "w_scrollbuffer_t *%s;\n", node->id);
+		} else if (strcmp(node->type, "listbox") == 0) {
+			fprintf(g_header, "w_listbox_t *%s;\n", node->id);
+			p = 0;
+			while (!s_list_eol(node->nodes, p)) {
+				tmp = (node_t *) s_list_get(node->nodes, p);
+				fprintf(g_header, "w_listbox_item_t *%s;\n", tmp->id);
+				p++;
+			}
 		}
 	}
 	p = 0;

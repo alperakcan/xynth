@@ -27,7 +27,7 @@
  * 	   slowers show() hide() processes, but cute.
  * 	3: much more memory optimization, too slower, draws everthing on the fly.
  */
-#define WIDGET_OPTIMIZE_MEMORY 0
+#define WIDGET_OPTIMIZE_MEMORY 2
 
 typedef struct w_object_s w_object_t;
 typedef struct w_button_s w_button_t;
@@ -116,10 +116,12 @@ typedef enum {
 	OBJECT_SCROLLBUFFER	= 0x7,
 	/** widget is scrollbufferbar */
 	OBJECT_SCROLLBUFFERBAR	= 0x8,
+	/** widget is listbox */
+	OBJECT_LISTBOX          = 0x9,
 	/** widget is window */
-	OBJECT_WINDOW		= 0x9,
+	OBJECT_WINDOW		= 0xa,
 	/** number of widgets */
-	OBJECT_OBJECTS 		= 0xa
+	OBJECT_OBJECTS 		= 0xb
 } OBJECT;
 
 /** object struct
@@ -243,6 +245,36 @@ void w_frame_draw (w_object_t *object);
 void w_frame_geometry (w_object_t *object);
 int w_frame_init (w_window_t *window, w_frame_t **frame, unsigned int style, w_object_t *parent);
 void w_frame_uninit (w_object_t *object);
+
+/* listbox.c */
+typedef struct w_listbox_s w_listbox_t;
+typedef struct w_listbox_item_s w_listbox_item_t;
+
+struct w_listbox_item_s {
+	char *name;
+	w_textbox_t *textbox;
+	void *data;
+};
+
+struct w_listbox_s {
+	w_object_t *object;
+	w_frame_t *frame;
+	s_list_t *items;
+	int height;
+	int yoffset;
+};
+
+void w_listbox_item_data_set (w_listbox_item_t *listbox_item, void *data);
+void w_listbox_item_name_set (w_object_t *listbox, w_listbox_item_t *listbox_item, char *name);
+int w_listbox_item_init (w_object_t *listbox, w_listbox_item_t **listbox_item);
+void w_listbox_item_uninit (w_object_t *listbox, w_listbox_item_t *listbox_item);
+void w_listbox_slide (w_object_t *object, int vertical, int horizontal, int *ytotal, int *yoffset);
+int w_listbox_item_add (w_object_t *object, w_listbox_item_t *item);
+int w_listbox_item_del (w_object_t *object, w_listbox_item_t *item);
+void w_listbox_draw (w_object_t *object);
+void w_listbox_geometry (w_object_t *object);
+int w_listbox_init (w_window_t *window, w_listbox_t **listbox, w_object_t *parent);
+void w_listbox_uninit (w_object_t *object);
 
 /* button.c */
 struct w_button_s {
