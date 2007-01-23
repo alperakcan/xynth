@@ -249,6 +249,7 @@ void w_frame_uninit (w_object_t *object);
 /* listbox.c */
 typedef struct w_listbox_s w_listbox_t;
 typedef struct w_listbox_item_s w_listbox_item_t;
+typedef struct w_listbox_item_image_s w_listbox_item_image_t;
 
 struct w_listbox_item_s {
 	char *name;
@@ -256,23 +257,39 @@ struct w_listbox_item_s {
 	void *data;
 };
 
+struct w_listbox_item_image_s {
+	unsigned int style;
+	unsigned int rotation;
+	unsigned int nimages;
+	char **images;
+};
+
 struct w_listbox_s {
 	w_object_t *object;
 	w_frame_t *frame;
 	s_list_t *items;
+	s_list_t *item_images;
+	int active;
 	int height;
 	int yoffset;
+	w_object_t *scrollbuffer;
 };
 
+int w_listbox_item_image_init (w_listbox_item_image_t **item_image, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs);
+void w_listbox_item_image_uninit (w_listbox_item_image_t *item_image);
 void w_listbox_item_data_set (w_listbox_item_t *listbox_item, void *data);
 void w_listbox_item_name_set (w_object_t *listbox, w_listbox_item_t *listbox_item, char *name);
 int w_listbox_item_init (w_object_t *listbox, w_listbox_item_t **listbox_item);
-void w_listbox_item_uninit (w_object_t *listbox, w_listbox_item_t *listbox_item);
-void w_listbox_slide (w_object_t *object, int vertical, int horizontal, int *ytotal, int *yoffset);
+void w_listbox_item_uninit (w_listbox_item_t *listbox_item);
 int w_listbox_item_add (w_object_t *object, w_listbox_item_t *item);
 int w_listbox_item_del (w_object_t *object, w_listbox_item_t *item);
+void w_listbox_slide (w_object_t *object, int vertical, int horizontal, int *ytotal, int *yoffset);
 void w_listbox_draw (w_object_t *object);
 void w_listbox_geometry (w_object_t *object);
+void w_listbox_event (w_object_t *object, s_event_t *event);
+void w_listbox_scrollbuffer_set (w_object_t *object, w_object_t *scrollbuffer);
+int w_listbox_set_style (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow);
+int w_listbox_set_itemimage (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs);
 int w_listbox_init (w_window_t *window, w_listbox_t **listbox, w_object_t *parent);
 void w_listbox_uninit (w_object_t *object);
 

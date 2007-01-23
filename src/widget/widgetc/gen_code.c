@@ -336,6 +336,14 @@ void node_generate_code_object_listbox (node_t *node)
 	node_t *tmp;
 	node_t *tnm;
 	fprintf(g_source, "w_listbox_init(%s, &%s, %s->object);\n", node_get_parent(node, "window")->id, node->id, node->parent->id);
+	while ((tmp = node_get_node(node, "style")) != NULL) {
+		node_generate_code_style(tmp, node, NULL);
+		tmp->dontparse = 1;
+	}
+	while ((tmp = node_get_node(node, "itemimage")) != NULL) {
+		node_generate_code_image(tmp, node, "item");
+		tmp->dontparse = 1;
+	}
 	while ((tmp = node_get_node(node, "item")) != NULL) {
 		fprintf(g_source, "w_listbox_item_init(%s->object, &%s);\n", node->id, tmp->id);
 		while ((tnm = node_get_node(tmp, "name")) != NULL) {
@@ -344,6 +352,10 @@ void node_generate_code_object_listbox (node_t *node)
 		}
 		fprintf(g_source, "w_listbox_item_add(%s->object, %s);\n", node->id, tmp->id);
 		tmp->dontparse = 1; 
+	}
+	while ((tmp = node_get_node(node, "scrollbuffer")) != NULL) {
+		fprintf(g_source, "w_listbox_scrollbuffer_set(%s->object, %s->object);\n", node->id, tmp->value);
+		tmp->dontparse = 1;
 	}
 }
 
