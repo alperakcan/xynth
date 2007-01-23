@@ -70,8 +70,15 @@ void w_listbox_item_uninit (w_listbox_item_t *listbox_item)
 int w_listbox_item_add (w_object_t *object, w_listbox_item_t *item)
 {
 	w_listbox_t *lb;
+	w_listbox_item_t *active;
 	lb = object->data[OBJECT_LISTBOX];
+	active = s_list_get(lb->items, lb->active);
 	s_list_add(lb->items, item, -1);
+	if (active == NULL) {
+		lb->active = 0;
+	} else {
+		lb->active = s_list_get_pos(lb->items, active);
+	}
 	w_object_draw(object);
 	return 0;
 }
@@ -79,11 +86,39 @@ int w_listbox_item_add (w_object_t *object, w_listbox_item_t *item)
 int w_listbox_item_del (w_object_t *object, w_listbox_item_t *item)
 {
 	int p;
+	int active;
 	w_listbox_t *lb;
 	lb = object->data[OBJECT_LISTBOX];
+	active = s_list_get(lb->items, lb->active);
 	p = s_list_get_pos(lb->items, item);
 	s_list_remove(lb->items, p);
 	w_listbox_item_uninit(item);
+	if (active == NULL) {
+		lb->active = 0;
+	} else {
+		lb->active = s_list_get_pos(lb->items, active);
+	}
+	w_object_draw(object);
+	return 0;
+}
+
+w_listbox_item_t * w_listbox_item_active_get (w_object_t *object)
+{
+	w_listbox_t *lb;
+	lb = object->data[OBJECT_LISTBOX];
+	return s_list_get(lb->items, lb->active); 
+}
+
+int w_listbox_item_active_set (w_object_t *object, w_listbox_item_t *listbox_item)
+{
+	int active;
+	w_listbox_t *lb;
+	lb = object->data[OBJECT_LISTBOX];
+	active = s_list_get_pos(lb->items, listbox_item);
+	if (active < 0) {
+		return -1;
+	}
+	lb->active = active;
 	w_object_draw(object);
 	return 0;
 }
@@ -144,7 +179,8 @@ void w_listbox_draw (w_object_t *object)
 		if (pos == lb->active) {
 			w_textbox_set_style(li->textbox->object, FRAME_PANEL, FRAME_SUNKEN);
 		} else {
-			w_textbox_set_style(li->textbox->object, FRAME_PANEL, FRAME_RAISED);
+			//w_textbox_set_style(li->textbox->object, FRAME_PANEL, FRAME_RAISED);
+			w_textbox_set_style(li->textbox->object, FRAME_NOFRAME, 0);
 		}
 		w_textbox_set_str(li->textbox->object, li->name);
 		w_object_move_silent(li->textbox->object, x, y, w, h);
