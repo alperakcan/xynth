@@ -63,13 +63,13 @@ void s_window_form_draw (s_window_t *window)
 
 void s_window_hide (s_window_t *window)
 {
-	s_socket_request(window, SOC_DATA_SHOW, window->id, -1);
+	s_socket_request(window, SOC_DATA_SHOW, window->id, NULL, -1);
 	window->surface->mode &= ~SURFACE_REAL;
 }
 
 void s_window_show (s_window_t *window)
 {
-	s_socket_request(window, SOC_DATA_SHOW, window->id, 0);
+	s_socket_request(window, SOC_DATA_SHOW, window->id, NULL, 0);
 	window->surface->mode |= SURFACE_REAL;
 }
 

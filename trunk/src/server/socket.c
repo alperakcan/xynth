@@ -183,16 +183,31 @@ int s_server_socket_listen_close (int id)
 
 int s_server_socket_listen_show (int id)
 {
+	int i;
+	int rid = -1;
 	s_soc_data_show_t *data;
 	data = (s_soc_data_show_t *) s_calloc(1, sizeof(s_soc_data_show_t));
+	debugf(0, "ALPER");
 	if (s_socket_api_recv(server->client[id].soc, data, sizeof(s_soc_data_show_t)) != sizeof(s_soc_data_show_t)) {
 		s_free(data);
 		return -1;
 	}
-	if (data->show == -1) {
-		s_server_window_hide_id(data->id);
+	if (data->title[0] != '\0') {
+		for (i = 0; i < S_CLIENTS_MAX; i++) {
+			if (server->client[i].title.str != NULL &&
+			    strcmp(server->client[i].title.str, data->title) == 0) {
+				rid = i;
+			}
+		}
 	} else {
-		s_server_pri_set(SURFACE_FOCUS, data->id);
+		rid = data->id;
+	}
+	if (rid >= 0) {
+		if (data->show == -1) {
+			s_server_window_hide_id(rid);
+		} else {
+			s_server_pri_set(SURFACE_FOCUS, rid);
+		}
 	}
 	s_free(data);
 	return 0;
