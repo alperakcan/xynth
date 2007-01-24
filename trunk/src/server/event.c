@@ -181,6 +181,7 @@ int s_event_changed_ (s_window_t *window)
 void s_server_event_changed (void)
 {
 	int id;
+	int eid;
 	int oid;
 	int remote;
 
@@ -225,6 +226,14 @@ void s_server_event_changed (void)
 				server->window->event->type &= ~MOUSE_EXITED;
 			}
 			s_server_socket_request(SOC_DATA_EVENT, id);
+			server->window->event->type &= ~MOUSE_ENTERED;
+			server->window->event->type &= ~MOUSE_EXITED;
+			for (eid = 0; eid < S_CLIENTS_MAX; eid++) {
+				if (eid != id &&
+				    server->client[eid].type & WINDOW_INPUT) {
+					s_server_socket_request(SOC_DATA_EVENT, eid);
+				}
+			}
 			if (id != oid) {
 				server->window->event->type &= ~MOUSE_ENTERED;
 				server->window->event->type |= MOUSE_EXITED;
@@ -232,9 +241,19 @@ void s_server_event_changed (void)
 			}
 		} else if (server->window->event->type & KEYBD_EVENT) {
 			if (remote) {
-				s_server_socket_request(SOC_DATA_EVENT, s_server_pri_id(1));
+				id = s_server_pri_id(1);
 			} else {
+				id = s_server_pri_id(0);
 				s_server_socket_request(SOC_DATA_EVENT, s_server_pri_id(0));
+			}
+			if (id >= 0) {
+				s_server_socket_request(SOC_DATA_EVENT, id);
+			}
+			for (eid = 0; eid < S_CLIENTS_MAX; eid++) {
+				if (eid != id &&
+				    server->client[eid].type & WINDOW_INPUT) {
+					s_server_socket_request(SOC_DATA_EVENT, eid);
+				}
 			}
 		}
 	}

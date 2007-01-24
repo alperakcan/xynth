@@ -2721,8 +2721,14 @@ typedef enum {
 	WINDOW_TEMP       = 0x0100,
 	/** window child */
 	WINDOW_CHILD      = 0x0200,
+	/** bitwise or`ed window types */
+	WINDOW_TYPES      = WINDOW_MAIN | WINDOW_TEMP | WINDOW_CHILD,
 	/** window desktop, this is a bitwise or'ed property */
-	WINDOW_DESKTOP    = 0x0400
+	WINDOW_DESKTOP    = 0x0400,
+	/** window input, this is a bitwise or`ed property
+	  * this type of window will receive all input events,
+	  * even if not shown */
+	WINDOW_INPUT      = 0x0800 
 } S_WINDOW;
 
 /** window struct

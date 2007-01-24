@@ -274,7 +274,7 @@ void * s_window_main (void *arg)
 {
 	s_window_t *window = (s_window_t *) arg;
 	
-	switch (window->type & ~(WINDOW_NOFORM | WINDOW_DESKTOP)) {
+	switch (window->type & WINDOW_TYPES) {
 		case WINDOW_MAIN:
 			s_window_loop(window);
 			break;
