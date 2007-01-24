@@ -167,11 +167,17 @@ int s_server_socket_listen_stream (int id)
 	return 0;
 }
 
-int s_server_socket_listen_close (int id)
+int s_server_socket_listen_close_server (int id)
 {
 	if (server->client[id].type & WINDOW_DESKTOP) {
 		s_server_quit(server->window);
 	}
+	return 0;
+}
+
+int s_server_socket_listen_close (int id)
+{
+	s_server_window_close_id(id);
 	return 0;
 }
 
@@ -276,10 +282,13 @@ int s_server_socket_listen_parse (int soc)
 			return s_server_socket_listen_configure(id);
 		case SOC_DATA_EXPOSE:
 			return s_server_socket_listen_stream(id);
-		case SOC_DATA_CLOSE:
-			return s_server_socket_listen_close(id);
 		case SOC_DATA_EVENT:
 			return s_server_socket_listen_event(id);
+		case SOC_DATA_CLOSE:
+			return s_server_socket_listen_close(id);
+			break;
+		case SOC_DATA_CLOSE_SERVER:
+			return s_server_socket_listen_close_server(id);
 		case SOC_DATA_DESKTOP:
 		case SOC_DATA_NOTHING:
 			break;
@@ -466,6 +475,7 @@ err:		debugf(DSER, "Error occured when requesting (%d) from client[%d]. Closing 
 		case SOC_DATA_NOTHING:
 		case SOC_DATA_FORMDRAW:
 		case SOC_DATA_CONFIGURE:
+		case SOC_DATA_CLOSE_SERVER:
 			break;
 	}
 

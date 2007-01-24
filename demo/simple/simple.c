@@ -22,6 +22,9 @@ static int c = MOUSE_CURSOR_ARROW;
 
 static void simple_atevent (s_window_t *window, s_event_t *event)
 {
+	if (event->type & QUIT_EVENT) {
+		debugf(DCLI, "[%d] quiting", window->id);
+	}
         if (event->type & KEYBD_EVENT) {
 		debugf(DCLI, "[%d] event: 0x%08X, f: 0x%08X, b: %d, a:%c", window->id, event->type, event->keybd->flag, event->keybd->button, event->keybd->ascii);
 	}
