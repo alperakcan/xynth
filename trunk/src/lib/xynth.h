@@ -1950,25 +1950,27 @@ int s_rect_difference (s_rect_t *r1, s_rect_t *r0, s_list_t *list);
   */  
 typedef enum {
 	/** nothing ;) */
-	SOC_DATA_NOTHING   = 0x0,
+	SOC_DATA_NOTHING      = 0x0,
 	/** new window */
-	SOC_DATA_NEW       = 0x1,
+	SOC_DATA_NEW          = 0x1,
 	/** show, hide */
-	SOC_DATA_SHOW      = 0x2,
+	SOC_DATA_SHOW         = 0x2,
 	/** close me request */
-	SOC_DATA_CLOSE     = 0x3,
+	SOC_DATA_CLOSE        = 0x3,
+	/** close server request */
+	SOC_DATA_CLOSE_SERVER = 0x4,
 	/** event */
-	SOC_DATA_EVENT     = 0x4,
+	SOC_DATA_EVENT        = 0x5,
 	/** expose */
-	SOC_DATA_EXPOSE    = 0x5,
+	SOC_DATA_EXPOSE       = 0x6,
 	/** display properties */
-	SOC_DATA_DISPLAY   = 0x6,
+	SOC_DATA_DISPLAY      = 0x7,
 	/** request to re draw window form */
-	SOC_DATA_FORMDRAW  = 0x7,
+	SOC_DATA_FORMDRAW     = 0x8,
 	/** configure */
-	SOC_DATA_CONFIGURE = 0x8,
+	SOC_DATA_CONFIGURE    = 0x9,
 	/** special data for desktop windows' */
-	SOC_DATA_DESKTOP   = 0x9,
+	SOC_DATA_DESKTOP      = 0xa,
 } S_SOC_DATA;
 
 /* socket.c */

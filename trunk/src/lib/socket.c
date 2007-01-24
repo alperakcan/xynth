@@ -236,6 +236,7 @@ again:	if (window->running <= 0) {
 			va_end(ap);
 			break;
 		case SOC_DATA_CLOSE:
+		case SOC_DATA_CLOSE_SERVER:
 		case SOC_DATA_DESKTOP:
 		case SOC_DATA_NOTHING:
 		case SOC_DATA_FORMDRAW:
@@ -409,6 +410,7 @@ int s_socket_listen_parse (s_window_t *window, int soc)
 		case SOC_DATA_DISPLAY:
 		case SOC_DATA_FORMDRAW:
 		case SOC_DATA_CONFIGURE:
+		case SOC_DATA_CLOSE_SERVER:
 			break;
 	}
 

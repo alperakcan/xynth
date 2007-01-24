@@ -213,8 +213,7 @@ void s_window_exit (s_window_t *window)
 
 void s_window_quit (s_window_t *window)
 {
-	window->running = 0;
-	s_window_wakeup(window);
+	s_socket_request(window, SOC_DATA_CLOSE);
 }
 
 int s_window_wakeup (s_window_t *window)

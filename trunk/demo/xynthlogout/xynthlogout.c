@@ -34,7 +34,7 @@ static void xynthlogout_cancel (s_window_t *window, s_event_t *event, s_handler_
 
 static void xynthlogout_logout (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
-	s_socket_request(window, SOC_DATA_CLOSE);
+	s_socket_request(window, SOC_DATA_CLOSE_SERVER);
 }
 
 int main (int argc, char *argv[])
