@@ -86,8 +86,8 @@ int w_listbox_item_add (w_object_t *object, w_listbox_item_t *item)
 int w_listbox_item_del (w_object_t *object, w_listbox_item_t *item)
 {
 	int p;
-	int active;
 	w_listbox_t *lb;
+	w_listbox_item_t *active;
 	lb = object->data[OBJECT_LISTBOX];
 	active = s_list_get(lb->items, lb->active);
 	p = s_list_get_pos(lb->items, item);
