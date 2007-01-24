@@ -113,6 +113,9 @@ void s_surface_linear (s_window_t *window)
 
 void s_surface_uninit (s_window_t *window)
 {
+	if (window->surface == NULL) {
+		return;
+	}
 #if defined(SINGLE_APP)
 #else
 	if ((window->type & WINDOW_MAIN) &&
