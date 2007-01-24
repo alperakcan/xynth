@@ -137,7 +137,6 @@ int s_socket_request_show (s_window_t *window, int soc, int id, char *title, int
 	data = (s_soc_data_show_t *) s_calloc(1, sizeof(s_soc_data_show_t));
 	data->id = id;
 	data->show = show;
-	debugf(0, "%s", title);
 	if (title != NULL) {
 		strncpy(data->title, title, S_TITLE_MAX);
 	}
