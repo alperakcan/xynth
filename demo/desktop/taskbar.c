@@ -43,7 +43,7 @@ void taskbar_progs_handler_r (s_window_t *window, s_event_t *event, s_handler_t 
 
 	desktopc = (s_desktop_client_t *) s_list_get(tbar_progs->desktop->clients, pos);
 	if (desktopc != NULL) {
-		s_socket_request(window, SOC_DATA_SHOW, desktopc->id, 0);
+		s_socket_request(window, SOC_DATA_SHOW, desktopc->id, NULL, 0);
 	}
 }
 

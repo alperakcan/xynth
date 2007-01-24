@@ -131,12 +131,17 @@ int s_socket_request_stream (s_window_t *window, int soc, s_rect_t *coor)
 	return 0;
 }
 
-int s_socket_request_show (s_window_t *window, int soc, int id, int show)
+int s_socket_request_show (s_window_t *window, int soc, int id, char *title, int show)
 {
 	s_soc_data_show_t *data;
 	data = (s_soc_data_show_t *) s_calloc(1, sizeof(s_soc_data_show_t));
 	data->id = id;
 	data->show = show;
+	debugf(0, "%s", title);
+	if (title != NULL) {
+		strncpy(data->title, title, S_TITLE_MAX);
+	}
+	data->title[S_TITLE_MAX - 1] = '\0';
 	if (s_socket_api_send(soc, data, sizeof(s_soc_data_show_t)) != sizeof(s_soc_data_show_t)) {
 		s_free(data);
 		return -1;
@@ -168,11 +173,12 @@ int s_socket_request (s_window_t *window, S_SOC_DATA req, ...)
 	int show;
 	va_list ap;
 	int ret = 0;
+	char *title;
 	S_WINDOW form;
 	s_rect_t *coor;
 	s_event_t *event;
 	struct pollfd pollfd;
-
+	
 again:	if (window->running <= 0) {
 		return -1;
 	}
@@ -225,8 +231,9 @@ again:	if (window->running <= 0) {
 		case SOC_DATA_SHOW:
 			va_start(ap, req);
 			id = (int) va_arg(ap, int);
+			title = (char *) va_arg(ap, char *);
 			show = (int) va_arg(ap, int);
-			ret = s_socket_request_show(window, pollfd.fd, id, show);
+			ret = s_socket_request_show(window, pollfd.fd, id, title, show);
 			va_end(ap);
 			break;
 		case SOC_DATA_EVENT:

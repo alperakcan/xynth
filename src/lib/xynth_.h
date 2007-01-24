@@ -217,6 +217,7 @@ typedef struct s_soc_data_show_s {
 	/* 8 bytes */
 	int id;
 	int show;
+	char title[S_TITLE_MAX];
 } s_soc_data_show_t;
 
 #ifdef __cplusplus

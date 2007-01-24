@@ -2014,10 +2014,11 @@ int s_socket_request_stream (s_window_t *window, int soc, s_rect_t *coor);
   * @param *window - the window
   * @param soc     - window socket
   * @param id      - requested window id
+  * @param *title  - requested window title
   * @param show    - 1: show, 0: hide
   * @return 0 on success
   */
-int s_socket_request_show (s_window_t *window, int soc, int id, int show);
+int s_socket_request_show (s_window_t *window, int soc, int id, char *title, int show);
 
 /** @brief send event request to server
   *
