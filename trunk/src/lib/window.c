@@ -213,7 +213,9 @@ void s_window_exit (s_window_t *window)
 
 void s_window_quit (s_window_t *window)
 {
-	s_socket_request(window, SOC_DATA_CLOSE);
+        window->event->type = QUIT_EVENT;
+        s_event_changed(window);
+//	s_socket_request(window, SOC_DATA_CLOSE);
 }
 
 int s_window_wakeup (s_window_t *window)
@@ -237,14 +239,19 @@ void * s_window_loop_event (void *arg)
 			window->atevent(window, event);
 		}
 		switch (event->type & EVENT_MASK) {
-			case QUIT_EVENT:   window->running = 0;                 break;
-			case MOUSE_EVENT:  s_event_parse_mouse(window, event);  break;
-			case KEYBD_EVENT:  s_event_parse_keybd(window, event);  break;
-			case EXPOSE_EVENT: s_event_parse_expos(window, event);  break;
-			case CONFIG_EVENT: s_event_parse_config(window, event); break;
-			case TIMER_EVENT:  s_event_parse_timer(window, event);  break;
-			case FOCUS_EVENT:                                       break;
-			case DESKTOP_EVENT:				        break;
+//			case QUIT_EVENT:   window->running = 0;                      break;
+			case QUIT_EVENT:
+				 s_socket_request(window, SOC_DATA_CLOSE);
+				 s_event_uninit(event);
+				 return NULL;
+				 break;
+			case MOUSE_EVENT:  s_event_parse_mouse(window, event);       break;
+			case KEYBD_EVENT:  s_event_parse_keybd(window, event);       break;
+			case EXPOSE_EVENT: s_event_parse_expos(window, event);       break;
+			case CONFIG_EVENT: s_event_parse_config(window, event);      break;
+			case TIMER_EVENT:  s_event_parse_timer(window, event);       break;
+			case FOCUS_EVENT:                                            break;
+			case DESKTOP_EVENT:				             break;
 		}
 		s_event_uninit(event);
 	}
