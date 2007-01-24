@@ -244,7 +244,6 @@ void s_server_event_changed (void)
 				id = s_server_pri_id(1);
 			} else {
 				id = s_server_pri_id(0);
-				s_server_socket_request(SOC_DATA_EVENT, s_server_pri_id(0));
 			}
 			if (id >= 0) {
 				s_server_socket_request(SOC_DATA_EVENT, id);
