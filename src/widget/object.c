@@ -347,6 +347,9 @@ int w_object_hide (w_object_t *object)
 		w_object_hide_(object);
 		w_object_update(object, object->surface->win);
 	}
+	if (object->unload) {
+		object->unload(object);
+	}
 	return 0;
 }
 
@@ -366,6 +369,9 @@ int w_object_show (w_object_t *object)
 		w_effect_start(object);
 	} else {
 		w_object_update(object, object->surface->win);
+	}
+	if (object->onload) {
+		object->onload(object);
 	}
 	return 0;
 }
@@ -561,6 +567,8 @@ int w_object_init (w_window_t *window, w_object_t **object, void (*draw) (w_obje
  	(*object)->geometry = NULL;
 	(*object)->draw = draw;
 	(*object)->destroy = w_object_uninit;
+	(*object)->onload = NULL;
+	(*object)->unload = NULL;
 	(*object)->window = window;
 
 	(*object)->content = (s_rect_t *) s_malloc(sizeof(s_rect_t));
