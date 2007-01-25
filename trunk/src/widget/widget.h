@@ -153,6 +153,10 @@ struct w_object_s {
 	void (*event) (w_object_t *object, s_event_t *event);
 	/** uninit function */
 	void (*destroy) (w_object_t *object);
+	/** onload function */
+	void (*onload) (w_object_t *object);
+	/** unload function */
+	void (*unload) (w_object_t *object);
 	/** window */
 	w_window_t *window;
 	/** internal data */
