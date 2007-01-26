@@ -66,6 +66,10 @@ void node_generate_function (node_t *node, FILE *g_header)
 	node_t *tmp;
 	if (strcmp(node->name, "draw") == 0) {
 		fprintf(g_header, "void %s (w_object_t *object);\n", node->value);
+	} else if (strcmp(node->name, "onload") == 0) {
+		fprintf(g_header, "void %s (w_object_t *object);\n", node->value);
+	} else if (strcmp(node->name, "unload") == 0) {
+		fprintf(g_header, "void %s (w_object_t *object);\n", node->value);
 	} else if (strcmp(node->name, "pressed") == 0) {
 		fprintf(g_header, "void %s (w_object_t *object, int button);\n", node->value);
 	} else if (strcmp(node->name, "released") == 0) {
