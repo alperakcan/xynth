@@ -383,6 +383,7 @@ int w_editbox_set_size (w_object_t *object, int size);
 int w_editbox_set_rgb (w_object_t *object, int r, int g, int b);
 int w_editbox_set_properties (w_object_t *object, TEXTBOX_PROPERTIES properties);
 void w_editbox_draw (w_object_t *object);
+void w_editbox_event (w_object_t *object, s_event_t *event);
 void w_editbox_geometry (w_object_t *object);
 int w_editbox_init (w_window_t *window, w_editbox_t **editbox, w_object_t *parent);
 void w_editbox_uninit (w_object_t *object);
@@ -408,6 +409,7 @@ int w_checkbox_set_size (w_object_t *object, int size);
 int w_checkbox_set_properties (w_object_t *object, TEXTBOX_PROPERTIES properties);
 void w_checkbox_geometry (w_object_t *object);
 void w_checkbox_draw (w_object_t *object);
+void w_checkbox_event (w_object_t *object, s_event_t *event);
 void w_checkbox_state (w_object_t *object, int state);
 void w_checkbox_released (w_object_t *object, int btn);
 void w_checkbox_uninit (w_object_t *object);
@@ -478,8 +480,8 @@ struct w_window_s {
 	void *data;
 };
 
-void w_window_focus_change_notify (s_window_t *window, w_object_t *focus);
-void w_window_change_keybd_focus (s_window_t *window, int type);
+void w_window_focus_change_notify (w_object_t *object, w_object_t *focus);
+void w_window_change_focus (w_object_t *object, int type);
 void w_window_atevent (s_window_t *window, s_event_t *event);
 int w_window_init (w_window_t **window, S_WINDOW type, w_window_t *parent);
 int w_window_set_coor (w_window_t *window, int x, int y, int w, int h);

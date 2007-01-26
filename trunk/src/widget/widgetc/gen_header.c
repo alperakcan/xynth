@@ -66,6 +66,8 @@ void node_generate_function (node_t *node, FILE *g_header)
 	node_t *tmp;
 	if (strcmp(node->name, "draw") == 0) {
 		fprintf(g_header, "void %s (w_object_t *object);\n", node->value);
+	} else if (strcmp(node->name, "event") == 0) {
+		fprintf(g_header, "void %s (w_object_t *object, s_event_t *event);\n", node->value);
 	} else if (strcmp(node->name, "onload") == 0) {
 		fprintf(g_header, "void %s (w_object_t *object);\n", node->value);
 	} else if (strcmp(node->name, "unload") == 0) {

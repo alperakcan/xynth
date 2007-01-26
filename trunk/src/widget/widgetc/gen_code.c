@@ -383,6 +383,11 @@ void node_generate_code_draw (node_t *node)
 	fprintf(g_source, "%s->object->draw = %s;\n", node->parent->id, node->value);
 }
 
+void node_generate_code_event (node_t *node)
+{
+	fprintf(g_source, "%s->object->event = %s;\n", node->parent->id, node->value);
+}
+
 void node_generate_code_onload (node_t *node)
 {
 	fprintf(g_source, "%s->object->onload = %s;\n", node->parent->id, node->value);
@@ -419,6 +424,10 @@ void node_generate_code_object (node_t *node)
 	}
 	while ((tmp = node_get_node(node, "draw")) != NULL) {
 		node_generate_code_draw(tmp);
+		tmp->dontparse = 1;
+	}
+	while ((tmp = node_get_node(node, "event")) != NULL) {
+		node_generate_code_event(tmp);
 		tmp->dontparse = 1;
 	}
 	while ((tmp = node_get_node(node, "onload")) != NULL) {
