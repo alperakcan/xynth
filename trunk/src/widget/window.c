@@ -16,77 +16,95 @@
 #include "../lib/xynth_.h"
 #include "widget.h"
 
-void w_window_focus_change_notify (s_window_t *window, w_object_t *focus)
+void w_window_focus_change_notify (w_object_t *object, w_object_t *focus)
 {
 	s_event_t *event;
-	w_window_t *windoww;
-	windoww = (w_window_t *) window->data;
-	if (windoww->focus != focus) {
+	w_window_t *window;
+	window = object->window;
+	if (window->focus != focus) {
 		s_event_init(&event);
 		event->type = FOCUS_EVENT | FOCUSOUT_EVENT;
-		if (windoww->focus && windoww->focus->event) {
-			windoww->focus->focused = 0;
-			windoww->focus->event(windoww->focus, event);
-			if (windoww->focus->draw) {
-				windoww->focus->draw(windoww->focus);
-				w_object_update(windoww->focus, windoww->focus->surface->win);
+		if (window->focus && window->focus->event) {
+			window->focus->focused = 0;
+			window->focus->event(window->focus, event);
+			if (window->focus->draw) {
+				window->focus->draw(window->focus);
+				w_object_update(window->focus, window->focus->surface->win);
 			}
 		}
 		s_event_uninit(event);
-		windoww->focus = focus;
+		window->focus = focus;
 		s_event_init(&event);
 		event->type = FOCUS_EVENT | FOCUSIN_EVENT;
-		if (windoww->focus && windoww->focus->event) {
-			windoww->focus->focused = 1;
-			windoww->focus->event(windoww->focus, event);
-			if (windoww->focus->draw) {
-				windoww->focus->draw(windoww->focus);
-				w_object_update(windoww->focus, windoww->focus->surface->win);
+		if (window->focus && window->focus->event) {
+			window->focus->focused = 1;
+			window->focus->event(window->focus, event);
+			if (window->focus->draw) {
+				window->focus->draw(window->focus);
+				w_object_update(window->focus, window->focus->surface->win);
 			}
 		}
 		s_event_uninit(event);
 	}
 }
 
-void w_window_change_keybd_focus (s_window_t *window, int type)
+void w_window_change_focus (w_object_t *object, int type)
 {
 	int i;
 	int l;
 	int ls;
+	int add;
 	w_object_t *temp;
 	w_object_t *root;
-	w_window_t *windoww;
+	w_window_t *window;
 
-	windoww = (w_window_t *) window->data;
+	window = object->window;
 	
-	if (type == 0 || windoww->focus == NULL) {
+	if (type == 0 || window->focus == NULL) {
 		/* focus next object */
-		root = windoww->object;
+		root = window->object;
+		add = 1;
 	} else if (type == 1) {
 		/* focus next child oject of the same parent */
-		root = windoww->focus->parent;
+		root = window->focus->parent;
+		add = 1;
 	} else if (type == 2) {
 		/* focus next sister object of the same grand parent */
-		root = windoww->object;
+		root = window->object;
+		add = 1;
+	} else if (type == -1) {
+		/* focus previous object */
+		root = window->object;
+		add = -1;
+	} else if (type == -2) {
+		/* focus previous child oject of the same parent */
+		root = window->focus->parent;
+		add = -1;
+	} else if (type == -3) {
+		/* focus previous sister object of the same grand parent */
+		root = window->object;
+		add = -1;
 	} else {
 		return;
 	}
 
-	w_object_level_find(root, windoww->focus, &l);
+	w_object_level_find(root, window->focus, &l);
 	w_object_level_count(root, &ls);
 	for (i = 0; i < ls; i++) {
-		l++;
+		l += add;
 		if (l > ls) {
 			l = 0;
+		} else if (l < 0) {
+			l = ls;
 		}
 		w_object_level_get(root, &temp, l);
 		if (temp && temp->event) {
-			if (type == 2 &&
-			    windoww->focus &&
-			    windoww->focus->parent &&
-			    w_object_isshownchild(windoww->focus->parent, temp) == 0) {
+			if ((type == 2 || type == -3) &&
+			    window->focus &&
+			    window->focus->parent &&
+			    w_object_isshownchild(window->focus->parent, temp) == 0) {
 			} else {
-				w_window_focus_change_notify(window, temp);
+				w_window_focus_change_notify(window->object, temp);
 				break;
 			}
 		}
@@ -132,7 +150,7 @@ void w_window_atevent (s_window_t *window, s_event_t *event)
 		}
 		if (event->type & MOUSE_PRESSED) {
 			if (objectn && objectn->event) {
-				w_window_focus_change_notify(window, objectn);
+				w_window_focus_change_notify(windoww->object, objectn);
 			}
 		}
 		if (objectp && (objectn != objectp) && (objectp->event)) {
@@ -146,7 +164,7 @@ void w_window_atevent (s_window_t *window, s_event_t *event)
 		if (event->type & KEYBD_PRESSED &&
 		    event->keybd->keycode == S_KEYCODE_TAB) {
 		    	flag = (event->keybd->flag & KEYCODE_LSHIFTF) ? 1 : (event->keybd->flag & KEYCODE_RSHIFTF) ? 2 : 0;
-		    	w_window_change_keybd_focus(window, flag);
+		    	w_window_change_focus(windoww->object, flag);
 		}
 		if (windoww->focus && windoww->focus->event) {
 			windoww->focus->event(windoww->focus, event);

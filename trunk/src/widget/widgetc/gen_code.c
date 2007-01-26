@@ -383,6 +383,16 @@ void node_generate_code_draw (node_t *node)
 	fprintf(g_source, "%s->object->draw = %s;\n", node->parent->id, node->value);
 }
 
+void node_generate_code_onload (node_t *node)
+{
+	fprintf(g_source, "%s->object->onload = %s;\n", node->parent->id, node->value);
+}
+
+void node_generate_code_unload (node_t *node)
+{
+	fprintf(g_source, "%s->object->unload = %s;\n", node->parent->id, node->value);
+}
+
 void node_generate_code_object (node_t *node)
 {
 	node_t *tmp;
@@ -403,12 +413,20 @@ void node_generate_code_object (node_t *node)
 	} else if (strcmp(node->type, "listbox") == 0) {
 		node_generate_code_object_listbox(node);
 	}
-	if ((tmp = node_get_node(node, "effect")) != NULL) {
+	while ((tmp = node_get_node(node, "effect")) != NULL) {
 		node_generate_code_effect(tmp);
 		tmp->dontparse = 1;
 	}
-	if ((tmp = node_get_node(node, "draw")) != NULL) {
+	while ((tmp = node_get_node(node, "draw")) != NULL) {
 		node_generate_code_draw(tmp);
+		tmp->dontparse = 1;
+	}
+	while ((tmp = node_get_node(node, "onload")) != NULL) {
+		node_generate_code_onload(tmp);
+		tmp->dontparse = 1;
+	}
+	while ((tmp = node_get_node(node, "unload")) != NULL) {
+		node_generate_code_unload(tmp);
 		tmp->dontparse = 1;
 	}
 }
