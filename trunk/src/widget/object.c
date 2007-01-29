@@ -553,6 +553,7 @@ int w_object_init (w_window_t *window, w_object_t **object, void (*draw) (w_obje
 	s_list_init(&((*object)->childs));
 	(*object)->parent = parent;
 	
+	(*object)->alpha = 0xff;
 	(*object)->focused = 0;
 	(*object)->showed = 0;
 	

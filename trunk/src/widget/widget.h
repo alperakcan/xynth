@@ -143,6 +143,8 @@ struct w_object_s {
 	int showed;
 	/** is focused */
 	int focused;
+	/** alpha blen ration */
+	int alpha;
 	/** effect */
 	w_effect_t *effect;
 	/** geometry function */
@@ -305,7 +307,7 @@ struct w_button_s {
 	w_object_t *object;
 	w_frame_t *frame;
 	s_handler_t *handler_m;
-	s_handler_t *handler_k;
+	s_handler_t *handler_k[5];
 	void (*pressed) (w_object_t *, int);
 	void (*released) (w_object_t *, int);
 	void (*clicked) (w_object_t *, int, int);

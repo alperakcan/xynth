@@ -52,6 +52,7 @@ int w_button_set_style (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shad
 
 void w_button_event (w_object_t *object, s_event_t *event)
 {
+	int i;
 	w_button_t *button;
 	button = (w_button_t *) object->data[OBJECT_BUTTON];
 	if (event->type & MOUSE_EVENT) {
@@ -66,7 +67,9 @@ void w_button_event (w_object_t *object, s_event_t *event)
 	}
 	if (event->type & KEYBD_EVENT) {
 		s_thread_mutex_lock(object->window->window->handlers->mut);
-		s_event_parse_keybd_handler(object->window->window, event, button->handler_k);
+		for (i = 0; i < 5; i++) {
+			s_event_parse_keybd_handler(object->window->window, event, button->handler_k[i]);
+		}
 		s_thread_mutex_unlock(object->window->window->handlers->mut);
 	}
 	if (event->type & FOCUSOUT_EVENT) {
@@ -210,7 +213,7 @@ void w_button_cb_kp (s_window_t *window, s_event_t *event, s_handler_t *handler)
 		object->draw(object);
 		w_object_update(object, object->surface->win);
 		if (button->pressed != NULL) {
-			button->pressed(object, MOUSE_LEFTBUTTON);
+			button->pressed(object, handler->keybd.button);
 		}
 	}
 }
@@ -226,7 +229,7 @@ void w_button_cb_kr (s_window_t *window, s_event_t *event, s_handler_t *handler)
 		object->draw(object);
 		w_object_update(object, object->surface->win);
 		if (button->released != NULL) {
-			button->released(object, MOUSE_LEFTBUTTON);
+			button->released(object, handler->keybd.button);
 		}
 	}
 }
@@ -258,13 +261,45 @@ int w_button_init (w_window_t *window, w_button_t **button, w_object_t *parent)
 	(*button)->handler_m->data = *button;	
 	(*button)->state = 0;
 	
-	s_handler_init(&((*button)->handler_k));
-	(*button)->handler_k->type = KEYBD_HANDLER;
-	(*button)->handler_k->keybd.flag = 0;
-	(*button)->handler_k->keybd.button = S_KEYCODE_SPACE;
-	(*button)->handler_k->keybd.p = w_button_cb_kp;
-	(*button)->handler_k->keybd.r = w_button_cb_kr;
-	(*button)->handler_k->data = *button;	
+	s_handler_init(&((*button)->handler_k[0]));
+	(*button)->handler_k[0]->type = KEYBD_HANDLER;
+	(*button)->handler_k[0]->keybd.flag = 0;
+	(*button)->handler_k[0]->keybd.button = S_KEYCODE_SPACE;
+	(*button)->handler_k[0]->keybd.p = w_button_cb_kp;
+	(*button)->handler_k[0]->keybd.r = w_button_cb_kr;
+	(*button)->handler_k[0]->data = *button;	
+
+	s_handler_init(&((*button)->handler_k[1]));
+	(*button)->handler_k[1]->type = KEYBD_HANDLER;
+	(*button)->handler_k[1]->keybd.flag = 0;
+	(*button)->handler_k[1]->keybd.button = S_KEYCODE_LEFT;
+	(*button)->handler_k[1]->keybd.p = w_button_cb_kp;
+	(*button)->handler_k[1]->keybd.r = w_button_cb_kr;
+	(*button)->handler_k[1]->data = *button;	
+
+	s_handler_init(&((*button)->handler_k[2]));
+	(*button)->handler_k[2]->type = KEYBD_HANDLER;
+	(*button)->handler_k[2]->keybd.flag = 0;
+	(*button)->handler_k[2]->keybd.button = S_KEYCODE_UP;
+	(*button)->handler_k[2]->keybd.p = w_button_cb_kp;
+	(*button)->handler_k[2]->keybd.r = w_button_cb_kr;
+	(*button)->handler_k[2]->data = *button;	
+
+	s_handler_init(&((*button)->handler_k[3]));
+	(*button)->handler_k[3]->type = KEYBD_HANDLER;
+	(*button)->handler_k[3]->keybd.flag = 0;
+	(*button)->handler_k[3]->keybd.button = S_KEYCODE_RIGHT;
+	(*button)->handler_k[3]->keybd.p = w_button_cb_kp;
+	(*button)->handler_k[3]->keybd.r = w_button_cb_kr;
+	(*button)->handler_k[3]->data = *button;	
+
+	s_handler_init(&((*button)->handler_k[4]));
+	(*button)->handler_k[4]->type = KEYBD_HANDLER;
+	(*button)->handler_k[4]->keybd.flag = 0;
+	(*button)->handler_k[4]->keybd.button = S_KEYCODE_DOWN;
+	(*button)->handler_k[4]->keybd.p = w_button_cb_kp;
+	(*button)->handler_k[4]->keybd.r = w_button_cb_kr;
+	(*button)->handler_k[4]->data = *button;	
 
 	(*button)->object = (*button)->frame->object;
 	(*button)->object->type = OBJECT_BUTTON;
@@ -285,10 +320,13 @@ err0:	s_free(*button);
 
 void w_button_uninit (w_object_t *object)
 {
+	int i;
 	w_button_t *button;
 	button = (w_button_t *) object->data[OBJECT_BUTTON];
 	w_frame_uninit(object);
 	s_handler_uninit(button->handler_m);
-	s_handler_uninit(button->handler_k);
+	for (i = 0; i < 5; i++) {
+		s_handler_uninit(button->handler_k[i]);
+	}
 	s_free(button);
 }
