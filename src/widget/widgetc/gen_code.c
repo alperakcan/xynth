@@ -378,6 +378,11 @@ void node_generate_code_show (node_t *node)
 	}
 }
 
+void node_generate_code_alpha (node_t *node)
+{
+	fprintf(g_source, "%s->object->alpha = %s;\n", node->parent->id, node->value);
+}
+
 void node_generate_code_draw (node_t *node)
 {
 	fprintf(g_source, "%s->object->draw = %s;\n", node->parent->id, node->value);
@@ -417,6 +422,10 @@ void node_generate_code_object (node_t *node)
 		node_generate_code_object_scrollbuffer(node);
 	} else if (strcmp(node->type, "listbox") == 0) {
 		node_generate_code_object_listbox(node);
+	}
+	while ((tmp = node_get_node(node, "alpha")) != NULL) {
+		node_generate_code_alpha(tmp);
+		tmp->dontparse = 1;
 	}
 	while ((tmp = node_get_node(node, "effect")) != NULL) {
 		node_generate_code_effect(tmp);
