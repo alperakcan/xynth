@@ -2,12 +2,12 @@
 include ../../Makefile.cfg
 include ../../Makefile.parse
 
-INCDIR += ./libz ./libpng ./freetype2/include
+INCDIR += ./libz ./libpng ./freetype2/include ./expat
 
 OBJS = alloc.o child.o config.o debug.o driver.o event.o eventq.o font.o \
        gettext.o gettime.o grlib.o handler.o image.o image_gif.o image_png.o \
        image_xpm.o list.o pipe_api.o pollfd.o rect.o socket.o socket_api.o surface.o \
-       thread.o timer.o window.o
+       thread.o timer.o window.o xml.o
 
 OBJS += libz/adler32.o libz/compress.o libz/crc32.o libz/gzio.o libz/uncompr.o \
         libz/deflate.o libz/trees.o libz/zutil.o libz/inflate.o libz/infback.o \
@@ -22,6 +22,9 @@ CFLAGS += -DFT2_BUILD_LIBRARY
 OBJS += freetype2/ftbase.o freetype2/ftbitmap.o freetype2/ftdebug.o freetype2/ftglyph.o \
         freetype2/ftinit.o freetype2/ftsystem.o freetype2/autofit.o freetype2/sfnt.o \
         freetype2/smooth.o freetype2/truetype.o
+
+CFLAGS += -DHAVE_EXPAT_CONFIG_H
+OBJS += expat/xmlparse.o expat/xmltok.o expat/xmlrole.o
 
 TARGET_A-$(PLATFORM_LINUX)  = libxynth.a
 TARGET_SO-$(PLATFORM_LINUX) = libxynth.so
