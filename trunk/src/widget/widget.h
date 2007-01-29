@@ -418,12 +418,20 @@ void w_checkbox_uninit (w_object_t *object);
 int w_checkbox_init (w_window_t *window, w_checkbox_t **checkbox, w_object_t *parent);
 
 /* progressbar.c */
+
+typedef enum {
+	PROGRESSBAR_BALL  = 0x1,
+	PROGRESSBAR_SLIDE = 0x2,
+	PROGRESSBAR_TEXT  = 0x4
+} PROGRESSBAR_PROPERTIES;
+
 struct w_progressbar_s {
 	w_object_t *object;
 	w_frame_t *frame;
 	w_frame_t *box;
 	w_textbox_t *text;
 	unsigned int level;
+	PROGRESSBAR_PROPERTIES properties;
 	void (*changed) (w_object_t *, int);
 };
 
@@ -432,6 +440,7 @@ int w_progressbar_set_style (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW
 int w_progressbar_set_image (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs);
 int w_progressbar_set_boxstyle (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow);
 int w_progressbar_set_boximage (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs);
+int w_progressbar_set_properties (w_object_t *object, PROGRESSBAR_PROPERTIES properties);
 void w_progressbar_level (w_object_t *object, unsigned int level);
 void w_progressbar_geometry (w_object_t *object);
 int w_progressbar_init (w_window_t *window, w_progressbar_t **progressbar, w_object_t *parent);

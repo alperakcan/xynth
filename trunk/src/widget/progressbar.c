@@ -49,6 +49,17 @@ int w_progressbar_set_boximage (w_object_t *object, unsigned int style, unsigned
 	return w_frame_set_image(pb->box->object, style, rotation, nimgs, imgs);
 }
 
+int w_progressbar_set_properties (w_object_t *object, PROGRESSBAR_PROPERTIES properties)
+{
+	w_progressbar_t *pb;
+	pb = object->data[OBJECT_PROGRESSBAR];
+	pb->properties = properties;
+	if ((pb->properties & PROGRESSBAR_TEXT) == 0) {
+		w_object_hide(pb->text->object);
+	}
+	return 0;
+}
+
 void w_progressbar_level (w_object_t *object, unsigned int level)
 {
 	char str[10];
@@ -68,14 +79,23 @@ void w_progressbar_level (w_object_t *object, unsigned int level)
 
 void w_progressbar_geometry (w_object_t *object)
 {
+	int x;
 	int w;
 	w_progressbar_t *pb;
 	pb = object->data[OBJECT_PROGRESSBAR];
 	w_frame_geometry(object);
-	w = ((object->content->w - 4) * pb->level) / 100;
-	w = MAX(w, 0);
-	w_object_move(pb->box->object, 2, 2, w, object->content->h - 4);
-	w_object_move(pb->text->object, 2, 2, object->content->w - 4, object->content->h - 4);
+	if (pb->properties & PROGRESSBAR_SLIDE) {
+		w = ((object->content->w - 4) * pb->level) / 100;
+		w = MAX(w, 0);
+		w_object_move(pb->box->object, 2, 2, w, object->content->h - 4);
+	} else {
+		x = ((object->content->w - object->content->h) * pb->level) / 100;
+//		x = MAX(w, 0);
+		w_object_move(pb->box->object, x + 2, 2, object->content->h - 4, object->content->h - 4);
+	}
+	if (pb->properties & PROGRESSBAR_TEXT) {
+		w_object_move(pb->text->object, 2, 2, object->content->w - 4, object->content->h - 4);
+	}
 }
 
 int w_progressbar_init (w_window_t *window, w_progressbar_t **progressbar, w_object_t *parent)
@@ -89,6 +109,7 @@ int w_progressbar_init (w_window_t *window, w_progressbar_t **progressbar, w_obj
 	w_textbox_set_str(pb->text->object, "%0");
 	pb->text->frame->style = FRAME_NOFRAME;
 	pb->text->properties = TEXTBOX_HCENTER | TEXTBOX_VCENTER;
+	pb->properties = PROGRESSBAR_SLIDE | PROGRESSBAR_TEXT;
 	w_object_show(pb->box->object);
 	w_object_show(pb->text->object);
 	pb->changed = NULL;
