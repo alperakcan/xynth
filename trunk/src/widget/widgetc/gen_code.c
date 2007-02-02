@@ -340,6 +340,14 @@ void node_generate_code_object_listbox (node_t *node)
 		node_generate_code_style(tmp, node, NULL);
 		tmp->dontparse = 1;
 	}
+	while ((tmp = node_get_node(node, "changed")) != NULL) {
+		fprintf(g_source, "%s->changed = %s;\n", node->id, tmp->value);
+		tmp->dontparse = 1;
+	}
+	while ((tmp = node_get_node(node, "itemheight")) != NULL) {
+		fprintf(g_source, "w_listbox_set_item_height(%s->object, %s);\n", node->id, tmp->value);
+		tmp->dontparse = 1;
+	}
 	while ((tmp = node_get_node(node, "itemimage")) != NULL) {
 		node_generate_code_image(tmp, node, "item");
 		tmp->dontparse = 1;
