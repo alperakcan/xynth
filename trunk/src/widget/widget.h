@@ -276,9 +276,16 @@ struct w_listbox_s {
 	w_frame_t *frame;
 	s_list_t *items;
 	s_list_t *item_images;
+	unsigned int itemheight;
+	unsigned int activeshape;
+	unsigned int activeshadow;
+	unsigned int inactiveshape;
+	unsigned int inactiveshadow;
 	int active;
+	int pactive;
 	int height;
 	int yoffset;
+	void (*changed) (w_object_t *object, int active);
 	w_object_t *scrollbuffer;
 };
 
@@ -299,6 +306,9 @@ void w_listbox_event (w_object_t *object, s_event_t *event);
 void w_listbox_scrollbuffer_set (w_object_t *object, w_object_t *scrollbuffer);
 int w_listbox_set_style (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow);
 int w_listbox_set_itemimage (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs);
+int w_listbox_set_active_style (w_object_t *object, unsigned int shape, unsigned int shadow);
+int w_listbox_set_inactive_style (w_object_t *object, unsigned int shape, unsigned int shadow);
+int w_listbox_set_item_height (w_object_t *object, int size);
 int w_listbox_init (w_window_t *window, w_listbox_t **listbox, w_object_t *parent);
 void w_listbox_uninit (w_object_t *object);
 

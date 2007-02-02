@@ -2,8 +2,6 @@
 #include "../lib/xynth_.h"
 #include "widget.h"
 
-#define LISTBOX_ITEM_HEIGHT 24
-
 int w_listbox_item_image_init (w_listbox_item_image_t **item_image, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs)
 {
 	unsigned int i;
@@ -51,6 +49,7 @@ int w_listbox_item_init (w_object_t *listbox, w_listbox_item_t **listbox_item)
 	li = (w_listbox_item_t *) s_malloc(sizeof(w_listbox_item_t));
 	memset(li, 0, sizeof(w_listbox_item_t));
 	w_textbox_init(listbox->window, &(li->textbox), listbox);
+	w_textbox_set_size(li->textbox->object, lb->itemheight - 8);
 	for (pos = 0; !s_list_eol(lb->item_images, pos); pos++) {
 		ii = (w_listbox_item_image_t *) s_list_get(lb->item_images, pos);
 		w_textbox_set_image(li->textbox->object, ii->style, ii->rotation, ii->nimages, ii->images);
@@ -98,7 +97,7 @@ int w_listbox_item_del (w_object_t *object, w_listbox_item_t *item)
 	} else {
 		lb->active = s_list_get_pos(lb->items, active);
 	}
-	w_object_draw(object);
+//	w_object_draw(object);
 	return 0;
 }
 
@@ -129,11 +128,11 @@ void w_listbox_slide (w_object_t *object, int vertical, int horizontal, int *yto
 	lb = object->data[OBJECT_LISTBOX];
 	lb->yoffset -= vertical;
 	if (vertical > 0) {
-		if (lb->active * LISTBOX_ITEM_HEIGHT + lb->yoffset < 0) {
+		if (lb->active * lb->itemheight + lb->yoffset < 0) {
 			lb->active += 1;
 		}
 	} else {
-		if ((lb->active + 1) * LISTBOX_ITEM_HEIGHT + lb->yoffset > lb->object->content->h) {
+		if ((lb->active + 1) * lb->itemheight + lb->yoffset > lb->object->content->h) {
 			lb->active -= 1;
 		}
 	}
@@ -153,16 +152,16 @@ void w_listbox_draw (w_object_t *object)
 	w_listbox_t *lb;
 	w_listbox_item_t *li;
 	lb = object->data[OBJECT_LISTBOX];
-	if (object->surface->vbuf == NULL) {
-		goto end;
-	}
 	x = object->content->x;
 	w = object->content->w;
-	h = LISTBOX_ITEM_HEIGHT;
+	h = lb->itemheight;
 	lb->height = lb->items->nb_elt * h;
 	lb->yoffset = MAX(lb->yoffset, object->content->h - lb->height);
 	lb->yoffset = MIN(0, lb->yoffset);
 	y = object->content->y + lb->yoffset;
+	if (object->surface->vbuf == NULL) {
+		goto end;
+	}
 	if (lb->scrollbuffer) {
 		if (((lb->active + 1) * h) + lb->yoffset > lb->object->content->h) {
 			w_scrollbuffer_slide(lb->scrollbuffer, (((lb->active + 1) * h) + lb->yoffset) - lb->object->content->h, 0);
@@ -172,19 +171,26 @@ void w_listbox_draw (w_object_t *object)
 			w_scrollbuffer_slide(lb->scrollbuffer, ((lb->active * h) + lb->yoffset), 0);
 			return;
 		}
-	} 
+	}
 	w_frame_draw(object);
 	for (pos = 0; !s_list_eol(lb->items, pos); pos++) {
 		li = (w_listbox_item_t *) s_list_get(lb->items, pos);
 		if (pos == lb->active) {
-			w_textbox_set_style(li->textbox->object, FRAME_PANEL, FRAME_SUNKEN);
+			w_textbox_set_rgb(li->textbox->object, 0, 0, 0);
+			w_textbox_set_style(li->textbox->object, lb->activeshape, lb->activeshadow);
 		} else {
-			//w_textbox_set_style(li->textbox->object, FRAME_PANEL, FRAME_RAISED);
-			w_textbox_set_style(li->textbox->object, FRAME_NOFRAME, 0);
+			w_textbox_set_rgb(li->textbox->object, 255, 255, 255);
+			w_textbox_set_style(li->textbox->object, lb->inactiveshape, lb->inactiveshadow);
 		}
 		w_textbox_set_str(li->textbox->object, li->name);
 		w_object_move_silent(li->textbox->object, x, y, w, h);
 		y += h;
+	}
+	if (lb->pactive != lb->active) {
+		if (lb->changed != NULL) {
+			lb->changed(object, lb->active);
+		}
+		lb->pactive = lb->active;
 	}
 	w_object_update(lb->object, lb->object->surface->win);
 end:	return;
@@ -201,7 +207,7 @@ void w_listbox_event (w_object_t *object, s_event_t *event)
 	w_listbox_t *lb;
 	lb = object->data[OBJECT_LISTBOX];
 	if (event->type & KEYBD_EVENT) {
-		if (event->type & KEYBD_PRESSED) {
+		if (event->type & KEYBD_RELEASED) {
 			if (event->keybd->keycode == S_KEYCODE_UP) {
 				lb->active = MAX(lb->active - 1, 0);
 				w_listbox_draw(object);
@@ -235,6 +241,32 @@ int w_listbox_set_itemimage (w_object_t *object, unsigned int style, unsigned in
 	return 0;
 }
 
+int w_listbox_set_active_style (w_object_t *object, unsigned int shape, unsigned int shadow)
+{
+	w_listbox_t *lb;
+	lb = object->data[OBJECT_LISTBOX];
+	lb->activeshape = shape;
+	lb->activeshadow = shadow;
+	return 0;
+}
+
+int w_listbox_set_inactive_style (w_object_t *object, unsigned int shape, unsigned int shadow)
+{
+	w_listbox_t *lb;
+	lb = object->data[OBJECT_LISTBOX];
+	lb->inactiveshape = shape;
+	lb->inactiveshadow = shadow;
+	return 0;
+}
+
+int w_listbox_set_item_height (w_object_t *object, int size)
+{
+	w_listbox_t *lb;
+	lb = object->data[OBJECT_LISTBOX];
+	lb->itemheight = size;
+	return 0;
+}
+
 int w_listbox_init (w_window_t *window, w_listbox_t **listbox, w_object_t *parent)
 {
 	w_listbox_t *lb;
@@ -245,6 +277,13 @@ int w_listbox_init (w_window_t *window, w_listbox_t **listbox, w_object_t *paren
 	lb->height = 0;
 	lb->yoffset = 0;
 	lb->active = 0;
+	lb->pactive = -1;
+	lb->itemheight = 24;
+	lb->changed = NULL;
+	lb->activeshape = FRAME_PANEL;
+	lb->activeshadow = FRAME_SUNKEN;
+	lb->inactiveshape = FRAME_NOFRAME;
+	lb->inactiveshadow = FRAME_RAISED;
 	lb->scrollbuffer = NULL;
 	lb->object = lb->frame->object;
 	lb->object->type = OBJECT_LISTBOX;
