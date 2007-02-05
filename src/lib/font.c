@@ -228,6 +228,8 @@ int s_font_get_glyph (s_font_t *font)
 	xmin =  3200;
 	xmax = -3200;
 
+	x = 0;
+	y = 0;
 	for (n = 0; n < num_chars; n++) {
 		cache = (unicode[n] < FONT_CACHE_SIZE) ? 1 : 0;
 		{ /* get glyph */
@@ -254,6 +256,11 @@ int s_font_get_glyph (s_font_t *font)
 					debugf(0, "FT_Get_Glyph (%d, 0x%x)", error, error);
 					continue;
 				}
+				error = FT_Glyph_To_Bitmap(&glyph, ft_render_mode_normal, 0, 1);
+				if (error) {
+					debugf(0, "FT_Glyph_To_Bitmap (%d, 0x%x)", error, error);
+					continue;
+				}
 				FT_Glyph_Get_CBox(glyph, ft_glyph_bbox_pixels, &glyph_bbox);
 				glyph_advance_x = font->ft->face->glyph->advance.x >> 6;
 				
@@ -263,6 +270,8 @@ int s_font_get_glyph (s_font_t *font)
 					font->ft->cache[unicode[n]].index = glyph_index;
 					font->ft->cache[unicode[n]].glyph = glyph;
 					font->ft->cache[unicode[n]].advance_x = glyph_advance_x;
+				} else {
+					exit(0);
 				}
 			}
 		}
@@ -297,15 +306,12 @@ int s_font_get_glyph (s_font_t *font)
 			}
 		}
 		{ /* get images */
+			FT_BitmapGlyph bit = (FT_BitmapGlyph) glyph;
 			pens[num_glyphs].x = 0 + pos[num_glyphs].x;
 			pens[num_glyphs].y = 0 + pos[num_glyphs].y;
-			error = FT_Glyph_To_Bitmap(&glyph, ft_render_mode_normal, &pens[num_glyphs], !cache);
-			if (!error) {
-				FT_BitmapGlyph bit = (FT_BitmapGlyph) glyph;
-				x = pens[num_glyphs].x;
-				xmin = MIN(xmin, x);
-				xmax = MAX(xmax, x + bit->bitmap.width);
-			}
+			x = pens[num_glyphs].x;
+			xmin = MIN(xmin, x);
+			xmax = MAX(xmax, x + bit->bitmap.width);
 			images[num_glyphs] = glyph;
 		}
 		previous = glyph_index;
@@ -362,7 +368,6 @@ int s_font_get_glyph (s_font_t *font)
 			bbuf += (bit->bitmap.pitch - bit->bitmap.width);
 			rgba += (font->glyph.img->w - bit->bitmap.width);
 		}
-		FT_Done_Glyph(images[n]);
 	}
 
 	s_free(pos);
