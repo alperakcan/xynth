@@ -342,15 +342,25 @@ int s_font_get_glyph (s_font_t *font)
 	for (n = 0; n < num_glyphs; n++) {
 		int i;
 		int j;
+		unsigned int rgb;
+		unsigned int *rgba;
+		unsigned char *bbuf;
 		FT_BitmapGlyph bit = (FT_BitmapGlyph) images[n];
 		x = pens[n].x;
 		y = (pens[n].y - bit->top + font->glyph.img->h) - (font->glyph.img->h - font->glyph.yMax);
+		rgb = (font->rgb << 8) & 0xFFFFFF00;
+		bbuf = bit->bitmap.buffer;
+		rgba = font->glyph.img->rgba + (x + y * font->glyph.img->w);
 		for (i = 0; i < bit->bitmap.rows; i++) {
 			for (j = 0; j < bit->bitmap.width; j++) {
-				if (*(bit->bitmap.buffer + i * bit->bitmap.pitch + j)) {
-					*(font->glyph.img->rgba + j + x + ((i + y) * font->glyph.img->w)) = ((font->rgb << 8) & 0xFFFFFF00) | (~*(bit->bitmap.buffer + i * bit->bitmap.pitch + j) & 0xFF);
+				if (*bbuf) {
+					*rgba = rgb | (~*(bbuf) & 0xff);
 				}
+				bbuf++;
+				rgba++;
 			}
+			bbuf += (bit->bitmap.pitch - bit->bitmap.width);
+			rgba += (font->glyph.img->w - bit->bitmap.width);
 		}
 		FT_Done_Glyph(images[n]);
 	}
