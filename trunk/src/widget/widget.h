@@ -362,6 +362,7 @@ struct w_textbox_s {
 	TEXTBOX_PROPERTIES properties;
 	int height;
 	int yoffset;
+	int calculate;
 };
 
 void w_textbox_slide (w_object_t *object, int vertical, int horizontal, int *ytotal, int *yoffset);

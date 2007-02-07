@@ -76,22 +76,27 @@ void w_textbox_lines_uninit (w_object_t *object)
 
 void w_textbox_lines_calculate (w_object_t *object)
 {
-	char *str;
 	int ptrw;
 	int strw;
 	int limit;
 	int chars;
 	char *tmp;
+	char *str;
 	char *ptr;
+	char *ntr;
+	char *ttr;
 	char *strline;
 	char *ptrline;
 	s_font_t *font;
 	w_textbox_t *textbox;
 	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
+	if (textbox->calculate == 0) {
+		return;
+	}
 	if (object->content->w <= 0) {
 		return;
 	}
-	if ((str = _(textbox->str)) == NULL) {
+	if ((ntr = _(textbox->str)) == NULL) {
 		return;
 	}
 	w_textbox_lines_uninit(object);
@@ -102,78 +107,95 @@ void w_textbox_lines_calculate (w_object_t *object)
 	textbox->height = 0;
 	s_font_set_size(font, textbox->size);
 	s_font_set_rgb(font, (textbox->rgb >> 0x10) & 0xff, (textbox->rgb >> 0x8) & 0xff, textbox->rgb & 0xff);
-	if (textbox->properties & TEXTBOX_WRAP) {
-		strline = (char *) s_malloc(sizeof(char *) * (strlen(str) + 1));
-		ptrline = (char *) s_malloc(sizeof(char *) * (strlen(str) + 1));
-		memset(ptrline, 0, strlen(str) + 1);
-		memset(strline, 0, strlen(str) + 1);
-		for (tmp = str; tmp < str + strlen(str); tmp += (chars - 1)) {
-			for (chars = 0, limit = 0; limit == 0 && chars <= strlen(tmp);) {
-				snprintf(ptrline, chars, "%s", tmp);
-				snprintf(strline, chars + 1, "%s", tmp);
-				ptrline[chars] = '\0';
-				strline[chars + 1] = '\0';
-				ptrw = s_font_get_width(font, ptrline);
-				strw = s_font_get_width(font, strline);
-				if (object->content->w <= strw) {
-				    	limit = 1;
-				} else {
-#if 1
-					int charst = 0;
-					int charsp = 0;
-					while ((object->content->w - font->height) > (strw + charst)) {
-						charst += font->size;
-						charsp++;
-					}
-					if (chars + charsp < strlen(tmp)) {
-						chars += charsp;
-					}
-#endif
-					chars++;
-				}
-			}
-			if (limit) {
-				while (ptrline[0] == ' ') {
-					for (ptrw = 0; ptrline[ptrw] && ptrline[ptrw + 1]; ptrw++) {
-						ptrline[ptrw] = ptrline[ptrw + 1];
-					}
-					ptrline[ptrw] = '\0';
-				}
-				while (strline[0] == ' ') {
-					for (strw = 0; strline[strw] && strline[strw + 1]; strw++) {
-						strline[strw] = strline[strw + 1];
-					}
-					strline[strw] = '\0';
-				}
-				ptrw = strlen(ptrline);
-				strw = strlen(strline);
-				if (ptrline[ptrw - 1] != ' ' &&
-				    strline[strw - 1] != ' ') {
-				    	ptr = strdup(ptrline);
-				    	for (strw = strlen(ptr) - 1; strw >= 0; strw--) {
-				    		if (ptr[strw] != ' ') {
-				    			chars--;
-				    			ptr[strw] = '\0';
-				    		} else {
-				    			break;
-				    		}
-				    	}
-				    	if (strw >= 0) {
-				    		sprintf(ptrline, "%s", ptr);
-				    	}
-				    	s_free(ptr);
-				}
-				w_textbox_line_add(font, ptrline);
-			} else {
-				w_textbox_line_add(font, strline);
-				break;
-			}
+	
+	ttr = strdup(ntr);
+	str = ttr;
+	while (*ntr) {
+		if ((ntr = strchr(str, '\n')) != NULL) {
+			*ntr = '\0';
 		}
-		s_free(strline);
-		s_free(ptrline);
-	} else {
-		w_textbox_line_add(font, str);
+		if (textbox->properties & TEXTBOX_WRAP &&
+		    strlen(str) > 0) {
+			strline = (char *) s_malloc(sizeof(char *) * (strlen(str) + 1));
+			ptrline = (char *) s_malloc(sizeof(char *) * (strlen(str) + 1));
+			memset(ptrline, 0, strlen(str) + 1);
+			memset(strline, 0, strlen(str) + 1);
+			for (tmp = str; tmp < str + strlen(str); tmp += (chars - 1)) {
+				for (chars = 0, limit = 0; limit == 0 && chars <= strlen(tmp);) {
+					snprintf(ptrline, chars, "%s", tmp);
+					snprintf(strline, chars + 1, "%s", tmp);
+					ptrline[chars] = '\0';
+					strline[chars + 1] = '\0';
+					ptrw = s_font_get_width(font, ptrline);
+					strw = s_font_get_width(font, strline);
+					if (object->content->w <= strw) {
+					    	limit = 1;
+					} else {
+#if 1
+						int charst = 0;
+						int charsp = 0;
+						while ((object->content->w - font->height) > (strw + charst)) {
+							charst += font->size;
+							charsp++;
+						}
+						if (chars + charsp < strlen(tmp)) {
+							chars += charsp;
+						}
+#endif
+						chars++;
+					}
+				}
+				if (limit) {
+					while (ptrline[0] == ' ') {
+						for (ptrw = 0; ptrline[ptrw] && ptrline[ptrw + 1]; ptrw++) {
+							ptrline[ptrw] = ptrline[ptrw + 1];
+						}
+						ptrline[ptrw] = '\0';
+					}
+					while (strline[0] == ' ') {
+						for (strw = 0; strline[strw] && strline[strw + 1]; strw++) {
+							strline[strw] = strline[strw + 1];
+						}
+						strline[strw] = '\0';
+					}
+					ptrw = strlen(ptrline);
+					strw = strlen(strline);
+					if (ptrline[ptrw - 1] != ' ' &&
+					    strline[strw - 1] != ' ') {
+					    	ptr = strdup(ptrline);
+					    	for (strw = strlen(ptr) - 1; strw >= 0; strw--) {
+					    		if (ptr[strw] != ' ') {
+					    			chars--;
+					    			ptr[strw] = '\0';
+					    		} else {
+					    			break;
+					    		}
+					    	}
+					    	if (strw >= 0) {
+					    		sprintf(ptrline, "%s", ptr);
+					    	}
+					    	s_free(ptr);
+					}
+					w_textbox_line_add(font, ptrline);
+				} else {
+					w_textbox_line_add(font, strline);
+					break;
+				}
+			}
+			s_free(strline);
+			s_free(ptrline);
+		} else {
+			w_textbox_line_add(font, str);
+		}
+		if (ntr) {
+			str = ntr + 1;
+			ntr++;
+		} else {
+			break;
+		}
 	}
+	s_free(ttr);
+	textbox->calculate = 0;
 }
 
 void w_textbox_draw_ (w_object_t *object)
@@ -254,6 +276,7 @@ int w_textbox_set_size (w_object_t *object, int size)
 	w_textbox_t *textbox;
 	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
 	textbox->size = size;
+	textbox->calculate = 1;
 	w_textbox_draw(object);
 	return 0;
 }
@@ -269,13 +292,17 @@ int w_textbox_set_str (w_object_t *object, char *str)
 	}
 	s_free(textbox->str);
 	textbox->str = str;
+	textbox->calculate = 1;
 	w_textbox_draw(object);
 	return 0;
 }
 
 void w_textbox_geometry (w_object_t *object)
 {
+	w_textbox_t *textbox;
+	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
 	w_frame_geometry(object);
+	textbox->calculate = 1;
 	w_textbox_draw(object);
 }
 
@@ -297,6 +324,7 @@ int w_textbox_init (w_window_t *window, w_textbox_t **textbox, w_object_t *paren
 	(*textbox)->properties = TEXTBOX_VCENTER | TEXTBOX_HCENTER;
 	(*textbox)->height = 0;
 	(*textbox)->yoffset = 0;
+	(*textbox)->calculate = 0;
 
 	(*textbox)->object = (*textbox)->frame->object;
 	(*textbox)->object->type = OBJECT_TEXTBOX;
