@@ -78,7 +78,7 @@ int w_listbox_item_add (w_object_t *object, w_listbox_item_t *item)
 	} else {
 		lb->active = s_list_get_pos(lb->items, active);
 	}
-	w_object_draw(object);
+//	w_object_draw(object);
 	return 0;
 }
 
@@ -97,7 +97,25 @@ int w_listbox_item_del (w_object_t *object, w_listbox_item_t *item)
 	} else {
 		lb->active = s_list_get_pos(lb->items, active);
 	}
+	if (lb->active < 0) {
+		lb->active = 0;
+	}
 //	w_object_draw(object);
+	return 0;
+}
+
+int w_listbox_clear (w_object_t *object)
+{
+	w_listbox_t *lb;
+	w_listbox_item_t *li;
+	lb = object->data[OBJECT_LISTBOX];
+	while ((li = w_listbox_item_active_get(object)) != NULL) {
+		w_listbox_item_del(object, li);
+	}
+	lb->height = 0;
+	lb->yoffset = 0;
+	lb->active = 0;
+	lb->pactive = -1;
 	return 0;
 }
 
@@ -173,8 +191,22 @@ void w_listbox_draw (w_object_t *object)
 		}
 	}
 	w_frame_draw(object);
-	for (pos = 0; !s_list_eol(lb->items, pos); pos++) {
+	for (pos = 0; !s_list_eol(lb->items, pos); pos++, y += h) {
 		li = (w_listbox_item_t *) s_list_get(lb->items, pos);
+		if (!(pos == lb->active || pos == lb->pactive) &&
+		    (li->textbox->object->surface->buf->x == x &&
+		     li->textbox->object->surface->buf->y == y &&
+		     li->textbox->object->surface->buf->w == w &&
+		     li->textbox->object->surface->buf->h == h)) {
+#if 0
+			printf("pos %d, active: %d, pactive: %d\n"
+			       "%d %d %d %d, %d %d %d %d\n",
+			       pos, lb->active, lb->pactive, x, y, w, h,
+			       li->textbox->object->surface->buf->x, li->textbox->object->surface->buf->y,
+			       li->textbox->object->surface->buf->w, li->textbox->object->surface->buf->h);
+#endif
+			continue;
+		}
 		if (pos == lb->active) {
 			w_textbox_set_rgb(li->textbox->object, 0, 0, 0);
 			w_textbox_set_style(li->textbox->object, lb->activeshape, lb->activeshadow);
@@ -184,7 +216,6 @@ void w_listbox_draw (w_object_t *object)
 		}
 		w_textbox_set_str(li->textbox->object, li->name);
 		w_object_move_silent(li->textbox->object, x, y, w, h);
-		y += h;
 	}
 	if (lb->pactive != lb->active) {
 		if (lb->changed != NULL) {
@@ -213,6 +244,7 @@ void w_listbox_event (w_object_t *object, s_event_t *event)
 				w_listbox_draw(object);
 			} else if (event->keybd->keycode == S_KEYCODE_DOWN) {
 				lb->active = MIN(lb->items->nb_elt - 1, lb->active + 1);
+				lb->active = MAX(lb->active, 0);
 				w_listbox_draw(object);
 			}
 		}
@@ -244,9 +276,15 @@ int w_listbox_set_itemimage (w_object_t *object, unsigned int style, unsigned in
 int w_listbox_set_active_style (w_object_t *object, unsigned int shape, unsigned int shadow)
 {
 	w_listbox_t *lb;
+	w_listbox_item_t *li;
 	lb = object->data[OBJECT_LISTBOX];
 	lb->activeshape = shape;
 	lb->activeshadow = shadow;
+	li = w_listbox_item_active_get(object);
+	if (li) {
+		w_textbox_set_style(li->textbox->object, lb->activeshape, lb->activeshadow);
+		w_object_draw(li->textbox->object);
+	}
 	return 0;
 }
 
@@ -256,6 +294,7 @@ int w_listbox_set_inactive_style (w_object_t *object, unsigned int shape, unsign
 	lb = object->data[OBJECT_LISTBOX];
 	lb->inactiveshape = shape;
 	lb->inactiveshadow = shadow;
+	w_object_draw(object);
 	return 0;
 }
 
@@ -264,6 +303,7 @@ int w_listbox_set_item_height (w_object_t *object, int size)
 	w_listbox_t *lb;
 	lb = object->data[OBJECT_LISTBOX];
 	lb->itemheight = size;
+	w_object_draw(object);
 	return 0;
 }
 
