@@ -411,6 +411,7 @@ typedef struct s_keybd_s {
 	int keycode;
 	int scancode;
 	int state[S_KEYCODE_CODES];
+	long long time;
 	S_KEYCODE_FLAG flag;
 } s_keybd_t;
 

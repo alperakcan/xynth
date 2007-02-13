@@ -281,7 +281,9 @@ int s_font_get_glyph (s_font_t *font)
 				if (FT_Get_Kerning(font->ft->face, previous, glyph_index, FT_KERNING_DEFAULT, &delta)) {
 					debugf(0, "Couldnt get kerning data for char: %c[%d]", font->str[n], font->str[n]);
 				}
-				pen_x += delta.x >> 6;
+				//pen_x += delta.x >> 6;
+				pen_x += FT_FLOOR(delta.x);
+				//pen_x += FT_CEIL(delta.x);
 			}
 			pos[num_glyphs].x = pen_x;
 			pos[num_glyphs].y = pen_y;

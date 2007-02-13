@@ -72,7 +72,9 @@ int w_scrollbuffer_set_boxstyle (w_object_t *object, FRAME_SHAPE shape, FRAME_SH
 {
 	w_scrollbuffer_t *sb;
 	sb = object->data[OBJECT_SCROLLBUFFER];
-	return w_frame_set_style(sb->vertical->box->object, shape, shadow);
+	w_frame_set_style(sb->vertical->box->object, shape, shadow);
+	w_object_draw(sb->vertical->box->object);
+	return 0;
 }
 
 int w_scrollbuffer_set_boximage (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs)
@@ -86,7 +88,9 @@ int w_scrollbuffer_set_addstyle (w_object_t *object, FRAME_SHAPE shape, FRAME_SH
 {
 	w_scrollbuffer_t *sb;
 	sb = object->data[OBJECT_SCROLLBUFFER];
-	return w_frame_set_style(sb->vertical->add->object, shape, shadow);
+	w_frame_set_style(sb->vertical->add->object, shape, shadow);
+	w_object_draw(sb->vertical->add->object);
+	return 0;
 }
 
 int w_scrollbuffer_set_addimage (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs)
@@ -100,7 +104,9 @@ int w_scrollbuffer_set_substyle (w_object_t *object, FRAME_SHAPE shape, FRAME_SH
 {
 	w_scrollbuffer_t *sb;
 	sb = object->data[OBJECT_SCROLLBUFFER];
-	return w_frame_set_style(sb->vertical->sub->object, shape, shadow);
+	w_frame_set_style(sb->vertical->sub->object, shape, shadow);
+	w_object_draw(sb->vertical->sub->object);
+	return 0;
 }
 
 int w_scrollbuffer_set_subimage (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs)

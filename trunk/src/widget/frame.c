@@ -63,17 +63,17 @@ int w_frame_set_image (w_object_t *object, unsigned int style, unsigned int rota
         w_frame_t *frame;
 	w_frame_image_t *fimg;
         frame = (w_frame_t *) object->data[OBJECT_FRAME];
-	for (pos = 0; pos < nimgs; pos++) {
-		if (access(imgs[pos], R_OK)) {
-			return -1;
-		}
-	}
 	for (pos = 0; !s_list_eol(frame->images, pos); pos++) {
 		fimg = (w_frame_image_t *) s_list_get(frame->images, pos);
 		if (fimg->style == style) {
 			s_list_remove(frame->images, pos);
 			w_frame_image_uninit(fimg);
 			break;
+		}
+	}
+	for (pos = 0; pos < nimgs; pos++) {
+		if (access(imgs[pos], R_OK)) {
+			return -1;
 		}
 	}
 	w_frame_image_init(&fimg);

@@ -18,8 +18,10 @@
 
 void s_server_event_parse_keyboard (s_video_input_data_keybd_t *keybd)
 {
+	long long time;
 	S_KEYCODE_FLAG keycode_flag;
 	
+	time = s_gettimeofday();
 	keycode_flag = server->window->event->keybd->flag;
         
 	if (keybd->state == KEYBD_PRESSED) {
@@ -82,6 +84,7 @@ void s_server_event_parse_keyboard (s_video_input_data_keybd_t *keybd)
 	server->window->event->keybd->keycode = keybd->keycode;
 	server->window->event->keybd->ascii = keybd->ascii;
 	server->window->event->keybd->state[keybd->keycode] = keybd->state;
+	server->window->event->keybd->time = time;
 }
 
 int s_server_event_parse_mouse (s_video_input_data_mouse_t *mouse)
