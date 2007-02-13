@@ -138,19 +138,19 @@ int s_image_png (char *file, s_image_t *img)
 			int r;
 			int g;
 			int b;
+			int a;
 		};
 		struct Palette *pal;
 		pal = (struct Palette *) s_malloc(256 * sizeof(struct Palette));
-
+		memset(pal, 0, 256 * sizeof(struct Palette));
+		
 		for (i = 0; i < info_ptr->num_palette; i++) {
 			pal[i].r = info_ptr->palette[i].red;
 			pal[i].g = info_ptr->palette[i].green;
 			pal[i].b = info_ptr->palette[i].blue;
-		}
-		for (; i < 256; i++) {
-			pal[i].r = 0;
-			pal[i].g = 0;
-			pal[i].b = 0;
+			if (i < info_ptr->num_trans) {
+				pal[i].a = info_ptr->trans[i];
+			}
 		}
 
 		for (y = 0; y < height; y++) {
@@ -160,7 +160,7 @@ int s_image_png (char *file, s_image_t *img)
 				*tmp |= (pal[ptr[0]].r << 0x18);
 				*tmp |= (pal[ptr[0]].g << 0x10);
 				*tmp |= (pal[ptr[0]].b << 0x08);
-				*tmp |= 0x0;
+				*tmp |= (~(pal[ptr[0]].a << 0x00)) & 0xff;
 				tmp++;
 			}
 		}
