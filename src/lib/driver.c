@@ -400,7 +400,7 @@ void bpp_putbox_alpha_o (s_surface_t *surface, int id,  int x, int y, int w, int
 void bpp_putbox_rgb_o (s_surface_t *surface, int id,  int x, int y, int w, int h, unsigned int *rgb, int bw)
 {
 	unsigned int i = h;
-	unsigned int s_ = bw * surface->bytesperpixel;
+	unsigned int s_ = bw;
 	unsigned int d_ = surface->linear_buf_pitch * surface->bytesperpixel;
 	unsigned int *s = rgb;
 	unsigned char *d = surface->linear_buf + OFFSE4P * surface->bytesperpixel;
@@ -428,7 +428,7 @@ void bpp_putbox_rgb_o (s_surface_t *surface, int id,  int x, int y, int w, int h
 void bpp_putbox_rgba_o (s_surface_t *surface, int id,  int x, int y, int w, int h, unsigned int *rgba, int bw)
 {
 	unsigned int i = h;
-	unsigned int s_ = bw * surface->bytesperpixel;
+	unsigned int s_ = bw;
 	unsigned int d_ = surface->linear_buf_pitch * surface->bytesperpixel;
 	unsigned int *s = rgba;
 	unsigned char *d = surface->linear_buf + OFFSE4P * surface->bytesperpixel;
