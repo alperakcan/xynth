@@ -136,11 +136,10 @@ KAFFE_FONT_FUNC_DECL (jobject, Java_java_awt_Toolkit_fntGetWidths)
 	jw = (*env)->GetIntArrayElements(env, widths, &isCopy);
 	for (n = 0; n < 256; n++) {
 		sprintf(str, "%c", n);
-		s_font_set_str(font, str);
-		s_font_get_glyph(font);
-		jw[n] = font->glyph.img->w;
+		jw[n] = s_font_get_width(font, str);
 		jw[n] = (jw[n] < 0) ? 0 : jw[n];
 	}
 	(*env)->ReleaseIntArrayElements(env, widths, jw, 0);
+	DEBUGF("Leave");
 	return widths;
 }
