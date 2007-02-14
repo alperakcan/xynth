@@ -1,7 +1,7 @@
 
 /*
  * Copyright (c) 2006 - 2007
- *	Alper Akcan <distchx@yahoo.com>, All rights reserved.
+ *	Alper Akcan <alper@kaffe.org>, All rights reserved.
  *
  * See the file "license.terms" for information on usage and redistribution 
  * of this file. 
@@ -108,7 +108,7 @@ void Java_java_awt_Toolkit_wndSetVisible (JNIEnv *env UNUSED, jclass clazz UNUSE
 		DEBUGF("Could not find idx for window");
 		return;
 	}
-	DEBUGF("window->client->id: %d", window->client->id);
+	DEBUGF("window->id: %d", window->id);
 	if (showIt) {
 		s_window_show(window);
 	} else {
