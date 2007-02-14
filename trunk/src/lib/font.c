@@ -271,7 +271,8 @@ int s_font_get_glyph (s_font_t *font)
 					font->ft->cache[unicode[n]].glyph = glyph;
 					font->ft->cache[unicode[n]].advance_x = glyph_advance_x;
 				} else {
-					exit(0);
+					/* LEAK */
+					//exit(0);
 				}
 			}
 		}
