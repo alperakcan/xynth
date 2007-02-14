@@ -1,7 +1,7 @@
 
 /*
  * Copyright (c) 2006 - 2007
- *	Alper Akcan <distchx@yahoo.com>, All rights reserved.
+ *	Alper Akcan <alper@kaffe.org>, All rights reserved.
  *
  * See the file "license.terms" for information on usage and redistribution 
  * of this file. 
@@ -263,7 +263,7 @@ KAFFE_GR_FUNC_DECL(void, Java_java_awt_Toolkit_graDrawString, jstring jstr, jint
 	s_font_set_rgb(gr->font, r, g, b);
 	s_font_get_glyph(gr->font);
 	coor.x = gr->x0 + x;
-	coor.y = gr->y0 + y - gr->font->yMax;
+	coor.y = gr->y0 + y - gr->font->glyph.yMax;
 	coor.w = gr->font->glyph.img->w;
 	coor.h = gr->font->glyph.img->h;
 	if (s_rect_intersect(&(gr->clip), &coor, &inter) == 0) {
@@ -331,7 +331,7 @@ KAFFE_GR_FUNC_DECL(void, Java_java_awt_Toolkit_graDrawChars, jcharArray jChars, 
 	s_font_set_rgb(gr->font, r, g, b);
 	s_font_get_glyph(gr->font);
 	coor.x = gr->x0 + x;
-	coor.y = gr->y0 + y - gr->font->yMax;
+	coor.y = gr->y0 + y - gr->font->glyph.yMax;
 	coor.w = gr->font->glyph.img->w;
 	coor.h = gr->font->glyph.img->h;
 	if (s_rect_intersect(&(gr->clip), &coor, &inter) == 0) {
