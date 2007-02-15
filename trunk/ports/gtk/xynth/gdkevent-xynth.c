@@ -9,6 +9,7 @@ static gboolean xynth_events_dispatch (GSource *source, GSourceFunc callback, gp
 	GdkDisplayXynth *display_xynth;
 	ENT();
 	GDK_THREADS_ENTER();
+	DBG("");
 	display_xynth = GDK_DISPLAY_XYNTH(_gdk_display);
 	if (display_xynth->event_pollfd.revents & G_IO_IN) {
 		read(display_xynth->event_pipe[0], &foo, sizeof(S_EVENT));
@@ -16,12 +17,17 @@ static gboolean xynth_events_dispatch (GSource *source, GSourceFunc callback, gp
 			DBG("foo: 0x%08x", foo);
 		}
 	}
-	while ((event = _gdk_event_unqueue(gdk_display_get_default()))) {
+	DBG("");
+	while ((event = _gdk_event_unqueue(gdk_display_get_default())) != NULL) {
+	DBG("");
 		if (_gdk_event_func) {
+	DBG("");
 			(*_gdk_event_func)(event, _gdk_event_data);
+	DBG("");
 		}
 		gdk_event_free(event);
 	}
+	DBG("");
 	GDK_THREADS_LEAVE();
 	LEV();
 	return TRUE;

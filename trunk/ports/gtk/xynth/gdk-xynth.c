@@ -302,11 +302,6 @@ GdkGrabStatus gdk_pointer_grab (GdkWindow *window, gboolean owner_events, GdkEve
 	NIY();
 }
 
-gboolean gdk_pointer_grab_info_libgtk_only (GdkDisplay *display, GdkWindow **grab_window, gboolean *owner_events)
-{
-	NIY();
-}
-
 void gdk_property_change (GdkWindow *window, GdkAtom property, GdkAtom type, gint format, GdkPropMode mode, const guchar *data, gint nelements)
 {
 	NIY();
@@ -482,11 +477,6 @@ void gdk_window_maximize (GdkWindow *window)
 	NIY();
 }
 
-void gdk_window_move (GdkWindow *window, gint x, gint y)
-{
-	NIY();
-}
-
 void gdk_window_raise (GdkWindow *window)
 {
 	NIY();
@@ -508,11 +498,6 @@ void gdk_window_resize (GdkWindow *window, gint width, gint height)
 }
 
 void gdk_window_scroll (GdkWindow *window, gint dx, gint dy)
-{
-	NIY();
-}
-
-void gdk_window_set_back_pixmap (GdkWindow *window, GdkPixmap *pixmap, gboolean parent_relative)
 {
 	NIY();
 }
@@ -580,11 +565,6 @@ void _gdk_windowing_display_set_sm_client_id (GdkDisplay  *display, const gchar 
 	NIY();
 }
 
-gint _gdk_windowing_get_bits_for_depth (GdkDisplay *display, gint depth)
-{
-	NIY();
-}
-
 gint gdk_text_property_to_text_list_for_display (GdkDisplay *display, GdkAtom encoding, gint format, const guchar *text, gint length, gchar ***list)
 {
 	NIY();
@@ -601,11 +581,6 @@ GList * gdk_screen_list_visuals (GdkScreen *screen)
 }
 
 void _gdk_windowing_window_clear_area_e (GdkWindow *window, gint x, gint y, gint width, gint height)
-{
-	NIY();
-}
-
-void _gdk_windowing_gc_get_foreground (GdkGC *gc, GdkColor *color)
 {
 	NIY();
 }

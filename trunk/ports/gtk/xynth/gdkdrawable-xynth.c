@@ -274,7 +274,9 @@ static GdkScreen * gdk_xynth_get_screen (GdkDrawable *drawable)
 
 static GdkVisual * gdk_xynth_get_visual (GdkDrawable *drawable)
 {
-	NIY();
+	ENT();
+	LEV();
+	return gdk_visual_get_system();
 }
 
 static void gdk_xynth_get_size (GdkDrawable *drawable, gint *width, gint *height)

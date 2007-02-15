@@ -208,7 +208,7 @@ GdkGC * gdk_xynth_gc_new (GdkDrawable *drawable, GdkGCValues *values, GdkGCValue
 	GdkGC *gc;
 	GdkGCXynth *private;
 	ENT();
-	g_return_val_if_fail (GDK_IS_DRAWABLE_IMPL_XYNTH(drawable), NULL);
+	g_return_val_if_fail(GDK_IS_DRAWABLE_IMPL_XYNTH(drawable), NULL);
 	gc = g_object_new(gdk_gc_xynth_get_type(), NULL);
 	private = GDK_GC_XYNTH(gc);
 	private->depth = gdk_drawable_get_depth(drawable);
@@ -272,3 +272,19 @@ void gdk_gc_set_clip_rectangle (GdkGC *gc, GdkRectangle *rectangle)
 	LEV();
 }
 
+void _gdk_windowing_gc_get_foreground (GdkGC *gc, GdkColor *color)
+{
+	GdkGCXynth *x_gc;
+	GdkColormap *cmap;
+	ENT();
+	g_return_if_fail(GDK_IS_GC_XYNTH(gc));
+	if (GDK_GC_XYNTH(gc)->values_mask & GDK_GC_FOREGROUND) {
+		(*color) = GDK_GC_XYNTH(gc)->values.foreground;
+	} else {
+		color->pixel = 0;
+		color->red = 0;
+		color->green = 0;
+		color->blue = 0;
+	}
+	LEV();
+}

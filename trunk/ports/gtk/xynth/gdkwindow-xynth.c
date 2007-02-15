@@ -124,10 +124,22 @@ static const gchar * get_default_title (void)
 	const char *title;
 	ENT();
 	title = g_get_application_name();
-	if (!title)
+	if (!title) {
 		title = g_get_prgname();
+	}
 	LEV();
 	return title;
+}
+
+void gdk_window_move (GdkWindow *window, gint x, gint y)
+{
+	GdkWindowObject *private;
+	GdkWindowImplXynth *window_impl;
+	ENT();
+	private = (GdkWindowObject *) window;
+	window_impl = GDK_WINDOW_IMPL_XYNTH(private->impl);
+	gdk_window_move_resize(window, x, y, window_impl->width, window_impl->height);
+	LEV();
 }
 
 void gdk_window_move_resize (GdkWindow *window, gint x, gint y, gint width, gint height)
@@ -155,7 +167,7 @@ void gdk_window_move_resize (GdkWindow *window, gint x, gint y, gint width, gint
 		case GDK_WINDOW_TOPLEVEL:
 		case GDK_WINDOW_TEMP:
 			w_object_move_silent(draw_impl->object, 0, 0, width, height);
-			s_fillbox(draw_impl->object->surface, 0, 0, draw_impl->object->surface->width, draw_impl->object->surface->height, 0);
+			//s_fillbox(draw_impl->object->surface, 0, 0, draw_impl->object->surface->width, draw_impl->object->surface->height, 0);
 			w_window_set_coor(window_impl->window, x, y, width, height);
 			break;
 		default:
@@ -214,6 +226,21 @@ void gdk_window_xynth_atevent (s_window_t *window, s_event_t *event)
 		gevent->configure.y = window->surface->buf->y;
 		gevent->configure.width = window->surface->buf->w;
 		gevent->configure.height = window->surface->buf->h;
+		write(display_xynth->event_pipe[1], &event->type, sizeof(S_EVENT));
+	} else if (event->type & MOUSE_EVENT) {
+	     	gevent = gdk_event_make(gwindow, GDK_MOTION_NOTIFY, TRUE);
+	     	gevent->motion.type = GDK_MOTION_NOTIFY;
+	     	gevent->motion.window = gwindow;
+	     	//event->motion.time = xevent->xmotion.time;
+	     	gevent->motion.x = event->mouse->x;
+	     	gevent->motion.y = event->mouse->y;
+	     	gevent->motion.x_root = 0;
+	     	gevent->motion.y_root = 0;
+	     	gevent->motion.axes = NULL;
+	     	//event->motion.state = (GdkModifierType) xevent->xmotion.state;
+	     	//event->motion.is_hint = xevent->xmotion.is_hint;
+	     	gevent->motion.device = _gdk_core_pointer;
+	     	DBG("mouse x: %d, y: %d", event->mouse->x, event->mouse->y);
 		write(display_xynth->event_pipe[1], &event->type, sizeof(S_EVENT));
 	}
 	//LEV();
@@ -295,8 +322,8 @@ GdkWindow * gdk_window_new (GdkWindow *parent, GdkWindowAttr *attributes, gint a
 	}
 	if (attributes->wclass == GDK_INPUT_OUTPUT) {
 		depth = visual->depth;
-		private->input_only = FALSE;
 		private->depth = depth;
+		private->input_only = FALSE;
 		if ((attributes_mask & GDK_WA_COLORMAP) && attributes->colormap) {
 			draw_impl->colormap = attributes->colormap;
 		} else {
@@ -567,3 +594,30 @@ void gdk_window_configure_finished (GdkWindow *window)
 //	NIY();
 }
 
+void gdk_window_set_back_pixmap (GdkWindow *window, GdkPixmap *pixmap, gboolean parent_relative)
+{
+	GdkWindowObject *private = (GdkWindowObject *) window;
+	GdkPixmap *old_pixmap;
+	ENT();
+	g_return_if_fail(window != NULL);
+	g_return_if_fail(GDK_IS_WINDOW(window));
+	g_return_if_fail(pixmap == NULL || !parent_relative);
+	g_return_if_fail(pixmap == NULL || gdk_drawable_get_depth(window) == gdk_drawable_get_depth(pixmap));
+	old_pixmap = private->bg_pixmap;
+	if (parent_relative) {
+		private->bg_pixmap = GDK_PARENT_RELATIVE_BG;
+	} else {
+		if (pixmap) {
+			g_object_ref(pixmap);
+			private->bg_pixmap = pixmap;
+		} else {
+			private->bg_pixmap = GDK_NO_BG;
+		}
+	}
+	if (old_pixmap &&
+	    old_pixmap != GDK_PARENT_RELATIVE_BG &&
+	    old_pixmap != GDK_NO_BG) {
+		g_object_unref(old_pixmap);
+	}
+	LEV();
+}

@@ -10,6 +10,17 @@
 #include <xynth.h>
 #include <widget.h>
 
+#if 0
+
+#define NIY()
+#define ENT()
+#define LEV()
+#define DBG(dbg...)
+#define DBG_WINDOW_TYPE()
+#define DBG_PWINDOW_TYPE()
+
+#else
+
 #define NIY() {\
 	static int __niy__ = 1;\
 	if (__niy__) {\
@@ -24,13 +35,9 @@
 	printf("ENT [%d]: %s (%s:%d)\n", __ent__, __FUNCTION__, __FILE__, __LINE__);\
 	__ent__++;
 
-#if 1
 #define LEV() \
 	__ent__--;\
 	printf("LEV [%d]: %s (%s:%d)\n", __ent__, __FUNCTION__, __FILE__, __LINE__);
-#else
-#define LEV()
-#endif
 
 #define DBG(dbg...) \
 	printf("DBG ");\
@@ -56,6 +63,7 @@
 		case GDK_WINDOW_ROOT:     DBG("GDK_WINDOW_ROOT");     break; \
 		default:                  DBG("GDK_WINDOW_UNKNOWN");  break; \
 	}
+#endif
 
 typedef struct _GdkDisplayXynth           GdkDisplayXynth;
 typedef struct _GdkDisplayXynthClass      GdkDisplayXynthClass;
@@ -167,7 +175,7 @@ struct _GdkGCXynthClass {
 #define GDK_IS_PIXMAP_IMPL_XYNTH_CLASS(klass)   (G_TYPE_CHECK_CLASS_TYPE ((klass), GDK_TYPE_PIXMAP_IMPL_XYNTH))
 #define GDK_PIXMAP_IMPL_XYNTH_GET_CLASS(obj)    (G_TYPE_INSTANCE_GET_CLASS ((obj), GDK_TYPE_PIXMAP_IMPL_XYNTH, GdkPixmapImplXynthClass))
 
-#define GDK_TYPE_GC_XYNTH                       (_gdk_gc_xynth_get_type())
+#define GDK_TYPE_GC_XYNTH                       (gdk_gc_xynth_get_type())
 #define GDK_GC_XYNTH(object)                    (G_TYPE_CHECK_INSTANCE_CAST ((object), GDK_TYPE_GC_XYNTH, GdkGCXynth))
 #define GDK_GC_XYNTH_CLASS(klass)               (G_TYPE_CHECK_CLASS_CAST ((klass), GDK_TYPE_GC_XYNTH, GdkGCXynthClass))
 #define GDK_IS_GC_XYNTH(object)                 (G_TYPE_CHECK_INSTANCE_TYPE ((object), GDK_TYPE_GC_XYNTH))
@@ -181,6 +189,7 @@ GdkScreen   *_gdk_screen;
 GdkVisual   *_gdk_visual;
 GdkColormap *_gdk_colormap;
 GdkWindow   *_gdk_parent_root;
+GdkDevice   *_gdk_core_pointer;
 
 void _gdk_windowing_visual_init (GdkDisplay *display);
 void _gdk_windowing_window_init (GdkDisplay *display);

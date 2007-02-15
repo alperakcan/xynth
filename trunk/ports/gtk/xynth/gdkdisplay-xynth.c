@@ -38,6 +38,7 @@ GdkDisplay * gdk_display_open (const gchar *display_name)
 	display_xynth = GDK_DISPLAY_XYNTH(display);
 	w_window_init(&(display_xynth->window), WINDOW_MAIN | WINDOW_NOFORM, NULL);
 	w_window_set_coor(display_xynth->window, 0, 0, display_xynth->window->window->surface->linear_buf_width, display_xynth->window->window->surface->linear_buf_height);
+//	s_thread_create(&s_window_loop, display_xynth->window->window);
 	_gdk_windowing_visual_init(display);
 	gdk_screen_set_default_colormap(screen, gdk_screen_get_system_colormap(screen));
 	_gdk_windowing_window_init(display);

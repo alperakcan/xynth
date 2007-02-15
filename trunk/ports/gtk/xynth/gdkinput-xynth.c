@@ -1,7 +1,6 @@
 
 #include "gdk-xynth.h"
 
-GdkDevice *_gdk_core_pointer = NULL;
 GList *_gdk_input_devices;
 gint   _gdk_input_ignore_core;
 
