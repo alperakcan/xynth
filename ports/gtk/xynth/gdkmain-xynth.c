@@ -22,3 +22,26 @@ guint32 gdk_xynth_get_time(void)
 	LEV();
 	return (guint32) tv.tv_sec * 1000 + tv.tv_usec / 1000;
 }
+
+gboolean gdk_pointer_grab_info_libgtk_only (GdkDisplay *display, GdkWindow **grab_window, gboolean *owner_events)
+{
+	GdkDisplayXynth *display_xynth;
+	ENT();
+	LEV();
+	return FALSE;
+#if 0
+	g_return_val_if_fail(GDK_IS_DISPLAY(display), False);
+	display_xynth = GDK_DISPLAY_XYNTH(display);
+	if (display_x11->pointer_xgrab_window) {
+		if (grab_window) {
+			*grab_window = (GdkWindow *)display_x11->pointer_xgrab_window;
+		}
+		if (owner_events) {
+			*owner_events = display_x11->pointer_xgrab_owner_events;
+		}
+		return TRUE;
+	} else {
+		return FALSE;
+	}
+#endif
+}
