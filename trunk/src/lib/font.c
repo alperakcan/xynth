@@ -28,6 +28,11 @@ typedef struct s_font_cache_s {
 	FT_Glyph glyph;
 } s_font_cache_t;
 
+typedef struct s_font_image_s {
+	int cached;
+	FT_Glyph image;
+} s_font_image_t;
+
 struct s_font_ft_s {
 	FT_Face face;
 	FT_Library library;
@@ -201,7 +206,8 @@ int s_font_get_glyph (s_font_t *font)
 	FT_UInt previous;
 	FT_Vector *pos;
 	FT_Glyph glyph;
-	FT_Glyph *images;
+	//FT_Glyph *images;
+	s_font_image_t *images;
 	FT_Vector *pens;
 	FT_BBox bbox;
 	FT_BBox glyph_bbox;
@@ -209,7 +215,7 @@ int s_font_get_glyph (s_font_t *font)
 	
 	num_chars = strlen(font->str);	
 	pos = (FT_Vector *) s_malloc(sizeof(FT_Vector) * num_chars);
-	images = (FT_Glyph *) s_malloc(sizeof(FT_Glyph) * num_chars);
+	images = (s_font_image_t *) s_malloc(sizeof(s_font_image_t) * num_chars);
 	pens = (FT_Vector *) s_malloc(sizeof(FT_Vector) * num_chars);
 
 	pen_x = 0;
@@ -314,7 +320,8 @@ int s_font_get_glyph (s_font_t *font)
 			x = pens[num_glyphs].x;
 			xmin = MIN(xmin, x);
 			xmax = MAX(xmax, x + bit->bitmap.width);
-			images[num_glyphs] = glyph;
+			images[num_glyphs].image = glyph;
+			images[num_glyphs].cached = cache;
 		}
 		previous = glyph_index;
 		num_glyphs++;
@@ -352,7 +359,7 @@ int s_font_get_glyph (s_font_t *font)
 		unsigned int rgb;
 		unsigned int *rgba;
 		unsigned char *bbuf;
-		FT_BitmapGlyph bit = (FT_BitmapGlyph) images[n];
+		FT_BitmapGlyph bit = (FT_BitmapGlyph) images[n].image;
 		x = pens[n].x;
 		y = (pens[n].y - bit->top + font->glyph.img->h) - (font->glyph.img->h - font->glyph.yMax);
 		rgb = (font->rgb << 8) & 0xFFFFFF00;
@@ -369,12 +376,12 @@ int s_font_get_glyph (s_font_t *font)
 			bbuf += (bit->bitmap.pitch - bit->bitmap.width);
 			rgba += (font->glyph.img->w - bit->bitmap.width);
 		}
-		cache = (unicode[n] < FONT_CACHE_SIZE) ? 1 : 0;
-		if (cache == 0) {
-			FT_Done_Glyph((FT_Glyph) images[n]);
+	}
+	for (n = 0; n < num_glyphs; n++) {
+		if (images[n].cached == 0) {
+			FT_Done_Glyph((FT_Glyph) images[n].image);
 		}
 	}
-
 	s_free(pos);
 	s_free(pens);
 	s_free(images);
