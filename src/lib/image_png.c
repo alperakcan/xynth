@@ -144,6 +144,10 @@ int s_image_png (char *file, s_image_t *img)
 		pal = (struct Palette *) s_malloc(256 * sizeof(struct Palette));
 		memset(pal, 0, 256 * sizeof(struct Palette));
 		
+		for (i = 0; i < 256; i++) {
+			pal[i].a = 255;
+		}
+		
 		for (i = 0; i < info_ptr->num_palette; i++) {
 			pal[i].r = info_ptr->palette[i].red;
 			pal[i].g = info_ptr->palette[i].green;
