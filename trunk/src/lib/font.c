@@ -271,7 +271,6 @@ int s_font_get_glyph (s_font_t *font)
 					font->ft->cache[unicode[n]].glyph = glyph;
 					font->ft->cache[unicode[n]].advance_x = glyph_advance_x;
 				} else {
-					/* LEAK */
 					//exit(0);
 				}
 			}
@@ -320,7 +319,6 @@ int s_font_get_glyph (s_font_t *font)
 		previous = glyph_index;
 		num_glyphs++;
 	}
-	s_free(unicode);
 
 	if (xmin > xmax) {
 		xmin = 0;
@@ -371,11 +369,16 @@ int s_font_get_glyph (s_font_t *font)
 			bbuf += (bit->bitmap.pitch - bit->bitmap.width);
 			rgba += (font->glyph.img->w - bit->bitmap.width);
 		}
+		cache = (unicode[n] < FONT_CACHE_SIZE) ? 1 : 0;
+		if (cache == 0) {
+			FT_Done_Glyph((FT_Glyph) images[n]);
+		}
 	}
 
 	s_free(pos);
 	s_free(pens);
 	s_free(images);
+	s_free(unicode);
 	return 0;
 }
 
