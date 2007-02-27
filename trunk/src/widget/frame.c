@@ -19,6 +19,14 @@
 #include "../lib/xynth_.h"
 #include "widget.h"
 
+int w_frame_set_border (w_object_t *object, int border)
+{
+	w_frame_t *frame;
+	frame = (w_frame_t *) object->data[OBJECT_FRAME];
+	frame->linewidth = border;
+	return 0;
+}
+
 int w_frame_set_style (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow)
 {
         w_frame_t *frame;
@@ -94,6 +102,7 @@ int w_frame_set_image (w_object_t *object, unsigned int style, unsigned int rota
 void w_frame_draw_image (w_object_t *object, w_frame_image_t *fimg)
 {
 	int i;
+	int j;
 	switch (fimg->names->nb_elt) {
 		case 1:
 		{
@@ -123,6 +132,125 @@ void w_frame_draw_image (w_object_t *object, w_frame_image_t *fimg)
 			s_image_uninit(img);
 #endif
 			break;	
+		}
+		case 9:
+		{
+			char *name[9];
+			s_image_t *imgs[9];
+			name[0] = (char *) s_list_get(fimg->names, 0);
+			name[1] = (char *) s_list_get(fimg->names, 1);
+			name[2] = (char *) s_list_get(fimg->names, 2);
+			name[3] = (char *) s_list_get(fimg->names, 3);
+			name[4] = (char *) s_list_get(fimg->names, 4);
+			name[5] = (char *) s_list_get(fimg->names, 5);
+			name[6] = (char *) s_list_get(fimg->names, 6);
+			name[7] = (char *) s_list_get(fimg->names, 7);
+			name[8] = (char *) s_list_get(fimg->names, 8);
+#if defined(WIDGET_OPTIMIZE_MEMORY) && WIDGET_OPTIMIZE_MEMORY >= 1
+			s_image_init(&imgs[0]);
+			s_image_img(name[0], imgs[0]);
+			s_image_init(&imgs[1]);
+			s_image_img(name[1], imgs[1]);
+			s_image_init(&imgs[2]);
+			s_image_img(name[2], imgs[2]);
+			s_image_init(&imgs[3]);
+			s_image_img(name[3], imgs[3]);
+			s_image_init(&imgs[4]);
+			s_image_img(name[4], imgs[4]);
+			s_image_init(&imgs[5]);
+			s_image_img(name[5], imgs[5]);
+			s_image_init(&imgs[6]);
+			s_image_img(name[6], imgs[6]);
+			s_image_init(&imgs[7]);
+			s_image_img(name[7], imgs[7]);
+			s_image_init(&imgs[8]);
+			s_image_img(name[8], imgs[8]);
+#else
+			imgs[0] = w_window_image_get(object->window, name[0]);
+			imgs[1] = w_window_image_get(object->window, name[1]);
+			imgs[2] = w_window_image_get(object->window, name[2]);
+			imgs[3] = w_window_image_get(object->window, name[3]);
+			imgs[4] = w_window_image_get(object->window, name[4]);
+			imgs[5] = w_window_image_get(object->window, name[5]);
+			imgs[6] = w_window_image_get(object->window, name[6]);
+			imgs[7] = w_window_image_get(object->window, name[7]);
+			imgs[8] = w_window_image_get(object->window, name[8]);
+#endif
+			s_image_get_mat(imgs[0]);
+			s_image_get_mat(imgs[1]);
+			s_image_get_mat(imgs[2]);
+			s_image_get_mat(imgs[3]);
+			s_image_get_mat(imgs[4]);
+			s_image_get_mat(imgs[5]);
+			s_image_get_mat(imgs[6]);
+			s_image_get_mat(imgs[7]);
+			s_image_get_mat(imgs[8]);
+			
+			/* 0 1 2
+			 * 3 4 5
+			 * 6 7 8
+			 */
+			for (j = 0; j < object->surface->height; j+= imgs[4]->h) {
+				for (i = 0; i < object->surface->width; i+= imgs[4]->w) {
+					s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
+					              i, j, imgs[4]->w, imgs[4]->h, imgs[4]->w, imgs[4]->h, imgs[4]->mat, 0, 0);
+					s_putboxrgb(object->surface, i, j, imgs[4]->w, imgs[4]->h, imgs[4]->rgba);
+				}
+			}
+			for (i = 0; i < object->surface->width; i += imgs[1]->w) {
+				s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
+				              i, 0, imgs[1]->w, imgs[1]->h, imgs[1]->w, imgs[1]->h, imgs[1]->mat, 0, 0);
+				s_putboxrgb(object->surface, i, 0, imgs[1]->w, imgs[1]->h, imgs[1]->rgba);
+			}
+			for (i = 0; i < object->surface->width; i += imgs[7]->w) {
+				s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
+				              i, object->surface->height - imgs[7]->h, imgs[7]->w, imgs[7]->h, imgs[7]->w, imgs[7]->h, imgs[7]->mat, 0, 0);
+				s_putboxrgb(object->surface, i, object->surface->height - imgs[7]->h, imgs[7]->w, imgs[7]->h, imgs[7]->rgba);
+			}
+			for (i = 0; i < object->surface->height; i += imgs[3]->h) {
+				s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
+				              0, i, imgs[3]->w, imgs[3]->h, imgs[3]->w, imgs[3]->h, imgs[3]->mat, 0, 0);
+				s_putboxrgb(object->surface, 0, i, imgs[3]->w, imgs[3]->h, imgs[3]->rgba);
+			}
+			for (i = 0; i < object->surface->height; i += imgs[5]->h) {
+				s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
+				              object->surface->width - imgs[5]->w, i, imgs[5]->w, imgs[5]->h, imgs[5]->w, imgs[5]->h, imgs[5]->mat, 0, 0);
+				s_putboxrgb(object->surface, object->surface->width - imgs[5]->w, i, imgs[5]->w, imgs[5]->h, imgs[5]->rgba);
+			}
+			s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
+			              0, 0, imgs[0]->w, imgs[0]->h, imgs[0]->w, imgs[0]->h, imgs[0]->mat, 0, 0);
+			s_putboxrgb(object->surface, 0, 0, imgs[0]->w, imgs[0]->h, imgs[0]->rgba);
+			s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
+			              object->surface->width - imgs[2]->w, 0, imgs[2]->w, imgs[2]->h, imgs[2]->w, imgs[2]->h, imgs[2]->mat, 0, 0);
+			s_putboxrgb(object->surface, object->surface->width - imgs[2]->w, 0, imgs[2]->w, imgs[2]->h, imgs[2]->rgba);
+			s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
+			              0, object->surface->height - imgs[6]->h, imgs[6]->w, imgs[6]->h, imgs[6]->w, imgs[6]->h, imgs[6]->mat, 0, 0);
+			s_putboxrgb(object->surface, 0, object->surface->height - imgs[6]->h, imgs[6]->w, imgs[6]->h, imgs[6]->rgba);
+			s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
+			              object->surface->width - imgs[8]->w, object->surface->height - imgs[8]->h, imgs[8]->w, imgs[8]->h, imgs[8]->w, imgs[8]->h, imgs[8]->mat, 0, 0);
+			s_putboxrgb(object->surface, object->surface->width - imgs[8]->w, object->surface->height - imgs[8]->h, imgs[8]->w, imgs[8]->h, imgs[8]->rgba);
+
+			s_image_free_mat(imgs[0]);
+			s_image_free_mat(imgs[1]);
+			s_image_free_mat(imgs[2]);
+			s_image_free_mat(imgs[3]);
+			s_image_free_mat(imgs[4]);
+			s_image_free_mat(imgs[5]);
+			s_image_free_mat(imgs[6]);
+			s_image_free_mat(imgs[7]);
+			s_image_free_mat(imgs[8]);
+#if defined(WIDGET_OPTIMIZE_MEMORY) && WIDGET_OPTIMIZE_MEMORY >= 1
+			s_image_uninit(imgs[0]);
+			s_image_uninit(imgs[1]);
+			s_image_uninit(imgs[2]);
+			s_image_uninit(imgs[3]);
+			s_image_uninit(imgs[4]);
+			s_image_uninit(imgs[5]);
+			s_image_uninit(imgs[6]);
+			s_image_uninit(imgs[7]);
+			s_image_uninit(imgs[8]);
+#endif
+			break;
 		}
 		case 3:
 		{

@@ -533,6 +533,8 @@ struct w_scrollbuffer_s {
 	w_scrollbufferbar_t *vertical;
 	w_object_t *child;
 	void (*slide) (w_object_t *, int, int, int *, int *);
+	int ytotal;
+	int yoffset;
 };
 
 void w_scrollbuffer_set_slide (w_object_t *object, void (*slide) (w_object_t *, int, int, int *, int *));
