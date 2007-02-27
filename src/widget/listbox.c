@@ -155,7 +155,7 @@ void w_listbox_slide (w_object_t *object, int vertical, int horizontal, int *yto
 		}
 	}
 	w_listbox_draw(object);
-	w_object_update(object, object->surface->win);
+	//w_object_update(object, object->surface->win);
 	(*ytotal) = lb->height;
 	(*yoffset) = lb->yoffset;
 }
