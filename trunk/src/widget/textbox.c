@@ -237,8 +237,8 @@ void w_textbox_draw_ (w_object_t *object)
 		if (!(textbox->properties & TEXTBOX_HCENTER)) {
 			d = glyph->img->w - object->content->w;
 			if (d > 0) {
-				x -= d;
-				w += d;
+				//x -= d;
+				//w += d;
 			}
 		}
 		s_image_get_mat(glyph->img);
@@ -267,6 +267,7 @@ int w_textbox_set_rgb (w_object_t *object, int r, int g, int b)
 	w_textbox_t *textbox;
 	textbox = (w_textbox_t *) object->data[OBJECT_TEXTBOX];
 	textbox->rgb = ((r & 0xff) << 0x10) | ((g & 0xff) << 0x8) | (b & 0xff);
+	textbox->calculate = 1;
 	w_textbox_draw(object);
 	return 0;
 }
