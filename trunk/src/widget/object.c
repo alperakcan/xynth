@@ -76,6 +76,7 @@ int w_object_update_to_surface (w_object_t *object, s_surface_t *surface, s_rect
 	if (s_rect_intersect(coor, object->surface->win, &bound)) {
 		goto end;
 	}
+	update = bound;
 	tmp = object;
 	while (tmp->parent) {
 		rtmp.x = tmp->parent->content->x + tmp->parent->surface->win->x;
@@ -133,12 +134,35 @@ int w_object_update_to_surface (w_object_t *object, s_surface_t *surface, s_rect
 end:	return 0;
 }
 
+int w_object_update_clip (w_object_t *object, s_rect_t *coor)
+{
+	s_rect_t rect;
+	s_rect_t clip;
+	clip.x = coor->x;
+	clip.y = coor->y;
+	clip.w = coor->w;
+	clip.h = coor->h;
+	 while ((object = object->parent) != NULL) {
+		if (s_rect_intersect(&clip, object->surface->win, &rect)) {
+			return -1;
+		}
+		clip.x = rect.x;
+		clip.y = rect.y;
+		clip.w = rect.w;
+		clip.h = rect.h;
+	}
+	return 0;
+}
+
 int w_object_update (w_object_t *object, s_rect_t *coor)
 {
 	s_rect_t rect;
 	s_rect_t clip;
 	w_object_t *effect;
 	if (object == NULL) {
+		goto end;
+	}
+	if (w_object_update_clip(object, coor)) {
 		goto end;
 	}
 	effect = object;
@@ -553,7 +577,6 @@ int w_object_init (w_window_t *window, w_object_t **object, void (*draw) (w_obje
 	s_list_init(&((*object)->childs));
 	(*object)->parent = parent;
 	
-	(*object)->alpha = 0xff;
 	(*object)->focused = 0;
 	(*object)->showed = 0;
 	
