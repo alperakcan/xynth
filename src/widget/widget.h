@@ -118,10 +118,12 @@ typedef enum {
 	OBJECT_SCROLLBUFFERBAR	= 0x8,
 	/** widget is listbox */
 	OBJECT_LISTBOX          = 0x9,
+	/** widget is control listbox */
+	OBJECT_CLISTBOX         = 0xa,
 	/** widget is window */
-	OBJECT_WINDOW		= 0xa,
+	OBJECT_WINDOW		= 0xb,
 	/** number of widgets */
-	OBJECT_OBJECTS 		= 0xb
+	OBJECT_OBJECTS 		= 0xc
 } OBJECT;
 
 /** object struct
@@ -343,6 +345,65 @@ void w_button_cb_oh (s_window_t *window, s_event_t *event, s_handler_t *handler)
 void w_button_cb_hoh (s_window_t *window, s_event_t *event, s_handler_t *handler);
 int w_button_init (w_window_t *window, w_button_t **button, w_object_t *parent);
 void w_button_uninit (w_object_t *object);
+
+/* clistbox.c */
+typedef struct w_clistbox_s w_clistbox_t;
+typedef struct w_clistbox_item_s w_clistbox_item_t;
+typedef struct w_clistbox_item_image_s w_clistbox_item_image_t;
+
+struct w_clistbox_item_s {
+	w_frame_t *frame;
+	void *data;
+};
+
+struct w_clistbox_item_image_s {
+	unsigned int style;
+	unsigned int rotation;
+	unsigned int nimages;
+	char **images;
+};
+
+struct w_clistbox_s {
+	w_object_t *object;
+	w_frame_t *frame;
+	s_list_t *items;
+	s_list_t *item_images;
+	unsigned int itemheight;
+	unsigned int activeshape;
+	unsigned int activeshadow;
+	unsigned int inactiveshape;
+	unsigned int inactiveshadow;
+	int active;
+	int pactive;
+	int height;
+	int yoffset;
+	void (*changed) (w_object_t *object, int active);
+	w_object_t *scrollbuffer;
+};
+
+int w_clistbox_item_image_init (w_clistbox_item_image_t **item_image, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs);
+void w_clistbox_item_image_uninit (w_clistbox_item_image_t *item_image);
+void w_clistbox_item_data_set (w_clistbox_item_t *listbox_item, void *data);
+void w_clistbox_item_name_set (w_object_t *listbox, w_clistbox_item_t *listbox_item, char *name);
+int w_clistbox_item_init (w_object_t *listbox, w_clistbox_item_t **listbox_item);
+void w_clistbox_item_uninit (w_clistbox_item_t *listbox_item);
+int w_clistbox_item_add (w_object_t *object, w_clistbox_item_t *item);
+int w_clistbox_item_del (w_object_t *object, w_clistbox_item_t *item);
+int w_clistbox_clear (w_object_t *object);
+w_clistbox_item_t * w_clistbox_item_active_get (w_object_t *object);
+int w_clistbox_item_active_set (w_object_t *object, w_clistbox_item_t *listbox_item);
+void w_clistbox_slide (w_object_t *object, int vertical, int horizontal, int *ytotal, int *yoffset);
+void w_clistbox_draw (w_object_t *object);
+void w_clistbox_geometry (w_object_t *object);
+void w_clistbox_event (w_object_t *object, s_event_t *event);
+void w_clistbox_scrollbuffer_set (w_object_t *object, w_object_t *scrollbuffer);
+int w_clistbox_set_style (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow);
+int w_clistbox_set_itemimage (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs);
+int w_clistbox_set_active_style (w_object_t *object, unsigned int shape, unsigned int shadow);
+int w_clistbox_set_inactive_style (w_object_t *object, unsigned int shape, unsigned int shadow);
+int w_clistbox_set_item_height (w_object_t *object, int size);
+int w_clistbox_init (w_window_t *window, w_clistbox_t **listbox, w_object_t *parent);
+void w_clistbox_uninit (w_object_t *object);
 
 /* textbox.c */
 typedef enum {
