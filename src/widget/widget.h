@@ -27,7 +27,7 @@
  * 	   slowers show() hide() processes, but cute.
  * 	3: much more memory optimization, too slower, draws everthing on the fly.
  */
-#define WIDGET_OPTIMIZE_MEMORY 2
+#define WIDGET_OPTIMIZE_MEMORY 0
 
 typedef struct w_object_s w_object_t;
 typedef struct w_button_s w_button_t;
