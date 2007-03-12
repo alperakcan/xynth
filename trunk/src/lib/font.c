@@ -24,6 +24,7 @@
 typedef struct s_font_cache_s {
 	FT_UInt index;
 	FT_BBox bbox;
+	int min_x;
 	unsigned long int advance_x;
 	FT_Glyph glyph;
 } s_font_cache_t;
@@ -31,6 +32,8 @@ typedef struct s_font_cache_s {
 typedef struct s_font_image_s {
 	int cached;
 	FT_Glyph image;
+	int min_x;
+	unsigned long int advance_x;
 } s_font_image_t;
 
 struct s_font_ft_s {
@@ -212,6 +215,7 @@ int s_font_get_glyph (s_font_t *font)
 	FT_BBox bbox;
 	FT_BBox glyph_bbox;
 	FT_UInt glyph_advance_x;
+	int glyph_min_x = 0;
 	
 	num_chars = strlen(font->str);	
 	pos = (FT_Vector *) s_malloc(sizeof(FT_Vector) * num_chars);
@@ -246,6 +250,7 @@ int s_font_get_glyph (s_font_t *font)
 			    	glyph_bbox = cache->bbox;
 			    	glyph_index = cache->index;
 			    	glyph_advance_x = cache->advance_x;
+			    	glyph_min_x = cache->min_x;
 			} else {
 				glyph_index = FT_Get_Char_Index(font->ft->face, unicode[n]);
 				if (glyph_index == 0) {
@@ -268,7 +273,8 @@ int s_font_get_glyph (s_font_t *font)
 					continue;
 				}
 				FT_Glyph_Get_CBox(glyph, ft_glyph_bbox_pixels, &glyph_bbox);
-				glyph_advance_x = font->ft->face->glyph->advance.x >> 6;
+				glyph_min_x = FT_FLOOR(font->ft->face->glyph->metrics.horiBearingX);
+				glyph_advance_x = FT_CEIL(font->ft->face->glyph->metrics.horiAdvance);
 				
 				/* cache it */
 				if (cache) {
@@ -276,21 +282,24 @@ int s_font_get_glyph (s_font_t *font)
 					font->ft->cache[unicode[n]].index = glyph_index;
 					font->ft->cache[unicode[n]].glyph = glyph;
 					font->ft->cache[unicode[n]].advance_x = glyph_advance_x;
+					font->ft->cache[unicode[n]].min_x = glyph_min_x;
 				} else {
 					//exit(0);
 				}
 			}
 		}
 		{ /* set pen */
+			printf("%d\n", pen_x);
 			if (use_kerning && previous && glyph_index) {
 				FT_Vector delta;
 				if (FT_Get_Kerning(font->ft->face, previous, glyph_index, FT_KERNING_DEFAULT, &delta)) {
 					debugf(0, "Couldnt get kerning data for char: %c[%d]", font->str[n], font->str[n]);
 				}
-				//pen_x += delta.x >> 6;
-				pen_x += FT_FLOOR(delta.x);
+				pen_x += delta.x >> 6;
+				//pen_x += FT_FLOOR(delta.x);
 				//pen_x += FT_CEIL(delta.x);
 			}
+			printf("mx: %d\n", glyph_min_x);
 			pos[num_glyphs].x = pen_x;
 			pos[num_glyphs].y = pen_y;
 			pen_x += glyph_advance_x;
@@ -319,9 +328,11 @@ int s_font_get_glyph (s_font_t *font)
 			pens[num_glyphs].y = 0 + pos[num_glyphs].y;
 			x = pens[num_glyphs].x;
 			xmin = MIN(xmin, x);
-			xmax = MAX(xmax, x + bit->bitmap.width);
+			xmax = MAX(xmax, x + bit->bitmap.width + glyph_min_x);
 			images[num_glyphs].image = glyph;
 			images[num_glyphs].cached = cache;
+			images[num_glyphs].min_x = glyph_min_x;
+			images[num_glyphs].advance_x = glyph_advance_x;
 		}
 		previous = glyph_index;
 		num_glyphs++;
@@ -345,6 +356,7 @@ int s_font_get_glyph (s_font_t *font)
 	font->glyph.lineskip = font->lineskip;
 	font->glyph.size = font->size;
 	
+	printf("W: %d, %d\n", font->glyph.img->w, glyph_min_x);
 	s_free(font->glyph.img->rgba);
 	font->glyph.img->rgba  = (unsigned int *) s_calloc(font->glyph.img->w * font->glyph.img->h, sizeof(unsigned int *));
 
@@ -360,7 +372,7 @@ int s_font_get_glyph (s_font_t *font)
 		unsigned int *rgba;
 		unsigned char *bbuf;
 		FT_BitmapGlyph bit = (FT_BitmapGlyph) images[n].image;
-		x = pens[n].x;
+		x = pens[n].x + images[n].min_x;
 		y = (pens[n].y - bit->top + font->glyph.img->h) - (font->glyph.img->h - font->glyph.yMax);
 		rgb = (font->rgb << 8) & 0xFFFFFF00;
 		bbuf = bit->bitmap.buffer;
