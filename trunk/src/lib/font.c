@@ -289,7 +289,6 @@ int s_font_get_glyph (s_font_t *font)
 			}
 		}
 		{ /* set pen */
-			printf("%d\n", pen_x);
 			if (use_kerning && previous && glyph_index) {
 				FT_Vector delta;
 				if (FT_Get_Kerning(font->ft->face, previous, glyph_index, FT_KERNING_DEFAULT, &delta)) {
@@ -299,7 +298,6 @@ int s_font_get_glyph (s_font_t *font)
 				//pen_x += FT_FLOOR(delta.x);
 				//pen_x += FT_CEIL(delta.x);
 			}
-			printf("mx: %d\n", glyph_min_x);
 			pos[num_glyphs].x = pen_x;
 			pos[num_glyphs].y = pen_y;
 			pen_x += glyph_advance_x;
@@ -356,7 +354,6 @@ int s_font_get_glyph (s_font_t *font)
 	font->glyph.lineskip = font->lineskip;
 	font->glyph.size = font->size;
 	
-	printf("W: %d, %d\n", font->glyph.img->w, glyph_min_x);
 	s_free(font->glyph.img->rgba);
 	font->glyph.img->rgba  = (unsigned int *) s_calloc(font->glyph.img->w * font->glyph.img->h, sizeof(unsigned int *));
 
