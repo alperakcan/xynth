@@ -209,7 +209,6 @@ int s_font_get_glyph (s_font_t *font)
 	FT_UInt previous;
 	FT_Vector *pos;
 	FT_Glyph glyph;
-	//FT_Glyph *images;
 	s_font_image_t *images;
 	FT_Vector *pens;
 	FT_BBox bbox;
@@ -283,8 +282,6 @@ int s_font_get_glyph (s_font_t *font)
 					font->ft->cache[unicode[n]].glyph = glyph;
 					font->ft->cache[unicode[n]].advance_x = glyph_advance_x;
 					font->ft->cache[unicode[n]].min_x = glyph_min_x;
-				} else {
-					//exit(0);
 				}
 			}
 		}
@@ -295,8 +292,6 @@ int s_font_get_glyph (s_font_t *font)
 					debugf(0, "Couldnt get kerning data for char: %c[%d]", font->str[n], font->str[n]);
 				}
 				pen_x += delta.x >> 6;
-				//pen_x += FT_FLOOR(delta.x);
-				//pen_x += FT_CEIL(delta.x);
 			}
 			pos[num_glyphs].x = pen_x;
 			pos[num_glyphs].y = pen_y;

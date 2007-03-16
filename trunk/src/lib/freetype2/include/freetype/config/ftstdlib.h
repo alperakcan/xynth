@@ -5,7 +5,7 @@
 /*    ANSI-specific library and header configuration file (specification   */
 /*    only).                                                               */
 /*                                                                         */
-/*  Copyright 2002, 2003, 2004, 2005, 2006 by                              */
+/*  Copyright 2002, 2003, 2004, 2005, 2006, 2007 by                        */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -101,6 +101,7 @@
 #define ft_strncmp  strncmp
 #define ft_strncpy  strncpy
 #define ft_strrchr  strrchr
+#define ft_strstr   strstr
 
 
   /**********************************************************************/
@@ -168,12 +169,12 @@
 
 #include <setjmp.h>
 
-#define ft_jmp_buf  jmp_buf   /* note: this cannot be a typedef since */
-                              /*       jmp_buf is defined as a macro  */
-                              /*       on certain platforms           */
+#define ft_jmp_buf     jmp_buf  /* note: this cannot be a typedef since */
+                                /*       jmp_buf is defined as a macro  */
+                                /*       on certain platforms           */
 
-#define ft_longjmp  longjmp   /* likewise        */
-#define ft_setjmp   setjmp    /* same thing here */
+#define ft_longjmp     longjmp
+#define ft_setjmp( b ) setjmp( *(jmp_buf*) &(b) )    /* same thing here */
 
 
   /* the following is only used for debugging purposes, i.e., if */

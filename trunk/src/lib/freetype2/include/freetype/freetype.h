@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    FreeType high-level API and common types (specification only).       */
 /*                                                                         */
-/*  Copyright 1996-2001, 2002, 2003, 2004, 2005, 2006 by                   */
+/*  Copyright 1996-2001, 2002, 2003, 2004, 2005, 2006, 2007 by             */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -637,7 +637,7 @@ FT_BEGIN_HEADER
   /*     http://www.unicode.org/Public/MAPPINGS/VENDORS/APPLE/README.TXT   */
   /*                                                                       */
   /*   to get an idea how to do that.  Basically, if the language ID is 0, */
-  /*   dont use it, otherwise subtract 1 from the language ID.  Then       */
+  /*   don't use it, otherwise subtract 1 from the language ID.  Then      */
   /*   examine `encoding_id'.  If, for example, `encoding_id' is           */
   /*   @TT_MAC_ID_ROMAN and the language ID (minus 1) is                   */
   /*   `TT_MAC_LANGID_GREEK', it is the Greek encoding, not Roman.         */
@@ -913,7 +913,9 @@ FT_BEGIN_HEADER
 
     FT_Generic        generic;
 
-    /*# the following are only relevant to scalable outlines */
+    /*# The following member variables (down to `underline_thickness') */
+    /*# are only relevant to scalable outlines; cf. @FT_Bitmap_Size    */
+    /*# for bitmap fonts.                                              */
     FT_BBox           bbox;
 
     FT_UShort         units_per_EM;
@@ -1270,6 +1272,8 @@ FT_BEGIN_HEADER
   /*    glyphs.  As this would be a definite performance hit, it is up to  */
   /*    client applications to perform such computations.                  */
   /*                                                                       */
+  /*    The FT_Size_Metrics structure is valid for bitmap fonts also.      */
+  /*                                                                       */
   typedef struct  FT_Size_Metrics_
   {
     FT_UShort  x_ppem;      /* horizontal pixels per EM               */
@@ -1581,7 +1585,7 @@ FT_BEGIN_HEADER
   /*    FT_Done_FreeType                                                   */
   /*                                                                       */
   /* <Description>                                                         */
-  /*    Destroy a given FreeType library object and all of its childs,     */
+  /*    Destroy a given FreeType library object and all of its children,   */
   /*    including resources, drivers, faces, sizes, etc.                   */
   /*                                                                       */
   /* <Input>                                                               */
@@ -1721,6 +1725,10 @@ FT_BEGIN_HEADER
   /*    If the `FT_OPEN_PARAMS' bit is set, the parameters given by        */
   /*    `num_params' and `params' is used.  They are ignored otherwise.    */
   /*                                                                       */
+  /*    Ideally, both the `pathname' and `params' fields should be tagged  */
+  /*    as `const'; this is missing for API backwards compatibility.  With */
+  /*    other words, applications should treat them as read-only.          */
+  /*                                                                       */
   typedef struct  FT_Open_Args_
   {
     FT_UInt         flags;
@@ -1794,6 +1802,9 @@ FT_BEGIN_HEADER
   /*                                                                       */
   /* <Return>                                                              */
   /*    FreeType error code.  0 means success.                             */
+  /*                                                                       */
+  /* <Note>                                                                */
+  /*    You must not deallocate the memory before calling @FT_Done_Face.   */
   /*                                                                       */
   FT_EXPORT( FT_Error )
   FT_New_Memory_Face( FT_Library      library,
@@ -2304,7 +2315,7 @@ FT_BEGIN_HEADER
    *     This flag implies @FT_LOAD_NO_SCALE and @FT_LOAD_IGNORE_TRANSFORM.
    *
    *   FT_LOAD_IGNORE_TRANSFORM ::
-   *     Indicates that the tranform matrix set by @FT_Set_Transform should
+   *     Indicates that the transform matrix set by @FT_Set_Transform should
    *     be ignored.
    *
    *   FT_LOAD_MONOCHROME ::
@@ -2801,6 +2812,11 @@ FT_BEGIN_HEADER
   /* <Note>                                                                */
   /*    This function returns an error if no charmap in the face           */
   /*    corresponds to the encoding queried here.                          */
+  /*                                                                       */
+  /*    Because many fonts contain more than a single cmap for Unicode     */
+  /*    encoding, this function has some special code to select the one    */
+  /*    which covers Unicode best.  It is thus preferable to               */
+  /*    @FT_Set_Charmap in this case.                                      */
   /*                                                                       */
   FT_EXPORT( FT_Error )
   FT_Select_Charmap( FT_Face      face,
@@ -3306,8 +3322,8 @@ FT_BEGIN_HEADER
    *    macros.
    */
 #define FREETYPE_MAJOR  2
-#define FREETYPE_MINOR  2
-#define FREETYPE_PATCH  1
+#define FREETYPE_MINOR  3
+#define FREETYPE_PATCH  2
 
 
   /*************************************************************************/
@@ -3344,7 +3360,6 @@ FT_BEGIN_HEADER
                       FT_Int      *amajor,
                       FT_Int      *aminor,
                       FT_Int      *apatch );
-
 
   /* */
 

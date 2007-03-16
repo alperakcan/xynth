@@ -244,6 +244,7 @@ struct w_frame_s {
 	s_list_t *images;
 };
 
+int w_frame_set_border (w_object_t *object, int border);
 int w_frame_set_style (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow);
 int w_frame_image_init (w_frame_image_t **fimg);
 int w_frame_image_uninit (w_frame_image_t *fimg);
