@@ -16,6 +16,5 @@ FT_USE_MODULE(pshinter_module_class)
 FT_USE_MODULE(ft_raster1_renderer_class)
 FT_USE_MODULE(ft_smooth_lcd_renderer_class)
 FT_USE_MODULE(ft_smooth_lcdv_renderer_class)
-FT_USE_MODULE(otv_module_class)
 FT_USE_MODULE(bdf_driver_class)
 */

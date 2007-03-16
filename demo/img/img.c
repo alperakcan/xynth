@@ -40,6 +40,8 @@ static void img_show (s_window_t *window)
 	if (name == NULL) {
 		return;
 	}
+	
+	s_fillbox(window->surface, 0, 0, window->surface->width, window->surface->height, 0);
 
 	s_image_init(&img);
 	s_image_img(name, img);

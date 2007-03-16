@@ -135,7 +135,7 @@ int parse_xml_file (xml_data_t *xdata, char *name)
 	XML_SetElementHandler(p, parse_xml_start, parse_xml_end);
 	XML_SetCharacterDataHandler(p, parse_xml_char_hndl);
 	if (!XML_Parse(p, tmp, l, 1)) {
-		fprintf(stderr, "Parse error at line %d:\n%s\n", XML_GetCurrentLineNumber(p), XML_ErrorString(XML_GetErrorCode(p)));
+		fprintf(stderr, "Parse error at line %d:\n%s\n", (int) XML_GetCurrentLineNumber(p), (char *) XML_ErrorString(XML_GetErrorCode(p)));
 		return -1;
 	}
 	XML_ParserFree(p);
