@@ -14,7 +14,7 @@ endif
 CFLAGS += $(SPIDER_MONKEY_CFLAGS)
 INCDIR = ./ ../ ../../lib $(SPIDER_MONKEY_INC)
 LIBDIR = ../../lib ../../widget
-LDFLAGS = -lwidget -lxynth -lexpat -lm $(SPIDER_MONKEY_LIB)
+LDFLAGS = -lwidget -lxynth $(SPIDER_MONKEY_LIB)
 
 OBJS = widgetr.o table.o code.o js.o
 
