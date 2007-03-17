@@ -66,11 +66,12 @@ s_xml_node_t * s_xml_node_get_path_ (s_xml_node_t *node, char *path)
 	char *str;
 	s_xml_node_t *res;
 	s_xml_node_t *tmp;
-	p = 0;
 	res = NULL;
 	if (path[0] == '/') {
 		path++;
-		node = node->root;
+		while (node->parent) {
+			node = node->parent;
+		}
 		str = strchr(path, '/');
 		if (str == NULL &&
 		    strcmp(node->name, path) == 0) {
@@ -86,8 +87,11 @@ s_xml_node_t * s_xml_node_get_path_ (s_xml_node_t *node, char *path)
 		goto end;
 	}
 ok:
-	while (!s_list_eol(node->nodes, p)) {
+	for (p = 0; !s_list_eol(node->nodes, p); p++) {
 		tmp = (s_xml_node_t *) s_list_get(node->nodes, p);
+		if (tmp->dontparse == 1) {
+			continue;
+		}
 		str = strchr(path,  '/');
 		if (str == NULL) {
 			if (strcmp(tmp->name, path) == 0) {
@@ -106,7 +110,6 @@ ok:
 			    	}
 			}
 		}
-		p++;
 	}
 end:	return res;
 }
@@ -139,6 +142,84 @@ char * s_xml_node_get_path_value (s_xml_node_t *node, char *path)
 		return NULL;
 	}
 	return s_xml_node_get_value(res);
+}
+
+s_xml_node_attr_t * s_xml_node_get_attr (s_xml_node_t *node, char *attr)
+{
+	int i;
+	s_xml_node_attr_t *tmp;
+	if (node == NULL || attr == NULL) {
+		return NULL;
+	}
+	for (i = 0; !s_list_eol(node->attrs, i); i++) {
+		tmp = (s_xml_node_attr_t *) s_list_get(node->attrs, i);
+		if (tmp->dontparse == 1) {
+			continue;
+		}
+		if (strcmp(tmp->name, attr) == 0) {
+			return tmp;
+		}
+	}
+	return NULL;
+}
+
+char * s_xml_node_get_attr_value (s_xml_node_t *node, char *attr)
+{
+	s_xml_node_attr_t *tmp;
+	tmp = s_xml_node_get_attr(node, attr);
+	if (tmp) {
+		return tmp->value;
+	}
+	return NULL;
+}
+
+static void s_xml_node_dublicate_ (s_xml_node_t *node, s_xml_node_t *dub)
+{
+	int p;
+	s_xml_node_t *tmp;
+	s_xml_node_t *dmp;
+	s_xml_node_attr_t *atmp;
+	s_xml_node_attr_t *admp;
+	dub->name = (node->name) ? strdup(node->name) : NULL;
+	dub->value = (node->value) ? strdup(node->value) : NULL;
+	for (p = 0; !s_list_eol(node->attrs, p); p++) {
+		atmp = (s_xml_node_attr_t *) s_list_get(node->attrs, p);
+		s_xml_node_attr_dublicate(atmp, &admp);
+		s_list_add(dub->attrs, admp, -1);
+	}
+	for (p = 0; !s_list_eol(node->nodes, p); p++) {
+    		tmp = (s_xml_node_t *) s_list_get(node->nodes, p);
+    		s_xml_node_init(&dmp);
+    		s_xml_node_dublicate_(tmp, dmp);
+    		s_list_add(dub->nodes, dmp, -1);
+    		dmp->parent = dub;
+	}
+}
+
+int s_xml_node_dublicate (s_xml_node_t *node, s_xml_node_t **dub)
+{
+	s_xml_node_init(dub);
+	s_xml_node_dublicate_(node, *dub);
+	return 0;
+}
+
+int s_xml_node_attr_dublicate (s_xml_node_attr_t *attr, s_xml_node_attr_t **dub)
+{
+	s_xml_node_attr_init(dub);
+	(*dub)->name = (attr->name) ? strdup(attr->name) : NULL;
+	(*dub)->value = (attr->value) ? strdup(attr->value) : NULL;
+	return 0;
+}
+
+s_xml_node_t * s_xml_node_get_parent (s_xml_node_t *node, char *name)
+{
+	while (node->parent) {
+		if (strcmp(node->parent->name, name) == 0) {
+			return node->parent;
+		}
+		node = node->parent;
+	}
+	return NULL;
 }
 
 int s_xml_node_attr_init (s_xml_node_attr_t **attr)
@@ -217,7 +298,6 @@ void s_xml_parse_start (void *xdata, const char *el, const char **xattr)
 		data->root = node;
 	}
 	node->parent = data->active;
-	node->root = data->root;
 	data->active = node;
 }
 
@@ -305,6 +385,9 @@ int s_xml_parse_file (s_xml_node_t **node, char *file)
 	unsigned int len;
 	struct stat stbuf;
 	*node = NULL;
+	if (file == NULL) {
+		return -1;
+	}
 	if (stat(file, &stbuf)) {
 		debugf(0, "No such file : %s", file);
 		return -1;

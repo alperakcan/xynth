@@ -359,11 +359,6 @@ typedef enum {
 	EVENT_MASK     = (QUIT_EVENT | KEYBD_EVENT | MOUSE_EVENT | EXPOSE_EVENT | CONFIG_EVENT | FOCUS_EVENT | DESKTOP_EVENT | TIMER_EVENT)
 } S_EVENT;
 
-typedef enum {
-	MOUSE_HANDLER = 0x1,
-	KEYBD_HANDLER = 0x2
-} S_HANDLER;
-
 typedef struct s_font_glyph_s {
 	int yMin;
 	int yMax;
@@ -1172,6 +1167,15 @@ int s_putmaskpart (unsigned char *dp, int dw, int dh, int x, int y, int w, int h
 /** @addtogroup client_handler */
 /*@{*/
 
+/** handler type enumarator
+  */
+typedef enum S_HANDLER {
+	/** handler is a mouse handler */
+	MOUSE_HANDLER = 0x1,
+	/** handler is a keyboard handler */
+	KEYBD_HANDLER = 0x2
+} S_HANDLER;
+
 /** keyboard handler struct
   */
 struct s_handler_keybd_s {
@@ -1241,6 +1245,7 @@ struct s_handlers_s {
 	/** handlers list mutex */
 	s_thread_mutex_t *mut;
 };
+
 /* handler.c */
 
 /** @brief initialize the thandler struct.
@@ -2957,6 +2962,7 @@ typedef struct s_xml_data_s s_xml_data_t;
 struct s_xml_node_attr_s {
 	char *name;
 	char *value;
+	int dontparse;
 };
 
 struct s_xml_node_s {
@@ -2965,7 +2971,7 @@ struct s_xml_node_s {
 	s_list_t *attrs;
 	s_list_t *nodes;
 	s_xml_node_t *parent;
-	s_xml_node_t *root;
+	int dontparse;
 };
 
 struct s_xml_data_s {
@@ -2980,6 +2986,11 @@ s_xml_node_t * s_xml_node_get_path_ (s_xml_node_t *node, char *path);
 s_xml_node_t * s_xml_node_get_path (s_xml_node_t *node, char *path);
 char * s_xml_node_get_value (s_xml_node_t *node);
 char * s_xml_node_get_path_value (s_xml_node_t *node, char *path);
+s_xml_node_attr_t * s_xml_node_get_attr (s_xml_node_t *node, char *attr);
+char * s_xml_node_get_attr_value (s_xml_node_t *node, char *attr);
+int s_xml_node_dublicate (s_xml_node_t *node, s_xml_node_t **dub);
+int s_xml_node_attr_dublicate (s_xml_node_attr_t *attr, s_xml_node_attr_t **dub);
+s_xml_node_t * s_xml_node_get_parent (s_xml_node_t *node, char *name);
 int s_xml_node_attr_init (s_xml_node_attr_t **attr);
 int s_xml_node_attr_uninit (s_xml_node_attr_t *attr);
 int s_xml_node_init (s_xml_node_t **node);

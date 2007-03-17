@@ -21,12 +21,11 @@
 #include <pspthreadman.h>
 #include <pspmoduleinfo.h>
 
-unsigned int usleep (unsigned long msec)
+void usleep (unsigned long msec)
 {
 	unsigned long delay;
 	delay = MIN(msec, 0xffffffffUL);
 	sceKernelDelayThreadCB(delay);
-	return 0;
 }
 
 unsigned int sleep (unsigned int sec)
@@ -53,10 +52,9 @@ struct timezone {
 	int tz_dsttime;
 };
 
-unsigned int usleep (unsigned long msec)
+void usleep (unsigned long msec)
 {
 	Sleep(msec);
-	return 0;
 }
 
 unsigned int sleep (unsigned int sec)
