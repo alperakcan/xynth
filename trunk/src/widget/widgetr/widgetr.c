@@ -17,8 +17,6 @@
 #include "widget.h"
 #include <getopt.h>
 
-#include "node.h"
-#include "parse.h"
 #include "table.h"
 #include "widgetr.h"
 #include "code.h"
@@ -58,13 +56,11 @@ int main (int argc, char *argv[])
 {
 	char c;
 	char *hex;
-	node_t *root;
 	unsigned int i;
 	char *varf = NULL;
 	char *vars = NULL;
 	char *varc = NULL;
 	char *vare = NULL;
-	xml_data_t *xdata;
 	ctable_t *widgetr;
 	unsigned int option_index = 0;
 	struct option long_options[] = {
@@ -131,8 +127,11 @@ option_tables:
 			case 'h':
 option_help:
 				printf("%s usage;\n"
-				       "\t-f / --file   : xml file to parse\n"
-				       "\t-t / --tables : tables depth\n"
+				       "\t-f / --file   : xml file to use\n"
+				       "\t-s / --style  : style sheet xml file to use\n"
+				       "\t-c / --script : script file to use\n"
+				       "\t-e / --engine : script engine to use\n"
+				       "\t-d / --depth  : tables depth\n"
 				       "\t-m / --mask   : bit mask\n",
 				       argv[0]);
 				exit(1);
@@ -154,12 +153,31 @@ option_help:
 	printf("%s:\n"
 	       "\ttable depth : %u\n"
 	       "\ttable mask  : 0x%08x\n"
-	       "\tmask length : %u\n",
-	       argv[0], widgetr->depth, widgetr->mask, i);
+	       "\tmask length : %u\n"
+	       "\tfile        : %s\n"
+	       "\tstyle       : %s\n"
+	       "\tscript      : %s\n"
+	       "\tengine      : %s\n",
+	       argv[0], widgetr->depth, widgetr->mask, i, varf, vars, varc, vare);
 	
 	table_init(&widgetr->table, widgetr->mask + 1);
 
 	if (varf != NULL) {
+		s_xml_node_t *xfile = NULL;
+		s_xml_node_t *xstyle = NULL;
+		if (s_xml_parse_file(&xfile, varf)) {
+			exit(1);
+		}
+		if (vars != NULL) {
+			if (s_xml_parse_file(&xstyle, vars)) {
+				exit(1);
+			}
+		}
+		code_parse(widgetr->table, widgetr->depth, widgetr->mask, xfile, xstyle, varc, vare);
+		s_xml_node_uninit(xfile);
+		s_xml_node_uninit(xstyle);
+		
+#if 0
 		xdata = (xml_data_t *) s_malloc(sizeof(xml_data_t));
 		memset(xdata, 0, sizeof(xml_data_t));
 		if (vars != NULL) {
@@ -176,6 +194,7 @@ option_help:
 		for (root = xdata->elem; root && root->parent; root = root->parent);
 		node_uninit(root);
 		s_free(xdata);
+#endif
 	}
 
 	table_uninit(widgetr->table, widgetr->mask + 1);
