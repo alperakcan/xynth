@@ -77,10 +77,10 @@ extern "C" {
 #elif defined(PLATFORM_PSPDEV)
 	#include <sys/time.h>
 	unsigned int sleep (unsigned int sec);
-	unsigned int usleep (unsigned long msec);
+	void usleep (unsigned long msec);
 #elif defined(PLATFORM_MINGW)
 	unsigned int sleep (unsigned int sec);
-	unsigned int usleep (unsigned long msec);
+	void usleep (unsigned long msec);
 #endif
 
 #if defined(SOCKET_BSD)
