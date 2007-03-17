@@ -176,25 +176,6 @@ option_help:
 		code_parse(widgetr->table, widgetr->depth, widgetr->mask, xfile, xstyle, varc, vare);
 		s_xml_node_uninit(xfile);
 		s_xml_node_uninit(xstyle);
-		
-#if 0
-		xdata = (xml_data_t *) s_malloc(sizeof(xml_data_t));
-		memset(xdata, 0, sizeof(xml_data_t));
-		if (vars != NULL) {
-			if (parse_xml_file(xdata, vars)) {
-				exit(1);
-			}
-		}
-		if (parse_xml_file(xdata, varf)) {
-			exit(1);
-		}
-		code_parse(widgetr->table, widgetr->depth, widgetr->mask, xdata->root, xdata->elem, varc, vare);
-		for (root = xdata->root; root && root->parent; root = root->parent);
-		node_uninit(root);
-		for (root = xdata->elem; root && root->parent; root = root->parent);
-		node_uninit(root);
-		s_free(xdata);
-#endif
 	}
 
 	table_uninit(widgetr->table, widgetr->mask + 1);
