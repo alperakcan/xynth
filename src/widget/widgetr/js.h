@@ -30,7 +30,7 @@ JSBool js_objectMove (JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 JSBool js_buttonDraw (JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval);
 JSBool js_textboxSetStr (JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval);
 JSBool js_getElementById (JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval);
-int js_init (ctable_t *ctable, char *script_file);
+int js_init (s_hashtable_t *htable, char *script_file);
 void js_uninit (void);
 
 #endif /*JS_H_*/

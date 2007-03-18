@@ -1296,6 +1296,40 @@ int s_handlers_uninit (s_window_t *window);
 
 /*@}*/
 
+/* hashtable.c */
+typedef struct s_hashtable_node_s s_hashtable_node_t;
+typedef struct s_hashtable_table_s s_hashtable_table_t;
+typedef struct s_hashtable_s s_hashtable_t;
+
+struct s_hashtable_node_s {
+	unsigned long int key;
+	char *name;
+	s_hashtable_node_t *next;
+	s_hashtable_node_t *prev;
+	s_hashtable_table_t *table;
+	void *data;
+};
+
+struct s_hashtable_table_s {
+	s_hashtable_table_t *table;
+	s_hashtable_node_t *node;
+};
+
+struct s_hashtable_s {
+	unsigned int size;
+	unsigned int mask;
+	unsigned int depth;
+	s_hashtable_table_t *table;
+};
+
+s_hashtable_node_t * s_hashtable_get_node (s_hashtable_t *htable, char *name);
+int s_hashtable_add (s_hashtable_t *htable, char *name, void *data);
+int s_hashtable_del (s_hashtable_t *htable, char *name);
+void * s_hashtable_get_data (s_hashtable_t *htable, char *name);
+int s_hashtable_init (s_hashtable_t **htable, unsigned int mask, unsigned int depth);
+int s_hashtable_uninit_table (s_hashtable_table_t *table, unsigned int size);
+int s_hashtable_uninit (s_hashtable_t *htable);
+
 /** @defgroup client_image Client Library - Image API
   * @brief detailed description
   *
