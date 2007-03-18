@@ -32,6 +32,9 @@ typedef struct s_handler_s s_handler_t;
 typedef struct s_handlers_s s_handlers_t;
 typedef struct s_handler_keybd_s s_handler_keybd_t;
 typedef struct s_handler_mouse_s s_handler_mouse_t;
+typedef struct s_hashtable_node_s s_hashtable_node_t;
+typedef struct s_hashtable_table_s s_hashtable_table_t;
+typedef struct s_hashtable_s s_hashtable_t;
 typedef struct s_image_s s_image_t;
 typedef struct s_list_s s_list_t;
 typedef struct s_list_node_s s_list_node_t;
@@ -1297,10 +1300,6 @@ int s_handlers_uninit (s_window_t *window);
 /*@}*/
 
 /* hashtable.c */
-typedef struct s_hashtable_node_s s_hashtable_node_t;
-typedef struct s_hashtable_table_s s_hashtable_table_t;
-typedef struct s_hashtable_s s_hashtable_t;
-
 struct s_hashtable_node_s {
 	unsigned long int key;
 	char *name;
