@@ -47,12 +47,11 @@
 #include "xynth_.h"
 #include "widget.h"
 
-#include "table.h"
 #include "widgetr.h"
 #include "code.h"
 #include "js.h"
 
-static ctable_t *g_ctable;
+static s_hashtable_t *g_htable;
 
 static JSRuntime *rt;
 static JSContext *cx;
@@ -87,8 +86,6 @@ code_script_t js_script = {
 	.init = js_init,
 	.uninit = js_uninit
 };
-
-#define TGD(__key) table_get_data(g_ctable->table, g_ctable->depth, g_ctable->mask, __key)
 
 JSObject * js_newObjectData (void *data)
 {
@@ -277,13 +274,13 @@ JSBool js_getElementById (JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	w_object_t *wobject;
 	jstr = JS_ValueToString(cx, argv[0]);
 	str = JS_GetStringBytes(jstr);
-	wobject = TGD(str);
+	wobject = s_hashtable_get_data(g_htable, str);
 	jobject = js_newObjectData(wobject);
 	*rval = OBJECT_TO_JSVAL(jobject);
 	return 1;
 }
 
-int js_init (ctable_t *ctable, char *script_file)
+int js_init (s_hashtable_t *htable, char *script_file)
 {
 	JSBool ok;
 	jsval rval;
@@ -300,7 +297,7 @@ int js_init (ctable_t *ctable, char *script_file)
 	fread(script, 1, stbuf.st_size, fp);
 	fclose(fp);
 
-    	g_ctable = ctable;
+    	g_htable = htable;
 	
 	rt = JS_NewRuntime(1L * 1024L * 1024L);
 	cx = JS_NewContext(rt, 8192);

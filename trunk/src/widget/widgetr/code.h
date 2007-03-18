@@ -29,29 +29,29 @@ typedef struct code_script_s {
 	void (*button_pressed) (w_object_t *object, int button);
 	void (*button_released) (w_object_t *object, int button);
 	void (*button_clicked) (w_object_t *object, int button, int click);
-	int (*init) (ctable_t *ctable, char *script);
+	int (*init) (s_hashtable_t *htable, char *script);
 	void (*uninit) (void);
 } code_script_t;
 
 char * code_trim_quota (char *value);
 char * code_trim_space (char *value);
 void code_tokenize (char *value, char token, int *n, char ***tokens);
-void code_get_enum (ctable_t *ctable, char *val, unsigned int *prop);
-void code_get_style (ctable_t *ctable, s_xml_node_t *node, FRAME_SHAPE *fshape, FRAME_SHADOW *fshadow);
-void code_get_image (ctable_t *ctable, s_xml_node_t *node, unsigned int *istyle, unsigned int *irotate, unsigned int *icount, char ***ivar);
+void code_get_enum (s_hashtable_t *htable, char *val, unsigned int *prop);
+void code_get_style (s_hashtable_t *htable, s_xml_node_t *node, FRAME_SHAPE *fshape, FRAME_SHADOW *fshadow);
+void code_get_image (s_hashtable_t *htable, s_xml_node_t *node, unsigned int *istyle, unsigned int *irotate, unsigned int *icount, char ***ivar);
 void code_parse_element (s_xml_node_t *file, s_xml_node_t *style);
-void code_generate_move (ctable_t *ctable, s_xml_node_t *node);
-void code_generate_window (ctable_t *ctable, s_xml_node_t *node);
-void code_generate_show (ctable_t *ctable, s_xml_node_t *node);
-void code_generate_object_frame (ctable_t *ctable, s_xml_node_t *node);
-void code_generate_object_button (ctable_t *ctable, s_xml_node_t *node);
-void code_generate_object_textbox (ctable_t *ctable, s_xml_node_t *node);
-void code_generate_object_editbox (ctable_t *ctable, s_xml_node_t *node);
-void code_generate_object_checkbox (ctable_t *ctable, s_xml_node_t *node);
-void code_generate_object_progressbar (ctable_t *ctable, s_xml_node_t *node);
-void code_generate_object_scrollbuffer (ctable_t *ctable, s_xml_node_t *node);
-void code_generate_object (ctable_t *ctable, s_xml_node_t *node);
-void code_parse_generate (ctable_t *ctable, s_xml_node_t *node);
-void code_parse (w_table_t *table, unsigned int depth, unsigned int mask, s_xml_node_t *file, s_xml_node_t *style, char *script, char *engine);
+void code_generate_move (s_hashtable_t *htable, s_xml_node_t *node);
+void code_generate_window (s_hashtable_t *htable, s_xml_node_t *node);
+void code_generate_show (s_hashtable_t *htable, s_xml_node_t *node);
+void code_generate_object_frame (s_hashtable_t *htable, s_xml_node_t *node);
+void code_generate_object_button (s_hashtable_t *htable, s_xml_node_t *node);
+void code_generate_object_textbox (s_hashtable_t *htable, s_xml_node_t *node);
+void code_generate_object_editbox (s_hashtable_t *htable, s_xml_node_t *node);
+void code_generate_object_checkbox (s_hashtable_t *htable, s_xml_node_t *node);
+void code_generate_object_progressbar (s_hashtable_t *htable, s_xml_node_t *node);
+void code_generate_object_scrollbuffer (s_hashtable_t *htable, s_xml_node_t *node);
+void code_generate_object (s_hashtable_t *htable, s_xml_node_t *node);
+void code_parse_generate (s_hashtable_t *htable, s_xml_node_t *node);
+void code_parse (s_hashtable_t *htable, s_xml_node_t *file, s_xml_node_t *style, char *script, char *engine);
 
 #endif /*CODE_H_*/

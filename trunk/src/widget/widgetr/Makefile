@@ -2,7 +2,7 @@
 include ../../../Makefile.cfg
 include ../../../Makefile.parse
 
-#WIDGET_SCRIPT_ENGINE_JS = Y
+WIDGET_SCRIPT_ENGINE_JS = Y
 
 ifdef WIDGET_SCRIPT_ENGINE_JS
 SPIDER_MONKEY = ./mozilla/js/
@@ -16,7 +16,7 @@ INCDIR = ./ ../ ../../lib $(SPIDER_MONKEY_INC)
 LIBDIR = ../../lib ../../widget
 LDFLAGS = -lwidget -lxynth $(SPIDER_MONKEY_LIB)
 
-OBJS = widgetr.o table.o code.o js.o
+OBJS = widgetr.o code.o js.o
 
 TARGET = widgetr
 

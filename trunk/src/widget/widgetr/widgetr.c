@@ -17,7 +17,6 @@
 #include "widget.h"
 #include <getopt.h>
 
-#include "table.h"
 #include "widgetr.h"
 #include "code.h"
 
@@ -61,72 +60,47 @@ int main (int argc, char *argv[])
 	char *vars = NULL;
 	char *varc = NULL;
 	char *vare = NULL;
-	ctable_t *widgetr;
+	unsigned int mask = 0;
+	unsigned int depth = 0;
+	s_hashtable_t *htable;
 	unsigned int option_index = 0;
 	struct option long_options[] = {
-		{"depth", 1, 0, 0},
-		{"mask", 1, 0, 0},
-		{"file", 1, 0, 0},
-		{"style", 1, 0, 0},
-		{"script", 1, 0, 0},
-		{"engine", 1, 0, 0},
-		{"help", 0, 0, 0},
+		{"depth", 1, 0, 'd'},
+		{"mask", 1, 0, 'm'},
+		{"file", 1, 0, 'f'},
+		{"style", 1, 0, 's'},
+		{"script", 1, 0, 'c'},
+		{"engine", 1, 0, 'e'},
+		{"help", 0, 0, 'h'},
 		{0, 0, 0, 0},
 	};
 
-	widgetr = (ctable_t *) s_malloc(sizeof(ctable_t));
-	memset(widgetr, 0, sizeof(ctable_t));
-	
 	while ((c = getopt_long(argc, argv, "e:c:s:f:d:m:h", long_options, &option_index)) != -1) {
 		switch (c) {
-			case 0:
-				if (strcmp("depth", long_options[option_index].name) == 0) {
-					goto option_tables;
-				} else if (strcmp("mask", long_options[option_index].name) == 0) {
-					goto option_mask;
-				} else if (strcmp("file", long_options[option_index].name) == 0) {
-					goto option_file;
-				} else if (strcmp("style", long_options[option_index].name) == 0) {
-					goto option_style;
-				} else if (strcmp("script", long_options[option_index].name) == 0) {
-					goto option_script;
-				} else if (strcmp("engine", long_options[option_index].name) == 0) {
-					goto option_engine;
-				} else if (strcmp("help", long_options[option_index].name) == 0) {
-					goto option_help;
-				}
-				break;
 			case 'e':
-option_engine:
 				vare = optarg;
 				break;
 			case 'c':
-option_script:
 				varc = optarg;
 				break;
 			case 's':
-option_style:
 				vars = optarg;
 				break;
 			case 'f':
-option_file:
 				varf = optarg;
 				break;
 			case 'm':
-option_mask:
 				if ((hex = strstr(optarg, "0x")) != NULL) {
-					widgetr->mask = axtoi(hex + 2);
+					mask = axtoi(hex + 2);
 				} else {
-					widgetr->mask = atoi(optarg);
+					mask = atoi(optarg);
 				}
 				break;
 			case 'd':
-option_tables:
-				widgetr->depth = atoi(optarg);
+				depth = atoi(optarg);
 				break;
 			case 'h':
-option_help:
-				printf("%s usage;\n"
+usage:				printf("%s usage;\n"
 				       "\t-f / --file   : xml file to use\n"
 				       "\t-s / --style  : style sheet xml file to use\n"
 				       "\t-c / --script : script file to use\n"
@@ -137,16 +111,19 @@ option_help:
 				exit(1);
 		}
 	}
-	
-	if (widgetr->depth == 0) {
-		widgetr->depth = 4;
+	if (varf == NULL) {
+		goto usage;
 	}
-	if (widgetr->mask == 0) {
-		widgetr->mask = 0x0f;
+	
+	if (depth == 0) {
+		depth = 4;
+	}
+	if (mask == 0) {
+		mask = 0x0f;
 	}
 	
 	for (i = 32; i > 0; i--) {
-		if (widgetr->mask & (1 << (i - 1))) {
+		if (mask & (1 << (i - 1))) {
 			break;
 		}
 	}
@@ -158,9 +135,9 @@ option_help:
 	       "\tstyle       : %s\n"
 	       "\tscript      : %s\n"
 	       "\tengine      : %s\n",
-	       argv[0], widgetr->depth, widgetr->mask, i, varf, vars, varc, vare);
+	       argv[0], depth, mask, i, varf, vars, varc, vare);
 	
-	table_init(&widgetr->table, widgetr->mask + 1);
+	s_hashtable_init(&htable, mask, depth);
 
 	if (varf != NULL) {
 		s_xml_node_t *xfile = NULL;
@@ -173,13 +150,12 @@ option_help:
 				exit(1);
 			}
 		}
-		code_parse(widgetr->table, widgetr->depth, widgetr->mask, xfile, xstyle, varc, vare);
+		code_parse(htable, xfile, xstyle, varc, vare);
 		s_xml_node_uninit(xfile);
 		s_xml_node_uninit(xstyle);
 	}
 
-	table_uninit(widgetr->table, widgetr->mask + 1);
-	s_free(widgetr);
+	s_hashtable_uninit(htable);
 	
 	return 0;
 }

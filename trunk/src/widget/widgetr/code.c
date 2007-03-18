@@ -16,7 +16,6 @@
 #include "xynth_.h"
 #include "widget.h"
 
-#include "table.h"
 #include "widgetr.h"
 #include "code.h"
 
@@ -32,9 +31,6 @@ code_script_t *code_scripts[] = {
 };
 
 code_script_t *g_engine = NULL;
-
-#define TAD(__key, __data) table_add(ctable->table, ctable->depth, ctable->mask, __key, __data);
-#define TGD(__key) table_get_data(ctable->table, ctable->depth, ctable->mask, __key)
 
 char * code_trim_quota (char *value)
 {
@@ -99,7 +95,7 @@ void code_tokenize (char *value, char token, int *n, char ***tokens)
 	return;
 }
 
-void code_get_enum (ctable_t *ctable, char *val, unsigned int *prop)
+void code_get_enum (s_hashtable_t *htable, char *val, unsigned int *prop)
 {
 	int i;
 	int tok_count;
@@ -110,12 +106,12 @@ void code_get_enum (ctable_t *ctable, char *val, unsigned int *prop)
 	}
 	code_tokenize(val, '|', &tok_count, &tok_vals);
 	for (i = 0; i < tok_count; i++) {
-		*prop |= (unsigned int) TGD(code_trim_space(tok_vals[i]));
+		*prop |= (unsigned int) s_hashtable_get_data(htable, code_trim_space(tok_vals[i]));
 	}
 	s_free(tok_vals);
 }
 
-void code_get_effect (ctable_t *ctable, s_xml_node_t *node, EFFECT *effect)
+void code_get_effect (s_hashtable_t *htable, s_xml_node_t *node, EFFECT *effect)
 {
 	s_xml_node_t *t_effect = s_xml_node_get_path(node, "effect");
 	*effect = EFFECT_NONE;
@@ -123,12 +119,12 @@ void code_get_effect (ctable_t *ctable, s_xml_node_t *node, EFFECT *effect)
 		return;
 	}
 	if (t_effect) {
-		code_get_enum(ctable, t_effect->value, effect);
+		code_get_enum(htable, t_effect->value, effect);
 		t_effect->dontparse = 1;
 	}
 }
 
-void code_get_style (ctable_t *ctable, s_xml_node_t *node, FRAME_SHAPE *fshape, FRAME_SHADOW *fshadow)
+void code_get_style (s_hashtable_t *htable, s_xml_node_t *node, FRAME_SHAPE *fshape, FRAME_SHADOW *fshadow)
 {
 	s_xml_node_t *shape = s_xml_node_get_path(node, "shape");
 	s_xml_node_t *shadow = s_xml_node_get_path(node, "shadow");
@@ -138,16 +134,16 @@ void code_get_style (ctable_t *ctable, s_xml_node_t *node, FRAME_SHAPE *fshape, 
 		return;
 	}
 	if (shape) {
-		code_get_enum(ctable, shape->value, fshape);
+		code_get_enum(htable, shape->value, fshape);
 		shape->dontparse = 1;
 	}
 	if (shadow) {
-		code_get_enum(ctable, shadow->value, fshadow);
+		code_get_enum(htable, shadow->value, fshadow);
 		shadow->dontparse = 1;
 	}
 }
 
-void code_get_image (ctable_t *ctable, s_xml_node_t *node, unsigned int *istyle, unsigned int *irotate, unsigned int *icount, char ***ivar)
+void code_get_image (s_hashtable_t *htable, s_xml_node_t *node, unsigned int *istyle, unsigned int *irotate, unsigned int *icount, char ***ivar)
 {
 	int i;
 	int count;
@@ -165,8 +161,8 @@ void code_get_image (ctable_t *ctable, s_xml_node_t *node, unsigned int *istyle,
 	if (count == 0) {
 		return;
 	}
-	code_get_enum(ctable, s_xml_node_get_path_value(node, "rotate"), &rotate);
-	code_get_style(ctable, s_xml_node_get_path(node, "style"), &shape, &shadow);
+	code_get_enum(htable, s_xml_node_get_path_value(node, "rotate"), &rotate);
+	code_get_style(htable, s_xml_node_get_path(node, "style"), &shape, &shadow);
 	cntstr = (char *) s_malloc(sizeof(char *) * 255);
 	var = (char **) s_malloc(sizeof(char **) * count);
 	for (i = 0; i < count; i++) {
@@ -227,7 +223,7 @@ void code_parse_element (s_xml_node_t *node, s_xml_node_t *style)
 	}
 }
 
-void code_generate_move (ctable_t *ctable, s_xml_node_t *node)
+void code_generate_move (s_hashtable_t *htable, s_xml_node_t *node)
 {
 	int xi = 0;
 	int yi = 0;
@@ -244,11 +240,11 @@ void code_generate_move (ctable_t *ctable, s_xml_node_t *node)
 	if (w) wi = atoi(w);
 	if (h) hi = atoi(h);
 	if (strcmp(node->parent->name, "window") == 0) {
-		if ((object = (w_object_t *) TGD(s_xml_node_get_attr_value(node->parent, "id"))) != NULL) {
+		if ((object = (w_object_t *) s_hashtable_get_data(htable, s_xml_node_get_attr_value(node->parent, "id"))) != NULL) {
 			w_window_set_coor(object->window, xi, yi, wi, hi);
 		}
 	} else if (strcmp(node->parent->name, "object") == 0) {
-		if ((object = (w_object_t *) TGD(s_xml_node_get_attr_value(node->parent, "id"))) != NULL) {
+		if ((object = (w_object_t *) s_hashtable_get_data(htable, s_xml_node_get_attr_value(node->parent, "id"))) != NULL) {
 			w_object_move(object, xi, yi, wi, hi);
 		}
 	}
@@ -259,41 +255,41 @@ void code_generate_move (ctable_t *ctable, s_xml_node_t *node)
 	if ((tmp = s_xml_node_get_path(node, "h")) != NULL) { tmp->dontparse = 1; }
 }
 
-void code_generate_window (ctable_t *ctable, s_xml_node_t *node)
+void code_generate_window (s_hashtable_t *htable, s_xml_node_t *node)
 {
 	S_WINDOW prop;
 	s_xml_node_t *tmp;
 	w_window_t *window;
-	code_get_enum(ctable, s_xml_node_get_attr_value(node, "type"), &prop);
+	code_get_enum(htable, s_xml_node_get_attr_value(node, "type"), &prop);
 	w_window_init(&window, prop, NULL);
-	TAD(s_xml_node_get_attr_value(node, "id"), window->object);
+	s_hashtable_add(htable, s_xml_node_get_attr_value(node, "id"), window->object);
 	if ((tmp = s_xml_node_get_path(node, "title")) != NULL) {
 		s_window_set_title(window->window, tmp->value);
 		tmp->dontparse = 1;
 	}
 	if ((tmp = s_xml_node_get_path(node, "move")) != NULL) {
-		code_generate_move(ctable, tmp);
+		code_generate_move(htable, tmp);
 		tmp->dontparse = 1;
 	}
 }
 
-void code_generate_show (ctable_t *ctable, s_xml_node_t *node)
+void code_generate_show (s_hashtable_t *htable, s_xml_node_t *node)
 {
 	w_object_t *object;
 	if (strcmp(node->parent->name, "window") == 0) {
-		if ((object = (w_object_t *) TGD(s_xml_node_get_attr_value(node->parent, "id"))) != NULL) {
+		if ((object = (w_object_t *) s_hashtable_get_data(htable, s_xml_node_get_attr_value(node->parent, "id"))) != NULL) {
 			w_object_show(object);
 			s_window_show(object->window->window);
 			s_window_main(object->window->window);
 		}
 	} else if (strcmp(node->parent->name, "object") == 0) {
-		if ((object = (w_object_t *) TGD(s_xml_node_get_attr_value(node->parent, "id"))) != NULL) {
+		if ((object = (w_object_t *) s_hashtable_get_data(htable, s_xml_node_get_attr_value(node->parent, "id"))) != NULL) {
 			w_object_show(object);
 		}
 	}
 }
 
-void code_generate_object_frame (ctable_t *ctable, s_xml_node_t *node)
+void code_generate_object_frame (s_hashtable_t *htable, s_xml_node_t *node)
 {
 	w_frame_t *frame;
 	s_xml_node_t *tmp;
@@ -301,14 +297,14 @@ void code_generate_object_frame (ctable_t *ctable, s_xml_node_t *node)
 	w_object_t *pobject;
 	w_object_t *wobject;
 	s_xml_node_t *window = s_xml_node_get_parent(node, "window");
-	wobject = (w_object_t *) TGD(s_xml_node_get_attr_value(window, "id"));
-	pobject = (w_object_t *) TGD(s_xml_node_get_attr_value(node->parent, "id"));
+	wobject = (w_object_t *) s_hashtable_get_data(htable, s_xml_node_get_attr_value(window, "id"));
+	pobject = (w_object_t *) s_hashtable_get_data(htable, s_xml_node_get_attr_value(node->parent, "id"));
 	w_frame_init(wobject->window, &frame, 0, pobject);
-	TAD(s_xml_node_get_attr_value(node, "id"), frame->object);
+	s_hashtable_add(htable, s_xml_node_get_attr_value(node, "id"), frame->object);
 	while ((tmp = s_xml_node_get_path(node, "style")) != NULL) {
 		FRAME_SHAPE fshape;
 		FRAME_SHADOW fshadow;
-		code_get_style(ctable, tmp, &fshape, &fshadow);
+		code_get_style(htable, tmp, &fshape, &fshadow);
 		w_frame_set_style(frame->object, fshape, fshadow); 
 		tmp->dontparse = 1;
 	}
@@ -317,7 +313,7 @@ void code_generate_object_frame (ctable_t *ctable, s_xml_node_t *node)
 		unsigned int count;
 		unsigned int style;
 		unsigned int rotate;
-		code_get_image(ctable, tmp, &style, &rotate, &count, &var);
+		code_get_image(htable, tmp, &style, &rotate, &count, &var);
 		if (var != NULL) {
 			w_frame_set_image(frame->object, style, rotate, count, var);
 			while (count--) s_free(var[count]);
@@ -329,7 +325,7 @@ void code_generate_object_frame (ctable_t *ctable, s_xml_node_t *node)
 	memset(priv, 0, sizeof(code_priv_t));
 	if ((tmp = s_xml_node_get_path(node, "effect")) != NULL) {
 		EFFECT effect;
-		code_get_effect(ctable, tmp, &effect);
+		code_get_effect(htable, tmp, &effect);
 		frame->object->effect->effect = effect;
 		tmp->dontparse = 1;
 	}
@@ -341,7 +337,7 @@ void code_generate_object_frame (ctable_t *ctable, s_xml_node_t *node)
 	frame->object->priv = priv;
 }
 
-void code_generate_object_button (ctable_t *ctable, s_xml_node_t *node)
+void code_generate_object_button (s_hashtable_t *htable, s_xml_node_t *node)
 {
 	s_xml_node_t *tmp;
 	code_priv_t *priv;
@@ -349,14 +345,14 @@ void code_generate_object_button (ctable_t *ctable, s_xml_node_t *node)
 	w_object_t *pobject;
 	w_object_t *wobject;
 	s_xml_node_t *window = s_xml_node_get_parent(node, "window");
-	wobject = (w_object_t *) TGD(s_xml_node_get_attr_value(window, "id"));
-	pobject = (w_object_t *) TGD(s_xml_node_get_attr_value(node->parent, "id"));
+	wobject = (w_object_t *) s_hashtable_get_data(htable, s_xml_node_get_attr_value(window, "id"));
+	pobject = (w_object_t *) s_hashtable_get_data(htable, s_xml_node_get_attr_value(node->parent, "id"));
 	w_button_init(wobject->window, &button, pobject);
-	TAD(s_xml_node_get_attr_value(node, "id"), button->object);
+	s_hashtable_add(htable, s_xml_node_get_attr_value(node, "id"), button->object);
 	while ((tmp = s_xml_node_get_path(node, "style")) != NULL) {
 		FRAME_SHAPE fshape;
 		FRAME_SHADOW fshadow;
-		code_get_style(ctable, tmp, &fshape, &fshadow);
+		code_get_style(htable, tmp, &fshape, &fshadow);
 		w_button_set_style(button->object, fshape, fshadow); 
 		tmp->dontparse = 1;
 	}
@@ -365,7 +361,7 @@ void code_generate_object_button (ctable_t *ctable, s_xml_node_t *node)
 		unsigned int count;
 		unsigned int style;
 		unsigned int rotate;
-		code_get_image(ctable, tmp, &style, &rotate, &count, &var);
+		code_get_image(htable, tmp, &style, &rotate, &count, &var);
 		if (var != NULL) {
 			w_button_set_image(button->object, style, rotate, count, var);
 			while (count--) s_free(var[count]);
@@ -398,21 +394,21 @@ void code_generate_object_button (ctable_t *ctable, s_xml_node_t *node)
 	button->object->priv = priv;
 }
 
-void code_generate_object_textbox (ctable_t *ctable, s_xml_node_t *node)
+void code_generate_object_textbox (s_hashtable_t *htable, s_xml_node_t *node)
 {
 	s_xml_node_t *tmp;
 	w_textbox_t *textbox;
 	w_object_t *pobject;
 	w_object_t *wobject;
 	s_xml_node_t *window = s_xml_node_get_parent(node, "window");
-	wobject = (w_object_t *) TGD(s_xml_node_get_attr_value(window, "id"));
-	pobject = (w_object_t *) TGD(s_xml_node_get_attr_value(node->parent, "id"));
+	wobject = (w_object_t *) s_hashtable_get_data(htable, s_xml_node_get_attr_value(window, "id"));
+	pobject = (w_object_t *) s_hashtable_get_data(htable, s_xml_node_get_attr_value(node->parent, "id"));
 	w_textbox_init(wobject->window, &textbox, pobject);
-	TAD(s_xml_node_get_attr_value(node, "id"), textbox->object);
+	s_hashtable_add(htable, s_xml_node_get_attr_value(node, "id"), textbox->object);
 	while ((tmp = s_xml_node_get_path(node, "style")) != NULL) {
 		FRAME_SHAPE fshape;
 		FRAME_SHADOW fshadow;
-		code_get_style(ctable, tmp, &fshape, &fshadow);
+		code_get_style(htable, tmp, &fshape, &fshadow);
 		w_textbox_set_style(textbox->object, fshape, fshadow); 
 		tmp->dontparse = 1;
 	}
@@ -421,7 +417,7 @@ void code_generate_object_textbox (ctable_t *ctable, s_xml_node_t *node)
 		unsigned int count;
 		unsigned int style;
 		unsigned int rotate;
-		code_get_image(ctable, tmp, &style, &rotate, &count, &var);
+		code_get_image(htable, tmp, &style, &rotate, &count, &var);
 		if (var != NULL) {
 			w_textbox_set_image(textbox->object, style, rotate, count, var);
 			while (count--) s_free(var[count]);
@@ -431,7 +427,7 @@ void code_generate_object_textbox (ctable_t *ctable, s_xml_node_t *node)
 	}
 	while ((tmp = s_xml_node_get_path(node, "properties")) != NULL) {
 		TEXTBOX_PROPERTIES prop;
-		code_get_enum(ctable, tmp->value, &prop);
+		code_get_enum(htable, tmp->value, &prop);
 		w_textbox_set_properties(textbox->object, prop);
 		tmp->dontparse = 1;
 	}
@@ -456,21 +452,21 @@ void code_generate_object_textbox (ctable_t *ctable, s_xml_node_t *node)
 	}
 }
 
-void code_generate_object_editbox (ctable_t *ctable, s_xml_node_t *node)
+void code_generate_object_editbox (s_hashtable_t *htable, s_xml_node_t *node)
 {
 	s_xml_node_t *tmp;
 	w_editbox_t *editbox;
 	w_object_t *pobject;
 	w_object_t *wobject;
 	s_xml_node_t *window = s_xml_node_get_parent(node, "window");
-	wobject = (w_object_t *) TGD(s_xml_node_get_attr_value(window, "id"));
-	pobject = (w_object_t *) TGD(s_xml_node_get_attr_value(node->parent, "id"));
+	wobject = (w_object_t *) s_hashtable_get_data(htable, s_xml_node_get_attr_value(window, "id"));
+	pobject = (w_object_t *) s_hashtable_get_data(htable, s_xml_node_get_attr_value(node->parent, "id"));
 	w_editbox_init(wobject->window, &editbox, pobject);
-	TAD(s_xml_node_get_attr_value(node, "id"), editbox->object);
+	s_hashtable_add(htable, s_xml_node_get_attr_value(node, "id"), editbox->object);
 	while ((tmp = s_xml_node_get_path(node, "style")) != NULL) {
 		FRAME_SHAPE fshape;
 		FRAME_SHADOW fshadow;
-		code_get_style(ctable, tmp, &fshape, &fshadow);
+		code_get_style(htable, tmp, &fshape, &fshadow);
 		w_editbox_set_style(editbox->object, fshape, fshadow); 
 		tmp->dontparse = 1;
 	}
@@ -479,7 +475,7 @@ void code_generate_object_editbox (ctable_t *ctable, s_xml_node_t *node)
 		unsigned int count;
 		unsigned int style;
 		unsigned int rotate;
-		code_get_image(ctable, tmp, &style, &rotate, &count, &var);
+		code_get_image(htable, tmp, &style, &rotate, &count, &var);
 		if (var != NULL) {
 			w_editbox_set_image(editbox->object, style, rotate, count, var);
 			while (count--) s_free(var[count]);
@@ -489,7 +485,7 @@ void code_generate_object_editbox (ctable_t *ctable, s_xml_node_t *node)
 	}
 	while ((tmp = s_xml_node_get_path(node, "properties")) != NULL) {
 		TEXTBOX_PROPERTIES prop;
-		code_get_enum(ctable, tmp->value, &prop);
+		code_get_enum(htable, tmp->value, &prop);
 		w_editbox_set_properties(editbox->object, prop);
 		tmp->dontparse = 1;
 	}
@@ -514,28 +510,28 @@ void code_generate_object_editbox (ctable_t *ctable, s_xml_node_t *node)
 	}
 }
 
-void code_generate_object_checkbox (ctable_t *ctable, s_xml_node_t *node)
+void code_generate_object_checkbox (s_hashtable_t *htable, s_xml_node_t *node)
 {
 	s_xml_node_t *tmp;
 	w_checkbox_t *checkbox;
 	w_object_t *pobject;
 	w_object_t *wobject;
 	s_xml_node_t *window = s_xml_node_get_parent(node, "window");
-	wobject = (w_object_t *) TGD(s_xml_node_get_attr_value(window, "id"));
-	pobject = (w_object_t *) TGD(s_xml_node_get_attr_value(node->parent, "id"));
+	wobject = (w_object_t *) s_hashtable_get_data(htable, s_xml_node_get_attr_value(window, "id"));
+	pobject = (w_object_t *) s_hashtable_get_data(htable, s_xml_node_get_attr_value(node->parent, "id"));
 	w_checkbox_init(wobject->window, &checkbox, pobject);
-	TAD(s_xml_node_get_attr_value(node, "id"), checkbox->object);
+	s_hashtable_add(htable, s_xml_node_get_attr_value(node, "id"), checkbox->object);
 	while ((tmp = s_xml_node_get_path(node, "style")) != NULL) {
 		FRAME_SHAPE fshape;
 		FRAME_SHADOW fshadow;
-		code_get_style(ctable, tmp, &fshape, &fshadow);
+		code_get_style(htable, tmp, &fshape, &fshadow);
 		w_checkbox_set_style(checkbox->object, fshape, fshadow); 
 		tmp->dontparse = 1;
 	}
 	if ((tmp = s_xml_node_get_path(node, "boxstyle")) != NULL) {
 		FRAME_SHAPE fshape;
 		FRAME_SHADOW fshadow;
-		code_get_style(ctable, tmp, &fshape, &fshadow);
+		code_get_style(htable, tmp, &fshape, &fshadow);
 		w_checkbox_set_boxstyle(checkbox->object, fshape, fshadow); 
 		tmp->dontparse = 1;
 	}
@@ -544,7 +540,7 @@ void code_generate_object_checkbox (ctable_t *ctable, s_xml_node_t *node)
 		unsigned int count;
 		unsigned int style;
 		unsigned int rotate;
-		code_get_image(ctable, tmp, &style, &rotate, &count, &var);
+		code_get_image(htable, tmp, &style, &rotate, &count, &var);
 		if (var != NULL) {
 			w_checkbox_set_image(checkbox->object, style, rotate, count, var);
 			while (count--) s_free(var[count]);
@@ -557,7 +553,7 @@ void code_generate_object_checkbox (ctable_t *ctable, s_xml_node_t *node)
 		unsigned int count;
 		unsigned int style;
 		unsigned int rotate;
-		code_get_image(ctable, tmp, &style, &rotate, &count, &var);
+		code_get_image(htable, tmp, &style, &rotate, &count, &var);
 		if (var != NULL) {
 			w_checkbox_set_boximage(checkbox->object, style, rotate, count, var);
 			while (count--) s_free(var[count]);
@@ -567,7 +563,7 @@ void code_generate_object_checkbox (ctable_t *ctable, s_xml_node_t *node)
 	}
 	while ((tmp = s_xml_node_get_path(node, "properties")) != NULL) {
 		TEXTBOX_PROPERTIES prop;
-		code_get_enum(ctable, tmp->value, &prop);
+		code_get_enum(htable, tmp->value, &prop);
 		w_checkbox_set_properties(checkbox->object, prop);
 		tmp->dontparse = 1;
 	}
@@ -595,28 +591,28 @@ void code_generate_object_checkbox (ctable_t *ctable, s_xml_node_t *node)
 	}
 }
 
-void code_generate_object_progressbar (ctable_t *ctable, s_xml_node_t *node)
+void code_generate_object_progressbar (s_hashtable_t *htable, s_xml_node_t *node)
 {
 	s_xml_node_t *tmp;
 	w_progressbar_t *progressbar;
 	w_object_t *pobject;
 	w_object_t *wobject;
 	s_xml_node_t *window = s_xml_node_get_parent(node, "window");
-	wobject = (w_object_t *) TGD(s_xml_node_get_attr_value(window, "id"));
-	pobject = (w_object_t *) TGD(s_xml_node_get_attr_value(node->parent, "id"));
+	wobject = (w_object_t *) s_hashtable_get_data(htable, s_xml_node_get_attr_value(window, "id"));
+	pobject = (w_object_t *) s_hashtable_get_data(htable, s_xml_node_get_attr_value(node->parent, "id"));
 	w_progressbar_init(wobject->window, &progressbar, pobject);
-	TAD(s_xml_node_get_attr_value(node, "id"), progressbar->object);
+	s_hashtable_add(htable, s_xml_node_get_attr_value(node, "id"), progressbar->object);
 	while ((tmp = s_xml_node_get_path(node, "style")) != NULL) {
 		FRAME_SHAPE fshape;
 		FRAME_SHADOW fshadow;
-		code_get_style(ctable, tmp, &fshape, &fshadow);
+		code_get_style(htable, tmp, &fshape, &fshadow);
 		w_progressbar_set_style(progressbar->object, fshape, fshadow); 
 		tmp->dontparse = 1;
 	}
 	if ((tmp = s_xml_node_get_path(node, "boxstyle")) != NULL) {
 		FRAME_SHAPE fshape;
 		FRAME_SHADOW fshadow;
-		code_get_style(ctable, tmp, &fshape, &fshadow);
+		code_get_style(htable, tmp, &fshape, &fshadow);
 		w_progressbar_set_boxstyle(progressbar->object, fshape, fshadow); 
 		tmp->dontparse = 1;
 	}
@@ -625,7 +621,7 @@ void code_generate_object_progressbar (ctable_t *ctable, s_xml_node_t *node)
 		unsigned int count;
 		unsigned int style;
 		unsigned int rotate;
-		code_get_image(ctable, tmp, &style, &rotate, &count, &var);
+		code_get_image(htable, tmp, &style, &rotate, &count, &var);
 		if (var != NULL) {
 			w_progressbar_set_image(progressbar->object, style, rotate, count, var);
 			while (count--) s_free(var[count]);
@@ -641,23 +637,23 @@ void code_generate_object_progressbar (ctable_t *ctable, s_xml_node_t *node)
 	}
 }
 
-void code_generate_object_scrollbuffer (ctable_t *ctable, s_xml_node_t *node)
+void code_generate_object_scrollbuffer (s_hashtable_t *htable, s_xml_node_t *node)
 {
 	s_xml_node_t *tmp;
 	w_scrollbuffer_t *scrollbuffer;
 	w_object_t *pobject;
 	w_object_t *wobject;
 	s_xml_node_t *window = s_xml_node_get_parent(node, "window");
-	wobject = (w_object_t *) TGD(s_xml_node_get_attr_value(window, "id"));
-	pobject = (w_object_t *) TGD(s_xml_node_get_attr_value(node->parent, "id"));
+	wobject = (w_object_t *) s_hashtable_get_data(htable, s_xml_node_get_attr_value(window, "id"));
+	pobject = (w_object_t *) s_hashtable_get_data(htable, s_xml_node_get_attr_value(node->parent, "id"));
 	w_scrollbuffer_init(wobject->window, &scrollbuffer, pobject);
-	TAD(s_xml_node_get_attr_value(node, "id"), scrollbuffer->object);
+	s_hashtable_add(htable, s_xml_node_get_attr_value(node, "id"), scrollbuffer->object);
 	while ((tmp = s_xml_node_get_path(node, "object")) != NULL) {
-		code_parse_generate(ctable, tmp);
+		code_parse_generate(htable, tmp);
 		tmp->dontparse = 1;
 	}
 	if ((tmp = s_xml_node_get_path(node, "child")) != NULL) {
-		w_object_t *cobject = (w_object_t *) TGD(tmp->value);
+		w_object_t *cobject = (w_object_t *) s_hashtable_get_data(htable, tmp->value);
 		w_scrollbuffer_set_child(scrollbuffer->object, cobject);
 		tmp->dontparse = 1;
 	}
@@ -667,7 +663,7 @@ void code_generate_object_scrollbuffer (ctable_t *ctable, s_xml_node_t *node)
 	while ((tmp = s_xml_node_get_path(node, "boxstyle")) != NULL) {
 		FRAME_SHAPE fshape;
 		FRAME_SHADOW fshadow;
-		code_get_style(ctable, tmp, &fshape, &fshadow);
+		code_get_style(htable, tmp, &fshape, &fshadow);
 		w_scrollbuffer_set_boxstyle(scrollbuffer->object, fshape, fshadow); 
 		tmp->dontparse = 1;
 	}
@@ -688,27 +684,27 @@ void code_generate_object_scrollbuffer (ctable_t *ctable, s_xml_node_t *node)
 	}
 }
 
-void code_generate_object (ctable_t *ctable, s_xml_node_t *node)
+void code_generate_object (s_hashtable_t *htable, s_xml_node_t *node)
 {
 	char *type = s_xml_node_get_attr_value(node, "type");
 	if (strcmp(type, "frame") == 0) {
-		code_generate_object_frame(ctable, node);
+		code_generate_object_frame(htable, node);
 	} else if (strcmp(type, "button") == 0) {
-		code_generate_object_button(ctable, node);
+		code_generate_object_button(htable, node);
 	} else if (strcmp(type, "textbox") == 0) {
-		code_generate_object_textbox(ctable, node);
+		code_generate_object_textbox(htable, node);
 	} else if (strcmp(type, "editbox") == 0) {
-		code_generate_object_editbox(ctable, node);
+		code_generate_object_editbox(htable, node);
 	} else if (strcmp(type, "checkbox") == 0) {
-		code_generate_object_checkbox(ctable, node);
+		code_generate_object_checkbox(htable, node);
 	} else if (strcmp(type, "progressbar") == 0) {
-		code_generate_object_progressbar(ctable, node);
+		code_generate_object_progressbar(htable, node);
 	} else if (strcmp(type, "scrollbuffer") == 0) {
-		code_generate_object_scrollbuffer(ctable, node);
+		code_generate_object_scrollbuffer(htable, node);
 	}
 }
 
-void code_parse_generate (ctable_t *ctable, s_xml_node_t *node)
+void code_parse_generate (s_hashtable_t *htable, s_xml_node_t *node)
 {
 	int p;
 	s_xml_node_t *tmp;
@@ -716,82 +712,74 @@ void code_parse_generate (ctable_t *ctable, s_xml_node_t *node)
 		return;
 	}
 	if (strcmp(node->name, "window") == 0) {
-		code_generate_window(ctable, node);
+		code_generate_window(htable, node);
 	} else if (strcmp(node->name, "object") == 0) {
-		code_generate_object(ctable, node);
+		code_generate_object(htable, node);
 	} else if (strcmp(node->name, "move") == 0) {
-		code_generate_move(ctable, node);
+		code_generate_move(htable, node);
 	} else if (strcmp(node->name, "show") == 0) {
-		code_generate_show(ctable, node);
+		code_generate_show(htable, node);
 	}
 	p = 0;
 	while (!s_list_eol(node->nodes, p)) {
 		tmp = (s_xml_node_t *) s_list_get(node->nodes, p);
-		code_parse_generate(ctable, tmp);
+		code_parse_generate(htable, tmp);
 		p++;
 	}
 }
 
-void code_parse (w_table_t *table, unsigned int depth, unsigned int mask, s_xml_node_t *file, s_xml_node_t *style, char *script, char *engine)
+void code_parse (s_hashtable_t *htable, s_xml_node_t *file, s_xml_node_t *style, char *script, char *engine)
 {
-	ctable_t *ctable;
 	code_script_t **sengine;
 	
-	ctable = (ctable_t *) s_malloc(sizeof(ctable_t));
-	ctable->table = table;
-	ctable->depth = depth;
-	ctable->mask = mask;
+	s_hashtable_add(htable, "WINDOW_NOFORM", (void *) WINDOW_NOFORM);
+	s_hashtable_add(htable, "WINDOW_MAIN", (void *) WINDOW_MAIN);
+	s_hashtable_add(htable, "WINDOW_TEMP", (void *) WINDOW_TEMP);
+	s_hashtable_add(htable, "WINDOW_CHILD", (void *) WINDOW_CHILD);
+	s_hashtable_add(htable, "WINDOW_DESKTOP", (void *) WINDOW_DESKTOP);
+
+	s_hashtable_add(htable, "FRAME_NOFRAME", (void *) FRAME_NOFRAME);
+	s_hashtable_add(htable, "FRAME_BOX", (void *) FRAME_BOX);
+	s_hashtable_add(htable, "FRAME_PANEL", (void *) FRAME_PANEL);
+	s_hashtable_add(htable, "FRAME_WINPANEL", (void *) FRAME_WINPANEL);
+	s_hashtable_add(htable, "FRAME_HLINE", (void *) FRAME_HLINE);
+	s_hashtable_add(htable, "FRAME_VLINE", (void *) FRAME_VLINE);
+	s_hashtable_add(htable, "FRAME_STYLEDPANEL", (void *) FRAME_STYLEDPANEL);
+	s_hashtable_add(htable, "FRAME_POPUPPANEL", (void *) FRAME_POPUPPANEL);
+	s_hashtable_add(htable, "FRAME_MENUBARPANEL", (void *) FRAME_MENUBARPANEL);
+	s_hashtable_add(htable, "FRAME_TOOLBARPANEL", (void *) FRAME_TOOLBARPANEL);
+	s_hashtable_add(htable, "FRAME_LINEEDITPANEL", (void *) FRAME_LINEEDITPANEL);
+	s_hashtable_add(htable, "FRAME_TABWIDGETPANEL", (void *) FRAME_TABWIDGETPANEL);
+	s_hashtable_add(htable, "FRAME_GROUPBOXPANEL", (void *) FRAME_GROUPBOXPANEL);
+	s_hashtable_add(htable, "FRAME_EMPTY", (void *) FRAME_EMPTY);
+	s_hashtable_add(htable, "FRAME_PLAIN", (void *) FRAME_PLAIN);
+	s_hashtable_add(htable, "FRAME_RAISED", (void *) FRAME_RAISED);
+	s_hashtable_add(htable, "FRAME_SUNKEN", (void *) FRAME_SUNKEN);
+	s_hashtable_add(htable, "FRAME_FOCUSED", (void *) FRAME_FOCUSED);
+
+	s_hashtable_add(htable, "TEXTBOX_WRAP", (void *) TEXTBOX_WRAP);
+	s_hashtable_add(htable, "TEXTBOX_VCENTER", (void *) TEXTBOX_VCENTER);
+	s_hashtable_add(htable, "TEXTBOX_HCENTER", (void *) TEXTBOX_HCENTER);
 	
-	TAD("WINDOW_NOFORM", (void *) WINDOW_NOFORM);
-	TAD("WINDOW_MAIN", (void *) WINDOW_MAIN);
-	TAD("WINDOW_TEMP", (void *) WINDOW_TEMP);
-	TAD("WINDOW_CHILD", (void *) WINDOW_CHILD);
-	TAD("WINDOW_DESKTOP", (void *) WINDOW_DESKTOP);
+	s_hashtable_add(htable, "FRAME_IMAGE_SOLID", (void *) FRAME_IMAGE_SOLID);
+	s_hashtable_add(htable, "FRAME_IMAGE_VERTICAL", (void *) FRAME_IMAGE_VERTICAL);
+	s_hashtable_add(htable, "FRAME_IMAGE_HORIZONTAL", (void *) FRAME_IMAGE_HORIZONTAL);
 
-	TAD("FRAME_NOFRAME", (void *) FRAME_NOFRAME);
-	TAD("FRAME_BOX", (void *) FRAME_BOX);
-	TAD("FRAME_PANEL", (void *) FRAME_PANEL);
-	TAD("FRAME_WINPANEL", (void *) FRAME_WINPANEL);
-	TAD("FRAME_HLINE", (void *) FRAME_HLINE);
-	TAD("FRAME_VLINE", (void *) FRAME_VLINE);
-	TAD("FRAME_STYLEDPANEL", (void *) FRAME_STYLEDPANEL);
-	TAD("FRAME_POPUPPANEL", (void *) FRAME_POPUPPANEL);
-	TAD("FRAME_MENUBARPANEL", (void *) FRAME_MENUBARPANEL);
-	TAD("FRAME_TOOLBARPANEL", (void *) FRAME_TOOLBARPANEL);
-	TAD("FRAME_LINEEDITPANEL", (void *) FRAME_LINEEDITPANEL);
-	TAD("FRAME_TABWIDGETPANEL", (void *) FRAME_TABWIDGETPANEL);
-	TAD("FRAME_GROUPBOXPANEL", (void *) FRAME_GROUPBOXPANEL);
-	TAD("FRAME_EMPTY", (void *) FRAME_EMPTY);
-	TAD("FRAME_PLAIN", (void *) FRAME_PLAIN);
-	TAD("FRAME_RAISED", (void *) FRAME_RAISED);
-	TAD("FRAME_SUNKEN", (void *) FRAME_SUNKEN);
-	TAD("FRAME_FOCUSED", (void *) FRAME_FOCUSED);
-
-	TAD("TEXTBOX_WRAP", (void *) TEXTBOX_WRAP);
-	TAD("TEXTBOX_VCENTER", (void *) TEXTBOX_VCENTER);
-	TAD("TEXTBOX_HCENTER", (void *) TEXTBOX_HCENTER);
-	
-	TAD("FRAME_IMAGE_SOLID", (void *) FRAME_IMAGE_SOLID);
-	TAD("FRAME_IMAGE_VERTICAL", (void *) FRAME_IMAGE_VERTICAL);
-	TAD("FRAME_IMAGE_HORIZONTAL", (void *) FRAME_IMAGE_HORIZONTAL);
-
-	TAD("EFFECT_NONE", (void *) EFFECT_NONE);
-	TAD("EFFECT_FADEIN", (void *) EFFECT_FADEIN);
-	TAD("EFFECT_FADEOUT", (void *) EFFECT_FADEOUT);
-	TAD("EFFECT_POPIN", (void *) EFFECT_POPIN);
-	TAD("EFFECT_POPOUT", (void *) EFFECT_POPOUT);
+	s_hashtable_add(htable, "EFFECT_NONE", (void *) EFFECT_NONE);
+	s_hashtable_add(htable, "EFFECT_FADEIN", (void *) EFFECT_FADEIN);
+	s_hashtable_add(htable, "EFFECT_FADEOUT", (void *) EFFECT_FADEOUT);
+	s_hashtable_add(htable, "EFFECT_POPIN", (void *) EFFECT_POPIN);
+	s_hashtable_add(htable, "EFFECT_POPOUT", (void *) EFFECT_POPOUT);
 
 	for (sengine = code_scripts; *sengine && engine; sengine++) {
 		if (strcmp((*sengine)->name, engine) == 0) {
 			g_engine = *sengine;
 		} 
 	}
-	if (g_engine) g_engine->init(ctable, script);	
+	if (g_engine) g_engine->init(htable, script);	
 
 	code_parse_element(file, style);
-	code_parse_generate(ctable, file);
+	code_parse_generate(htable, file);
 	
 	if (g_engine) g_engine->uninit();
-	
-	s_free(ctable);
 }
