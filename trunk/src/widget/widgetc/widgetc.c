@@ -153,7 +153,7 @@ usage:				printf("%s -f input_file -o output_name [-s style]\n"
 		    s_xml_parse_file(&xstyle, vars)) {
 		    	exit(1);
 		}
-		node_generate_element(xfile, xstyle);
+		node_generate_element(xfile, s_xml_node_get_path(xstyle, "stylesheet"));
 		node_generate_sources(xfile);
 		s_xml_node_uninit(xfile);
 		s_xml_node_uninit(xstyle);

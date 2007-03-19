@@ -24,7 +24,6 @@
 void header_generate (s_xml_node_t *node, FILE *g_header)
 {
 	int p;
-	char *tid;
 	char *nid;
 	char *ntype;
 	s_xml_node_t *tmp;
@@ -47,15 +46,18 @@ void header_generate (s_xml_node_t *node, FILE *g_header)
 			fprintf(g_header, "w_progressbar_t *%s;\n", nid);
 		} else if (strcmp(ntype, "scrollbuffer") == 0) {
 			fprintf(g_header, "w_scrollbuffer_t *%s;\n", nid);
+		} else if (strcmp(ntype, "scrollbar") == 0) {
+			fprintf(g_header, "w_scrollbar_t *%s;\n", nid);
+		} else if (strcmp(ntype, "combobox") == 0) {
+			fprintf(g_header, "w_combobox_t *%s;\n", nid);
 		} else if (strcmp(ntype, "listbox") == 0) {
 			fprintf(g_header, "w_listbox_t *%s;\n", nid);
-			p = 0;
-			while (!s_list_eol(node->nodes, p)) {
-				tmp = (s_xml_node_t *) s_list_get(node->nodes, p);
-				tid = s_xml_node_get_attr_value(tmp, "id");
-				fprintf(g_header, "w_listbox_item_t *%s;\n", tid);
-				p++;
-			}
+		} else if (strcmp(ntype, "ctrllistbox") == 0) {
+			fprintf(g_header, "w_ctrllistbox_t *%s;\n", nid);
+		} else if (strcmp(ntype, "nlistbox") == 0) {
+			fprintf(g_header, "w_nlistbox_t *%s;\n", nid);
+		} else if (strcmp(ntype, "clistbox") == 0) {
+			fprintf(g_header, "w_clistbox_t *%s;\n", nid);
 		}
 	}
 	p = 0;
