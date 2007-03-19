@@ -19,9 +19,9 @@
 
 #include "list.h"
 #include "node.h"
-#include "gen_header.h"
+#include "header.h"
 
-void node_generate_header (node_t *node, FILE *g_header)
+void header_generate (node_t *node, FILE *g_header)
 {
 	int p;
 	node_t *tmp;
@@ -55,12 +55,12 @@ void node_generate_header (node_t *node, FILE *g_header)
 	p = 0;
 	while (!s_list_eol(node->nodes, p)) {
 		tmp = (node_t *) s_list_get(node->nodes, p);
-		node_generate_header(tmp, g_header);
+		header_generate(tmp, g_header);
 		p++;
 	}
 }
 
-void node_generate_function (node_t *node, FILE *g_header)
+void header_generate_function (node_t *node, FILE *g_header)
 {
 	int p;
 	node_t *tmp;
@@ -82,7 +82,7 @@ void node_generate_function (node_t *node, FILE *g_header)
 	p = 0;
 	while (!s_list_eol(node->nodes, p)) {
 		tmp = (node_t *) s_list_get(node->nodes, p);
-		node_generate_function(tmp, g_header);
+		header_generate_function(tmp, g_header);
 		p++;
 	}
 }
