@@ -5,7 +5,7 @@ include ../../../Makefile.parse
 LDFLAGS = -lexpat
 INCDIR = ./ ../ ../../lib
 
-OBJS = widgetc.o list.o node.o code.o header.o parse.o xml.o
+OBJS = widgetc.o list.o code.o header.o xml.o
 
 TARGET = widgetc
 

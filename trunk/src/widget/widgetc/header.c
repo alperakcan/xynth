@@ -18,52 +18,58 @@
 #include <string.h>
 
 #include "list.h"
-#include "node.h"
+#include "xml.h"
 #include "header.h"
 
-void header_generate (node_t *node, FILE *g_header)
+void header_generate (s_xml_node_t *node, FILE *g_header)
 {
 	int p;
-	node_t *tmp;
+	char *tid;
+	char *nid;
+	char *ntype;
+	s_xml_node_t *tmp;
+	nid = s_xml_node_get_attr_value(node, "id");
+	ntype = s_xml_node_get_attr_value(node, "type");
 	if (strcmp(node->name, "window") == 0) {
-		fprintf(g_header, "w_window_t *%s;\n", node->id);
+		fprintf(g_header, "w_window_t *%s;\n", nid);
 	} else if (strcmp(node->name, "object") == 0) {
-		if (strcmp(node->type, "frame") == 0) {
-			fprintf(g_header, "w_frame_t *%s;\n", node->id);
-		} else if (strcmp(node->type, "button") == 0) {
-			fprintf(g_header, "w_button_t *%s;\n", node->id);
-		} else if (strcmp(node->type, "textbox") == 0) {
-			fprintf(g_header, "w_textbox_t *%s;\n", node->id);
-		} else if (strcmp(node->type, "checkbox") == 0) {
-			fprintf(g_header, "w_checkbox_t *%s;\n", node->id);
-		} else if (strcmp(node->type, "editbox") == 0) {
-			fprintf(g_header, "w_editbox_t *%s;\n", node->id);
-		} else if (strcmp(node->type, "progressbar") == 0) {
-			fprintf(g_header, "w_progressbar_t *%s;\n", node->id);
-		} else if (strcmp(node->type, "scrollbuffer") == 0) {
-			fprintf(g_header, "w_scrollbuffer_t *%s;\n", node->id);
-		} else if (strcmp(node->type, "listbox") == 0) {
-			fprintf(g_header, "w_listbox_t *%s;\n", node->id);
+		if (strcmp(ntype, "frame") == 0) {
+			fprintf(g_header, "w_frame_t *%s;\n", nid);
+		} else if (strcmp(ntype, "button") == 0) {
+			fprintf(g_header, "w_button_t *%s;\n", nid);
+		} else if (strcmp(ntype, "textbox") == 0) {
+			fprintf(g_header, "w_textbox_t *%s;\n", nid);
+		} else if (strcmp(ntype, "checkbox") == 0) {
+			fprintf(g_header, "w_checkbox_t *%s;\n", nid);
+		} else if (strcmp(ntype, "editbox") == 0) {
+			fprintf(g_header, "w_editbox_t *%s;\n", nid);
+		} else if (strcmp(ntype, "progressbar") == 0) {
+			fprintf(g_header, "w_progressbar_t *%s;\n", nid);
+		} else if (strcmp(ntype, "scrollbuffer") == 0) {
+			fprintf(g_header, "w_scrollbuffer_t *%s;\n", nid);
+		} else if (strcmp(ntype, "listbox") == 0) {
+			fprintf(g_header, "w_listbox_t *%s;\n", nid);
 			p = 0;
 			while (!s_list_eol(node->nodes, p)) {
-				tmp = (node_t *) s_list_get(node->nodes, p);
-				fprintf(g_header, "w_listbox_item_t *%s;\n", tmp->id);
+				tmp = (s_xml_node_t *) s_list_get(node->nodes, p);
+				tid = s_xml_node_get_attr_value(tmp, "id");
+				fprintf(g_header, "w_listbox_item_t *%s;\n", tid);
 				p++;
 			}
 		}
 	}
 	p = 0;
 	while (!s_list_eol(node->nodes, p)) {
-		tmp = (node_t *) s_list_get(node->nodes, p);
+		tmp = (s_xml_node_t *) s_list_get(node->nodes, p);
 		header_generate(tmp, g_header);
 		p++;
 	}
 }
 
-void header_generate_function (node_t *node, FILE *g_header)
+void header_generate_function (s_xml_node_t *node, FILE *g_header)
 {
 	int p;
-	node_t *tmp;
+	s_xml_node_t *tmp;
 	if (strcmp(node->name, "draw") == 0) {
 		fprintf(g_header, "void %s (w_object_t *object);\n", node->value);
 	} else if (strcmp(node->name, "event") == 0) {
@@ -81,7 +87,7 @@ void header_generate_function (node_t *node, FILE *g_header)
 	}
 	p = 0;
 	while (!s_list_eol(node->nodes, p)) {
-		tmp = (node_t *) s_list_get(node->nodes, p);
+		tmp = (s_xml_node_t *) s_list_get(node->nodes, p);
 		header_generate_function(tmp, g_header);
 		p++;
 	}

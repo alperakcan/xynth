@@ -16,7 +16,7 @@
 #ifndef GEN_HEADER_H_
 #define GEN_HEADER_H_
 
-void header_generate (node_t *node, FILE *g_header);
-void header_generate_function (node_t *node, FILE *g_header);
+void header_generate (s_xml_node_t *node, FILE *g_header);
+void header_generate_function (s_xml_node_t *node, FILE *g_header);
 
 #endif /*GEN_HEADER_H_*/

@@ -15,5 +15,19 @@
 
 #define s_malloc malloc
 #define s_free free
+#define s_realloc realloc
+
+#define debugf(a, b...) {\
+	printf(b);\
+	printf(" [%s (%s:%d)]\n", __FUNCTION__, __FILE__, __LINE__);\
+}
+
+#define SXYNTH__H
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "list.h"
+#include "xml.h"
 
 #include "../../lib/xml.c"
