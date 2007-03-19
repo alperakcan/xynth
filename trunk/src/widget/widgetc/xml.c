@@ -1,6 +1,6 @@
 /***************************************************************************
-    begin                : Wed Dec 20 2006
-    copyright            : (C) 2006 - 2007 by Alper Akcan
+    begin                : Sun Mar 18 2007
+    copyright            : (C) 2007 by Alper Akcan
     email                : distchx@yahoo.com
  ***************************************************************************/
 
@@ -13,10 +13,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef GEN_HEADER_H_
-#define GEN_HEADER_H_
+#define s_malloc malloc
+#define s_free free
 
-void node_generate_header (node_t *node, FILE *g_header);
-void node_generate_function (node_t *node, FILE *g_header);
-
-#endif /*GEN_HEADER_H_*/
+#include "../../lib/xml.c"
