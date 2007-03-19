@@ -28,7 +28,7 @@ endif
 include ../../Makefile.rules
 
 widgetx_xml.c: widgetx.xml $(WIDGETC)
-	$(WIDGETC) -f widgetx.xml -o widgetx -c
+	$(WIDGETC) -f widgetx.xml -o widgetx
 endif
 
 dist: all
