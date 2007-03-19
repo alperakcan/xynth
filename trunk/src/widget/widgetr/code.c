@@ -71,7 +71,7 @@ void code_tokenize (char *value, char token, int *n, char ***tokens)
 			count++;
 		}
 	}
-	tok = (char **) malloc(sizeof(char **) * (count + 1));
+	tok = (char **) s_malloc(sizeof(char **) * (count + 1));
 	if (tok == NULL) {
 		*n = 0;
 		return;
@@ -207,8 +207,8 @@ void code_parse_element (s_xml_node_t *node, s_xml_node_t *style)
 	    		stype = s_xml_node_get_attr(tmp, "type");
 	    		if (strcmp(tmp->name, "element") == 0 && sid && strcmp(sid->value, ntype->value) == 0) {
 	    		    	s_xml_node_dublicate(tmp, &dmp);
-	    		    	free(node->name);
-	    		    	free(ntype->value);
+	    		    	s_free(node->name);
+	    		    	s_free(ntype->value);
 	    		    	node->name = strdup("object");
 	    		    	ntype->value = (stype->value) ? strdup(stype->value) : NULL;
 	    		    	while (!s_list_eol(dmp->nodes, 0)) {

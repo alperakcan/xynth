@@ -139,16 +139,16 @@ usage:				printf("%s usage;\n"
 	
 	s_hashtable_init(&htable, mask, depth);
 
-	if (varf != NULL) {
+	{
 		s_xml_node_t *xfile = NULL;
 		s_xml_node_t *xstyle = NULL;
-		if (s_xml_parse_file(&xfile, varf)) {
+		if (varf == NULL ||
+		    s_xml_parse_file(&xfile, varf)) {
 			exit(1);
 		}
-		if (vars != NULL) {
-			if (s_xml_parse_file(&xstyle, vars)) {
-				exit(1);
-			}
+		if (vars == NULL ||
+		    s_xml_parse_file(&xstyle, vars)) {
+		    	exit(1);
 		}
 		code_parse(htable, xfile, xstyle, varc, vare);
 		s_xml_node_uninit(xfile);
