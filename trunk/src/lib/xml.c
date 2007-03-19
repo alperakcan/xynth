@@ -368,7 +368,7 @@ int s_xml_parse_buffer (s_xml_node_t **node, char *buffer, unsigned int len)
 	XML_SetElementHandler(p, s_xml_parse_start, s_xml_parse_end);
 	XML_SetCharacterDataHandler(p, s_xml_parse_character);
 	if (!XML_Parse(p, buffer, len, 1)) {
-		debugf(0, "Parse error at line %d:%s", XML_GetCurrentLineNumber(p), XML_ErrorString(XML_GetErrorCode(p)));
+		debugf(0, "Parse error at line %d:%s", (int) XML_GetCurrentLineNumber(p), XML_ErrorString(XML_GetErrorCode(p)));
 		ret = -1;
 	}
 	XML_ParserFree(p);

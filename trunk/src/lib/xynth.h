@@ -48,6 +48,9 @@ typedef struct s_thread_cond_s s_thread_cond_t;
 typedef struct s_thread_mutex_s s_thread_mutex_t;
 typedef struct s_timer_s s_timer_t;
 typedef struct s_timers_s s_timers_t;
+typedef struct s_xml_node_attr_s s_xml_node_attr_t;
+typedef struct s_xml_node_s s_xml_node_t;
+typedef struct s_xml_data_s s_xml_data_t;
 
 typedef enum {
 	MOUSE_CURSOR_WAIT    = 0x0,
@@ -1299,35 +1302,137 @@ int s_handlers_uninit (s_window_t *window);
 
 /*@}*/
 
+/** @defgroup client_hashtable Client Library - Hashtable API
+  * @brief this api is used for simple hashtable support.
+  *
+  * @example
+  * 
+  * for further information look in demo/ directory
+  * 
+  * @code
+  * {
+  * 	s_hashtable_t *htable;
+  * 	s_hashtable_init(&htable, S_HASHTABLE_MASK, S_HASHTABLE_DEPTH);
+  * 	s_hashtable_add(htable, "name-0", (void *) "value-0");
+  *	s_hashtable_add(htable, "name-1", (void *) "value-1");
+  * 	printf("name-0: %s\n", s_hashtable_get_data(htable, "name-0")); 
+  * 	printf("name-1: %s\n", s_hashtable_get_data(htable, "name-1")); 
+  * 	s_hashtable_uninit(&htable);
+  * }
+  * @endcode
+  */
+
+/** @addtogroup client_hashtable */
+/*@{*/
+
 /* hashtable.c */
+
+/** hashtable default values
+  */
+typedef enum S_HASHTABLE {
+	/** default table mask */
+	S_HASHTABLE_MASK = 0xf,
+	/** default table depth */
+	S_HASHTABLE_DEPTH = 0x8,
+} S_HASHTABLE;
+
+/** hashtable node struct
+  */ 
 struct s_hashtable_node_s {
+	/** node hash key (32 bit) */
 	unsigned long int key;
+	/** node name */
 	char *name;
+	/** next node with the same hash key */
 	s_hashtable_node_t *next;
+	/** prev node with the same hash key */
 	s_hashtable_node_t *prev;
+	/** table that node is attached to */
 	s_hashtable_table_t *table;
+	/** private data, for user */
 	void *data;
 };
 
+/** hashtable table struct
+  */ 
 struct s_hashtable_table_s {
+	/** tree tables */
 	s_hashtable_table_t *table;
+	/** tree nodes */
 	s_hashtable_node_t *node;
 };
 
+/** hashtable struct
+  */ 
 struct s_hashtable_s {
+	/** hashtable size for allocation */
 	unsigned int size;
+	/** hashtable hashkey bitwise mask */
 	unsigned int mask;
+	/** hashtable tables depth */
 	unsigned int depth;
+	/** the root table */
 	s_hashtable_table_t *table;
 };
 
+/** @brief returns the node which was added with the name "name".
+  *
+  * @param *htable - hashtable
+  * @param *name   - name to search
+  * @returns the node, or NULL if fails.
+  */
 s_hashtable_node_t * s_hashtable_get_node (s_hashtable_t *htable, char *name);
+
+/** @brief adds a node with the name "name", and data "data" to the hashtable
+  *
+  * @param *htable - hashtable
+  * @param *name   - key name
+  * @param *data   - key data
+  * @returns 0 on success, 1 on error
+  */
 int s_hashtable_add (s_hashtable_t *htable, char *name, void *data);
+
+/** @brief deletes the node which was added with the name "name".
+  *
+  * @param *htable - hashtable
+  * @param *name   - name to search
+  * @returns 0 on success, 1 on error
+  */
 int s_hashtable_del (s_hashtable_t *htable, char *name);
+
+/** @brief returns the private data of the node which was added with the name "name".
+  *
+  * @param *htable - hashtable
+  * @param *name   - name to search
+  * @returns the data, or NULL if fails.
+  */
 void * s_hashtable_get_data (s_hashtable_t *htable, char *name);
+
+/** @brief initialize the hashtable
+  *
+  * @param **htable - hashtable
+  * @param *mask    - mask value to use for each table
+  * @param *depth   - maximum depth for the tables
+  * @returns 0 on success, 1 on error
+  */
 int s_hashtable_init (s_hashtable_t **htable, unsigned int mask, unsigned int depth);
+
+/** @brief initialize the hashtable table
+  *
+  * @param *table - table array
+  * @param *size  - array size
+  * @returns 0 on success, 1 on error
+  */
 int s_hashtable_uninit_table (s_hashtable_table_t *table, unsigned int size);
+
+/** @brief uninitialize the hashtable
+  *
+  * @param *htable - hashtable
+  * @returns 0 on success, 1 on error
+  */
 int s_hashtable_uninit (s_hashtable_t *htable);
+
+/*@}*/
 
 /** @defgroup client_image Client Library - Image API
   * @brief detailed description
@@ -2988,10 +3093,6 @@ void s_window_atexit (s_window_t *window, void (*f) (s_window_t *));
 /*@}*/
 
 /* xml.c */
-typedef struct s_xml_node_attr_s s_xml_node_attr_t;
-typedef struct s_xml_node_s s_xml_node_t;
-typedef struct s_xml_data_s s_xml_data_t;
-
 struct s_xml_node_attr_s {
 	char *name;
 	char *value;
