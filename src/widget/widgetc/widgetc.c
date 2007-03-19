@@ -21,10 +21,9 @@
 #include <unistd.h>
 
 #include "list.h"
-#include "node.h"
+#include "xml.h"
 #include "code.h"
 #include "header.h"
-#include "parse.h"
 
 static FILE *g_source = NULL;
 static FILE *g_header = NULL;
@@ -32,10 +31,10 @@ static char *g_name = NULL;
 static char *g_source_name = NULL;
 static char *g_header_name = NULL;
 
-static void node_generate_element (node_t *node, node_t *s_node);
-static void node_generate_sources (node_t *node);
+static void node_generate_element (s_xml_node_t *node, s_xml_node_t *s_node);
+static void node_generate_sources (s_xml_node_t *node);
 
-static void node_generate_sources (node_t *node)
+static void node_generate_sources (s_xml_node_t *node)
 {
 	fprintf(g_header,
 	        "\n"
@@ -62,37 +61,41 @@ static void node_generate_sources (node_t *node)
 	        "}\n");
 }
 
-static void node_generate_element (node_t *node, node_t *elem)
+static void node_generate_element (s_xml_node_t *node, s_xml_node_t *style)
 {
 	int p;
-	node_t *tmp;
-	node_t *dmp;
-	node_t *chl;
-	if (elem == NULL) {
+	s_xml_node_t *tmp;
+	s_xml_node_t *dmp;
+	s_xml_node_t *chl;
+	s_xml_node_attr_t *sid;
+	s_xml_node_attr_t *stype;
+	s_xml_node_attr_t *ntype;
+	if (style == NULL) {
 		return;
 	}
 	for (p = 0; !s_list_eol(node->nodes, p); p++) {
-    		tmp = (node_t *) s_list_get(node->nodes, p);
-    		node_generate_element(tmp, elem);
+    		tmp = (s_xml_node_t *) s_list_get(node->nodes, p);
+    		node_generate_element(tmp, style);
 	}
-	if (strcmp(node->name, "element") == 0 &&
-	    node->type != NULL) {
-	    	for (p = 0; !s_list_eol(elem->nodes, p); p++) {
-	    		tmp = (node_t *) s_list_get(elem->nodes, p);
-	    		if (strcmp(tmp->name, "element") == 0 &&
-	    		    strcmp(tmp->id, node->type) == 0) {
-	    		    	node_dublicate(tmp, &dmp);
+	ntype = s_xml_node_get_attr(node, "type");
+	if (strcmp(node->name, "element") == 0 && ntype && ntype->value != NULL) {
+	    	for (p = 0; !s_list_eol(style->nodes, p); p++) {
+	    		tmp = (s_xml_node_t *) s_list_get(style->nodes, p);
+	    		sid = s_xml_node_get_attr(tmp, "id");
+	    		stype = s_xml_node_get_attr(tmp, "type");
+	    		if (strcmp(tmp->name, "element") == 0 && sid && strcmp(sid->value, ntype->value) == 0) {
+	    		    	s_xml_node_dublicate(tmp, &dmp);
 	    		    	free(node->name);
-	    		    	free(node->type);
-	    		    	node->name = node_strdup("object");
-	    		    	node->type = node_strdup(dmp->type);
+	    		    	free(ntype->value);
+	    		    	node->name = strdup("object");
+	    		    	ntype->value = (stype->value) ? strdup(stype->value) : NULL;
 	    		    	while (!s_list_eol(dmp->nodes, 0)) {
-	    		    		chl = (node_t *) s_list_get(dmp->nodes, dmp->nodes->nb_elt - 1);
+	    		    		chl = (s_xml_node_t *) s_list_get(dmp->nodes, dmp->nodes->nb_elt - 1);
 	    		    		chl->parent = node;
 	    		    		s_list_add(node->nodes, chl, 0);
 	    		    		s_list_remove(dmp->nodes, dmp->nodes->nb_elt - 1);
 	    		    	}
-	    		    	node_uninit(dmp);
+	    		    	s_xml_node_uninit(dmp);
 	    		}
 	    	}
 	}
@@ -101,11 +104,9 @@ static void node_generate_element (node_t *node, node_t *elem)
 int main (int argc, char **argv)
 {
 	int c;
-	node_t *root;
 	char *varo = NULL;
 	char *varf = NULL;
 	char *vars = NULL;
-	xml_data_t *xdata;
 	
 	while ((c = getopt(argc, argv, "s:f:o:h")) != -1) {
 		switch (c) {
@@ -133,48 +134,35 @@ usage:				printf("%s -f input_file -o output_name [-s style]\n"
 		goto usage;
 	}
 	
-	xdata = (xml_data_t *) malloc(sizeof(xml_data_t));
-	memset(xdata, 0, sizeof(xml_data_t));
+	g_source_name = (char *) malloc(strlen(varo) + 20);
+	g_header_name = (char *) malloc(strlen(varo) + 20);
+	g_name = strdup(varo);
+	sprintf(g_source_name, "%s_xml.c", varo);
+	sprintf(g_header_name, "%s_xml.h", varo);
+	g_source = fopen(g_source_name, "w+");
+	g_header = fopen(g_header_name, "w+");
 
-	if (vars != NULL) {
-		if (parse_xml_file(xdata, vars)) {
+	{
+		s_xml_node_t *xfile = NULL;
+		s_xml_node_t *xstyle = NULL;
+		if (varf == NULL ||
+		    s_xml_parse_file(&xfile, varf)) {
 			exit(1);
 		}
-	} 
-	
-	if (varf != NULL) {
-		if (parse_xml_file(xdata, varf)) {
-			exit(1);
+		if (vars == NULL ||
+		    s_xml_parse_file(&xstyle, vars)) {
+		    	exit(1);
 		}
-	} else {
-		goto usage;
-	}
-
-	if (varo != NULL) {
-		g_source_name = (char *) malloc(strlen(varo) + 20);
-		g_header_name = (char *) malloc(strlen(varo) + 20);
-		g_name = strdup(varo);
-		sprintf(g_source_name, "%s_xml.c", varo);
-		sprintf(g_header_name, "%s_xml.h", varo);
-		g_source = fopen(g_source_name, "w+");
-		g_header = fopen(g_header_name, "w+");
-	} else {
-		goto usage;
+		node_generate_element(xfile, xstyle);
+		node_generate_sources(xfile);
+		s_xml_node_uninit(xfile);
+		s_xml_node_uninit(xstyle);
 	}
 	
-	node_generate_element(xdata->root, xdata->elem);
-
-	node_generate_sources(xdata->root);
-
-	for (root = xdata->root; root && root->parent; root = root->parent);
-	node_uninit(root);
-	for (root = xdata->elem; root && root->parent; root = root->parent);
-	node_uninit(root);
 
 	fclose(g_source);
 	fclose(g_header);
 	
-	free(xdata);
 	free(g_name);
 	free(g_source_name);
 	free(g_header_name);
