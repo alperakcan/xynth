@@ -150,7 +150,7 @@ usage:				printf("%s usage;\n"
 		    s_xml_parse_file(&xstyle, vars)) {
 		    	exit(1);
 		}
-		code_parse(htable, xfile, xstyle, varc, vare);
+		code_parse(htable, xfile, s_xml_node_get_path(xstyle, "stylesheet"), varc, vare);
 		s_xml_node_uninit(xfile);
 		s_xml_node_uninit(xstyle);
 	}
