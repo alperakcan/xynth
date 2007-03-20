@@ -119,6 +119,9 @@ s_xml_node_t * s_xml_node_get_path (s_xml_node_t *node, char *path)
 	int len;
 	char *str;
 	s_xml_node_t *res;
+	if (node == NULL || path == NULL) {
+		return NULL;
+	}
 	len = strlen(path);
 	str = (char *) s_malloc(len + 10 + 1);
 	memset(str, 0, len + 10 + 1);

@@ -1,0 +1,10 @@
+prefix=@prefix@
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: xynth
+Description: Xynth Windowing System
+Version: @version@
+Libs: -L${libdir} -lxynth @widget_libs@
+Cflags: -I${includedir}
