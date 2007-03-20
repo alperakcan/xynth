@@ -2,6 +2,8 @@
 include Makefile.cfg
 include Makefile.parse
 
+.PHONY := all clean dist install optimize doxy-doc xynth.pc test strip update pspdev
+
 all:
 	$(MAKE) -C src
 
@@ -12,7 +14,7 @@ clean:
 	rm -rf dist
 	rm -rf doc
 
-dist: all
+dist: all xynth.pc
 	rm -rf dist
 	mkdir -p $(DISTTOPDIR)
 	mkdir -p $(DISTINCDIR)
@@ -22,6 +24,8 @@ dist: all
 	mkdir -p $(DISTFONTDIR)
 	mkdir -p $(DISTTHEMEDIR)
 	$(MAKE) dist -C src
+	mkdir -p $(DISTPKGCONFIG)
+	cp xynth.pc $(DISTPKGCONFIG)/xynth.pc
 
 install: dist
 ifeq ($(PLATFORM_LINUX), Y)
@@ -87,6 +91,17 @@ doxy-doc:
 	GENERATE_HTML='YES' \
 	GENERATE_LATEX='NO' \
 	doxygen ./doxygen.cfg
+
+xynth.pc: Makefile.parse Makefile.cfg
+	@rm -rf xynth.pc
+	@echo > subs.sed
+	@echo "s,@prefix@,${INSTALLDIR},g"     >> subs.sed
+	@echo "s,@version@,${XYNTH_VERSION},g" >> subs.sed
+ifeq ($(WIDGET_LIB), Y)
+	@echo "s,@widget_libs@,-lwidget,g"     >> subs.sed
+endif
+	@sed -f subs.sed $@.in > $@
+	@rm -rf subs.sed
 
 test: clean all dist install
 
