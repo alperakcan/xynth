@@ -2431,6 +2431,39 @@ void s_surface_changed (s_window_t *window, s_rect_t *changed);
 
 /*@}*/
 
+/* render.c */
+
+typedef enum S_RENDER_TYPE {
+	S_RENDER_TYPE_RGB,
+	S_RENDER_TYPE_ARGB,
+	S_RENDER_TYPE_ALPHA,
+} S_RENDER_TYPE;
+
+typedef enum S_RENDER_OPERATOR {
+	S_RENDER_OPERATOR_CLEAR,
+	S_RENDER_OPERATOR_SOURCE,
+	S_RENDER_OPERATOR_SOURCE_OVER,
+} S_RENDER_OPERATOR;
+
+typedef struct s_render_s {
+	S_RENDER_TYPE type;
+	unsigned int width;
+	unsigned int height;
+	unsigned int stride;
+	unsigned int *argb;
+	s_list_t *clips;
+	s_rect_t clip;
+	void *data;
+} s_render_t;
+
+int s_render_init (s_render_t **render, S_RENDER_TYPE type, unsigned int width, unsigned int height);
+int s_render_uninit (s_render_t *render);
+int s_render_set_clip_region (s_render_t *render, int nrects, s_rect_t *rects);
+int s_render_fill_rectangle (s_render_t *render, S_RENDER_OPERATOR operator, int x, int y, int width, int height, unsigned char alpha, unsigned char red, unsigned char green, unsigned char blue);
+int s_render_getbox (s_render_t *render, s_render_t **dest, int x, int y, int width, int height);
+int s_render_putbox (s_render_t *render, S_RENDER_OPERATOR operator, s_render_t *source, int x, int y);
+int s_render_putboxpartmask (s_render_t *render, S_RENDER_OPERATOR operator, s_render_t *source, s_render_t *mask, int dst_x, int dst_y, int src_x, int src_y, int mask_x, int mask_y, int width, int height);
+
 /** @defgroup client_thread Client Library - Thread API
   * @brief s_thread_* api is an abstract layer for system calls.
   *        programmer should not use s_thread_sem_* calls, becouse

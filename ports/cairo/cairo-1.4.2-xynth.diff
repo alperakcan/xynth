@@ -1,6 +1,6 @@
 diff -Naur cairo-1.4.2/boilerplate/Makefile.am cairo-1.4.2-xynth/boilerplate/Makefile.am
 --- cairo-1.4.2/boilerplate/Makefile.am	2007-03-20 08:49:29.000000000 +0200
-+++ cairo-1.4.2-xynth/boilerplate/Makefile.am	2007-03-20 16:42:35.000000000 +0200
++++ cairo-1.4.2-xynth/boilerplate/Makefile.am	2007-03-22 17:41:17.000000000 +0200
 @@ -17,6 +17,10 @@
  libcairoboilerplate_la_SOURCES += cairo-test-directfb.c cairo-test-directfb.h
  endif
@@ -14,7 +14,7 @@ diff -Naur cairo-1.4.2/boilerplate/Makefile.am cairo-1.4.2-xynth/boilerplate/Mak
  endif
 diff -Naur cairo-1.4.2/boilerplate/cairo-boilerplate.c cairo-1.4.2-xynth/boilerplate/cairo-boilerplate.c
 --- cairo-1.4.2/boilerplate/cairo-boilerplate.c	2007-03-19 22:08:03.000000000 +0200
-+++ cairo-1.4.2-xynth/boilerplate/cairo-boilerplate.c	2007-03-20 16:42:35.000000000 +0200
++++ cairo-1.4.2-xynth/boilerplate/cairo-boilerplate.c	2007-03-23 13:15:34.000000000 +0200
 @@ -1037,6 +1037,10 @@
  #include "cairo-test-directfb.h"
  #endif
@@ -26,7 +26,15 @@ diff -Naur cairo-1.4.2/boilerplate/cairo-boilerplate.c cairo-1.4.2-xynth/boilerp
  #if CAIRO_HAS_PS_SURFACE
  #include "cairo-ps.h"
  
-@@ -1515,6 +1519,13 @@
+@@ -1368,6 +1372,7 @@
+     /* I'm uncompromising about leaving the image backend as 0
+      * for tolerance. There shouldn't ever be anything that is out of
+      * our control here. */
++#if 0
+     { "image", CAIRO_SURFACE_TYPE_IMAGE, CAIRO_CONTENT_COLOR_ALPHA, 0,
+       create_image_surface, cairo_surface_write_to_png, NULL},
+     { "image", CAIRO_SURFACE_TYPE_IMAGE, CAIRO_CONTENT_COLOR, 0,
+@@ -1515,6 +1520,26 @@
        create_directfb_surface, cairo_surface_write_to_png,cleanup_directfb},
  #endif
  
@@ -36,13 +44,26 @@ diff -Naur cairo-1.4.2/boilerplate/cairo-boilerplate.c cairo-1.4.2-xynth/boilerp
 +    { "xynth", CAIRO_SURFACE_TYPE_XYNTH, CAIRO_CONTENT_COLOR_ALPHA, 0,
 +      create_xynth_surface, cairo_surface_write_to_png, cleanup_xynth},
 +#endif
-+
++#else
++    /* Acceleration architectures may make the results differ by a
++     * bit, so we set the error tolerance to 1. */
++    { "xlib", CAIRO_SURFACE_TYPE_XLIB, CAIRO_CONTENT_COLOR_ALPHA, 1,
++      create_xlib_surface, cairo_surface_write_to_png, cleanup_xlib,
++      boilerplate_xlib_synchronize},
++    { "xlib", CAIRO_SURFACE_TYPE_XLIB, CAIRO_CONTENT_COLOR, 1,
++      create_xlib_surface, cairo_surface_write_to_png, cleanup_xlib,
++      boilerplate_xlib_synchronize},
++    { "xynth", CAIRO_SURFACE_TYPE_XYNTH, CAIRO_CONTENT_COLOR, 0,
++      create_xynth_surface, cairo_surface_write_to_png, cleanup_xynth},
++    { "xynth", CAIRO_SURFACE_TYPE_XYNTH, CAIRO_CONTENT_COLOR_ALPHA, 0,
++      create_xynth_surface, cairo_surface_write_to_png, cleanup_xynth},
++#endif
      { NULL }
  };
  
 diff -Naur cairo-1.4.2/boilerplate/cairo-test-xynth.c cairo-1.4.2-xynth/boilerplate/cairo-test-xynth.c
 --- cairo-1.4.2/boilerplate/cairo-test-xynth.c	1970-01-01 02:00:00.000000000 +0200
-+++ cairo-1.4.2-xynth/boilerplate/cairo-test-xynth.c	2007-03-20 18:28:04.000000000 +0200
++++ cairo-1.4.2-xynth/boilerplate/cairo-test-xynth.c	2007-03-26 12:00:47.000000000 +0300
 @@ -0,0 +1,29 @@
 +
 +#include <stdio.h>
@@ -68,14 +89,14 @@ diff -Naur cairo-1.4.2/boilerplate/cairo-test-xynth.c cairo-1.4.2-xynth/boilerpl
 +	if (width <= 0) width = 1;
 +	if (height <= 0) height = 1;
 +	if (mode == CAIRO_BOILERPLATE_MODE_TEST) {
-+		return cairo_xynth_surface_create(32, width, height, content);
++		return cairo_xynth_surface_create(width, height, content);
 +	} else if (mode == CAIRO_BOILERPLATE_MODE_PERF) {
 +	}
 +	return NULL;
 +}
 diff -Naur cairo-1.4.2/boilerplate/cairo-test-xynth.h cairo-1.4.2-xynth/boilerplate/cairo-test-xynth.h
 --- cairo-1.4.2/boilerplate/cairo-test-xynth.h	1970-01-01 02:00:00.000000000 +0200
-+++ cairo-1.4.2-xynth/boilerplate/cairo-test-xynth.h	2007-03-20 16:42:35.000000000 +0200
++++ cairo-1.4.2-xynth/boilerplate/cairo-test-xynth.h	2007-03-22 17:41:17.000000000 +0200
 @@ -0,0 +1,9 @@
 +
 +#include <cairo.h>
@@ -88,7 +109,7 @@ diff -Naur cairo-1.4.2/boilerplate/cairo-test-xynth.h cairo-1.4.2-xynth/boilerpl
 +CAIRO_END_DECLS
 diff -Naur cairo-1.4.2/configure.in cairo-1.4.2-xynth/configure.in
 --- cairo-1.4.2/configure.in	2007-03-20 08:23:49.000000000 +0200
-+++ cairo-1.4.2-xynth/configure.in	2007-03-20 16:42:35.000000000 +0200
++++ cairo-1.4.2-xynth/configure.in	2007-03-22 17:41:17.000000000 +0200
 @@ -226,6 +226,14 @@
  
  dnl ===========================================================================
@@ -122,7 +143,7 @@ diff -Naur cairo-1.4.2/configure.in cairo-1.4.2-xynth/configure.in
 +fi
 diff -Naur cairo-1.4.2/perf/cairo-perf.c cairo-1.4.2-xynth/perf/cairo-perf.c
 --- cairo-1.4.2/perf/cairo-perf.c	2007-03-19 22:08:03.000000000 +0200
-+++ cairo-1.4.2-xynth/perf/cairo-perf.c	2007-03-20 16:42:35.000000000 +0200
++++ cairo-1.4.2-xynth/perf/cairo-perf.c	2007-03-22 17:41:17.000000000 +0200
 @@ -76,6 +76,7 @@
      case CAIRO_SURFACE_TYPE_WIN32:
      case CAIRO_SURFACE_TYPE_BEOS:
@@ -133,7 +154,7 @@ diff -Naur cairo-1.4.2/perf/cairo-perf.c cairo-1.4.2-xynth/perf/cairo-perf.c
  #endif
 diff -Naur cairo-1.4.2/src/Makefile.am cairo-1.4.2-xynth/src/Makefile.am
 --- cairo-1.4.2/src/Makefile.am	2007-03-19 22:08:03.000000000 +0200
-+++ cairo-1.4.2-xynth/src/Makefile.am	2007-03-20 16:42:35.000000000 +0200
++++ cairo-1.4.2-xynth/src/Makefile.am	2007-03-22 17:41:17.000000000 +0200
 @@ -113,6 +113,12 @@
  backend_pkgconfigs += cairo-directfb.pc
  endif
@@ -165,17 +186,53 @@ diff -Naur cairo-1.4.2/src/Makefile.am cairo-1.4.2-xynth/src/Makefile.am
  	cairoint.h
  
  libcairo_la_LDFLAGS = -version-info @VERSION_INFO@ -no-undefined $(export_symbols)
+diff -Naur cairo-1.4.2/src/cairo-xlib-surface.c cairo-1.4.2-xynth/src/cairo-xlib-surface.c
+--- cairo-1.4.2/src/cairo-xlib-surface.c	2007-03-20 00:10:33.000000000 +0200
++++ cairo-1.4.2-xynth/src/cairo-xlib-surface.c	2007-03-24 02:32:58.000000000 +0200
+@@ -1298,6 +1298,8 @@
+     composite_operation_t       operation;
+     int				itx, ity;
+ 
++    printf("composite\n");
++    
+     if (!CAIRO_SURFACE_RENDER_HAS_COMPOSITE (dst))
+ 	return CAIRO_INT_STATUS_UNSUPPORTED;
+ 
+@@ -1331,6 +1333,7 @@
+     switch (operation)
+     {
+     case DO_RENDER:
++    	printf("Render\n");
+ 	_cairo_xlib_surface_ensure_dst_picture (dst);
+ 	if (mask) {
+ 	    status = _cairo_xlib_surface_set_attributes (mask, &mask_attr);
+@@ -1364,6 +1367,7 @@
+ 	break;
+ 
+     case DO_XCOPYAREA:
++    	printf("Copy\n");
+ 	_cairo_xlib_surface_ensure_gc (dst);
+ 	XCopyArea (dst->dpy,
+ 		   src->drawable,
+@@ -1376,6 +1380,7 @@
+ 	break;
+ 
+     case DO_XTILE:
++    	printf("Tile\n");
+ 	/* This case is only used for bug fallbacks, though it is theoretically
+ 	 * applicable to the case where we don't have the RENDER extension as
+ 	 * well.
 diff -Naur cairo-1.4.2/src/cairo-xynth-surface.c cairo-1.4.2-xynth/src/cairo-xynth-surface.c
 --- cairo-1.4.2/src/cairo-xynth-surface.c	1970-01-01 02:00:00.000000000 +0200
-+++ cairo-1.4.2-xynth/src/cairo-xynth-surface.c	2007-03-22 17:16:56.000000000 +0200
-@@ -0,0 +1,506 @@
++++ cairo-1.4.2-xynth/src/cairo-xynth-surface.c	2007-03-28 11:19:58.000000000 +0300
+@@ -0,0 +1,650 @@
 +
 +#include <xynth.h>
 +
 +#include "cairoint.h"
 +#include "cairo-xynth.h"
 +
-+#if 0
++#if 1
 +#define DEBUG(fmt...) {\
 +	printf(fmt);\
 +	printf(" [%s (%s:%d)]\n", __FUNCTION__, __FILE__, __LINE__);\
@@ -193,22 +250,60 @@ diff -Naur cairo-1.4.2/src/cairo-xynth-surface.c cairo-1.4.2-xynth/src/cairo-xyn
 +
 +typedef struct cairo_xynth_surface_s {
 +	cairo_surface_t cairo;
-+	s_surface_t *surface;
-+	s_list_t *clips;
++	s_render_t *render;
 +} cairo_xynth_surface_t;
 +
-+static int _cairo_xynth_surface_render_operator (cairo_operator_t op)
++static cairo_format_t _cairo_xynth_surface_cairo_format (S_RENDER_TYPE render)
++{
++	switch (render) {
++		case S_RENDER_TYPE_ARGB:
++			return CAIRO_FORMAT_ARGB32;
++		case S_RENDER_TYPE_RGB:
++			return CAIRO_FORMAT_RGB24;
++		case S_RENDER_TYPE_ALPHA:
++			return CAIRO_FORMAT_A8;
++	}
++	return -1;
++}
++
++static cairo_content_t _cairo_xynth_surface_cairo_content (S_RENDER_TYPE render)
++{
++	switch (render) {
++		case S_RENDER_TYPE_ARGB:
++			return CAIRO_CONTENT_COLOR_ALPHA;
++		case S_RENDER_TYPE_RGB:
++			return CAIRO_CONTENT_COLOR;
++		case S_RENDER_TYPE_ALPHA:
++			return CAIRO_CONTENT_ALPHA;
++	}
++	return -1;
++}
++
++static S_RENDER_TYPE _cairo_xynth_surface_render_type (cairo_content_t content)
++{
++	switch (content) {
++		case CAIRO_CONTENT_COLOR_ALPHA:
++			return S_RENDER_TYPE_ARGB;
++		case CAIRO_CONTENT_COLOR:
++			return S_RENDER_TYPE_RGB;
++		case CAIRO_CONTENT_ALPHA:
++			return S_RENDER_TYPE_ALPHA;
++	}
++	return -1;
++}
++
++static S_RENDER_OPERATOR _cairo_xynth_surface_render_operator (cairo_operator_t op)
 +{
 +	switch (op) {
 +		case CAIRO_OPERATOR_CLEAR:
 +		        DEBUG("operator: CAIRO_OPERATOR_CLEAR");
-+		        break;
++		        return S_RENDER_OPERATOR_CLEAR;
 +		case CAIRO_OPERATOR_SOURCE:
 +		        DEBUG("operator: CAIRO_OPERATOR_SOURCE");
-+		        break;
++		        return S_RENDER_OPERATOR_SOURCE;
 +		case CAIRO_OPERATOR_OVER:
 +		        DEBUG("operator: CAIRO_OPERATOR_OVER");
-+		        break;
++		        return S_RENDER_OPERATOR_SOURCE_OVER;
 +		case CAIRO_OPERATOR_IN:
 +		        DEBUG("operator: CAIRO_OPERATOR_IN");
 +		        break;
@@ -245,24 +340,24 @@ diff -Naur cairo-1.4.2/src/cairo-xynth-surface.c cairo-1.4.2-xynth/src/cairo-xyn
 +		default:
 +			break;
 +	}
-+	return CAIRO_OPERATOR_OVER;
++	return -1;
 +}
 +
-+static cairo_surface_t * _cairo_xynth_surface_create_similar (void *surface, cairo_content_t content, int width, int height)
++static cairo_surface_t * _cairo_xynth_surface_create_similar (void *abstract_surface, cairo_content_t content, int width, int height)
 +{
++	cairo_surface_t *surface;
 +	ENTER();
-+	NIY();
++	DEBUG("width: %d, height: %d, content: %d", width, height, content);
++	surface = cairo_xynth_surface_create(width, height, content);
 +	LEAVE();
-+	return 0;
++	return surface;
 +}
 +
 +static cairo_status_t  _cairo_xynth_surface_finish (void *abstract_surface)
 +{
 +	cairo_xynth_surface_t *surface = (cairo_xynth_surface_t *) abstract_surface;
 +	ENTER();
-+	s_free(surface->surface->matrix);
-+	s_free(surface->surface->vbuf);
-+	s_free(surface->surface);
++	s_render_uninit(surface->render);
 +	LEAVE();
 +	return CAIRO_STATUS_SUCCESS;
 +}
@@ -271,7 +366,7 @@ diff -Naur cairo-1.4.2/src/cairo-xynth-surface.c cairo-1.4.2-xynth/src/cairo-xyn
 +{
 +	cairo_xynth_surface_t *surface = (cairo_xynth_surface_t *) abstract_surface;
 +	ENTER();
-+	*image_out = (cairo_image_surface_t *) cairo_image_surface_create_for_data(surface->surface->vbuf, CAIRO_FORMAT_RGB24, surface->surface->width, surface->surface->height, surface->surface->width * surface->surface->bytesperpixel);
++	*image_out = (cairo_image_surface_t *) cairo_image_surface_create_for_data((void *) surface->render->argb, _cairo_xynth_surface_cairo_format(surface->render->type), surface->render->width, surface->render->height, surface->render->stride);
 +	*image_extra = NULL;
 +	DEBUG("(*image_out)->base.status: 0x%08x", (*image_out)->base.status);
 +	LEAVE();
@@ -280,7 +375,6 @@ diff -Naur cairo-1.4.2/src/cairo-xynth-surface.c cairo-1.4.2-xynth/src/cairo-xyn
 +
 +static void _cairo_xynth_surface_release_source_image (void *abstract_surface, cairo_image_surface_t *image, void *image_extra)
 +{
-+	cairo_xynth_surface_t *surface = (cairo_xynth_surface_t *) abstract_surface;
 +	ENTER();
 +	cairo_surface_destroy(&image->base);
 +	LEAVE();
@@ -288,8 +382,20 @@ diff -Naur cairo-1.4.2/src/cairo-xynth-surface.c cairo-1.4.2-xynth/src/cairo-xyn
 +
 +static cairo_status_t _cairo_xynth_surface_acquire_dest_image (void *abstract_surface, cairo_rectangle_int16_t *interest_rect, cairo_image_surface_t **image_out, cairo_rectangle_int16_t *image_rect, void **image_extra)
 +{
++	s_render_t *clone;
++	cairo_xynth_surface_t *surface = abstract_surface;
 +	ENTER();
-+	NIY();
++	DEBUG("surface: %d %d", surface->render->width, surface->render->height);
++	DEBUG("interest_rect: %d %d %d %d", interest_rect->x, interest_rect->y, interest_rect->width, interest_rect->height);
++	s_render_getbox(surface->render, &clone, interest_rect->x, interest_rect->y, interest_rect->width, interest_rect->height); 
++	*image_out = (cairo_image_surface_t *) cairo_image_surface_create_for_data((void *) clone->argb, _cairo_xynth_surface_cairo_format(clone->type), clone->width, clone->height, clone->stride);
++	*image_extra = NULL;
++	if (image_rect) {
++		image_rect->x = interest_rect->x;
++		image_rect->y = interest_rect->y;
++		image_rect->width = interest_rect->width;
++		image_rect->height = interest_rect->height;
++	}
 +	LEAVE();
 +	return 0;
 +}
@@ -297,7 +403,7 @@ diff -Naur cairo-1.4.2/src/cairo-xynth-surface.c cairo-1.4.2-xynth/src/cairo-xyn
 +static void _cairo_xynth_surface_release_dest_image (void *abstract_surface, cairo_rectangle_int16_t *interest_rect, cairo_image_surface_t *image, cairo_rectangle_int16_t *image_rect, void *image_extra)
 +{
 +	ENTER();
-+	NIY();
++	//NIY();
 +	LEAVE();
 +}
 +
@@ -308,16 +414,18 @@ diff -Naur cairo-1.4.2/src/cairo-xynth-surface.c cairo-1.4.2-xynth/src/cairo-xyn
 +	ENTER();
 +	if (src->backend == surface->cairo.backend) {
 +		*clone_out = cairo_surface_reference(src);
++		LEAVE();
 +		return CAIRO_STATUS_SUCCESS;
 +	} else if (_cairo_surface_is_image(src)) {
 +		cairo_image_surface_t *image_src = (cairo_image_surface_t *) src;
 +		if (!CAIRO_FORMAT_VALID(image_src->format)) {
++			LEAVE();
 +			return CAIRO_INT_STATUS_UNSUPPORTED;
 +		}
 +		DEBUG("format: 0x%08x", image_src->format);
 +		DEBUG("depth: %d, stride: %d, width: %d, height: %d", image_src->depth, image_src->stride, image_src->width, image_src->height);
 +		if (image_src->format == CAIRO_FORMAT_A1) {
-+			clone = (cairo_xynth_surface_t *) cairo_xynth_surface_create(8, image_src->width, image_src->height, CAIRO_CONTENT_COLOR | CAIRO_CONTENT_ALPHA);
++			clone = (cairo_xynth_surface_t *) cairo_xynth_surface_create(image_src->width, image_src->height, CAIRO_CONTENT_ALPHA);
 +			if (clone->cairo.status) {
 +				return CAIRO_STATUS_NO_MEMORY;
 +			}
@@ -325,109 +433,233 @@ diff -Naur cairo-1.4.2/src/cairo-xynth-surface.c cairo-1.4.2-xynth/src/cairo-xyn
 +				int x;
 +				int y;
 +				unsigned char *src = image_src->data;
-+				unsigned char *dst = clone->surface->vbuf;
++				unsigned int *dst = clone->render->argb;
 +				for (y = image_src->height; y; y--) {
 +					for (x = 0; x < image_src->width; x++) {
-+						dst[x] = (src[x >> 3] & (1 << (x & 7))) ? 0xff : 0x00;
++						dst[x] = (src[x >> 3] & (1 << (x & 7))) ? 0xff << 0x18: 0x00 << 0x18;
++					}
++					dst += image_src->width;
++					src += image_src->stride;
++				}
++			}
++		} else if (image_src->format == CAIRO_FORMAT_A8) {
++			clone = (cairo_xynth_surface_t *) cairo_xynth_surface_create(image_src->width, image_src->height, CAIRO_CONTENT_ALPHA);
++			if (clone->cairo.status) {
++				return CAIRO_STATUS_NO_MEMORY;
++			}
++			{
++				int x;
++				int y;
++				unsigned char *src = image_src->data;
++				unsigned int *dst = clone->render->argb;
++				for (y = image_src->height; y; y--) {
++					for (x = 0; x < image_src->width; x++) {
++						dst[x] = src[x] << 0x18;
++					}
++					dst += image_src->width;
++					src += image_src->stride;
++				}
++			}
++		} else if (image_src->format == CAIRO_FORMAT_RGB24) {
++			clone = (cairo_xynth_surface_t *) cairo_xynth_surface_create(image_src->width, image_src->height, CAIRO_CONTENT_COLOR);
++			if (clone->cairo.status) {
++				return CAIRO_STATUS_NO_MEMORY;
++			}
++			{
++				int x;
++				int y;
++				unsigned char *src = image_src->data;
++				unsigned int *dst = clone->render->argb;
++				for (y = image_src->height; y; y--) {
++					for (x = 0; x < image_src->width; x++) {
++						dst[x] = src[x] & 0x00FFFFFF;
++					}
++					dst += image_src->width;
++					src += image_src->stride;
++				}
++			}
++		} else if (image_src->format == CAIRO_FORMAT_ARGB32) {
++			clone = (cairo_xynth_surface_t *) cairo_xynth_surface_create(image_src->width, image_src->height, CAIRO_CONTENT_COLOR_ALPHA);
++			if (clone->cairo.status) {
++				return CAIRO_STATUS_NO_MEMORY;
++			}
++			{
++				int x;
++				int y;
++				unsigned char *src = image_src->data;
++				unsigned int *dst = clone->render->argb;
++				for (y = image_src->height; y; y--) {
++					for (x = 0; x < image_src->width; x++) {
++						dst[x] = src[x] & 0xFFFFFFFF;
 +					}
 +					dst += image_src->width;
 +					src += image_src->stride;
 +				}
 +			}
 +		} else {
-+			clone = (cairo_xynth_surface_t *) cairo_xynth_surface_create(image_src->depth, image_src->width, image_src->height, CAIRO_CONTENT_COLOR | CAIRO_CONTENT_ALPHA);
-+			if (clone->cairo.status) {
-+				return CAIRO_STATUS_NO_MEMORY;
-+			}
-+			{
-+				int x;
-+				int y;
-+				unsigned char *src = image_src->data;
-+				unsigned char *dst = clone->surface->vbuf;
-+				for (y = image_src->height; y; y--) {
-+					for (x = 0; x < image_src->width; x++) {
-+						dst[x] = src[x];
-+					}
-+					dst += image_src->width;
-+					src += image_src->stride;
-+				}
-+			}
-+//			s_putbox(clone->surface, 0, 0, image_src->width, image_src->height, image_src->data);
++			DEBUG("format: %d", image_src->format);
++			NIY();
 +		}
 +		*clone_out = &clone->cairo;
++		LEAVE();
 +		return CAIRO_STATUS_SUCCESS;
 +	}
 +	LEAVE();
 +	return CAIRO_INT_STATUS_UNSUPPORTED;
 +}
 +
-+static cairo_int_status_t _cairo_xynth_surface_composite (cairo_operator_t op, cairo_pattern_t *source, cairo_pattern_t *mask, void *abstract_surface, int src_x, int src_y, int mask_x, int mask_y, int dst_x, int dst_y, unsigned int width, unsigned int height)
++static cairo_int_status_t _cairo_xynth_surface_composite (cairo_operator_t operator, cairo_pattern_t *source, cairo_pattern_t *mask, void *abstract_surface, int src_x, int src_y, int mask_x, int mask_y, int dst_x, int dst_y, unsigned int width, unsigned int height)
 +{
-+	unsigned int surface_color;
-+	cairo_rectangle_int16_t extents;
++	S_RENDER_OPERATOR op;
++	cairo_int_status_t status;
++	cairo_xynth_surface_t *src = NULL;
++	cairo_xynth_surface_t *msk = NULL;
++	cairo_surface_attributes_t src_attr;
++	cairo_surface_attributes_t msk_attr;
 +	cairo_xynth_surface_t *surface = (cairo_xynth_surface_t *) abstract_surface;
 +	ENTER();
-+	_cairo_xynth_surface_render_operator(op);
-+	DEBUG("source pattern type: 0x%08x, extend :%d", source->type, cairo_pattern_get_extend(mask));
-+	if (_cairo_pattern_get_extents(source, &extents) == 0) {
-+		DEBUG("source: %d %d %d %d", extents.x, extents.y, extents.width, extents.height);
-+	}
-+	DEBUG("mask pattern type: 0x%08x, extend :%d", mask->type, cairo_pattern_get_extend(mask));
-+	if (_cairo_pattern_get_extents(mask, &extents) == 0) {
-+		DEBUG("mask: %d %d %d %d", extents.x, extents.y, extents.width, extents.height);
-+	}
-+	if (source) {
-+		if (cairo_pattern_get_type(source) == CAIRO_PATTERN_TYPE_SOLID) {
++	op = _cairo_xynth_surface_render_operator(operator);
++	status = _cairo_pattern_acquire_surfaces(source, mask,
++	                                         &surface->cairo,
++	                                         src_x, src_y,
++	                                         mask_x, mask_y,
++	                                         width, height,
++	                                         (cairo_surface_t **) &src,
++	                                         (cairo_surface_t **) &msk,
++	                                         &src_attr, &msk_attr);
++	DEBUG("status: %d", status);
++	DEBUG("src: %d %d [%d %d], dst: %d %d [%d %d], msk: %d %d [%d %d], offsets: %d %d, %d %d", src_x, src_y, width, height, dst_x, dst_y, width, height, mask_x, mask_y, width, height, (src) ? src_attr.x_offset : 0, (src) ? src_attr.y_offset : 0,  (msk) ? msk_attr.x_offset : 0, (msk) ? msk_attr.y_offset : 0);
++	DEBUG("src_attr->extend : 0x%08x", src_attr.extend);
++#if 1
++	if (source && src && src->render == NULL)
++	{
++		cairo_pattern_type_t ptype  = cairo_pattern_get_type(source);
++		if (ptype == CAIRO_PATTERN_TYPE_SOLID) {
 +			cairo_solid_pattern_t *pattern;
 +			pattern = (cairo_solid_pattern_t *) source;
 +			DEBUG("Source color: %d %d %d %d", pattern->color.red_short   >> 8,
 +			                                   pattern->color.green_short >> 8,
 +			                                   pattern->color.blue_short  >> 8,
 +			                                   pattern->color.alpha_short >> 8);
-+			surface_color = s_rgbcolor(surface->surface, pattern->color.red_short >> 8, pattern->color.green_short >> 8, pattern->color.blue_short >> 8);
-+		}
-+	}
-+	if (mask) {
-+		if (cairo_pattern_get_type(mask) == CAIRO_PATTERN_TYPE_SURFACE) {
-+			cairo_xynth_surface_t *src;
-+			cairo_surface_attributes_t src_attr;
-+			if (_cairo_pattern_acquire_surface(mask, &surface->cairo, extents.x, extents.y, extents.width, extents.height, (cairo_surface_t **) &src, &src_attr)) {
-+				DEBUG("ERROR");
++			if (s_render_init(&src->render, S_RENDER_TYPE_ARGB, surface->render->width, surface->render->height)) {
++				DEBUG("Error\n");
 +				exit(1);
 +			}
-+			DEBUG("src: %d %d [%d %d], dst: %d %d [%d %d], extents: %d %d %d %d", src_x, src_y, width, height, dst_x, dst_y, width, height, extents.x, extents.y, extents.width, extents.height); 
-+			s_fillboxmask(surface->surface, dst_x, dst_y, extents.width, extents.height, surface_color, src->surface->vbuf);
++			s_render_fill_rectangle(src->render, op, src_x, src_y, width, height, pattern->color.alpha_short >> 8, pattern->color.red_short >> 8, pattern->color.green_short >> 8, pattern->color.blue_short >> 8);
++		} else {
++//			DEBUG("%08x", ptype);
++//			NIY();
 +		}
 +	}
++#endif
++	if (src && src->render && msk && msk->render) {
++		DEBUG("");
++		s_render_putboxpartmask(surface->render, op,
++		                        src->render, msk->render,
++		                        dst_x, dst_y,
++		                        src_x + src_attr.x_offset, src_y + src_attr.y_offset,
++		                        mask_x + msk_attr.x_offset, mask_y + msk_attr.y_offset,
++		                        width, height);
++	} else if (src && src->render) {
++		DEBUG("");
++		s_render_putboxpartmask(surface->render, op,
++		                        src->render, NULL,
++		                        dst_x, dst_y,
++		                        src_x + src_attr.x_offset, src_y + src_attr.y_offset,
++		                        0, 0,
++		                        width, height);
++	} else if (msk && msk->render) {
++		NIY();
++	} else {
++		NIY();
++	}
++	if (!_cairo_operator_bounded_by_source(operator)) {
++		status = _cairo_surface_composite_fixup_unbounded(&surface->cairo,
++		                                                  &src_attr, src->render->width, src->render->height,
++		                                                  msk ? &msk_attr : NULL, msk ? msk->render->width : 0, msk ? msk->render->height : 0,
++		                                                  src_x, src_y, mask_x, mask_y, dst_x, dst_y, width, height);
++	}
 +	LEAVE();
-+	return 0;
++	return status;
 +}
 +
-+static cairo_int_status_t _cairo_xynth_surface_fill_rectangles (void *abstract_surface, cairo_operator_t op, const cairo_color_t *color, cairo_rectangle_int16_t *rects, int num_rects)
++static cairo_int_status_t _cairo_xynth_surface_fill_rectangles (void *abstract_surface, cairo_operator_t operator, const cairo_color_t *color, cairo_rectangle_int16_t *rects, int num_rects)
 +{
-+	unsigned int i;
-+	unsigned int surface_color;
++	int i;
++	S_RENDER_OPERATOR op;
 +	cairo_xynth_surface_t *surface = (cairo_xynth_surface_t *) abstract_surface;
 +	ENTER();
-+	_cairo_xynth_surface_render_operator(op);
-+	if (op == CAIRO_OPERATOR_CLEAR) {
-+	}
-+	if (op == CAIRO_OPERATOR_OVER) {
-+	}
-+	DEBUG("%d, %d, %d, %d", color->red_short >> 8, color->green_short >> 8, color->blue_short >> 8, color->alpha_short >> 8);
-+	surface_color = s_rgbcolor(surface->surface, color->red_short >> 8, color->green_short >> 8, color->blue_short >> 8);
++	op = _cairo_xynth_surface_render_operator(operator);
++	DEBUG("%d, %d, %d, %d", color->alpha_short >> 8, color->red_short >> 8, color->green_short >> 8, color->blue_short >> 8);
 +	for (i = 0; i < num_rects; i++) {
 +		DEBUG("rect[%d]: %d %d, %d %d", i, rects[i].x, rects[i].y, rects[i].width, rects[i].height); 
-+		s_fillbox(surface->surface, rects[i].x, rects[i].y, rects[i].width, rects[i].height, surface_color);
++		s_render_fill_rectangle(surface->render, op, rects[i].x, rects[i].y, rects[i].width, rects[i].height, color->alpha_short >> 8, color->red_short >> 8, color->green_short >> 8, color->blue_short >> 8);
 +	}
 +	LEAVE();
 +	return 0;
 +}
 +
-+static cairo_int_status_t _cairo_xynth_surface_composite_trapezoids (cairo_operator_t op, cairo_pattern_t *pattern, void *dst, cairo_antialias_t antialias, int src_x, int src_y, int dst_x, int dst_y, unsigned int width, unsigned int height, cairo_trapezoid_t *traps, int num_traps)
++static cairo_int_status_t _cairo_xynth_surface_composite_trapezoids (cairo_operator_t operator, cairo_pattern_t *source, void *abstract_surface, cairo_antialias_t antialias, int src_x, int src_y, int dst_x, int dst_y, unsigned int width, unsigned int height, cairo_trapezoid_t *traps, int num_traps)
 +{
++	int i;
++	int x;
++	int y;
++	int w;
++	int h;
++	S_RENDER_OPERATOR op;
++	cairo_int_status_t status;
++	pixman_region16_t *region;
++	cairo_xynth_surface_t *src = NULL;
++	cairo_surface_attributes_t src_attr;
++	cairo_xynth_surface_t *surface = (cairo_xynth_surface_t *) abstract_surface;
 +	ENTER();
-+	NIY();
++	op = _cairo_xynth_surface_render_operator(operator);
++	region = pixman_region_create();
++	for (i = 0; i < num_traps; i++) {
++		x = _cairo_fixed_integer_part(traps[i].left.p1.x);
++		y = _cairo_fixed_integer_part(traps[i].top);
++		w = _cairo_fixed_integer_part(traps[i].right.p1.x) - x;
++		h = _cairo_fixed_integer_part(traps[i].bottom) - y;
++		printf("%d: %d %d %d %d\n", i, x, y, w, h);
++		if (w == 0 || h == 0) {
++			continue;
++		}
++		if (pixman_region_union_rect(region, region, x, y, w, h) != PIXMAN_REGION_STATUS_SUCCESS) {
++			pixman_region_destroy(region);
++			DEBUG("CAIRO_STATUS_NO_MEMORY");
++			return CAIRO_STATUS_NO_MEMORY;
++		}
++	}
++	{
++		cairo_pattern_type_t ptype  = cairo_pattern_get_type(source);
++		DEBUG("ptype: %d", ptype);
++		if (ptype == CAIRO_PATTERN_TYPE_SOLID) {
++			cairo_solid_pattern_t *pattern;
++			pattern = (cairo_solid_pattern_t *) source;
++			DEBUG("Source color: %d %d %d %d", pattern->color.red_short   >> 8,
++			                                   pattern->color.green_short >> 8,
++			                                   pattern->color.blue_short  >> 8,
++			                                   pattern->color.alpha_short >> 8);
++		}
++	}
++	DEBUG("surface: %d %d, src: %d %d, dst: %d %d", surface->render->width, surface->render->height, src_x, src_y, dst_x, dst_y);
++	printf("antialias: %d\n", antialias);
++	pixman_region_destroy(region);
++	status = _cairo_pattern_acquire_surface(source, &surface->cairo, src_x, src_y, width, height, (cairo_surface_t **) &src, &src_attr);
++	DEBUG("surface: %d %d, src: %d %d, (%d %d)", surface->render->width, surface->render->height, src->render->width, src->render->height, width, height);
++	DEBUG("src_attr->extend : 0x%08x", src_attr.extend);
++	s_render_fill_rectangle(surface->render, 0, 0, 0, surface->render->width, surface->render->height, 255, 255, 255, 255);
++	if (!_cairo_operator_bounded_by_mask(operator)) {
++		printf("%d\n", op);
++		status = _cairo_surface_composite_shape_fixup_unbounded(&surface->cairo,
++								 &src_attr, src->render->width, src->render->height,
++								 width, height,
++								 src_x, src_y,
++								 0, 0,
++								 dst_x, dst_y, width, height);
++	}
++	//NIY();
++	//_cairo_pattern_release_surface(source, &src->cairo, &src_attr);
 +	LEAVE();
 +	return 0;
 +}
@@ -452,14 +684,34 @@ diff -Naur cairo-1.4.2/src/cairo-xynth-surface.c cairo-1.4.2-xynth/src/cairo-xyn
 +{
 +	cairo_xynth_surface_t *surface = (cairo_xynth_surface_t *) abstract_surface;
 +	ENTER();
-+	while (!s_list_eol(surface->clips, 0)) {
-+		s_rect_t *rect = (s_rect_t *) s_list_get(surface->clips, 0);
-+		s_list_remove(surface->clips, 0);
-+		free(rect);
++	if (region == NULL) {
++		s_render_set_clip_region(surface->render, 0, NULL);
++	} else {
++		int i = 0;
++		int nboxes = 0;
++		s_rect_t *rects = NULL;
++		pixman_box16_t *boxes = NULL;
++		nboxes = pixman_region_num_rects(region);
++		if (nboxes > 0) {
++			rects = malloc(sizeof(s_rect_t) * nboxes);
++			if (rects == NULL) {
++				return CAIRO_STATUS_NO_MEMORY;
++			}
++		} else {
++			nboxes = 0;
++			rects = NULL;
++		}
++		boxes = pixman_region_rects(region);
++		for (i = 0; i < nboxes; i++) {
++			rects[i].x = boxes[i].x1;
++			rects[i].y = boxes[i].y1;
++			rects[i].w = boxes[i].x2 - boxes[i].x1;
++			rects[i].h = boxes[i].y2 - boxes[i].y1;
++		}
++		s_render_set_clip_region(surface->render, nboxes, rects);
 +	}
-+	NIY();
 +	LEAVE();
-+	return 0;
++	return CAIRO_STATUS_SUCCESS;
 +}
 +
 +static cairo_int_status_t _cairo_xynth_surface_intersect_clip_path (void *dst, cairo_path_fixed_t *path, cairo_fill_rule_t fill_rule, double tolerance, cairo_antialias_t antialias)
@@ -477,8 +729,8 @@ diff -Naur cairo-1.4.2/src/cairo-xynth-surface.c cairo-1.4.2-xynth/src/cairo-xyn
 +	if (rectangle) {
 +		rectangle->x = 0;
 +		rectangle->y = 0;
-+		rectangle->width = surface->surface->width;
-+		rectangle->height = surface->surface->height;
++		rectangle->width = surface->render->width;
++		rectangle->height = surface->render->height;
 +	}
 +	LEAVE();
 +	return CAIRO_STATUS_SUCCESS;
@@ -529,7 +781,7 @@ diff -Naur cairo-1.4.2/src/cairo-xynth-surface.c cairo-1.4.2-xynth/src/cairo-xyn
 +	LEAVE();
 +}
 +
-+static cairo_int_status_t _cairo_xynth_surface_paint (void *surface, cairo_operator_t op, cairo_pattern_t *source)
++static cairo_int_status_t _cairo_xynth_surface_paint (void *abstract_surface, cairo_operator_t operator, cairo_pattern_t *source)
 +{
 +	ENTER();
 +	NIY();
@@ -539,43 +791,13 @@ diff -Naur cairo-1.4.2/src/cairo-xynth-surface.c cairo-1.4.2-xynth/src/cairo-xyn
 +
 +static cairo_int_status_t _cairo_xynth_surface_mask (void *abstract_surface, cairo_operator_t op, cairo_pattern_t *source, cairo_pattern_t *mask)
 +{
-+	cairo_rectangle_int16_t extents;
-+	cairo_xynth_surface_t *surface = (cairo_xynth_surface_t *) abstract_surface;
 +	ENTER();
-+	_cairo_xynth_surface_render_operator(op);
-+	DEBUG("source pattern type: 0x%08x, extend :%d", source->type, cairo_pattern_get_extend(mask));
-+	if (_cairo_pattern_get_extents(source, &extents) == 0) {
-+		DEBUG("source: %d %d %d %d", extents.x, extents.y, extents.width, extents.height);
-+	}
-+	DEBUG("mask pattern type: 0x%08x, extend :%d", mask->type, cairo_pattern_get_extend(mask));
-+	if (_cairo_pattern_get_extents(mask, &extents) == 0) {
-+		DEBUG("mask: %d %d %d %d", extents.x, extents.y, extents.width, extents.height);
-+	}
-+	if (source) {
-+		if (cairo_pattern_get_type(source) == CAIRO_PATTERN_TYPE_SOLID) {
-+			cairo_solid_pattern_t *pattern;
-+			pattern = (cairo_solid_pattern_t *) source;
-+			DEBUG("Source color: %d %d %d %d", pattern->color.red_short   >> 8,
-+			                                   pattern->color.green_short >> 8,
-+			                                   pattern->color.blue_short  >> 8,
-+			                                   pattern->color.alpha_short >> 8);
-+		}
-+	}
-+	if (mask) {
-+		if (cairo_pattern_get_type(mask) == CAIRO_PATTERN_TYPE_SURFACE) {
-+			cairo_xynth_surface_t *src;
-+			cairo_surface_attributes_t src_attr;
-+			if (_cairo_pattern_acquire_surface(mask, &surface->cairo, extents.x, extents.y, extents.width, extents.height, (cairo_surface_t **) &src, &src_attr)) {
-+				DEBUG("ERROR");
-+				exit(1);
-+			}
-+		}
-+	}
++	NIY();
 +	LEAVE();
 +	return 0;
 +}
 +
-+static cairo_int_status_t _cairo_xynth_surface_stroke (void *surface, cairo_operator_t op, cairo_pattern_t *source, cairo_path_fixed_t *path, cairo_stroke_style_t *style, cairo_matrix_t *ctm, cairo_matrix_t *ctm_inverse, double tolerance, cairo_antialias_t antialias)
++static cairo_int_status_t _cairo_xynth_surface_stroke (void *abstract_surface, cairo_operator_t op, cairo_pattern_t *source, cairo_path_fixed_t *path, cairo_stroke_style_t *style, cairo_matrix_t *ctm, cairo_matrix_t *ctm_inverse, double tolerance, cairo_antialias_t antialias)
 +{
 +	ENTER();
 +	NIY();
@@ -609,7 +831,7 @@ diff -Naur cairo-1.4.2/src/cairo-xynth-surface.c cairo-1.4.2-xynth/src/cairo-xyn
 +
 +static cairo_surface_backend_t cairo_xynth_surface_backend = {
 +	CAIRO_SURFACE_TYPE_XYNTH,
-+	_cairo_xynth_surface_create_similar,
++	NULL, //_cairo_xynth_surface_create_similar,
 +	_cairo_xynth_surface_finish,
 +	_cairo_xynth_surface_acquire_source_image,
 +	_cairo_xynth_surface_release_source_image,
@@ -618,27 +840,27 @@ diff -Naur cairo-1.4.2/src/cairo-xynth-surface.c cairo-1.4.2-xynth/src/cairo-xyn
 +	_cairo_xynth_surface_clone_similar,
 +	_cairo_xynth_surface_composite,
 +	_cairo_xynth_surface_fill_rectangles,
-+	_cairo_xynth_surface_composite_trapezoids,
-+	_cairo_xynth_surface_copy_page,
-+	_cairo_xynth_surface_show_page,
++	NULL, //_cairo_xynth_surface_composite_trapezoids,
++	NULL, //_cairo_xynth_surface_copy_page,
++	NULL, //_cairo_xynth_surface_show_page,
 +	_cairo_xynth_surface_set_clip_region,
 +	NULL, //_cairo_xynth_surface_intersect_clip_path,
 +	_cairo_xynth_surface_get_extents,
 +	NULL, //_cairo_xynth_surface_old_show_glyphs,
 +	NULL, //_cairo_xynth_surface_get_font_options,
 +	NULL, //_cairo_xynth_surface_flush,
-+	_cairo_xynth_surface_mark_dirty_rectangle,
++	NULL, //_cairo_xynth_surface_mark_dirty_rectangle,
 +	_cairo_xynth_surface_scaled_font_fini,
 +	_cairo_xynth_surface_scaled_glyph_fini,
 +	NULL, //_cairo_xynth_surface_paint,
 +	NULL, //_cairo_xynth_surface_mask,
-+	_cairo_xynth_surface_stroke,
++	NULL, //_cairo_xynth_surface_stroke,
 +	NULL, //_cairo_xynth_surface_fill,
 +	NULL, //_cairo_xynth_surface_show_glyphs,
 +	_cairo_xynth_surface_snapshot,
 +};
 +
-+cairo_surface_t * cairo_xynth_surface_create (unsigned int bitsperpixel, unsigned int width, unsigned int height, cairo_content_t content)
++cairo_surface_t * cairo_xynth_surface_create (unsigned int width, unsigned int height, cairo_content_t content)
 +{
 +	cairo_xynth_surface_t *surface;
 +	surface = (cairo_xynth_surface_t *) malloc(sizeof(cairo_xynth_surface_t));
@@ -646,44 +868,23 @@ diff -Naur cairo-1.4.2/src/cairo-xynth-surface.c cairo-1.4.2-xynth/src/cairo-xyn
 +		goto err0;
 +	}
 +	memset(surface, 0, sizeof(cairo_xynth_surface_t));
-+	if (s_list_init(&(surface->clips))) {
++	if (s_render_init(&(surface->render), _cairo_xynth_surface_render_type(content), width, height)) {
 +		goto err1;
-+	}
-+	surface->surface = (s_surface_t *) malloc(sizeof(s_surface_t));
-+	if (surface->surface == NULL) {
-+		goto err2;
-+	}
-+	memset(surface->surface, 0, sizeof(s_surface_t));
-+	s_getsurfacevirtual(surface->surface, width, height, bitsperpixel, NULL);
-+	if (content & CAIRO_CONTENT_COLOR) {
-+		surface->surface->vbuf = (unsigned char *) malloc(width * height * surface->surface->bytesperpixel * sizeof(char));
-+		if (surface->surface->vbuf == NULL) {
-+			goto err3;
-+		}
-+	}
-+	if (content & CAIRO_CONTENT_ALPHA) {
-+		surface->surface->matrix = (unsigned char *) malloc(width * height * sizeof(unsigned char));
-+		if (surface->surface->matrix == NULL) {
-+			goto err4;
-+		}
 +	}
 +	_cairo_surface_init(&surface->cairo, &cairo_xynth_surface_backend, content);
 +	return &(surface->cairo);
-+err4:	free(surface->surface->matrix);
-+err3:	free(surface->surface->vbuf);
-+err2:	free(surface->surface);
 +err1:	free(surface);
 +err0:	return NULL;
 +}
 diff -Naur cairo-1.4.2/src/cairo-xynth.h cairo-1.4.2-xynth/src/cairo-xynth.h
 --- cairo-1.4.2/src/cairo-xynth.h	1970-01-01 02:00:00.000000000 +0200
-+++ cairo-1.4.2-xynth/src/cairo-xynth.h	2007-03-20 18:01:56.000000000 +0200
++++ cairo-1.4.2-xynth/src/cairo-xynth.h	2007-03-26 12:00:10.000000000 +0300
 @@ -0,0 +1,2 @@
 +
-+cairo_surface_t * cairo_xynth_surface_create (unsigned int bitsperpixel, unsigned int width, unsigned int height, cairo_content_t content);
++cairo_surface_t * cairo_xynth_surface_create (unsigned int width, unsigned int height, cairo_content_t content);
 diff -Naur cairo-1.4.2/src/cairo.h cairo-1.4.2-xynth/src/cairo.h
 --- cairo-1.4.2/src/cairo.h	2007-03-19 22:08:04.000000000 +0200
-+++ cairo-1.4.2-xynth/src/cairo.h	2007-03-20 16:42:35.000000000 +0200
++++ cairo-1.4.2-xynth/src/cairo.h	2007-03-22 17:41:17.000000000 +0200
 @@ -1435,6 +1435,7 @@
   * @CAIRO_SURFACE_TYPE_DIRECTFB: The surface is of type directfb
   * @CAIRO_SURFACE_TYPE_SVG: The surface is of type svg
@@ -702,9 +903,21 @@ diff -Naur cairo-1.4.2/src/cairo.h cairo-1.4.2-xynth/src/cairo.h
  } cairo_surface_type_t;
  
  cairo_public cairo_surface_type_t
+diff -Naur cairo-1.4.2/test/buffer-diff.c cairo-1.4.2-xynth/test/buffer-diff.c
+--- cairo-1.4.2/test/buffer-diff.c	2007-03-19 22:08:04.000000000 +0200
++++ cairo-1.4.2-xynth/test/buffer-diff.c	2007-03-23 21:12:27.000000000 +0200
+@@ -149,6 +149,8 @@
+     cairo_test_log ("%d pixels differ (with maximum difference of %d) from reference image\n",
+ 		    result->pixels_changed, result->max_diff);
+ 
++    return;
++
+     /* Then, if there are any different pixels, we give the pdiff code
+      * a crack at the images. If it decides that there are no visually
+      * discernible differences in any pixels, then we accept this
 diff -Naur cairo-1.4.2/test/get-clip.c cairo-1.4.2-xynth/test/get-clip.c
 --- cairo-1.4.2/test/get-clip.c	2007-03-19 22:08:04.000000000 +0200
-+++ cairo-1.4.2-xynth/test/get-clip.c	2007-03-20 16:42:35.000000000 +0200
++++ cairo-1.4.2-xynth/test/get-clip.c	2007-03-22 17:41:17.000000000 +0200
 @@ -138,6 +138,7 @@
      case CAIRO_SURFACE_TYPE_WIN32:
      case CAIRO_SURFACE_TYPE_BEOS:
