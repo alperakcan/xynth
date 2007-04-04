@@ -2434,35 +2434,84 @@ void s_surface_changed (s_window_t *window, s_rect_t *changed);
 /* render.c */
 
 typedef enum S_RENDER_TYPE {
-	S_RENDER_TYPE_RGB,
-	S_RENDER_TYPE_ARGB,
-	S_RENDER_TYPE_ALPHA,
+	S_RENDER_TYPE_NONE  = 0x00,
+	S_RENDER_TYPE_RGB   = 0x01,
+	S_RENDER_TYPE_ARGB  = 0x02,
+	S_RENDER_TYPE_ALPHA = 0x03,
+	S_RENDER_TYPE_MASK  = 0x0f,
 } S_RENDER_TYPE;
 
+typedef enum S_RENDER_REPEAT {
+	S_RENDER_REPEAT_NONE = 0x00,
+	S_RENDER_REPEAT_TILE = 0x01,
+	S_RENDER_REPEAT_MASK = 0x0f,
+} S_RENDER_REPEAT;
+
 typedef enum S_RENDER_OPERATOR {
-	S_RENDER_OPERATOR_CLEAR,
-	S_RENDER_OPERATOR_SOURCE,
-	S_RENDER_OPERATOR_SOURCE_OVER,
+	S_RENDER_OPERATOR_NONE       = 0x00,
+	S_RENDER_OPERATOR_CLEAR      = 0x01,
+	S_RENDER_OPERATOR_SOURCE     = 0x02,
+	S_RENDER_OPERATOR_OVER       = 0x03,
+	S_RENDER_OPERATOR_IN_REVERSE = 0x04,
+	S_RENDER_OPERATOR_MASK       = 0x0f,
 } S_RENDER_OPERATOR;
+
+typedef struct s_render_color_s {
+	double alpha;
+	double red;
+	double green;
+	double blue;
+} s_render_color_t;
 
 typedef struct s_render_s {
 	S_RENDER_TYPE type;
+	S_RENDER_REPEAT repeat;
+	unsigned int width;
+	unsigned int height;
+	s_render_color_t *colors;
+	s_list_t *clips;
+	s_rect_t clip;
+} s_render_t;
+
+typedef struct s_bitmap_s {
+	unsigned int bitsperpixel;
+	unsigned int bytesperpixel;
 	unsigned int width;
 	unsigned int height;
 	unsigned int stride;
-	unsigned int *argb;
-	s_list_t *clips;
-	s_rect_t clip;
-	void *data;
-} s_render_t;
+	unsigned int alpha_mask;
+	unsigned int red_mask;
+	unsigned int green_mask;
+	unsigned int blue_mask;
+	void *bitmap;
+} s_bitmap_t;
 
+int s_render_color_init (s_render_color_t **color);
+int s_render_color_uninit (s_render_color_t *color);
+int s_render_set_repeat (s_render_t *render, S_RENDER_REPEAT repeat);
+int s_render_color_rgba (s_render_color_t *color, double alpha, double red, double green, double blue);
 int s_render_init (s_render_t **render, S_RENDER_TYPE type, unsigned int width, unsigned int height);
 int s_render_uninit (s_render_t *render);
 int s_render_set_clip_region (s_render_t *render, int nrects, s_rect_t *rects);
-int s_render_fill_rectangle (s_render_t *render, S_RENDER_OPERATOR operator, int x, int y, int width, int height, unsigned char alpha, unsigned char red, unsigned char green, unsigned char blue);
-int s_render_getbox (s_render_t *render, s_render_t **dest, int x, int y, int width, int height);
-int s_render_putbox (s_render_t *render, S_RENDER_OPERATOR operator, s_render_t *source, int x, int y);
-int s_render_putboxpartmask (s_render_t *render, S_RENDER_OPERATOR operator, s_render_t *source, s_render_t *mask, int dst_x, int dst_y, int src_x, int src_y, int mask_x, int mask_y, int width, int height);
+int s_render_fill_rectangle (s_render_t *render, S_RENDER_OPERATOR operator, s_render_color_t *color, int x, int y, int width, int height);
+int s_render_fill_rectangles (s_render_t *render, S_RENDER_OPERATOR operator, s_render_color_t *color, int nrects, s_rect_t *rects);
+int s_render_composite (s_render_t *render, S_RENDER_OPERATOR operator, s_render_t *source, s_render_t *mask,
+                        int dst_x, int dst_y, int src_x, int src_y, int mask_x, int mask_y,
+                        int width, int heigt);
+int s_bitmap_init (s_bitmap_t **bitmap,
+                   unsigned int bitsperpixel,
+                   unsigned int width, unsigned int height, unsigned int stride,
+                   unsigned int alpha_mask, unsigned int red_mask,
+                   unsigned int green_mask, unsigned int blue_mask);
+int s_bitmap_uninit (s_bitmap_t *bitmap);
+int s_bitmap_init_from_data (s_bitmap_t **bitmap,
+                             unsigned int bitsperpixel,
+                             unsigned int width, unsigned int height, unsigned int stride,
+                             unsigned int alpha_mask, unsigned int red_mask,
+                             unsigned int green_mask, unsigned int blue_mask,
+                             void *data);
+int s_render_from_bitmap (s_render_t **render, s_bitmap_t *bitmap);
+int s_bitmap_from_render (s_bitmap_t **bitmap, s_render_t *render);
 
 /** @defgroup client_thread Client Library - Thread API
   * @brief s_thread_* api is an abstract layer for system calls.
