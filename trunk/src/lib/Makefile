@@ -2,7 +2,7 @@
 include ../../Makefile.cfg
 include ../../Makefile.parse
 
-INCDIR += ./libz ./libpng ./freetype2/include ./expat
+INCDIR += ./libz ./libpng ./freetype2/include ./expat ./pixman
 
 OBJS = alloc.o child.o config.o debug.o driver.o event.o eventq.o font.o \
        gettext.o gettime.o grlib.o handler.o hashtable.o image.o image_gif.o \
@@ -25,6 +25,12 @@ OBJS += freetype2/ftbase.o freetype2/ftbitmap.o freetype2/ftdebug.o freetype2/ft
 
 CFLAGS += -DHAVE_EXPAT_CONFIG_H
 OBJS += expat/xmlparse.o expat/xmltok.o expat/xmlrole.o
+
+CFLAGS += -DHAVE_CONFIG_H
+OBJS += pixman/fbcompose.o pixman/fbedge.o pixman/fbpict.o pixman/fbtrap.o pixman/icblt.o \
+        pixman/icbltone.o pixman/iccolor.o pixman/icformat.o pixman/icimage.o \
+        pixman/icpixels.o pixman/icrect.o pixman/icstipple.o pixman/ictransform.o \
+        pixman/ictrap.o pixman/ictri.o pixman/icutil.o pixman/pixregion.o pixman/renderedge.o
 
 TARGET_A-$(PLATFORM_LINUX)  = libxynth.a
 TARGET_SO-$(PLATFORM_LINUX) = libxynth.so
