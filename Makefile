@@ -11,6 +11,7 @@ clean:
 	$(MAKE) clean -C src
 	$(MAKE) clean -C tools/theme
 	$(MAKE) clean -C tools/optimize
+	rm -f xynth.pc
 	rm -rf dist
 	rm -rf doc
 
