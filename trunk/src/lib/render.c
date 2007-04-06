@@ -69,8 +69,6 @@ err3:
 err2:	free(rnd->pixman);	
 err1:	free(rnd);
 err0:	*render = NULL;
-	printf("ALPER\n");
-	exit(0);
 	return -1;
 }
 
@@ -100,6 +98,7 @@ int s_render_init_for_data (s_render_t **render, unsigned char *data, S_RENDER_F
 	if (rnd->pixman->pixman_image == NULL) {
 		goto err3;
 	}
+	rnd->format = render_format;
 	rnd->data = (unsigned char *) s_render_pixman_image_get_data(rnd->pixman->pixman_image);
 	rnd->width = s_render_pixman_image_get_width(rnd->pixman->pixman_image);
 	rnd->height = s_render_pixman_image_get_height(rnd->pixman->pixman_image);
@@ -112,8 +111,6 @@ err3:
 err2:	free(rnd->pixman);	
 err1:	free(rnd);
 err0:	*render = NULL;
-	printf("ALPER\n");
-	exit(0);
 	return -1;
 }
 
