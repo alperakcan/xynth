@@ -916,6 +916,15 @@ pixman_set_extents (pixman_region16_t *region)
     assert(region->extents.x1 < region->extents.x2);
 }
 
+pixman_region_status_t pixman_region_addrect (pixman_region16_t *region, int x1, int y1, int x2, int y2)
+{
+	pixman_box16_t *pNextRect;
+	pNextRect = PIXREGION_TOP(region);
+	NEWRECT(region, pNextRect, x1, y1, x2, y2);
+	pixman_set_extents(region);
+	return PIXMAN_REGION_STATUS_SUCCESS;
+}
+
 /*======================================================================
  *	    Region Intersection
  *====================================================================*/
