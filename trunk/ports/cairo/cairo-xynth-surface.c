@@ -327,9 +327,7 @@ static cairo_int_status_t _cairo_xynth_surface_composite (cairo_operator_t cairo
 		                                                  dst_x, dst_y,
 		                                                  width, height);
 	}
-
- out:
- 	if (mask) {
+ out: 	if (mask) {
  		_cairo_pattern_release_surface(mask_pattern, &mask->cairo, &mask_attr);
  	}
  	_cairo_pattern_release_surface(src_pattern, &src->cairo, &src_attr);
@@ -376,8 +374,33 @@ static cairo_int_status_t _cairo_xynth_surface_composite_trapezoids (cairo_opera
 
 static cairo_int_status_t _cairo_xynth_surface_set_clip_region (void *abstract_surface, pixman_region16_t *region)
 {
+	int i;
+	int nboxes;
+	pixman_box16_t *boxes;
+	s_rect_t *render_rects;
+	cairo_xynth_surface_t *surface;
 	ENTER();
-	NIY();
+	surface = (cairo_xynth_surface_t *) abstract_surface;
+	nboxes = pixman_region_num_rects(region);
+	if (nboxes > 0) {
+		render_rects = (s_rect_t *) malloc(sizeof(s_rect_t) *nboxes);
+		if (render_rects == NULL) {
+			LEAVE();
+			return CAIRO_STATUS_NO_MEMORY;
+		}
+	} else {
+		nboxes = 0;
+		render_rects = NULL;
+	}
+	boxes = pixman_region_rects(region);
+	for (i = 0; i < nboxes; i++) {
+		render_rects[i].x = boxes[i].x1;
+		render_rects[i].y = boxes[i].y1;
+		render_rects[i].w = boxes[i].x2 - boxes[i].x1;
+		render_rects[i].h = boxes[i].y2 - boxes[i].y1;
+	}
+	s_render_set_clip(surface->render, nboxes, render_rects);
+	free(render_rects);
 	LEAVE();
 	return CAIRO_STATUS_SUCCESS;
 }
@@ -462,7 +485,7 @@ cairo_surface_t * cairo_xynth_surface_create_with_content (cairo_content_t conte
 {
 	cairo_surface_t *surface;
 	ENTER();
-	if (! CAIRO_CONTENT_VALID(content)) {
+	if (!CAIRO_CONTENT_VALID(content)) {
 		surface = NULL;
 	} else {
 		surface = cairo_xynth_surface_create( width, height, _cairo_format_from_content(content));
