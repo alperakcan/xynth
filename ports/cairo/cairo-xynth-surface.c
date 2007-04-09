@@ -364,11 +364,105 @@ static cairo_int_status_t _cairo_xynth_surface_fill_rectangles (void *abstract_s
 	return CAIRO_STATUS_SUCCESS;
 }
 
-static cairo_int_status_t _cairo_xynth_surface_composite_trapezoids (cairo_operator_t operator, cairo_pattern_t *source, void *abstract_surface, cairo_antialias_t antialias, int src_x, int src_y, int dst_x, int dst_y, unsigned int width, unsigned int height, cairo_trapezoid_t *traps, int num_traps)
+static cairo_int_status_t _cairo_xynth_surface_composite_trapezoids (cairo_operator_t cairo_operator, cairo_pattern_t *pattern, void *abstract_surface, cairo_antialias_t antialias, int src_x, int src_y, int dst_x, int dst_y, unsigned int width, unsigned int height, cairo_trapezoid_t *traps, int num_traps)
 {
+	int i;
+	int mask_bpp;
+	int mask_stride;
+	s_render_t *mask;
+	unsigned char *mask_data;
+	cairo_int_status_t status;
+	cairo_xynth_surface_t *src;
+	cairo_xynth_surface_t *dst;
+	s_render_trap_t *render_traps;
+	S_RENDER_FORMAT render_format;
+	cairo_surface_attributes_t attributes;
 	ENTER();
-	NIY();
-	LEAVE();
+	dst = (cairo_xynth_surface_t *) abstract_surface;
+	if (num_traps > 0) {
+		render_traps = (s_render_trap_t *) malloc(sizeof(s_render_trap_t) * num_traps);
+		if (render_traps == NULL) {
+			LEAVE();
+			status = CAIRO_STATUS_NO_MEMORY;
+			goto out0;
+		} 
+	} else {
+		num_traps = 0;
+		render_traps = NULL;
+	}
+	for (i = 0; i < num_traps; i++) {
+		render_traps[i].top = traps[i].top;
+		render_traps[i].bottom = traps[i].bottom;
+		render_traps[i].left1x = traps[i].left.p1.x;
+		render_traps[i].left2x = traps[i].left.p2.x;
+		render_traps[i].right1x = traps[i].right.p1.x;
+		render_traps[i].right2x = traps[i].right.p2.x;
+		render_traps[i].left1y = traps[i].left.p1.y;
+		render_traps[i].left2y = traps[i].left.p2.y;
+		render_traps[i].right1y = traps[i].right.p1.y;
+		render_traps[i].right2y = traps[i].right.p2.y;
+	}
+	if (cairo_operator == CAIRO_OPERATOR_ADD &&
+	    _cairo_pattern_is_opaque_solid (pattern) &&
+	    dst->cairo.content == CAIRO_CONTENT_ALPHA &&
+	    !dst->render->has_clip &&
+	    antialias != CAIRO_ANTIALIAS_NONE) {
+		s_render_add_trapezoid(dst->render, 0, 0, num_traps, render_traps);
+	    	free(render_traps);
+	    	return CAIRO_STATUS_SUCCESS;
+	}
+	status = _cairo_pattern_acquire_surface(pattern, &dst->cairo, src_x, src_y, width, height, (cairo_surface_t **) &src, &attributes);
+	if (status) {
+		goto out1;
+	}
+	status = _cairo_xynth_surface_set_attributes(src, &attributes);
+	if (status) {
+		goto out2;
+	}
+	switch (antialias) {
+		case CAIRO_ANTIALIAS_NONE:
+			render_format = S_RENDER_FORMAT_A1;
+			mask_stride = (width + 31) / 8;
+			mask_bpp = 1;
+			break;
+		case CAIRO_ANTIALIAS_GRAY:
+		case CAIRO_ANTIALIAS_SUBPIXEL:
+		case CAIRO_ANTIALIAS_DEFAULT:
+		default:
+			render_format = S_RENDER_FORMAT_A8;
+			mask_stride = (width + 3) & ~3;
+			mask_bpp = 8;
+			break;
+	}
+	mask_data = calloc(1, mask_stride * height);
+	if (!mask_data) {
+		status = CAIRO_STATUS_NO_MEMORY;
+		goto out3;
+	}
+	s_render_init_for_data(&mask, mask_data, render_format, width, height, mask_bpp, mask_stride);
+	s_render_add_trapezoid(mask, - dst_x, - dst_y, num_traps, render_traps);
+	s_render_composite(_cairo_xynth_operator(cairo_operator),
+	                   src->render,
+	                   mask,
+	                   dst->render,
+	                   src_x + attributes.x_offset,
+	                   src_y + attributes.y_offset,
+	                   0, 0,
+	                   dst_x, dst_y,
+	                   width, height);
+	if (!_cairo_operator_bounded_by_mask(cairo_operator)) {
+		status = _cairo_surface_composite_shape_fixup_unbounded(&dst->cairo,
+		                                                        &attributes, src->render->width, src->render->height,
+		                                                        width, height,
+		                                                        src_x, src_y,
+		                                                        0, 0,
+		                                                        dst_x, dst_y, width, height);
+	}
+	s_render_uninit(mask);
+out3:	free(mask_data);
+out2:	_cairo_pattern_release_surface(pattern, &src->cairo, &attributes);
+out1:	free(render_traps);
+out0:	LEAVE();
 	return 0;
 }
 
@@ -383,7 +477,7 @@ static cairo_int_status_t _cairo_xynth_surface_set_clip_region (void *abstract_s
 	surface = (cairo_xynth_surface_t *) abstract_surface;
 	nboxes = pixman_region_num_rects(region);
 	if (nboxes > 0) {
-		render_rects = (s_rect_t *) malloc(sizeof(s_rect_t) *nboxes);
+		render_rects = (s_rect_t *) malloc(sizeof(s_rect_t) * nboxes);
 		if (render_rects == NULL) {
 			LEAVE();
 			return CAIRO_STATUS_NO_MEMORY;
