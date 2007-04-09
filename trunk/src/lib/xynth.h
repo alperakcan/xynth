@@ -2433,6 +2433,7 @@ void s_surface_changed (s_window_t *window, s_rect_t *changed);
 
 /* render.c */
 typedef struct s_render_s s_render_t;
+typedef struct s_render_trap_s s_render_trap_t;
 typedef struct s_render_color_s s_render_color_t;
 typedef struct s_render_matrix_s s_render_matrix_t;
 typedef struct s_render_pixman_s s_render_pixman_t;
@@ -2490,6 +2491,15 @@ struct s_render_matrix_s {
 	unsigned int matrix[3][3];
 };
 
+struct s_render_trap_s {
+	int top;
+	int bottom;
+	int left1;
+	int left2;
+	int right1;
+	int right2;
+};
+
 struct s_render_s {
 	S_RENDER_FORMAT format;
 	int width;
@@ -2507,6 +2517,7 @@ int s_render_init_for_data (s_render_t **render, unsigned char *data, S_RENDER_F
 int s_render_set_filter (s_render_t *render, S_RENDER_FILTER filter);
 int s_render_set_repeat (s_render_t *render, S_RENDER_REPEAT repeat);
 int s_render_set_transform_matrix (s_render_t *render, s_render_matrix_t *matrix);
+int s_render_add_trapezoid (s_render_t *render, int ntraps, s_render_trap_t *traps);
 int s_render_set_clip (s_render_t *render, int nrects, s_rect_t *rects);
 int s_render_fill_rectangles (S_RENDER_OPERATOR operator, s_render_t *render, s_render_color_t *color, int nrects, s_rect_t *rects);
 int s_render_composite (S_RENDER_OPERATOR operator, s_render_t *source, s_render_t *mask, s_render_t *dest, int src_x, int src_y, int mask_x, int mask_y, int dest_x, int dest_y, int width, int height);

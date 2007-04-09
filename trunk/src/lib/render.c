@@ -209,6 +209,11 @@ int s_render_set_transform_matrix (s_render_t *render, s_render_matrix_t *matrix
 	return 0;
 }
 
+int s_render_add_trapezoid (s_render_t *render, int ntraps, s_render_trap_t *traps)
+{
+	return -1;
+}
+
 pixman_region_status_t pixman_region_addrect (pixman_region16_t *region, int x1, int y1, int x2, int y2);
 int s_render_set_clip (s_render_t *render, int nrects, s_rect_t *rects)
 {
