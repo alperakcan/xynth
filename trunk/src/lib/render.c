@@ -209,6 +209,23 @@ int s_render_set_transform_matrix (s_render_t *render, s_render_matrix_t *matrix
 	return 0;
 }
 
+pixman_region_status_t pixman_region_addrect (pixman_region16_t *region, int x1, int y1, int x2, int y2);
+int s_render_set_clip (s_render_t *render, int nrects, s_rect_t *rects)
+{
+	int i;
+	pixman_region16_t *pixman_region;
+	pixman_region = pixman_region_create();
+	if (pixman_region == NULL) {
+		return -1;
+	}
+	for (i = 0; i < nrects; i++) {
+		pixman_region_addrect(pixman_region, rects[i].x, rects[i].y, rects[i].w + rects[i].x, rects[i].h + rects[i].y);
+	}
+	s_render_pixman_image_set_clip_region(render->pixman->pixman_image, pixman_region);
+	s_render_pixman_region_destroy(pixman_region);
+	return 0;
+}
+
 int s_render_fill_rectangles (S_RENDER_OPERATOR operator, s_render_t *render, s_render_color_t *color, int nrects, s_rect_t *rects)
 {
 	int n;
@@ -230,7 +247,7 @@ int s_render_fill_rectangles (S_RENDER_OPERATOR operator, s_render_t *render, s_
 	}
 	s_render_pixman_fill_rectangles(_s_render_pixman_operator(operator), render->pixman->pixman_image, &pixman_color, pixman_rects, n);
 	free(pixman_rects);
-	return -1;
+	return 0;
 }
 
 int s_render_composite (S_RENDER_OPERATOR operator, s_render_t *source, s_render_t *mask, s_render_t *dest, int src_x, int src_y, int mask_x, int mask_y, int dest_x, int dest_y, int width, int height)
