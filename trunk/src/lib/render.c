@@ -1,3 +1,17 @@
+/***************************************************************************
+    begin                : Mon Mar 9 2007
+    copyright            : (C) 2007 by Alper Akcan
+    email                : distchx@yahoo.com
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU Lesser General Public License as        *
+ *   published by the Free Software Foundation; either version 2.1 of the  *
+ *   License, or (at your option) any later version.                       *
+ *                                                                         *
+ ***************************************************************************/
 
 #include "xynth_.h"
 #include "pixman.h"
@@ -5,6 +19,42 @@
 struct s_render_pixman_s {
 	pixman_image_t *pixman_image;
 };
+
+static pixman_operator_t _s_render_pixman_operator (S_RENDER_OPERATOR operator)
+{
+	switch (operator) {
+		case S_RENDER_OPERATOR_CLEAR:
+			return PIXMAN_OPERATOR_CLEAR;
+		case S_RENDER_OPERATOR_SRC:
+			return PIXMAN_OPERATOR_SRC;
+		case S_RENDER_OPERATOR_OVER:
+			return PIXMAN_OPERATOR_OVER;
+		case S_RENDER_OPERATOR_IN:
+			return PIXMAN_OPERATOR_IN;
+		case S_RENDER_OPERATOR_OUT:
+			return PIXMAN_OPERATOR_OUT;
+		case S_RENDER_OPERATOR_ATOP:
+			return PIXMAN_OPERATOR_ATOP;
+		case S_RENDER_OPERATOR_DST:
+			return PIXMAN_OPERATOR_DST;
+		case S_RENDER_OPERATOR_OVER_REVERSE:
+			return PIXMAN_OPERATOR_OVER_REVERSE;
+		case S_RENDER_OPERATOR_IN_REVERSE:
+			return PIXMAN_OPERATOR_IN_REVERSE;
+		case S_RENDER_OPERATOR_OUT_REVERSE:
+			return PIXMAN_OPERATOR_OUT_REVERSE;
+		case S_RENDER_OPERATOR_ATOP_REVERSE:
+			return PIXMAN_OPERATOR_ATOP_REVERSE;
+		case S_RENDER_OPERATOR_XOR:
+			return PIXMAN_OPERATOR_XOR;
+		case S_RENDER_OPERATOR_ADD:
+			return PIXMAN_OPERATOR_ADD;
+		case S_RENDER_OPERATOR_SATURATE:
+			return PIXMAN_OPERATOR_SATURATE;
+		default:
+			return PIXMAN_OPERATOR_OVER;
+	}
+}
 
 static pixman_format_t * _s_render_create_pixman_format (S_RENDER_FORMAT render_format)
 {
@@ -57,6 +107,7 @@ int s_render_init (s_render_t **render, S_RENDER_FORMAT render_format, int width
 		goto err3;
 	}
 	rnd->format = render_format;
+	rnd->has_clip = 0;
 	rnd->data = (unsigned char *) s_render_pixman_image_get_data(rnd->pixman->pixman_image);
 	rnd->width = s_render_pixman_image_get_width(rnd->pixman->pixman_image);
 	rnd->height = s_render_pixman_image_get_height(rnd->pixman->pixman_image);
@@ -99,6 +150,7 @@ int s_render_init_for_data (s_render_t **render, unsigned char *data, S_RENDER_F
 		goto err3;
 	}
 	rnd->format = render_format;
+	rnd->has_clip = 0;
 	rnd->data = (unsigned char *) s_render_pixman_image_get_data(rnd->pixman->pixman_image);
 	rnd->width = s_render_pixman_image_get_width(rnd->pixman->pixman_image);
 	rnd->height = s_render_pixman_image_get_height(rnd->pixman->pixman_image);
@@ -112,42 +164,6 @@ err2:	free(rnd->pixman);
 err1:	free(rnd);
 err0:	*render = NULL;
 	return -1;
-}
-
-static pixman_operator_t _s_render_pixman_operator (S_RENDER_OPERATOR operator)
-{
-	switch (operator) {
-		case S_RENDER_OPERATOR_CLEAR:
-			return PIXMAN_OPERATOR_CLEAR;
-		case S_RENDER_OPERATOR_SRC:
-			return PIXMAN_OPERATOR_SRC;
-		case S_RENDER_OPERATOR_OVER:
-			return PIXMAN_OPERATOR_OVER;
-		case S_RENDER_OPERATOR_IN:
-			return PIXMAN_OPERATOR_IN;
-		case S_RENDER_OPERATOR_OUT:
-			return PIXMAN_OPERATOR_OUT;
-		case S_RENDER_OPERATOR_ATOP:
-			return PIXMAN_OPERATOR_ATOP;
-		case S_RENDER_OPERATOR_DST:
-			return PIXMAN_OPERATOR_DST;
-		case S_RENDER_OPERATOR_OVER_REVERSE:
-			return PIXMAN_OPERATOR_OVER_REVERSE;
-		case S_RENDER_OPERATOR_IN_REVERSE:
-			return PIXMAN_OPERATOR_IN_REVERSE;
-		case S_RENDER_OPERATOR_OUT_REVERSE:
-			return PIXMAN_OPERATOR_OUT_REVERSE;
-		case S_RENDER_OPERATOR_ATOP_REVERSE:
-			return PIXMAN_OPERATOR_ATOP_REVERSE;
-		case S_RENDER_OPERATOR_XOR:
-			return PIXMAN_OPERATOR_XOR;
-		case S_RENDER_OPERATOR_ADD:
-			return PIXMAN_OPERATOR_ADD;
-		case S_RENDER_OPERATOR_SATURATE:
-			return PIXMAN_OPERATOR_SATURATE;
-		default:
-			return PIXMAN_OPERATOR_OVER;
-	}
 }
 
 int s_render_set_filter (s_render_t *render, S_RENDER_FILTER filter)
@@ -209,9 +225,33 @@ int s_render_set_transform_matrix (s_render_t *render, s_render_matrix_t *matrix
 	return 0;
 }
 
-int s_render_add_trapezoid (s_render_t *render, int ntraps, s_render_trap_t *traps)
+int s_render_add_trapezoid (s_render_t *render, int x_off, int y_off, int ntraps, s_render_trap_t *traps)
 {
-	return -1;
+	int i;
+	pixman_trapezoid_t *pixman_traps;
+	if (ntraps > 0) {
+		pixman_traps = (pixman_trapezoid_t *) malloc(sizeof(pixman_trapezoid_t) * ntraps);
+		if (pixman_traps == NULL) {
+			return -1;
+		}
+	} else {
+		ntraps = 0;
+		pixman_traps = NULL;
+	}
+	for (i = 0; i < ntraps; i++) {
+		pixman_traps[i].top = traps[i].top;
+		pixman_traps[i].bottom = traps[i].bottom;
+		pixman_traps[i].left.p1.x = traps[i].left1x;
+		pixman_traps[i].left.p1.y = traps[i].left1y;
+		pixman_traps[i].left.p2.x = traps[i].left2x;
+		pixman_traps[i].left.p2.y = traps[i].left2y;
+		pixman_traps[i].right.p1.x = traps[i].right1x;
+		pixman_traps[i].right.p1.y = traps[i].right1y;
+		pixman_traps[i].right.p2.x = traps[i].right2x;
+		pixman_traps[i].right.p2.y = traps[i].right2y;
+	}
+	s_render_pixman_add_trapezoids(render->pixman->pixman_image, x_off, y_off, pixman_traps, ntraps);
+	return 0;
 }
 
 pixman_region_status_t pixman_region_addrect (pixman_region16_t *region, int x1, int y1, int x2, int y2);
@@ -228,6 +268,7 @@ int s_render_set_clip (s_render_t *render, int nrects, s_rect_t *rects)
 	}
 	s_render_pixman_image_set_clip_region(render->pixman->pixman_image, pixman_region);
 	s_render_pixman_region_destroy(pixman_region);
+	render->has_clip = (nrects > 0) ? 1 : 0;
 	return 0;
 }
 
