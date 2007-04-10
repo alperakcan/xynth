@@ -178,54 +178,6 @@ diff -Naur cairo-1.4.2/src/Makefile.am cairo-1.4.2-xynth/src/Makefile.am
  	cairoint.h
  
  libcairo_la_LDFLAGS = -version-info @VERSION_INFO@ -no-undefined $(export_symbols)
-diff -Naur cairo-1.4.2/src/cairo-image-surface.c cairo-1.4.2-xynth/src/cairo-image-surface.c
---- cairo-1.4.2/src/cairo-image-surface.c	2007-03-19 22:08:03.000000000 +0200
-+++ cairo-1.4.2-xynth/src/cairo-image-surface.c	2007-04-10 10:59:10.000000000 +0300
-@@ -622,7 +622,7 @@
- {
-     *image_out = abstract_surface;
-     *image_extra = NULL;
--
-+    
-     return CAIRO_STATUS_SUCCESS;
- }
- 
-diff -Naur cairo-1.4.2/src/cairo-xlib-surface.c cairo-1.4.2-xynth/src/cairo-xlib-surface.c
---- cairo-1.4.2/src/cairo-xlib-surface.c	2007-03-20 00:10:33.000000000 +0200
-+++ cairo-1.4.2-xynth/src/cairo-xlib-surface.c	2007-04-10 10:59:10.000000000 +0300
-@@ -1298,6 +1298,8 @@
-     composite_operation_t       operation;
-     int				itx, ity;
- 
-+    printf("composite\n");
-+    
-     if (!CAIRO_SURFACE_RENDER_HAS_COMPOSITE (dst))
- 	return CAIRO_INT_STATUS_UNSUPPORTED;
- 
-@@ -1331,6 +1333,7 @@
-     switch (operation)
-     {
-     case DO_RENDER:
-+    	printf("Render\n");
- 	_cairo_xlib_surface_ensure_dst_picture (dst);
- 	if (mask) {
- 	    status = _cairo_xlib_surface_set_attributes (mask, &mask_attr);
-@@ -1364,6 +1367,7 @@
- 	break;
- 
-     case DO_XCOPYAREA:
-+    	printf("Copy\n");
- 	_cairo_xlib_surface_ensure_gc (dst);
- 	XCopyArea (dst->dpy,
- 		   src->drawable,
-@@ -1376,6 +1380,7 @@
- 	break;
- 
-     case DO_XTILE:
-+    	printf("Tile\n");
- 	/* This case is only used for bug fallbacks, though it is theoretically
- 	 * applicable to the case where we don't have the RENDER extension as
- 	 * well.
 diff -Naur cairo-1.4.2/src/cairo-xynth-surface.c cairo-1.4.2-xynth/src/cairo-xynth-surface.c
 --- cairo-1.4.2/src/cairo-xynth-surface.c	1970-01-01 02:00:00.000000000 +0200
 +++ cairo-1.4.2-xynth/src/cairo-xynth-surface.c	2007-04-10 10:59:10.000000000 +0300
