@@ -4,7 +4,7 @@
 #include "cairoint.h"
 #include "cairo-xynth.h"
 
-#if 1
+#if 0
 #define DEBUG(fmt...) {\
 	printf(fmt);\
 	printf(" [%s (%s:%d)]\n", __FUNCTION__, __FILE__, __LINE__);\
