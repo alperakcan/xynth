@@ -5,7 +5,7 @@
 ########################
 
     ## Main settings.
-    PREFIX="/opt/"
+    PREFIX="/opt/xynth-ports"
 
     ## Set the directories.
     PTCDIR="`pwd`"
@@ -15,9 +15,10 @@
     ## Source code versions.
     GTK="gtk+-2.4.14"
     MPLAYER="MPlayer-1.0rc1"
-    LINKS="links-2.1pre23"
-    SDL="SDL-1.2.10"
+    LINKS="links-2.1pre26"
+    SDL="SDL-1.2.11"
     KAFFE="kaffe-1.1.7"
+    CAIRO="cairo-1.4.2"
     
 #########################
 ## PARSE THE ARGUMENTS ##
@@ -33,6 +34,7 @@
 	BUILD_LINKS=1
 	BUILD_SDL=1
 	BUILD_KAFFE=1
+	BUILD_CAIRO=1
     ## Else...
     else
 	## Parse the arguments.
@@ -56,6 +58,9 @@
 		-k | -kaffe | --kaffe)
 		    BUILD_KAFFE=1
 		    shift;;
+		-c | -cairo | --cairo)
+		    BUILD_CAIRO=1
+		    shift;;
 		-a | -all | --all)
 		    DO_DOWNLOAD=1
 		    BUILD_GTK=1
@@ -63,6 +68,7 @@
 		    BUILD_SDL=1
 		    BUILD_LINKS=1
 		    BUILD_KAFFE=1
+		    BUILD_CAIRO=1
 		    shift;;
 		-prefix=* | --prefix=*)
 		    PREFIX=`echo $1 | cut -d '=' -f 2`
@@ -74,6 +80,7 @@
 		    echo "-l : build $LINKS"
 		    echo "-s : build $SDL"
 		    echo "-k : build $KAFFE"
+		    echo "-c : build $CAIRO"
 		    echo "-a : build all"
 		    echo "-prefix=path : prefix"
 		    echo "-help : this text"
@@ -149,6 +156,9 @@
 	if test "$BUILD_KAFFE" = "1" ; then
 	    $WGET ftp://ftp.kaffe.org/pub/kaffe/v1.1.x-development/$KAFFE.tar.bz2 || { echo "ERROR DOWNLOADING KAFFE"; exit; }
 	fi
+	if test "$BUILD_CAIRO" = "1" ; then
+	    $WGET http://cairographics.org/releases/$CAIRO.tar.gz || { echo "ERROR DOWNLOADING CAIRO"; exit; }
+	fi
     fi
     
     ## Unpack and patch the gtk source.
@@ -198,6 +208,16 @@
 	fi
 	rm -Rf $KAFFE; bzip2 -cd "$KAFFE.tar.bz2" | tar xvf -
 	cd $KAFFE; cat "$PTCDIR/kaffe/$KAFFE-xynth.diff" | $PATCH || { echo "ERROR PATCHING KAFFE"; exit; }
+	cd ..
+    fi
+
+    ## Unpack and patch the cairo source.
+    if test "$BUILD_CAIRO" = "1" ; then
+	if test ! -f "$CAIRO.tar.gz" ; then
+	    $WGET http://cairographics.org/releases/$CAIRO.tar.gz || { echo "ERROR DOWNLOADING CAIRO"; exit; }
+	fi
+	rm -Rf $CAIRO; gzip -cd "$KAFFE.tar.gz" | tar xvf -
+	cd $CAIRO; cat "$PTCDIR/kaffe/$CAIRO-xynth.diff" | $PATCH || { echo "ERROR PATCHING CAIRO"; exit; }
 	cd ..
     fi
 
@@ -291,6 +311,26 @@
 	$MAKE clean; $MAKE || { echo "ERROR BUILDING KAFFE"; exit; }
 	## Install the result.
 	$MAKE install || { echo "ERROR INSTALLING KAFFE"; exit; }
+	## Clean up the result.
+#	$MAKE clean
+	## Exit the build and source directories.
+	cd ..; cd ..
+    fi
+
+    ## If we've been told to build cairo...
+    if test "$BUILD_CAIRO" = "1" ; then
+	## Enter the source directory.
+	cd $CAIRO
+	## Rebuild configure script
+	aclocal && automake && autoconf
+	## Create and enter the build directory.
+	mkdir build-xynth; cd build-xynth
+	## Configure the source.
+	../configure --prefix=$PREFIX || { echo "ERROR CONFIGURING CAIRO"; exit; }
+	## Build the source.
+	$MAKE clean; $MAKE || { echo "ERROR BUILDING CAIRO"; exit; }
+	## Install the result.
+	$MAKE install || { echo "ERROR INSTALLING CAIRO"; exit; }
 	## Clean up the result.
 #	$MAKE clean
 	## Exit the build and source directories.
