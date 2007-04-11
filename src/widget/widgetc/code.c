@@ -378,104 +378,11 @@ void code_generate_object_scrollbuffer (s_xml_node_t *node)
 void code_generate_object_listbox (s_xml_node_t *node)
 {
 	s_xml_node_t *tmp;
-	char *nid = s_xml_node_get_attr_value(node, "id");
-	char *pid = s_xml_node_get_attr_value(node->parent, "id");
-	char *wid = s_xml_node_get_attr_value(s_xml_node_get_parent(node, "window"), "id");
-	fprintf(g_source, "w_listbox_init(%s, &%s, %s->object);\n", wid, nid, pid);
-	while ((tmp = s_xml_node_get_path(node, "style")) != NULL) {
-		code_generate_style(tmp, node, NULL);
-		tmp->dontparse = 1;
-	}
-	while ((tmp = s_xml_node_get_path(node, "image")) != NULL) {
-		code_generate_image(tmp, node, NULL);
-		tmp->dontparse = 1;
-	}
-	if ((tmp = s_xml_node_get_path(node, "changed")) != NULL) {
-		fprintf(g_source, "w_listbox_changed(%s->object, %s);\n", nid, tmp->value);
-		tmp->dontparse = 1;
-	}
-	if ((tmp = s_xml_node_get_path(node, "add")) != NULL) {
-		fprintf(g_source, "w_listbox_add(%s->object, %s);\n", nid, tmp->value);
-		tmp->dontparse = 1;
-	}
-	while((tmp = s_xml_node_get_path(node, "scrollbarupimage")) != NULL) {
-		code_generate_image(tmp,node,"scrollbarup");
-		tmp->dontparse = 1;
-	}
-	while((tmp = s_xml_node_get_path(node, "scrollbardownimage")) != NULL) {
-		code_generate_image(tmp,node,"scrollbardown");
-		tmp->dontparse = 1;
-	}
-	while((tmp = s_xml_node_get_path(node, "scrollbarmiddleimage")) != NULL) {
-		code_generate_image(tmp,node,"scrollbarmiddle");
-		tmp->dontparse = 1;
-	}
-	while((tmp = s_xml_node_get_path(node, "scrollbarbackgroundimage")) != NULL) {
-		code_generate_image(tmp,node,"scrollbarbackground");
-		tmp->dontparse = 1;
-	}
-	if ((tmp = s_xml_node_get_path(node, "clearlist")) != NULL) {
-		fprintf(g_source, "w_listbox_clearlist(%s->object);\n", nid);
-		tmp->dontparse = 1;
-	}
-}
-
-void code_generate_object_ctrllistbox (s_xml_node_t *node)
-{
-	s_xml_node_t *tmp;
-	char *nid = s_xml_node_get_attr_value(node, "id");
-	char *pid = s_xml_node_get_attr_value(node->parent, "id");
-	char *wid = s_xml_node_get_attr_value(s_xml_node_get_parent(node, "window"), "id");
-	fprintf(g_source, "w_ctrllistbox_init(%s, &%s, %s->object);\n", wid, nid, pid);
-	while ((tmp = s_xml_node_get_path(node, "style")) != NULL) {
-		code_generate_style(tmp, node, NULL);
-		tmp->dontparse = 1;
-	}
-	while ((tmp = s_xml_node_get_path(node, "line")) != NULL) {
-		code_generate_image(tmp, node, "line");
-		tmp->dontparse = 1;
-	}
-	
-	while ((tmp = s_xml_node_get_path(node, "progressbar")) != NULL) {
-		code_generate_image(tmp, node, "progressbar");
-		tmp->dontparse = 1;
-	}
-
-	while ((tmp = s_xml_node_get_path(node, "progressboxbar")) != NULL) {
-		code_generate_image(tmp, node, "progressboxbar");
-		tmp->dontparse = 1;
-	}
-		
-	if ((tmp = s_xml_node_get_path(node, "add")) != NULL) {
-		fprintf(g_source, "w_ctrllistbox_add(%s->object, %s);\n", nid, tmp->value);
-		tmp->dontparse = 1;
-	}
-	while((tmp = s_xml_node_get_path(node, "scrollbarupimage")) != NULL) {
-		code_generate_image(tmp,node,"scrollbarup");
-		tmp->dontparse = 1;
-	}
-	while((tmp = s_xml_node_get_path(node, "scrollbardownimage")) != NULL) {
-		code_generate_image(tmp,node,"scrollbardown");
-		tmp->dontparse = 1;
-	}
-	while((tmp = s_xml_node_get_path(node, "scrollbarmiddleimage")) != NULL) {
-		code_generate_image(tmp,node,"scrollbarmiddle");
-		tmp->dontparse = 1;
-	}
-	while((tmp = s_xml_node_get_path(node, "scrollbarbackgroundimage")) != NULL) {
-		code_generate_image(tmp,node,"scrollbarbackground");
-		tmp->dontparse = 1;
-	}
-}
-
-void code_generate_object_nlistbox (s_xml_node_t *node)
-{
-	s_xml_node_t *tmp;
 	s_xml_node_t *tnm;
 	char *nid = s_xml_node_get_attr_value(node, "id");
 	char *pid = s_xml_node_get_attr_value(node->parent, "id");
 	char *wid = s_xml_node_get_attr_value(s_xml_node_get_parent(node, "window"), "id");
-	fprintf(g_source, "w_nlistbox_init(%s, &%s, %s->object);\n", wid, nid, pid);
+	fprintf(g_source, "w_listbox_init(%s, &%s, %s->object);\n", wid, nid, pid);
 	while ((tmp = s_xml_node_get_path(node, "style")) != NULL) {
 		code_generate_style(tmp, node, NULL);
 		tmp->dontparse = 1;
@@ -485,7 +392,7 @@ void code_generate_object_nlistbox (s_xml_node_t *node)
 		tmp->dontparse = 1;
 	}
 	while ((tmp = s_xml_node_get_path(node, "itemheight")) != NULL) {
-		fprintf(g_source, "w_nlistbox_set_item_height(%s->object, %s);\n", nid, tmp->value);
+		fprintf(g_source, "w_listbox_set_item_height(%s->object, %s);\n", nid, tmp->value);
 		tmp->dontparse = 1;
 	}
 	while ((tmp = s_xml_node_get_path(node, "itemimage")) != NULL) {
@@ -494,16 +401,16 @@ void code_generate_object_nlistbox (s_xml_node_t *node)
 	}
 	while ((tmp = s_xml_node_get_path(node, "item")) != NULL) {
 		char *tid = s_xml_node_get_attr_value(tmp, "id");
-		fprintf(g_source, "w_nlistbox_item_init(%s->object, &%s);\n", nid, tid);
+		fprintf(g_source, "w_listbox_item_init(%s->object, &%s);\n", nid, tid);
 		while ((tnm = s_xml_node_get_path(tmp, "name")) != NULL) {
-			fprintf(g_source, "w_nlistbox_item_name_set(%s->object, %s, %s);\n", nid, tid, tnm->value);
+			fprintf(g_source, "w_listbox_item_name_set(%s->object, %s, %s);\n", nid, tid, tnm->value);
 			tnm->dontparse = 1;
 		}
-		fprintf(g_source, "w_nlistbox_item_add(%s->object, %s);\n", nid, tid);
+		fprintf(g_source, "w_listbox_item_add(%s->object, %s);\n", nid, tid);
 		tmp->dontparse = 1; 
 	}
 	while ((tmp = s_xml_node_get_path(node, "scrollbuffer")) != NULL) {
-		fprintf(g_source, "w_nlistbox_scrollbuffer_set(%s->object, %s->object);\n", nid, tmp->value);
+		fprintf(g_source, "w_listbox_scrollbuffer_set(%s->object, %s->object);\n", nid, tmp->value);
 		tmp->dontparse = 1;
 	}
 }
@@ -614,10 +521,6 @@ void code_generate_object (s_xml_node_t *node)
 		code_generate_object_scrollbuffer(node);
 	} else if (strcmp(type, "listbox") == 0) {
 		code_generate_object_listbox(node);
-	} else if (strcmp(type, "ctrllistbox") == 0) {
-		code_generate_object_ctrllistbox(node);
-	} else if (strcmp(type, "nlistbox") == 0) {
-		code_generate_object_nlistbox(node);
 	} else if (strcmp(type, "clistbox") == 0) {
 		code_generate_object_clistbox(node);
 	}
