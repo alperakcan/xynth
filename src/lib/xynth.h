@@ -50,7 +50,6 @@ typedef struct s_timer_s s_timer_t;
 typedef struct s_timers_s s_timers_t;
 typedef struct s_xml_node_attr_s s_xml_node_attr_t;
 typedef struct s_xml_node_s s_xml_node_t;
-typedef struct s_xml_data_s s_xml_data_t;
 
 typedef enum {
 	MOUSE_CURSOR_WAIT    = 0x0,
@@ -3187,49 +3186,189 @@ void s_window_atexit (s_window_t *window, void (*f) (s_window_t *));
 
 /*@}*/
 
+/** @defgroup client_xml Client Library - XML API
+  * @brief XML parse and handling api.
+  *
+  * @example
+  *
+  * for further information look in demo/ directory
+  *
+  * @code
+  * <xml>
+  * 	<a>
+  * 		<b>b</b>
+  * 		<c c0="c0" c1="c1">
+  * 			<d>d</d>
+  * 		</c>
+  * 	</a>
+  * 	<e>e</e>
+  * </xml>
+  * 
+  * {
+  * 	s_xml_node_t *xml;
+  * 	s_xml_node_t *xml_e;
+  * 	s_xml_node_t *xml_d;
+  * 	s_xml_node_t *xml_c;
+  * 	s_xml_node_attr_t *xml_c_attr;
+  * 
+  * 	s_xml_parse_file(&xml, &fle);
+  * 
+  * 	xml_d = s_xml_node_get_path(xml, "xml/a/c/d");
+  * 	printf("xml/a/c/d value: %s\n", s_xml_node_get_value(xml_d);
+  * 	xml_e = s_xml_node_get_path(xml, "xml/e");
+  * 	printf("xml/e value: %s\n", s_xml_node_get_value(xml_e);
+  * 
+  * 	xml_c = s_xml_node_get_path(xml, "xml/a/c");
+  * 	xml_c_attr = s_xml_node_get_attr(xml_c, "c0");
+  * 	printf("xml/c attr c0 value: %s\n", s_xml_node_get_attr_value(xml_c, "c0"));
+  * 
+  * 	s_xml_node_uninit(xml);
+  * }
+  * @endcode
+  */
+
+/** @addtogroup client_xml */
+/*@{*/
+
 /* xml.c */
+
+/** xml node attributes struct
+  */
 struct s_xml_node_attr_s {
+	/** attr name */
 	char *name;
+	/** attr value */
 	char *value;
+	/** internal dontparse flag */
 	int dontparse;
 };
 
+/** xml node struct
+  */
 struct s_xml_node_s {
+	/** node name */
 	char *name;
+	/** node value */
 	char *value;
+	/** node attributes */
 	s_list_t *attrs;
+	/** child nodes */
 	s_list_t *nodes;
+	/** parent node */
 	s_xml_node_t *parent;
+	/** internal dontparse flag */
 	int dontparse;
 };
 
-struct s_xml_data_s {
-	char *path;
-	s_xml_node_t *active;
-	s_xml_node_t *root;
-	s_xml_node_t *elem;
-};
-
-int s_xml_node_path_normalize (char *out, int len);
-s_xml_node_t * s_xml_node_get_path_ (s_xml_node_t *node, char *path);
+/** @brief return the node for given path, and head node
+  *
+  * @param *node - head node to start
+  * @param *path - the requested path
+  * @returns node for given path, or NULL if not found.
+  */
 s_xml_node_t * s_xml_node_get_path (s_xml_node_t *node, char *path);
+
+/** @brief returns the value for given node
+  *
+  * @param *node - the node
+  * @returns value for given node, or NULL if no value.
+  */
 char * s_xml_node_get_value (s_xml_node_t *node);
+
+/** @brief return the node value for given path, and head node
+  *
+  * @param *node - head node to start
+  * @param *path - the requested path
+  * @returns value for given path, or NULL if not found.
+  */
 char * s_xml_node_get_path_value (s_xml_node_t *node, char *path);
+
+/** @brief returns the attribute "attr", for given node
+  *
+  * @param *node - the node
+  * @param *attr - requested attribute
+  * @return the attribute, or NULL if not found
+  */
 s_xml_node_attr_t * s_xml_node_get_attr (s_xml_node_t *node, char *attr);
+
+/** @brief returns the value for given node, and attribute
+  *
+  * @param *node - the noe
+  * @param *attr - the attribute
+  * @returns value for given node, or NULL if no value.
+  */
 char * s_xml_node_get_attr_value (s_xml_node_t *node, char *attr);
+
+/** @brief dublicates the given node
+  *
+  * @param *node - node to dublicate
+  * @param **dub - dublicated value
+  * @returns 0 on success
+  */
 int s_xml_node_dublicate (s_xml_node_t *node, s_xml_node_t **dub);
+
+/** @brief dublicates the given attribute
+  *
+  * @param *attr - node to dublicate
+  * @param **dub - dublicated value
+  * @returns 0 on success
+  */
 int s_xml_node_attr_dublicate (s_xml_node_attr_t *attr, s_xml_node_attr_t **dub);
+
+/** @brief return the parent of node with the name "name"
+  *
+  * @param *node - the node
+  * @param *name - name of the parent
+  * @returns the parent, or NULL if not found
+  */
 s_xml_node_t * s_xml_node_get_parent (s_xml_node_t *node, char *name);
+
+/** @brief initializes the attribute struct
+  *
+  * @param **attr - out value
+  * @returns 0 on success
+  */
 int s_xml_node_attr_init (s_xml_node_attr_t **attr);
+
+/** @brief uninitializes the attribute node
+  *
+  * @param *attr - the attribute
+  * @returns 0 on success
+  */
 int s_xml_node_attr_uninit (s_xml_node_attr_t *attr);
+
+/** @brief initializes the node struct
+  *
+  * @param **node - out value
+  * @returns 0 on success
+  */
 int s_xml_node_init (s_xml_node_t **node);
+
+/** @brief uninitializes the node
+  *
+  * @param *node - the node
+  * @returns 0 on success
+  */
 int s_xml_node_uninit (s_xml_node_t *node);
-void s_xml_parse_start (void *xdata, const char *el, const char **xattr);
-void s_xml_parse_end (void *xdata, const char *el);
-void s_xml_parse_character_fixup (char *out);
-void s_xml_parse_character (void *xdata, const char *txt, int txtlen);
+
+/** @brief parses the given buffer
+  *
+  * @param **node  - out value
+  * @param *buffer - buffer to parse
+  * @param len     - buffer length
+  * @returns 0 on success
+  */
 int s_xml_parse_buffer (s_xml_node_t **node, char *buffer, unsigned int len);
+
+/** @brief parses the given file
+  *
+  * @param **node - out value
+  * @param *file  - file to parse
+  * @returns 0 on success
+  */
 int s_xml_parse_file (s_xml_node_t **node, char *file);
+
+/*@}*/
 
 #ifdef __cplusplus
 	}

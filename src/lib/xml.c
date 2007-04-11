@@ -5,7 +5,21 @@
 #include <unistd.h>
 #include <expat.h>
 
-int s_xml_node_path_normalize (char *out, int len)
+typedef struct s_xml_data_s {
+	char *path;
+	s_xml_node_t *active;
+	s_xml_node_t *root;
+	s_xml_node_t *elem;
+} s_xml_data_t;
+
+static int s_xml_node_path_normalize (char *out, int len);
+static s_xml_node_t * s_xml_node_get_path_ (s_xml_node_t *node, char *path);
+static void s_xml_parse_start (void *xdata, const char *el, const char **xattr);
+static void s_xml_parse_end (void *xdata, const char *el);
+static void s_xml_parse_character_fixup (char *out);
+static void s_xml_parse_character (void *xdata, const char *txt, int txtlen);
+
+static int s_xml_node_path_normalize (char *out, int len)
 {
 	int i;
 	int j;
@@ -59,7 +73,7 @@ int s_xml_node_path_normalize (char *out, int len)
 	return 0;
 }
 
-s_xml_node_t * s_xml_node_get_path_ (s_xml_node_t *node, char *path)
+static s_xml_node_t * s_xml_node_get_path_ (s_xml_node_t *node, char *path)
 {
 	int p;
 	char *ptr;
@@ -278,7 +292,7 @@ int s_xml_node_uninit (s_xml_node_t *node)
 	return 0;
 }
 
-void s_xml_parse_start (void *xdata, const char *el, const char **xattr)
+static void s_xml_parse_start (void *xdata, const char *el, const char **xattr)
 {
 	int p;
 	s_xml_data_t *data;
@@ -304,7 +318,7 @@ void s_xml_parse_start (void *xdata, const char *el, const char **xattr)
 	data->active = node;
 }
 
-void s_xml_parse_end (void *xdata, const char *el)
+static void s_xml_parse_end (void *xdata, const char *el)
 {
 	s_xml_data_t *data;
 	data = (s_xml_data_t *) xdata;
@@ -313,7 +327,7 @@ void s_xml_parse_end (void *xdata, const char *el)
 	data->active = data->active->parent;
 }
 
-void s_xml_parse_character_fixup (char *out)
+static void s_xml_parse_character_fixup (char *out)
 {
 	int i;
 	int j;
@@ -327,7 +341,7 @@ void s_xml_parse_character_fixup (char *out)
 	}
 }
 
-void s_xml_parse_character (void *xdata, const char *txt, int txtlen)
+static void s_xml_parse_character (void *xdata, const char *txt, int txtlen)
 {
 	char *str;
 	s_xml_data_t *data;

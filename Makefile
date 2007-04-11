@@ -76,6 +76,8 @@ doxy-doc:
 			  */libz/* \
 			  */libpng/* \
 			  */freetype2/* \
+			  */expat/* \
+			  */pixman/* \
 			  */lrmi-*/* \
 			  */pthread_w32/*' \
 	SRCDIR='.' \

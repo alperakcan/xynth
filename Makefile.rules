@@ -19,14 +19,14 @@ $(TARGET): $(OBJS) $(EXTRA_OBJS)
 endif
 
 ifdef TARGET_A
-$(TARGET_A): $(OBJS)
+$(TARGET_A): $(OBJS) $(EXTRA_OBJS)
 	rm -rf $@
 	$(AR) $@ $^
 	$(RANLIB) $@
 endif
 
 ifdef TARGET_SO
-$(TARGET_SO): $(OBJS)
+$(TARGET_SO): $(OBJS) $(EXTRA_OBJS)
 	rm -rf $@
 	$(CC) -g -shared -o $@ $^ $(LDFLAGS)
 endif
