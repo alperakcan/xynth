@@ -13,8 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef S_CURSOR_H_
-#define S_CURSOR_H_
+#ifndef CURSOR_H
+#define CURSOR_H
 
 static unsigned int s_video_helper_cursor_arrow[64] = {
 0x00000000,  0x00000000,  0x40000000,  0x60000000,
@@ -272,4 +272,4 @@ static unsigned int s_video_helper_cursor_none[64] = {
 0x00000000,  0x00000000,  0x00000000,  0x00000000,
 0x00000000,  0x00000000,  0x00000000,  0x00000000};
 
-#endif /* S_CURSOR_H_ */
+#endif /* CURSOR_H */
