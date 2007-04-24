@@ -22,7 +22,8 @@
 	printf(" [%s (%s:%d)]\n", __FUNCTION__, __FILE__, __LINE__);\
 }
 
-#define SXYNTH__H
+#define XYNTH_H
+#define XYNTH__H
 
 #include <stdio.h>
 #include <stdlib.h>
