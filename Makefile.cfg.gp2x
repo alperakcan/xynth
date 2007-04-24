@@ -1,4 +1,13 @@
 
+# Host Settings
+HOSTCC     = gcc
+HOSTCXX    = g++
+HOSTAR     = ar rcs
+HOSTMAKE   = make
+HOSTRANLIB = chmod a+r
+HOSTSTRIP  = strip -xsR .note -R .comment
+HOSTNM     = nm
+
 # Target platform
 PLATFORM_LINUX  = N
 PLATFORM_PSPDEV = N

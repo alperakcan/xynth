@@ -1,49 +1,164 @@
 
-INCDIR := $(INCDIR)
-LIBDIR := $(LIBDIR)
+INCDIR   := $(INCDIR)
+LIBDIR   := $(LIBDIR)
 
 CFLAGS   := $(addprefix -I,$(INCDIR)) $(CFLAGS)
 CXXFLAGS := $(CFLAGS) $(CXXFLAGS)
 CPPFLAGS := $(CFLAGS) $(CXXFLAGS)
 ASFLAGS  := $(CFLAGS) $(ASFLAGS)
 LDFLAGS  := $(addprefix -L,$(LIBDIR)) $(LDFLAGS)
+ARFLAGS  :=
 DEPEND   := Makefile.depend
 
-all: $(EXTRA_TARGETS) $(TARGET) $(TARGET_A) $(TARGET_SO)
-	$(foreach F, $(SUBDIR-Y), $(MAKE) -C $F || exit 1;)
+all: $(EXTRA_TARGETS) $(TARGET) $(TARGET_A) $(TARGET_SO) $(TARGET_HOST) $(TARGET_HOST_A) $(TARGET_HOST_SO)
+	@$(foreach F, $(SUBDIR-Y), $(MAKE) -C $F || exit 1;)
+
+#------------------------------------------------------------
+# Make the output nice and tight
+#MAKEFLAGS = --no-print-directory
+export MAKE_IS_SILENT=n
+ifneq ($(findstring s,$(MAKEFLAGS)),)
+    export MAKE_IS_SILENT=y
+    SECHO := @-false
+    DISP  := sil
+    Q     := @
+else
+ifneq ($(V)$(VERBOSE),)
+    SECHO := @-false
+    DISP  := ver
+    Q     := 
+else
+    SECHO := @echo
+    DISP  := pur
+    Q     := @
+endif
+endif
+
+show_objs = $@
+pur_disp_compile.c   = echo "  "CC $(show_objs)
+pur_disp_compile.h   = echo "  "HOSTCC $(show_objs)
+pur_disp_compile.cpp = echo "  "CXX $(show_objs)
+pur_disp_compile.hpp = echo "  "HOSTCXX $(show_objs)
+pur_disp_strip       = echo "  "STRIP $(show_objs)
+pur_disp_link        = echo "  "LINK $(show_objs)
+pur_disp_ar          = echo "  "AR $(ARFLAGS) $(show_objs)
+pur_disp_ranlib      = echo "  "RANLIB $(RANLIBFLAGS) $(show_objs)
+sil_disp_compile.c   = true
+sil_disp_compile.h   = true
+sil_disp_compile.cpp = true
+sil_disp_compile.hpp = true
+sil_disp_strip       = true
+sil_disp_link        = true
+sil_disp_ar          = true
+sil_disp_ranlib      = true
+ver_disp_compile.c   = echo $(cmd_compile.c)
+ver_disp_compile.h   = echo $(cmd_compile.h)
+ver_disp_compile.cpp = echo $(cmd_compile.cpp)
+ver_disp_compile.hpp = echo $(cmd_compile.hpp)
+ver_disp_strip       = echo $(cmd_strip)
+ver_disp_link        = echo $(cmd_link)
+ver_disp_ar          = echo $(cmd_ar)
+ver_disp_ranlib      = echo $(cmd_ranlib)
+disp_compile.c       = $($(DISP)_disp_compile.c)
+disp_compile.h       = $($(DISP)_disp_compile.h)
+disp_compile.cpp     = $($(DISP)_disp_compile.cpp)
+disp_compile.hpp     = $($(DISP)_disp_compile.hpp)
+disp_strip           = $($(DISP)_disp_strip)
+disp_link            = $($(DISP)_disp_link)
+disp_ar              = $($(DISP)_disp_ar)
+disp_ranlib          = $($(DISP)_disp_ranlib)
+cmd_compile.c        = $(CC) $(CFLAGS) $(EXTRA_CFLAGS) -c -o $@ $<
+cmd_compile.h        = $(HOSTCC) $(CFLAGS) $(EXTRA_CFLAGS) -c -o $@ $<
+cmd_compile.cpp      = $(CXX) $(CXXFLAGS) $(EXTRA_CXXFLAGS) -c -o $@ $<
+cmd_compile.hpp      = $(HOSTCXX) $(HOSTCXXFLAGS) -c -o $@ $<
+cmd_strip            = $(STRIPCMD) $@
+cmd_link             = $(CC) $(CFLAGS) $(EXTRA_CFLAGS) -o $@ $^ $(LDFLAGS)
+cmd_ar               = $(AR) $(ARFLAGS) $@ $^
+cmd_ranlib           = $(RANLIB) $(RANLIBFLAGS) $@
+compile.c            = @$(disp_compile.c) ; $(cmd_compile.c)
+compile.h            = @$(disp_compile.h) ; $(cmd_compile.h)
+compile.cpp          = @$(disp_compile.cpp) ; $(cmd_compile.cpp)
+compile.hpp          = @$(disp_compile.hpp) ; $(cmd_compile.hpp)
+do_strip             = @$(disp_strip)     ; $(cmd_strip)
+do_link              = @$(disp_link)      ; $(cmd_link)
+do_ar                = @$(disp_ar)        ; $(cmd_ar)
+do_ranlib            = @$(disp_ranlib)    ; $(cmd_ranlib)
 
 ifdef TARGET
 $(TARGET): $(OBJS) $(EXTRA_OBJS)
-	rm -rf $@
-	$(CC) $^ $(LDFLAGS) -o $@
+	$(Q)rm -rf $@
+	$(do_link)
+endif
+
+ifdef TARGET_HOST
+$(TARGET_HOST): $(OBJS) $(EXTRA_OBJS)
+	$(Q)rm -rf $@
+	$(do_link)
 endif
 
 ifdef TARGET_A
 $(TARGET_A): $(OBJS) $(EXTRA_OBJS)
-	rm -rf $@
-	$(AR) $@ $^
-	$(RANLIB) $@
+	$(Q)rm -rf $@
+	$(do_ar) $@ $^
+	$(do_ranlib) $@
+endif
+
+ifdef TARGET_HOST_A
+$(TARGET_HOST_A): $(OBJS) $(EXTRA_OBJS)
+	$(Q)rm -rf $@
+	$(do_ar) $@ $^
+	$(do_ranlib) $@
 endif
 
 ifdef TARGET_SO
 $(TARGET_SO): $(OBJS) $(EXTRA_OBJS)
-	rm -rf $@
-	$(CC) -g -shared -o $@ $^ $(LDFLAGS)
+	$(Q)rm -rf $@
+	$(do_link) -shared
+endif
+
+ifdef TARGET_HOST_SO
+$(TARGET_HOST_SO): $(OBJS) $(EXTRA_OBJS)
+	$(Q)rm -rf $@
+	$(do_link) -shared
 endif
 
 .c.o:
-	$(CC) $(CFLAGS) -c -o $@ $<
+ifdef TARGET_HOST
+	$(compile.h)
+else
+ifdef TARGET_HOST_A
+	$(compile.h)
+else
+ifdef TARGET_HOST_SO
+	$(compile.h)
+else
+	$(compile.c)
+endif
+endif
+endif
 
 .cpp.o:
-	$(CXX) $(CXXFLAGS) -c -o $@ $<
+ifdef TARGET_HOST
+	$(compile.hpp)
+else
+ifdef TARGET_HOST_A
+	$(compile.hpp)
+else
+ifdef TARGET_HOST_SO
+	$(compile.hpp)
+else
+	$(compile.cpp)
+endif
+endif
+endif
 
 $(DEPEND): $(EXTRA_DEPEND_FILES) $(OBJS:.o=.c)
 	@>$(DEPEND)
 	@$(foreach F, $(OBJS:.o=.c), $(CC) $(CFLAGS) -MT $(F:.c=.o) -MM $(F) >> $(DEPEND);)
 -include $(DEPEND)
 
-clean:
-	$(foreach F, $(SUBDIR-Y), $(MAKE) clean -C $F || exit 1;)
-	$(foreach F, $(SUBDIR-N), $(MAKE) clean -C $F || exit 1;)
-	$(foreach F, $(SUBDIR-), $(MAKE) clean -C $F || exit 1;)
-	rm -f $(TARGET) $(TARGET_A) $(TARGET_SO) $(EXTRA_CLEAN) $(OBJS) $(EXTRA_TARGETS) $(DEPEND)
+clean: $(EXTRA_TARGETS_CLEAN)
+	@$(foreach F, $(SUBDIR-Y), $(MAKE) clean -C $F || exit 1;)
+	@$(foreach F, $(SUBDIR-N), $(MAKE) clean -C $F || exit 1;)
+	@$(foreach F, $(SUBDIR-), $(MAKE) clean -C $F || exit 1;)
+	rm -f $(TARGET) $(TARGET_A) $(TARGET_SO) $(TARGET_HOST) $(TARGET_HOST_A) $(TARGET_HOST_SO) $(EXTRA_CLEAN) $(OBJS) $(EXTRA_TARGETS) $(DEPEND)
