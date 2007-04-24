@@ -13,8 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef S_THEME_STATIC_H_
-#define S_THEME_STATIC_H_
+#ifndef THEME_STATIC_H
+#define THEME_STATIC_H
 
 static void theme_set (s_image_t *img, unsigned int *data, int a, int b)
 {
@@ -1061,4 +1061,4 @@ void theme_init (s_theme_t *theme)
 	theme->text_v_off[0] = 1;
 }
 
-#endif /* S_THEME_STATIC_H_ */
+#endif /* THEME_STATIC_H */

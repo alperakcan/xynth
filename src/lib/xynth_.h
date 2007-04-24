@@ -13,8 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef SXYNTH__H
-#define SXYNTH__H
+#ifndef XYNTH__H
+#define XYNTH__H
 
 #ifdef __cplusplus
 extern "C" {
@@ -224,4 +224,4 @@ typedef struct s_soc_data_show_s {
 }
 #endif
 
-#endif /* SXYNTH__H */
+#endif /* XYNTH__H */

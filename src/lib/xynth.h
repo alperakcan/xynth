@@ -13,8 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef SXYNTH_H
-#define SXYNTH_H
+#ifndef XYNTH_H
+#define XYNTH_H
 
 #ifdef __cplusplus
 	extern "C" {
@@ -3374,4 +3374,4 @@ int s_xml_parse_file (s_xml_node_t **node, char *file);
 	}
 #endif
 
-#endif
+#endif /* XYNTH_H */

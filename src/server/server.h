@@ -13,8 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef S_SERVER_H_
-#define S_SERVER_H_
+#ifndef SERVER_H
+#define SERVER_H
 
 typedef struct s_cursor_s s_cursor_t;
 typedef struct s_theme_s s_theme_t;
@@ -415,4 +415,4 @@ void s_server_restore (void);
 void s_server_fullscreen (void);
 void s_server_surface_update (s_rect_t *coor);
 
-#endif /* S_SERVER_H_ */
+#endif /* SERVER_H */
