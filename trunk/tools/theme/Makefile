@@ -8,6 +8,6 @@ LDFLAGS = $(LIBDIR)/libxynth.a -lpthread -lm
 
 OBJS = theme.o
 
-TARGET = theme
+TARGET_HOST = theme
 
 include ../../Makefile.rules

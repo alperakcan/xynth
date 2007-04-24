@@ -7,9 +7,9 @@ INCDIR = ./ ../ ../../lib
 
 OBJS = widgetc.o list.o code.o header.o xml.o
 
-TARGET = widgetc
+TARGET_HOST = widgetc
 
-CC := PATH=/usr/bin:${PATH} gcc
+#CC := PATH=/usr/bin:${PATH} gcc
 
 include ../../../Makefile.rules
 
