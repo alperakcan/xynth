@@ -2,6 +2,8 @@
 include ../../../Makefile.cfg
 include ../../../Makefile.parse
 
+DIR = src/widget/widgetc/
+
 LDFLAGS = -lexpat
 INCDIR = ./ ../ ../../lib
 

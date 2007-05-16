@@ -2,6 +2,8 @@
 include ../../Makefile.cfg
 include ../../Makefile.parse
 
+DIR = src/widget/
+
 INCDIR = ./ ../lib
 
 OBJS = button.o checkbox.o editbox.o effect.o frame.o object.o progressbar.o \

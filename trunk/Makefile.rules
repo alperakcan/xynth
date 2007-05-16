@@ -1,46 +1,81 @@
 
-INCDIR   := $(INCDIR)
-LIBDIR   := $(LIBDIR)
-
-CFLAGS   := $(addprefix -I,$(INCDIR)) $(CFLAGS)
-CXXFLAGS := $(CFLAGS) $(CXXFLAGS)
-CPPFLAGS := $(CFLAGS) $(CXXFLAGS)
-ASFLAGS  := $(CFLAGS) $(ASFLAGS)
-LDFLAGS  := $(addprefix -L,$(LIBDIR)) $(LDFLAGS)
-ARFLAGS  :=
-DEPEND   := Makefile.depend
-
-all: $(EXTRA_TARGETS) $(TARGET) $(TARGET_A) $(TARGET_SO) $(TARGET_HOST) $(TARGET_HOST_A) $(TARGET_HOST_SO)
-	@$(foreach F, $(SUBDIR-Y), $(MAKE) -C $F || exit 1;)
-
-#------------------------------------------------------------
-# Make the output nice and tight
-#MAKEFLAGS = --no-print-directory
-export MAKE_IS_SILENT=n
+export MAKE_IS_SILENT=y
 ifneq ($(findstring s,$(MAKEFLAGS)),)
     export MAKE_IS_SILENT=y
     SECHO := @-false
     DISP  := sil
     Q     := @
+    MAKE  := make --no-print-directory
 else
 ifneq ($(V)$(VERBOSE),)
     SECHO := @-false
     DISP  := ver
     Q     := 
+    MAKE  := make -w
 else
     SECHO := @echo
     DISP  := pur
     Q     := @
+    MAKE  := make --no-print-directory
 endif
 endif
 
-show_objs = $@
+MAJOR_VERSION   := 0
+MINOR_VERSION   := 0
+SUBLEVEL_VERSION:= 1
+EXTRAVERSION    :=
+VERSION         := $(MAJOR_VERSION).$(MINOR_VERSION).$(SUBLEVEL_VERSION)$(EXTRAVERSION)
+BUILDTIME       := $(shell TZ=UTC date -u "+%Y.%m.%d-%H:%M%z")
+
+export VERSION BUILDTIME
+
+SED  = sed
+
+HOSTLD     = ld
+HOSTCC     = gcc
+HOSTCXX    = g++
+HOSTAR     = ar rcs
+HOSTRANLIB = ranlib
+HOSTSTRIP  = strip -xsR .note -R .comment
+HOSTNM     = nm
+
+ifdef CONFIG_BUILD_CROSS_COMPILER_PREFIX
+	CROSS_PREFIX = $(CONFIG_BUILD_CROSS_COMPILER_PREFIX)
+endif
+
+LD     = $(CROSS_PREFIX)ld
+CC     = $(CROSS_PREFIX)gcc
+CXX    = $(CROSS_PREFIX)g++
+AR     = $(CROSS_PREFIX)ar rcs
+RANLIB = $(CROSS_PREFIX)ranlib
+STRIP  = $(CROSS_PREFIX)strip -xsR .note -R .comment
+NM     = $(CROSS_PREFIX)nm
+
+CFLAGS   := -Wall -g -pipe $(CFLAGS)
+INCDIR   := $(INCDIR) $(CONFIG_BUILD_XYNTH_INCDIR)
+LIBDIR   := $(LIBDIR) $(CONFIG_BUILD_XYNTH_LIBDIR)
+
+CFLAGS   := $(addprefix -I,$(INCDIR)) $(addprefix -I,$(INCDIR-Y)) $(CFLAGS) $(CFLAGS-Y)
+CXXFLAGS := $(CFLAGS) $(CXXFLAGS)
+CPPFLAGS := $(CFLAGS) $(CXXFLAGS)
+ASFLAGS  := $(CFLAGS) $(ASFLAGS)
+LDFLAGS  := $(addprefix -L,$(LIBDIR)) $(addprefix -L,$(LIBDIR-Y)) $(LDFLAGS) $(LDFLAGS-Y) -lxynth
+DEPEND   := Makefile.depend
+
+all: $(EXTRA_TARGETS) $(TARGET) $(TARGET_O) $(TARGET_A) $(TARGET_SO) $(TARGET_HOST) $(TARGET_HOST_A) $(TARGET_HOST_SO)
+	@$(foreach F, $(SUBDIR-Y), $(MAKE) -C $F || exit 1;)
+
+ARFLAGS:=
+
+show_objs = $(addprefix $(DIR),$@)
+show_targ = $(addprefix $(DIR),$^)
 pur_disp_compile.c   = echo "  "CC $(show_objs)
 pur_disp_compile.h   = echo "  "HOSTCC $(show_objs)
 pur_disp_compile.cpp = echo "  "CXX $(show_objs)
 pur_disp_compile.hpp = echo "  "HOSTCXX $(show_objs)
-pur_disp_strip       = echo "  "STRIP $(show_objs)
+pur_disp_strip       = echo "  "STRIP $(show_targ)
 pur_disp_link        = echo "  "LINK $(show_objs)
+pur_disp_ld          = echo "  "LD $(show_objs)
 pur_disp_ar          = echo "  "AR $(ARFLAGS) $(show_objs)
 pur_disp_ranlib      = echo "  "RANLIB $(RANLIBFLAGS) $(show_objs)
 sil_disp_compile.c   = true
@@ -49,6 +84,7 @@ sil_disp_compile.cpp = true
 sil_disp_compile.hpp = true
 sil_disp_strip       = true
 sil_disp_link        = true
+sil_disp_ld          = true
 sil_disp_ar          = true
 sil_disp_ranlib      = true
 ver_disp_compile.c   = echo $(cmd_compile.c)
@@ -57,6 +93,7 @@ ver_disp_compile.cpp = echo $(cmd_compile.cpp)
 ver_disp_compile.hpp = echo $(cmd_compile.hpp)
 ver_disp_strip       = echo $(cmd_strip)
 ver_disp_link        = echo $(cmd_link)
+ver_disp_ld          = echo $(cmd_ld)
 ver_disp_ar          = echo $(cmd_ar)
 ver_disp_ranlib      = echo $(cmd_ranlib)
 disp_compile.c       = $($(DISP)_disp_compile.c)
@@ -65,14 +102,16 @@ disp_compile.cpp     = $($(DISP)_disp_compile.cpp)
 disp_compile.hpp     = $($(DISP)_disp_compile.hpp)
 disp_strip           = $($(DISP)_disp_strip)
 disp_link            = $($(DISP)_disp_link)
+disp_ld              = $($(DISP)_disp_ld)
 disp_ar              = $($(DISP)_disp_ar)
 disp_ranlib          = $($(DISP)_disp_ranlib)
 cmd_compile.c        = $(CC) $(CFLAGS) $(EXTRA_CFLAGS) -c -o $@ $<
 cmd_compile.h        = $(HOSTCC) $(CFLAGS) $(EXTRA_CFLAGS) -c -o $@ $<
 cmd_compile.cpp      = $(CXX) $(CXXFLAGS) $(EXTRA_CXXFLAGS) -c -o $@ $<
 cmd_compile.hpp      = $(HOSTCXX) $(HOSTCXXFLAGS) -c -o $@ $<
-cmd_strip            = $(STRIPCMD) $@
+cmd_strip            = $(STRIP) $(STRIPFLAGS) $^
 cmd_link             = $(CC) $(CFLAGS) $(EXTRA_CFLAGS) -o $@ $^ $(LDFLAGS)
+cmd_ld               = $(LD) -r -o $@ $^ $(LDFLAGS)
 cmd_ar               = $(AR) $(ARFLAGS) $@ $^
 cmd_ranlib           = $(RANLIB) $(RANLIBFLAGS) $@
 compile.c            = @$(disp_compile.c) ; $(cmd_compile.c)
@@ -81,6 +120,7 @@ compile.cpp          = @$(disp_compile.cpp) ; $(cmd_compile.cpp)
 compile.hpp          = @$(disp_compile.hpp) ; $(cmd_compile.hpp)
 do_strip             = @$(disp_strip)     ; $(cmd_strip)
 do_link              = @$(disp_link)      ; $(cmd_link)
+do_ld                = @$(disp_ld)        ; $(cmd_ld)
 do_ar                = @$(disp_ar)        ; $(cmd_ar)
 do_ranlib            = @$(disp_ranlib)    ; $(cmd_ranlib)
 
@@ -94,6 +134,12 @@ ifdef TARGET_HOST
 $(TARGET_HOST): $(OBJS) $(EXTRA_OBJS)
 	$(Q)rm -rf $@
 	$(do_link)
+endif
+
+ifdef TARGET_O
+$(TARGET_O): $(OBJS) $(EXTRA_OBJS)
+	$(Q)rm -rf $@
+	$(do_ld) $@
 endif
 
 ifdef TARGET_A
@@ -161,4 +207,4 @@ clean: $(EXTRA_TARGETS_CLEAN)
 	@$(foreach F, $(SUBDIR-Y), $(MAKE) clean -C $F || exit 1;)
 	@$(foreach F, $(SUBDIR-N), $(MAKE) clean -C $F || exit 1;)
 	@$(foreach F, $(SUBDIR-), $(MAKE) clean -C $F || exit 1;)
-	rm -f $(TARGET) $(TARGET_A) $(TARGET_SO) $(TARGET_HOST) $(TARGET_HOST_A) $(TARGET_HOST_SO) $(EXTRA_CLEAN) $(OBJS) $(EXTRA_TARGETS) $(DEPEND)
+	rm -f $(TARGET) $(TARGET_O) $(TARGET_A) $(TARGET_SO) $(TARGET_HOST) $(TARGET_HOST_A) $(TARGET_HOST_SO) $(EXTRA_CLEAN) $(OBJS) $(EXTRA_TARGETS) $(DEPEND)

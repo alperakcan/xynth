@@ -2,6 +2,8 @@
 include ../../Makefile.cfg
 include ../../Makefile.parse
 
+DIR = src/python/
+
 INCDIR += ../lib /usr/include/python2.4
 LIBDIR += ../lib
 

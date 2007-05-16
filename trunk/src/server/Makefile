@@ -2,6 +2,8 @@
 include ../../Makefile.cfg
 include ../../Makefile.parse
 
+DIR = src/server/
+
 INCDIR += ./ ../lib
 LIBDIR += ../lib
 

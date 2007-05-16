@@ -2,6 +2,8 @@
 include ../../Makefile.cfg
 include ../../Makefile.parse
 
+DIR = src/lib/
+
 INCDIR += ./libz ./libpng ./freetype2/include ./expat ./pixman
 
 OBJS = alloc.o child.o config.o debug.o driver.o event.o eventq.o font.o \

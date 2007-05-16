@@ -2,6 +2,8 @@
 include ../../../Makefile.cfg
 include ../../../Makefile.parse
 
+DIR = src/widget/widgetr/
+
 #WIDGET_SCRIPT_ENGINE_JS = Y
 
 ifdef WIDGET_SCRIPT_ENGINE_JS

@@ -2,22 +2,18 @@
 include ../Makefile.cfg
 include ../Makefile.parse
 
-subdirs-Y += fonts
-subdirs-Y += configs
-subdirs-Y += lib
-subdirs-$(WIDGET_LIB) += widget
-subdirs-Y += ../demo
-subdirs-$(THEME_PLUGIN)   += themes
-subdirs-Y += server
-#subdirs-$(PYTHON_BINDING) += python
+DIR = src/
 
-all :
-	@$(foreach F, $(subdirs-Y), $(MAKE) -C $F || exit 1;)
+SUBDIR-Y += fonts
+SUBDIR-Y += configs
+SUBDIR-Y += lib
+SUBDIR-$(WIDGET_LIB) += widget
+SUBDIR-Y += ../demo
+SUBDIR-$(THEME_PLUGIN)   += themes
+SUBDIR-Y += server
+#SUBDIR-$(PYTHON_BINDING) += python
+
+include ../Makefile.rules
 
 dist:
-	@$(foreach F, $(subdirs-Y), $(MAKE) dist -C $F || exit 1;)
-
-clean :
-	@$(foreach F, $(subdirs-Y), $(MAKE) clean -C $F || exit 1;)
-	@$(foreach F, $(subdirs-N), $(MAKE) clean -C $F || exit 1;)
-	@$(foreach F, $(subdirs-), $(MAKE) clean -C $F || exit 1;)
+	@$(foreach F, $(SUBDIR-Y), $(MAKE) dist -C $F || exit 1;)
