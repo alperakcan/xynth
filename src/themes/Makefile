@@ -2,6 +2,8 @@
 include ../../Makefile.cfg
 include ../../Makefile.parse
 
+DIR = src/themes/
+
 THEME_KERAMIK = Y
 THEME_MICROGUI = Y
 THEME_SILVERADO = Y

@@ -2,6 +2,8 @@
 include ../../Makefile.cfg
 include ../../Makefile.parse
 
+DIR = src/demo/term/
+
 INCDIR  = ../../src/lib
 LIBDIR  = ../../src/lib
 LDFLAGS = -lxynth

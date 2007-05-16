@@ -2,6 +2,8 @@
 include ../../Makefile.cfg
 include ../../Makefile.parse
 
+DIR = src/demo/widgetx/
+
 INCDIR  = ../../src/lib ../../src/widget
 LIBDIR  = ../../src/widget ../../src/lib
 LDFLAGS = -lwidget -lxynth

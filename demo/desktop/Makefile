@@ -2,6 +2,8 @@
 include ../../Makefile.cfg
 include ../../Makefile.parse
 
+DIR = src/demo/desktop/
+
 DESKTOPDIR = $(INSTALLDIR)/$(SHAREDIR)/desktop
 CFLAGS += -DDESKTOPDIR=\"$(DESKTOPDIR)\"
 INCDIR  = ../../src/lib

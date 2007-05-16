@@ -5,12 +5,12 @@ include Makefile.parse
 .PHONY := all clean dist install optimize doxy-doc xynth.pc test strip update pspdev
 
 all:
-	$(MAKE) -C src
+	@$(MAKE) --no-print-directory -C src
 
 clean:
-	$(MAKE) clean -C src
-	$(MAKE) clean -C tools/theme
-	$(MAKE) clean -C tools/optimize
+	@$(MAKE) --no-print-directory clean -C src
+	@$(MAKE) --no-print-directory clean -C tools/theme
+	@$(MAKE) --no-print-directory clean -C tools/optimize
 	rm -f xynth.pc
 	rm -rf dist
 	rm -rf doc
@@ -24,7 +24,7 @@ dist: all xynth.pc
 	mkdir -p $(DISTCONFDIR)
 	mkdir -p $(DISTFONTDIR)
 	mkdir -p $(DISTTHEMEDIR)
-	$(MAKE) dist -C src
+	@$(MAKE) --no-print-directory dist -C src
 	mkdir -p $(DISTPKGCONFIG)
 	cp xynth.pc $(DISTPKGCONFIG)/xynth.pc
 
@@ -64,7 +64,7 @@ endif
 endif
 
 optimize:
-	make -C tools/optimize
+	$(MAKE) -C tools/optimize
 
 doxy-doc:
 	rm -rf doc
