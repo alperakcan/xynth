@@ -146,7 +146,7 @@ usage:				printf("%s usage;\n"
 		    s_xml_parse_file(&xfile, varf)) {
 			exit(1);
 		}
-		if (vars == NULL ||
+		if (vars != NULL &&
 		    s_xml_parse_file(&xstyle, vars)) {
 		    	exit(1);
 		}
