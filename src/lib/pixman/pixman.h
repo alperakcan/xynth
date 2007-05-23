@@ -74,9 +74,9 @@ SOFTWARE.
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifdef HAVE_CONFIG_H
+//#ifdef HAVE_CONFIG_H
 # include "config.h"
-#endif
+//#endif
 
 #if   HAVE_STDINT_H
 # include <stdint.h>
