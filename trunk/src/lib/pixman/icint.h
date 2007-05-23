@@ -23,9 +23,9 @@
 #ifndef _ICINT_H_
 #define _ICINT_H_
 
-#ifdef HAVE_CONFIG_H
+//#ifdef HAVE_CONFIG_H
 #  include "config.h"
-#endif
+//#endif
 
 #include "pixman.h"
 
