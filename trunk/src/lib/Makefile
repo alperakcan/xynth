@@ -4,14 +4,15 @@ include ../../Makefile.parse
 
 DIR = src/lib/
 
-INCDIR += ./libz ./libpng ./freetype2/include ./expat ./pixman
+INCDIR = ./libz ./libpng ./freetype2/include ./expat ./pixman
 
 OBJS = alloc.o child.o config.o debug.o driver.o event.o eventq.o font.o \
        gettext.o gettime.o grlib.o handler.o hashtable.o image.o image_gif.o \
        image_png.o image_xpm.o list.o pipe_api.o pollfd.o rect.o socket.o \
-       socket_api.o surface.o render.o thread.o timer.o window.o xml.o \
-       expat/libexpat.o libpng/libpng.o libz/libz.o pixman/libpixman.o \
-       freetype2/libfreetype2.o
+       socket_api.o surface.o render.o thread.o timer.o window.o xml.o
+
+EXTRA_OBJS = expat/libexpat.o libpng/libpng.o libz/libz.o pixman/libpixman.o \
+             freetype2/libfreetype2.o
 
 TARGET_A-$(PLATFORM_LINUX)  = libxynth.a
 TARGET_SO-$(PLATFORM_LINUX) = libxynth.so
@@ -30,8 +31,6 @@ LDFLAGS-$(PLATFORM_GP2X)   = -lpthread -lm
 
 TARGET_A  = $(TARGET_A-Y)
 TARGET_SO = $(TARGET_SO-Y)
-INCDIR   += $(INCDIR-Y)
-LDFLAGS  += $(LDFLAGS-Y)
 
 EXTRA_CLEAN = libxynth.a libxynth.so
 EXTRA_TARGETS_CLEAN = extra_clean
