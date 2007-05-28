@@ -8,7 +8,11 @@ INCDIR  = ../../src/lib ../../src/widget
 LIBDIR  = ../../src/widget ../../src/lib
 LDFLAGS = -lwidget -lxynth
 
+ifdef PLATFORM_MINGW
+WIDGETC = ../../src/widget/widgetc/widgetc.exe
+else
 WIDGETC = ../../src/widget/widgetc/widgetc
+endif
 
 have_widgetc := $(wildcard $(WIDGETC))
 

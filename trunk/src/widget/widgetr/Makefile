@@ -14,8 +14,11 @@ SPIDER_MONKEY_LIB = $(SPIDER_MONKEY)/src/Linux_All_DBG.OBJ/libjs.a  -lm  $(SPIDE
 endif
 
 CFLAGS += $(SPIDER_MONKEY_CFLAGS)
-INCDIR = ./ ../ ../../lib $(SPIDER_MONKEY_INC)
+INCDIR = . .. ../../lib $(SPIDER_MONKEY_INC)
 LIBDIR = ../../lib ../../widget
+LIBDIR-$(PLATFORM_MINGW) = ../../server/video/gdi/pthread_w32
+LDFLAGS-$(PLATFORM_MINGW) = -lpthreadGC2
+
 LDFLAGS = -lwidget -lxynth $(SPIDER_MONKEY_LIB)
 
 OBJS = widgetr.o code.o js.o
