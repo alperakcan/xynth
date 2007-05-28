@@ -4,7 +4,7 @@ include ../../../Makefile.parse
 
 DIR = src/lib/expat/
 
-INCDIR = ./
+INCDIR = .
 CFLAGS += -DHAVE_EXPAT_CONFIG_H
 OBJS += xmlparse.o xmltok.o xmlrole.o
 

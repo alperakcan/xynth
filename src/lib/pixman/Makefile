@@ -4,7 +4,7 @@ include ../../../Makefile.parse
 
 DIR = src/lib/pixman/
 
-INCDIR = ./
+INCDIR = .
 CFLAGS += -DHAVE_CONFIG_H
 OBJS += fbcompose.o fbedge.o fbpict.o fbtrap.o icblt.o \
         icbltone.o iccolor.o icformat.o icimage.o \

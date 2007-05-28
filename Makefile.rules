@@ -150,15 +150,15 @@ endif
 ifdef TARGET_A
 $(TARGET_A): $(OBJS) $(EXTRA_OBJS)
 	$(Q)rm -rf $@
-	$(do_ar) $@ $^
-	$(do_ranlib) $@
+	$(do_ar)
+	$(do_ranlib)
 endif
 
 ifdef TARGET_HOST_A
 $(TARGET_HOST_A): $(OBJS) $(EXTRA_OBJS)
 	$(Q)rm -rf $@
-	$(do_ar) $@ $^
-	$(do_ranlib) $@
+	$(do_ar)
+	$(do_ranlib)
 endif
 
 ifdef TARGET_SO
