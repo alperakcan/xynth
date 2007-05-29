@@ -41,9 +41,6 @@ endif
 ifeq ($(DEMO_SIMPLE), Y)
 	CFLAGS += -DDEMO_SIMPLE
 endif
-ifeq ($(DEMO_OBJECT), Y)
-	CFLAGS += -DDEMO_OBJECT
-endif
 ifeq ($(DEMO_ONSCREENKEYBOARD), Y)
 	CFLAGS += -DDEMO_ONSCREENKEYBOARD
 endif
@@ -62,8 +59,13 @@ endif
 ifeq ($(DEMO_IMAGE), Y)
 	CFLAGS += -DDEMO_IMAGE
 endif
+ifeq ($(WIDGET_LIB), Y)
+ifeq ($(DEMO_OBJECT), Y)
+	CFLAGS += -DDEMO_OBJECT
+endif
 ifeq ($(DEMO_WIDGETX), Y)
 	CFLAGS += -DDEMO_WIDGETX
+endif
 endif
 
 ifeq ($(VIDEO_FBDev), Y)

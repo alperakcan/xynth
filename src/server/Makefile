@@ -29,7 +29,7 @@ OBJS-$(VIDEO_VESA)        += video/vesa/kbd.o video/vesa/server.o video/vesa/lrm
 
 TARGET-$(VIDEO_PSPDEV)     = xynth.elf
 OBJS-$(VIDEO_PSPDEV)      += video/pspdev/event.o video/pspdev/kbd.o video/pspdev/mouse.o video/pspdev/server.o
-VLDFLAGS-$(VIDEO_PSPDEV)  += -lm -lpspdebug -lpspdisplay -lpspge -lpspctrl -lpspsdk -lc -lpsputility -lpspuser -lpspkernel
+VLDFLAGS-$(VIDEO_PSPDEV)  += -lm -lpspdebug -lpspdisplay -lpspge -lpspctrl -lpspsdk -lc -lpspnet -lpspnet_inet -lpspnet_apctl -lpspnet_resolver -lpsputility -lpspuser -lpspkernel
 
 OBJS-$(VIDEO_GDI)         += video/gdi/event.o video/gdi/kbd.o video/gdi/mouse.o video/gdi/server.o
 LIBDIR-$(VIDEO_GDI)       += video/gdi/pthread_w32
@@ -64,17 +64,15 @@ ifeq ($(SINGLE_APP), Y)
 	EXTRA_OBJS-$(DEMO_WIDGETX) += ../../demo/widgetx/single_widgetx.a
 endif
 
-LIBDIR-$(WIDGET_LIB) += ../widget
+LIBDIR-$(WIDGET_LIB)  += ../widget
 LDFLAGS-$(WIDGET_LIB) += -lwidget
+LDFLAGS-Y             += $(VLDFLAGS-Y)
 
 LDFLAGS-$(THEME_PLUGIN) += -ldl
 
 OBJS       += $(OBJS-Y)
 EXTRA_OBJS += $(EXTRA_OBJS-Y)
-CFLAGS     += $(CFLAGS-Y)
-INCDIR     += $(INCDIR-Y)
-LIBDIR     += $(LIBDIR-Y)
-LDFLAGS    += $(LDFLAGS-Y) -lxynth $(VLDFLAGS-Y)
+LDFLAGS    += -lxynth
 TARGET      = $(TARGET-Y)
 
 EXTRA_CLEAN = xynth xynth.exe xynth.elf $(OBJS-N) $(OBJS-)

@@ -16,4 +16,7 @@
 #define s_malloc malloc
 #define s_free free
 
+#define XYNTH__H
+
+#include "../../lib/xynth.h"
 #include "../../lib/list.c"

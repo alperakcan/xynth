@@ -4,7 +4,7 @@ include ../../Makefile.parse
 
 DIR = src/lib/
 
-INCDIR = ./libz ./libpng ./freetype2/include ./expat ./pixman
+INCDIR += ./libz ./libpng ./freetype2/include ./expat ./pixman
 
 OBJS = alloc.o child.o config.o debug.o driver.o event.o eventq.o font.o \
        gettext.o gettime.o grlib.o handler.o hashtable.o image.o image_gif.o \
