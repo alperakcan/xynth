@@ -63,7 +63,7 @@ int main (int argc, char *argv[])
 	unsigned int mask = 0;
 	unsigned int depth = 0;
 	s_hashtable_t *htable;
-	unsigned int option_index = 0;
+	int option_index = 0;
 	struct option long_options[] = {
 		{"depth", 1, 0, 'd'},
 		{"mask", 1, 0, 'm'},

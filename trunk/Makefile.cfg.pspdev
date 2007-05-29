@@ -17,6 +17,7 @@ PLATFORM_GP2X   = N
 # Platform Settings
 CC     = psp-gcc
 CXX    = psp-g++
+LD     = psp-ld
 AR     = psp-ar cru
 MAKE   = make
 RANLIB = psp-ranlib
