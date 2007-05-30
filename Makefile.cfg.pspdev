@@ -93,13 +93,13 @@ DEBUG		= Y
 SINGLE_APP      = Y
 
 # Build widget library
-WIDGET_LIB      = N
+WIDGET_LIB      = Y
 
 # Demo applications
 DEMO_CHILD      = Y
 DEMO_DESKTOP    = Y
 DEMO_HIDE       = Y
-DEMO_LOAD       = Y
+DEMO_LOAD       = N
 DEMO_SIMPLE     = Y
 DEMO_OBJECT     = Y
 DEMO_ONSCREENKEYBOARD = Y
