@@ -161,10 +161,11 @@ static int s_pipe_mem_close (int fd)
 			s_free(data->data);
 			s_free(data);
 		}
+		s_list_uninit(p->data);
 #else
 		s_free(p->data->data);
-#endif
 		s_free(p->data);
+#endif
 	}
 	if (p->conn != NULL) {
 		s_pipe_mem_wake(p->conn);
