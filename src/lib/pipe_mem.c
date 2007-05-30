@@ -19,6 +19,11 @@
 
 #define MIN_PIPE_E	0
 #define MAX_PIPE_E	4096
+#define MAX_PIPE_LEN	65536
+
+/* enable this to enable unlimeted size of data passing
+ */
+#define USE_PIPE_LIST	0
 
 typedef enum {
 	PIPET_NONE  = 0x2,
@@ -34,7 +39,11 @@ typedef struct s_pipe_data_s {
 typedef struct s_pipe_s {
 	int fd;
 	PIPE_T type;
+#if USE_PIPE_LIST
 	s_list_t *data;
+#else
+	s_pipe_data_t *data;
+#endif
 	s_list_t *wait;
 	struct s_pipe_s *conn;
 } s_pipe_t;
@@ -145,12 +154,16 @@ static int s_pipe_mem_close (int fd)
 		goto err0;
 	}
 	if (p->data != NULL) {
+#if USE_PIPE_LIST
 		while (!s_list_eol(p->data, 0)) {
 			s_pipe_data_t *data = (s_pipe_data_t *) s_list_get(p->data, 0);
 			s_list_remove(p->data, 0);
 			s_free(data->data);
 			s_free(data);
 		}
+#else
+		s_free(p->data->data);
+#endif
 		s_free(p->data);
 	}
 	if (p->conn != NULL) {
@@ -174,7 +187,11 @@ static int s_pipe_mem_pipe (int filedes[2])
 {
 	s_pipe_t *pr;
 	s_pipe_t *pw;
+#if USE_PIPE_LIST
 	s_list_t *pd;
+#else
+	s_pipe_data_t *pd;
+#endif
 	DEBUGF(0, "enter");
 	if (s_pipe_mem_new(&pr)) {
 		goto err0;
@@ -182,9 +199,16 @@ static int s_pipe_mem_pipe (int filedes[2])
 	if (s_pipe_mem_new(&pw)) {
 		goto err1;
 	}
+
+#if USE_PIPE_LIST
 	if (s_list_init(&pd)) {
 		goto err2;
 	}
+#else
+	pd = (s_pipe_data_t *) s_malloc(sizeof(s_pipe_data_t));
+	pd->dlen = 0;
+	pd->data = (void *) s_malloc(sizeof(char) * MAX_PIPE_LEN);
+#endif
 	s_thread_mutex_lock(s_pipe.lock);
 	if (s_pipe.fds >= MAX_PIPE_E) {
 		debugf(DFAT, "Unhandled BUG");
@@ -204,7 +228,9 @@ static int s_pipe_mem_pipe (int filedes[2])
 	s_thread_mutex_unlock(s_pipe.lock);
 	DEBUGF(0, "leave");
 	return 0;
+#if USE_PIPE_LIST
 err2:	s_pipe_mem_del(pw);
+#endif
 err1:	s_pipe_mem_del(pr);
 err0:	DEBUGF(0, "leave error");
 	return -1;
@@ -213,7 +239,9 @@ err0:	DEBUGF(0, "leave error");
 static int s_pipe_mem_write (int fd, void *buf, unsigned int count)
 {
 	s_pipe_t *p;
+#if USE_PIPE_LIST
 	s_pipe_data_t *d;
+#endif
 	DEBUGF(0, "enter");
 	s_thread_mutex_lock(s_pipe.lock);
 	if (s_pipe_mem_find(fd, &p)) {
@@ -223,11 +251,19 @@ static int s_pipe_mem_write (int fd, void *buf, unsigned int count)
 	    (p->conn == NULL)) {
 		goto err0;
 	}
+#if USE_PIPE_LIST
 	d = (s_pipe_data_t *) s_malloc(sizeof(s_pipe_data_t));
 	d->dlen = count;
 	d->data = (void *) s_malloc(d->dlen);
 	memcpy(d->data, buf, d->dlen);
 	s_list_add(p->data, d, -1);
+#else
+	if (p->data->dlen + count > MAX_PIPE_LEN) {
+		goto err0;
+	}
+	memcpy(p->data->data + p->data->dlen, buf, count);
+	p->data->dlen += count;
+#endif
 	s_pipe_mem_wake(p->conn);
 	s_thread_mutex_unlock(s_pipe.lock);
 	DEBUGF(0, "leave");
@@ -240,7 +276,9 @@ err0:	s_thread_mutex_unlock(s_pipe.lock);
 static int s_pipe_mem_read (int fd, void *buf, unsigned int count)
 {
 	s_pipe_t *p;
+#if USE_PIPE_LIST
 	s_pipe_data_t *d;
+#endif
 	s_thread_cond_t *c = NULL;
 	DEBUGF(0, "enter");
 	s_thread_mutex_lock(s_pipe.lock);
@@ -252,6 +290,7 @@ static int s_pipe_mem_read (int fd, void *buf, unsigned int count)
 		goto err0;
 	}
 
+#if USE_PIPE_LIST
 	if (p->data->nb_elt <= 0) {
 		if (s_thread_cond_init(&c)) {
 			goto err0;
@@ -261,11 +300,23 @@ static int s_pipe_mem_read (int fd, void *buf, unsigned int count)
 	while (p->data->nb_elt <= 0) {
 		s_thread_cond_wait(c, s_pipe.lock);
 	}
+#else
+	if (p->data->dlen <= 0) {
+		if (s_thread_cond_init(&c)) {
+			goto err0;
+		}
+		s_list_add(p->wait, c, -1);
+	}
+	while (p->data->dlen <= 0) {
+		s_thread_cond_wait(c, s_pipe.lock);
+	}
+#endif
 	if (c != NULL) {
 		s_list_remove(p->wait, s_list_get_pos(p->wait, c));
 		s_thread_cond_destroy(c);
 	}
 
+#if USE_PIPE_LIST
 	d = (s_pipe_data_t *) s_list_get(p->data, 0);
 	if (d->dlen != count) {
 		goto err0;
@@ -274,6 +325,14 @@ static int s_pipe_mem_read (int fd, void *buf, unsigned int count)
 	s_list_remove(p->data, 0);
 	s_free(d->data);
 	s_free(d);
+#else
+	if (p->data->dlen < count) {
+		goto err0;
+	}
+	memcpy(buf, p->data->data, count);
+	p->data->dlen -= count;
+	memmove(p->data->data, p->data->data + count, p->data->dlen);
+#endif
 	s_pipe_mem_wake(p->conn);
 	s_thread_mutex_unlock(s_pipe.lock);
 	DEBUGF(0, "leave");
@@ -313,7 +372,11 @@ error:			ufds[i].revents = POLLNVAL | POLLHUP | POLLERR;
 			}
 			if (ufds[i].events & POLLIN) {
 				if (p->type == PIPET_READ) {
+#if USE_PIPE_LIST
 					if (p->data->nb_elt > 0) {
+#else
+					if (p->data->dlen > 0) {
+#endif
 						ufds[i].revents = POLLIN;
 						ret++;
 					}
@@ -323,7 +386,11 @@ error:			ufds[i].revents = POLLNVAL | POLLHUP | POLLERR;
 			}
 			if (ufds[i].events & POLLOUT) {
 				if (p->type == PIPET_WRITE) {
+#if USE_PIPE_LIST
 					if (p->data->nb_elt == 0) {
+#else
+					if (p->data->dlen <= 0) {
+#endif
 						ufds[i].revents = POLLOUT;
 						ret++;
 					}

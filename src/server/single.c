@@ -122,7 +122,7 @@ void s_server_single_start (void)
 #else
 	for (sa = s_server_single_apps; *sa; sa++) {
 		if (strcmp((*sa)->argv[0], "xynthlogout") != 0) {
-			s_thread_create(s_server_single_app_start, *sa);
+			(*sa)->tid = s_thread_create(s_server_single_app_start, *sa);
 		}
 	}
 #endif
@@ -131,6 +131,12 @@ void s_server_single_start (void)
 
 void s_server_single_stop (void)
 {
+	s_single_app_t **sa;
+	for (sa = s_server_single_apps; *sa; sa++) {
+		if ((*sa)->tid) {
+			s_free((*sa)->tid);
+		}
+	}
 }
 
 #endif /* SINGLE_APP */
