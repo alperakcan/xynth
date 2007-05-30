@@ -468,6 +468,7 @@ typedef struct s_single_app_s {
 	int (*fonk) (int argc, char *argv[]);
 	int argc;
 	char *argv[10];
+	s_thread_t *tid;
 } s_single_app_t;
 
 /* alloc.c */

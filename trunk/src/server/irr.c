@@ -80,12 +80,19 @@ int s_server_irr_add_code (char *key, char *code)
 
 int s_server_irr_uninit (s_window_t *window, s_pollfd_t *pfd)
 {
+	int i;
 	s_video_input_t *irr;
+	s_video_helper_irr_codes_t *codes;
 	irr = (s_video_input_t *) pfd->data;
         if (irr->uninit != NULL) {
 		irr->uninit();
 	}
+	for (i = 0; i < irr_codes_size; i++) {
+		codes = &irr_codes[i];
+		s_free(codes->code);
+	}
 	s_free(irr_codes);
+	irr_codes = NULL;
 	irr_codes_size = 0;
 	return 0;
 }
@@ -114,8 +121,10 @@ int s_server_irr_update (s_window_t *window, s_pollfd_t *pfd)
 
 void s_server_irr_init (s_server_conf_t *cfg, s_video_input_t *irr)
 {
+	int i;
 	int fd = -1;
 	s_pollfd_t *pfd;
+	s_video_helper_irr_codes_t *codes;
         if (irr->init != NULL) {
 		if (strcasecmp(cfg->irr.type, "IRR_NONE") != 0) {
 			fd = irr->init(cfg);
@@ -125,6 +134,13 @@ void s_server_irr_init (s_server_conf_t *cfg, s_video_input_t *irr)
 		}
 	}
 	if (fd < 0) {
+		for (i = 0; i < irr_codes_size; i++) {
+			codes = &irr_codes[i];
+			s_free(codes->code);
+		}
+		s_free(irr_codes);
+		irr_codes = NULL;
+		irr_codes_size = 0;
 		debugf(DSER, "irr support disabled");
 	} else {
 		s_pollfd_init(&pfd);
