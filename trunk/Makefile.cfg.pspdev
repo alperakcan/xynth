@@ -87,7 +87,7 @@ IMAGE_XPM       = Y
 THEME_PLUGIN    = N
 
 # Debug Options
-DEBUG		= Y
+DEBUG		= N
 
 # Link them all
 SINGLE_APP      = Y

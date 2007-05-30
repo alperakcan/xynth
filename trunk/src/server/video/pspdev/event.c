@@ -61,6 +61,22 @@ void * s_video_pspdev_event_parse (void *arg)
 		} else if (pad.Buttons & PSP_CTRL_DOWN) {
 			axisy += MOUSE_ACCELL;
 		}
+
+		if (pad.Lx < 30) {         axisx -= MOUSE_ACCELL + 2;
+		} else if (pad.Lx < 60) {  axisx -= MOUSE_ACCELL + 1;
+		} else if (pad.Lx < 90) {  axisx -= MOUSE_ACCELL;
+		} else if (pad.Lx > 225) { axisx += MOUSE_ACCELL + 2;
+		} else if (pad.Lx > 195) { axisx += MOUSE_ACCELL + 1;
+		} else if (pad.Lx > 165) { axisx += MOUSE_ACCELL;
+		}
+		if (pad.Ly < 30) {         axisy -= MOUSE_ACCELL + 2;
+		} else if (pad.Ly < 60) {  axisy -= MOUSE_ACCELL + 1;
+		} else if (pad.Ly < 90) {  axisy -= MOUSE_ACCELL;
+		} else if (pad.Ly > 225) { axisy += MOUSE_ACCELL + 2;
+		} else if (pad.Ly > 195) { axisy += MOUSE_ACCELL + 1;
+		} else if (pad.Ly > 165) { axisy += MOUSE_ACCELL;
+		}
+		
 		axisx = MAX(axisx, server->mouse_rangex[0]);
 		axisx = MIN(axisx, server->mouse_rangex[1]);
 		axisy = MAX(axisy, server->mouse_rangey[0]);
