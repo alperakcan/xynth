@@ -83,29 +83,13 @@ extern "C" {
 	void usleep (unsigned long msec);
 #endif
 
-#if defined(SOCKET_BSD)
-	#include <sys/types.h>
-	#include <sys/socket.h>
-	#include <sys/un.h>
-	#include <netinet/in.h>
-	#include <arpa/inet.h>
-	typedef struct sockaddr s_sockaddr_t;
-#elif defined(SOCKET_PIPE)
-	#define AF_PIPE		0x0001
-	#define SOCK_STREAM	0x0001
-	#define socklen_t	unsigned int
-	struct s_sockaddr_s {
-		short sa_family;
-		char sa_addr[40];
-	};
-	typedef struct s_sockaddr_s s_sockaddr_t;
-#else
-	#error "Select one of the connection methods!"
-#endif
-
 #if defined(HAVE_POLL)
 	#include <sys/poll.h>
 #else
+	#include <fcntl.h>
+	#include <sys/time.h>
+	#include <sys/select.h>
+
 	#define	POLLIN		0x0001
 	#define	POLLPRI		0x0002
 	#define	POLLOUT		0x0004
@@ -118,6 +102,28 @@ extern "C" {
 		short revents;
 	};
 	typedef unsigned int nfds_t;
+#endif
+
+#if defined(SOCKET_BSD)
+	#include <sys/types.h>
+	#include <sys/socket.h>
+	#include <sys/un.h>
+	#include <netinet/in.h>
+	#include <arpa/inet.h>
+	typedef struct sockaddr s_sockaddr_t;
+#elif defined(SOCKET_PIPE)
+	#define AF_PIPE		0x0001
+#if !defined(SOCK_STREAM)
+	#define SOCK_STREAM	0x0001
+	typedef unsigned int    socklen_t;
+#endif
+	struct s_sockaddr_s {
+		short sa_family;
+		char sa_addr[40];
+	};
+	typedef struct s_sockaddr_s s_sockaddr_t;
+#else
+	#error "Select one of the connection methods!"
 #endif
 
 /* pipe_api.c */

@@ -25,11 +25,11 @@ STRIP  = psp-strip
 NM     = psp-nm
 
 PSP-CONFIG = psp-config
-#PSP-VERSION = 1.0
-PSP-VERSION = 1.5
+#PSP_FW_VERSION = 100
+PSP_FW_VERSION = 150
 INCDIR += $(shell $(PSP-CONFIG) -p)/include
 LIBDIR += $(shell $(PSP-CONFIG) -p)/lib
-CFLAGS += -G0 -DPSP_VERSION=$(PSP-VERSION) -DPSP_DIRECTACCESS -DPSP_BITSPERPIXEL=32
+CFLAGS += -G0 -DPSP_DIRECTACCESS -DPSP_BITSPERPIXEL=32 -D_PSP_FW_VERSION=$(PSP_FW_VERSION)
 
 # Platform directory structure
 _INSTALLDIR = ms0:/psp/game/xynth/
@@ -87,19 +87,19 @@ IMAGE_XPM       = Y
 THEME_PLUGIN    = N
 
 # Debug Options
-DEBUG		= N
+DEBUG		= Y
 
 # Link them all
 SINGLE_APP      = Y
 
 # Build widget library
-WIDGET_LIB      = Y
+WIDGET_LIB      = N
 
 # Demo applications
 DEMO_CHILD      = Y
 DEMO_DESKTOP    = Y
 DEMO_HIDE       = Y
-DEMO_LOAD       = N
+DEMO_LOAD       = Y
 DEMO_SIMPLE     = Y
 DEMO_OBJECT     = Y
 DEMO_ONSCREENKEYBOARD = Y

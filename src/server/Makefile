@@ -89,7 +89,7 @@ else
 ifeq ($(PLATFORM_PSPDEV), Y)
 	psp-fixup-imports ../../$(DISTBINDIR)/$(TARGET)
 	mksfo 'Xynth Windowing System' ../../$(DISTBINDIR)/param.sfo
-ifeq ($(PSP-VERSION), 1.5)
+ifeq ($(PSP_FW_VERSION), 150)
 	mkdir -p ../../$(DISTBINDIR)/xynth
 	psp-strip ../../$(DISTBINDIR)/$(TARGET) -o ../../$(DISTBINDIR)/xynth/eboot.pbp
 	mkdir -p ../../$(DISTBINDIR)/xynth%
@@ -103,7 +103,7 @@ ifeq ($(PSP-VERSION), 1.5)
 	         NULL \
 	         NULL
 else
-ifeq ($(PSP-VERSION), 1.0)
+ifeq ($(PSP_FW_VERSION), 1.0)
 	mkdir -p ../../$(DISTBINDIR)/xynth
 	psp-strip ../../$(DISTBINDIR)/$(TARGET) -o ../../$(DISTBINDIR)/$(TARGET).strip
 	pack-pbp ../../$(DISTBINDIR)/xynth/eboot.pbp \
