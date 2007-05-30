@@ -44,11 +44,11 @@ ifeq ($(PLATFORM_PSPDEV), Y)
 	rm -rf $(DISTCONFDIR)
 	rm -rf $(DISTTHEMEDIR)
 	mkdir -p dist/psp/game
-	cp -af dist/bin/xynth dist/psp/game
+	cp -af dist/bin/__SCE__xynth dist/psp/game
 ifeq ($(PSP_FW_VERSION), 150)
-	cp -af dist/bin/xynth% dist/psp/game
+	cp -af dist/bin/%__SCE__xynth dist/psp/game
 endif
-	cp -af dist/share dist/psp/game/xynth
+	cp -af dist/share dist/psp/game/__SCE__xynth
 	rm -rf dist/share
 	rm -rf dist/bin
 else
@@ -118,5 +118,5 @@ strip: dist
 
 pspdev:
 	mount /mnt/sdc1
-	cp -Rf dist/psp/game/xynth* /mnt/sdc1/psp/game/
+	cp -Rf dist/psp/game/*xynth* /mnt/sdc1/psp/game/
 	umount /mnt/sdc1

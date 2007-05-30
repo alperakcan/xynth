@@ -90,10 +90,11 @@ ifeq ($(PLATFORM_PSPDEV), Y)
 	psp-fixup-imports ../../$(DISTBINDIR)/$(TARGET)
 	mksfo 'Xynth Windowing System' ../../$(DISTBINDIR)/param.sfo
 ifeq ($(PSP_FW_VERSION), 150)
-	mkdir -p ../../$(DISTBINDIR)/xynth
-	psp-strip ../../$(DISTBINDIR)/$(TARGET) -o ../../$(DISTBINDIR)/xynth/eboot.pbp
-	mkdir -p ../../$(DISTBINDIR)/xynth%
-	pack-pbp ../../$(DISTBINDIR)/xynth%/eboot.pbp \
+	mkdir -p ../../$(DISTBINDIR)/__SCE__xynth
+	psp-strip ../../$(DISTBINDIR)/$(TARGET) -o ../../$(DISTBINDIR)/__SCE__xynth/eboot.pbp
+	psp-packer ../../$(DISTBINDIR)/__SCE__xynth/eboot.pbp
+	mkdir -p ../../$(DISTBINDIR)/%__SCE__xynth
+	pack-pbp ../../$(DISTBINDIR)/%__SCE__xynth/eboot.pbp \
 	         ../../$(DISTBINDIR)/param.sfo \
 	         ../../tools/pspdev/icon0.png \
 	         NULL \
