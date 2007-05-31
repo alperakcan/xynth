@@ -71,20 +71,38 @@ int s_socket_api_poll (struct pollfd *ufds, nfds_t nfds, int timeout)
 
 int s_socket_api_recv (int s, void *read_buf, int total_size)
 {
-	if ((s_socket_api != NULL) &&
-	    (s_socket_api->recv != NULL)) {
-		return s_socket_api->recv(s, read_buf, total_size);
+	int ret;
+	int read = 0;
+	if ((s_socket_api != NULL) && (s_socket_api->recv != NULL)) {
+		while (total_size > 0) {
+			ret = s_socket_api->recv(s, read_buf + read, total_size);
+			if (ret < 0) {
+				goto err;
+			}
+			read += ret;
+			total_size -= ret;
+		}
+		return read;
 	}
-	return -1;
+err:	return -1;
 }
 
 int s_socket_api_send (int s, void *write_buf, int total_size)
 {
-	if ((s_socket_api != NULL) &&
-	    (s_socket_api->send != NULL)) {
-		return s_socket_api->send(s, write_buf, total_size);
+	int ret;
+	int sent = 0;
+	if ((s_socket_api != NULL) && (s_socket_api->send != NULL)) {
+		while (total_size > 0) {
+			ret = s_socket_api->send(s, write_buf + sent, total_size);
+			if (ret < 0) {
+				goto err;
+			}
+			sent += ret;
+			total_size -= ret;
+		}
+		return sent;
 	}
-	return -1;
+err:	return -1;
 }
 
 int s_socket_api_socket (int domain, int type, int protocol)
