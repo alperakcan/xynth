@@ -92,7 +92,7 @@ ifeq ($(PLATFORM_PSPDEV), Y)
 ifeq ($(PSP_FW_VERSION), 150)
 	mkdir -p ../../$(DISTBINDIR)/__SCE__xynth
 	psp-strip ../../$(DISTBINDIR)/$(TARGET) -o ../../$(DISTBINDIR)/__SCE__xynth/eboot.pbp
-	psp-packer ../../$(DISTBINDIR)/__SCE__xynth/eboot.pbp
+#	psp-packer ../../$(DISTBINDIR)/__SCE__xynth/eboot.pbp
 	mkdir -p ../../$(DISTBINDIR)/%__SCE__xynth
 	pack-pbp ../../$(DISTBINDIR)/%__SCE__xynth/eboot.pbp \
 	         ../../$(DISTBINDIR)/param.sfo \
@@ -107,6 +107,7 @@ else
 ifeq ($(PSP_FW_VERSION), 1.0)
 	mkdir -p ../../$(DISTBINDIR)/xynth
 	psp-strip ../../$(DISTBINDIR)/$(TARGET) -o ../../$(DISTBINDIR)/$(TARGET).strip
+	psp-packer ../../$(DISTBINDIR)/$(TARGET).strip
 	pack-pbp ../../$(DISTBINDIR)/xynth/eboot.pbp \
 	         ../../$(DISTBINDIR)/param.sfo \
 	         ../../tools/pspdev/icon0.png \

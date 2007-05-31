@@ -117,6 +117,6 @@ strip: dist
 	@$(foreach F, $(wildcard $(DISTTHEMEDIR)/*), $(STRIP) $(F) > /dev/null 2>&1;)
 
 pspdev:
-	mount /mnt/sdc1
-	cp -Rf dist/psp/game/*xynth* /mnt/sdc1/psp/game/
-	umount /mnt/sdc1
+	mount /mnt/sdb1
+	cp -Rf dist/psp/game/*xynth* /mnt/sdb1/psp/game/
+	umount /mnt/sdb1

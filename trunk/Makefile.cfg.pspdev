@@ -32,7 +32,7 @@ LIBDIR += $(shell $(PSP-CONFIG) -p)/lib
 CFLAGS += -G0 -DPSP_DIRECTACCESS -DPSP_BITSPERPIXEL=32 -D_PSP_FW_VERSION=$(PSP_FW_VERSION)
 
 # Platform directory structure
-_INSTALLDIR = ms0:/psp/game/xynth/
+_INSTALLDIR = ms0:/psp/game/__SCE__xynth/
 _SHAREDIR = share/
 _FONTDIR = fonts/
 _CONFDIR = configs/
@@ -87,7 +87,7 @@ IMAGE_XPM       = Y
 THEME_PLUGIN    = N
 
 # Debug Options
-DEBUG		= N
+DEBUG		= Y
 
 # Link them all
 SINGLE_APP      = Y
