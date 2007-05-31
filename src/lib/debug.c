@@ -17,7 +17,9 @@
 
 #if defined(PLATFORM_PSPDEV)
 	#include <pspdebug.h>
+	/* for psplink
 	#define printf	pspDebugScreenPrintf
+	*/
 #endif
 
 void s_debug_debugf (unsigned short flags, char *file, int line, char *func, char *fmt, ...)

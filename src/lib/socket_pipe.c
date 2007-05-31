@@ -23,6 +23,7 @@ typedef struct s_soce_s {
 	int rsoc;
 	int wsoc;
 	char *bname;
+	int connected;
 	struct s_soce_s *conn;
 } s_soce_t;
 
@@ -79,19 +80,30 @@ static int s_socket_pipe_poll (struct pollfd *ufds, nfds_t nfds, int timeout)
 			tmpn++;
 		} else {
 			if (ufds[i].events & POLLIN) {
-				tmp[tmpn].fd = soc->rsoc;
-				tmp[tmpn].events |= POLLIN;
-				tbl[tmpn] = &ufds[i];
-				tmpn++;
+				if (soc->connected && soc->conn == NULL) {
+					/* connected end is closed
+					 */
+					ufds[i].revents = POLLHUP;
+					s_thread_mutex_unlock(s_soce.lock);
+					s_free(tmp);
+					s_free(tbl);
+					return 1;
+				} else {
+					tmp[tmpn].fd = soc->rsoc;
+					tmp[tmpn].events |= POLLIN;
+					tbl[tmpn] = &ufds[i];
+					tmpn++;
+				}
 			}
 			if (ufds[i].events & POLLOUT) {
-				if (soc->conn != NULL) {
+				if (soc->connected && soc->conn != NULL) {
 					tmp[tmpn].fd = soc->conn->wsoc;
 					tmp[tmpn].events |= POLLOUT;
 					tbl[tmpn] = &ufds[i];
 					tmpn++;
 				} else {
-					/* connected end is closed */
+					/* connected end is closed
+					 */
 					ufds[i].revents = POLLHUP;
 					s_thread_mutex_unlock(s_soce.lock);
 					s_free(tmp);
@@ -193,6 +205,7 @@ found:	soc->soc = i;
 	soc->wsoc = pfd[1];
 	soc->bname = NULL;
 	soc->conn = NULL;
+	soc->connected = 0;
 
 	/* Posibble Error :
 	   if this function returns a newly closed id as new id (can happen,
@@ -274,7 +287,9 @@ static int s_socket_pipe_accept (int s, s_sockaddr_t *addr, socklen_t *addrlen)
 		goto err0;
 	}
 	client->conn = clconn;
+	client->connected = 1;
 	clconn->conn = client;
+	clconn->connected = 1;
 	if (s_pipe_api_write(client->wsoc, &ok, sizeof(int)) <= 0) {
 		s_pipe_api_close(t);
 		goto err0;
