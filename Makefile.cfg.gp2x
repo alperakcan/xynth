@@ -101,7 +101,7 @@ DEMO_TIMER      = Y
 DEMO_LOGOUT     = Y
 DEMO_IMAGE      = N
 
-CFLAGS += -Wall -Wparentheses -pipe -fsigned-char -DREENTRANT
+CFLAGS += -Wall -Wparentheses -pipe -fsigned-char -fno-strict-aliasing -DREENTRANT
 
 # Debug
 CFLAGS += -g
