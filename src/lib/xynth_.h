@@ -107,7 +107,9 @@ extern "C" {
 #if defined(SOCKET_BSD)
 	#include <sys/types.h>
 	#include <sys/socket.h>
+#if defined(IPC_UDS)
 	#include <sys/un.h>
+#endif
 	#include <netinet/in.h>
 	#include <arpa/inet.h>
 	typedef struct sockaddr s_sockaddr_t;

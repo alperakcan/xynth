@@ -80,6 +80,7 @@ static int s_socket_pipe_poll (struct pollfd *ufds, nfds_t nfds, int timeout)
 			tmpn++;
 		} else {
 			if (ufds[i].events & POLLIN) {
+#if 0
 				if (soc->connected && soc->conn == NULL) {
 					/* connected end is closed
 					 */
@@ -94,6 +95,12 @@ static int s_socket_pipe_poll (struct pollfd *ufds, nfds_t nfds, int timeout)
 					tbl[tmpn] = &ufds[i];
 					tmpn++;
 				}
+#else
+					tmp[tmpn].fd = soc->rsoc;
+					tmp[tmpn].events |= POLLIN;
+					tbl[tmpn] = &ufds[i];
+					tmpn++;
+#endif
 			}
 			if (ufds[i].events & POLLOUT) {
 				if (soc->connected && soc->conn != NULL) {
@@ -131,7 +138,8 @@ static int s_socket_pipe_poll (struct pollfd *ufds, nfds_t nfds, int timeout)
 
 static int s_socket_pipe_recv (int s, void *read_buf, int total_size)
 {
-	int r = 0;
+	int r;
+	int sr;
 	int r_size = 0;
 	s_soce_t *soc;
 	DEBUGF(0, "enter");
@@ -139,11 +147,12 @@ static int s_socket_pipe_recv (int s, void *read_buf, int total_size)
 	if (s_socket_pipe_find(s, &soc)) {
 		goto err0;
 	}
+	sr = soc->rsoc;
 	s_thread_mutex_unlock(s_soce.lock);
 	while (total_size != r_size) {
-		r = s_pipe_api_read(soc->rsoc, (void *) (((char *) read_buf) + r_size), total_size - r_size);
+		r = s_pipe_api_read(sr, (void *) (((char *) read_buf) + r_size), total_size - r_size);
 		if (r <= 0) {
-			s_pipe_api_close(s);
+			s_socket_api_close(sr);
 			return -1;
 		}
 		r_size += r;
@@ -158,6 +167,7 @@ err0:	s_thread_mutex_unlock(s_soce.lock);
 static int s_socket_pipe_send (int s, void *write_buf, int total_size)
 {
 	int w;
+	int sw;
 	int w_size = 0;
 	s_soce_t *soc;
 	DEBUGF(0, "enter");
@@ -165,11 +175,12 @@ static int s_socket_pipe_send (int s, void *write_buf, int total_size)
 	if (s_socket_pipe_find(s, &soc)) {
 		goto err0;
 	}
+	sw = soc->conn->wsoc;
 	s_thread_mutex_unlock(s_soce.lock);
 	while (total_size != w_size) {
-		w = s_pipe_api_write(soc->conn->wsoc, (void *) (((char *) write_buf) + w_size), total_size - w_size);
+		w = s_pipe_api_write(sw, (void *) (((char *) write_buf) + w_size), total_size - w_size);
 		if (w <= 0) {
-			s_pipe_api_close(s);
+			s_socket_api_close(sw);
 			return -1;
 		}
 		w_size += w;
