@@ -102,7 +102,7 @@ DEMO_LOGOUT     = Y
 DEMO_IMAGE      = N
 DEMO_WIDGETX    = Y
 
-CFLAGS += -Wall -Wparentheses -pipe -fsigned-char -DREENTRANT
+CFLAGS += -Wall -Wparentheses -pipe -fsigned-char -fno-strict-aliasing -DREENTRANT
 
 # Debug
 CFLAGS += -g
