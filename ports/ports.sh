@@ -216,8 +216,8 @@
 	if test ! -f "$CAIRO.tar.gz" ; then
 	    $WGET http://cairographics.org/releases/$CAIRO.tar.gz || { echo "ERROR DOWNLOADING CAIRO"; exit; }
 	fi
-	rm -Rf $CAIRO; gzip -cd "$KAFFE.tar.gz" | tar xvf -
-	cd $CAIRO; cat "$PTCDIR/kaffe/$CAIRO-xynth.diff" | $PATCH || { echo "ERROR PATCHING CAIRO"; exit; }
+	rm -Rf $CAIRO; gzip -cd "$CAIRO.tar.gz" | tar xvf -
+	cd $CAIRO; cat "$PTCDIR/cairo/$CAIRO-xynth.diff" | $PATCH || { echo "ERROR PATCHING CAIRO"; exit; }
 	cd ..
     fi
 
