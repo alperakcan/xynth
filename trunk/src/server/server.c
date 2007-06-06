@@ -485,6 +485,7 @@ err0:	s_free(config.general.driver);
 void s_server_quit (s_window_t *window)
 {
 	window->running = 0;
+	s_window_wakeup(window);
 }
 
 void s_server_uninit (void)
