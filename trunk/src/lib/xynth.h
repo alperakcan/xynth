@@ -16,7 +16,7 @@
 #ifndef XYNTH_H
 #define XYNTH_H
 
-#ifdef __cplusplus
+#if defined(__cplusplus)
 	extern "C" {
 #endif
 
@@ -2523,8 +2523,8 @@ int s_render_set_repeat (s_render_t *render, S_RENDER_REPEAT repeat);
 int s_render_set_transform_matrix (s_render_t *render, s_render_matrix_t *matrix);
 int s_render_add_trapezoid (s_render_t *render, int x_off, int y_off, int ntraps, s_render_trap_t *traps);
 int s_render_set_clip (s_render_t *render, int nrects, s_rect_t *rects);
-int s_render_fill_rectangles (S_RENDER_OPERATOR operator, s_render_t *render, s_render_color_t *color, int nrects, s_rect_t *rects);
-int s_render_composite (S_RENDER_OPERATOR operator, s_render_t *source, s_render_t *mask, s_render_t *dest, int src_x, int src_y, int mask_x, int mask_y, int dest_x, int dest_y, int width, int height);
+int s_render_fill_rectangles (S_RENDER_OPERATOR op, s_render_t *render, s_render_color_t *color, int nrects, s_rect_t *rects);
+int s_render_composite (S_RENDER_OPERATOR op, s_render_t *source, s_render_t *mask, s_render_t *dest, int src_x, int src_y, int mask_x, int mask_y, int dest_x, int dest_y, int width, int height);
 
 /** @defgroup client_thread Client Library - Thread API
   * @brief s_thread_* api is an abstract layer for system calls.
