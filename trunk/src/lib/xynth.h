@@ -2078,6 +2078,115 @@ int s_rect_difference (s_rect_t *r1, s_rect_t *r0, s_list_t *list);
 
 /*@}*/
 
+/* region.c */
+typedef struct s_region_s {
+	s_rect_t extents;
+	int nrects;
+	s_rect_t *rects;
+} s_region_t;
+
+int s_region_create (s_region_t **region);
+int s_region_destroy (s_region_t *region);
+int s_region_addrect (s_region_t *region, s_rect_t *rect);
+int s_region_num_rectangles (s_region_t *region);
+s_rect_t * s_region_rectangles (s_region_t *region);
+
+/* render.c */
+typedef struct s_render_s s_render_t;
+typedef struct s_render_trap_s s_render_trap_t;
+typedef struct s_render_color_s s_render_color_t;
+typedef struct s_render_matrix_s s_render_matrix_t;
+typedef struct s_render_pixman_s s_render_pixman_t;
+
+typedef enum S_RENDER_FORMAT {
+	S_RENDER_FORMAT_NONE,
+	S_RENDER_FORMAT_ARGB32,
+	S_RENDER_FORMAT_RGB16,
+	S_RENDER_FORMAT_RGB24,
+	S_RENDER_FORMAT_A8,
+	S_RENDER_FORMAT_A1
+} S_RENDER_FORMAT;
+
+typedef enum S_RENDER_OPERATOR {
+	S_RENDER_OPERATOR_NONE,
+	S_RENDER_OPERATOR_CLEAR,
+	S_RENDER_OPERATOR_SRC,
+	S_RENDER_OPERATOR_OVER,
+	S_RENDER_OPERATOR_IN,
+	S_RENDER_OPERATOR_OUT,
+	S_RENDER_OPERATOR_ATOP,
+	S_RENDER_OPERATOR_DST,
+	S_RENDER_OPERATOR_OVER_REVERSE,
+	S_RENDER_OPERATOR_IN_REVERSE,
+	S_RENDER_OPERATOR_OUT_REVERSE,
+	S_RENDER_OPERATOR_ATOP_REVERSE,
+	S_RENDER_OPERATOR_XOR,
+	S_RENDER_OPERATOR_ADD,
+	S_RENDER_OPERATOR_SATURATE,
+} S_RENDER_OPERATOR;
+
+typedef enum S_RENDER_REPEAT {
+	S_RENDER_REPEAT_NONE,
+	S_RENDER_REPEAT_NORMAL,
+	S_RENDER_REPEAT_REFLECT,
+	S_RENDER_REPEAT_PAD,
+} S_RENDER_REPEAT;
+
+typedef enum S_RENDER_FILTER {
+	S_RENDER_FILTER_NONE,
+	S_RENDER_FILTER_FAST,
+	S_RENDER_FILTER_GOOD,
+	S_RENDER_FILTER_BEST,
+	S_RENDER_FILTER_NEAREST,
+	S_RENDER_FILTER_BILINEAR,
+} S_RENDER_FILTER;
+
+struct s_render_color_s {
+	unsigned short red;
+	unsigned short green;
+	unsigned short blue;
+	unsigned short alpha;
+};
+
+struct s_render_matrix_s {
+	unsigned int matrix[3][3];
+};
+
+struct s_render_trap_s {
+	int top;
+	int bottom;
+	int left1x;
+	int left1y;
+	int left2x;
+	int left2y;
+	int right1x;
+	int right1y;
+	int right2x;
+	int right2y;
+};
+
+struct s_render_s {
+	S_RENDER_FORMAT format;
+	int width;
+	int height;
+	int stride;
+	int depth;
+	int has_clip;
+	unsigned char *data;
+	s_render_pixman_t *pixman;
+};
+
+int s_render_uninit (s_render_t *render);
+int s_render_init (s_render_t **render, S_RENDER_FORMAT render_format, int width, int height);
+int s_render_init_for_data (s_render_t **render, unsigned char *data, S_RENDER_FORMAT render_format, int width, int height, int bpp, int stride);
+int s_render_set_filter (s_render_t *render, S_RENDER_FILTER filter);
+int s_render_set_repeat (s_render_t *render, S_RENDER_REPEAT repeat);
+int s_render_set_transform_matrix (s_render_t *render, s_render_matrix_t *matrix);
+int s_render_add_trapezoid (s_render_t *render, int x_off, int y_off, int ntraps, s_render_trap_t *traps);
+int s_render_set_clip (s_render_t *render, int nrects, s_rect_t *rects);
+int s_render_fill_rectangles (S_RENDER_OPERATOR op, s_render_t *render, s_render_color_t *color, int nrects, s_rect_t *rects);
+int s_render_composite (S_RENDER_OPERATOR op, s_render_t *source, s_render_t *mask, s_render_t *dest, int src_x, int src_y, int mask_x, int mask_y, int dest_x, int dest_y, int width, int height);
+
 /** @defgroup client_socket Client Library - Socket API
   * @brief s_socket_* api is very internal, and is used for server / client
   *        interaction. every message type has its own function both for
@@ -2430,101 +2539,6 @@ void s_surface_uninit (s_window_t *window);
 void s_surface_changed (s_window_t *window, s_rect_t *changed);
 
 /*@}*/
-
-/* render.c */
-typedef struct s_render_s s_render_t;
-typedef struct s_render_trap_s s_render_trap_t;
-typedef struct s_render_color_s s_render_color_t;
-typedef struct s_render_matrix_s s_render_matrix_t;
-typedef struct s_render_pixman_s s_render_pixman_t;
-
-typedef enum S_RENDER_FORMAT {
-	S_RENDER_FORMAT_NONE,
-	S_RENDER_FORMAT_ARGB32,
-	S_RENDER_FORMAT_RGB24,
-	S_RENDER_FORMAT_A8,
-	S_RENDER_FORMAT_A1
-} S_RENDER_FORMAT;
-
-typedef enum S_RENDER_OPERATOR {
-	S_RENDER_OPERATOR_NONE,
-	S_RENDER_OPERATOR_CLEAR,
-	S_RENDER_OPERATOR_SRC,
-	S_RENDER_OPERATOR_OVER,
-	S_RENDER_OPERATOR_IN,
-	S_RENDER_OPERATOR_OUT,
-	S_RENDER_OPERATOR_ATOP,
-	S_RENDER_OPERATOR_DST,
-	S_RENDER_OPERATOR_OVER_REVERSE,
-	S_RENDER_OPERATOR_IN_REVERSE,
-	S_RENDER_OPERATOR_OUT_REVERSE,
-	S_RENDER_OPERATOR_ATOP_REVERSE,
-	S_RENDER_OPERATOR_XOR,
-	S_RENDER_OPERATOR_ADD,
-	S_RENDER_OPERATOR_SATURATE,
-} S_RENDER_OPERATOR;
-
-typedef enum S_RENDER_REPEAT {
-	S_RENDER_REPEAT_NONE,
-	S_RENDER_REPEAT_NORMAL,
-	S_RENDER_REPEAT_REFLECT,
-	S_RENDER_REPEAT_PAD,
-} S_RENDER_REPEAT;
-
-typedef enum S_RENDER_FILTER {
-	S_RENDER_FILTER_NONE,
-	S_RENDER_FILTER_FAST,
-	S_RENDER_FILTER_GOOD,
-	S_RENDER_FILTER_BEST,
-	S_RENDER_FILTER_NEAREST,
-	S_RENDER_FILTER_BILINEAR,
-} S_RENDER_FILTER;
-
-struct s_render_color_s {
-	unsigned short red;
-	unsigned short green;
-	unsigned short blue;
-	unsigned short alpha;
-};
-
-struct s_render_matrix_s {
-	unsigned int matrix[3][3];
-};
-
-struct s_render_trap_s {
-	int top;
-	int bottom;
-	int left1x;
-	int left1y;
-	int left2x;
-	int left2y;
-	int right1x;
-	int right1y;
-	int right2x;
-	int right2y;
-};
-
-struct s_render_s {
-	S_RENDER_FORMAT format;
-	int width;
-	int height;
-	int stride;
-	int depth;
-	int has_clip;
-	unsigned char *data;
-	s_render_pixman_t *pixman;
-};
-
-int s_render_uninit (s_render_t *render);
-int s_render_init (s_render_t **render, S_RENDER_FORMAT render_format, int width, int height);
-int s_render_init_for_data (s_render_t **render, unsigned char *data, S_RENDER_FORMAT render_format, int width, int height, int bpp, int stride);
-int s_render_set_filter (s_render_t *render, S_RENDER_FILTER filter);
-int s_render_set_repeat (s_render_t *render, S_RENDER_REPEAT repeat);
-int s_render_set_transform_matrix (s_render_t *render, s_render_matrix_t *matrix);
-int s_render_add_trapezoid (s_render_t *render, int x_off, int y_off, int ntraps, s_render_trap_t *traps);
-int s_render_set_clip (s_render_t *render, int nrects, s_rect_t *rects);
-int s_render_fill_rectangles (S_RENDER_OPERATOR op, s_render_t *render, s_render_color_t *color, int nrects, s_rect_t *rects);
-int s_render_composite (S_RENDER_OPERATOR op, s_render_t *source, s_render_t *mask, s_render_t *dest, int src_x, int src_y, int mask_x, int mask_y, int dest_x, int dest_y, int width, int height);
 
 /** @defgroup client_thread Client Library - Thread API
   * @brief s_thread_* api is an abstract layer for system calls.
