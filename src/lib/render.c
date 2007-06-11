@@ -63,6 +63,8 @@ static pixman_format_t * _s_render_create_pixman_format (S_RENDER_FORMAT render_
 			return s_render_pixman_format_create(PIXMAN_FORMAT_NAME_A1);
 		case S_RENDER_FORMAT_A8:
 			return s_render_pixman_format_create(PIXMAN_FORMAT_NAME_A8);
+		case S_RENDER_FORMAT_RGB16:
+			return s_render_pixman_format_create(PIXMAN_FORMAT_NAME_RGB16_565);
 		case S_RENDER_FORMAT_RGB24:
 			return s_render_pixman_format_create(PIXMAN_FORMAT_NAME_RGB24);
 		case S_RENDER_FORMAT_ARGB32:
@@ -259,7 +261,7 @@ int s_render_set_clip (s_render_t *render, int nrects, s_rect_t *rects)
 {
 	int i;
 	pixman_region16_t *pixman_region;
-	pixman_region = pixman_region_create();
+	pixman_region = s_render_pixman_region_create();
 	if (pixman_region == NULL) {
 		return -1;
 	}
