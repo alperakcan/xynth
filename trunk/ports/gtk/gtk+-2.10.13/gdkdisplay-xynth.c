@@ -130,6 +130,7 @@ GdkDisplay * gdk_display_open (const gchar *display_name)
 GType gdk_display_xynth_get_type (void)
 {
 	static GType object_type = 0;
+	ENTER();
 	if (!object_type) {
 		static const GTypeInfo object_info = {
 			sizeof(GdkDisplayXYNTHClass),
@@ -144,6 +145,7 @@ GType gdk_display_xynth_get_type (void)
 		};
 		object_type = g_type_register_static(GDK_TYPE_DISPLAY, "GdkDisplayXYNTH", &object_info, 0);
 	}
+	LEAVE();
 	return object_type;
 }
 
@@ -207,4 +209,3 @@ G_CONST_RETURN gchar * gdk_display_get_name (GdkDisplay *display)
 	LEAVE();
 	return NULL;
 }
-

@@ -108,4 +108,3 @@ void gdk_window_register_dnd (GdkWindow *window)
 	ASSERT();
 	LEAVE();
 }
-
