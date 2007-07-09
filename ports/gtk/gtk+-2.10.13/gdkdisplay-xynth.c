@@ -11,6 +11,8 @@
 #include "gdkprivate-xynth.h"
 #include "gdkxynth.h"
 
+extern void _gdk_visual_init (void);
+
 const GOptionEntry _gdk_windowing_args[] = {
 	{ NULL }
 };
@@ -101,15 +103,24 @@ GList * gdk_display_list_devices (GdkDisplay *dpy)
 
 GdkDisplay * gdk_display_open (const gchar *display_name)
 {
+	s_window_t *xynth;
 	ENTER();
 	if (_gdk_display) {
 		/* single display only */
 		return GDK_DISPLAY_OBJECT(_gdk_display);
 	}
 	/* initialize xynth here */
-	/* initialize gtk stuff, and make xynth connection */
+	if (s_window_init(&xynth)) {
+		return NULL;
+	}
+	/* initialize gtk globals */
 	_gdk_display = g_object_new(GDK_TYPE_DISPLAY_XYNTH,NULL);
 	_gdk_screen = g_object_new(GDK_TYPE_SCREEN, NULL);
+	/* connect xynth */
+	_gdk_display->xynth = xynth;
+	/* initialize gtk internals */
+	_gdk_visual_init();
+	gdk_screen_set_default_colormap(_gdk_screen, gdk_screen_get_system_colormap(_gdk_screen));
 	NIY();
 	ASSERT();
 	LEAVE();
