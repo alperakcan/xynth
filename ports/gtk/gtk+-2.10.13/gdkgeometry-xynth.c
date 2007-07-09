@@ -31,5 +31,3 @@ void gdk_window_scroll (GdkWindow *window, gint dx, gint dy)
 	ASSERT();
 	LEAVE();
 }
-
-

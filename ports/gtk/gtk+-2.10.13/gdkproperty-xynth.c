@@ -59,6 +59,3 @@ gboolean gdk_property_get (GdkWindow *window, GdkAtom property, GdkAtom type, gu
 	LEAVE();
 	return 0;
 }
-
-
-

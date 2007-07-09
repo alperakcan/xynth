@@ -44,5 +44,3 @@ GType gdk_image_get_type (void)
 	LEAVE();
 	return 0;
 }
-
-

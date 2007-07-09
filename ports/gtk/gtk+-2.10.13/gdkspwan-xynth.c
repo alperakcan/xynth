@@ -16,4 +16,3 @@ gboolean gdk_spawn_on_screen (GdkScreen *screen, const gchar *working_directory,
 	LEAVE();
 	return 0;
 }
-
