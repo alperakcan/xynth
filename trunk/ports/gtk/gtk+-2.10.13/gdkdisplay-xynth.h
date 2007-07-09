@@ -20,7 +20,7 @@ typedef struct _GdkDisplayXYNTHClass GdkDisplayXYNTHClass;
 
 struct _GdkDisplayXYNTH {
 	GdkDisplay parent;
-	GdkKeymap *keymap;
+	s_window_t *xynth;
 };
 
 struct _GdkDisplayXYNTHClass {

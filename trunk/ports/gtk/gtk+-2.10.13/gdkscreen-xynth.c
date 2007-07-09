@@ -8,6 +8,8 @@
 
 #include "gdkxynth.h"
 
+static GdkColormap *default_colormap = NULL;
+
 gchar * _gdk_windowing_substitute_screen_number (const gchar *display_name, int screen_number)
 {
 	ENTER();
@@ -117,9 +119,15 @@ gboolean gdk_screen_is_composited (GdkScreen *screen)
 
 void gdk_screen_set_default_colormap (GdkScreen *screen, GdkColormap *colormap)
 {
+	GdkColormap *old_colormap;
 	ENTER();
-	NIY();
-	ASSERT();
+	g_return_if_fail(GDK_IS_SCREEN(screen));
+	g_return_if_fail(GDK_IS_COLORMAP(colormap));
+	old_colormap = default_colormap;
+	default_colormap = g_object_ref(colormap);
+	if (old_colormap) {
+		g_object_unref(old_colormap);
+	}
 	LEAVE();
 }
 

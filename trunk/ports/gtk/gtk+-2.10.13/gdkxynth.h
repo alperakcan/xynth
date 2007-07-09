@@ -1,5 +1,7 @@
 
 #include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #if 1
 #define DEBUG(fmt...) {\
