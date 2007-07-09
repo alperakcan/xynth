@@ -11,5 +11,6 @@
 #include "gdkxynth.h"
 
 extern GdkDisplayXYNTH *_gdk_display;
+extern GdkScreen       *_gdk_screen;
 
 #endif

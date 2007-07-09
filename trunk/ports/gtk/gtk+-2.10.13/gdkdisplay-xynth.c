@@ -103,12 +103,37 @@ GdkDisplay * gdk_display_open (const gchar *display_name)
 {
 	ENTER();
 	if (_gdk_display) {
-		return GDK_DISPLAY_OBJECT(_gdk_display); /* single display only */
+		/* single display only */
+		return GDK_DISPLAY_OBJECT(_gdk_display);
 	}
+	/* initialize xynth here */
+	/* initialize gtk stuff, and make xynth connection */
+	_gdk_display = g_object_new(GDK_TYPE_DISPLAY_XYNTH,NULL);
+	_gdk_screen = g_object_new(GDK_TYPE_SCREEN, NULL);
 	NIY();
 	ASSERT();
 	LEAVE();
 	return NULL;
+}
+
+GType gdk_display_xynth_get_type (void)
+{
+	static GType object_type = 0;
+	if (!object_type) {
+		static const GTypeInfo object_info = {
+			sizeof(GdkDisplayXYNTHClass),
+			(GBaseInitFunc) NULL,
+			(GBaseFinalizeFunc) NULL,
+			(GClassInitFunc) NULL,
+			NULL,                 /* class_finalize */
+			NULL,                 /* class_data */
+			sizeof(GdkDisplayXYNTH),
+			0,                    /* n_preallocs */
+			(GInstanceInitFunc) NULL,
+		};
+		object_type = g_type_register_static(GDK_TYPE_DISPLAY, "GdkDisplayXYNTH", &object_info, 0);
+	}
+	return object_type;
 }
 
 gint gdk_display_pointer_is_grabbed (GdkDisplay *display)
