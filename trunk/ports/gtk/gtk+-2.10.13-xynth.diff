@@ -1,6 +1,300 @@
-diff -Naur gtk+-svn/README.xynth gtk+-svn-xynth/README.xynth
---- gtk+-svn/README.xynth	1970-01-01 02:00:00.000000000 +0200
-+++ gtk+-svn-xynth/README.xynth	2007-04-10 17:23:47.000000000 +0300
+diff -Naur gtk+-2.10.13/.cproject gtk+-2.10.13-xynth/.cproject
+--- gtk+-2.10.13/.cproject	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.13-xynth/.cproject	2007-07-11 22:05:34.000000000 +0300
+@@ -0,0 +1,209 @@
++<?xml version="1.0" encoding="UTF-8" standalone="no"?>
++<?fileVersion 4.0.0?>
++
++<cproject>
++<storageModule moduleId="org.eclipse.cdt.core.settings">
++<cconfiguration id="0.1130386245">
++<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="0.1130386245" moduleId="org.eclipse.cdt.core.settings" name="Default">
++<externalSettings/>
++<extensions>
++<extension id="org.eclipse.cdt.core.VCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
++<extension id="org.eclipse.cdt.core.MakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
++<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
++<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
++<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
++</extensions>
++</storageModule>
++<storageModule moduleId="cdtBuildSystem" version="4.0.0">
++<configuration artifactName="gtk+-2.10.13-xynth" buildProperties="" description="" id="0.1130386245" name="Default" parent="org.eclipse.cdt.build.core.prefbase.cfg">
++<folderInfo id="0.1130386245." name="/" resourcePath="">
++<toolChain id="org.eclipse.cdt.build.core.prefbase.toolchain.463016140" name="No ToolChain" resourceTypeBasedDiscovery="false" superClass="org.eclipse.cdt.build.core.prefbase.toolchain">
++<targetPlatform id="org.eclipse.cdt.build.core.prefbase.toolchain.463016140.1509262226" name=""/>
++<builder id="org.eclipse.cdt.build.core.settings.default.builder.1565005344" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="org.eclipse.cdt.build.core.settings.default.builder"/>
++<tool id="org.eclipse.cdt.build.core.settings.holder.libs.1028077597" name="holder for library settings" superClass="org.eclipse.cdt.build.core.settings.holder.libs"/>
++<tool id="org.eclipse.cdt.build.core.settings.holder.950277939" name="Assembly" superClass="org.eclipse.cdt.build.core.settings.holder">
++<inputType id="org.eclipse.cdt.build.core.settings.holder.inType.2135129184" languageId="org.eclipse.cdt.core.assembly" languageName="Assembly" sourceContentType="org.eclipse.cdt.core.asmSource" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
++</tool>
++<tool id="org.eclipse.cdt.build.core.settings.holder.558955041" name="GNU C++" superClass="org.eclipse.cdt.build.core.settings.holder">
++<inputType id="org.eclipse.cdt.build.core.settings.holder.inType.1970621934" languageId="org.eclipse.cdt.core.g++" languageName="GNU C++" sourceContentType="org.eclipse.cdt.core.cxxSource,org.eclipse.cdt.core.cxxHeader" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
++</tool>
++<tool id="org.eclipse.cdt.build.core.settings.holder.561350434" name="GNU C" superClass="org.eclipse.cdt.build.core.settings.holder">
++<inputType id="org.eclipse.cdt.build.core.settings.holder.inType.270770759" languageId="org.eclipse.cdt.core.gcc" languageName="GNU C" sourceContentType="org.eclipse.cdt.core.cSource,org.eclipse.cdt.core.cHeader" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
++</tool>
++</toolChain>
++</folderInfo>
++</configuration>
++</storageModule>
++<storageModule moduleId="scannerConfiguration">
++<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile"/>
++<profile id="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile">
++<buildOutputProvider>
++<openAction enabled="false" filePath=""/>
++<parser enabled="false"/>
++</buildOutputProvider>
++<scannerInfoProvider id="specsFile">
++<runAction arguments="-E -P -v -dD ${plugin_state_location}/${specs_file}" command="gcc" useDefault="true"/>
++<parser enabled="true"/>
++</scannerInfoProvider>
++</profile>
++<profile id="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileCPP">
++<buildOutputProvider>
++<openAction enabled="false" filePath=""/>
++<parser enabled="false"/>
++</buildOutputProvider>
++<scannerInfoProvider id="specsFile">
++<runAction arguments="-E -P -v -dD ${plugin_state_location}/specs.cpp" command="g++" useDefault="true"/>
++<parser enabled="true"/>
++</scannerInfoProvider>
++</profile>
++<profile id="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC">
++<buildOutputProvider>
++<openAction enabled="false" filePath=""/>
++<parser enabled="false"/>
++</buildOutputProvider>
++<scannerInfoProvider id="specsFile">
++<runAction arguments="-E -P -v -dD ${plugin_state_location}/specs.c" command="gcc" useDefault="true"/>
++<parser enabled="true"/>
++</scannerInfoProvider>
++</profile>
++<profile id="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile">
++<buildOutputProvider>
++<openAction enabled="false" filePath=""/>
++<parser enabled="false"/>
++</buildOutputProvider>
++<scannerInfoProvider id="specsFile">
++<runAction arguments="-E -P -v -dD ${plugin_state_location}/${specs_file}" command="gcc" useDefault="true"/>
++<parser enabled="true"/>
++</scannerInfoProvider>
++</profile>
++<profile id="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfileCPP">
++<buildOutputProvider>
++<openAction enabled="false" filePath=""/>
++<parser enabled="false"/>
++</buildOutputProvider>
++<scannerInfoProvider id="specsFile">
++<runAction arguments="-E -P -v -dD ${plugin_state_location}/specs.cpp" command="g++" useDefault="true"/>
++<parser enabled="true"/>
++</scannerInfoProvider>
++</profile>
++<profile id="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfileC">
++<buildOutputProvider>
++<openAction enabled="false" filePath=""/>
++<parser enabled="false"/>
++</buildOutputProvider>
++<scannerInfoProvider id="specsFile">
++<runAction arguments="-E -P -v -dD ${plugin_state_location}/specs.c" command="gcc" useDefault="true"/>
++<parser enabled="true"/>
++</scannerInfoProvider>
++</profile>
++<profile id="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile">
++<buildOutputProvider>
++<openAction enabled="true" filePath=""/>
++<parser enabled="true"/>
++</buildOutputProvider>
++<scannerInfoProvider id="specsFile">
++<runAction arguments="-E -P -v -dD ${plugin_state_location}/${specs_file}" command="gcc" useDefault="true"/>
++<parser enabled="true"/>
++</scannerInfoProvider>
++</profile>
++<profile id="org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile">
++<buildOutputProvider>
++<openAction enabled="true" filePath=""/>
++<parser enabled="true"/>
++</buildOutputProvider>
++<scannerInfoProvider id="makefileGenerator">
++<runAction arguments="-f ${project_name}_scd.mk" command="make" useDefault="true"/>
++<parser enabled="true"/>
++</scannerInfoProvider>
++</profile>
++<scannerConfigBuildInfo instanceId="0.1130386245">
++<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile"/>
++<profile id="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile">
++<buildOutputProvider>
++<openAction enabled="false" filePath=""/>
++<parser enabled="false"/>
++</buildOutputProvider>
++<scannerInfoProvider id="specsFile">
++<runAction arguments="-E -P -v -dD ${plugin_state_location}/${specs_file}" command="gcc" useDefault="true"/>
++<parser enabled="true"/>
++</scannerInfoProvider>
++</profile>
++<profile id="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileCPP">
++<buildOutputProvider>
++<openAction enabled="false" filePath=""/>
++<parser enabled="false"/>
++</buildOutputProvider>
++<scannerInfoProvider id="specsFile">
++<runAction arguments="-E -P -v -dD ${plugin_state_location}/specs.cpp" command="g++" useDefault="true"/>
++<parser enabled="true"/>
++</scannerInfoProvider>
++</profile>
++<profile id="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC">
++<buildOutputProvider>
++<openAction enabled="false" filePath=""/>
++<parser enabled="false"/>
++</buildOutputProvider>
++<scannerInfoProvider id="specsFile">
++<runAction arguments="-E -P -v -dD ${plugin_state_location}/specs.c" command="gcc" useDefault="true"/>
++<parser enabled="true"/>
++</scannerInfoProvider>
++</profile>
++<profile id="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile">
++<buildOutputProvider>
++<openAction enabled="false" filePath=""/>
++<parser enabled="false"/>
++</buildOutputProvider>
++<scannerInfoProvider id="specsFile">
++<runAction arguments="-E -P -v -dD ${plugin_state_location}/${specs_file}" command="gcc" useDefault="true"/>
++<parser enabled="true"/>
++</scannerInfoProvider>
++</profile>
++<profile id="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfileCPP">
++<buildOutputProvider>
++<openAction enabled="false" filePath=""/>
++<parser enabled="false"/>
++</buildOutputProvider>
++<scannerInfoProvider id="specsFile">
++<runAction arguments="-E -P -v -dD ${plugin_state_location}/specs.cpp" command="g++" useDefault="true"/>
++<parser enabled="true"/>
++</scannerInfoProvider>
++</profile>
++<profile id="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfileC">
++<buildOutputProvider>
++<openAction enabled="false" filePath=""/>
++<parser enabled="false"/>
++</buildOutputProvider>
++<scannerInfoProvider id="specsFile">
++<runAction arguments="-E -P -v -dD ${plugin_state_location}/specs.c" command="gcc" useDefault="true"/>
++<parser enabled="true"/>
++</scannerInfoProvider>
++</profile>
++<profile id="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile">
++<buildOutputProvider>
++<openAction enabled="true" filePath=""/>
++<parser enabled="true"/>
++</buildOutputProvider>
++<scannerInfoProvider id="specsFile">
++<runAction arguments="-E -P -v -dD ${plugin_state_location}/${specs_file}" command="gcc" useDefault="true"/>
++<parser enabled="true"/>
++</scannerInfoProvider>
++</profile>
++<profile id="org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile">
++<buildOutputProvider>
++<openAction enabled="true" filePath=""/>
++<parser enabled="true"/>
++</buildOutputProvider>
++<scannerInfoProvider id="makefileGenerator">
++<runAction arguments="-f ${project_name}_scd.mk" command="make" useDefault="true"/>
++<parser enabled="true"/>
++</scannerInfoProvider>
++</profile>
++</scannerConfigBuildInfo>
++</storageModule>
++<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
++</cconfiguration>
++</storageModule>
++<storageModule moduleId="cdtBuildSystem" version="4.0.0">
++<project id="gtk+-2.10.13-xynth.null.1999747862" name="gtk+-2.10.13-xynth"/>
++</storageModule>
++</cproject>
+diff -Naur gtk+-2.10.13/.project gtk+-2.10.13-xynth/.project
+--- gtk+-2.10.13/.project	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.13-xynth/.project	2007-07-11 22:05:34.000000000 +0300
+@@ -0,0 +1,77 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<projectDescription>
++	<name>gtk+-2.10.13-xynth</name>
++	<comment></comment>
++	<projects>
++	</projects>
++	<buildSpec>
++		<buildCommand>
++			<name>org.eclipse.cdt.managedbuilder.core.genmakebuilder</name>
++			<triggers>clean,full,incremental,</triggers>
++			<arguments>
++				<dictionary>
++					<key>org.eclipse.cdt.make.core.cleanBuildTarget</key>
++					<value>clean</value>
++				</dictionary>
++				<dictionary>
++					<key>org.eclipse.cdt.make.core.enableCleanBuild</key>
++					<value>true</value>
++				</dictionary>
++				<dictionary>
++					<key>?name?</key>
++					<value></value>
++				</dictionary>
++				<dictionary>
++					<key>org.eclipse.cdt.make.core.append_environment</key>
++					<value>true</value>
++				</dictionary>
++				<dictionary>
++					<key>org.eclipse.cdt.make.core.stopOnError</key>
++					<value>true</value>
++				</dictionary>
++				<dictionary>
++					<key>org.eclipse.cdt.make.core.buildCommand</key>
++					<value>make</value>
++				</dictionary>
++				<dictionary>
++					<key>org.eclipse.cdt.make.core.contents</key>
++					<value>org.eclipse.cdt.make.core.activeConfigSettings</value>
++				</dictionary>
++				<dictionary>
++					<key>org.eclipse.cdt.make.core.useDefaultBuildCmd</key>
++					<value>true</value>
++				</dictionary>
++				<dictionary>
++					<key>org.eclipse.cdt.make.core.enableAutoBuild</key>
++					<value>false</value>
++				</dictionary>
++				<dictionary>
++					<key>org.eclipse.cdt.make.core.enableFullBuild</key>
++					<value>true</value>
++				</dictionary>
++				<dictionary>
++					<key>org.eclipse.cdt.make.core.buildArguments</key>
++					<value></value>
++				</dictionary>
++				<dictionary>
++					<key>org.eclipse.cdt.make.core.fullBuildTarget</key>
++					<value>all</value>
++				</dictionary>
++				<dictionary>
++					<key>org.eclipse.cdt.make.core.autoBuildTarget</key>
++					<value>all</value>
++				</dictionary>
++			</arguments>
++		</buildCommand>
++		<buildCommand>
++			<name>org.eclipse.cdt.managedbuilder.core.ScannerConfigBuilder</name>
++			<arguments>
++			</arguments>
++		</buildCommand>
++	</buildSpec>
++	<natures>
++		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
++		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
++		<nature>org.eclipse.cdt.core.cnature</nature>
++	</natures>
++</projectDescription>
+diff -Naur gtk+-2.10.13/README.xynth gtk+-2.10.13-xynth/README.xynth
+--- gtk+-2.10.13/README.xynth	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.13-xynth/README.xynth	2007-07-11 22:03:32.000000000 +0300
 @@ -0,0 +1,7 @@
 +export PKG_CONFIG_PATH=/opt/gtk/lib/pkgconfig
 +export LD_LIBRARY_PATH=/opt/gtk/lib
@@ -9,10 +303,10 @@ diff -Naur gtk+-svn/README.xynth gtk+-svn-xynth/README.xynth
 +cd build-xynth
 +../configure --with-gdktarget=xynth --prefix=/opt/gtk --disable-visibility
 +make
-diff -Naur gtk+-svn/configure.in gtk+-svn-xynth/configure.in
---- gtk+-svn/configure.in	2007-04-10 15:54:54.000000000 +0300
-+++ gtk+-svn-xynth/configure.in	2007-04-10 17:23:47.000000000 +0300
-@@ -217,13 +217,13 @@
+diff -Naur gtk+-2.10.13/configure.in gtk+-2.10.13-xynth/configure.in
+--- gtk+-2.10.13/configure.in	2007-06-13 06:10:46.000000000 +0300
++++ gtk+-2.10.13-xynth/configure.in	2007-07-11 22:03:32.000000000 +0300
+@@ -224,13 +224,13 @@
    gdktarget=x11
  fi
  
@@ -29,7 +323,7 @@ diff -Naur gtk+-svn/configure.in gtk+-svn-xynth/configure.in
  esac
  
  gdktargetlib=libgdk-$gdktarget-$GTK_API_VERSION.la
-@@ -1373,6 +1373,26 @@
+@@ -1437,6 +1437,26 @@
    AM_CONDITIONAL(USE_DIRECTFB, false)
  fi
  
@@ -56,7 +350,7 @@ diff -Naur gtk+-svn/configure.in gtk+-svn-xynth/configure.in
  
  # Check for Pango flags
  
-@@ -1648,6 +1668,9 @@
+@@ -1703,6 +1723,9 @@
  elif test "x$gdktarget" = "xdirectfb" ; then
    gdk_windowing='
  #define GDK_WINDOWING_DIRECTFB'
@@ -66,7 +360,7 @@ diff -Naur gtk+-svn/configure.in gtk+-svn-xynth/configure.in
  fi
  
  if test x$gdk_wchar_h = xyes; then
-@@ -1707,6 +1730,7 @@
+@@ -1762,6 +1785,7 @@
  gdk/linux-fb/Makefile
  gdk/quartz/Makefile
  gdk/directfb/Makefile
@@ -74,9 +368,9 @@ diff -Naur gtk+-svn/configure.in gtk+-svn-xynth/configure.in
  gtk/Makefile
  gtk/makefile.msc
  gtk/gtkversion.h
-diff -Naur gtk+-svn/gdk/Makefile.am gtk+-svn-xynth/gdk/Makefile.am
---- gtk+-svn/gdk/Makefile.am	2007-04-10 15:54:52.000000000 +0300
-+++ gtk+-svn-xynth/gdk/Makefile.am	2007-04-10 17:23:47.000000000 +0300
+diff -Naur gtk+-2.10.13/gdk/Makefile.am gtk+-2.10.13-xynth/gdk/Makefile.am
+--- gtk+-2.10.13/gdk/Makefile.am	2007-06-13 06:10:45.000000000 +0300
++++ gtk+-2.10.13-xynth/gdk/Makefile.am	2007-07-11 22:03:32.000000000 +0300
 @@ -1,7 +1,7 @@
  ## Makefile.am for gtk+/gdk
  
@@ -98,7 +392,7 @@ diff -Naur gtk+-svn/gdk/Makefile.am gtk+-svn-xynth/gdk/Makefile.am
  libgdk_directfb_2_0_la_SOURCES = $(common_sources) 
  libgdk_directfb_2_0_la_LIBADD = directfb/libgdk-directfb.la $(GDK_DEP_LIBS) \
    $(top_builddir)/gdk-pixbuf/libgdk_pixbuf-$(GTK_API_VERSION).la
-@@ -202,7 +207,7 @@
+@@ -208,7 +213,7 @@
  
  lib_LTLIBRARIES = $(gdktargetlib)
  
@@ -107,10 +401,10 @@ diff -Naur gtk+-svn/gdk/Makefile.am gtk+-svn-xynth/gdk/Makefile.am
  
  MAINTAINERCLEANFILES = gdkenumtypes.h stamp-gdkenumtypes.h gdkenumtypes.c \
    gdkmarshalers.h gdkmarshalers.c
-diff -Naur gtk+-svn/gdk/xynth/Makefile.am gtk+-svn-xynth/gdk/xynth/Makefile.am
---- gtk+-svn/gdk/xynth/Makefile.am	1970-01-01 02:00:00.000000000 +0200
-+++ gtk+-svn-xynth/gdk/xynth/Makefile.am	2007-04-10 17:25:54.000000000 +0300
-@@ -0,0 +1,45 @@
+diff -Naur gtk+-2.10.13/gdk/xynth/Makefile.am gtk+-2.10.13-xynth/gdk/xynth/Makefile.am
+--- gtk+-2.10.13/gdk/xynth/Makefile.am	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.13-xynth/gdk/xynth/Makefile.am	2007-07-11 17:31:24.000000000 +0300
+@@ -0,0 +1,46 @@
 +## Makefile.am for gtk+/gdk/gdk-xynth
 +
 +libgdkincludedir = $(includedir)/gtk-2.0/gdk
@@ -139,6 +433,7 @@ diff -Naur gtk+-svn/gdk/xynth/Makefile.am gtk+-svn-xynth/gdk/xynth/Makefile.am
 +	gdkfont-xynth.c		\
 +	gdkgc-xynth.c		\
 +	gdkgeometry-xynth.c	\
++	gdkglobals-xynth.c      \
 +	gdkim-xynth.c		\
 +	gdkimage-xynth.c	\
 +	gdkinput-xynth.c	\
@@ -156,10 +451,10 @@ diff -Naur gtk+-svn/gdk/xynth/Makefile.am gtk+-svn-xynth/gdk/xynth/Makefile.am
 +libgdkinclude_HEADERS =		\
 +	gdkxynth.h 		\
 +	gdkprivate-xynth.h
-diff -Naur gtk+-svn/gdk/xynth/gdkcolor-xynth.c gtk+-svn-xynth/gdk/xynth/gdkcolor-xynth.c
---- gtk+-svn/gdk/xynth/gdkcolor-xynth.c	1970-01-01 02:00:00.000000000 +0200
-+++ gtk+-svn-xynth/gdk/xynth/gdkcolor-xynth.c	2007-04-10 17:23:47.000000000 +0300
-@@ -0,0 +1,79 @@
+diff -Naur gtk+-2.10.13/gdk/xynth/gdkcolor-xynth.c gtk+-2.10.13-xynth/gdk/xynth/gdkcolor-xynth.c
+--- gtk+-2.10.13/gdk/xynth/gdkcolor-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.13-xynth/gdk/xynth/gdkcolor-xynth.c	2007-07-11 17:31:24.000000000 +0300
+@@ -0,0 +1,131 @@
 +
 +#include "config.h"
 +#include "gdk.h"
@@ -170,6 +465,8 @@ diff -Naur gtk+-svn/gdk/xynth/gdkcolor-xynth.c gtk+-svn-xynth/gdk/xynth/gdkcolor
 +#include "gdkalias.h"
 +
 +#include "gdkxynth.h"
++
++static GObjectClass *parent_class = NULL;
 +
 +gint gdk_colormap_alloc_colors (GdkColormap *colormap, GdkColor *colors, gint ncolors, gboolean writeable, gboolean best_match, gboolean *success)
 +{
@@ -205,22 +502,69 @@ diff -Naur gtk+-svn/gdk/xynth/gdkcolor-xynth.c gtk+-svn-xynth/gdk/xynth/gdkcolor
 +	return NULL;
 +}
 +
++static void gdk_colormap_init (GdkColormap *colormap)
++{
++	ENTER();
++	colormap->size           = 0;
++	colormap->colors         = NULL;
++	colormap->windowing_data = NULL;
++	LEAVE();
++}
++
++static void gdk_colormap_finalize (GObject *object)
++{
++	GdkColormap *colormap;
++	ENTER();
++	colormap = GDK_COLORMAP(object);
++	g_free(colormap->colors);
++	colormap->colors = NULL;
++	G_OBJECT_CLASS(parent_class)->finalize(object);
++	LEAVE();
++}
++
++static void gdk_colormap_class_init (GdkColormapClass *klass)
++{
++	GObjectClass *object_class;
++	ENTER();
++	object_class = G_OBJECT_CLASS(klass);
++	parent_class = g_type_class_peek_parent(klass);
++	object_class->finalize = gdk_colormap_finalize;
++	LEAVE();
++}
++
 +GType gdk_colormap_get_type (void)
 +{
 +	ENTER();
-+	NIY();
-+	ASSERT();
++	static GType object_type = 0;
++	if (!object_type) {
++		static const GTypeInfo object_info = {
++			sizeof(GdkColormapClass),
++			(GBaseInitFunc) NULL,
++			(GBaseFinalizeFunc) NULL,
++			(GClassInitFunc) gdk_colormap_class_init,
++			NULL,           /* class_finalize */
++			NULL,           /* class_data */
++			sizeof (GdkColormap),
++			0,              /* n_preallocs */
++			(GInstanceInitFunc) gdk_colormap_init,
++		};
++		object_type = g_type_register_static(G_TYPE_OBJECT, "GdkColormap", &object_info, 0);
++	}
 +	LEAVE();
-+	return 0;
++	return object_type;
 +}
 +
 +GdkColormap * gdk_colormap_new (GdkVisual *visual, gboolean private_cmap)
 +{
++	GdkColormap *colormap;
 +	ENTER();
-+	NIY();
-+	ASSERT();
++	g_return_val_if_fail(visual != NULL, NULL);
++	g_return_val_if_fail(visual->type == GDK_VISUAL_TRUE_COLOR, NULL);
++	colormap = g_object_new(gdk_colormap_get_type(), NULL);
++	colormap->visual = visual;
++	colormap->size   = visual->colormap_size;
 +	LEAVE();
-+	return NULL;
++	return colormap;
 +}
 +
 +void gdk_colormap_query_color (GdkColormap *colormap, gulong pixel, GdkColor *result)
@@ -233,15 +577,18 @@ diff -Naur gtk+-svn/gdk/xynth/gdkcolor-xynth.c gtk+-svn-xynth/gdk/xynth/gdkcolor
 +
 +GdkColormap * gdk_screen_get_system_colormap (GdkScreen *screen)
 +{
++	static GdkColormap *colormap = NULL;
 +	ENTER();
-+	NIY();
-+	ASSERT();
++	if (!colormap) {
++		GdkVisual *visual = gdk_visual_get_system();
++		colormap = gdk_colormap_new(visual, FALSE);
++	}
 +	LEAVE();
-+	return NULL;
++	return colormap;
 +}
-diff -Naur gtk+-svn/gdk/xynth/gdkcursor-xynth.c gtk+-svn-xynth/gdk/xynth/gdkcursor-xynth.c
---- gtk+-svn/gdk/xynth/gdkcursor-xynth.c	1970-01-01 02:00:00.000000000 +0200
-+++ gtk+-svn-xynth/gdk/xynth/gdkcursor-xynth.c	2007-04-10 17:23:47.000000000 +0300
+diff -Naur gtk+-2.10.13/gdk/xynth/gdkcursor-xynth.c gtk+-2.10.13-xynth/gdk/xynth/gdkcursor-xynth.c
+--- gtk+-2.10.13/gdk/xynth/gdkcursor-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.13-xynth/gdk/xynth/gdkcursor-xynth.c	2007-07-11 17:31:24.000000000 +0300
 @@ -0,0 +1,96 @@
 +
 +#include <config.h>
@@ -339,10 +686,10 @@ diff -Naur gtk+-svn/gdk/xynth/gdkcursor-xynth.c gtk+-svn-xynth/gdk/xynth/gdkcurs
 +	LEAVE();
 +	return 0;
 +}
-diff -Naur gtk+-svn/gdk/xynth/gdkdisplay-xynth.c gtk+-svn-xynth/gdk/xynth/gdkdisplay-xynth.c
---- gtk+-svn/gdk/xynth/gdkdisplay-xynth.c	1970-01-01 02:00:00.000000000 +0200
-+++ gtk+-svn-xynth/gdk/xynth/gdkdisplay-xynth.c	2007-04-10 17:23:47.000000000 +0300
-@@ -0,0 +1,170 @@
+diff -Naur gtk+-2.10.13/gdk/xynth/gdkdisplay-xynth.c gtk+-2.10.13-xynth/gdk/xynth/gdkdisplay-xynth.c
+--- gtk+-2.10.13/gdk/xynth/gdkdisplay-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.13-xynth/gdk/xynth/gdkdisplay-xynth.c	2007-07-11 17:31:24.000000000 +0300
+@@ -0,0 +1,211 @@
 +
 +#include <config.h>
 +
@@ -353,7 +700,10 @@ diff -Naur gtk+-svn/gdk/xynth/gdkdisplay-xynth.c gtk+-svn-xynth/gdk/xynth/gdkdis
 +#include "gdkintl.h"
 +#include "gdkalias.h"
 +
++#include "gdkprivate-xynth.h"
 +#include "gdkxynth.h"
++
++extern void _gdk_visual_init (void);
 +
 +const GOptionEntry _gdk_windowing_args[] = {
 +	{ NULL }
@@ -445,11 +795,50 @@ diff -Naur gtk+-svn/gdk/xynth/gdkdisplay-xynth.c gtk+-svn-xynth/gdk/xynth/gdkdis
 +
 +GdkDisplay * gdk_display_open (const gchar *display_name)
 +{
++	s_window_t *xynth;
 +	ENTER();
++	if (_gdk_display) {
++		/* single display only */
++		return GDK_DISPLAY_OBJECT(_gdk_display);
++	}
++	/* initialize xynth here */
++	if (s_window_init(&xynth)) {
++		return NULL;
++	}
++	/* initialize gtk globals */
++	_gdk_display = g_object_new(GDK_TYPE_DISPLAY_XYNTH,NULL);
++	_gdk_screen = g_object_new(GDK_TYPE_SCREEN, NULL);
++	/* connect xynth */
++	_gdk_display->xynth = xynth;
++	/* initialize gtk internals */
++	_gdk_visual_init();
++	gdk_screen_set_default_colormap(_gdk_screen, gdk_screen_get_system_colormap(_gdk_screen));
 +	NIY();
 +	ASSERT();
 +	LEAVE();
 +	return NULL;
++}
++
++GType gdk_display_xynth_get_type (void)
++{
++	static GType object_type = 0;
++	ENTER();
++	if (!object_type) {
++		static const GTypeInfo object_info = {
++			sizeof(GdkDisplayXYNTHClass),
++			(GBaseInitFunc) NULL,
++			(GBaseFinalizeFunc) NULL,
++			(GClassInitFunc) NULL,
++			NULL,                 /* class_finalize */
++			NULL,                 /* class_data */
++			sizeof(GdkDisplayXYNTH),
++			0,                    /* n_preallocs */
++			(GInstanceInitFunc) NULL,
++		};
++		object_type = g_type_register_static(GDK_TYPE_DISPLAY, "GdkDisplayXYNTH", &object_info, 0);
++	}
++	LEAVE();
++	return object_type;
 +}
 +
 +gint gdk_display_pointer_is_grabbed (GdkDisplay *display)
@@ -512,11 +901,48 @@ diff -Naur gtk+-svn/gdk/xynth/gdkdisplay-xynth.c gtk+-svn-xynth/gdk/xynth/gdkdis
 +	LEAVE();
 +	return NULL;
 +}
+diff -Naur gtk+-2.10.13/gdk/xynth/gdkdisplay-xynth.h gtk+-2.10.13-xynth/gdk/xynth/gdkdisplay-xynth.h
+--- gtk+-2.10.13/gdk/xynth/gdkdisplay-xynth.h	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.13-xynth/gdk/xynth/gdkdisplay-xynth.h	2007-07-11 17:31:24.000000000 +0300
+@@ -0,0 +1,34 @@
 +
-diff -Naur gtk+-svn/gdk/xynth/gdkdnd-xynth.c gtk+-svn-xynth/gdk/xynth/gdkdnd-xynth.c
---- gtk+-svn/gdk/xynth/gdkdnd-xynth.c	1970-01-01 02:00:00.000000000 +0200
-+++ gtk+-svn-xynth/gdk/xynth/gdkdnd-xynth.c	2007-04-10 17:23:47.000000000 +0300
-@@ -0,0 +1,111 @@
++#ifndef GDKDISPLAYXYNTH_H_
++#define GDKDISPLAYXYNTH_H_
++
++#include <xynth.h>
++#include <gdk/gdkdisplay.h>
++#include <gdk/gdkkeys.h>
++
++G_BEGIN_DECLS
++
++typedef struct _GdkDisplayXYNTH GdkDisplayXYNTH;
++typedef struct _GdkDisplayXYNTHClass GdkDisplayXYNTHClass;
++
++#define GDK_TYPE_DISPLAY_XYNTH              (gdk_display_xynth_get_type())
++#define GDK_DISPLAY_XYNTH(object)           (G_TYPE_CHECK_INSTANCE_CAST ((object), GDK_TYPE_DISPLAY_XYNTH, GdkDisplayXYNTH))
++#define GDK_DISPLAY_XYNTH_CLASS(klass)      (G_TYPE_CHECK_CLASS_CAST ((klass), GDK_TYPE_DISPLAY_XYNTH, GdkDisplayXYNTHClass))
++#define GDK_IS_DISPLAY_XYNTH(object)        (G_TYPE_CHECK_INSTANCE_TYPE ((object), GDK_TYPE_DISPLAY_XYNTH))
++#define GDK_IS_DISPLAY_XYNTH_CLASS(klass)   (G_TYPE_CHECK_CLASS_TYPE ((klass), GDK_TYPE_DISPLAY_XYNTH))
++#define GDK_DISPLAY_XYNTH_GET_CLASS(obj)    (G_TYPE_INSTANCE_GET_CLASS ((obj), GDK_TYPE_DISPLAY_XYNTH, GdkDisplayXYNTHClass))
++
++struct _GdkDisplayXYNTH {
++	GdkDisplay parent;
++	s_window_t *xynth;
++};
++
++struct _GdkDisplayXYNTHClass {
++	GdkDisplayClass parent;
++};
++
++GType gdk_display_xynth_get_type (void);
++
++G_END_DECLS
++
++#endif /*GDKDISPLAYXYNTH_H_*/
+diff -Naur gtk+-2.10.13/gdk/xynth/gdkdnd-xynth.c gtk+-2.10.13-xynth/gdk/xynth/gdkdnd-xynth.c
+--- gtk+-2.10.13/gdk/xynth/gdkdnd-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.13-xynth/gdk/xynth/gdkdnd-xynth.c	2007-07-11 17:31:24.000000000 +0300
+@@ -0,0 +1,110 @@
 +
 +#include <config.h>
 +#include "gdk.h"
@@ -627,10 +1053,9 @@ diff -Naur gtk+-svn/gdk/xynth/gdkdnd-xynth.c gtk+-svn-xynth/gdk/xynth/gdkdnd-xyn
 +	ASSERT();
 +	LEAVE();
 +}
-+
-diff -Naur gtk+-svn/gdk/xynth/gdkevents-xynth.c gtk+-svn-xynth/gdk/xynth/gdkevents-xynth.c
---- gtk+-svn/gdk/xynth/gdkevents-xynth.c	1970-01-01 02:00:00.000000000 +0200
-+++ gtk+-svn-xynth/gdk/xynth/gdkevents-xynth.c	2007-04-10 17:23:47.000000000 +0300
+diff -Naur gtk+-2.10.13/gdk/xynth/gdkevents-xynth.c gtk+-2.10.13-xynth/gdk/xynth/gdkevents-xynth.c
+--- gtk+-2.10.13/gdk/xynth/gdkevents-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.13-xynth/gdk/xynth/gdkevents-xynth.c	2007-07-11 17:31:24.000000000 +0300
 @@ -0,0 +1,61 @@
 +
 +#include "config.h"
@@ -693,9 +1118,9 @@ diff -Naur gtk+-svn/gdk/xynth/gdkevents-xynth.c gtk+-svn-xynth/gdk/xynth/gdkeven
 +	LEAVE();
 +	return 0;
 +}
-diff -Naur gtk+-svn/gdk/xynth/gdkfont-xynth.c gtk+-svn-xynth/gdk/xynth/gdkfont-xynth.c
---- gtk+-svn/gdk/xynth/gdkfont-xynth.c	1970-01-01 02:00:00.000000000 +0200
-+++ gtk+-svn-xynth/gdk/xynth/gdkfont-xynth.c	2007-04-10 17:23:47.000000000 +0300
+diff -Naur gtk+-2.10.13/gdk/xynth/gdkfont-xynth.c gtk+-2.10.13-xynth/gdk/xynth/gdkfont-xynth.c
+--- gtk+-2.10.13/gdk/xynth/gdkfont-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.13-xynth/gdk/xynth/gdkfont-xynth.c	2007-07-11 17:31:24.000000000 +0300
 @@ -0,0 +1,88 @@
 +
 +#include <config.h>
@@ -785,9 +1210,9 @@ diff -Naur gtk+-svn/gdk/xynth/gdkfont-xynth.c gtk+-svn-xynth/gdk/xynth/gdkfont-x
 +	LEAVE();
 +	return 0;
 +}
-diff -Naur gtk+-svn/gdk/xynth/gdkgc-xynth.c gtk+-svn-xynth/gdk/xynth/gdkgc-xynth.c
---- gtk+-svn/gdk/xynth/gdkgc-xynth.c	1970-01-01 02:00:00.000000000 +0200
-+++ gtk+-svn-xynth/gdk/xynth/gdkgc-xynth.c	2007-04-10 17:23:47.000000000 +0300
+diff -Naur gtk+-2.10.13/gdk/xynth/gdkgc-xynth.c gtk+-2.10.13-xynth/gdk/xynth/gdkgc-xynth.c
+--- gtk+-2.10.13/gdk/xynth/gdkgc-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.13-xynth/gdk/xynth/gdkgc-xynth.c	2007-07-11 17:31:24.000000000 +0300
 @@ -0,0 +1,28 @@
 +
 +#include <config.h>
@@ -817,10 +1242,10 @@ diff -Naur gtk+-svn/gdk/xynth/gdkgc-xynth.c gtk+-svn-xynth/gdk/xynth/gdkgc-xynth
 +	ASSERT();
 +	LEAVE();
 +}
-diff -Naur gtk+-svn/gdk/xynth/gdkgeometry-xynth.c gtk+-svn-xynth/gdk/xynth/gdkgeometry-xynth.c
---- gtk+-svn/gdk/xynth/gdkgeometry-xynth.c	1970-01-01 02:00:00.000000000 +0200
-+++ gtk+-svn-xynth/gdk/xynth/gdkgeometry-xynth.c	2007-04-10 17:23:47.000000000 +0300
-@@ -0,0 +1,35 @@
+diff -Naur gtk+-2.10.13/gdk/xynth/gdkgeometry-xynth.c gtk+-2.10.13-xynth/gdk/xynth/gdkgeometry-xynth.c
+--- gtk+-2.10.13/gdk/xynth/gdkgeometry-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.13-xynth/gdk/xynth/gdkgeometry-xynth.c	2007-07-11 17:31:24.000000000 +0300
+@@ -0,0 +1,33 @@
 +
 +#include "config.h"
 +#include "gdk.h"
@@ -854,11 +1279,26 @@ diff -Naur gtk+-svn/gdk/xynth/gdkgeometry-xynth.c gtk+-svn-xynth/gdk/xynth/gdkge
 +	ASSERT();
 +	LEAVE();
 +}
+diff -Naur gtk+-2.10.13/gdk/xynth/gdkglobals-xynth.c gtk+-2.10.13-xynth/gdk/xynth/gdkglobals-xynth.c
+--- gtk+-2.10.13/gdk/xynth/gdkglobals-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.13-xynth/gdk/xynth/gdkglobals-xynth.c	2007-07-11 17:31:24.000000000 +0300
+@@ -0,0 +1,13 @@
 +
++#include <config.h>
++#include "gdk.h"
 +
-diff -Naur gtk+-svn/gdk/xynth/gdkim-xynth.c gtk+-svn-xynth/gdk/xynth/gdkim-xynth.c
---- gtk+-svn/gdk/xynth/gdkim-xynth.c	1970-01-01 02:00:00.000000000 +0200
-+++ gtk+-svn-xynth/gdk/xynth/gdkim-xynth.c	2007-04-10 17:23:47.000000000 +0300
++#include "gdkxynth.h"
++#include "gdkprivate-xynth.h"
++
++#include "gdkalias.h"
++
++GdkDisplayXYNTH *_gdk_display = NULL;
++GdkScreen       *_gdk_screen  = NULL;
++
++#include "gdkaliasdef.c"
+diff -Naur gtk+-2.10.13/gdk/xynth/gdkim-xynth.c gtk+-2.10.13-xynth/gdk/xynth/gdkim-xynth.c
+--- gtk+-2.10.13/gdk/xynth/gdkim-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.13-xynth/gdk/xynth/gdkim-xynth.c	2007-07-11 17:31:24.000000000 +0300
 @@ -0,0 +1,47 @@
 +
 +#include <locale.h>
@@ -907,10 +1347,10 @@ diff -Naur gtk+-svn/gdk/xynth/gdkim-xynth.c gtk+-svn-xynth/gdk/xynth/gdkim-xynth
 +	LEAVE();
 +	return 0;
 +}
-diff -Naur gtk+-svn/gdk/xynth/gdkimage-xynth.c gtk+-svn-xynth/gdk/xynth/gdkimage-xynth.c
---- gtk+-svn/gdk/xynth/gdkimage-xynth.c	1970-01-01 02:00:00.000000000 +0200
-+++ gtk+-svn-xynth/gdk/xynth/gdkimage-xynth.c	2007-04-10 17:23:47.000000000 +0300
-@@ -0,0 +1,48 @@
+diff -Naur gtk+-2.10.13/gdk/xynth/gdkimage-xynth.c gtk+-2.10.13-xynth/gdk/xynth/gdkimage-xynth.c
+--- gtk+-2.10.13/gdk/xynth/gdkimage-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.13-xynth/gdk/xynth/gdkimage-xynth.c	2007-07-11 17:31:24.000000000 +0300
+@@ -0,0 +1,46 @@
 +
 +#include <config.h>
 +#include "gdk.h"
@@ -957,11 +1397,9 @@ diff -Naur gtk+-svn/gdk/xynth/gdkimage-xynth.c gtk+-svn-xynth/gdk/xynth/gdkimage
 +	LEAVE();
 +	return 0;
 +}
-+
-+
-diff -Naur gtk+-svn/gdk/xynth/gdkinput-xynth.c gtk+-svn-xynth/gdk/xynth/gdkinput-xynth.c
---- gtk+-svn/gdk/xynth/gdkinput-xynth.c	1970-01-01 02:00:00.000000000 +0200
-+++ gtk+-svn-xynth/gdk/xynth/gdkinput-xynth.c	2007-04-10 17:23:47.000000000 +0300
+diff -Naur gtk+-2.10.13/gdk/xynth/gdkinput-xynth.c gtk+-2.10.13-xynth/gdk/xynth/gdkinput-xynth.c
+--- gtk+-2.10.13/gdk/xynth/gdkinput-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.13-xynth/gdk/xynth/gdkinput-xynth.c	2007-07-11 17:31:24.000000000 +0300
 @@ -0,0 +1,85 @@
 +
 +#include <config.h>
@@ -1048,9 +1486,9 @@ diff -Naur gtk+-svn/gdk/xynth/gdkinput-xynth.c gtk+-svn-xynth/gdk/xynth/gdkinput
 +	ASSERT();
 +	LEAVE();
 +}
-diff -Naur gtk+-svn/gdk/xynth/gdkkeys-xynth.c gtk+-svn-xynth/gdk/xynth/gdkkeys-xynth.c
---- gtk+-svn/gdk/xynth/gdkkeys-xynth.c	1970-01-01 02:00:00.000000000 +0200
-+++ gtk+-svn-xynth/gdk/xynth/gdkkeys-xynth.c	2007-04-10 17:23:47.000000000 +0300
+diff -Naur gtk+-2.10.13/gdk/xynth/gdkkeys-xynth.c gtk+-2.10.13-xynth/gdk/xynth/gdkkeys-xynth.c
+--- gtk+-2.10.13/gdk/xynth/gdkkeys-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.13-xynth/gdk/xynth/gdkkeys-xynth.c	2007-07-11 17:31:24.000000000 +0300
 @@ -0,0 +1,71 @@
 +
 +#include <config.h>
@@ -1123,10 +1561,10 @@ diff -Naur gtk+-svn/gdk/xynth/gdkkeys-xynth.c gtk+-svn-xynth/gdk/xynth/gdkkeys-x
 +	LEAVE();
 +	return NULL;
 +}
-diff -Naur gtk+-svn/gdk/xynth/gdkmain-xynth.c gtk+-svn-xynth/gdk/xynth/gdkmain-xynth.c
---- gtk+-svn/gdk/xynth/gdkmain-xynth.c	1970-01-01 02:00:00.000000000 +0200
-+++ gtk+-svn-xynth/gdk/xynth/gdkmain-xynth.c	2007-04-10 17:23:47.000000000 +0300
-@@ -0,0 +1,81 @@
+diff -Naur gtk+-2.10.13/gdk/xynth/gdkmain-xynth.c gtk+-2.10.13-xynth/gdk/xynth/gdkmain-xynth.c
+--- gtk+-2.10.13/gdk/xynth/gdkmain-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.13-xynth/gdk/xynth/gdkmain-xynth.c	2007-07-11 17:31:24.000000000 +0300
+@@ -0,0 +1,80 @@
 +
 +#include <config.h>
 +#include "gdk.h"
@@ -1151,8 +1589,7 @@ diff -Naur gtk+-svn/gdk/xynth/gdkmain-xynth.c gtk+-svn-xynth/gdk/xynth/gdkmain-x
 +void _gdk_windowing_init (void)
 +{
 +	ENTER();
-+	NIY();
-+	ASSERT();
++	/* nothing to do */
 +	LEAVE();
 +}
 +
@@ -1208,10 +1645,10 @@ diff -Naur gtk+-svn/gdk/xynth/gdkmain-xynth.c gtk+-svn-xynth/gdk/xynth/gdkmain-x
 +	LEAVE();
 +	return 0;
 +}
-diff -Naur gtk+-svn/gdk/xynth/gdkpixmap-xynth.c gtk+-svn-xynth/gdk/xynth/gdkpixmap-xynth.c
---- gtk+-svn/gdk/xynth/gdkpixmap-xynth.c	1970-01-01 02:00:00.000000000 +0200
-+++ gtk+-svn-xynth/gdk/xynth/gdkpixmap-xynth.c	2007-04-10 17:23:47.000000000 +0300
-@@ -0,0 +1,38 @@
+diff -Naur gtk+-2.10.13/gdk/xynth/gdkpixmap-xynth.c gtk+-2.10.13-xynth/gdk/xynth/gdkpixmap-xynth.c
+--- gtk+-2.10.13/gdk/xynth/gdkpixmap-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.13-xynth/gdk/xynth/gdkpixmap-xynth.c	2007-07-11 17:31:24.000000000 +0300
+@@ -0,0 +1,37 @@
 +
 +#include <config.h>
 +#include "gdk.h"
@@ -1249,18 +1686,34 @@ diff -Naur gtk+-svn/gdk/xynth/gdkpixmap-xynth.c gtk+-svn-xynth/gdk/xynth/gdkpixm
 +	LEAVE();
 +	return NULL;
 +}
+diff -Naur gtk+-2.10.13/gdk/xynth/gdkprivate-xynth.h gtk+-2.10.13-xynth/gdk/xynth/gdkprivate-xynth.h
+--- gtk+-2.10.13/gdk/xynth/gdkprivate-xynth.h	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.13-xynth/gdk/xynth/gdkprivate-xynth.h	2007-07-11 17:31:24.000000000 +0300
+@@ -0,0 +1,20 @@
 +
-diff -Naur gtk+-svn/gdk/xynth/gdkprivate-xynth.h gtk+-svn-xynth/gdk/xynth/gdkprivate-xynth.h
---- gtk+-svn/gdk/xynth/gdkprivate-xynth.h	1970-01-01 02:00:00.000000000 +0200
-+++ gtk+-svn-xynth/gdk/xynth/gdkprivate-xynth.h	2007-04-10 17:23:47.000000000 +0300
-@@ -0,0 +1,3 @@
++#ifndef GDKPRIVATEXYNTH_H_
++#define GDKPRIVATEXYNTH_H_
++
++#include <gdk/gdkprivate.h>
++#include "gdkinternals.h"
++#include "gdkcursor.h"
++#include "gdkdisplay-xynth.h"
++#include <cairo.h>
 +
 +#include "gdkxynth.h"
 +
-diff -Naur gtk+-svn/gdk/xynth/gdkproperty-xynth.c gtk+-svn-xynth/gdk/xynth/gdkproperty-xynth.c
---- gtk+-svn/gdk/xynth/gdkproperty-xynth.c	1970-01-01 02:00:00.000000000 +0200
-+++ gtk+-svn-xynth/gdk/xynth/gdkproperty-xynth.c	2007-04-10 17:23:47.000000000 +0300
-@@ -0,0 +1,64 @@
++extern GdkDisplayXYNTH *_gdk_display;
++extern GdkScreen       *_gdk_screen;
++
++typedef struct {
++	GdkVisual visual;
++} GdkVisualXYNTH;
++
++#endif
+diff -Naur gtk+-2.10.13/gdk/xynth/gdkproperty-xynth.c gtk+-2.10.13-xynth/gdk/xynth/gdkproperty-xynth.c
+--- gtk+-2.10.13/gdk/xynth/gdkproperty-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.13-xynth/gdk/xynth/gdkproperty-xynth.c	2007-07-11 17:31:24.000000000 +0300
+@@ -0,0 +1,61 @@
 +
 +#include <config.h>
 +#include "gdk.h"
@@ -1322,13 +1775,10 @@ diff -Naur gtk+-svn/gdk/xynth/gdkproperty-xynth.c gtk+-svn-xynth/gdk/xynth/gdkpr
 +	LEAVE();
 +	return 0;
 +}
-+
-+
-+
-diff -Naur gtk+-svn/gdk/xynth/gdkscreen-xynth.c gtk+-svn-xynth/gdk/xynth/gdkscreen-xynth.c
---- gtk+-svn/gdk/xynth/gdkscreen-xynth.c	1970-01-01 02:00:00.000000000 +0200
-+++ gtk+-svn-xynth/gdk/xynth/gdkscreen-xynth.c	2007-04-10 17:23:47.000000000 +0300
-@@ -0,0 +1,133 @@
+diff -Naur gtk+-2.10.13/gdk/xynth/gdkscreen-xynth.c gtk+-2.10.13-xynth/gdk/xynth/gdkscreen-xynth.c
+--- gtk+-2.10.13/gdk/xynth/gdkscreen-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.13-xynth/gdk/xynth/gdkscreen-xynth.c	2007-07-11 17:31:24.000000000 +0300
+@@ -0,0 +1,141 @@
 +
 +#include "config.h"
 +#include "gdk.h"
@@ -1338,6 +1788,8 @@ diff -Naur gtk+-svn/gdk/xynth/gdkscreen-xynth.c gtk+-svn-xynth/gdk/xynth/gdkscre
 +#include "gdkalias.h"
 +
 +#include "gdkxynth.h"
++
++static GdkColormap *default_colormap = NULL;
 +
 +gchar * _gdk_windowing_substitute_screen_number (const gchar *display_name, int screen_number)
 +{
@@ -1448,9 +1900,15 @@ diff -Naur gtk+-svn/gdk/xynth/gdkscreen-xynth.c gtk+-svn-xynth/gdk/xynth/gdkscre
 +
 +void gdk_screen_set_default_colormap (GdkScreen *screen, GdkColormap *colormap)
 +{
++	GdkColormap *old_colormap;
 +	ENTER();
-+	NIY();
-+	ASSERT();
++	g_return_if_fail(GDK_IS_SCREEN(screen));
++	g_return_if_fail(GDK_IS_COLORMAP(colormap));
++	old_colormap = default_colormap;
++	default_colormap = g_object_ref(colormap);
++	if (old_colormap) {
++		g_object_unref(old_colormap);
++	}
 +	LEAVE();
 +}
 +
@@ -1462,9 +1920,9 @@ diff -Naur gtk+-svn/gdk/xynth/gdkscreen-xynth.c gtk+-svn-xynth/gdk/xynth/gdkscre
 +	LEAVE();
 +	return NULL;
 +}
-diff -Naur gtk+-svn/gdk/xynth/gdkselection-xynth.c gtk+-svn-xynth/gdk/xynth/gdkselection-xynth.c
---- gtk+-svn/gdk/xynth/gdkselection-xynth.c	1970-01-01 02:00:00.000000000 +0200
-+++ gtk+-svn-xynth/gdk/xynth/gdkselection-xynth.c	2007-04-10 17:23:47.000000000 +0300
+diff -Naur gtk+-2.10.13/gdk/xynth/gdkselection-xynth.c gtk+-2.10.13-xynth/gdk/xynth/gdkselection-xynth.c
+--- gtk+-2.10.13/gdk/xynth/gdkselection-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.13-xynth/gdk/xynth/gdkselection-xynth.c	2007-07-11 17:31:24.000000000 +0300
 @@ -0,0 +1,105 @@
 +
 +#include "config.h"
@@ -1571,10 +2029,10 @@ diff -Naur gtk+-svn/gdk/xynth/gdkselection-xynth.c gtk+-svn-xynth/gdk/xynth/gdks
 +	LEAVE();
 +	return 0;
 +}
-diff -Naur gtk+-svn/gdk/xynth/gdkspwan-xynth.c gtk+-svn-xynth/gdk/xynth/gdkspwan-xynth.c
---- gtk+-svn/gdk/xynth/gdkspwan-xynth.c	1970-01-01 02:00:00.000000000 +0200
-+++ gtk+-svn-xynth/gdk/xynth/gdkspwan-xynth.c	2007-04-10 17:23:47.000000000 +0300
-@@ -0,0 +1,19 @@
+diff -Naur gtk+-2.10.13/gdk/xynth/gdkspwan-xynth.c gtk+-2.10.13-xynth/gdk/xynth/gdkspwan-xynth.c
+--- gtk+-2.10.13/gdk/xynth/gdkspwan-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.13-xynth/gdk/xynth/gdkspwan-xynth.c	2007-07-11 17:31:24.000000000 +0300
+@@ -0,0 +1,18 @@
 +
 +#include <config.h>
 +#include <glib.h>
@@ -1593,11 +2051,10 @@ diff -Naur gtk+-svn/gdk/xynth/gdkspwan-xynth.c gtk+-svn-xynth/gdk/xynth/gdkspwan
 +	LEAVE();
 +	return 0;
 +}
-+
-diff -Naur gtk+-svn/gdk/xynth/gdkvisual-xynth.c gtk+-svn-xynth/gdk/xynth/gdkvisual-xynth.c
---- gtk+-svn/gdk/xynth/gdkvisual-xynth.c	1970-01-01 02:00:00.000000000 +0200
-+++ gtk+-svn-xynth/gdk/xynth/gdkvisual-xynth.c	2007-04-10 17:23:47.000000000 +0300
-@@ -0,0 +1,37 @@
+diff -Naur gtk+-2.10.13/gdk/xynth/gdkvisual-xynth.c gtk+-2.10.13-xynth/gdk/xynth/gdkvisual-xynth.c
+--- gtk+-2.10.13/gdk/xynth/gdkvisual-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.13-xynth/gdk/xynth/gdkvisual-xynth.c	2007-07-11 17:31:24.000000000 +0300
+@@ -0,0 +1,93 @@
 +
 +#include "config.h"
 +
@@ -1605,15 +2062,21 @@ diff -Naur gtk+-svn/gdk/xynth/gdkvisual-xynth.c gtk+-svn-xynth/gdk/xynth/gdkvisu
 +#include "gdkvisual.h"
 +#include "gdkalias.h"
 +
++#include "gdkprivate-xynth.h"
 +#include "gdkxynth.h"
++
++struct _GdkVisualClass {
++	GObjectClass parent_class;
++};
++
++GdkVisual *system_visual = NULL;
 +
 +GdkVisual * gdk_screen_get_system_visual (GdkScreen *screen)
 +{
 +	ENTER();
-+	NIY();
-+	ASSERT();
++	g_assert(system_visual);
 +	LEAVE();
-+	return NULL;
++	return system_visual;
 +}
 +
 +GList * gdk_screen_list_visuals (GdkScreen *screen)
@@ -1634,10 +2097,60 @@ diff -Naur gtk+-svn/gdk/xynth/gdkvisual-xynth.c gtk+-svn-xynth/gdk/xynth/gdkvisu
 +	return NULL;
 +}
 +
++static void gdk_visual_finalize (GObject *object)
++{
++	g_error ("A GdkVisual object was finalized. This should not happen");
++}
 +
-diff -Naur gtk+-svn/gdk/xynth/gdkwindow-xynth.c gtk+-svn-xynth/gdk/xynth/gdkwindow-xynth.c
---- gtk+-svn/gdk/xynth/gdkwindow-xynth.c	1970-01-01 02:00:00.000000000 +0200
-+++ gtk+-svn-xynth/gdk/xynth/gdkwindow-xynth.c	2007-04-10 17:23:47.000000000 +0300
++static void gdk_visual_class_init (GObjectClass *class)
++{
++	class->finalize = gdk_visual_finalize;
++}
++
++GType gdk_visual_get_type (void)
++{
++	static GType object_type = 0;
++	if (!object_type) {
++		static const GTypeInfo object_info = {
++			sizeof(GdkVisualClass),
++			(GBaseInitFunc) NULL,
++			(GBaseFinalizeFunc) NULL,
++			(GClassInitFunc) gdk_visual_class_init,
++			NULL,           /* class_finalize */
++			NULL,           /* class_data */
++			sizeof(GdkVisualXYNTH),
++			0,              /* n_preallocs */
++			(GInstanceInitFunc) NULL,
++		};
++		object_type = g_type_register_static(G_TYPE_OBJECT, "GdkVisual", &object_info, 0);
++	}
++	return object_type;
++}
++
++void _gdk_visual_init (void)
++{
++	ENTER();
++	system_visual = g_object_new(GDK_TYPE_VISUAL, NULL);
++	g_assert(system_visual != NULL);
++	system_visual->depth = _gdk_display->xynth->surface->bitsperpixel;
++	system_visual->bits_per_rgb = _gdk_display->xynth->surface->bitsperpixel;
++	system_visual->byte_order = GDK_LSB_FIRST;
++	system_visual->colormap_size = 0;
++	system_visual->type = GDK_VISUAL_TRUE_COLOR;
++	system_visual->red_prec = _gdk_display->xynth->surface->redlength;
++	system_visual->red_shift = _gdk_display->xynth->surface->redoffset;
++	system_visual->red_mask = _gdk_display->xynth->surface->redmask;
++	system_visual->green_prec = _gdk_display->xynth->surface->greenlength;
++	system_visual->green_shift = _gdk_display->xynth->surface->greenoffset;
++	system_visual->green_mask = _gdk_display->xynth->surface->greenmask;
++	system_visual->blue_prec = _gdk_display->xynth->surface->bluelength;
++	system_visual->blue_shift = _gdk_display->xynth->surface->blueoffset;
++	system_visual->blue_mask = _gdk_display->xynth->surface->bluemask;
++	LEAVE();
++}
+diff -Naur gtk+-2.10.13/gdk/xynth/gdkwindow-xynth.c gtk+-2.10.13-xynth/gdk/xynth/gdkwindow-xynth.c
+--- gtk+-2.10.13/gdk/xynth/gdkwindow-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.13-xynth/gdk/xynth/gdkwindow-xynth.c	2007-07-11 17:31:24.000000000 +0300
 @@ -0,0 +1,544 @@
 +
 +#include <config.h>
@@ -2183,19 +2696,20 @@ diff -Naur gtk+-svn/gdk/xynth/gdkwindow-xynth.c gtk+-svn-xynth/gdk/xynth/gdkwind
 +	ASSERT();
 +	LEAVE();
 +}
-diff -Naur gtk+-svn/gdk/xynth/gdkxynth.c gtk+-svn-xynth/gdk/xynth/gdkxynth.c
---- gtk+-svn/gdk/xynth/gdkxynth.c	1970-01-01 02:00:00.000000000 +0200
-+++ gtk+-svn-xynth/gdk/xynth/gdkxynth.c	2007-04-10 17:23:47.000000000 +0300
-@@ -0,0 +1,3 @@
+diff -Naur gtk+-2.10.13/gdk/xynth/gdkxynth.c gtk+-2.10.13-xynth/gdk/xynth/gdkxynth.c
+--- gtk+-2.10.13/gdk/xynth/gdkxynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.13-xynth/gdk/xynth/gdkxynth.c	2007-07-11 17:31:24.000000000 +0300
+@@ -0,0 +1,2 @@
 +
 +#include "gdkxynth.h"
-+
-diff -Naur gtk+-svn/gdk/xynth/gdkxynth.h gtk+-svn-xynth/gdk/xynth/gdkxynth.h
---- gtk+-svn/gdk/xynth/gdkxynth.h	1970-01-01 02:00:00.000000000 +0200
-+++ gtk+-svn-xynth/gdk/xynth/gdkxynth.h	2007-04-10 17:23:47.000000000 +0300
-@@ -0,0 +1,21 @@
+diff -Naur gtk+-2.10.13/gdk/xynth/gdkxynth.h gtk+-2.10.13-xynth/gdk/xynth/gdkxynth.h
+--- gtk+-2.10.13/gdk/xynth/gdkxynth.h	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.13-xynth/gdk/xynth/gdkxynth.h	2007-07-11 17:31:24.000000000 +0300
+@@ -0,0 +1,23 @@
 +
 +#include <assert.h>
++#include <stdio.h>
++#include <stdlib.h>
 +
 +#if 1
 +#define DEBUG(fmt...) {\
@@ -2215,9 +2729,9 @@ diff -Naur gtk+-svn/gdk/xynth/gdkxynth.h gtk+-svn-xynth/gdk/xynth/gdkxynth.h
 +	DEBUG("This should not happen");\
 +	assert(0);\
 +}
-diff -Naur gtk+-svn/gtk/Makefile.am gtk+-svn-xynth/gtk/Makefile.am
---- gtk+-svn/gtk/Makefile.am	2007-04-10 15:51:46.000000000 +0300
-+++ gtk+-svn-xynth/gtk/Makefile.am	2007-04-10 17:23:47.000000000 +0300
+diff -Naur gtk+-2.10.13/gtk/Makefile.am gtk+-2.10.13-xynth/gtk/Makefile.am
+--- gtk+-2.10.13/gtk/Makefile.am	2007-06-13 06:09:42.000000000 +0300
++++ gtk+-2.10.13-xynth/gtk/Makefile.am	2007-07-11 22:03:32.000000000 +0300
 @@ -798,12 +798,14 @@
  libgtk_win32_2_0_la_SOURCES = $(gtk_c_sources)
  libgtk_quartz_2_0_la_SOURCES = $(gtk_c_sources)
