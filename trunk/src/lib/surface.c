@@ -87,7 +87,7 @@ void s_surface_linear (s_window_t *window)
 		if ((addr = (void *) shmat(window->surface->shm_sid, NULL, 0)) < 0) {
 			debugf(DCLI | DFAT | DSYS, "[%d] Can not attach the shared memory", window->id);
 		}
-		window->surface->linear_buf = (char *) addr;
+		window->surface->linear_buf = (unsigned char *) addr;
 	} else {
 		fd = open(window->surface->device, O_RDWR);
 		if (fd < 0) {
