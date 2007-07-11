@@ -53,6 +53,9 @@ int s_socket_request_display (s_window_t *window, int soc)
 	window->surface->bluelength = data->bluelength;
 	window->surface->greenlength = data->greenlength;
 	window->surface->redlength = data->redlength;
+	window->surface->bluemask = data->bluemask;
+	window->surface->greenmask = data->greenmask;
+	window->surface->redmask = data->redmask;
 
 	window->surface->linear_buf = (unsigned char *) data->linear_buf;
 	window->surface->matrix = (unsigned char *) data->matrix;

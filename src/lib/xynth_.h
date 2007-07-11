@@ -152,15 +152,18 @@ int s_socket_api_close (int fd);
 
 typedef struct s_soc_data_display_s {
 	 /* 336 bytes */
-	int bytesperpixel;
-	int bitsperpixel;
-	int colors;
-	int blueoffset;
-	int greenoffset;
-	int redoffset;
-	int bluelength;
-	int greenlength;
-	int redlength;
+	unsigned int bytesperpixel;
+	unsigned int bitsperpixel;
+	unsigned int colors;
+	unsigned int blueoffset;
+	unsigned int greenoffset;
+	unsigned int redoffset;
+	unsigned int bluelength;
+	unsigned int greenlength;
+	unsigned int redlength;
+	unsigned int bluemask;
+	unsigned int greenmask;
+	unsigned int redmask;
 	unsigned int linear_buf;
 	unsigned int matrix;
 	unsigned int linear_mem_size;

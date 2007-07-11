@@ -69,6 +69,9 @@ int s_server_socket_listen_display (int id)
 	data->bluelength = server->window->surface->bluelength;
 	data->greenlength = server->window->surface->greenlength;
 	data->redlength = server->window->surface->redlength;
+	data->bluemask = server->window->surface->bluemask;
+	data->greenmask = server->window->surface->greenmask;
+	data->redmask = server->window->surface->redmask;
 
 	data->linear_buf = (unsigned int) server->window->surface->linear_buf;
 	data->matrix = (unsigned int) server->window->surface->matrix;
