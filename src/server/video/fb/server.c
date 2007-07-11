@@ -192,7 +192,7 @@ void fb_server_surface_init (s_video_helper_mode_info_t *gmode)
 		debugf(DSER | DFAT, "FBDEV : mmap failed");
 	}
 
-	server->window->surface->vbuf = (char *) server->window->surface->linear_mem_base;
+	server->window->surface->vbuf = (unsigned char *) server->window->surface->linear_mem_base;
 	server->window->surface->linear_buf = server->window->surface->vbuf;
 	server->window->surface->linear_mem_base = 0;
 

@@ -192,8 +192,8 @@ int s_video_sdl_server_init (s_server_conf_t *cfg)
 		server->window->surface->linear_mem_base = (unsigned int) addr;
 		server->window->surface->linear_mem_size = (unsigned int) (sizeof(char) * server->window->surface->width * server->window->surface->height * server->window->surface->bytesperpixel);
 		priv->screen->pixels = (char *) addr;
-		server->window->surface->vbuf = (char *) addr;
-		server->window->surface->linear_buf = (char *) addr;
+		server->window->surface->vbuf = (unsigned char *) addr;
+		server->window->surface->linear_buf = (unsigned char *) addr;
 
 		server->window->surface->need_expose = SURFACE_NEEDEXPOSE;
 
