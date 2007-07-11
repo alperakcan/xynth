@@ -2438,23 +2438,29 @@ struct s_surface_s {
 	/** bitwise ored SURFACE_REAL, SURFACE_VIRTUAL */
 	S_SURFACE_MODE mode;
 	/** surface buytes per pixel */
-	int bytesperpixel;
+	unsigned int bytesperpixel;
 	/** surface bits per pixel */
-	int bitsperpixel;
+	unsigned int bitsperpixel;
 	/** number of colors */
-	int colors;
+	unsigned int colors;
 	/** blue color offset */
-	int blueoffset;
+	unsigned int blueoffset;
 	/** green color offset */
-	int greenoffset;
+	unsigned int greenoffset;
 	/** red color offset */
-	int redoffset;
+	unsigned int redoffset;
 	/** blue color length */
-	int bluelength;
+	unsigned int bluelength;
 	/** green color length */
-	int greenlength;
+	unsigned int greenlength;
 	/** red color length */
-	int redlength;
+	unsigned int redlength;
+	/** blue color mask */
+	unsigned int bluemask;
+	/** green color mask */
+	unsigned int greenmask;
+	/** red color mask */
+	unsigned int redmask;
 	/** surface virtual buffer width */
 	int width;
 	/** surface virtual buffer height */

@@ -454,6 +454,10 @@ void s_getsurfacevirtual (s_surface_t *s, int w, int h, int bitspp, void *vbuf)
 			s->redlength = 8;
 			break;
 	}
+        
+        s->bluemask = ((1 << s->bluelength) - 1) << s->blueoffset;
+        s->greenmask = ((1 << s->greenlength) - 1) << s->greenoffset;
+        s->redmask = ((1 << s->redlength) - 1) << s->redoffset;
 
 	s->mode = SURFACE_VIRTUAL;
 	s->width = w;

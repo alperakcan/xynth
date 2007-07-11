@@ -362,7 +362,11 @@ int s_server_init (void)
 		goto err0;
 	}
 
-	if (config.general.rotate) {
+        server->window->surface->bluemask = ((1 << server->window->surface->bluelength) - 1) << server->window->surface->blueoffset;
+        server->window->surface->greenmask = ((1 << server->window->surface->greenlength) - 1) << server->window->surface->greenoffset;
+        server->window->surface->redmask = ((1 << server->window->surface->redlength) - 1) << server->window->surface->redoffset;
+
+        if (config.general.rotate) {
 		server->rotate = config.general.rotate;
 		server->origin_w = server->window->surface->width;
 		server->origin_h = server->window->surface->height;
