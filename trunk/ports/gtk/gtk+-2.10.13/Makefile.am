@@ -22,6 +22,7 @@ libgdk_xynth_la_SOURCES =	\
 	gdkcursor-xynth.c	\
 	gdkdisplay-xynth.c	\
 	gdkdnd-xynth.c		\
+	gdkdrawable-xynth.c	\
 	gdkevents-xynth.c	\
 	gdkfont-xynth.c		\
 	gdkgc-xynth.c		\

@@ -12,6 +12,7 @@
 #include "gdkxynth.h"
 
 extern void _gdk_visual_init (void);
+extern void _gdk_windowing_window_init (void);
 
 const GOptionEntry _gdk_windowing_args[] = {
 	{ NULL }
@@ -121,6 +122,7 @@ GdkDisplay * gdk_display_open (const gchar *display_name)
 	/* initialize gtk internals */
 	_gdk_visual_init();
 	gdk_screen_set_default_colormap(_gdk_screen, gdk_screen_get_system_colormap(_gdk_screen));
+	_gdk_windowing_window_init();
 	NIY();
 	ASSERT();
 	LEAVE();

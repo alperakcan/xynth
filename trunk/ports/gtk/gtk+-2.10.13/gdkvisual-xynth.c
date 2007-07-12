@@ -89,5 +89,11 @@ void _gdk_visual_init (void)
 	system_visual->blue_prec = _gdk_display->xynth->surface->bluelength;
 	system_visual->blue_shift = _gdk_display->xynth->surface->blueoffset;
 	system_visual->blue_mask = _gdk_display->xynth->surface->bluemask;
+	
+	DEBUG("RGB len: %d %d %d, off: %d %d %d, mask: 0x%08X 0x%08X 0x%08X",
+	      system_visual->red_prec, system_visual->green_prec, system_visual->blue_prec,
+	      system_visual->red_shift, system_visual->green_shift, system_visual->blue_shift,
+	      system_visual->red_mask, system_visual->green_mask, system_visual->blue_mask);
+
 	LEAVE();
 }
