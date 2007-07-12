@@ -9,11 +9,10 @@
 #include "gdkalias.h"
 
 #include "gdkxynth.h"
+#include "gdkprivate-xynth.h"
 
-GType _gdk_window_impl_get_type (void)
-{
-	return 0;
-}
+GdkWindow *_gdk_parent_root  = NULL;
+static gpointer parent_class = NULL;
 
 GdkWindow * _gdk_windowing_window_at_pointer (GdkDisplay *display, gint *win_x, gint *win_y)
 {
@@ -538,6 +537,181 @@ void gdk_window_shape_combine_region (GdkWindow *window, GdkRegion *shape_region
 void gdk_window_set_icon_name (GdkWindow *window, const gchar *name)
 {
 	ENTER();
+	NIY();
+	ASSERT();
+	LEAVE();
+}
+
+static void gdk_window_impl_xynth_process_updates (GdkPaintable *paintable, gboolean update_children)
+{
+	GdkWindow *window;
+	GdkWindowObject *private;
+	GdkWindowImplXYNTH *wimpl;
+	GdkDrawableImplXYNTH *impl;
+	ENTER();
+	wimpl = GDK_WINDOW_IMPL_XYNTH(paintable);
+	impl = (GdkDrawableImplXYNTH *) wimpl;
+	window = wimpl->gdkWindow;
+	private = (GdkWindowObject *)window;
+	NIY();
+	ASSERT();
+	LEAVE();
+}
+
+static void gdk_window_impl_xynth_invalidate_maybe_recurse (GdkPaintable *paintable, GdkRegion *region, gboolean (*child_func) (GdkWindow *, gpointer), gpointer user_data)
+{
+	GdkWindow *window;
+	GdkWindowObject *private;
+	GdkWindowImplXYNTH *wimpl;
+	GdkDrawableImplXYNTH *impl;
+	ENTER();
+	wimpl = GDK_WINDOW_IMPL_XYNTH(paintable);
+	impl = (GdkDrawableImplXYNTH *) wimpl;
+	window = wimpl->gdkWindow;
+	private = (GdkWindowObject *) window;
+	NIY();
+	ASSERT();
+	LEAVE();
+}
+
+static void gdk_window_impl_xynth_end_paint (GdkPaintable *paintable)
+{
+	GdkDrawableImplXYNTH *impl;
+	ENTER();
+	impl = GDK_DRAWABLE_IMPL_XYNTH(paintable);
+	NIY();
+	ASSERT();
+	LEAVE();
+}
+
+static void gdk_window_impl_xynth_begin_paint_region (GdkPaintable *paintable, GdkRegion *region)
+{
+	GdkDrawableImplXYNTH *impl;
+	GdkWindowImplXYNTH *wimpl;
+	ENTER();
+	g_assert(region != NULL);
+	wimpl = GDK_WINDOW_IMPL_XYNTH(paintable);
+	impl = (GdkDrawableImplXYNTH *) wimpl;
+	NIY();
+	ASSERT();
+	LEAVE();
+}
+
+static void gdk_window_impl_xynth_paintable_init (GdkPaintableIface *iface)
+{
+	ENTER();
+	iface->begin_paint_region = gdk_window_impl_xynth_begin_paint_region;
+	iface->end_paint = gdk_window_impl_xynth_end_paint;
+	iface->invalidate_maybe_recurse = gdk_window_impl_xynth_invalidate_maybe_recurse;
+	iface->process_updates = gdk_window_impl_xynth_process_updates;
+	LEAVE();
+}
+
+static void gdk_window_impl_xynth_init (GdkWindowImplXYNTH *impl)
+{
+	ENTER();
+	impl->drawable.width = 1;
+	impl->drawable.height = 1;
+	//cannot use gdk_cursor_new here since gdk_display_get_default
+	//does not work yet.
+	impl->cursor = gdk_cursor_new_for_display(GDK_DISPLAY_OBJECT(_gdk_display), GDK_LEFT_PTR);
+	LEAVE();
+}
+
+static GdkRegion * gdk_window_impl_xynth_get_visible_region (GdkDrawable *drawable)
+{
+	GdkRegion *reg;
+	GdkRectangle rect = {0, 0, 0, 0};
+	GdkDrawableImplXYNTH *priv = GDK_DRAWABLE_IMPL_XYNTH(drawable);
+	ENTER();
+	DEBUG("Set region rectangle");
+	reg = gdk_region_rectangle(&rect);
+	LEAVE();
+	return reg;
+}
+
+static void gdk_window_impl_xynth_set_colormap (GdkDrawable *drawable, GdkColormap *colormap)
+{
+	ENTER();
+	GDK_DRAWABLE_CLASS(parent_class)->set_colormap(drawable, colormap);
+	LEAVE();
+}
+
+static void gdk_window_impl_xynth_finalize (GObject *object)
+{
+	GdkWindowImplXYNTH *impl = GDK_WINDOW_IMPL_XYNTH(object);
+	ENTER();
+	if (GDK_WINDOW_IS_MAPPED(impl->drawable.wrapper)) {
+		gdk_window_hide(impl->drawable.wrapper);
+	}
+	if (impl->cursor) {
+		gdk_cursor_unref(impl->cursor);
+	}
+	DEBUG("Release any window impl allocations to avoid memory leaks!");
+	if (G_OBJECT_CLASS(parent_class)->finalize) {
+		G_OBJECT_CLASS(parent_class)->finalize(object);
+	}
+	LEAVE();
+}
+
+static void gdk_window_impl_xynth_class_init (GdkWindowImplXYNTHClass *klass)
+{
+	GObjectClass *object_class = G_OBJECT_CLASS(klass);
+	GdkDrawableClass *drawable_class = GDK_DRAWABLE_CLASS(klass);
+	ENTER();
+	parent_class = g_type_class_peek_parent(klass);
+	object_class->finalize = gdk_window_impl_xynth_finalize;
+	drawable_class->set_colormap = gdk_window_impl_xynth_set_colormap;
+	/* Visible and clip regions are the same */
+	drawable_class->get_clip_region = gdk_window_impl_xynth_get_visible_region;
+	drawable_class->get_visible_region = gdk_window_impl_xynth_get_visible_region;
+	LEAVE();
+}
+
+GType gdk_window_impl_xynth_get_type (void)
+{
+	static GType object_type = 0;
+	ENTER();
+	if (!object_type) {
+		static const GTypeInfo object_info = {
+			sizeof(GdkWindowImplXYNTHClass),
+			(GBaseInitFunc) NULL,
+			(GBaseFinalizeFunc) NULL,
+			(GClassInitFunc) gdk_window_impl_xynth_class_init,
+			NULL,           /* class_finalize */
+			NULL,           /* class_data */
+			sizeof (GdkWindowImplXYNTH),
+			0,              /* n_preallocs */
+			(GInstanceInitFunc) gdk_window_impl_xynth_init,
+		};
+		static const GInterfaceInfo paintable_info = {
+			(GInterfaceInitFunc) gdk_window_impl_xynth_paintable_init,
+			NULL,
+			NULL
+		};
+		object_type = g_type_register_static(GDK_TYPE_DRAWABLE_IMPL_XYNTH, "GdkWindowImplXYNTH", &object_info, 0);
+		g_type_add_interface_static(object_type, GDK_TYPE_PAINTABLE, &paintable_info);
+	}
+	LEAVE();
+	return object_type;
+}
+
+GType _gdk_window_impl_get_type (void)
+{
+	GType rtype;
+	ENTER();
+	rtype = gdk_window_impl_xynth_get_type();
+	LEAVE();
+	return rtype;
+}
+
+void _gdk_windowing_window_init (void)
+{
+	GdkWindowObject *private;
+	ENTER();
+	g_assert(_gdk_parent_root == NULL);
+	_gdk_parent_root = g_object_new(GDK_TYPE_WINDOW, NULL);
+	private = GDK_WINDOW_OBJECT(_gdk_parent_root);
 	NIY();
 	ASSERT();
 	LEAVE();
