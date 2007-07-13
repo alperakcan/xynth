@@ -159,6 +159,7 @@ struct s_server_conf_s {
 		char *type;
 		char *device;
 		char *brate;
+		int timestamp;
 	} irr;
 	struct {
 		float horizsync_min;
