@@ -44,3 +44,12 @@ GType gdk_image_get_type (void)
 	LEAVE();
 	return 0;
 }
+
+GdkImage * _gdk_xynth_copy_to_image (GdkDrawable *drawable, GdkImage *image, gint src_x, gint src_y, gint dest_x, gint dest_y, gint width, gint height)
+{
+	ENTER();
+	NIY();
+	ASSERT();
+	LEAVE();
+	return NULL;
+}

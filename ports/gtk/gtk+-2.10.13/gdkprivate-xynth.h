@@ -46,16 +46,16 @@ struct _GdkDrawableImplXYNTH {
 	gint abs_x;
 	gint abs_y;
 	GdkColormap *colormap;
-	cairo_surface_t *cairo_surface;
 };
 
 struct _GdkWindowImplXYNTH {
 	GdkDrawableImplXYNTH drawable;
 	GdkWindow *gdkWindow;
-	GdkCursor *cursor;
 	GdkWindowTypeHint type_hint;
 };
 
-GType      gdk_drawable_impl_xynth_get_type (void);
+GType gdk_drawable_impl_xynth_get_type (void);
+GdkGC * _gdk_xynth_gc_new (GdkDrawable *drawable, GdkGCValues *values, GdkGCValuesMask values_mask);
+GdkImage * _gdk_xynth_copy_to_image (GdkDrawable *drawable, GdkImage *image, gint src_x, gint src_y, gint dest_x, gint dest_y, gint width, gint height);
 
 #endif

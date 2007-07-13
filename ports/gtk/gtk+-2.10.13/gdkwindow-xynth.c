@@ -612,9 +612,6 @@ static void gdk_window_impl_xynth_init (GdkWindowImplXYNTH *impl)
 	ENTER();
 	impl->drawable.width = 1;
 	impl->drawable.height = 1;
-	//cannot use gdk_cursor_new here since gdk_display_get_default
-	//does not work yet.
-	impl->cursor = gdk_cursor_new_for_display(GDK_DISPLAY_OBJECT(_gdk_display), GDK_LEFT_PTR);
 	LEAVE();
 }
 
@@ -643,9 +640,6 @@ static void gdk_window_impl_xynth_finalize (GObject *object)
 	ENTER();
 	if (GDK_WINDOW_IS_MAPPED(impl->drawable.wrapper)) {
 		gdk_window_hide(impl->drawable.wrapper);
-	}
-	if (impl->cursor) {
-		gdk_cursor_unref(impl->cursor);
 	}
 	DEBUG("Release any window impl allocations to avoid memory leaks!");
 	if (G_OBJECT_CLASS(parent_class)->finalize) {
