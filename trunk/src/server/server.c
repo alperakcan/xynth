@@ -176,6 +176,8 @@ int s_server_cfg (s_server_conf_t *config)
 			} else if (strcasecmp(cat->name, "infrared") == 0) {
 				if (strcasecmp(var->name, "type") == 0) {
 					config->irr.type = strdup(var->value);
+				} else if (strcasecmp(var->name, "timestamp") == 0) {
+					config->irr.timestamp = atoi(var->value);
 				} else if (strcasecmp(var->name, "device") == 0) {
 					config->irr.device = strdup(var->value);
 				} else if (strcasecmp(var->name, "brate") == 0) {
@@ -362,11 +364,11 @@ int s_server_init (void)
 		goto err0;
 	}
 
-        server->window->surface->bluemask = ((1 << server->window->surface->bluelength) - 1) << server->window->surface->blueoffset;
-        server->window->surface->greenmask = ((1 << server->window->surface->greenlength) - 1) << server->window->surface->greenoffset;
-        server->window->surface->redmask = ((1 << server->window->surface->redlength) - 1) << server->window->surface->redoffset;
+	server->window->surface->bluemask = ((1 << server->window->surface->bluelength) - 1) << server->window->surface->blueoffset;
+	server->window->surface->greenmask = ((1 << server->window->surface->greenlength) - 1) << server->window->surface->greenoffset;
+	server->window->surface->redmask = ((1 << server->window->surface->redlength) - 1) << server->window->surface->redoffset;
 
-        if (config.general.rotate) {
+	if (config.general.rotate) {
 		server->rotate = config.general.rotate;
 		server->origin_w = server->window->surface->width;
 		server->origin_h = server->window->surface->height;
