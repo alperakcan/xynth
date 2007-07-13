@@ -11,11 +11,198 @@
 #include "gdkxynth.h"
 #include "gdkprivate-xynth.h"
 
-static void gdk_drawable_impl_xynth_class_init (GdkDrawableImplXYNTHClass *klass)
+static gpointer parent_class = NULL;
+
+void _gdk_xynth_draw_rectangle (GdkDrawable *drawable, GdkGC *gc, gint filled, gint x, gint y, gint width, gint height)
 {
 	ENTER();
 	NIY();
 	ASSERT();
+	LEAVE();
+}
+
+static void gdk_xynth_draw_arc (GdkDrawable *drawable, GdkGC *gc, gint filled, gint x, gint y, gint width, gint height, gint angle1, gint angle2)
+{
+	ENTER();
+	NIY();
+	ASSERT();
+	LEAVE();
+}
+
+static void gdk_xynth_draw_polygon (GdkDrawable *drawable, GdkGC *gc, gint filled, GdkPoint *points, gint npoints)
+{
+	ENTER();
+	NIY();
+	ASSERT();
+	LEAVE();
+}
+
+static void gdk_xynth_draw_text (GdkDrawable *drawable, GdkFont *font, GdkGC *gc, gint x, gint y, const gchar *text, gint text_length)
+{
+	ENTER();
+	NIY();
+	ASSERT();
+	LEAVE();
+}
+
+static void gdk_xynth_draw_text_wc (GdkDrawable *drawable, GdkFont *font, GdkGC *gc, gint x, gint y, const GdkWChar *text, gint text_length)
+{
+	ENTER();
+	NIY();
+	ASSERT();
+	LEAVE();
+}
+
+static void gdk_xynth_draw_drawable (GdkDrawable *drawable, GdkGC *gc, GdkDrawable *src, gint xsrc, gint ysrc, gint xdest, gint ydest, gint width, gint height)
+{
+	ENTER();
+	NIY();
+	ASSERT();
+	LEAVE();
+}
+
+static void gdk_xynth_draw_points (GdkDrawable *drawable, GdkGC *gc, GdkPoint *points, gint npoints)
+{
+	ENTER();
+	NIY();
+	ASSERT();
+	LEAVE();
+}
+
+static void gdk_xynth_draw_segments (GdkDrawable *drawable, GdkGC *gc, GdkSegment *segs, gint nsegs)
+{
+	ENTER();
+	NIY();
+	ASSERT();
+	LEAVE();
+}
+
+static void gdk_xynth_draw_lines (GdkDrawable *drawable, GdkGC *gc, GdkPoint *points, gint npoints)
+{
+	ENTER();
+	NIY();
+	ASSERT();
+	LEAVE();
+}
+
+static void gdk_xynth_draw_image (GdkDrawable *drawable, GdkGC *gc, GdkImage *image, gint xsrc, gint ysrc, gint xdest, gint ydest, gint width, gint height)
+{
+	ENTER();
+	NIY();
+	ASSERT();
+	LEAVE();
+}
+
+static cairo_surface_t * gdk_xynth_ref_cairo_surface (GdkDrawable *drawable)
+{
+	ENTER();
+	NIY();
+	ASSERT();
+	LEAVE();
+}
+
+static gint gdk_xynth_get_depth (GdkDrawable *drawable)
+{
+	ENTER();
+	NIY();
+	ASSERT();
+	LEAVE();
+}
+
+static void gdk_xynth_get_size (GdkDrawable *drawable, gint *width, gint *height)
+{
+	ENTER();
+	NIY();
+	ASSERT();
+	LEAVE();
+}
+
+static GdkVisual * gdk_xynth_get_visual (GdkDrawable *drawable)
+{
+	GdkVisual *visual;
+	ENTER();
+	visual = gdk_visual_get_system();
+	LEAVE();
+	return visual;
+}
+
+static GdkScreen * gdk_xynth_get_screen (GdkDrawable *drawable)
+{
+	GdkScreen *screen;
+	ENTER();
+	screen = gdk_screen_get_default();
+	LEAVE();
+	return screen;
+}
+
+static void gdk_xynth_set_colormap (GdkDrawable *drawable, GdkColormap *colormap)
+{
+	GdkDrawableImplXYNTH *impl;
+	ENTER();
+	impl = GDK_DRAWABLE_IMPL_XYNTH(drawable);
+	if (impl->colormap == colormap) {
+		LEAVE();
+		return;
+	}
+	if (impl->colormap) {
+		g_object_unref(impl->colormap);
+	}
+	impl->colormap = colormap;
+	if (colormap) {
+		g_object_ref(colormap);
+	}
+	LEAVE();
+}
+
+static GdkColormap * gdk_xynth_get_colormap (GdkDrawable *drawable)
+{
+	GdkColormap *retval;
+	ENTER();
+	retval = GDK_DRAWABLE_IMPL_XYNTH(drawable)->colormap;
+	if (!retval) {
+		retval = gdk_colormap_get_system();
+		gdk_xynth_set_colormap(drawable, retval);
+	}
+	LEAVE();
+	return retval;
+}
+
+static void gdk_drawable_impl_xynth_finalize (GObject *object)
+{
+	GdkDrawableImplXYNTH *impl;
+	ENTER();
+	impl = GDK_DRAWABLE_IMPL_XYNTH(object);
+	gdk_xynth_set_colormap(GDK_DRAWABLE(object), NULL);
+	G_OBJECT_CLASS(parent_class)->finalize(object);
+	LEAVE();
+}
+
+static void gdk_drawable_impl_xynth_class_init (GdkDrawableImplXYNTHClass *klass)
+{
+	GObjectClass *object_class   = G_OBJECT_CLASS(klass);
+	GdkDrawableClass *drawable_class = GDK_DRAWABLE_CLASS(klass);
+	ENTER();
+	parent_class = g_type_class_peek_parent(klass);
+	object_class->finalize = gdk_drawable_impl_xynth_finalize;
+	drawable_class->create_gc      = _gdk_xynth_gc_new;
+	drawable_class->draw_rectangle = _gdk_xynth_draw_rectangle;
+	drawable_class->draw_arc       = gdk_xynth_draw_arc;
+	drawable_class->draw_polygon   = gdk_xynth_draw_polygon;
+	drawable_class->draw_text      = gdk_xynth_draw_text;
+	drawable_class->draw_text_wc   = gdk_xynth_draw_text_wc;
+	drawable_class->draw_drawable  = gdk_xynth_draw_drawable;
+	drawable_class->draw_points    = gdk_xynth_draw_points;
+	drawable_class->draw_segments  = gdk_xynth_draw_segments;
+	drawable_class->draw_lines     = gdk_xynth_draw_lines;
+	drawable_class->draw_image     = gdk_xynth_draw_image;
+	drawable_class->ref_cairo_surface = gdk_xynth_ref_cairo_surface;
+	drawable_class->set_colormap   = gdk_xynth_set_colormap;
+	drawable_class->get_colormap   = gdk_xynth_get_colormap;
+	drawable_class->get_depth      = gdk_xynth_get_depth;
+	drawable_class->get_visual     = gdk_xynth_get_visual;
+	drawable_class->get_size       = gdk_xynth_get_size;
+	drawable_class->_copy_to_image = _gdk_xynth_copy_to_image;
+	drawable_class->get_screen     = gdk_xynth_get_screen;
 	LEAVE();
 }
 

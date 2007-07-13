@@ -26,3 +26,12 @@ void _gdk_windowing_gc_set_clip_region (GdkGC *gc, GdkRegion *region)
 	ASSERT();
 	LEAVE();
 }
+
+GdkGC * _gdk_xynth_gc_new (GdkDrawable *drawable, GdkGCValues *values, GdkGCValuesMask values_mask)
+{
+	ENTER();
+	NIY();
+	ASSERT();
+	LEAVE();
+	return NULL;
+}
