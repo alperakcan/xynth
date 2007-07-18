@@ -125,9 +125,8 @@ void fb_init (s_server_conf_t *cfg)
 			debugf(DSER, "Unable to get console");
 			return;
 		}
-	} else {
-		fb_open();
 	}
+	fb_open();
 }
 
 #if 0
