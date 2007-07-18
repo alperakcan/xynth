@@ -334,7 +334,8 @@ int s_thread_cancel (s_thread_t *tid)
 int s_thread_join (s_thread_t *tid, void **ret)
 {
 	int r;
-	if ((s_thread_api == NULL) ||
+	if ((tid == NULL) ||
+	    (s_thread_api == NULL) ||
 	    (s_thread_api->thread_join == NULL)) {
 		return -1;
 	}

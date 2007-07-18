@@ -155,9 +155,13 @@ void s_surface_changed (s_window_t *window, s_rect_t *changed)
 	if (window->surface->need_expose & SURFACE_NEEDSTREAM) {
 		s_socket_request(window, SOC_DATA_EXPOSE, &coor);
 	} else {
-		bpp_putbox_o(window->surface, window->id, coor.x, coor.y, coor.w, coor.h,
-		             window->surface->vbuf + ((coor.y * window->surface->width) + coor.x) * window->surface->bytesperpixel,
-		             window->surface->width);
+		if (window->surface->mode & SURFACE_VIRTUAL) {
+			bpp_putbox_o(window->surface, window->id, coor.x, coor.y, coor.w, coor.h,
+			             window->surface->vbuf + ((coor.y * window->surface->width) + coor.x) * window->surface->bytesperpixel,
+			             window->surface->width);
+		} else {
+			bpp_fillbox_o(window->surface, window->id, coor.x, coor.y, coor.w, coor.h, 0);
+		}
 		if (window->surface->need_expose & SURFACE_NEEDEXPOSE) {
 			s_socket_request(window, SOC_DATA_EXPOSE, &coor);
 		}

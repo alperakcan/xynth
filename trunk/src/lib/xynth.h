@@ -411,8 +411,8 @@ typedef struct s_mouse_s {
 typedef struct s_keybd_s {
 	int ascii;
 	int button;
-	int keycode;
 	int scancode;
+	S_KEYCODE_CODE keycode;
 	int state[S_KEYCODE_CODES];
 	long long time;
 	S_KEYCODE_FLAG flag;

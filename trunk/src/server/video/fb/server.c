@@ -53,9 +53,9 @@ s_video_input_t s_video_fb_input_tscreen = {
 #endif
 
 s_video_input_t *s_video_fb_input[] = {
+	&s_video_fb_input_irr,
 	&s_video_fb_input_keybd,
 	&s_video_fb_input_mouse,
-	&s_video_fb_input_irr,
 #if defined(VIDEO_HELPER_TSCREEN)
 	&s_video_fb_input_tscreen,
 #endif

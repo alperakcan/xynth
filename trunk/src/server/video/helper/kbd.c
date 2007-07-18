@@ -124,7 +124,7 @@ static void s_video_helper_kbd_keymap_init (void)
 							s_video_helper_keybd_keymap[map][i] = K(KT_ASCII, '*');
 							break;
 						case K_PSLASH:
-							s_video_helper_keybd_keymap[map][i]=K(KT_ASCII, '/');
+							s_video_helper_keybd_keymap[map][i] = K(KT_ASCII, '/');
 							break;
 						case K_PENTER:
 							s_video_helper_keybd_keymap[map][i] = K(KT_ASCII, '\r');
@@ -158,7 +158,7 @@ int s_video_helper_kbd_init (s_server_conf_t *cfg, int kfd)
 {
 	int i;
 	struct sigaction siga;
-
+	
 	s_video_helper_keybd.fd = kfd;
 	if (s_video_helper_keybd.fd < 0) {
 		return -1;
@@ -167,13 +167,14 @@ int s_video_helper_kbd_init (s_server_conf_t *cfg, int kfd)
 	if (ioctl(s_video_helper_keybd.fd, KDGKBMODE, &s_video_helper_keybd.oldmode)) {
 		debugf(DSER | DSYS | DFAT, "Cannot get keyboard mode");
 	}
-        tcgetattr(s_video_helper_keybd.fd, &s_video_helper_keybd.oldtermios);
-        s_video_helper_keybd.newtermios = s_video_helper_keybd.oldtermios;
 
-        s_video_helper_keybd.newtermios.c_lflag &= ~(ICANON | ECHO | ISIG);
-        s_video_helper_keybd.newtermios.c_iflag &= ~(ISTRIP | IGNCR | ICRNL | INLCR | IXOFF | IXON);
-        s_video_helper_keybd.newtermios.c_cc[VMIN] = 0;
-        s_video_helper_keybd.newtermios.c_cc[VTIME] = 0;
+	tcgetattr(s_video_helper_keybd.fd, &s_video_helper_keybd.oldtermios);
+	s_video_helper_keybd.newtermios = s_video_helper_keybd.oldtermios;
+
+	s_video_helper_keybd.newtermios.c_lflag &= ~(ICANON | ECHO | ISIG);
+	s_video_helper_keybd.newtermios.c_iflag &= ~(ISTRIP | IGNCR | ICRNL | INLCR | IXOFF | IXON);
+	s_video_helper_keybd.newtermios.c_cc[VMIN] = 0;
+	s_video_helper_keybd.newtermios.c_cc[VTIME] = 0;
 
 	s_video_helper_keybd.pid = getpid();
 	atexit(s_video_helper_kbd_atexit);
@@ -205,7 +206,7 @@ int s_video_helper_kbd_update (s_video_input_data_t *keybd)
 
 	int map = 0;
 	S_KEYCODE_FLAG keycode_flag;
-
+	
 	bytesread = read(s_video_helper_keybd.fd, &buf, 1);
 
 	for (i = 0; i < bytesread; i++) {
