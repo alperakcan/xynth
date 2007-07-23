@@ -113,7 +113,7 @@ update: clean
 
 strip: dist
 	@$(foreach F, $(wildcard $(DISTBINDIR)/*), $(STRIP) $(F) > /dev/null 2>&1;)
-	@$(foreach F, $(wildcard $(DISTLIBDIR)/*), $(STRIP) $(F) > /dev/null 2>&1;)
+	@$(foreach F, $(wildcard $(DISTLIBDIR)/lib*), $(STRIP) $(F) > /dev/null 2>&1;)
 	@$(foreach F, $(wildcard $(DISTTHEMEDIR)/*), $(STRIP) $(F) > /dev/null 2>&1;)
 
 pspdev:
