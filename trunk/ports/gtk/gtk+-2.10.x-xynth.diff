@@ -1,0 +1,2938 @@
+diff -Naur gtk+-2.10.14/README.xynth gtk+-2.10.14-xynth/README.xynth
+--- gtk+-2.10.14/README.xynth	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.14-xynth/README.xynth	2007-07-20 11:51:33.000000000 +0300
+@@ -0,0 +1,7 @@
++export PKG_CONFIG_PATH=/opt/gtk/lib/pkgconfig
++export LD_LIBRARY_PATH=/opt/gtk/lib
++aclocal && automake && autoconf
++mkdir build-xynth
++cd build-xynth
++../configure --with-gdktarget=xynth --prefix=/opt/gtk --disable-visibility
++make
+diff -Naur gtk+-2.10.14/configure.in gtk+-2.10.14-xynth/configure.in
+--- gtk+-2.10.14/configure.in	2007-07-16 22:46:25.000000000 +0300
++++ gtk+-2.10.14-xynth/configure.in	2007-07-20 11:51:33.000000000 +0300
+@@ -224,13 +224,13 @@
+   gdktarget=x11
+ fi
+ 
+-AC_ARG_WITH(gdktarget, [  --with-gdktarget=[[x11/linux-fb/win32/quartz/directfb]] select non-default GDK target],
++AC_ARG_WITH(gdktarget, [  --with-gdktarget=[[x11/linux-fb/win32/quartz/directfb/xynth]] select non-default GDK target],
+ 	gdktarget=$with_gdktarget)
+ 
+ AC_SUBST(gdktarget)
+ case $gdktarget in
+-  x11|linux-fb|win32|quartz|directfb) ;;
+-  *) AC_MSG_ERROR([Invalid target for GDK: use x11, linux-fb, quartz, directfb or win32.]);;
++  x11|linux-fb|win32|quartz|directfb|xynth) ;;
++  *) AC_MSG_ERROR([Invalid target for GDK: use x11, linux-fb, quartz, directfb, win32 or xynth.]);;
+ esac
+ 
+ gdktargetlib=libgdk-$gdktarget-$GTK_API_VERSION.la
+@@ -1437,6 +1437,26 @@
+   AM_CONDITIONAL(USE_DIRECTFB, false)
+ fi
+ 
++if test "x$gdktarget" = "xxynth"; then
++  XYNTH_REQUIRED_VERSION=0.8.40
++  AC_MSG_CHECKING(for Xynth)
++
++  if $PKG_CONFIG --atleast-version $XYNTH_REQUIRED_VERSION xynth ; then
++      AC_MSG_RESULT(found)
++      GDK_EXTRA_CFLAGS="`$PKG_CONFIG --cflags xynth` $GDK_EXTRA_CFLAGS"
++      GDK_EXTRA_LIBS="`$PKG_CONFIG --libs xynth` $GDK_EXTRA_LIBS"
++  else
++      AC_MSG_ERROR([
++*** Xynth $XYNTH_REQUIRED_VERSION or newer and the cairo backend 
++*** are required. The latest version of Xynth is always available 
++*** from http://www.xynth.org/.
++  ])
++  fi
++
++  AM_CONDITIONAL(USE_XYNTH, true)
++else
++  AM_CONDITIONAL(USE_XYNTH, false)
++fi
+ 
+ # Check for Pango flags
+ 
+@@ -1703,6 +1723,9 @@
+ elif test "x$gdktarget" = "xdirectfb" ; then
+   gdk_windowing='
+ #define GDK_WINDOWING_DIRECTFB'
++elif test "x$gdktarget" = "xxynth" ; then
++  gdk_windowing='
++#define GDK_WINDOWING_XYNTH'
+ fi
+ 
+ if test x$gdk_wchar_h = xyes; then
+@@ -1762,6 +1785,7 @@
+ gdk/linux-fb/Makefile
+ gdk/quartz/Makefile
+ gdk/directfb/Makefile
++gdk/xynth/Makefile
+ gtk/Makefile
+ gtk/makefile.msc
+ gtk/gtkversion.h
+diff -Naur gtk+-2.10.14/gdk/Makefile.am gtk+-2.10.14-xynth/gdk/Makefile.am
+--- gtk+-2.10.14/gdk/Makefile.am	2007-07-16 22:46:24.000000000 +0300
++++ gtk+-2.10.14-xynth/gdk/Makefile.am	2007-07-20 11:51:33.000000000 +0300
+@@ -1,7 +1,7 @@
+ ## Makefile.am for gtk+/gdk
+ 
+ SUBDIRS = $(gdktarget)
+-DIST_SUBDIRS = linux-fb win32 x11 quartz directfb
++DIST_SUBDIRS = linux-fb win32 x11 quartz directfb xynth
+ 
+ EXTRA_DIST =			\
+ 	keynames.txt		\
+@@ -134,6 +134,11 @@
+ 	gdkenumtypes.c		\
+ 	gdkmarshalers.h
+ 
++libgdk_xynth_2_0_la_SOURCES = $(common_sources) 
++libgdk_xynth_2_0_la_LIBADD = xynth/libgdk-xynth.la $(GDK_DEP_LIBS) \
++  $(top_builddir)/gdk-pixbuf/libgdk_pixbuf-$(GTK_API_VERSION).la
++libgdk_xynth_2_0_la_LDFLAGS = $(LDADD)
++
+ libgdk_directfb_2_0_la_SOURCES = $(common_sources) 
+ libgdk_directfb_2_0_la_LIBADD = directfb/libgdk-directfb.la $(GDK_DEP_LIBS) \
+   $(top_builddir)/gdk-pixbuf/libgdk_pixbuf-$(GTK_API_VERSION).la
+@@ -208,7 +213,7 @@
+ 
+ lib_LTLIBRARIES = $(gdktargetlib)
+ 
+-EXTRA_LTLIBRARIES = libgdk-x11-2.0.la libgdk-linux-fb-2.0.la libgdk-win32-2.0.la libgdk-quartz-2.0.la libgdk-directfb-2.0.la
++EXTRA_LTLIBRARIES = libgdk-x11-2.0.la libgdk-linux-fb-2.0.la libgdk-win32-2.0.la libgdk-quartz-2.0.la libgdk-directfb-2.0.la libgdk-xynth-2.0.la
+ 
+ MAINTAINERCLEANFILES = gdkenumtypes.h stamp-gdkenumtypes.h gdkenumtypes.c \
+   gdkmarshalers.h gdkmarshalers.c
+diff -Naur gtk+-2.10.14/gdk/xynth/Makefile.am gtk+-2.10.14-xynth/gdk/xynth/Makefile.am
+--- gtk+-2.10.14/gdk/xynth/Makefile.am	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.14-xynth/gdk/xynth/Makefile.am	2007-07-17 16:06:20.000000000 +0300
+@@ -0,0 +1,47 @@
++## Makefile.am for gtk+/gdk/gdk-xynth
++
++libgdkincludedir = $(includedir)/gtk-2.0/gdk
++
++INCLUDES = 				\
++	-DG_LOG_DOMAIN=\"Gdk-Xynth\"	\
++	-DGDK_COMPILATION		\
++	-I$(top_srcdir)			\
++	-I$(top_srcdir)/gdk		\
++	-I$(top_builddir)/gdk		\
++	-DG_DISABLE_DEPRECATED		\
++	@GTK_DEBUG_FLAGS@		\
++	@GDK_DEP_CFLAGS@		
++
++LDADDS = 		\
++	@GDK_DEP_LIBS@		
++
++noinst_LTLIBRARIES = libgdk-xynth.la
++
++libgdk_xynth_la_SOURCES =	\
++	gdkcolor-xynth.c	\
++	gdkcursor-xynth.c	\
++	gdkdisplay-xynth.c	\
++	gdkdnd-xynth.c		\
++	gdkdrawable-xynth.c	\
++	gdkevents-xynth.c	\
++	gdkfont-xynth.c		\
++	gdkgc-xynth.c		\
++	gdkgeometry-xynth.c	\
++	gdkglobals-xynth.c      \
++	gdkim-xynth.c		\
++	gdkimage-xynth.c	\
++	gdkinput-xynth.c	\
++	gdkkeys-xynth.c		\
++	gdkmain-xynth.c		\
++	gdkpixmap-xynth.c	\
++	gdkproperty-xynth.c	\
++	gdkscreen-xynth.c	\
++	gdkselection-xynth.c	\
++	gdkspwan-xynth.c	\
++	gdkvisual-xynth.c	\
++	gdkwindow-xynth.c	\
++	gdkxynth.c
++
++libgdkinclude_HEADERS =		\
++	gdkxynth.h 		\
++	gdkprivate-xynth.h
+diff -Naur gtk+-2.10.14/gdk/xynth/gdkcolor-xynth.c gtk+-2.10.14-xynth/gdk/xynth/gdkcolor-xynth.c
+--- gtk+-2.10.14/gdk/xynth/gdkcolor-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.14-xynth/gdk/xynth/gdkcolor-xynth.c	2007-07-17 16:06:20.000000000 +0300
+@@ -0,0 +1,131 @@
++
++#include "config.h"
++#include "gdk.h"
++
++#include "gdkinternals.h"
++
++#include "gdkcolor.h"
++#include "gdkalias.h"
++
++#include "gdkxynth.h"
++
++static GObjectClass *parent_class = NULL;
++
++gint gdk_colormap_alloc_colors (GdkColormap *colormap, GdkColor *colors, gint ncolors, gboolean writeable, gboolean best_match, gboolean *success)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return -1;
++}
++
++void gdk_colormap_change (GdkColormap *colormap, gint ncolors)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_colormap_free_colors (GdkColormap *colormap, GdkColor *colors, gint ncolors)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++GdkScreen * gdk_colormap_get_screen (GdkColormap *cmap)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
++
++static void gdk_colormap_init (GdkColormap *colormap)
++{
++	ENTER();
++	colormap->size           = 0;
++	colormap->colors         = NULL;
++	colormap->windowing_data = NULL;
++	LEAVE();
++}
++
++static void gdk_colormap_finalize (GObject *object)
++{
++	GdkColormap *colormap;
++	ENTER();
++	colormap = GDK_COLORMAP(object);
++	g_free(colormap->colors);
++	colormap->colors = NULL;
++	G_OBJECT_CLASS(parent_class)->finalize(object);
++	LEAVE();
++}
++
++static void gdk_colormap_class_init (GdkColormapClass *klass)
++{
++	GObjectClass *object_class;
++	ENTER();
++	object_class = G_OBJECT_CLASS(klass);
++	parent_class = g_type_class_peek_parent(klass);
++	object_class->finalize = gdk_colormap_finalize;
++	LEAVE();
++}
++
++GType gdk_colormap_get_type (void)
++{
++	ENTER();
++	static GType object_type = 0;
++	if (!object_type) {
++		static const GTypeInfo object_info = {
++			sizeof(GdkColormapClass),
++			(GBaseInitFunc) NULL,
++			(GBaseFinalizeFunc) NULL,
++			(GClassInitFunc) gdk_colormap_class_init,
++			NULL,           /* class_finalize */
++			NULL,           /* class_data */
++			sizeof (GdkColormap),
++			0,              /* n_preallocs */
++			(GInstanceInitFunc) gdk_colormap_init,
++		};
++		object_type = g_type_register_static(G_TYPE_OBJECT, "GdkColormap", &object_info, 0);
++	}
++	LEAVE();
++	return object_type;
++}
++
++GdkColormap * gdk_colormap_new (GdkVisual *visual, gboolean private_cmap)
++{
++	GdkColormap *colormap;
++	ENTER();
++	g_return_val_if_fail(visual != NULL, NULL);
++	g_return_val_if_fail(visual->type == GDK_VISUAL_TRUE_COLOR, NULL);
++	colormap = g_object_new(gdk_colormap_get_type(), NULL);
++	colormap->visual = visual;
++	colormap->size   = visual->colormap_size;
++	LEAVE();
++	return colormap;
++}
++
++void gdk_colormap_query_color (GdkColormap *colormap, gulong pixel, GdkColor *result)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++GdkColormap * gdk_screen_get_system_colormap (GdkScreen *screen)
++{
++	static GdkColormap *colormap = NULL;
++	ENTER();
++	if (!colormap) {
++		GdkVisual *visual = gdk_visual_get_system();
++		colormap = gdk_colormap_new(visual, FALSE);
++	}
++	LEAVE();
++	return colormap;
++}
+diff -Naur gtk+-2.10.14/gdk/xynth/gdkcursor-xynth.c gtk+-2.10.14-xynth/gdk/xynth/gdkcursor-xynth.c
+--- gtk+-2.10.14/gdk/xynth/gdkcursor-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.14-xynth/gdk/xynth/gdkcursor-xynth.c	2007-07-17 16:06:20.000000000 +0300
+@@ -0,0 +1,96 @@
++
++#include <config.h>
++#include "gdk.h"
++
++#include "gdkcursor.h"
++#include "gdkalias.h"
++
++#include "gdkxynth.h"
++
++void _gdk_cursor_destroy (GdkCursor *cursor)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++GdkDisplay * gdk_cursor_get_display (GdkCursor *cursor)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
++
++GdkPixbuf * gdk_cursor_get_image (GdkCursor *cursor)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
++
++GdkCursor * gdk_cursor_new_for_display (GdkDisplay *display, GdkCursorType cursor_type)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
++
++GdkCursor * gdk_cursor_new_from_name (GdkDisplay *display, const gchar *name)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
++
++GdkCursor * gdk_cursor_new_from_pixmap (GdkPixmap *source, GdkPixmap *mask, const GdkColor *fg, const GdkColor *bg, gint x, gint y)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
++
++GdkCursor * gdk_cursor_new_from_pixbuf (GdkDisplay *display, GdkPixbuf *pixbuf, gint x, gint y)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
++
++void gdk_display_get_maximal_cursor_size (GdkDisplay *display, guint *width, guint *height)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++gboolean gdk_display_supports_cursor_alpha (GdkDisplay *display)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++gboolean gdk_display_supports_cursor_color (GdkDisplay *display)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
+diff -Naur gtk+-2.10.14/gdk/xynth/gdkdisplay-xynth.c gtk+-2.10.14-xynth/gdk/xynth/gdkdisplay-xynth.c
+--- gtk+-2.10.14/gdk/xynth/gdkdisplay-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.14-xynth/gdk/xynth/gdkdisplay-xynth.c	2007-07-17 16:06:20.000000000 +0300
+@@ -0,0 +1,213 @@
++
++#include <config.h>
++
++#include <glib.h>
++#include "gdk.h"
++#include "gdkscreen.h"
++#include "gdkdisplaymanager.h"
++#include "gdkintl.h"
++#include "gdkalias.h"
++
++#include "gdkprivate-xynth.h"
++#include "gdkxynth.h"
++
++extern void _gdk_visual_init (void);
++extern void _gdk_windowing_window_init (void);
++
++const GOptionEntry _gdk_windowing_args[] = {
++	{ NULL }
++};
++
++void _gdk_windowing_set_default_display (GdkDisplay *display)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_display_beep (GdkDisplay *display)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_display_sync (GdkDisplay *display)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_display_flush (GdkDisplay *display)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_notify_startup_complete (void)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++GdkScreen * gdk_display_get_default_screen (GdkDisplay *display)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
++
++int gdk_display_get_n_screens (GdkDisplay *display)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++GdkScreen * gdk_display_get_screen (GdkDisplay *display, gint screen_num)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
++
++void gdk_display_keyboard_ungrab (GdkDisplay *display, guint32 time)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++GList * gdk_display_list_devices (GdkDisplay *dpy)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
++
++GdkDisplay * gdk_display_open (const gchar *display_name)
++{
++	s_window_t *xynth;
++	ENTER();
++	if (_gdk_display) {
++		/* single display only */
++		return GDK_DISPLAY_OBJECT(_gdk_display);
++	}
++	/* initialize xynth here */
++	if (s_window_init(&xynth)) {
++		return NULL;
++	}
++	/* initialize gtk globals */
++	_gdk_display = g_object_new(GDK_TYPE_DISPLAY_XYNTH,NULL);
++	_gdk_screen = g_object_new(GDK_TYPE_SCREEN, NULL);
++	/* connect xynth */
++	_gdk_display->xynth = xynth;
++	/* initialize gtk internals */
++	_gdk_visual_init();
++	gdk_screen_set_default_colormap(_gdk_screen, gdk_screen_get_system_colormap(_gdk_screen));
++	_gdk_windowing_window_init();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
++
++GType gdk_display_xynth_get_type (void)
++{
++	static GType object_type = 0;
++	ENTER();
++	if (!object_type) {
++		static const GTypeInfo object_info = {
++			sizeof(GdkDisplayXYNTHClass),
++			(GBaseInitFunc) NULL,
++			(GBaseFinalizeFunc) NULL,
++			(GClassInitFunc) NULL,
++			NULL,                 /* class_finalize */
++			NULL,                 /* class_data */
++			sizeof(GdkDisplayXYNTH),
++			0,                    /* n_preallocs */
++			(GInstanceInitFunc) NULL,
++		};
++		object_type = g_type_register_static(GDK_TYPE_DISPLAY, "GdkDisplayXYNTH", &object_info, 0);
++	}
++	LEAVE();
++	return object_type;
++}
++
++gint gdk_display_pointer_is_grabbed (GdkDisplay *display)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++void gdk_display_pointer_ungrab (GdkDisplay *display, guint32 time)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++gboolean gdk_display_request_selection_notification (GdkDisplay *display, GdkAtom selection)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++void gdk_display_store_clipboard (GdkDisplay *display, GdkWindow  *clipboard_window, guint32 time_, GdkAtom *targets, gint n_targets)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++gboolean gdk_display_supports_clipboard_persistence (GdkDisplay *display)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++gboolean gdk_display_supports_selection_notification (GdkDisplay *display)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++G_CONST_RETURN gchar * gdk_display_get_name (GdkDisplay *display)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
+diff -Naur gtk+-2.10.14/gdk/xynth/gdkdisplay-xynth.h gtk+-2.10.14-xynth/gdk/xynth/gdkdisplay-xynth.h
+--- gtk+-2.10.14/gdk/xynth/gdkdisplay-xynth.h	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.14-xynth/gdk/xynth/gdkdisplay-xynth.h	2007-07-17 16:06:20.000000000 +0300
+@@ -0,0 +1,34 @@
++
++#ifndef GDKDISPLAYXYNTH_H_
++#define GDKDISPLAYXYNTH_H_
++
++#include <xynth.h>
++#include <gdk/gdkdisplay.h>
++#include <gdk/gdkkeys.h>
++
++G_BEGIN_DECLS
++
++typedef struct _GdkDisplayXYNTH GdkDisplayXYNTH;
++typedef struct _GdkDisplayXYNTHClass GdkDisplayXYNTHClass;
++
++#define GDK_TYPE_DISPLAY_XYNTH              (gdk_display_xynth_get_type())
++#define GDK_DISPLAY_XYNTH(object)           (G_TYPE_CHECK_INSTANCE_CAST ((object), GDK_TYPE_DISPLAY_XYNTH, GdkDisplayXYNTH))
++#define GDK_DISPLAY_XYNTH_CLASS(klass)      (G_TYPE_CHECK_CLASS_CAST ((klass), GDK_TYPE_DISPLAY_XYNTH, GdkDisplayXYNTHClass))
++#define GDK_IS_DISPLAY_XYNTH(object)        (G_TYPE_CHECK_INSTANCE_TYPE ((object), GDK_TYPE_DISPLAY_XYNTH))
++#define GDK_IS_DISPLAY_XYNTH_CLASS(klass)   (G_TYPE_CHECK_CLASS_TYPE ((klass), GDK_TYPE_DISPLAY_XYNTH))
++#define GDK_DISPLAY_XYNTH_GET_CLASS(obj)    (G_TYPE_INSTANCE_GET_CLASS ((obj), GDK_TYPE_DISPLAY_XYNTH, GdkDisplayXYNTHClass))
++
++struct _GdkDisplayXYNTH {
++	GdkDisplay parent;
++	s_window_t *xynth;
++};
++
++struct _GdkDisplayXYNTHClass {
++	GdkDisplayClass parent;
++};
++
++GType gdk_display_xynth_get_type (void);
++
++G_END_DECLS
++
++#endif /*GDKDISPLAYXYNTH_H_*/
+diff -Naur gtk+-2.10.14/gdk/xynth/gdkdnd-xynth.c gtk+-2.10.14-xynth/gdk/xynth/gdkdnd-xynth.c
+--- gtk+-2.10.14/gdk/xynth/gdkdnd-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.14-xynth/gdk/xynth/gdkdnd-xynth.c	2007-07-17 16:06:20.000000000 +0300
+@@ -0,0 +1,110 @@
++
++#include <config.h>
++#include "gdk.h"
++
++#include "gdkdnd.h"
++#include "gdkproperty.h"
++#include "gdkalias.h"
++
++#include "gdkxynth.h"
++
++void gdk_drag_abort (GdkDragContext *context, guint32 time)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++GdkDragContext * gdk_drag_begin (GdkWindow *window, GList *targets)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
++
++GType gdk_drag_context_get_type (void)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++void gdk_drag_drop (GdkDragContext *context, guint32 time)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_drag_find_window_for_screen (GdkDragContext *context, GdkWindow *drag_window, GdkScreen *screen, gint x_root, gint y_root, GdkWindow **dest_window, GdkDragProtocol *protocol)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++guint32 gdk_drag_get_protocol_for_display (GdkDisplay *display, guint32 xid, GdkDragProtocol *protocol)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++GdkAtom gdk_drag_get_selection (GdkDragContext *context)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
++
++gboolean gdk_drag_motion (GdkDragContext *context, GdkWindow *dest_window, GdkDragProtocol protocol, gint x_root, gint y_root, GdkDragAction suggested_action, GdkDragAction possible_actions, guint32 time)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++void gdk_drag_status (GdkDragContext *context, GdkDragAction action, guint32 time)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_drop_finish (GdkDragContext *context, gboolean success, guint32 time)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_drop_reply (GdkDragContext *context, gboolean ok, guint32 time)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_register_dnd (GdkWindow *window)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
+diff -Naur gtk+-2.10.14/gdk/xynth/gdkdrawable-xynth.c gtk+-2.10.14-xynth/gdk/xynth/gdkdrawable-xynth.c
+--- gtk+-2.10.14/gdk/xynth/gdkdrawable-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.14-xynth/gdk/xynth/gdkdrawable-xynth.c	2007-07-17 16:06:20.000000000 +0300
+@@ -0,0 +1,229 @@
++
++#include <config.h>
++#include "gdk.h"
++#include "gdkwindow.h"
++
++#include "gdkregion-generic.h"
++
++#include "gdkinternals.h"
++#include "gdkalias.h"
++
++#include "gdkxynth.h"
++#include "gdkprivate-xynth.h"
++
++static gpointer parent_class = NULL;
++
++void _gdk_xynth_draw_rectangle (GdkDrawable *drawable, GdkGC *gc, gint filled, gint x, gint y, gint width, gint height)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++static void gdk_xynth_draw_arc (GdkDrawable *drawable, GdkGC *gc, gint filled, gint x, gint y, gint width, gint height, gint angle1, gint angle2)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++static void gdk_xynth_draw_polygon (GdkDrawable *drawable, GdkGC *gc, gint filled, GdkPoint *points, gint npoints)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++static void gdk_xynth_draw_text (GdkDrawable *drawable, GdkFont *font, GdkGC *gc, gint x, gint y, const gchar *text, gint text_length)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++static void gdk_xynth_draw_text_wc (GdkDrawable *drawable, GdkFont *font, GdkGC *gc, gint x, gint y, const GdkWChar *text, gint text_length)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++static void gdk_xynth_draw_drawable (GdkDrawable *drawable, GdkGC *gc, GdkDrawable *src, gint xsrc, gint ysrc, gint xdest, gint ydest, gint width, gint height)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++static void gdk_xynth_draw_points (GdkDrawable *drawable, GdkGC *gc, GdkPoint *points, gint npoints)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++static void gdk_xynth_draw_segments (GdkDrawable *drawable, GdkGC *gc, GdkSegment *segs, gint nsegs)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++static void gdk_xynth_draw_lines (GdkDrawable *drawable, GdkGC *gc, GdkPoint *points, gint npoints)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++static void gdk_xynth_draw_image (GdkDrawable *drawable, GdkGC *gc, GdkImage *image, gint xsrc, gint ysrc, gint xdest, gint ydest, gint width, gint height)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++static cairo_surface_t * gdk_xynth_ref_cairo_surface (GdkDrawable *drawable)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++static gint gdk_xynth_get_depth (GdkDrawable *drawable)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++static void gdk_xynth_get_size (GdkDrawable *drawable, gint *width, gint *height)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++static GdkVisual * gdk_xynth_get_visual (GdkDrawable *drawable)
++{
++	GdkVisual *visual;
++	ENTER();
++	visual = gdk_visual_get_system();
++	LEAVE();
++	return visual;
++}
++
++static GdkScreen * gdk_xynth_get_screen (GdkDrawable *drawable)
++{
++	GdkScreen *screen;
++	ENTER();
++	screen = gdk_screen_get_default();
++	LEAVE();
++	return screen;
++}
++
++static void gdk_xynth_set_colormap (GdkDrawable *drawable, GdkColormap *colormap)
++{
++	GdkDrawableImplXYNTH *impl;
++	ENTER();
++	impl = GDK_DRAWABLE_IMPL_XYNTH(drawable);
++	if (impl->colormap == colormap) {
++		LEAVE();
++		return;
++	}
++	if (impl->colormap) {
++		g_object_unref(impl->colormap);
++	}
++	impl->colormap = colormap;
++	if (colormap) {
++		g_object_ref(colormap);
++	}
++	LEAVE();
++}
++
++static GdkColormap * gdk_xynth_get_colormap (GdkDrawable *drawable)
++{
++	GdkColormap *retval;
++	ENTER();
++	retval = GDK_DRAWABLE_IMPL_XYNTH(drawable)->colormap;
++	if (!retval) {
++		retval = gdk_colormap_get_system();
++		gdk_xynth_set_colormap(drawable, retval);
++	}
++	LEAVE();
++	return retval;
++}
++
++static void gdk_drawable_impl_xynth_finalize (GObject *object)
++{
++	GdkDrawableImplXYNTH *impl;
++	ENTER();
++	impl = GDK_DRAWABLE_IMPL_XYNTH(object);
++	gdk_xynth_set_colormap(GDK_DRAWABLE(object), NULL);
++	G_OBJECT_CLASS(parent_class)->finalize(object);
++	LEAVE();
++}
++
++static void gdk_drawable_impl_xynth_class_init (GdkDrawableImplXYNTHClass *klass)
++{
++	GObjectClass *object_class   = G_OBJECT_CLASS(klass);
++	GdkDrawableClass *drawable_class = GDK_DRAWABLE_CLASS(klass);
++	ENTER();
++	parent_class = g_type_class_peek_parent(klass);
++	object_class->finalize = gdk_drawable_impl_xynth_finalize;
++	drawable_class->create_gc      = _gdk_xynth_gc_new;
++	drawable_class->draw_rectangle = _gdk_xynth_draw_rectangle;
++	drawable_class->draw_arc       = gdk_xynth_draw_arc;
++	drawable_class->draw_polygon   = gdk_xynth_draw_polygon;
++	drawable_class->draw_text      = gdk_xynth_draw_text;
++	drawable_class->draw_text_wc   = gdk_xynth_draw_text_wc;
++	drawable_class->draw_drawable  = gdk_xynth_draw_drawable;
++	drawable_class->draw_points    = gdk_xynth_draw_points;
++	drawable_class->draw_segments  = gdk_xynth_draw_segments;
++	drawable_class->draw_lines     = gdk_xynth_draw_lines;
++	drawable_class->draw_image     = gdk_xynth_draw_image;
++	drawable_class->ref_cairo_surface = gdk_xynth_ref_cairo_surface;
++	drawable_class->set_colormap   = gdk_xynth_set_colormap;
++	drawable_class->get_colormap   = gdk_xynth_get_colormap;
++	drawable_class->get_depth      = gdk_xynth_get_depth;
++	drawable_class->get_visual     = gdk_xynth_get_visual;
++	drawable_class->get_size       = gdk_xynth_get_size;
++	drawable_class->_copy_to_image = _gdk_xynth_copy_to_image;
++	drawable_class->get_screen     = gdk_xynth_get_screen;
++	LEAVE();
++}
++
++GType gdk_drawable_impl_xynth_get_type (void)
++{
++	static GType object_type = 0;
++	ENTER();
++	if (!object_type) {
++		static const GTypeInfo object_info = {
++			sizeof (GdkDrawableImplXYNTHClass),
++			(GBaseInitFunc) NULL,
++			(GBaseFinalizeFunc) NULL,
++			(GClassInitFunc) gdk_drawable_impl_xynth_class_init,
++			NULL,           /* class_finalize */
++			NULL,           /* class_data */
++			sizeof (GdkDrawableImplXYNTH),
++			0,              /* n_preallocs */
++			(GInstanceInitFunc) NULL,
++		};
++		object_type = g_type_register_static(GDK_TYPE_DRAWABLE, "GdkDrawableImplXYNTH", &object_info, 0);
++	}
++	LEAVE();
++	return object_type;
++}
+diff -Naur gtk+-2.10.14/gdk/xynth/gdkevents-xynth.c gtk+-2.10.14-xynth/gdk/xynth/gdkevents-xynth.c
+--- gtk+-2.10.14/gdk/xynth/gdkevents-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.14-xynth/gdk/xynth/gdkevents-xynth.c	2007-07-17 16:06:20.000000000 +0300
+@@ -0,0 +1,61 @@
++
++#include "config.h"
++#include "gdk.h"
++
++#include "gdkinternals.h"
++#include "gdkkeysyms.h"
++#include "gdkalias.h"
++#include "gdkaliasdef.c"
++
++#include "gdkxynth.h"
++
++void _gdk_events_queue (GdkDisplay *display)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++GdkEvent * gdk_event_get_graphics_expose (GdkWindow *window)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
++
++gboolean gdk_event_send_client_message_for_display (GdkDisplay *display, GdkEvent *event, guint32 xid)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++void gdk_flush (void)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_screen_broadcast_client_message (GdkScreen *screen, GdkEvent *sev)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++gboolean gdk_screen_get_setting (GdkScreen *screen, const gchar *name, GValue *value)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
+diff -Naur gtk+-2.10.14/gdk/xynth/gdkfont-xynth.c gtk+-2.10.14-xynth/gdk/xynth/gdkfont-xynth.c
+--- gtk+-2.10.14/gdk/xynth/gdkfont-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.14-xynth/gdk/xynth/gdkfont-xynth.c	2007-07-17 16:06:20.000000000 +0300
+@@ -0,0 +1,88 @@
++
++#include <config.h>
++#include "gdk.h"
++
++#include "gdkinternals.h"
++#include "gdkfont.h"
++#include "gdkalias.h"
++
++#include "gdkxynth.h"
++
++void _gdk_font_destroy (GdkFont *font)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++gint _gdk_font_strlen (GdkFont *font, const gchar *str)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++gint gdk_font_equal (const GdkFont *fonta, const GdkFont *fontb)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++GdkFont * gdk_font_from_description_for_display (GdkDisplay * display, PangoFontDescription *font_desc)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
++
++gint gdk_font_id (const GdkFont *font)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++GdkFont * gdk_font_load_for_display (GdkDisplay *display, const gchar *font_name)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
++
++void gdk_text_extents (GdkFont *font, const gchar *text, gint text_length, gint *lbearing, gint *rbearing, gint *width, gint *ascent, gint *descent)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++gint gdk_text_width (GdkFont *font, const gchar  *text, gint text_length)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++gint gdk_text_width_wc (GdkFont *font, const GdkWChar *text, gint text_length)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
+diff -Naur gtk+-2.10.14/gdk/xynth/gdkgc-xynth.c gtk+-2.10.14-xynth/gdk/xynth/gdkgc-xynth.c
+--- gtk+-2.10.14/gdk/xynth/gdkgc-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.14-xynth/gdk/xynth/gdkgc-xynth.c	2007-07-17 16:06:20.000000000 +0300
+@@ -0,0 +1,37 @@
++
++#include <config.h>
++#include "gdk.h"
++
++#include "gdkgc.h"
++#include "gdkfont.h"
++#include "gdkpixmap.h"
++#include "gdkregion-generic.h"
++
++#include "gdkalias.h"
++
++#include "gdkxynth.h"
++
++void _gdk_windowing_gc_copy (GdkGC *dst_gc, GdkGC *src_gc)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void _gdk_windowing_gc_set_clip_region (GdkGC *gc, GdkRegion *region)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++GdkGC * _gdk_xynth_gc_new (GdkDrawable *drawable, GdkGCValues *values, GdkGCValuesMask values_mask)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
+diff -Naur gtk+-2.10.14/gdk/xynth/gdkgeometry-xynth.c gtk+-2.10.14-xynth/gdk/xynth/gdkgeometry-xynth.c
+--- gtk+-2.10.14/gdk/xynth/gdkgeometry-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.14-xynth/gdk/xynth/gdkgeometry-xynth.c	2007-07-17 16:06:20.000000000 +0300
+@@ -0,0 +1,33 @@
++
++#include "config.h"
++#include "gdk.h"
++
++#include "gdkinternals.h"
++#include "gdkalias.h"
++
++#include "gdkxynth.h"
++
++void _gdk_windowing_window_get_offsets (GdkWindow *window, gint *x_offset, gint *y_offset)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++gboolean _gdk_windowing_window_queue_antiexpose (GdkWindow *window, GdkRegion *area)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++void gdk_window_scroll (GdkWindow *window, gint dx, gint dy)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
+diff -Naur gtk+-2.10.14/gdk/xynth/gdkglobals-xynth.c gtk+-2.10.14-xynth/gdk/xynth/gdkglobals-xynth.c
+--- gtk+-2.10.14/gdk/xynth/gdkglobals-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.14-xynth/gdk/xynth/gdkglobals-xynth.c	2007-07-17 16:06:20.000000000 +0300
+@@ -0,0 +1,13 @@
++
++#include <config.h>
++#include "gdk.h"
++
++#include "gdkxynth.h"
++#include "gdkprivate-xynth.h"
++
++#include "gdkalias.h"
++
++GdkDisplayXYNTH *_gdk_display = NULL;
++GdkScreen       *_gdk_screen  = NULL;
++
++#include "gdkaliasdef.c"
+diff -Naur gtk+-2.10.14/gdk/xynth/gdkim-xynth.c gtk+-2.10.14-xynth/gdk/xynth/gdkim-xynth.c
+--- gtk+-2.10.14/gdk/xynth/gdkim-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.14-xynth/gdk/xynth/gdkim-xynth.c	2007-07-17 16:06:20.000000000 +0300
+@@ -0,0 +1,47 @@
++
++#include <locale.h>
++
++#include <config.h>
++#include "gdk.h"
++
++#include "gdkinternals.h"
++#include "gdkfont.h"
++#include "gdkalias.h"
++
++#include "gdkxynth.h"
++
++gint gdk_nmbstowcs (GdkWChar *dest, const gchar *src, gint src_len, gint dest_max)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++gchar * gdk_set_locale (void)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
++
++gchar * gdk_wcstombs (const GdkWChar *src)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
++
++gint gdk_mbstowcs (GdkWChar *dest, const gchar *src, gint dest_max)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
+diff -Naur gtk+-2.10.14/gdk/xynth/gdkimage-xynth.c gtk+-2.10.14-xynth/gdk/xynth/gdkimage-xynth.c
+--- gtk+-2.10.14/gdk/xynth/gdkimage-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.14-xynth/gdk/xynth/gdkimage-xynth.c	2007-07-17 16:06:20.000000000 +0300
+@@ -0,0 +1,55 @@
++
++#include <config.h>
++#include "gdk.h"
++
++#include "gdkinternals.h"
++
++#include "gdkimage.h"
++#include "gdkalias.h"
++
++#include "gdkxynth.h"
++
++GdkImage * _gdk_image_new_for_depth (GdkScreen *screen, GdkImageType type, GdkVisual *visual, gint width, gint height, gint depth)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
++
++gint _gdk_windowing_get_bits_for_depth (GdkDisplay *display, gint depth)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++guint32 gdk_image_get_pixel (GdkImage *image, gint x, gint y)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++GType gdk_image_get_type (void)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++GdkImage * _gdk_xynth_copy_to_image (GdkDrawable *drawable, GdkImage *image, gint src_x, gint src_y, gint dest_x, gint dest_y, gint width, gint height)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
+diff -Naur gtk+-2.10.14/gdk/xynth/gdkinput-xynth.c gtk+-2.10.14-xynth/gdk/xynth/gdkinput-xynth.c
+--- gtk+-2.10.14/gdk/xynth/gdkinput-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.14-xynth/gdk/xynth/gdkinput-xynth.c	2007-07-17 16:06:20.000000000 +0300
+@@ -0,0 +1,85 @@
++
++#include <config.h>
++#include "gdk.h"
++
++#include "gdkinput.h"
++#include "gdkkeysyms.h"
++#include "gdkalias.h"
++
++#include "gdkxynth.h"
++
++gboolean gdk_device_get_axis (GdkDevice *device, gdouble *axes, GdkAxisUse use, gdouble *value)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++GType gdk_device_get_type (void)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++void gdk_device_set_axis_use (GdkDevice *device, guint index, GdkAxisUse use)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_device_set_key (GdkDevice *device, guint index, guint keyval, GdkModifierType modifiers)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++gboolean gdk_device_set_mode (GdkDevice *device, GdkInputMode mode)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++void gdk_input_set_extension_events (GdkWindow *window, gint mask, GdkExtensionMode mode)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++gboolean gdk_device_get_history  (GdkDevice *device, GdkWindow *window, guint32 start, guint32 stop, GdkTimeCoord ***events, gint *n_events)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++void gdk_device_free_history (GdkTimeCoord **events, gint n_events)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_device_get_state (GdkDevice *device, GdkWindow *window, gdouble *axes, GdkModifierType *mask)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
+diff -Naur gtk+-2.10.14/gdk/xynth/gdkkeys-xynth.c gtk+-2.10.14-xynth/gdk/xynth/gdkkeys-xynth.c
+--- gtk+-2.10.14/gdk/xynth/gdkkeys-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.14-xynth/gdk/xynth/gdkkeys-xynth.c	2007-07-17 16:06:20.000000000 +0300
+@@ -0,0 +1,71 @@
++
++#include <config.h>
++#include "gdk.h"
++
++#include "gdkkeysyms.h"
++#include "gdkalias.h"
++
++#include "gdkxynth.h"
++
++PangoDirection gdk_keymap_get_direction (GdkKeymap *keymap)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return PANGO_DIRECTION_NEUTRAL;
++}
++
++gboolean gdk_keymap_get_entries_for_keycode (GdkKeymap *keymap, guint hardware_keycode, GdkKeymapKey **keys, guint **keyvals, gint *n_entries)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++gboolean gdk_keymap_get_entries_for_keyval (GdkKeymap *keymap, guint keyval, GdkKeymapKey **keys, gint *n_keys)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++GdkKeymap * gdk_keymap_get_for_display (GdkDisplay *display)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
++
++gboolean gdk_keymap_translate_keyboard_state (GdkKeymap *keymap, guint keycode, GdkModifierType state, gint group, guint *keyval, gint *effective_group, gint *level, GdkModifierType *consumed_modifiers)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++guint gdk_keyval_from_name (const gchar *keyval_name)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++gchar * gdk_keyval_name (guint keyval)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
+diff -Naur gtk+-2.10.14/gdk/xynth/gdkmain-xynth.c gtk+-2.10.14-xynth/gdk/xynth/gdkmain-xynth.c
+--- gtk+-2.10.14/gdk/xynth/gdkmain-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.14-xynth/gdk/xynth/gdkmain-xynth.c	2007-07-17 16:06:20.000000000 +0300
+@@ -0,0 +1,80 @@
++
++#include <config.h>
++#include "gdk.h"
++
++#include "gdkdisplay.h"
++
++#include "gdkinternals.h"
++
++#include "gdkintl.h"
++#include "gdkalias.h"
++
++#include "gdkxynth.h"
++
++void _gdk_windowing_display_set_sm_client_id (GdkDisplay *display, const gchar *sm_client_id)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void _gdk_windowing_init (void)
++{
++	ENTER();
++	/* nothing to do */
++	LEAVE();
++}
++
++gint gdk_error_trap_pop (void)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++void gdk_error_trap_push (void)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++GdkGrabStatus gdk_keyboard_grab (GdkWindow *window, gint owner_events, guint32 time) 
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++gboolean gdk_keyboard_grab_info_libgtk_only (GdkDisplay *display, GdkWindow **grab_window, gboolean *owner_events)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++GdkGrabStatus gdk_pointer_grab (GdkWindow *window, gint owner_events, GdkEventMask event_mask, GdkWindow *confine_to, GdkCursor *cursor, guint32 time)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++gboolean gdk_pointer_grab_info_libgtk_only (GdkDisplay *display, GdkWindow **grab_window, gboolean *owner_events)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
+diff -Naur gtk+-2.10.14/gdk/xynth/gdkpixmap-xynth.c gtk+-2.10.14-xynth/gdk/xynth/gdkpixmap-xynth.c
+--- gtk+-2.10.14/gdk/xynth/gdkpixmap-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.14-xynth/gdk/xynth/gdkpixmap-xynth.c	2007-07-17 16:06:20.000000000 +0300
+@@ -0,0 +1,37 @@
++
++#include <config.h>
++#include "gdk.h"
++
++#include "gdkinternals.h"
++
++#include "gdkpixmap.h"
++#include "gdkalias.h"
++
++#include "gdkxynth.h"
++
++GType _gdk_pixmap_impl_get_type (void)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++GdkPixmap * gdk_bitmap_create_from_data (GdkDrawable *drawable, const gchar *data, gint width, gint height)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
++
++GdkPixmap * gdk_pixmap_new (GdkDrawable *drawable, gint width, gint height, gint depth)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
+diff -Naur gtk+-2.10.14/gdk/xynth/gdkprivate-xynth.h gtk+-2.10.14-xynth/gdk/xynth/gdkprivate-xynth.h
+--- gtk+-2.10.14/gdk/xynth/gdkprivate-xynth.h	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.14-xynth/gdk/xynth/gdkprivate-xynth.h	2007-07-17 16:06:20.000000000 +0300
+@@ -0,0 +1,61 @@
++
++#ifndef GDKPRIVATEXYNTH_H_
++#define GDKPRIVATEXYNTH_H_
++
++#include <gdk/gdkprivate.h>
++#include "gdkinternals.h"
++#include "gdkcursor.h"
++#include "gdkdisplay-xynth.h"
++#include <cairo.h>
++
++#include "gdkxynth.h"
++
++extern GdkDisplayXYNTH *_gdk_display;
++extern GdkScreen       *_gdk_screen;
++
++typedef struct _GdkDrawableImplXYNTH GdkDrawableImplXYNTH;
++typedef struct _GdkWindowImplXYNTH   GdkWindowImplXYNTH;
++
++#define GDK_TYPE_DRAWABLE_IMPL_XYNTH       (gdk_drawable_impl_xynth_get_type())
++#define GDK_DRAWABLE_IMPL_XYNTH(object)    (G_TYPE_CHECK_INSTANCE_CAST((object), GDK_TYPE_DRAWABLE_IMPL_XYNTH, GdkDrawableImplXYNTH))
++#define GDK_IS_DRAWABLE_IMPL_XYNTH(object) (G_TYPE_CHECK_INSTANCE_TYPE((object), GDK_TYPE_DRAWABLE_IMPL_XYNTH))
++
++#define GDK_TYPE_WINDOW_IMPL_XYNTH         (gdk_window_impl_xynth_get_type())
++#define GDK_WINDOW_IMPL_XYNTH(object)      (G_TYPE_CHECK_INSTANCE_CAST((object), GDK_TYPE_WINDOW_IMPL_XYNTH, GdkWindowImplXYNTH))
++#define GDK_IS_WINDOW_IMPL_XYNTH(object)   (G_TYPE_CHECK_INSTANCE_TYPE((object), GDK_TYPE_WINDOW_IMPL_XYNTH))
++
++typedef struct {
++	GdkVisual visual;
++} GdkVisualXYNTH;
++
++typedef struct {
++	GdkDrawableClass parent_class;
++} GdkDrawableImplXYNTHClass;
++
++typedef struct {
++	GdkDrawableImplXYNTHClass parent_class;
++} GdkWindowImplXYNTHClass;
++
++struct _GdkDrawableImplXYNTH {
++	GdkDrawable parent_object;
++	GdkDrawable *wrapper;
++	GdkRegion *paint_region;
++	gint paint_depth;
++	gint width;
++	gint height;
++	gint abs_x;
++	gint abs_y;
++	GdkColormap *colormap;
++};
++
++struct _GdkWindowImplXYNTH {
++	GdkDrawableImplXYNTH drawable;
++	GdkWindow *gdkWindow;
++	GdkWindowTypeHint type_hint;
++};
++
++GType gdk_drawable_impl_xynth_get_type (void);
++GdkGC * _gdk_xynth_gc_new (GdkDrawable *drawable, GdkGCValues *values, GdkGCValuesMask values_mask);
++GdkImage * _gdk_xynth_copy_to_image (GdkDrawable *drawable, GdkImage *image, gint src_x, gint src_y, gint dest_x, gint dest_y, gint width, gint height);
++
++#endif
+diff -Naur gtk+-2.10.14/gdk/xynth/gdkproperty-xynth.c gtk+-2.10.14-xynth/gdk/xynth/gdkproperty-xynth.c
+--- gtk+-2.10.14/gdk/xynth/gdkproperty-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.14-xynth/gdk/xynth/gdkproperty-xynth.c	2007-07-17 16:06:20.000000000 +0300
+@@ -0,0 +1,61 @@
++
++#include <config.h>
++#include "gdk.h"
++
++#include "gdkproperty.h"
++#include "gdkinternals.h"
++#include "gdkalias.h"
++
++#include "gdkxynth.h"
++
++GdkAtom gdk_atom_intern (const gchar *atom_name, gboolean only_if_exists)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
++
++GdkAtom gdk_atom_intern_static_string (const gchar *atom_name)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
++
++gchar * gdk_atom_name (GdkAtom atom)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
++
++void gdk_property_change (GdkWindow *window, GdkAtom property, GdkAtom type, gint format, GdkPropMode mode, const guchar *data, gint nelements)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_property_delete (GdkWindow *window, GdkAtom property)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++gboolean gdk_property_get (GdkWindow *window, GdkAtom property, GdkAtom type, gulong offset, gulong length, gint pdelete, GdkAtom *actual_property_type, gint *actual_format_type, gint *actual_length, guchar **data)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
+diff -Naur gtk+-2.10.14/gdk/xynth/gdkscreen-xynth.c gtk+-2.10.14-xynth/gdk/xynth/gdkscreen-xynth.c
+--- gtk+-2.10.14/gdk/xynth/gdkscreen-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.14-xynth/gdk/xynth/gdkscreen-xynth.c	2007-07-17 16:06:20.000000000 +0300
+@@ -0,0 +1,141 @@
++
++#include "config.h"
++#include "gdk.h"
++#include "gdkscreen.h"
++
++#include "gdkinternals.h"
++#include "gdkalias.h"
++
++#include "gdkxynth.h"
++
++static GdkColormap *default_colormap = NULL;
++
++gchar * _gdk_windowing_substitute_screen_number (const gchar *display_name, int screen_number)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
++
++GdkColormap * gdk_screen_get_default_colormap (GdkScreen *screen)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
++
++GdkDisplay * gdk_screen_get_display (GdkScreen *screen)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
++
++gint gdk_screen_get_height (GdkScreen *screen)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++gint gdk_screen_get_height_mm (GdkScreen *screen)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++void gdk_screen_get_monitor_geometry (GdkScreen *screen, gint num_monitor, GdkRectangle *dest)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++gint gdk_screen_get_n_monitors (GdkScreen *screen)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++gint gdk_screen_get_number (GdkScreen *screen)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++GdkWindow * gdk_screen_get_root_window (GdkScreen *screen)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
++
++gint gdk_screen_get_width (GdkScreen *screen)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++gint gdk_screen_get_width_mm (GdkScreen *screen)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++gboolean gdk_screen_is_composited (GdkScreen *screen)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++void gdk_screen_set_default_colormap (GdkScreen *screen, GdkColormap *colormap)
++{
++	GdkColormap *old_colormap;
++	ENTER();
++	g_return_if_fail(GDK_IS_SCREEN(screen));
++	g_return_if_fail(GDK_IS_COLORMAP(colormap));
++	old_colormap = default_colormap;
++	default_colormap = g_object_ref(colormap);
++	if (old_colormap) {
++		g_object_unref(old_colormap);
++	}
++	LEAVE();
++}
++
++GdkColormap * gdk_screen_get_rgba_colormap (GdkScreen *screen)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
+diff -Naur gtk+-2.10.14/gdk/xynth/gdkselection-xynth.c gtk+-2.10.14-xynth/gdk/xynth/gdkselection-xynth.c
+--- gtk+-2.10.14/gdk/xynth/gdkselection-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.14-xynth/gdk/xynth/gdkselection-xynth.c	2007-07-17 16:06:20.000000000 +0300
+@@ -0,0 +1,105 @@
++
++#include "config.h"
++
++#include "gdkproperty.h"
++#include "gdkselection.h"
++#include "gdkprivate.h"
++#include "gdkalias.h"
++
++#include "gdkxynth.h"
++
++void gdk_free_compound_text (guchar *ctext)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_selection_convert (GdkWindow *requestor, GdkAtom selection, GdkAtom target, guint32 time)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++GdkWindow * gdk_selection_owner_get_for_display (GdkDisplay *display, GdkAtom selection)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
++
++gint gdk_selection_owner_set_for_display (GdkDisplay *display, GdkWindow *owner, GdkAtom selection, guint32 time, gint send_event)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++gint gdk_selection_property_get (GdkWindow *requestor, guchar **data, GdkAtom *ret_type, gint *ret_format)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++void gdk_selection_send_notify_for_display (GdkDisplay *display, guint32 requestor, GdkAtom selection, GdkAtom target, GdkAtom property, guint32 time)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++gint gdk_string_to_compound_text_for_display (GdkDisplay *display, const gchar *str, GdkAtom *encoding, gint *format, guchar **ctext, gint *length)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++gint gdk_text_property_to_text_list_for_display (GdkDisplay *display, GdkAtom encoding, gint format, const guchar *text, gint length, gchar ***list)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++gint gdk_text_property_to_utf8_list_for_display (GdkDisplay *display, GdkAtom encoding, gint format, const guchar *text, gint length, gchar ***list)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++gchar * gdk_utf8_to_string_target (const gchar *str)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
++
++gboolean gdk_utf8_to_compound_text_for_display (GdkDisplay *display, const gchar *str, GdkAtom *encoding, gint *format, guchar **ctext, gint *length)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
+diff -Naur gtk+-2.10.14/gdk/xynth/gdkspwan-xynth.c gtk+-2.10.14-xynth/gdk/xynth/gdkspwan-xynth.c
+--- gtk+-2.10.14/gdk/xynth/gdkspwan-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.14-xynth/gdk/xynth/gdkspwan-xynth.c	2007-07-17 16:06:20.000000000 +0300
+@@ -0,0 +1,18 @@
++
++#include <config.h>
++#include <glib.h>
++#include "gdk.h"
++#include "gdkspawn.h"
++#include "gdkprivate.h"
++#include "gdkalias.h"
++
++#include "gdkxynth.h"
++
++gboolean gdk_spawn_on_screen (GdkScreen *screen, const gchar *working_directory, gchar **argv, gchar **envp, GSpawnFlags flags, GSpawnChildSetupFunc child_setup, gpointer user_data, gint *child_pid, GError **error)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
+diff -Naur gtk+-2.10.14/gdk/xynth/gdkvisual-xynth.c gtk+-2.10.14-xynth/gdk/xynth/gdkvisual-xynth.c
+--- gtk+-2.10.14/gdk/xynth/gdkvisual-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.14-xynth/gdk/xynth/gdkvisual-xynth.c	2007-07-17 16:06:20.000000000 +0300
+@@ -0,0 +1,99 @@
++
++#include "config.h"
++
++#include "gdkscreen.h"
++#include "gdkvisual.h"
++#include "gdkalias.h"
++
++#include "gdkprivate-xynth.h"
++#include "gdkxynth.h"
++
++struct _GdkVisualClass {
++	GObjectClass parent_class;
++};
++
++GdkVisual *system_visual = NULL;
++
++GdkVisual * gdk_screen_get_system_visual (GdkScreen *screen)
++{
++	ENTER();
++	g_assert(system_visual);
++	LEAVE();
++	return system_visual;
++}
++
++GList * gdk_screen_list_visuals (GdkScreen *screen)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
++
++GdkScreen * gdk_visual_get_screen (GdkVisual *visual)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
++
++static void gdk_visual_finalize (GObject *object)
++{
++	g_error ("A GdkVisual object was finalized. This should not happen");
++}
++
++static void gdk_visual_class_init (GObjectClass *class)
++{
++	class->finalize = gdk_visual_finalize;
++}
++
++GType gdk_visual_get_type (void)
++{
++	static GType object_type = 0;
++	if (!object_type) {
++		static const GTypeInfo object_info = {
++			sizeof(GdkVisualClass),
++			(GBaseInitFunc) NULL,
++			(GBaseFinalizeFunc) NULL,
++			(GClassInitFunc) gdk_visual_class_init,
++			NULL,           /* class_finalize */
++			NULL,           /* class_data */
++			sizeof(GdkVisualXYNTH),
++			0,              /* n_preallocs */
++			(GInstanceInitFunc) NULL,
++		};
++		object_type = g_type_register_static(G_TYPE_OBJECT, "GdkVisual", &object_info, 0);
++	}
++	return object_type;
++}
++
++void _gdk_visual_init (void)
++{
++	ENTER();
++	system_visual = g_object_new(GDK_TYPE_VISUAL, NULL);
++	g_assert(system_visual != NULL);
++	system_visual->depth = _gdk_display->xynth->surface->bitsperpixel;
++	system_visual->bits_per_rgb = _gdk_display->xynth->surface->bitsperpixel;
++	system_visual->byte_order = GDK_LSB_FIRST;
++	system_visual->colormap_size = 0;
++	system_visual->type = GDK_VISUAL_TRUE_COLOR;
++	system_visual->red_prec = _gdk_display->xynth->surface->redlength;
++	system_visual->red_shift = _gdk_display->xynth->surface->redoffset;
++	system_visual->red_mask = _gdk_display->xynth->surface->redmask;
++	system_visual->green_prec = _gdk_display->xynth->surface->greenlength;
++	system_visual->green_shift = _gdk_display->xynth->surface->greenoffset;
++	system_visual->green_mask = _gdk_display->xynth->surface->greenmask;
++	system_visual->blue_prec = _gdk_display->xynth->surface->bluelength;
++	system_visual->blue_shift = _gdk_display->xynth->surface->blueoffset;
++	system_visual->blue_mask = _gdk_display->xynth->surface->bluemask;
++	
++	DEBUG("RGB len: %d %d %d, off: %d %d %d, mask: 0x%08X 0x%08X 0x%08X",
++	      system_visual->red_prec, system_visual->green_prec, system_visual->blue_prec,
++	      system_visual->red_shift, system_visual->green_shift, system_visual->blue_shift,
++	      system_visual->red_mask, system_visual->green_mask, system_visual->blue_mask);
++
++	LEAVE();
++}
+diff -Naur gtk+-2.10.14/gdk/xynth/gdkwindow-xynth.c gtk+-2.10.14-xynth/gdk/xynth/gdkwindow-xynth.c
+--- gtk+-2.10.14/gdk/xynth/gdkwindow-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.14-xynth/gdk/xynth/gdkwindow-xynth.c	2007-07-17 16:06:20.000000000 +0300
+@@ -0,0 +1,712 @@
++
++#include <config.h>
++#include "gdk.h"
++#include "gdkwindow.h"
++
++#include "gdkregion-generic.h"
++
++#include "gdkinternals.h"
++#include "gdkalias.h"
++
++#include "gdkxynth.h"
++#include "gdkprivate-xynth.h"
++
++GdkWindow *_gdk_parent_root  = NULL;
++static gpointer parent_class = NULL;
++
++GdkWindow * _gdk_windowing_window_at_pointer (GdkDisplay *display, gint *win_x, gint *win_y)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
++
++void _gdk_windowing_window_clear_area (GdkWindow *window, gint x, gint y, gint width, gint height)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void _gdk_windowing_window_clear_area_e (GdkWindow *window, gint x, gint y, gint width, gint height)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void _gdk_windowing_window_destroy (GdkWindow *window, gboolean recursing, gboolean foreign_destroy)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void _gdk_windowing_window_destroy_foreign (GdkWindow *window)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++GdkWindow * _gdk_windowing_window_get_pointer (GdkDisplay *display, GdkWindow *window, gint *x, gint *y, GdkModifierType *mask)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
++
++void _gdk_windowing_get_pointer (GdkDisplay *display, GdkScreen **screen, gint *x, gint *y, GdkModifierType *mask)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_display_warp_pointer (GdkDisplay *display, GdkScreen *screen, gint x, gint y)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_begin_move_drag (GdkWindow *window, gint button, gint root_x, gint root_y, guint32 timestamp)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_begin_resize_drag (GdkWindow *window, GdkWindowEdge edge, gint button, gint root_x, gint root_y, guint32 timestamp)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_configure_finished (GdkWindow *window)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_deiconify (GdkWindow *window)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_enable_synchronized_configure (GdkWindow *window)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_focus (GdkWindow *window, guint32 timestamp)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++GdkWindow * gdk_window_foreign_new_for_display (GdkDisplay* display,GdkNativeWindow anid)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
++
++void gdk_window_fullscreen (GdkWindow *window)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++gboolean gdk_window_get_deskrelative_origin (GdkWindow *window, gint *x, gint *y)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++GdkEventMask gdk_window_get_events (GdkWindow *window)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++void gdk_window_get_frame_extents (GdkWindow *window, GdkRectangle *rect)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_get_geometry (GdkWindow *window, gint *x, gint *y, gint *width, gint *height, gint *depth)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++gboolean gdk_window_get_origin (GdkWindow *window, gint *x, gint *y)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return 0;
++}
++
++void gdk_window_hide (GdkWindow *window)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_iconify (GdkWindow *window)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_input_shape_combine_mask (GdkWindow *window, GdkBitmap *mask, gint x, gint y)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++GdkWindow * gdk_window_lookup_for_display (GdkDisplay *display, GdkNativeWindow anid)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
++
++void gdk_window_lower (GdkWindow *window)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_maximize (GdkWindow *window)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_move (GdkWindow *window, gint x, gint y)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_move_resize (GdkWindow *window, gint x, gint y, gint width, gint height)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++GdkWindow * gdk_window_new (GdkWindow *parent, GdkWindowAttr *attributes, gint attributes_mask)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++	return NULL;
++}
++
++void gdk_window_raise (GdkWindow *window)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_reparent (GdkWindow *window, GdkWindow *new_parent, gint x, gint y)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_resize (GdkWindow *window, gint width, gint height)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_set_accept_focus (GdkWindow *window, gboolean accept_focus)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_set_back_pixmap (GdkWindow *window, GdkPixmap *pixmap, gint parent_relative)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_set_background (GdkWindow *window, const GdkColor  *color)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_set_cursor (GdkWindow *window, GdkCursor *cursor)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_set_decorations (GdkWindow *window, GdkWMDecoration decorations)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_set_events (GdkWindow *window, GdkEventMask event_mask)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_set_focus_on_map (GdkWindow *window, gboolean focus_on_map)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_set_functions (GdkWindow *window, GdkWMFunction functions)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_set_geometry_hints (GdkWindow *window, GdkGeometry *geometry, GdkWindowHints geom_mask)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_set_icon (GdkWindow *window, GdkWindow *icon_window, GdkPixmap *pixmap, GdkBitmap *mask)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_set_icon_list (GdkWindow *window, GList *pixbufs)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_set_keep_above (GdkWindow *window, gboolean setting)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_set_keep_below (GdkWindow *window, gboolean setting)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_set_modal_hint (GdkWindow *window, gboolean modal)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_set_role (GdkWindow *window, const gchar *role)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_set_skip_pager_hint (GdkWindow *window, gboolean skips_pager)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_set_skip_taskbar_hint (GdkWindow *window, gboolean skips_taskbar)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_set_title (GdkWindow *window, const gchar *title)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_set_transient_for (GdkWindow *window, GdkWindow *parent)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_set_type_hint (GdkWindow *window, GdkWindowTypeHint hint)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_set_urgency_hint (GdkWindow *window, gboolean urgent)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_shape_combine_mask (GdkWindow *window, GdkBitmap *mask, gint x, gint y)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_show_unraised (GdkWindow *window)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_show (GdkWindow *window)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_stick (GdkWindow *window)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_unfullscreen (GdkWindow *window)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_unmaximize (GdkWindow *window)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_unstick (GdkWindow *window)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_withdraw (GdkWindow *window)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_get_root_origin (GdkWindow *window, gint *x, gint *y)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_shape_combine_region (GdkWindow *window, GdkRegion *shape_region, gint offset_x, gint offset_y)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++void gdk_window_set_icon_name (GdkWindow *window, const gchar *name)
++{
++	ENTER();
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++static void gdk_window_impl_xynth_process_updates (GdkPaintable *paintable, gboolean update_children)
++{
++	GdkWindow *window;
++	GdkWindowObject *private;
++	GdkWindowImplXYNTH *wimpl;
++	GdkDrawableImplXYNTH *impl;
++	ENTER();
++	wimpl = GDK_WINDOW_IMPL_XYNTH(paintable);
++	impl = (GdkDrawableImplXYNTH *) wimpl;
++	window = wimpl->gdkWindow;
++	private = (GdkWindowObject *)window;
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++static void gdk_window_impl_xynth_invalidate_maybe_recurse (GdkPaintable *paintable, GdkRegion *region, gboolean (*child_func) (GdkWindow *, gpointer), gpointer user_data)
++{
++	GdkWindow *window;
++	GdkWindowObject *private;
++	GdkWindowImplXYNTH *wimpl;
++	GdkDrawableImplXYNTH *impl;
++	ENTER();
++	wimpl = GDK_WINDOW_IMPL_XYNTH(paintable);
++	impl = (GdkDrawableImplXYNTH *) wimpl;
++	window = wimpl->gdkWindow;
++	private = (GdkWindowObject *) window;
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++static void gdk_window_impl_xynth_end_paint (GdkPaintable *paintable)
++{
++	GdkDrawableImplXYNTH *impl;
++	ENTER();
++	impl = GDK_DRAWABLE_IMPL_XYNTH(paintable);
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++static void gdk_window_impl_xynth_begin_paint_region (GdkPaintable *paintable, GdkRegion *region)
++{
++	GdkDrawableImplXYNTH *impl;
++	GdkWindowImplXYNTH *wimpl;
++	ENTER();
++	g_assert(region != NULL);
++	wimpl = GDK_WINDOW_IMPL_XYNTH(paintable);
++	impl = (GdkDrawableImplXYNTH *) wimpl;
++	NIY();
++	ASSERT();
++	LEAVE();
++}
++
++static void gdk_window_impl_xynth_paintable_init (GdkPaintableIface *iface)
++{
++	ENTER();
++	iface->begin_paint_region = gdk_window_impl_xynth_begin_paint_region;
++	iface->end_paint = gdk_window_impl_xynth_end_paint;
++	iface->invalidate_maybe_recurse = gdk_window_impl_xynth_invalidate_maybe_recurse;
++	iface->process_updates = gdk_window_impl_xynth_process_updates;
++	LEAVE();
++}
++
++static void gdk_window_impl_xynth_init (GdkWindowImplXYNTH *impl)
++{
++	ENTER();
++	impl->drawable.width = 1;
++	impl->drawable.height = 1;
++	LEAVE();
++}
++
++static GdkRegion * gdk_window_impl_xynth_get_visible_region (GdkDrawable *drawable)
++{
++	GdkRegion *reg;
++	GdkRectangle rect = {0, 0, 0, 0};
++	GdkDrawableImplXYNTH *priv = GDK_DRAWABLE_IMPL_XYNTH(drawable);
++	ENTER();
++	DEBUG("Set region rectangle");
++	reg = gdk_region_rectangle(&rect);
++	LEAVE();
++	return reg;
++}
++
++static void gdk_window_impl_xynth_set_colormap (GdkDrawable *drawable, GdkColormap *colormap)
++{
++	ENTER();
++	GDK_DRAWABLE_CLASS(parent_class)->set_colormap(drawable, colormap);
++	LEAVE();
++}
++
++static void gdk_window_impl_xynth_finalize (GObject *object)
++{
++	GdkWindowImplXYNTH *impl = GDK_WINDOW_IMPL_XYNTH(object);
++	ENTER();
++	if (GDK_WINDOW_IS_MAPPED(impl->drawable.wrapper)) {
++		gdk_window_hide(impl->drawable.wrapper);
++	}
++	DEBUG("Release any window impl allocations to avoid memory leaks!");
++	if (G_OBJECT_CLASS(parent_class)->finalize) {
++		G_OBJECT_CLASS(parent_class)->finalize(object);
++	}
++	LEAVE();
++}
++
++static void gdk_window_impl_xynth_class_init (GdkWindowImplXYNTHClass *klass)
++{
++	GObjectClass *object_class = G_OBJECT_CLASS(klass);
++	GdkDrawableClass *drawable_class = GDK_DRAWABLE_CLASS(klass);
++	ENTER();
++	parent_class = g_type_class_peek_parent(klass);
++	object_class->finalize = gdk_window_impl_xynth_finalize;
++	drawable_class->set_colormap = gdk_window_impl_xynth_set_colormap;
++	/* Visible and clip regions are the same */
++	drawable_class->get_clip_region = gdk_window_impl_xynth_get_visible_region;
++	drawable_class->get_visible_region = gdk_window_impl_xynth_get_visible_region;
++	LEAVE();
++}
++
++GType gdk_window_impl_xynth_get_type (void)
++{
++	static GType object_type = 0;
++	ENTER();
++	if (!object_type) {
++		static const GTypeInfo object_info = {
++			sizeof(GdkWindowImplXYNTHClass),
++			(GBaseInitFunc) NULL,
++			(GBaseFinalizeFunc) NULL,
++			(GClassInitFunc) gdk_window_impl_xynth_class_init,
++			NULL,           /* class_finalize */
++			NULL,           /* class_data */
++			sizeof (GdkWindowImplXYNTH),
++			0,              /* n_preallocs */
++			(GInstanceInitFunc) gdk_window_impl_xynth_init,
++		};
++		static const GInterfaceInfo paintable_info = {
++			(GInterfaceInitFunc) gdk_window_impl_xynth_paintable_init,
++			NULL,
++			NULL
++		};
++		object_type = g_type_register_static(GDK_TYPE_DRAWABLE_IMPL_XYNTH, "GdkWindowImplXYNTH", &object_info, 0);
++		g_type_add_interface_static(object_type, GDK_TYPE_PAINTABLE, &paintable_info);
++	}
++	LEAVE();
++	return object_type;
++}
++
++GType _gdk_window_impl_get_type (void)
++{
++	GType rtype;
++	ENTER();
++	rtype = gdk_window_impl_xynth_get_type();
++	LEAVE();
++	return rtype;
++}
++
++void _gdk_windowing_window_init (void)
++{
++	GdkWindowObject *private;
++	ENTER();
++	g_assert(_gdk_parent_root == NULL);
++	_gdk_parent_root = g_object_new(GDK_TYPE_WINDOW, NULL);
++	private = GDK_WINDOW_OBJECT(_gdk_parent_root);
++	NIY();
++	ASSERT();
++	LEAVE();
++}
+diff -Naur gtk+-2.10.14/gdk/xynth/gdkxynth.c gtk+-2.10.14-xynth/gdk/xynth/gdkxynth.c
+--- gtk+-2.10.14/gdk/xynth/gdkxynth.c	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.14-xynth/gdk/xynth/gdkxynth.c	2007-07-17 16:06:20.000000000 +0300
+@@ -0,0 +1,2 @@
++
++#include "gdkxynth.h"
+diff -Naur gtk+-2.10.14/gdk/xynth/gdkxynth.h gtk+-2.10.14-xynth/gdk/xynth/gdkxynth.h
+--- gtk+-2.10.14/gdk/xynth/gdkxynth.h	1970-01-01 02:00:00.000000000 +0200
++++ gtk+-2.10.14-xynth/gdk/xynth/gdkxynth.h	2007-07-17 16:06:20.000000000 +0300
+@@ -0,0 +1,23 @@
++
++#include <assert.h>
++#include <stdio.h>
++#include <stdlib.h>
++
++#if 1
++#define DEBUG(fmt...) {\
++	printf(fmt);\
++	printf(" [%s (%s:%d)]\n", __FUNCTION__, __FILE__, __LINE__);\
++}
++#else
++#define DEBUG(fmt...) do { } while (0)
++#endif
++
++#define ENTER() DEBUG("Enter");
++#define LEAVE() DEBUG("Leave");
++#define NIY()   {\
++	DEBUG("Not Implemented Yet");\
++}
++#define ASSERT() {\
++	DEBUG("This should not happen");\
++	assert(0);\
++}
+diff -Naur gtk+-2.10.14/gtk/Makefile.am gtk+-2.10.14-xynth/gtk/Makefile.am
+--- gtk+-2.10.14/gtk/Makefile.am	2007-07-16 22:44:17.000000000 +0300
++++ gtk+-2.10.14-xynth/gtk/Makefile.am	2007-07-20 11:51:33.000000000 +0300
+@@ -798,12 +798,14 @@
+ libgtk_win32_2_0_la_SOURCES = $(gtk_c_sources)
+ libgtk_quartz_2_0_la_SOURCES = $(gtk_c_sources)
+ libgtk_directfb_2_0_la_SOURCES = $(gtk_c_sources)
++libgtk_xynth_2_0_la_SOURCES = $(gtk_c_sources)
+ 
+ libgtk_x11_2_0_la_LDFLAGS = $(libtool_opts)
+ libgtk_linux_fb_2_0_la_LDFLAGS = $(libtool_opts)
+ libgtk_win32_2_0_la_LDFLAGS = $(libtool_opts)
+ libgtk_quartz_2_0_la_LDFLAGS = $(libtool_opts)
+ libgtk_directfb_2_0_la_LDFLAGS = $(libtool_opts)
++libgtk_xynth_2_0_la_LDFLAGS = $(libtool_opts)
+ 
+ libgtk_x11_2_0_la_LIBADD = $(libadd)
+ libgtk_linux_fb_2_0_la_LIBADD = $(libadd)
+@@ -811,11 +813,12 @@
+ libgtk_win32_2_0_la_DEPENDENCIES = $(gtk_def) $(gtk_win32_res)
+ libgtk_quartz_2_0_la_LIBADD = $(libadd)
+ libgtk_directfb_2_0_la_LIBADD = $(libadd)
++libgtk_xynth_2_0_la_LIBADD = $(libadd)
+ 
+ if USE_WIN32
+ libgtk_target_ldflags = $(gtk_win32_res_ldflag) $(gtk_win32_symbols)
+ endif
+-EXTRA_LTLIBRARIES = libgtk-x11-2.0.la libgtk-linux-fb-2.0.la libgtk-win32-2.0.la libgtk-quartz-2.0.la libgtk-directfb-2.0.la
++EXTRA_LTLIBRARIES = libgtk-x11-2.0.la libgtk-linux-fb-2.0.la libgtk-win32-2.0.la libgtk-quartz-2.0.la libgtk-directfb-2.0.la libgtk-xynth-2.0.la
+ 
+ install-exec-hook: 
+ if DISABLE_EXPLICIT_DEPS
