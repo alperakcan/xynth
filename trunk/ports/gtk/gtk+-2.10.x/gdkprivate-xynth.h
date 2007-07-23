@@ -55,10 +55,18 @@ struct _GdkWindowImplXYNTH {
 	GdkDrawableImplXYNTH drawable;
 	GdkWindow *gdkWindow;
 	GdkWindowTypeHint type_hint;
-	
+
+	GdkCursor              *cursor;
+
 	int input_only;
 	s_window_t *xynth_window;
 };
+
+typedef struct {
+	GdkCursor         cursor;
+	gint              hot_x;
+	gint              hot_y;
+} GdkCursorXYNTH;
 
 GType gdk_drawable_impl_xynth_get_type (void);
 GdkGC * _gdk_xynth_gc_new (GdkDrawable *drawable, GdkGCValues *values, GdkGCValuesMask values_mask);
