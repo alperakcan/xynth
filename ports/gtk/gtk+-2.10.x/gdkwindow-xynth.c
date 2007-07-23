@@ -253,17 +253,31 @@ void gdk_window_move_resize (GdkWindow *window, gint x, gint y, gint width, gint
 	LEAVE();
 }
 
-GdkWindow * gdk_window_new (GdkWindow *parent, GdkWindowAttr *attributes, gint attributes_mask)
+void _gdk_xynth_calc_abs (GdkWindow *window)
 {
+	GdkWindowObject      *private;
+	GdkDrawableImplXYNTH *impl;
+	GList                *list;
 	ENTER();
-	if (attributes == NULL) {
+	if (GDK_IS_WINDOW(window) == 0) {
 		LEAVE();
-		return NULL;
+		return;
 	}
-	NIY();
-	ASSERT();
+	private = GDK_WINDOW_OBJECT(window);
+	impl = GDK_DRAWABLE_IMPL_XYNTH(private->impl);
+	
+	impl->abs_x = private->x;
+	impl->abs_y = private->y;
+	
+	if (private->parent) {
+		GdkDrawableImplXYNTH *parent_impl = GDK_DRAWABLE_IMPL_XYNTH(GDK_WINDOW_OBJECT(private->parent)->impl);
+		impl->abs_x += parent_impl->abs_x;
+		impl->abs_y += parent_impl->abs_y;
+	}
+	for (list = private->children; list; list = list->next) {
+		_gdk_xynth_calc_abs(list->data);
+	}	
 	LEAVE();
-	return NULL;
 }
 
 void gdk_window_raise (GdkWindow *window)
@@ -314,12 +328,40 @@ void gdk_window_set_background (GdkWindow *window, const GdkColor  *color)
 	LEAVE();
 }
 
-void gdk_window_set_cursor (GdkWindow *window, GdkCursor *cursor)
+void gdk_xynth_window_send_crossing_events (GdkWindow *src, GdkWindow *dest, GdkCrossingMode  mode)
 {
 	ENTER();
 	NIY();
 	ASSERT();
 	LEAVE();
+}
+
+void gdk_window_set_cursor (GdkWindow *window, GdkCursor *cursor)
+{
+	GdkWindowImplXYNTH *impl;
+	GdkCursor          *old_cursor;
+	ENTER();
+	if (GDK_IS_WINDOW(window) == 0) {
+		LEAVE();
+	}
+	impl = GDK_WINDOW_IMPL_XYNTH(GDK_WINDOW_OBJECT(window)->impl);
+	old_cursor = impl->cursor;
+	impl->cursor = (cursor ? gdk_cursor_ref(cursor) : gdk_cursor_new(GDK_LEFT_PTR));
+	if (gdk_window_at_pointer(NULL, NULL) == window) {
+		/* This is a bit evil but we want to keep all cursor changes in
+		 * one place, so let gdk_xynth_window_send_crossing_events
+		 * do the work for us. */
+		gdk_xynth_window_send_crossing_events(window, window, GDK_CROSSING_NORMAL);
+	} else if (impl->xynth_window) {
+		GdkCursorXYNTH *xynth_cursor = (GdkCursorXYNTH *) impl->cursor;
+		/* this branch takes care of setting the cursor for unmapped windows */
+		NIY();
+	}
+	if (old_cursor) {
+		gdk_cursor_unref(old_cursor);
+	}
+	LEAVE();
+
 }
 
 void gdk_window_set_decorations (GdkWindow *window, GdkWMDecoration decorations)
@@ -333,8 +375,14 @@ void gdk_window_set_decorations (GdkWindow *window, GdkWMDecoration decorations)
 void gdk_window_set_events (GdkWindow *window, GdkEventMask event_mask)
 {
 	ENTER();
-	NIY();
-	ASSERT();
+	if (GDK_IS_WINDOW(window) == 0) {
+		LEAVE();
+		return;
+	}
+	if (event_mask & GDK_BUTTON_MOTION_MASK) {
+		event_mask |= (GDK_BUTTON1_MOTION_MASK | GDK_BUTTON2_MOTION_MASK | GDK_BUTTON3_MOTION_MASK);
+	}
+	GDK_WINDOW_OBJECT(window)->event_mask = event_mask;
 	LEAVE();
 }
 
@@ -616,6 +664,7 @@ static void gdk_window_impl_xynth_init (GdkWindowImplXYNTH *impl)
 	ENTER();
 	impl->drawable.width = 1;
 	impl->drawable.height = 1;
+	impl->cursor = gdk_cursor_new_for_display(GDK_DISPLAY_OBJECT(_gdk_display), GDK_LEFT_PTR);
 	LEAVE();
 }
 
@@ -644,6 +693,9 @@ static void gdk_window_impl_xynth_finalize (GObject *object)
 	ENTER();
 	if (GDK_WINDOW_IS_MAPPED(impl->drawable.wrapper)) {
 		gdk_window_hide(impl->drawable.wrapper);
+	}
+	if (impl->cursor) {
+		gdk_cursor_unref(impl->cursor);
 	}
 	DEBUG("Release any window impl allocations to avoid memory leaks!");
 	if (G_OBJECT_CLASS(parent_class)->finalize) {
@@ -713,11 +765,14 @@ static void xynth_window_atevent (s_window_t *window, s_event_t *event)
 static int create_xynth_window (GdkWindowImplXYNTH *impl, s_window_t *parent, S_WINDOW window_type, s_rect_t *position)
 {
 	s_window_t *xynth_window;
+	ENTER();
 	if (s_window_init(&xynth_window)) {
+		LEAVE();
 		return -1;
 	}
 	if (s_window_new(xynth_window, window_type, parent)) {
 		s_window_uninit(xynth_window);
+		LEAVE();
 		return -1;
 	}
 	if (impl->input_only) {
@@ -726,10 +781,160 @@ static int create_xynth_window (GdkWindowImplXYNTH *impl, s_window_t *parent, S_
 		impl->drawable.xynth_surface = xynth_window->surface;
 	}
 	if (position) {
-		s_window_set_coor(xynth_window, window_type & WINDOW_NOFORM, position->x, position->y, position->w, position->h);
+		s_window_set_coor(xynth_window, WINDOW_NOFORM, position->x, position->y, position->w, position->h);
 	}
+	impl->xynth_window = xynth_window;
 	return 0;
 }
+
+GdkWindow * gdk_xynth_window_new (GdkWindow *parent, GdkWindowAttr *attributes, gint attributes_mask)
+{
+	GdkWindow             *window;
+	GdkWindowObject       *private;
+	GdkWindowObject       *parent_private;
+	GdkWindowImplXYNTH    *impl;
+	GdkWindowImplXYNTH    *parent_impl;
+	GdkVisual             *visual;
+	s_rect_t pos;
+	gint x, y;
+	ENTER();
+	if (attributes == NULL) {
+		LEAVE();
+		return NULL;
+	}
+	if (!parent || attributes->window_type != GDK_WINDOW_CHILD) {
+		parent = _gdk_parent_root;
+	}
+
+	window = g_object_new(GDK_TYPE_WINDOW, NULL);
+	private = GDK_WINDOW_OBJECT(window);
+	
+	parent_private = GDK_WINDOW_OBJECT(parent);
+	parent_impl = GDK_WINDOW_IMPL_XYNTH(parent_private->impl);
+	private->parent = parent_private;
+	
+	x = (attributes_mask & GDK_WA_X) ? attributes->x : 0;
+	y = (attributes_mask & GDK_WA_Y) ? attributes->y : 0;
+	
+	gdk_window_set_events (window, attributes->event_mask | GDK_STRUCTURE_MASK);
+	
+	impl = GDK_WINDOW_IMPL_XYNTH(private->impl);
+	impl->drawable.wrapper = GDK_DRAWABLE(window);
+	impl->gdkWindow = window;
+	
+	private->x = x;
+	private->y = y;
+	
+	_gdk_xynth_calc_abs(window);
+	
+	impl->drawable.width  = MAX(1, attributes->width);
+	impl->drawable.height = MAX(1, attributes->height);
+	
+	private->window_type = attributes->window_type;
+	
+	if (attributes_mask & GDK_WA_VISUAL) {
+		visual = attributes->visual;
+	} else {
+		visual = gdk_drawable_get_visual(parent);
+	}
+	
+	switch (attributes->wclass) {
+		case GDK_INPUT_OUTPUT:
+			DEBUG("wclass: GDK_INPUT_OUTPUT");
+			private->input_only = FALSE;
+			impl->input_only = 0;
+			break;
+		case GDK_INPUT_ONLY:
+			DEBUG("wclass: GDK_INPUT_ONLY");
+			private->input_only = TRUE;
+			impl->input_only = 1;
+			break;
+		default:
+			g_warning("gdk_window_new: unsupported window class\n");
+			_gdk_window_destroy(window, FALSE);
+			LEAVE();
+			return NULL;
+	}
+	switch (private->window_type) {
+		case GDK_WINDOW_TOPLEVEL:
+			DEBUG("wtype: GDK_WINDOW_TOPLEVEL");
+			goto open_window;
+		case GDK_WINDOW_DIALOG:
+			DEBUG("wtype: GDK_WINDOW_DIALOG");
+			goto open_window;
+		case GDK_WINDOW_TEMP:
+			DEBUG("wtype: GDK_WINDOW_TEMP");
+open_window:
+			pos.x = x;
+			pos.y = y;
+			pos.w = impl->drawable.width;
+			pos.h = impl->drawable.height;
+			if (create_xynth_window(impl, parent_impl->xynth_window, WINDOW_CHILD, &pos)) {
+			          _gdk_window_destroy(window, FALSE);
+			          return NULL;
+			}
+			break;
+		case GDK_WINDOW_CHILD:
+			DEBUG("wtype: GDK_WINDOW_CHILD");
+			NIY();
+			ASSERT();
+			break;
+		default:
+			g_warning("gdk_window_new: unsupported window type: %d", private->window_type);
+			_gdk_window_destroy(window, FALSE);
+			LEAVE();
+			return NULL;
+	}
+	
+	if (impl->drawable.xynth_surface) {
+		GdkColormap *colormap;
+		private->depth = impl->drawable.xynth_surface->bitsperpixel;
+		if ((attributes_mask & GDK_WA_COLORMAP) && attributes->colormap) {
+			colormap = attributes->colormap;
+		} else {
+			if (gdk_visual_get_system() == visual) {
+				colormap = gdk_colormap_get_system();
+			} else {
+				colormap = gdk_drawable_get_colormap(parent);
+			}
+		}
+		gdk_drawable_set_colormap(GDK_DRAWABLE (window), colormap);
+	} else {
+		private->depth = visual->depth;
+	}
+	
+	gdk_window_set_cursor(window, ((attributes_mask & GDK_WA_CURSOR) ? (attributes->cursor) : NULL));
+	
+	if (parent_private) {
+		parent_private->children = g_list_prepend(parent_private->children, window);
+	}
+	
+	/* we hold a reference count on ourselves */
+	g_object_ref(window);
+	
+	if (impl->xynth_window) {
+		s_window_atevent(impl->xynth_window, xynth_window_atevent);
+	}
+	if (attributes_mask & GDK_WA_TYPE_HINT) {
+		gdk_window_set_type_hint(window, attributes->type_hint);
+	}
+
+	ASSERT();
+	LEAVE();
+	return NULL;
+}
+
+GdkWindow * gdk_window_new (GdkWindow *parent, GdkWindowAttr *attributes, gint attributes_mask)
+{
+	ENTER();
+	if (attributes == NULL) {
+		LEAVE();
+		return NULL;
+	}
+	LEAVE();
+	return gdk_xynth_window_new(parent, attributes, attributes_mask);
+}
+
 
 void _gdk_windowing_window_init (void)
 {
