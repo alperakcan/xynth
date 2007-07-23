@@ -2993,7 +2993,7 @@ typedef enum {
 	/** window input, this is a bitwise or`ed property
 	  * this type of window will receive all input events,
 	  * even if not shown */
-	WINDOW_INPUT      = 0x0800 
+	WINDOW_INPUT      = 0x0800,
 } S_WINDOW;
 
 /** window struct
