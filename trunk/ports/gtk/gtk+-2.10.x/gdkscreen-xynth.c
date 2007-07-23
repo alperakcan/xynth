@@ -6,6 +6,7 @@
 #include "gdkinternals.h"
 #include "gdkalias.h"
 
+#include "gdkprivate-xynth.h"
 #include "gdkxynth.h"
 
 static GdkColormap *default_colormap = NULL;
@@ -22,19 +23,15 @@ gchar * _gdk_windowing_substitute_screen_number (const gchar *display_name, int 
 GdkColormap * gdk_screen_get_default_colormap (GdkScreen *screen)
 {
 	ENTER();
-	NIY();
-	ASSERT();
 	LEAVE();
-	return NULL;
+	return default_colormap;
 }
 
 GdkDisplay * gdk_screen_get_display (GdkScreen *screen)
 {
 	ENTER();
-	NIY();
-	ASSERT();
 	LEAVE();
-	return NULL;
+	return GDK_DISPLAY_OBJECT(_gdk_display);
 }
 
 gint gdk_screen_get_height (GdkScreen *screen)
@@ -75,19 +72,16 @@ gint gdk_screen_get_n_monitors (GdkScreen *screen)
 gint gdk_screen_get_number (GdkScreen *screen)
 {
 	ENTER();
-	NIY();
-	ASSERT();
 	LEAVE();
+	g_return_val_if_fail(GDK_IS_SCREEN (screen), 0);
 	return 0;
 }
 
 GdkWindow * gdk_screen_get_root_window (GdkScreen *screen)
 {
 	ENTER();
-	NIY();
-	ASSERT();
 	LEAVE();
-	return NULL;
+	return _gdk_parent_root;
 }
 
 gint gdk_screen_get_width (GdkScreen *screen)

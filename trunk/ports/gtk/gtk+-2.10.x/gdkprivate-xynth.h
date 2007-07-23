@@ -39,6 +39,7 @@ typedef struct {
 struct _GdkDrawableImplXYNTH {
 	GdkDrawable parent_object;
 	GdkDrawable *wrapper;
+
 	GdkRegion *paint_region;
 	gint paint_depth;
 	gint width;
@@ -46,12 +47,17 @@ struct _GdkDrawableImplXYNTH {
 	gint abs_x;
 	gint abs_y;
 	GdkColormap *colormap;
+	
+	s_surface_t *xynth_surface;
 };
 
 struct _GdkWindowImplXYNTH {
 	GdkDrawableImplXYNTH drawable;
 	GdkWindow *gdkWindow;
 	GdkWindowTypeHint type_hint;
+	
+	int input_only;
+	s_window_t *xynth_window;
 };
 
 GType gdk_drawable_impl_xynth_get_type (void);

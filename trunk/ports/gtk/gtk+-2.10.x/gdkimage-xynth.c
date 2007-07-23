@@ -53,3 +53,9 @@ GdkImage * _gdk_xynth_copy_to_image (GdkDrawable *drawable, GdkImage *image, gin
 	LEAVE();
 	return NULL;
 }
+
+void _gdk_windowing_image_init (void)
+{
+	ENTER();
+	LEAVE();
+}

@@ -13,6 +13,10 @@
 
 extern void _gdk_visual_init (void);
 extern void _gdk_windowing_window_init (void);
+extern void _gdk_windowing_image_init (void);
+extern void _gdk_input_init (void);
+extern void _gdk_dnd_init (void);
+extern void _gdk_events_init (void);
 
 const GOptionEntry _gdk_windowing_args[] = {
 	{ NULL }
@@ -21,8 +25,7 @@ const GOptionEntry _gdk_windowing_args[] = {
 void _gdk_windowing_set_default_display (GdkDisplay *display)
 {
 	ENTER();
-	NIY();
-	ASSERT();
+	_gdk_display = GDK_DISPLAY_XYNTH(display);
 	LEAVE();
 }
 
@@ -61,10 +64,8 @@ void gdk_notify_startup_complete (void)
 GdkScreen * gdk_display_get_default_screen (GdkDisplay *display)
 {
 	ENTER();
-	NIY();
-	ASSERT();
 	LEAVE();
-	return NULL;
+	return _gdk_screen;
 }
 
 int gdk_display_get_n_screens (GdkDisplay *display)
@@ -104,29 +105,33 @@ GList * gdk_display_list_devices (GdkDisplay *dpy)
 
 GdkDisplay * gdk_display_open (const gchar *display_name)
 {
-	s_window_t *xynth;
+	s_window_t *xynth_window;
 	ENTER();
 	if (_gdk_display) {
-		/* single display only */
 		return GDK_DISPLAY_OBJECT(_gdk_display);
 	}
-	/* initialize xynth here */
-	if (s_window_init(&xynth)) {
+
+	if (s_window_init(&xynth_window)) {
 		return NULL;
 	}
-	/* initialize gtk globals */
+
 	_gdk_display = g_object_new(GDK_TYPE_DISPLAY_XYNTH,NULL);
 	_gdk_screen = g_object_new(GDK_TYPE_SCREEN, NULL);
-	/* connect xynth */
-	_gdk_display->xynth = xynth;
-	/* initialize gtk internals */
+
+	_gdk_display->xynth_window = xynth_window;
+
 	_gdk_visual_init();
 	gdk_screen_set_default_colormap(_gdk_screen, gdk_screen_get_system_colormap(_gdk_screen));
 	_gdk_windowing_window_init();
-	NIY();
-	ASSERT();
+
+	_gdk_input_init();
+	_gdk_dnd_init();
+	
+	_gdk_events_init();
+	
+	g_signal_emit_by_name(gdk_display_manager_get(), "display_opened", _gdk_display);
 	LEAVE();
-	return NULL;
+	return GDK_DISPLAY_OBJECT(_gdk_display);
 }
 
 GType gdk_display_xynth_get_type (void)
