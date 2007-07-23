@@ -103,10 +103,13 @@ static cairo_surface_t * gdk_xynth_ref_cairo_surface (GdkDrawable *drawable)
 
 static gint gdk_xynth_get_depth (GdkDrawable *drawable)
 {
+	gint depth;
+	GdkDrawableImplXYNTH *impl;	
 	ENTER();
-	NIY();
-	ASSERT();
+	impl = GDK_DRAWABLE_IMPL_XYNTH(drawable);
+	depth = impl->xynth_surface->bitsperpixel;
 	LEAVE();
+	return depth;
 }
 
 static void gdk_xynth_get_size (GdkDrawable *drawable, gint *width, gint *height)

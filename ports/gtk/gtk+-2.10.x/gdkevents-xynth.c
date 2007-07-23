@@ -7,6 +7,7 @@
 #include "gdkalias.h"
 #include "gdkaliasdef.c"
 
+#include "gdkprivate-xynth.h"
 #include "gdkxynth.h"
 
 void _gdk_events_queue (GdkDisplay *display)
@@ -54,8 +55,93 @@ void gdk_screen_broadcast_client_message (GdkScreen *screen, GdkEvent *sev)
 gboolean gdk_screen_get_setting (GdkScreen *screen, const gchar *name, GValue *value)
 {
 	ENTER();
+	LEAVE();
+	return FALSE;
+}
+
+static void dfb_events_process_window_event (s_window_t *xynth_window, s_event_t *xynth_event)
+{
+#if 0
+	GdkWindow *window = gdk_directfb_window_id_table_lookup(event->window_id);
+	if (!window) {
+		return;
+	}
+	gdk_event_translate(event, window);
+#else
+	ENTER();
 	NIY();
 	ASSERT();
 	LEAVE();
-	return 0;
+#endif
+}
+
+static void dfb_events_dispatch (void)
+{
+#if 0
+	GdkEvent *event;
+	GdkDisplay *display;
+	ENTER();
+	display = gdk_display_get_default();
+	while ((event = _gdk_event_unqueue(display)) != NULL) {
+		if (_gdk_event_func) {
+			(*_gdk_event_func) (event, _gdk_event_data);
+		}
+		gdk_event_free (event);
+	}
+	LEAVE();
+#endif
+}
+
+static gboolean xynth_events_io_func (GIOChannel *channel, GIOCondition condition, gpointer data)
+{
+#if 0
+	gsize      i;
+	gsize      read;
+	GIOStatus  result;
+	char buf[23];
+	ENTER();
+	result = g_io_channel_read_chars(channel, (gchar *) buf, sizeof (buf), &read, NULL);
+	if (result == G_IO_STATUS_ERROR) {
+		g_warning ("%s: GIOError occured", __FUNCTION__);
+		LEAVE();
+		return TRUE;
+	}
+	dfb_events_process_window_event (&event->window);
+	dfb_events_dispatch ();
+	LEAVE();
+	return TRUE;
+#else
+	ENTER();
+	NIY();
+	ASSERT();
+	LEAVE();
+#endif
+}
+
+void _gdk_events_init (void)
+{
+	GIOChannel *channel;
+	GSource    *source;
+	gint        fd;
+	
+	ENTER();
+
+	pipe(_gdk_display->xynth_event_fd);
+	
+	fd = _gdk_display->xynth_event_fd[0];
+	channel = g_io_channel_unix_new(fd);
+	
+	g_io_channel_set_encoding(channel, NULL, NULL);
+	g_io_channel_set_buffered(channel, FALSE);
+	
+	source = g_io_create_watch(channel, G_IO_IN);
+	
+	g_source_set_priority(source, G_PRIORITY_DEFAULT);
+	g_source_set_can_recurse(source, TRUE);
+	g_source_set_callback(source, (GSourceFunc) xynth_events_io_func, NULL, NULL);
+	
+	g_source_attach(source, NULL);
+	g_source_unref(source);
+
+	LEAVE();
 }

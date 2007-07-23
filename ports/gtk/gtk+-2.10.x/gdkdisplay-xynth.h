@@ -20,7 +20,8 @@ typedef struct _GdkDisplayXYNTHClass GdkDisplayXYNTHClass;
 
 struct _GdkDisplayXYNTH {
 	GdkDisplay parent;
-	s_window_t *xynth;
+	gint xynth_event_fd[2];
+	s_window_t *xynth_window;
 };
 
 struct _GdkDisplayXYNTHClass {

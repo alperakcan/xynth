@@ -75,20 +75,20 @@ void _gdk_visual_init (void)
 	ENTER();
 	system_visual = g_object_new(GDK_TYPE_VISUAL, NULL);
 	g_assert(system_visual != NULL);
-	system_visual->depth = _gdk_display->xynth->surface->bitsperpixel;
-	system_visual->bits_per_rgb = _gdk_display->xynth->surface->bitsperpixel;
+	system_visual->depth = _gdk_display->xynth_window->surface->bitsperpixel;
+	system_visual->bits_per_rgb = _gdk_display->xynth_window->surface->bitsperpixel;
 	system_visual->byte_order = GDK_LSB_FIRST;
 	system_visual->colormap_size = 0;
 	system_visual->type = GDK_VISUAL_TRUE_COLOR;
-	system_visual->red_prec = _gdk_display->xynth->surface->redlength;
-	system_visual->red_shift = _gdk_display->xynth->surface->redoffset;
-	system_visual->red_mask = _gdk_display->xynth->surface->redmask;
-	system_visual->green_prec = _gdk_display->xynth->surface->greenlength;
-	system_visual->green_shift = _gdk_display->xynth->surface->greenoffset;
-	system_visual->green_mask = _gdk_display->xynth->surface->greenmask;
-	system_visual->blue_prec = _gdk_display->xynth->surface->bluelength;
-	system_visual->blue_shift = _gdk_display->xynth->surface->blueoffset;
-	system_visual->blue_mask = _gdk_display->xynth->surface->bluemask;
+	system_visual->red_prec = _gdk_display->xynth_window->surface->redlength;
+	system_visual->red_shift = _gdk_display->xynth_window->surface->redoffset;
+	system_visual->red_mask = _gdk_display->xynth_window->surface->redmask;
+	system_visual->green_prec = _gdk_display->xynth_window->surface->greenlength;
+	system_visual->green_shift = _gdk_display->xynth_window->surface->greenoffset;
+	system_visual->green_mask = _gdk_display->xynth_window->surface->greenmask;
+	system_visual->blue_prec = _gdk_display->xynth_window->surface->bluelength;
+	system_visual->blue_shift = _gdk_display->xynth_window->surface->blueoffset;
+	system_visual->blue_mask = _gdk_display->xynth_window->surface->bluemask;
 	
 	DEBUG("RGB len: %d %d %d, off: %d %d %d, mask: 0x%08X 0x%08X 0x%08X",
 	      system_visual->red_prec, system_visual->green_prec, system_visual->blue_prec,

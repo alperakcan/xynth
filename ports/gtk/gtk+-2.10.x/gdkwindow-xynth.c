@@ -256,6 +256,10 @@ void gdk_window_move_resize (GdkWindow *window, gint x, gint y, gint width, gint
 GdkWindow * gdk_window_new (GdkWindow *parent, GdkWindowAttr *attributes, gint attributes_mask)
 {
 	ENTER();
+	if (attributes == NULL) {
+		LEAVE();
+		return NULL;
+	}
 	NIY();
 	ASSERT();
 	LEAVE();
@@ -699,14 +703,70 @@ GType _gdk_window_impl_get_type (void)
 	return rtype;
 }
 
+static void xynth_window_atevent (s_window_t *window, s_event_t *event)
+{
+	ENTER();
+	/* write to gtk */
+	LEAVE();
+}
+
+static int create_xynth_window (GdkWindowImplXYNTH *impl, s_window_t *parent, S_WINDOW window_type, s_rect_t *position)
+{
+	s_window_t *xynth_window;
+	if (s_window_init(&xynth_window)) {
+		return -1;
+	}
+	if (s_window_new(xynth_window, window_type, parent)) {
+		s_window_uninit(xynth_window);
+		return -1;
+	}
+	if (impl->input_only) {
+		impl->drawable.xynth_surface = NULL;
+	} else {
+		impl->drawable.xynth_surface = xynth_window->surface;
+	}
+	if (position) {
+		s_window_set_coor(xynth_window, window_type & WINDOW_NOFORM, position->x, position->y, position->w, position->h);
+	}
+	return 0;
+}
+
 void _gdk_windowing_window_init (void)
 {
+	s_rect_t pos;
 	GdkWindowObject *private;
+	GdkWindowImplXYNTH *impl;
+	
 	ENTER();
 	g_assert(_gdk_parent_root == NULL);
+	
 	_gdk_parent_root = g_object_new(GDK_TYPE_WINDOW, NULL);
 	private = GDK_WINDOW_OBJECT(_gdk_parent_root);
-	NIY();
-	ASSERT();
+	impl = GDK_WINDOW_IMPL_XYNTH(private->impl);
+	
+	private->window_type   = GDK_WINDOW_ROOT;
+	private->state         = 0;
+	private->children      = NULL;
+	impl->drawable.paint_region  = NULL;
+	impl->gdkWindow        = _gdk_parent_root;
+	impl->input_only       = 0;
+	impl->xynth_window     = NULL;
+	impl->drawable.abs_x   = 0;
+	impl->drawable.abs_y   = 0;
+	impl->drawable.width   = _gdk_display->xynth_window->surface->linear_buf_width;
+	impl->drawable.height  = _gdk_display->xynth_window->surface->linear_buf_height;
+	impl->drawable.wrapper = GDK_DRAWABLE(private);
+	
+	/* should i open window for root ?
+	 */
+	pos.x = 0;
+	pos.y = 0;
+	pos.w = _gdk_display->xynth_window->surface->linear_buf_width;
+	pos.h = _gdk_display->xynth_window->surface->linear_buf_height;
+	create_xynth_window(impl, _gdk_display->xynth_window, WINDOW_CHILD, &pos);
+
+	private->depth = impl->drawable.xynth_surface->bitsperpixel;
+	gdk_drawable_set_colormap(GDK_DRAWABLE (_gdk_parent_root), gdk_colormap_get_system());
+	
 	LEAVE();
 }
