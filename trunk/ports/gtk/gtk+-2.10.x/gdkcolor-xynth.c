@@ -7,17 +7,46 @@
 #include "gdkcolor.h"
 #include "gdkalias.h"
 
+#include "gdkprivate-xynth.h"
 #include "gdkxynth.h"
 
 static GObjectClass *parent_class = NULL;
 
 gint gdk_colormap_alloc_colors (GdkColormap *colormap, GdkColor *colors, gint ncolors, gboolean writeable, gboolean best_match, gboolean *success)
 {
+	gint i;
+	GdkVisual *visual;
+	g_return_val_if_fail(GDK_IS_COLORMAP (colormap), 0);
+	g_return_val_if_fail(colors != NULL, 0);
+	g_return_val_if_fail(success != NULL, 0);
 	ENTER();
-	NIY();
-	ASSERT();
+	switch (colormap->visual->type) {
+		case GDK_VISUAL_TRUE_COLOR:
+			visual = colormap->visual;
+			for (i = 0; i < ncolors; i++) {
+				colors[i].pixel = (((colors[i].red   >> (16 - visual->red_prec))   << visual->red_shift) +
+						   ((colors[i].green >> (16 - visual->green_prec)) << visual->green_shift) +
+						   ((colors[i].blue  >> (16 - visual->blue_prec))  << visual->blue_shift));
+				success[i] = TRUE;
+			}
+			break;
+		case GDK_VISUAL_STATIC_COLOR:
+			for (i = 0; i < ncolors; i++) {
+				colors[i].pixel = (((colors[i].red   & 0xE000) >> 8)  |
+						   ((colors[i].green & 0xE000) >> 11) |
+						   ((colors[i].blue  & 0xC000) >> 14));
+				success[i] = TRUE;
+			}
+			break;
+		default:
+			for (i = 0; i < ncolors; i++) {
+				success[i] = FALSE;
+			}
+			NIY();
+			break;
+	}
 	LEAVE();
-	return -1;
+	return 0;
 }
 
 void gdk_colormap_change (GdkColormap *colormap, gint ncolors)
@@ -39,10 +68,8 @@ void gdk_colormap_free_colors (GdkColormap *colormap, GdkColor *colors, gint nco
 GdkScreen * gdk_colormap_get_screen (GdkColormap *cmap)
 {
 	ENTER();
-	NIY();
-	ASSERT();
 	LEAVE();
-	return NULL;
+	return _gdk_screen;
 }
 
 static void gdk_colormap_init (GdkColormap *colormap)

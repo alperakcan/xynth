@@ -71,5 +71,8 @@ typedef struct {
 GType gdk_drawable_impl_xynth_get_type (void);
 GdkGC * _gdk_xynth_gc_new (GdkDrawable *drawable, GdkGCValues *values, GdkGCValuesMask values_mask);
 GdkImage * _gdk_xynth_copy_to_image (GdkDrawable *drawable, GdkImage *image, gint src_x, gint src_y, gint dest_x, gint dest_y, gint width, gint height);
+GdkWindow * gdk_xynth_child_at (GdkWindow *window, gint *winx, gint *winy);
+void gdk_xynth_mouse_get_info (gint *x, gint *y, GdkModifierType *mask);
+
 
 #endif

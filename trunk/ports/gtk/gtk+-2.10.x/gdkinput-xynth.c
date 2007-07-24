@@ -19,6 +19,24 @@ GList *_gdk_input_devices       = NULL;
 GdkDevice *_gdk_core_pointer    = NULL;
 gboolean _gdk_input_ignore_core = FALSE;
 
+int _gdk_xynth_mouse_x = 0;
+int _gdk_xynth_mouse_y = 0;
+
+void gdk_xynth_mouse_get_info (gint *x, gint *y, GdkModifierType *mask)
+{
+	ENTER();
+	if (x) {
+		*x = _gdk_xynth_mouse_x;
+	}
+	if (y) {
+		*y = _gdk_xynth_mouse_y;
+	}
+	if (mask) {
+		*mask = _gdk_xynth_modifiers;
+	}
+	LEAVE();
+}
+
 gboolean gdk_device_get_axis (GdkDevice *device, gdouble *axes, GdkAxisUse use, gdouble *value)
 {
 	ENTER();

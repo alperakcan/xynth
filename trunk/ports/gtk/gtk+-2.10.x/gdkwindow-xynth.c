@@ -16,11 +16,28 @@ static gpointer parent_class = NULL;
 
 GdkWindow * _gdk_windowing_window_at_pointer (GdkDisplay *display, gint *win_x, gint *win_y)
 {
+	gint wx;
+	gint wy;
+	GdkWindow *retval;
 	ENTER();
-	NIY();
-	ASSERT();
+	if (!win_x || !win_y) {
+		gdk_xynth_mouse_get_info(&wx, &wy, NULL);
+	}
+	if (win_x) {
+		wx = *win_x;
+	}
+	if (win_y) {
+		wy = *win_y;
+	}
+	retval = gdk_xynth_child_at(_gdk_parent_root, &wx, &wy);
+	if (win_x) {
+		*win_x = wx;
+	}
+	if (win_y) {
+		*win_y = wy;
+	}
 	LEAVE();
-	return NULL;
+	return retval;
 }
 
 void _gdk_windowing_window_clear_area (GdkWindow *window, gint x, gint y, gint width, gint height)
@@ -115,8 +132,6 @@ void gdk_window_deiconify (GdkWindow *window)
 void gdk_window_enable_synchronized_configure (GdkWindow *window)
 {
 	ENTER();
-	NIY();
-	ASSERT();
 	LEAVE();
 }
 
@@ -128,7 +143,7 @@ void gdk_window_focus (GdkWindow *window, guint32 timestamp)
 	LEAVE();
 }
 
-GdkWindow * gdk_window_foreign_new_for_display (GdkDisplay* display,GdkNativeWindow anid)
+GdkWindow * gdk_window_foreign_new_for_display (GdkDisplay* display, GdkNativeWindow anid)
 {
 	ENTER();
 	NIY();
@@ -493,8 +508,16 @@ void gdk_window_set_transient_for (GdkWindow *window, GdkWindow *parent)
 void gdk_window_set_type_hint (GdkWindow *window, GdkWindowTypeHint hint)
 {
 	ENTER();
-	NIY();
-	ASSERT();
+	if (GDK_IS_WINDOW(window) == 0) {
+		LEAVE();
+		return;
+	}
+	if (GDK_WINDOW_DESTROYED(window)) {
+		LEAVE();
+		return;
+	}
+	DEBUG("gdk_window_set_type_hint: %d", hint);
+	((GdkWindowImplXYNTH *) ((GdkWindowObject *) window)->impl)->type_hint = hint;
 	LEAVE();
 }
 
@@ -918,10 +941,8 @@ open_window:
 	if (attributes_mask & GDK_WA_TYPE_HINT) {
 		gdk_window_set_type_hint(window, attributes->type_hint);
 	}
-
-	ASSERT();
 	LEAVE();
-	return NULL;
+	return window;
 }
 
 GdkWindow * gdk_window_new (GdkWindow *parent, GdkWindowAttr *attributes, gint attributes_mask)
