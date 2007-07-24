@@ -10,6 +10,33 @@
 #include "gdkprivate-xynth.h"
 #include "gdkxynth.h"
 
+GdkWindow * gdk_xynth_child_at (GdkWindow *window, gint *winx, gint *winy)
+{
+	GList *list;
+	GdkWindowObject *private;
+	ENTER();
+	if (GDK_IS_WINDOW(window) == 0) {
+		LEAVE();
+		return NULL;
+	}
+	private = GDK_WINDOW_OBJECT(window);
+	for (list = private->children; list; list = list->next) {
+		GdkWindowObject *win = list->data;
+		if (GDK_WINDOW_IS_MAPPED(win) &&
+		    *winx >= win->x  &&
+		    *winx <  win->x + GDK_DRAWABLE_IMPL_XYNTH(win->impl)->width  &&
+		    *winy >= win->y  &&
+		    *winy <  win->y + GDK_DRAWABLE_IMPL_XYNTH(win->impl)->height) {
+			*winx -= win->x;
+			*winy -= win->y;
+			LEAVE();
+			return gdk_xynth_child_at(GDK_WINDOW(win), winx, winy );
+		}
+	}
+	LEAVE();
+	return window;
+}
+
 void _gdk_events_queue (GdkDisplay *display)
 {
 	ENTER();
@@ -59,7 +86,7 @@ gboolean gdk_screen_get_setting (GdkScreen *screen, const gchar *name, GValue *v
 	return FALSE;
 }
 
-static void dfb_events_process_window_event (s_window_t *xynth_window, s_event_t *xynth_event)
+static void xynth_events_process_window_event (s_window_t *xynth_window, s_event_t *xynth_event)
 {
 #if 0
 	GdkWindow *window = gdk_directfb_window_id_table_lookup(event->window_id);
@@ -75,7 +102,7 @@ static void dfb_events_process_window_event (s_window_t *xynth_window, s_event_t
 #endif
 }
 
-static void dfb_events_dispatch (void)
+static void xynth_events_dispatch (void)
 {
 #if 0
 	GdkEvent *event;

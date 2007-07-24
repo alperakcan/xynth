@@ -7,6 +7,8 @@
 
 #include "gdkxynth.h"
 
+GdkModifierType _gdk_xynth_modifiers = 0;
+
 PangoDirection gdk_keymap_get_direction (GdkKeymap *keymap)
 {
 	ENTER();
