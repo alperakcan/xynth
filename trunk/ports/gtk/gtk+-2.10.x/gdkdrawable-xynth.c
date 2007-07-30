@@ -13,11 +13,228 @@
 
 static gpointer parent_class = NULL;
 
-void _gdk_xynth_draw_rectangle (GdkDrawable *drawable, GdkGC *gc, gint filled, gint x, gint y, gint width, gint height)
+static GdkRegion * gdk_xynth_clip_region (GdkDrawable *drawable, GdkGC *gc, GdkRectangle *draw_rect)
+{
+	GdkDrawableImplXYNTH *private;
+	GdkRegion            *clip_region;
+	GdkRegion            *tmpreg;
+	GdkRectangle         rect;
+	g_return_val_if_fail(GDK_IS_DRAWABLE(drawable), NULL);
+	g_return_val_if_fail(GDK_IS_DRAWABLE_IMPL_XYNTH(drawable), NULL);
+	ENTER();
+	private = GDK_DRAWABLE_IMPL_XYNTH(drawable);
+	if (!draw_rect) {
+		rect.x      = 0;
+		rect.y      = 0;
+		rect.width  = private->width;
+		rect.height = private->height;
+		draw_rect = &rect;
+	}
+	DEBUG("buffered: %d", private->buffered);
+	clip_region = gdk_region_rectangle(draw_rect);
+	if (private->buffered && private->paint_region) {
+		gdk_region_intersect(clip_region, private->paint_region);
+	}
+	if (gc) {
+		GdkGCXYNTH *gc_private = GDK_GC_XYNTH(gc);
+		GdkRegion  *region     = gc_private->clip_region;
+		if (region) {
+			if (gc->clip_x_origin || gc->clip_y_origin) {
+				tmpreg = gdk_region_copy(region);
+				gdk_region_offset(tmpreg, gc->clip_x_origin, gc->clip_y_origin);
+				gdk_region_intersect(clip_region, tmpreg);
+				gdk_region_destroy (tmpreg);
+			} else {
+				gdk_region_intersect(clip_region, region);
+			}
+		}
+		if (gc_private->values_mask & GDK_GC_SUBWINDOW &&
+		    gc_private->values.subwindow_mode == GDK_INCLUDE_INFERIORS) {
+			LEAVE();
+			return clip_region;
+		}
+	}
+	if (GDK_IS_WINDOW(private->wrapper) &&
+	    GDK_WINDOW_IS_MAPPED(private->wrapper) &&
+	    !GDK_WINDOW_OBJECT(private->wrapper)->input_only) {
+		GList *cur;
+		for (cur = GDK_WINDOW_OBJECT(private->wrapper)->children; cur; cur = cur->next) {
+			GdkWindowObject      *cur_private;
+			GdkDrawableImplXYNTH *cur_impl;
+			cur_private = GDK_WINDOW_OBJECT(cur->data);
+			if (!GDK_WINDOW_IS_MAPPED (cur_private) || cur_private->input_only) {
+				continue;
+			}
+			cur_impl = GDK_DRAWABLE_IMPL_XYNTH(cur_private->impl);
+			rect.x      = cur_private->x;
+			rect.y      = cur_private->y;
+			rect.width  = cur_impl->width;
+			rect.height = cur_impl->height;
+			tmpreg = gdk_region_rectangle(&rect);
+			gdk_region_subtract(clip_region, tmpreg);
+			gdk_region_destroy (tmpreg);
+		}
+	}
+	LEAVE();
+	return clip_region;
+}
+
+static inline void gdk_xynth_set_color (GdkDrawableImplXYNTH *impl, GdkColor *color, guchar alpha)
 {
 	ENTER();
-	NIY();
-	ASSERT();
+	DEBUG("color: %d, %d, %d, %d", color->red >> 8, color->green >> 8, color->blue >> 8, alpha);
+	LEAVE();
+}
+
+static gboolean gdk_xynth_setup_for_drawing (GdkDrawableImplXYNTH *impl, GdkGCXYNTH *gc_private)
+{
+	GdkColor color = {0, 0, 0, 0};
+	guchar alpha = 0xFF;
+	ENTER();
+	if (!impl->xynth_surface) {
+		LEAVE();
+		return FALSE;
+	}
+	if (gc_private && gc_private->values_mask & GDK_GC_FOREGROUND) {
+		color = gc_private->values.foreground;
+	}
+	if (gc_private && gc_private->values_mask & GDK_GC_FUNCTION) {
+		switch (gc_private->values.function) {
+			case GDK_COPY:
+				DEBUG("copy");
+				break;
+			case GDK_INVERT:
+				DEBUG("invert");
+				color.red = color.green = color.blue = 0xFFFF;
+				alpha = 0x0;
+				break;
+			case GDK_XOR:
+				DEBUG("xor");
+				alpha = 0x0;
+				break;
+			case GDK_CLEAR:
+				DEBUG("clear");
+				color.red = color.green = color.blue = 0x0;
+				break;
+			case GDK_NOOP:
+				DEBUG("noop");
+				return FALSE;
+			case GDK_SET:
+				DEBUG("set");
+				color.red = color.green = color.blue = 0xFFFF;
+				break;
+			default:
+				NIY();
+				ASSERT();
+				break;
+		}
+		NIY();
+		ASSERT();
+	}
+	gdk_xynth_set_color(impl, &color, alpha);
+	LEAVE();
+	return TRUE;
+}
+
+void _gdk_xynth_draw_rectangle (GdkDrawable *drawable, GdkGC *gc, gint filled, gint x, gint y, gint width, gint height)
+{
+	GdkDrawableImplXYNTH *impl;
+	GdkRegion            *clip;
+	GdkGCXYNTH           *gc_private = NULL;
+	s_surface_t *xynth_surface = NULL;
+	gint  i;
+	g_return_if_fail(GDK_IS_DRAWABLE(drawable));
+	ENTER();
+	impl = GDK_DRAWABLE_IMPL_XYNTH(drawable);
+	if (!impl->xynth_surface) {
+		LEAVE();
+		return;
+	}
+	if (gc) {
+		gc_private = GDK_GC_XYNTH(gc);
+	}
+	if (gc_private) {
+		if (!gdk_xynth_setup_for_drawing(impl, gc_private)) {
+			LEAVE();
+			return;
+		}
+	} else {
+		GdkWindowObject *win = GDK_WINDOW_OBJECT(impl->wrapper);
+		gdk_xynth_set_color(impl, &win->bg_color, 0xFF);
+	}
+	if (filled) {
+		GdkRectangle rect = {x, y, width, height};
+		clip = gdk_xynth_clip_region(drawable, gc, &rect);
+		if (gc_private && gc_private->values_mask & GDK_GC_FILL) {
+#if 0
+			if (gc_private->values.fill == GDK_STIPPLED  &&
+			    gc_private->values_mask & GDK_GC_STIPPLE &&
+			    gc_private->values.stipple) {
+				xynth_surface = GDK_DRAWABLE_IMPL_XYNTH(GDK_PIXMAP_OBJECT(gc_private->values.stipple)->impl)->xynth_surface;
+				if (surface) {
+					impl->surface->SetBlittingFlags(impl->surface, (DSBLIT_BLEND_ALPHACHANNEL | DSBLIT_COLORIZE));
+				}
+			} else if (gc_private->values.fill == GDK_TILED  &&
+				   gc_private->values_mask & GDK_GC_TILE &&
+				   gc_private->values.tile) {
+				surface = GDK_DRAWABLE_IMPL_XYNTH(GDK_PIXMAP_OBJECT(gc_private->values.tile)->impl)->surface;
+			}
+#else
+		ASSERT();
+#endif
+		}
+		if (xynth_surface) {
+#if 0
+			if (gc_private->values_mask & GDK_GC_TS_X_ORIGIN) {
+				x = gc_private->values.ts_x_origin;
+			}
+			if (gc_private->values_mask & GDK_GC_TS_Y_ORIGIN) {
+				y = gc_private->values.ts_y_origin;
+			}
+			for (i = 0; i < clip->numRects; i++) {
+				Region reg = {
+					clip->rects[i].x1,
+					clip->rects[i].y1,
+					clip->rects[i].x2,
+					clip->rects[i].y2
+				};
+				impl->surface->SetClip(impl->surface, &reg);
+				impl->surface->TileBlit(impl->surface, surface, NULL, x, y);
+			}
+			impl->surface->SetBlittingFlags(impl->surface, DSBLIT_NOFX);
+			impl->surface->SetClip(impl->surface, NULL);
+#else
+		ASSERT();
+#endif
+		} else {
+			for (i = 0; i < clip->numRects; i++) {
+				DEBUG("rect: %d %d, %d %d",
+				      clip->rects[i].x1,
+				      clip->rects[i].y1,
+				      clip->rects[i].x2 - clip->rects[i].x1,
+				      clip->rects[i].y2 - clip->rects[i].y1);
+			}
+		}
+		gdk_region_destroy (clip);
+	} else {
+#if 0
+		Region region = {
+			x,
+			y,
+			x + width,
+			y + height
+		};
+		impl->surface->SetClip(impl->surface, &region);
+		/* Xyhnth does not draw rectangles the X way. Using Xynth,
+		 * a filled Rectangle has the same size as a drawn one, while
+		 * X draws the rectangle one pixel taller and wider.
+		 */
+		impl->surface->DrawRectangle(impl->surface, x, y, width, height);
+		impl->surface->SetClip (impl->surface, NULL);
+#else
+		ASSERT();
+#endif
+	}
 	LEAVE();
 }
 
@@ -114,9 +331,15 @@ static gint gdk_xynth_get_depth (GdkDrawable *drawable)
 
 static void gdk_xynth_get_size (GdkDrawable *drawable, gint *width, gint *height)
 {
+	GdkDrawableImplXYNTH *impl;
 	ENTER();
-	NIY();
-	ASSERT();
+	impl = GDK_DRAWABLE_IMPL_XYNTH(drawable);
+	if (width) {
+		*width = impl->width;
+	}
+	if (height) {
+		*height = impl->height;
+	}
 	LEAVE();
 }
 
@@ -176,6 +399,9 @@ static void gdk_drawable_impl_xynth_finalize (GObject *object)
 	ENTER();
 	impl = GDK_DRAWABLE_IMPL_XYNTH(object);
 	gdk_xynth_set_colormap(GDK_DRAWABLE(object), NULL);
+	if (impl->xynth_surface) {
+		s_surface_destroy(impl->xynth_surface);
+	}
 	G_OBJECT_CLASS(parent_class)->finalize(object);
 	LEAVE();
 }

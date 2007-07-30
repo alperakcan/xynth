@@ -10,8 +10,12 @@
 void _gdk_windowing_window_get_offsets (GdkWindow *window, gint *x_offset, gint *y_offset)
 {
 	ENTER();
-	NIY();
-	ASSERT();
+	if (x_offset) {
+		*x_offset = 0;
+	}
+	if (y_offset) {
+		*y_offset = 0;
+	}
 	LEAVE();
 }
 
