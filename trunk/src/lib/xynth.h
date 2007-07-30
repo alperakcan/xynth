@@ -1059,18 +1059,38 @@ void s_putboxpartalpha (s_surface_t *surface, int x, int y, int w, int h, int bw
   */
 void s_copybox (s_surface_t *surface, int x1, int y1, int w, int h, int x2, int y2);
 
-/** @brief sets surface (s), as virtual with the bitsperpixel of bitspp, width of w, and hight of h.
-  *        vbuf will be the virtual buffer of the surface. the source pixmap memory (vbuf) has the
-  *        size w * h * bytesperpixel.
+/** @brief creates a surface, as virtual with the given bitsperpixel, width,
+  *        and height. surface buffer will be allocated internal with the size
+  *        of width * height * bytesperpixel.
   *
-  * @param *s     - the surface
-  * @param w      - width
-  * @param h      - height
-  * @param bitspp - bitsperpixel
-  * @param vbuf   - virtual buffer
-  * @return no return
+  * @param **susrface   - the surface
+  * @param width        - width
+  * @param height       - height
+  * @param bitsperpixel - bitsperpixel
+  * @return 0 on success.
   */
-void s_getsurfacevirtual (s_surface_t *s, int w, int h, int bitspp, void *vbuf);
+int s_surface_create (s_surface_t **surface, int width, int height, int bitsperpixel);
+
+/** @brief creates a surface, as virtual with the given bitsperpixel, width,
+  *        and height. vbuf will be the virtual buffer of the surface. the
+  *        source pixmap memory (vbuf) has the size w * h * bytesperpixel.
+  *
+  * @param **susrface   - the surface
+  * @param width        - width
+  * @param height       - height
+  * @param bitsperpixel - bitsperpixel
+  * @param *vbuf        - given virtual buffer
+  * @return 0 on success.
+  */
+int s_surface_create_from_data (s_surface_t **surface, int width, int height, int bitsperpixel, void *vbuf);
+
+/** @brief destroys given virtual surface, vbuf will not be freed unless it was
+  *        allocated internaly.
+  * 
+  * @param *surface - the surface
+  * @return 0 on success.
+  */
+int s_surface_destroy (s_surface_t *surface);
 
 /** @brief copies and converts the source buffer (sb) which is sbitspp bitsperpixel, to destination
   *        buffer (db) which is dbitspp bitsperpixel. db will be alocated internally.
@@ -2468,6 +2488,8 @@ struct s_surface_s {
 	int width;
 	/** surface virtual buffer height */
 	int height;
+	/** vbuf is external */
+	unsigned int evbuf;
 	/** surface's virtual buffer */
         unsigned char *vbuf;
 	/** virtual buffers' seen part on screen */
@@ -2516,7 +2538,7 @@ int s_surface_init (s_window_t *window);
   * @param *window - the window
   * @returns no return
   */
-void s_surface_create (s_window_t *window);
+void s_surface_attach (s_window_t *window);
 
 /** @brief attach to the matrix buffer
   *

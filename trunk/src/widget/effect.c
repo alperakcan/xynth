@@ -98,13 +98,12 @@ int w_effect_apply (s_surface_t *surface, s_rect_t *rect, w_object_t *effect, w_
 		} else if (effect->effect->effect & EFFECT_POPIN) {
 			s_rect_t new;
 			s_surface_t *srf;
-			unsigned char *buf;
 			unsigned char *box;
 			unsigned char *scl;
 			if (effect == object) {
-				srf = (s_surface_t *) s_malloc(sizeof(s_surface_t));
-				buf = (unsigned char *) s_malloc(sizeof(char) * surface->width * surface->height * object->surface->bytesperpixel);
-				s_getsurfacevirtual(srf, surface->width, surface->height, surface->bitsperpixel, buf);
+				if (s_surface_create(&srf, surface->width, surface->height, surface->bitsperpixel)) {
+					return -1;
+				}
 				w_object_update_to_surface(object, srf, object->surface->win, effect, EFFECT_NONE);
 				box = (unsigned char *) s_malloc(sizeof(char) * object->surface->width * object->surface->height * object->surface->bytesperpixel);
 				s_getbox(srf, object->surface->win->x, object->surface->win->y, object->surface->win->w, object->surface->win->h, box);
@@ -115,8 +114,7 @@ int w_effect_apply (s_surface_t *surface, s_rect_t *rect, w_object_t *effect, w_
 				s_putboxpart(surface, object->surface->win->x, object->surface->win->y, new.w, new.h, new.w, new.h, scl, 0, 0);
 				s_free(scl);
 				s_free(box);
-				s_free(buf);
-				s_free(srf);
+				s_surface_destroy(srf);
 			}
 			return 0;
 		}
@@ -143,13 +141,12 @@ int w_effect_apply (s_surface_t *surface, s_rect_t *rect, w_object_t *effect, w_
 		} else if (effect->effect->effect & EFFECT_POPOUT) {
 			s_rect_t new;
 			s_surface_t *srf;
-			unsigned char *buf;
 			unsigned char *box;
 			unsigned char *scl;
 			if (effect == object) {
-				srf = (s_surface_t *) s_malloc(sizeof(s_surface_t));
-				buf = (unsigned char *) s_malloc(sizeof(char) * surface->width * surface->height * object->surface->bytesperpixel);
-				s_getsurfacevirtual(srf, surface->width, surface->height, surface->bitsperpixel, buf);
+				if (s_surface_create(&srf, surface->width, surface->height, surface->bitsperpixel)) {
+					return -1;
+				}
 				w_object_update_to_surface(object, srf, object->surface->win, effect, EFFECT_NONE);
 				box = (unsigned char *) s_malloc(sizeof(char) * object->surface->width * object->surface->height * object->surface->bytesperpixel);
 				s_getbox(srf, object->surface->win->x, object->surface->win->y, object->surface->win->w, object->surface->win->h, box);
@@ -160,8 +157,7 @@ int w_effect_apply (s_surface_t *surface, s_rect_t *rect, w_object_t *effect, w_
 				s_putboxpart(surface, object->surface->win->x, object->surface->win->y, new.w, new.h, new.w, new.h, scl, 0, 0);
 				s_free(scl);
 				s_free(box);
-				s_free(buf);
-				s_free(srf);
+				s_surface_destroy(srf);
 			}
 			return 0;
 		}

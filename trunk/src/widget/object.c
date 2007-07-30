@@ -567,11 +567,10 @@ int w_object_init (w_window_t *window, w_object_t **object, void (*draw) (w_obje
 	(*object) = (w_object_t *) s_malloc(sizeof(w_object_t));
 	memset(*object, 0, sizeof(w_object_t));
 	(*object)->type = OBJECT_OBJECT;
-	(*object)->surface = (s_surface_t *) s_malloc(sizeof(s_surface_t));
+	s_surface_create_from_data(&(*object)->surface, 0, 0, window->window->surface->bitsperpixel, NULL);
 	(*object)->surface->buf = (s_rect_t *) s_malloc(sizeof(s_rect_t));
 	(*object)->surface->win = (s_rect_t *) s_malloc(sizeof(s_rect_t));
 	(*object)->surface->matrix = NULL;
-	s_getsurfacevirtual((*object)->surface, 0, 0, window->window->surface->bitsperpixel, NULL);
 
 	s_list_init(&((*object)->shown));
 	s_list_init(&((*object)->childs));
@@ -666,7 +665,7 @@ void w_object_uninit (w_object_t *object)
 	s_free(object->surface->win);
 	s_free(object->surface->vbuf);
 	s_free(object->surface->matrix);
-	s_free(object->surface);
+	s_surface_destroy(object->surface);
 	s_free(object->content);
 	s_list_uninit(object->shown);
 	s_list_uninit(object->childs);

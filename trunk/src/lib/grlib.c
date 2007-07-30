@@ -374,9 +374,25 @@ void s_copybox (s_surface_t *surface, int x1, int y1, int w, int h, int x2, int 
 	s_free(p);
 }
 
-void s_getsurfacevirtual (s_surface_t *s, int w, int h, int bitspp, void *vbuf)
+int s_surface_destroy (s_surface_t *surface)
 {
-        switch (bitspp) {
+	if (surface) {
+		if (surface->evbuf == 0 && surface->vbuf) {
+			free(surface->vbuf);
+		}
+		free(surface);
+	}
+	return 0;
+}
+
+int s_surface_create_from_data (s_surface_t **surface, int width, int height, int bitsperpixel, void *vbuf)
+{
+	s_surface_t *s;
+
+	s = (s_surface_t *) s_malloc(sizeof(s_surface_t));
+	memset(s, 0, sizeof(s_surface_t));
+
+        switch (bitsperpixel) {
 		case 8:
                         s->bytesperpixel = 1;
 			s->bitsperpixel = 8;
@@ -453,6 +469,8 @@ void s_getsurfacevirtual (s_surface_t *s, int w, int h, int bitspp, void *vbuf)
 			s->greenlength = 8;
 			s->redlength = 8;
 			break;
+		default:
+			goto err0;
 	}
         
         s->bluemask = ((1 << s->bluelength) - 1) << s->blueoffset;
@@ -460,9 +478,29 @@ void s_getsurfacevirtual (s_surface_t *s, int w, int h, int bitspp, void *vbuf)
         s->redmask = ((1 << s->redlength) - 1) << s->redoffset;
 
 	s->mode = SURFACE_VIRTUAL;
-	s->width = w;
-	s->height = h;
+	s->width = width;
+	s->height = height;
 	s->vbuf = vbuf;
+	s->evbuf = 1;
+
+	*surface = s;
+	return 0;
+err0:	*surface = NULL;
+	return -1;
+}
+
+int s_surface_create (s_surface_t **surface, int width, int height, int bitsperpixel)
+{
+	s_surface_t *s;
+	if (s_surface_create_from_data(&s, width, height, bitsperpixel, NULL)) {
+		goto err0;
+	}
+	s->evbuf = 0;
+	s->vbuf = (unsigned char *) s_malloc(s->width * s->height * s->bytesperpixel);
+	*surface = s;
+	return 0;
+err0:	*surface = NULL;
+	return -1;
 }
 
 int s_copybuffer (char *sb, int sbitspp, char **db, int dbitspp, int w, int h)
@@ -472,21 +510,29 @@ int s_copybuffer (char *sb, int sbitspp, char **db, int dbitspp, int w, int h)
         int r;
         int g;
         int b;
-        s_surface_t ss;
-        s_surface_t ds;
+        s_surface_t *ss;
+        s_surface_t *ds;
         
+	if (s_surface_create_from_data(&ss, w, h, sbitspp, sb)) {
+		goto err0;
+	}
 	*db = (char *) s_malloc(w * h * ((dbitspp + 1) / 8));
-	s_getsurfacevirtual(&ss, w, h, sbitspp, sb);
-	s_getsurfacevirtual(&ds, w, h, dbitspp, *db);
+	if (s_surface_create_from_data(&ds, w, h, dbitspp, *db)) {
+		goto err1;
+	}
 
 	for (y = 0; y < h; y++) {
 		for (x = 0; x < w; x++) {
-			s_getpixelrgb(&ss, x, y, &r, &g, &b);
-			s_setpixelrgb(&ds, x, y, r, g, b);
+			s_getpixelrgb(ss, x, y, &r, &g, &b);
+			s_setpixelrgb(ds, x, y, r, g, b);
 		}
 	}
 	
+	s_surface_destroy(ds);
+	s_surface_destroy(ss);
 	return 0;
+err1:	s_surface_destroy(ss);
+err0:	return -1;
 }
 
 #define s_rotatebox_macro(type, angle) {\

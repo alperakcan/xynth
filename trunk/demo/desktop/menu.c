@@ -71,11 +71,10 @@ void start_menu_start (s_window_t *pwindow, s_list_t *progs, int wx, int wy)
 	int fw;
 	int fh;
 	char *file;
-	char *vbuf;
 	char *tbuf;
+	s_surface_t *s;
 	s_font_t *font;
 	s_image_t *img;
-	s_surface_t s;
 	s_window_t *temp;
 	s_handler_t *hndl;
 	smenu_prog_t *sprog;
@@ -110,15 +109,16 @@ void start_menu_start (s_window_t *pwindow, s_list_t *progs, int wx, int wy)
 			s_image_img(file, img);
 			s_image_get_handler(img);
 			tbuf = (char *) s_malloc(temp->surface->bytesperpixel * 18 * 18);
-			vbuf = (char *) s_malloc(temp->surface->bytesperpixel * img->w * img->h + 1);
-			s_getsurfacevirtual(&s, img->w, img->h, temp->surface->bitsperpixel, vbuf);
-			s_fillbox(&s, 0, 0, img->w, img->h, s_rgbcolor(&s, 197, 198, 199));
-			s_putboxrgba(&s, 0, 0, img->w, img->h, img->rgba);
-			s_scalebox(temp->surface, img->w, img->h, vbuf, 18, 18, tbuf);
+			if (s_surface_create(&s, img->w, img->h, temp->surface->bitsperpixel)) {
+				goto out;
+			}
+			s_fillbox(s, 0, 0, img->w, img->h, s_rgbcolor(s, 197, 198, 199));
+			s_putboxrgba(s, 0, 0, img->w, img->h, img->rgba);
+			s_scalebox(temp->surface, img->w, img->h, s->vbuf, 18, 18, tbuf);
 			s_putbox(temp->surface, 4, 2 + fy - 16, 18, 18, tbuf);
-			s_image_uninit(img);
+			s_surface_destroy(s);
+out:			s_image_uninit(img);
 			s_free(file);
-			s_free(vbuf);
 			s_free(tbuf);
 		}
 

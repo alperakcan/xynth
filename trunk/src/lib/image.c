@@ -77,16 +77,14 @@ int s_image_get_mat (s_image_t *img)
 
 int s_image_get_buf (s_surface_t *surface, s_image_t *img)
 {
-        s_surface_t s;
-
+        s_surface_t *s;
         if (img->buf != NULL) {
 		s_image_free_buf(img);
 	}
-
 	img->buf = (char *) s_malloc(img->w * img->h * surface->bytesperpixel + 1);
-	s_getsurfacevirtual(&s, img->w, img->h, surface->bitsperpixel, img->buf);
-	s_putboxrgb(&s, 0, 0, img->w, img->h, img->rgba);
-
+	s_surface_create_from_data(&s, img->w, img->h, surface->bitsperpixel, img->buf);
+	s_putboxrgb(s, 0, 0, img->w, img->h, img->rgba);
+	s_surface_destroy(s);
 	return 0;
 }
 

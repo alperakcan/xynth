@@ -570,7 +570,7 @@ void s_server_surface_update (s_rect_t *coor)
 		s_rect_t clip;
 		s_rect_t inter;
 		s_rect_t rotate;
-		s_surface_t surface;
+		s_surface_t *surface;
 
 		clip.x = 0;
 		clip.y = 0;
@@ -582,18 +582,22 @@ void s_server_surface_update (s_rect_t *coor)
 
 		src = s_malloc(inter.w * inter.h * server->window->surface->bytesperpixel);
 		dst = s_malloc(inter.w * inter.h * server->window->surface->bytesperpixel);
+		if (s_surface_create_from_data(&surface, server->origin_w, server->origin_h, server->window->surface->bitsperpixel, server->origin_vbuf)) {
+			s_free(src);
+			s_free(dst);
+			return;
+		}
 
 		s_getbox(server->window->surface, inter.x, inter.y, inter.w, inter.h, src);
-		s_getsurfacevirtual(&surface, server->origin_w, server->origin_h,
-					      server->window->surface->bitsperpixel, server->origin_vbuf);
-		s_rotatebox(&surface, &inter, src, &rotate, dst, server->rotate);
-		s_putbox(&surface, rotate.x, rotate.y, rotate.w, rotate.h, dst);
+		s_rotatebox(surface, &inter, src, &rotate, dst, server->rotate);
+		s_putbox(surface, rotate.x, rotate.y, rotate.w, rotate.h, dst);
 		if (server->driver->server_surface_update != NULL) {
 			server->driver->server_surface_update(&rotate);
 		}
 
 		s_free(src);
 		s_free(dst);
+		s_surface_destroy(surface);
 	} else {
 		s_rect_t clip;
 		if (server->driver->server_surface_update != NULL) {

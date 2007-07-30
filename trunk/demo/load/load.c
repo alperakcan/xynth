@@ -353,26 +353,25 @@ static int load_draw_mem_graph (s_surface_t *surface, load_data_t *ldata)
 
 static int load_draw_load (s_window_t *window)
 {
-        char *vbuf;
         load_data_t *ldata;
-	s_surface_t surface;
+	s_surface_t *surface;
 
 	ldata = (load_data_t *) window->data;
 
-	vbuf = (char *) s_malloc(ldata->width * ldata->height * window->surface->bytesperpixel);
-	s_getsurfacevirtual(&surface, ldata->width, ldata->height, window->surface->bitsperpixel, vbuf);
-
-	s_fillbox(&surface, 0, 0, ldata->width, ldata->height, s_rgbcolor(window->surface, 222, 222, 222));
-
-	load_draw_cpu_bar(&surface, ldata);
-	load_draw_cpu_graph(&surface, ldata);
-	load_draw_mem_bar(&surface, ldata);
-	load_draw_mem_graph(&surface, ldata);
-
-	s_putbox(window->surface, 0, 0, ldata->width, ldata->height, vbuf);
-
-	s_free(vbuf);
+	if (s_surface_create(&surface, ldata->width, ldata->height, window->surface->bitsperpixel)) {
+		return 0;
+	}
 	
+	s_fillbox(surface, 0, 0, ldata->width, ldata->height, s_rgbcolor(window->surface, 222, 222, 222));
+
+	load_draw_cpu_bar(surface, ldata);
+	load_draw_cpu_graph(surface, ldata);
+	load_draw_mem_bar(surface, ldata);
+	load_draw_mem_graph(surface, ldata);
+
+	s_putbox(window->surface, 0, 0, ldata->width, ldata->height, surface->vbuf);
+
+	s_surface_destroy(surface);
 	return 0;
 }
 
