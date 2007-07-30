@@ -10,6 +10,15 @@
 #include "gdkprivate-xynth.h"
 #include "gdkxynth.h"
 
+guint32 gdk_xynth_get_time (void)
+{
+	GTimeVal tv;
+	ENTER();
+	g_get_current_time(&tv);
+	LEAVE();
+	return (guint32) tv.tv_sec * 1000 + tv.tv_usec / 1000;
+}
+
 GdkWindow * gdk_xynth_child_at (GdkWindow *window, gint *winx, gint *winy)
 {
 	GList *list;
