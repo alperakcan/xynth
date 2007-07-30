@@ -64,9 +64,9 @@ struct _GdkDrawableImplXYNTH {
 	GdkDrawable parent_object;
 	GdkDrawable *wrapper;
 
-	gboolean buffered;
+	gboolean  buffered;
 	GdkRegion *paint_region;
-	gint paint_depth;
+	gint      paint_depth;
 
 	gint width;
 	gint height;
@@ -82,7 +82,7 @@ struct _GdkWindowImplXYNTH {
 	GdkWindow *gdkWindow;
 	GdkWindowTypeHint type_hint;
 
-	GdkCursor              *cursor;
+	GdkCursor *cursor;
 
 	int input_only;
 	s_window_t *xynth_window;
@@ -103,6 +103,8 @@ GdkGC * _gdk_xynth_gc_new (GdkDrawable *drawable, GdkGCValues *values, GdkGCValu
 GdkImage * _gdk_xynth_copy_to_image (GdkDrawable *drawable, GdkImage *image, gint src_x, gint src_y, gint dest_x, gint dest_y, gint width, gint height);
 GdkWindow * gdk_xynth_child_at (GdkWindow *window, gint *winx, gint *winy);
 void gdk_xynth_mouse_get_info (gint *x, gint *y, GdkModifierType *mask);
-
+GdkWindow * gdk_xynth_other_event_window (GdkWindow *window, GdkEventType type);
+GdkEvent * gdk_xynth_event_make (GdkWindow *window, GdkEventType type);
+guint32 gdk_xynth_get_time (void);
 
 #endif

@@ -582,11 +582,63 @@ void gdk_window_show_unraised (GdkWindow *window)
 	LEAVE();
 }
 
-static void show_window_internal (GdkWindow *window, gboolean raise)
+static gboolean all_parents_shown (GdkWindowObject *private)
 {
 	ENTER();
-	NIY();
-	ASSERT();
+	while (GDK_WINDOW_IS_MAPPED(private)) {
+		if (private->parent) {
+			private = GDK_WINDOW_OBJECT (private)->parent;
+		} else {
+			LEAVE();
+			return TRUE;
+		}
+	}
+	LEAVE();
+	return FALSE;
+}
+
+static void send_map_events (GdkWindowObject *private)
+{
+	GList *list;
+	GdkWindow *event_win;
+	ENTER();
+	if (!GDK_WINDOW_IS_MAPPED(private)) {
+		LEAVE();
+		return;
+	}
+	event_win = gdk_xynth_other_event_window((GdkWindow *) private, GDK_MAP);
+	if (event_win) {
+		gdk_xynth_event_make(event_win, GDK_MAP);
+	}
+	for (list = private->children; list; list = list->next) {
+		send_map_events (list->data);
+	}
+	LEAVE();
+}
+
+static void show_window_internal (GdkWindow *window, gboolean raise)
+{
+	GdkWindowObject *private;
+	GdkWindowImplXYNTH *impl;
+	GdkWindow *mousewin;
+	ENTER();
+	private = GDK_WINDOW_OBJECT(window);
+	impl = GDK_WINDOW_IMPL_XYNTH(private->impl);
+	if (!private->destroyed && !GDK_WINDOW_IS_MAPPED(private)) {
+		private->state &= ~GDK_WINDOW_STATE_WITHDRAWN;
+		if (raise) {
+			gdk_window_raise(window);
+		}
+		if (all_parents_shown(GDK_WINDOW_OBJECT(private)->parent)) {
+			send_map_events(private);
+			mousewin = gdk_window_at_pointer(NULL, NULL);
+			gdk_xynth_window_send_crossing_events(NULL, mousewin, GDK_CROSSING_NORMAL);
+			if (private->input_only) {
+				return;
+			}
+			gdk_window_invalidate_rect(window, NULL, TRUE);
+		}
+	}
 	LEAVE();
 }
 
