@@ -321,9 +321,29 @@ void gdk_window_resize (GdkWindow *window, gint width, gint height)
 
 void gdk_window_set_accept_focus (GdkWindow *window, gboolean accept_focus)
 {
+	GdkWindowObject *private;
+	g_return_if_fail(window != NULL);
+	g_return_if_fail(GDK_IS_WINDOW(window));
 	ENTER();
-	NIY();
-	ASSERT();
+	private = (GdkWindowObject *) window;
+	accept_focus = accept_focus != FALSE;
+	if (private->accept_focus != accept_focus) {
+		private->accept_focus = accept_focus;
+	}
+	LEAVE();
+}
+
+void gdk_window_set_focus_on_map (GdkWindow *window, gboolean focus_on_map)
+{
+	GdkWindowObject *private;
+	g_return_if_fail(window != NULL);
+	g_return_if_fail (GDK_IS_WINDOW(window));
+	ENTER();
+	private = (GdkWindowObject *) window;
+	focus_on_map = focus_on_map != FALSE;
+	if (private->focus_on_map != focus_on_map) {
+		private->focus_on_map = focus_on_map;
+	}
 	LEAVE();
 }
 
@@ -335,11 +355,20 @@ void gdk_window_set_back_pixmap (GdkWindow *window, GdkPixmap *pixmap, gint pare
 	LEAVE();
 }
 
-void gdk_window_set_background (GdkWindow *window, const GdkColor  *color)
+void gdk_window_set_background (GdkWindow *window, const GdkColor *color)
 {
+	GdkWindowObject *private;
+	g_return_if_fail(GDK_IS_WINDOW(window));
+	g_return_if_fail(color != NULL);
 	ENTER();
-	NIY();
-	ASSERT();
+	private = GDK_WINDOW_OBJECT(window);
+	private->bg_color = *color;
+	if (private->bg_pixmap &&
+	    private->bg_pixmap != GDK_PARENT_RELATIVE_BG &&
+	    private->bg_pixmap != GDK_NO_BG) {
+		g_object_unref(private->bg_pixmap);
+	}
+	private->bg_pixmap = NULL;
 	LEAVE();
 }
 
@@ -401,14 +430,6 @@ void gdk_window_set_events (GdkWindow *window, GdkEventMask event_mask)
 	LEAVE();
 }
 
-void gdk_window_set_focus_on_map (GdkWindow *window, gboolean focus_on_map)
-{
-	ENTER();
-	NIY();
-	ASSERT();
-	LEAVE();
-}
-
 void gdk_window_set_functions (GdkWindow *window, GdkWMFunction functions)
 {
 	ENTER();
@@ -419,25 +440,34 @@ void gdk_window_set_functions (GdkWindow *window, GdkWMFunction functions)
 
 void gdk_window_set_geometry_hints (GdkWindow *window, GdkGeometry *geometry, GdkWindowHints geom_mask)
 {
+	g_return_if_fail(GDK_IS_WINDOW(window));
 	ENTER();
+	if (GDK_WINDOW_DESTROYED(window)) {
+		return;
+	}
 	NIY();
-	ASSERT();
 	LEAVE();
 }
 
 void gdk_window_set_icon (GdkWindow *window, GdkWindow *icon_window, GdkPixmap *pixmap, GdkBitmap *mask)
 {
+	g_return_if_fail(GDK_IS_WINDOW(window));
 	ENTER();
+	if (GDK_WINDOW_DESTROYED(window)) {
+		return;
+	}
 	NIY();
-	ASSERT();
 	LEAVE();
 }
 
 void gdk_window_set_icon_list (GdkWindow *window, GList *pixbufs)
 {
+	g_return_if_fail(GDK_IS_WINDOW(window));
 	ENTER();
+	if (GDK_WINDOW_DESTROYED(window)) {
+		return;
+	}
 	NIY();
-	ASSERT();
 	LEAVE();
 }
 
@@ -459,9 +489,16 @@ void gdk_window_set_keep_below (GdkWindow *window, gboolean setting)
 
 void gdk_window_set_modal_hint (GdkWindow *window, gboolean modal)
 {
+	GdkWindowImplXYNTH *impl;
+	g_return_if_fail(GDK_IS_WINDOW(window));
 	ENTER();
-	NIY();
-	ASSERT();
+	if (GDK_WINDOW_DESTROYED(window)) {
+		return;
+	}
+	impl = GDK_WINDOW_IMPL_XYNTH(GDK_WINDOW_OBJECT(window)->impl);
+	if (impl->xynth_window) {
+		NIY();
+	}
 	LEAVE();
 }
 
@@ -545,11 +582,19 @@ void gdk_window_show_unraised (GdkWindow *window)
 	LEAVE();
 }
 
-void gdk_window_show (GdkWindow *window)
+static void show_window_internal (GdkWindow *window, gboolean raise)
 {
 	ENTER();
 	NIY();
 	ASSERT();
+	LEAVE();
+}
+
+void gdk_window_show (GdkWindow *window)
+{
+	g_return_if_fail(GDK_IS_WINDOW(window));
+	ENTER();
+	show_window_internal(window, FALSE);
 	LEAVE();
 }
 
@@ -699,6 +744,8 @@ static GdkRegion * gdk_window_impl_xynth_get_visible_region (GdkDrawable *drawab
 	ENTER();
 	DEBUG("Set region rectangle");
 	reg = gdk_region_rectangle(&rect);
+	NIY();
+	ASSERT();
 	LEAVE();
 	return reg;
 }
@@ -898,9 +945,12 @@ open_window:
 			}
 			break;
 		case GDK_WINDOW_CHILD:
+			impl->xynth_window = NULL;
 			DEBUG("wtype: GDK_WINDOW_CHILD");
-			NIY();
-			ASSERT();
+			if (!private->input_only && parent_impl->drawable.xynth_surface) {
+				NIY();
+				ASSERT();
+		        }
 			break;
 		default:
 			g_warning("gdk_window_new: unsupported window type: %d", private->window_type);
@@ -955,7 +1005,6 @@ GdkWindow * gdk_window_new (GdkWindow *parent, GdkWindowAttr *attributes, gint a
 	LEAVE();
 	return gdk_xynth_window_new(parent, attributes, attributes_mask);
 }
-
 
 void _gdk_windowing_window_init (void)
 {

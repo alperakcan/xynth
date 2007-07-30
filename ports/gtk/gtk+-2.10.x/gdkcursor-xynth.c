@@ -209,9 +209,13 @@ GdkCursor * gdk_cursor_new_for_display (GdkDisplay *display, GdkCursorType curso
 					unsigned int color = (x - mx < 0 || y - my < 0 || x-mx >= stock_cursors[cursor_type].width || y - my >= stock_cursors[cursor_type].height) ? 0x00FFFFFF : (src[bit/8] & (1 << bit%8) ? 0 : 0x00FFFFFF);
 					unsigned int  a     = color ? 0xE0 : 0xFF;
 					unsigned int alpha = mask[mbit / 8] & (1 << mbit % 8) ? (a << 24) : 0;
+#if XYNTH_DEBUG_LEVEL > 0
 					printf("%08X ", alpha | color);
-				}
+#endif
+					}
+#if XYNTH_DEBUG_LEVEL > 0
 				printf("\n");
+#endif
 			}
 		}
 		width  += 2;
