@@ -102,7 +102,6 @@ void taskbar_progs_draw (s_window_t *window)
         int x;
         int pos;
         int w = 0;
-        char *vbuf;
         s_surface_t *srf;
         tbar_data_t *tbar_data;
         tbar_progs_t *tbar_progs;
@@ -116,9 +115,9 @@ void taskbar_progs_draw (s_window_t *window)
 		w = ((tbar_progs->rect.w / tbar_progs->desktop->clients->nb_elt) > 125) ? 125 : (tbar_progs->rect.w / tbar_progs->desktop->clients->nb_elt);
 	}
 
-	srf = (s_surface_t *) s_malloc(sizeof(s_surface_t));
-        vbuf = (char *) s_malloc(window->surface->bytesperpixel * tbar_progs->rect.w * tbar_progs->rect.h + 1);
-        s_getsurfacevirtual(srf, tbar_progs->rect.w, tbar_progs->rect.h, window->surface->bitsperpixel, vbuf);
+	if (s_surface_create(&srf, tbar_progs->rect.w, tbar_progs->rect.h, window->surface->bitsperpixel)) {
+		return;
+	}
 
 	for (x = 0; x <= tbar_progs->rect.w; x++) {
 		s_putboxpart(srf, x, 0, 1, tbar_progs->rect.h, 1, 30, tbar_progs->tbar_img->buf, 0, tbar_progs->rect.y);
@@ -131,13 +130,11 @@ void taskbar_progs_draw (s_window_t *window)
 	}
 
         s_putbox(window->surface, tbar_progs->rect.x, tbar_progs->rect.y, tbar_progs->rect.w, tbar_progs->rect.h, srf->vbuf);
-        s_free(vbuf);
-        s_free(srf);
+        s_surface_destroy(srf);
 }
 
 void taskbar_start_menu_icon (s_window_t *window)
 {
-        char *vbuf;
         s_surface_t *srf;
         tbar_data_t *tbar_data;
         tbar_smenu_t *tbar_smenu;
@@ -145,14 +142,13 @@ void taskbar_start_menu_icon (s_window_t *window)
         tbar_data = (tbar_data_t *) window->data;
         tbar_smenu = (tbar_smenu_t *) tbar_data->tbar_smenu;
 
-	srf = (s_surface_t *) s_malloc(sizeof(s_surface_t));
-        vbuf = (char *) s_malloc(window->surface->bytesperpixel * tbar_smenu->img->w * tbar_smenu->img->h + 1);
-        s_getsurfacevirtual(srf, tbar_smenu->img->w, tbar_smenu->img->h, window->surface->bitsperpixel, vbuf);
+        if (s_surface_create(&srf, tbar_smenu->img->w, tbar_smenu->img->h, window->surface->bitsperpixel)) {
+        	return;
+        }
         s_getbox(window->surface, tbar_smenu->rect.x, tbar_smenu->rect.y, tbar_smenu->img->w, tbar_smenu->img->h, srf->vbuf);
         s_putboxrgba(srf, 0, 0, tbar_smenu->img->w, tbar_smenu->img->h, tbar_smenu->img->rgba);
         s_putbox(window->surface, tbar_smenu->rect.x, tbar_smenu->rect.y, tbar_smenu->img->w, tbar_smenu->img->h, srf->vbuf);
-        s_free(vbuf);
-        s_free(srf);
+        s_surface_destroy(srf);
 }
 
 void taskbar_start_menu_handler_p (s_window_t *window, s_event_t *event, s_handler_t *handler)
@@ -189,16 +185,15 @@ void taskbar_start_menu_handler_rh (s_window_t *window, s_event_t *event, s_hand
         tbar_smenu = (tbar_smenu_t *) tbar_data->tbar_smenu;
         tbar_progs = (tbar_progs_t *) tbar_data->tbar_progs;
 
-	srf = (s_surface_t *) s_malloc(sizeof(s_surface_t));
-        srf->vbuf = (unsigned char *) s_malloc(window->surface->bytesperpixel * (tbar_smenu->rect.w + tbar_progs->tbar_img->w + 2) * (tbar_smenu->rect.h + 2));
-	s_getsurfacevirtual(srf, (tbar_smenu->rect.w + tbar_progs->tbar_img->w + 2), (tbar_smenu->rect.h + 2), window->surface->bitsperpixel, srf->vbuf);
+        if (s_surface_create(&srf, (tbar_smenu->rect.w + tbar_progs->tbar_img->w + 2), (tbar_smenu->rect.h + 2), window->surface->bitsperpixel)) {
+        	return;
+        }
 	for (x = 0; x <= tbar_smenu->rect.w + 2; x++) {
 		s_putboxpart(srf, x, 0, tbar_progs->tbar_img->w, tbar_smenu->rect.h + 2, tbar_progs->tbar_img->w, tbar_progs->tbar_img->h, tbar_progs->tbar_img->buf, 0, tbar_smenu->rect.y);
 	}
         s_putboxrgba(srf, 0, 0, tbar_smenu->img->w, tbar_smenu->img->h, tbar_smenu->img->rgba);
 	s_putbox(window->surface, tbar_smenu->rect.x, tbar_smenu->rect.y, srf->width, srf->height, srf->vbuf);
-	s_free(srf->vbuf);
-	s_free(srf);
+	s_surface_destroy(srf);
 }
 
 void taskbar_clock_popup_atexit (s_window_t *window)
@@ -367,9 +362,9 @@ void taskbar_clock_draw (s_window_t *window, s_timer_t *timer)
 
 	s_font_get_glyph(tbar_clock->font);
 
-        vbuf = (char *) s_malloc(window->surface->bytesperpixel * tbar_clock->rect.w * tbar_clock->rect.h + 1);
-	srf = (s_surface_t *) s_malloc(sizeof(s_surface_t));
-        s_getsurfacevirtual(srf, tbar_clock->rect.w, tbar_clock->rect.h, window->surface->bitsperpixel, vbuf);
+	if (s_surface_create(&srf, tbar_clock->rect.w, tbar_clock->rect.h, window->surface->bitsperpixel)) {
+		return;
+	}
 
 	s_fillbox(srf, 0, 0, tbar_clock->rect.w, tbar_clock->rect.h, c0);
 	s_fillbox(srf, 1, 1, tbar_clock->rect.w - 1, tbar_clock->rect.h - 1, c1);
@@ -383,8 +378,8 @@ void taskbar_clock_draw (s_window_t *window, s_timer_t *timer)
 	s_putboxpartrgba(srf, 3, 4, w_, tbar_clock->font->glyph.img->h, tbar_clock->font->glyph.img->w, tbar_clock->font->glyph.img->h, tbar_clock->font->glyph.img->rgba, 0, 0);
 
         s_putbox(window->surface, tbar_clock->rect.x, tbar_clock->rect.y, tbar_clock->rect.w, tbar_clock->rect.h, srf->vbuf);
-        s_free(vbuf);
-        s_free(srf);
+
+        s_surface_destroy(srf);
         return;
 }
 

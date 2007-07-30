@@ -28,7 +28,6 @@ typedef struct img_data_s {
 static void img_show (s_window_t *window)
 {
 	char *name;
-	char *vbuf;
 	char *sbuf;
 	s_image_t *img;
 	s_surface_t *srf;
@@ -46,14 +45,14 @@ static void img_show (s_window_t *window)
 	s_image_init(&img);
 	s_image_img(name, img);
 
-	srf = (s_surface_t *) s_calloc(1, sizeof(s_surface_t));
-	vbuf = (char *) s_calloc(1, sizeof(char) * img->w * img->h * window->surface->bytesperpixel);
 	sbuf = (char *) s_calloc(1, sizeof(char) * window->surface->width * window->surface->height * window->surface->bytesperpixel);
-	s_getsurfacevirtual(srf, img->w, img->h, window->surface->bitsperpixel, vbuf);
+	if (s_surface_create(&srf, img->w, img->h, window->surface->bitsperpixel)) {
+		goto out;
+	}
 	s_putboxrgba(srf, 0, 0, img->w, img->h, img->rgba);
 
 	if (imgd->imgs) {
-		s_scalebox(srf, img->w, img->h, vbuf, window->surface->buf->w, window->surface->buf->h, sbuf);
+		s_scalebox(srf, img->w, img->h, srf->vbuf, window->surface->buf->w, window->surface->buf->h, sbuf);
 	}
 
 	window->surface->mode = SURFACE_VIRTUAL;
@@ -63,13 +62,12 @@ static void img_show (s_window_t *window)
 	if (imgd->imgs) {
 		s_putbox(window->surface, 0, 0, window->surface->buf->w, window->surface->buf->h, sbuf);
 	} else {
-		s_putbox(window->surface, img->x, img->y, img->w, img->h, vbuf);
+		s_putbox(window->surface, img->x, img->y, img->w, img->h, srf->vbuf);
 	}
 
-	s_image_uninit(img);
-	s_free(vbuf);
+	s_surface_destroy(srf);
+out:	s_image_uninit(img);
         s_free(sbuf);
-        s_free(srf);
 }
 
 static void img_atevent (s_window_t *window, s_event_t *event)

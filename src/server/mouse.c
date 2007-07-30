@@ -74,7 +74,7 @@ void s_server_cursor_image_set (int which, int c0, int c1, unsigned int *c)
 {
         int x;
         int y;
-	s_surface_t s;
+	s_surface_t *s;
         unsigned char *mat;
 	unsigned int *cur = c;
 
@@ -107,20 +107,22 @@ void s_server_cursor_image_set (int which, int c0, int c1, unsigned int *c)
 		}
 		cur++;
 	}
-
-	s_getsurfacevirtual(&s, server->cursor.images[which].w, server->cursor.images[which].h, server->window->surface->bitsperpixel, server->cursor.images[which].buf);
-
+	
+	if (s_surface_create_from_data(&s, server->cursor.images[which].w, server->cursor.images[which].h, server->window->surface->bitsperpixel, server->cursor.images[which].buf)) {
+		return;
+	}
         cur = c;
 	for (y = 0; y < 32; y++) {
 		for (x = 0; x < 32; x++) {
 			if ((*cur << x) & (1 << 31)) {
-				s_setpixel(&s, x, y, c1);
+				s_setpixel(s, x, y, c1);
 			} else if ((*(cur + 32) << x) & (1 << 31)) {
-				s_setpixel(&s, x, y, c0);
+				s_setpixel(s, x, y, c0);
 			}
 		}
 		cur++;
 	}
+	s_surface_destroy(s);
 }
 
 void s_server_cursor_matrix_add (void)

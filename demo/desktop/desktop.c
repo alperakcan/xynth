@@ -19,8 +19,7 @@ void desktop_background (s_window_t *window, char *file)
 {
         int x;
         int y;
-        char *vbuf;
-        s_surface_t s;
+        s_surface_t *s;
         int imagex = 0;
         int imagey = 0;
         s_image_t *img;
@@ -37,25 +36,24 @@ void desktop_background (s_window_t *window, char *file)
 	if (img->h < window->surface->buf->h) {
 		imagey = (window->surface->buf->h - img->h) / 2;
 	}
-
-        vbuf = (char *) s_malloc(window->surface->bytesperpixel * img->w * img->h + 1);
-        s_getsurfacevirtual(&s, img->w, img->h, window->surface->bitsperpixel, vbuf);
-        s_fillbox(&s, 0, 0, img->w, img->h, s_rgbcolor(&s, dtop_data->bg_color >> 0x10 & 0xFF,
-                                                           dtop_data->bg_color >> 0x08 & 0xFF,
-                                                           dtop_data->bg_color >> 0x00 & 0xFF));
-        s_putboxrgba(&s, 0, 0, img->w, img->h, img->rgba);
-
+	
+	if (s_surface_create(&s, img->w, img->h, window->surface->bitsperpixel)) {
+		goto out;
+	}
+	s_fillbox(s, 0, 0, img->w, img->h, s_rgbcolor(s, dtop_data->bg_color >> 0x10 & 0xFF,
+                                                         dtop_data->bg_color >> 0x08 & 0xFF,
+                                                         dtop_data->bg_color >> 0x00 & 0xFF));
+	s_putboxrgba(s, 0, 0, img->w, img->h, img->rgba);
 	if (dtop_data->scale_img) {
-		s_scalebox(window->surface, img->w, img->h, vbuf, window->surface->buf->w, window->surface->buf->h, window->surface->vbuf);
+		s_scalebox(window->surface, img->w, img->h, s->vbuf, window->surface->buf->w, window->surface->buf->h, window->surface->vbuf);
 	} else {
 		x = (window->surface->buf->w - img->w) / 2;
 		y = (window->surface->buf->h - img->h) / 2;
-		s_putbox(window->surface, 0, 0, img->w, img->h, vbuf);
+		s_putbox(window->surface, 0, 0, img->w, img->h, s->vbuf);
 	}
+	s_surface_destroy(s);
 
-	s_free(vbuf);
-
-	s_image_uninit(img);
+out:	s_image_uninit(img);
 }
 
 void desktop_icon_handler (s_window_t *window, s_event_t *event, s_handler_t *handler)

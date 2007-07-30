@@ -93,8 +93,6 @@ void s_server_window_title (int id, char *title)
 		return;
 	}
 	
-	srf = (s_surface_t *) s_malloc(sizeof(s_surface_t));
-
         for (v = 0; v < 2; v++) {
 		font = server->theme.font[v];
 		s_font_set_str(font, title);
@@ -103,7 +101,9 @@ void s_server_window_title (int id, char *title)
 		s_image_get_handler(font->glyph.img);
 
 		font->glyph.img->buf = (char *) s_calloc(1, font->glyph.img->w * font->glyph.img->h * server->window->surface->bytesperpixel);
-                s_getsurfacevirtual(srf, font->glyph.img->w, font->glyph.img->h, server->window->surface->bitsperpixel, font->glyph.img->buf);
+		if (s_surface_create_from_data(&srf, font->glyph.img->w, font->glyph.img->h, server->window->surface->bitsperpixel, font->glyph.img->buf)) {
+			goto out;
+		}
 
 		if ((i = font->glyph.img->w / server->theme.form[v][TOP_3].w) > 0) {
 			while (i--) {
@@ -131,10 +131,10 @@ void s_server_window_title (int id, char *title)
 		server->client[id].title.hh[v] = font->glyph.img->handler->h;
 		memcpy(server->client[id].title.img[v].mat, font->glyph.img->mat, font->glyph.img->w * font->glyph.img->h);
 		memcpy(server->client[id].title.img[v].buf, font->glyph.img->buf, font->glyph.img->w * font->glyph.img->h * server->window->surface->bytesperpixel);
-		s_image_uninit(font->glyph.img);
+		s_surface_destroy(srf);
+out:		s_image_uninit(font->glyph.img);
 		s_image_init(&(font->glyph.img));
 	}
-	s_free(srf);
 }
 
 void s_server_putbox (s_window_t *window, int id, s_rect_t *coor, int x, int y, s_image_t *img)

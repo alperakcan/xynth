@@ -378,7 +378,6 @@ static unsigned char * lxynth_init_driver (unsigned char *param, unsigned char *
 
 static struct graphics_device * lxynth_init_device (void)
 {
-        char *vbuf;
 	lxynth_device_t *wd;
 	struct graphics_device *gd;
 
@@ -389,9 +388,11 @@ static struct graphics_device * lxynth_init_device (void)
 	gd = (struct graphics_device *) s_malloc(sizeof(struct graphics_device));
 
 	wd->title = NULL;
-        wd->surface = (s_surface_t *) s_malloc(sizeof(s_surface_t));
-        vbuf = (char *) s_malloc(lxynth_root->window->surface->buf->w * lxynth_root->window->surface->buf->h * lxynth_root->window->surface->bytesperpixel);
-        s_getsurfacevirtual(wd->surface, lxynth_root->window->surface->buf->w , lxynth_root->window->surface->buf->h, lxynth_root->window->surface->bitsperpixel, vbuf);
+	if (s_surface_create(&wd->surface, lxynth_root->window->surface->buf->w , lxynth_root->window->surface->buf->h, lxynth_root->window->surface->bitsperpixel)) {
+		s_free(gd);
+		s_free(wd);
+		return NULL;
+	}
 
 	gd->size.x1 = 0;
 	gd->size.x2 = wd->surface->width;
@@ -441,8 +442,7 @@ static void lxynth_shutdown_device (struct graphics_device *dev)
 	unregister_bottom_half(lxynth_surface_register_update, dev);
 	wd = (lxynth_device_t *) dev->driver_data;
 	s_free(wd->title);
-	s_free(wd->surface->vbuf);
-	s_free(wd->surface);
+	s_surface_destroy(wd->surface);
 	s_free(wd);
 	s_free(dev);
 	s_thread_mutex_unlock(lxynth_root->gd->mut);
@@ -487,8 +487,7 @@ static void lxynth_shutdown_driver (void)
 		lxynth_device_t *wd = (lxynth_device_t *) gd->driver_data;
 		s_list_remove(lxynth_root->gd->list, 0);
 		s_free(wd->title);
-		s_free(wd->surface->vbuf);
-		s_free(wd->surface);
+		s_surface_destroy(wd->surface);
 		s_free(wd);
 		s_free(gd);
 	}

@@ -31,7 +31,7 @@ int s_surface_init (s_window_t *window)
 	return 0;
 }
 
-void s_surface_create (s_window_t *window)
+void s_surface_attach (s_window_t *window)
 {
 	window->surface->vbuf = (unsigned char *) s_calloc(sizeof(char), window->surface->width *
 	                                                                 window->surface->height *

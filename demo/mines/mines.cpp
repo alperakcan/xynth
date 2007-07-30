@@ -20,6 +20,8 @@
 #include <xynth.h>
 #include <widget.h>
 
+#error "DEPRECATED"
+
 #undef DEBUG
 
 class Mines;

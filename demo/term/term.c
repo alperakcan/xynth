@@ -580,9 +580,8 @@ static void write_char (s_window_t *window, unsigned chr)
 {
         int x;
         int y;
-        char *vbuf;
 	char str[2];
-        s_surface_t s;
+        s_surface_t *s;
         unsigned char c;
         unsigned int *mat;
 
@@ -605,10 +604,11 @@ static void write_char (s_window_t *window, unsigned chr)
 	s_font_get_glyph(font);
 	mat = font->glyph.img->rgba;
 
-        vbuf = (char *) s_malloc(window->surface->bytesperpixel * FONTW * FONTH + 1);
-        s_getsurfacevirtual(&s, FONTW, FONTH, window->surface->bitsperpixel, vbuf);
+	if (s_surface_create(&s, FONTW, FONTH, window->surface->bitsperpixel)) {
+		goto out;
+	}
 
-	s_fillbox(&s, 0, 0, FONTW, FONTH, chr_attr.bg_color);
+	s_fillbox(s, 0, 0, FONTW, FONTH, chr_attr.bg_color);
 
 	for (y = 0; y < font->glyph.img->h; y++) {
 		for (x = 0; x < font->glyph.img->w; x++) {
@@ -616,20 +616,20 @@ static void write_char (s_window_t *window, unsigned chr)
 				int r;
 				int g;
 				int b;
-				s_colorrgb(&s, chr_attr.fg_color, &r, &g, &b);
-				s_setpixelrgba(&s, x, y + FONTH - font->glyph.yMax - 4, r, g, b, *mat & 0xff);
+				s_colorrgb(s, chr_attr.fg_color, &r, &g, &b);
+				s_setpixelrgba(s, x, y + FONTH - font->glyph.yMax - 4, r, g, b, *mat & 0xff);
 			} else {
-				s_setpixel(&s, x, y + FONTH - font->glyph.yMax - 4, chr_attr.bg_color);
+				s_setpixel(s, x, y + FONTH - font->glyph.yMax - 4, chr_attr.bg_color);
 			}
 			mat++;
 		}
 	}
-        s_putbox(window->surface, (cursorx - 1) * FONTW, (cursory - 1) * FONTH, FONTW, FONTH, s.vbuf);
+	s_putbox(window->surface, (cursorx - 1) * FONTW, (cursory - 1) * FONTH, FONTW, FONTH, s->vbuf);
 
-	cursorx++;
-        s_free(vbuf);
+        cursorx++;
 
-        font->str = NULL;
+        s_surface_destroy(s);
+out:	font->str = NULL;
 	s_image_uninit(font->glyph.img);
 	s_image_init(&(font->glyph.img));
 }

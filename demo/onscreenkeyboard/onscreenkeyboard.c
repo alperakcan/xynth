@@ -270,14 +270,13 @@ static int draw_single_box (s_surface_t *wsurface, s_rect_t *rect, osk_char_t c[
 	int x = 0;
 	int y = 0;
 	char *tbuf;
-	char *vbuf;
 	s_image_t *img;
 	s_font_t *font;
 	s_surface_t *surface;
 	
-	vbuf = s_malloc(sizeof(char) * rect->w * rect->h * wsurface->bytesperpixel);
-	surface = (s_surface_t *) s_malloc(sizeof(s_surface_t));
-	s_getsurfacevirtual(surface, rect->w, rect->h, wsurface->bitsperpixel, vbuf);
+	if (s_surface_create(&surface, rect->w, rect->h, wsurface->bitsperpixel)) {
+		return -1;
+	}
 	
 	s_fillbox(surface, 0, 0, rect->w, rect->h, colors[0]);
 	
@@ -335,8 +334,7 @@ static int draw_single_box (s_surface_t *wsurface, s_rect_t *rect, osk_char_t c[
 	
         s_putbox(wsurface, rect->x, rect->y, rect->w, rect->h, surface->vbuf);
 
-        s_free(vbuf);
-        s_free(surface);
+        s_surface_destroy(surface);
 	return 0;
 }
 
@@ -344,14 +342,13 @@ static int draw_boxes (s_window_t *window)
 {
 	int x;
 	int y;
-	char *vbuf;
 	int colors[3];
 	s_rect_t rect;
 	s_surface_t *surface;
 	
-	vbuf = s_malloc(sizeof(char) * window->surface->buf->w * window->surface->buf->h * window->surface->bytesperpixel);
-	surface = (s_surface_t *) s_malloc(sizeof(s_surface_t));
-	s_getsurfacevirtual(surface, window->surface->buf->w, window->surface->buf->h, window->surface->bitsperpixel, vbuf);
+	if (s_surface_create(&surface, window->surface->buf->w, window->surface->buf->h, window->surface->bitsperpixel)) {
+		return -1;
+	}
 
 	for (y = 0; y < 3; y++) {
 		for (x = 0; x < 3; x++) {
@@ -392,9 +389,8 @@ static int draw_boxes (s_window_t *window)
 	}
 
         s_putbox(window->surface, 0, 0, surface->width, surface->height, surface->vbuf);
-	free(surface);
-	free(vbuf);
-
+        
+        s_surface_destroy(surface);
 	return 0;
 }
 
