@@ -374,135 +374,6 @@ void s_copybox (s_surface_t *surface, int x1, int y1, int w, int h, int x2, int 
 	s_free(p);
 }
 
-int s_surface_destroy (s_surface_t *surface)
-{
-	if (surface) {
-		if (surface->evbuf == 0 && surface->vbuf) {
-			free(surface->vbuf);
-		}
-		free(surface);
-	}
-	return 0;
-}
-
-int s_surface_create_from_data (s_surface_t **surface, int width, int height, int bitsperpixel, void *vbuf)
-{
-	s_surface_t *s;
-
-	s = (s_surface_t *) s_malloc(sizeof(s_surface_t));
-	memset(s, 0, sizeof(s_surface_t));
-
-        switch (bitsperpixel) {
-		case 8:
-                        s->bytesperpixel = 1;
-			s->bitsperpixel = 8;
-			s->blueoffset = 0;
-			s->greenoffset = 3;
-			s->redoffset = 6;
-#if defined(VIDEO_PSPDEV)
-			s->blueoffset = 6;
-			s->greenoffset = 3;
-			s->redoffset = 0;
-#endif
-			s->bluelength = 3;
-			s->greenlength = 3;
-			s->redlength = 2;
-			break;
-		case 15:
-                        s->bytesperpixel = 2;
-			s->bitsperpixel = 15;
-			s->blueoffset = 0;
-			s->greenoffset = 5;
-			s->redoffset = 10;
-#if defined(VIDEO_PSPDEV)
-			s->blueoffset = 10;
-			s->greenoffset = 5;
-			s->redoffset = 0;
-#endif
-			s->bluelength = 5;
-			s->greenlength = 5;
-			s->redlength = 5;
-			break;
-		case 16:
-                        s->bytesperpixel = 2;
-			s->bitsperpixel = 16;
-			s->blueoffset = 0;
-			s->greenoffset = 5;
-			s->redoffset = 11;
-#if defined(VIDEO_PSPDEV)
-			s->blueoffset = 11;
-			s->greenoffset = 5;
-			s->redoffset = 0;
-#endif
-			s->bluelength = 5;
-			s->greenlength = 6;
-			s->redlength = 5;
-			break;
-                case 18:
-			s->bytesperpixel = 4;
-                        s->bitsperpixel = 18;
-                        s->blueoffset = 0;
-                        s->greenoffset = 6;
-                        s->redoffset = 12;
-#if defined(VIDEO_PSPDEV)
-			s->blueoffset = 12;
-			s->greenoffset = 6;
-			s->redoffset = 0;
-#endif
-                        s->bluelength = 6;
-                        s->greenlength = 6;
-                        s->redlength = 6;
-                        break;
-		case 24:
-		case 32:
-                        s->bytesperpixel = 4;
-			s->bitsperpixel = 32;
-			s->blueoffset = 0;
-			s->greenoffset = 8;
-			s->redoffset = 16;
-#if defined(VIDEO_PSPDEV)
-			s->blueoffset = 16;
-			s->greenoffset = 8;
-			s->redoffset = 0;
-#endif
-			s->bluelength = 8;
-			s->greenlength = 8;
-			s->redlength = 8;
-			break;
-		default:
-			goto err0;
-	}
-        
-        s->bluemask = ((1 << s->bluelength) - 1) << s->blueoffset;
-        s->greenmask = ((1 << s->greenlength) - 1) << s->greenoffset;
-        s->redmask = ((1 << s->redlength) - 1) << s->redoffset;
-
-	s->mode = SURFACE_VIRTUAL;
-	s->width = width;
-	s->height = height;
-	s->vbuf = vbuf;
-	s->evbuf = 1;
-
-	*surface = s;
-	return 0;
-err0:	*surface = NULL;
-	return -1;
-}
-
-int s_surface_create (s_surface_t **surface, int width, int height, int bitsperpixel)
-{
-	s_surface_t *s;
-	if (s_surface_create_from_data(&s, width, height, bitsperpixel, NULL)) {
-		goto err0;
-	}
-	s->evbuf = 0;
-	s->vbuf = (unsigned char *) s_malloc(s->width * s->height * s->bytesperpixel);
-	*surface = s;
-	return 0;
-err0:	*surface = NULL;
-	return -1;
-}
-
 int s_copybuffer (char *sb, int sbitspp, char **db, int dbitspp, int w, int h)
 {
         int x;
@@ -776,4 +647,133 @@ int s_putmaskpart (unsigned char *dp, int dw, int dh, int x, int y, int w, int h
 	}
 
 	return 0;
+}
+
+int s_surface_destroy (s_surface_t *surface)
+{
+	if (surface) {
+		if (surface->evbuf == 0 && surface->vbuf) {
+			free(surface->vbuf);
+		}
+		free(surface);
+	}
+	return 0;
+}
+
+int s_surface_create_from_data (s_surface_t **surface, int width, int height, int bitsperpixel, void *vbuf)
+{
+	s_surface_t *s;
+
+	s = (s_surface_t *) s_malloc(sizeof(s_surface_t));
+	memset(s, 0, sizeof(s_surface_t));
+
+        switch (bitsperpixel) {
+		case 8:
+                        s->bytesperpixel = 1;
+			s->bitsperpixel = 8;
+			s->blueoffset = 0;
+			s->greenoffset = 3;
+			s->redoffset = 6;
+#if defined(VIDEO_PSPDEV)
+			s->blueoffset = 6;
+			s->greenoffset = 3;
+			s->redoffset = 0;
+#endif
+			s->bluelength = 3;
+			s->greenlength = 3;
+			s->redlength = 2;
+			break;
+		case 15:
+                        s->bytesperpixel = 2;
+			s->bitsperpixel = 15;
+			s->blueoffset = 0;
+			s->greenoffset = 5;
+			s->redoffset = 10;
+#if defined(VIDEO_PSPDEV)
+			s->blueoffset = 10;
+			s->greenoffset = 5;
+			s->redoffset = 0;
+#endif
+			s->bluelength = 5;
+			s->greenlength = 5;
+			s->redlength = 5;
+			break;
+		case 16:
+                        s->bytesperpixel = 2;
+			s->bitsperpixel = 16;
+			s->blueoffset = 0;
+			s->greenoffset = 5;
+			s->redoffset = 11;
+#if defined(VIDEO_PSPDEV)
+			s->blueoffset = 11;
+			s->greenoffset = 5;
+			s->redoffset = 0;
+#endif
+			s->bluelength = 5;
+			s->greenlength = 6;
+			s->redlength = 5;
+			break;
+                case 18:
+			s->bytesperpixel = 4;
+                        s->bitsperpixel = 18;
+                        s->blueoffset = 0;
+                        s->greenoffset = 6;
+                        s->redoffset = 12;
+#if defined(VIDEO_PSPDEV)
+			s->blueoffset = 12;
+			s->greenoffset = 6;
+			s->redoffset = 0;
+#endif
+                        s->bluelength = 6;
+                        s->greenlength = 6;
+                        s->redlength = 6;
+                        break;
+		case 24:
+		case 32:
+                        s->bytesperpixel = 4;
+			s->bitsperpixel = 32;
+			s->blueoffset = 0;
+			s->greenoffset = 8;
+			s->redoffset = 16;
+#if defined(VIDEO_PSPDEV)
+			s->blueoffset = 16;
+			s->greenoffset = 8;
+			s->redoffset = 0;
+#endif
+			s->bluelength = 8;
+			s->greenlength = 8;
+			s->redlength = 8;
+			break;
+		default:
+			goto err0;
+	}
+        
+        s->bluemask = ((1 << s->bluelength) - 1) << s->blueoffset;
+        s->greenmask = ((1 << s->greenlength) - 1) << s->greenoffset;
+        s->redmask = ((1 << s->redlength) - 1) << s->redoffset;
+
+	s->mode = SURFACE_VIRTUAL;
+	s->width = width;
+	s->height = height;
+	s->vbuf = vbuf;
+	s->evbuf = 1;
+
+	*surface = s;
+	return 0;
+err0:	*surface = NULL;
+	return -1;
+}
+
+int s_surface_create (s_surface_t **surface, int width, int height, int bitsperpixel)
+{
+	s_surface_t *s;
+	if (s_surface_create_from_data(&s, width, height, bitsperpixel, NULL)) {
+		goto err0;
+	}
+	s->evbuf = 0;
+	s->vbuf = (unsigned char *) s_malloc(s->width * s->height * s->bytesperpixel);
+	*surface = s;
+	return 0;
+err0:	*surface = NULL;
+	return -1;
 }
