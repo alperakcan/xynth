@@ -13,6 +13,11 @@
 extern GdkDisplayXYNTH *_gdk_display;
 extern GdkScreen       *_gdk_screen;
 
+extern GdkWindow       *_gdk_xynth_pointer_grab_window;
+extern GdkCursor       *_gdk_xynth_pointer_grab_cursor;
+extern gboolean         _gdk_xynth_pointer_grab_owner_events;
+extern GdkEventMask     _gdk_xynth_pointer_grab_events;
+
 typedef struct _GdkWindowImplXYNTH   GdkWindowImplXYNTH;
 typedef struct _GdkPixmapImplXYNTH   GdkPixmapImplXYNTH;
 typedef struct _GdkDrawableImplXYNTH GdkDrawableImplXYNTH;
@@ -106,5 +111,6 @@ void gdk_xynth_mouse_get_info (gint *x, gint *y, GdkModifierType *mask);
 GdkWindow * gdk_xynth_other_event_window (GdkWindow *window, GdkEventType type);
 GdkEvent * gdk_xynth_event_make (GdkWindow *window, GdkEventType type);
 guint32 gdk_xynth_get_time (void);
+GdkWindow * gdk_xynth_pointer_event_window (GdkWindow *window, GdkEventType type);
 
 #endif

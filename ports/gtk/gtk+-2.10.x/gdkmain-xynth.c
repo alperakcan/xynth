@@ -47,6 +47,67 @@ static const guint type_masks[] = {
 	GDK_SCROLL_MASK            /* GDK_SCROLL            = 31  */
 };
 
+GdkWindow * gdk_xynth_pointer_event_window (GdkWindow *window, GdkEventType type)
+{
+	guint            evmask;
+	GdkModifierType  mask;
+	GdkWindow       *w;
+	
+	ENTER();
+	
+	gdk_xynth_mouse_get_info(NULL, NULL, &mask);
+	
+	if (_gdk_xynth_pointer_grab_window && !_gdk_xynth_pointer_grab_owner_events) {
+		evmask = _gdk_xynth_pointer_grab_events;
+		
+		if (evmask & (GDK_BUTTON1_MOTION_MASK |
+		              GDK_BUTTON2_MOTION_MASK |
+		              GDK_BUTTON3_MOTION_MASK)) {
+			if (((mask & GDK_BUTTON1_MASK) && (evmask & GDK_BUTTON1_MOTION_MASK)) ||
+			    ((mask & GDK_BUTTON2_MASK) && (evmask & GDK_BUTTON2_MOTION_MASK)) ||
+			    ((mask & GDK_BUTTON3_MASK) && (evmask & GDK_BUTTON3_MOTION_MASK))) {
+				evmask |= GDK_POINTER_MOTION_MASK;
+			}
+		}
+		if (evmask & type_masks[type]) {
+			if (_gdk_xynth_pointer_grab_owner_events) {
+				return _gdk_xynth_pointer_grab_window;
+			} else {
+				GdkWindowObject *obj= GDK_WINDOW_OBJECT(window);
+				while (obj != NULL && obj != GDK_WINDOW_OBJECT(_gdk_xynth_pointer_grab_window)) {
+					obj = (GdkWindowObject *) obj->parent;
+				}
+				if (obj == GDK_WINDOW_OBJECT(_gdk_xynth_pointer_grab_window)) {
+					return  window;
+				} else {
+					// was not  child of the grab window so return the grab window
+					return _gdk_xynth_pointer_grab_window;
+				}
+			}
+		}
+	}
+	w = window;
+	while (w != _gdk_parent_root) {
+		/* Huge hack, so that we don't propagate events to GtkWindow->frame */
+		if ((w != window) && (GDK_WINDOW_OBJECT (w)->window_type != GDK_WINDOW_CHILD) && (g_object_get_data (G_OBJECT (w), "gdk-window-child-handler"))) {
+			break;
+		}
+		evmask = GDK_WINDOW_OBJECT(w)->event_mask;
+		if (evmask & (GDK_BUTTON1_MOTION_MASK | GDK_BUTTON2_MOTION_MASK | GDK_BUTTON3_MOTION_MASK)) {
+			if (((mask & GDK_BUTTON1_MASK) && (evmask & GDK_BUTTON1_MOTION_MASK)) ||
+			    ((mask & GDK_BUTTON2_MASK) && (evmask & GDK_BUTTON2_MOTION_MASK)) ||
+			    ((mask & GDK_BUTTON3_MASK) && (evmask & GDK_BUTTON3_MOTION_MASK))) {
+				evmask |= GDK_POINTER_MOTION_MASK;
+			}
+		}
+		if (evmask & type_masks[type]) {
+			return w;
+		}
+		w = gdk_window_get_parent(w);
+	}
+	return NULL;
+}
+
 GdkWindow * gdk_xynth_other_event_window (GdkWindow *window, GdkEventType type)
 {
 	guint32 evmask;
