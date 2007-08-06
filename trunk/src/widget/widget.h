@@ -103,7 +103,7 @@ typedef enum {
 	/** widget is frame */
 	OBJECT_FRAME   		= 0x1,
 	/** widget is button */
-	OBJECT_BUTTON  		= 0x2,
+	OBJECT_BUTTON  		= 0x2,http://www.fazlamesai.net/index.php?a=article&sid=1258
 	/** widget is textbox */
 	OBJECT_TEXTBOX 		= 0x3,
 	/** widget is editbox */
@@ -145,7 +145,7 @@ struct w_object_s {
 	int showed;
 	/** is focused */
 	int focused;
-	/** alpha blen ration */
+	/** alpha blend ratio */
 	int alpha;
 	/** effect */
 	w_effect_t *effect;
