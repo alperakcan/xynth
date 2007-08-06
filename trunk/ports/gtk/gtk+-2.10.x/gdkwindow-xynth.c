@@ -14,6 +14,64 @@
 GdkWindow *_gdk_parent_root  = NULL;
 static gpointer parent_class = NULL;
 
+static GdkWindow *gdk_xynth_window_containing_pointer = NULL;
+
+static GSList *update_windows = NULL;
+static guint update_idle = 0;
+
+static void gdk_window_xynth_process_all_updates (void)
+{
+	GSList *old_update_windows = update_windows;
+	GSList *tmp_list = update_windows;
+	
+	ENTER();
+	
+	if (update_idle) {
+		g_source_remove(update_idle);
+	}
+	
+	update_windows = NULL;
+	update_idle = 0;
+	
+	g_slist_foreach(old_update_windows, (GFunc) g_object_ref, NULL);
+	
+	while (tmp_list) {
+		GdkWindowObject *private = (GdkWindowObject *) tmp_list->data;
+		
+		if (private->update_freeze_count) {
+			update_windows = g_slist_prepend(update_windows, private);
+		} else {
+			gdk_window_process_updates(tmp_list->data, TRUE);
+		}
+		g_object_unref(tmp_list->data);
+		tmp_list = tmp_list->next;
+	}
+	g_slist_free (old_update_windows);
+	
+	LEAVE();
+}
+
+static gboolean gdk_window_update_idle (gpointer data)
+{
+	GDK_THREADS_ENTER();
+	gdk_window_xynth_process_all_updates();
+	GDK_THREADS_LEAVE ();
+	return FALSE;
+}
+
+static void gdk_window_schedule_update (GdkWindow *window)
+{
+	ENTER();
+	if (window && GDK_WINDOW_OBJECT(window)->update_freeze_count) {
+		LEAVE();
+		return;
+	}
+	if (!update_idle) {
+		update_idle = g_idle_add_full(GDK_PRIORITY_REDRAW, gdk_window_update_idle, NULL, NULL);
+	}
+	LEAVE();
+}
+
 GdkWindow * _gdk_windowing_window_at_pointer (GdkDisplay *display, gint *win_x, gint *win_y)
 {
 	gint wx;
@@ -123,9 +181,13 @@ void gdk_window_configure_finished (GdkWindow *window)
 
 void gdk_window_deiconify (GdkWindow *window)
 {
+	g_return_if_fail(GDK_IS_WINDOW(window));
 	ENTER();
-	NIY();
-	ASSERT();
+	if (GDK_WINDOW_DESTROYED(window)) {
+		LEAVE();
+		return;
+	}
+	gdk_window_show(window);
 	LEAVE();
 }
 
@@ -372,11 +434,220 @@ void gdk_window_set_background (GdkWindow *window, const GdkColor *color)
 	LEAVE();
 }
 
-void gdk_xynth_window_send_crossing_events (GdkWindow *src, GdkWindow *dest, GdkCrossingMode  mode)
+static GdkWindow * gdk_xynth_find_common_ancestor (GdkWindow *win1, GdkWindow *win2)
+{
+	GdkWindowObject *a;
+	GdkWindowObject *b;
+	ENTER();
+	for (a = GDK_WINDOW_OBJECT(win1); a; a = a->parent) {
+		for (b = GDK_WINDOW_OBJECT(win2); b; b = b->parent) {
+			if (a == b) {
+				LEAVE();
+				return GDK_WINDOW(a);
+			}
+		}
+	}
+	LEAVE();
+	return NULL;
+}
+
+GdkWindow * gdk_xynth_window_find_toplevel (GdkWindow *window)
 {
 	ENTER();
-	NIY();
-	ASSERT();
+	while (window && window != _gdk_parent_root) {
+		GdkWindow *parent = (GdkWindow *) (GDK_WINDOW_OBJECT(window))->parent;
+		if ((parent == _gdk_parent_root) && GDK_WINDOW_IS_MAPPED(window)) {
+			LEAVE();
+			return window;
+		}
+		window = parent;
+	}
+	LEAVE();
+	return _gdk_parent_root;
+}
+
+void gdk_xynth_window_send_crossing_events (GdkWindow *src, GdkWindow *dest, GdkCrossingMode  mode)
+{
+	GdkWindow       *c;
+	GdkWindow       *win, *last, *next;
+	GdkEvent        *event;
+	gint             x, y, x_int, y_int;
+	GdkModifierType  modifiers;
+	GSList          *path, *list;
+	gboolean         non_linear;
+	GdkWindow       *a;
+	GdkWindow       *b;
+	GdkWindow       *event_win;
+	
+	ENTER();
+	
+	/* Do a possible cursor change before checking if we need to
+	   generate crossing events so cursor changes due to pointer
+	   grabs work correctly. */
+	{
+		static GdkCursorXYNTH *last_cursor = NULL;
+		GdkWindowObject       *private = GDK_WINDOW_OBJECT(dest);
+		GdkWindowImplXYNTH    *impl    = GDK_WINDOW_IMPL_XYNTH(private->impl);
+		GdkCursorXYNTH        *cursor;
+		
+		if (_gdk_xynth_pointer_grab_cursor) {
+			cursor = (GdkCursorXYNTH *) _gdk_xynth_pointer_grab_cursor;
+		} else {
+			cursor = (GdkCursorXYNTH *) impl->cursor;
+		}
+		if (cursor != last_cursor) {
+			win     = gdk_xynth_window_find_toplevel(dest);
+			private = GDK_WINDOW_OBJECT(win);
+			impl    = GDK_WINDOW_IMPL_XYNTH(private->impl);
+			
+			if (impl->xynth_window) {
+				DEBUG("Change cursor here!");
+				NIY();
+			}
+			last_cursor = cursor;
+		}
+	}
+	if (dest == gdk_xynth_window_containing_pointer) {
+		LEAVE();
+		return;
+	}
+	if (gdk_xynth_window_containing_pointer == NULL) {
+		gdk_xynth_window_containing_pointer = g_object_ref(_gdk_parent_root);
+	}
+	if (src) {
+		a = src;
+	} else {
+		a = gdk_xynth_window_containing_pointer;
+	}
+	b = dest;
+	if (a == b) {
+		LEAVE();
+		return;
+	}
+	/* gdk_xynth_window_containing_pointer might have been destroyed.
+	 * The refcount we hold on it should keep it, but it's parents
+	 * might have died.
+	 */
+	if (GDK_WINDOW_DESTROYED(a)) {
+		a = _gdk_parent_root;
+	}
+	gdk_xynth_mouse_get_info(&x, &y, &modifiers);
+	c = gdk_xynth_find_common_ancestor(a, b);
+	non_linear = (c != a) && (c != b);
+	event_win = gdk_xynth_pointer_event_window(a, GDK_LEAVE_NOTIFY);
+	if (event_win) {
+		event = gdk_xynth_event_make(event_win, GDK_LEAVE_NOTIFY);
+		event->crossing.subwindow = NULL;
+		gdk_window_get_origin(a, &x_int, &y_int);
+		event->crossing.x      = x - x_int;
+		event->crossing.y      = y - y_int;
+		event->crossing.x_root = x;
+		event->crossing.y_root = y;
+		event->crossing.mode   = mode;
+		if (non_linear) {
+			event->crossing.detail = GDK_NOTIFY_NONLINEAR;
+		} else if (c == a) {
+			event->crossing.detail = GDK_NOTIFY_INFERIOR;
+		} else {
+			event->crossing.detail = GDK_NOTIFY_ANCESTOR;
+		}
+		event->crossing.focus = FALSE;
+		event->crossing.state = modifiers;
+	}
+	/* Traverse up from a to (excluding) c */
+	if (c != a) {
+		last = a;
+		win = GDK_WINDOW(GDK_WINDOW_OBJECT(a)->parent);
+		while (win != c) {
+			event_win = gdk_xynth_pointer_event_window (win, GDK_LEAVE_NOTIFY);
+			if (event_win) {
+				event = gdk_xynth_event_make(event_win, GDK_LEAVE_NOTIFY);
+				event->crossing.subwindow = g_object_ref(last);
+				gdk_window_get_origin (win, &x_int, &y_int);
+				event->crossing.x      = x - x_int;
+				event->crossing.y      = y - y_int;
+				event->crossing.x_root = x;
+				event->crossing.y_root = y;
+				event->crossing.mode   = mode;
+				if (non_linear) {
+					event->crossing.detail = GDK_NOTIFY_NONLINEAR_VIRTUAL;
+				} else {
+					event->crossing.detail = GDK_NOTIFY_VIRTUAL;
+				}
+				event->crossing.focus = FALSE;
+				event->crossing.state = modifiers;
+			}
+			last = win;
+			win = GDK_WINDOW(GDK_WINDOW_OBJECT(win)->parent);
+		}
+	}
+	/* Traverse down from c to b */
+	if (c != b) {
+		path = NULL;
+		win = GDK_WINDOW(GDK_WINDOW_OBJECT(b)->parent);
+		while (win != c) {
+			path = g_slist_prepend(path, win);
+			win = GDK_WINDOW(GDK_WINDOW_OBJECT(win)->parent);
+		}
+		list = path;
+		while (list) {
+			win = GDK_WINDOW(list->data);
+			list = g_slist_next(list);
+			if (list) {
+				next = GDK_WINDOW (list->data);
+			} else {
+				next = b;
+			}
+			event_win = gdk_xynth_pointer_event_window(win, GDK_ENTER_NOTIFY);
+			if (event_win) {
+				event = gdk_xynth_event_make(event_win, GDK_ENTER_NOTIFY);
+				event->crossing.subwindow = g_object_ref(next);
+				gdk_window_get_origin(win, &x_int, &y_int);
+				event->crossing.x      = x - x_int;
+				event->crossing.y      = y - y_int;
+				event->crossing.x_root = x;
+				event->crossing.y_root = y;
+				event->crossing.mode   = mode;
+				if (non_linear) {
+					event->crossing.detail = GDK_NOTIFY_NONLINEAR_VIRTUAL;
+				} else {
+					event->crossing.detail = GDK_NOTIFY_VIRTUAL;
+				}
+				event->crossing.focus = FALSE;
+				event->crossing.state = modifiers;
+			}
+		}
+		g_slist_free(path);
+	}
+	event_win = gdk_xynth_pointer_event_window(b, GDK_ENTER_NOTIFY);
+	if (event_win) {
+		event = gdk_xynth_event_make(event_win, GDK_ENTER_NOTIFY);
+		event->crossing.subwindow = NULL;
+		gdk_window_get_origin(b, &x_int, &y_int);
+		event->crossing.x      = x - x_int;
+		event->crossing.y      = y - y_int;
+		event->crossing.x_root = x;
+		event->crossing.y_root = y;
+		event->crossing.mode   = mode;
+		if (non_linear) {
+			event->crossing.detail = GDK_NOTIFY_NONLINEAR;
+		} else if (c == a) {
+			event->crossing.detail = GDK_NOTIFY_ANCESTOR;
+		} else {
+			event->crossing.detail = GDK_NOTIFY_INFERIOR;
+		}
+		event->crossing.focus = FALSE;
+		event->crossing.state = modifiers;
+	}
+	if (mode != GDK_CROSSING_GRAB) {
+		/* this seems to cause focus to change as the pointer moves yuck
+		 * gdk_xynth_change_focus(b);
+		 */
+		if (b != gdk_xynth_window_containing_pointer) {
+			g_object_unref(gdk_xynth_window_containing_pointer);
+			gdk_xynth_window_containing_pointer = g_object_ref(b);
+		}
+	}
 	LEAVE();
 }
 
@@ -668,18 +939,25 @@ void gdk_window_unfullscreen (GdkWindow *window)
 
 void gdk_window_unmaximize (GdkWindow *window)
 {
+	g_return_if_fail(GDK_IS_WINDOW(window));
 	ENTER();
+	if (GDK_WINDOW_DESTROYED(window)) {
+		LEAVE();
+		return;
+	}
 	NIY();
-	ASSERT();
 	LEAVE();
 }
 
 void gdk_window_unstick (GdkWindow *window)
 {
+	g_return_if_fail(GDK_IS_WINDOW(window));
 	ENTER();
+	if (GDK_WINDOW_DESTROYED(window)) {
+		LEAVE();
+		return;
+	}
 	NIY();
-	ASSERT();
-	LEAVE();
 }
 
 void gdk_window_withdraw (GdkWindow *window)
@@ -736,14 +1014,68 @@ static void gdk_window_impl_xynth_invalidate_maybe_recurse (GdkPaintable *painta
 	GdkWindowObject *private;
 	GdkWindowImplXYNTH *wimpl;
 	GdkDrawableImplXYNTH *impl;
-	ENTER();
+	
+	GdkRegion *visible_region;
+	GList *tmp_list;
+
 	wimpl = GDK_WINDOW_IMPL_XYNTH(paintable);
 	impl = (GdkDrawableImplXYNTH *) wimpl;
 	window = wimpl->gdkWindow;
 	private = (GdkWindowObject *) window;
-	NIY();
-	ASSERT();
-	LEAVE();
+	
+	g_return_if_fail(window != NULL);
+	g_return_if_fail(GDK_IS_WINDOW (window));
+
+	ENTER();
+	
+	if (GDK_WINDOW_DESTROYED(window)) {
+		return;
+	}
+	if (private->input_only || !GDK_WINDOW_IS_MAPPED(window)) {
+		return;
+	}
+	
+	visible_region = gdk_drawable_get_visible_region(window);
+	gdk_region_intersect(visible_region, region);
+	
+	tmp_list = private->children;
+	while (tmp_list) {
+		GdkWindowObject *child = tmp_list->data;
+		
+		if (!child->input_only) {
+			GdkRegion *child_region;
+			GdkRectangle child_rect;
+			
+			gdk_window_get_position((GdkWindow *) child, &child_rect.x, &child_rect.y);
+			gdk_drawable_get_size((GdkDrawable *) child, &child_rect.width, &child_rect.height);
+			
+			child_region = gdk_region_rectangle(&child_rect);
+			/* remove child area from the invalid area of the parent */
+			if (GDK_WINDOW_IS_MAPPED(child) && !child->shaped) {
+				gdk_region_subtract(visible_region, child_region);
+			}
+			
+			if (child_func && (*child_func) ((GdkWindow *) child, user_data)) {
+				gdk_region_offset(region, - child_rect.x, - child_rect.y);
+				gdk_region_offset(child_region, - child_rect.x, - child_rect.y);
+				gdk_region_intersect(child_region, region);
+				gdk_window_invalidate_maybe_recurse((GdkWindow *) child, child_region, child_func, user_data);
+				gdk_region_offset(region, child_rect.x, child_rect.y);
+			}
+			gdk_region_destroy(child_region);
+		}
+		tmp_list = tmp_list->next;
+	}
+	if (!gdk_region_empty(visible_region)) {
+		if (private->update_area) {
+			gdk_region_union(private->update_area, visible_region);
+		} else {
+			update_windows = g_slist_prepend(update_windows, window);
+			private->update_area = gdk_region_copy(visible_region);
+			gdk_window_schedule_update(window);
+		}
+	}
+	gdk_region_destroy(visible_region);
 }
 
 static void gdk_window_impl_xynth_end_paint (GdkPaintable *paintable)
@@ -797,7 +1129,7 @@ static GdkRegion * gdk_window_impl_xynth_get_visible_region (GdkDrawable *drawab
 	DEBUG("Set region rectangle");
 	reg = gdk_region_rectangle(&rect);
 	NIY();
-	ASSERT();
+//	ASSERT();
 	LEAVE();
 	return reg;
 }
