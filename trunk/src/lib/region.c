@@ -51,8 +51,8 @@ int s_region_addrect (s_region_t *region, s_rect_t *rect)
 	}
 	region->rects = (s_rect_t *) realloc(region->rects, region->nrects + 1);
 	if (region->rects != NULL) {
-		region->nrects += 1;
 		region->rects[region->nrects] = *rect;
+		region->nrects += 1;
 	} else {
 		goto err0;
 	}
