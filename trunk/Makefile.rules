@@ -42,6 +42,7 @@ HOSTNM     = nm
 ifdef CONFIG_BUILD_CROSS_COMPILER_PREFIX
 	CROSS_PREFIX = $(CONFIG_BUILD_CROSS_COMPILER_PREFIX)
 endif
+ifdef $(CROSS_PREFIX)
 LD     = $(CROSS_PREFIX)ld
 CC     = $(CROSS_PREFIX)gcc
 CXX    = $(CROSS_PREFIX)g++
@@ -49,6 +50,7 @@ AR     = $(CROSS_PREFIX)ar rcs
 RANLIB = $(CROSS_PREFIX)ranlib
 STRIP  = $(CROSS_PREFIX)strip -xsR .note -R .comment
 NM     = $(CROSS_PREFIX)nm
+endif
 
 CFLAGS   := -Wall -g -pipe $(CFLAGS) $(CFLAGS-Y)
 INCDIR   := $(INCDIR) $(INCDIR-Y) $(CONFIG_BUILD_XYNTH_INCDIR)
