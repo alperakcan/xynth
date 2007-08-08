@@ -103,7 +103,7 @@ typedef enum {
 	/** widget is frame */
 	OBJECT_FRAME   		= 0x1,
 	/** widget is button */
-	OBJECT_BUTTON  		= 0x2,http://www.fazlamesai.net/index.php?a=article&sid=1258
+	OBJECT_BUTTON  		= 0x2,
 	/** widget is textbox */
 	OBJECT_TEXTBOX 		= 0x3,
 	/** widget is editbox */
