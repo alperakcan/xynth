@@ -145,7 +145,7 @@ endif
 ifdef TARGET_O
 $(TARGET_O): $(OBJS) $(EXTRA_OBJS)
 	$(Q)rm -rf $@
-	$(do_ld) $@
+	$(do_ld)
 endif
 
 ifdef TARGET_A
