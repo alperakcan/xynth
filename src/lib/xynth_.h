@@ -86,7 +86,9 @@ extern "C" {
 #else
 	#include <fcntl.h>
 	#include <sys/time.h>
+#if !(defined(PLATFORM_MINGW))
 	#include <sys/select.h>
+#endif
 
 	#define	POLLIN		0x0001
 	#define	POLLPRI		0x0002
