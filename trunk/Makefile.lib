@@ -9,10 +9,10 @@ CFLAGS += -Wall -pipe -g -O2 -s -fsigned-char -fno-strict-aliasing
 
 MAKE   := $(MAKE) --no-print-directory
 
-CC     := arm-linux-gcc
-LD     := arm-linux-ld
-AR     := arm-linux-ar rcs
-RANLIB := arm-linux-ranlib
+CC     := gcc
+LD     := ld
+AR     := ar rcs
+RANLIB := ranlib
 
 HOSTCC := gcc
 HOSTLD := ld
