@@ -1,5 +1,7 @@
 
-#if defined(VIDEO_HELPER_IRIMAF)
+#include "config.h"
+
+#if defined(CONFIG_VIDEO_HELPER_IRIMAF)
 
 #include <stdio.h>
 #include <stdlib.h>

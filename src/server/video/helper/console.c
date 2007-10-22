@@ -59,7 +59,7 @@ static struct {
 
 static void s_video_helper_console_waitvtactive (int vc);
 static int s_video_helper_console_check_owner (int vc);
-static void s_video_helper_console_open (void);
+static void s_video_helper_console_open (s_server_conf_t *cfg);
 static void s_video_helper_console_restore (void);
 static void s_video_helper_console_signal_handler (int v);
 static void s_video_helper_console_releasevt_signal (int n);
@@ -94,7 +94,7 @@ static int s_video_helper_console_check_owner (int vc)
 	return 0;
 }
 
-static void s_video_helper_console_open (void)
+static void s_video_helper_console_open (s_server_conf_t *cfg)
 {
 	char fname[30];
 
@@ -124,7 +124,7 @@ static void s_video_helper_console_open (void)
         }
 #endif
         
-	if ((s_video_helper_console.fd = open("/dev/console", O_RDWR)) < 0) {
+	if ((s_video_helper_console.fd = open((cfg->general.console) ? cfg->general.console : "/dev/console", O_RDWR)) < 0) {
 		debugf(DSER | DSYS | DFAT, "Can't open /dev/console");
 	}
 	if (ioctl(s_video_helper_console.fd, VT_OPENQRY, &s_video_helper_console.vc) < 0) {
@@ -270,13 +270,13 @@ static void s_video_helper_console_atexit (void)
 	}
 }
 
-int s_video_helper_console_init (void)
+int s_video_helper_console_init (s_server_conf_t *cfg)
 {
 	int i;
 	struct sigaction siga;
 	struct vt_mode m;
 	
-	s_video_helper_console_open();
+	s_video_helper_console_open(cfg);
 	if (s_video_helper_console.fd < 0) {
 		return -1;
 	}

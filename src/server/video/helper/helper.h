@@ -17,7 +17,7 @@
 
 #if defined(CONFIG_VIDEO_HELPER_CONSOLE)
 /* console.c */
-int s_video_helper_console_init (void);
+int s_video_helper_console_init (s_server_conf_t *cfg);
 int s_video_helper_console_switch (int vt);
 #endif /* CONFIG_VIDEO_HELPER_CONSOLE */
 

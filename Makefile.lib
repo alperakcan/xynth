@@ -9,10 +9,10 @@ CFLAGS += -Wall -pipe -g -O2 -s -fsigned-char -fno-strict-aliasing
 
 MAKE   := $(MAKE) --no-print-directory
 
-CC     := gcc
-LD     := ld
-AR     := ar rcs
-RANLIB := ranlib
+CC     := arm-linux-gcc
+LD     := arm-linux-ld
+AR     := arm-linux-ar rcs
+RANLIB := arm-linux-ranlib
 
 HOSTCC := gcc
 HOSTLD := ld
@@ -52,10 +52,13 @@ pur_disp_compile.c.host = echo "  HOSTCC     $(pur_objects)"
 pur_disp_link.c.host    = echo "  HOSTLINK   $(pur_objects)"
 pur_disp_link_so.c.host = echo "  HOSTLINKSO $(pur_objects)"
 
-pur_disp_cp             = echo "  CP         $(pur_objects)"
 pur_disp_ar             = echo "  AR         $(pur_objects)"
 pur_disp_ranlib         = echo "  RANLIB     $(pur_objects)"
 pur_disp_ld             = echo "  LD         $(pur_objects)"
+
+pur_disp_ld.host        = echo "  HOSTLD     $(pur_objects)"
+
+pur_disp_cp             = echo "  CP         $(pur_objects)"
 pur_disp_clean          = echo "  CLEAN      $$(subst _clean,,$(pur_objects))"
 
 pur_disp_widgetc        = echo "  WIDGETC    $(pur_objects)"
@@ -73,10 +76,13 @@ ver_disp_compile.c.host = echo "$(subst ",\",$(cmd_compile.c.host))"
 ver_disp_link.c.host    = echo "$(subst ",\",$(cmd_link.c.host))"
 ver_disp_link_so.c.host = echo "$(subst ",\",$(cmd_link_so.c.host))"
 
-ver_disp_cp             = echo "$(subst ",\",$(cmd_cp))"
 ver_disp_ar             = echo "$(subst ",\",$(cmd_ar))"
 ver_disp_ranlib         = echo "$(subst ",\",$(cmd_ranlib))"
 ver_disp_ld             = echo "$(subst ",\",$(cmd_ld))"
+
+ver_disp_ld.host        = echo "$(subst ",\",$(cmd_ld.host))"
+
+ver_disp_cp             = echo "$(subst ",\",$(cmd_cp))"
 ver_disp_clean          = echo "$(subst ",\",$(cmd_clean) $1 .$1 $$@.cmd)"
 
 ver_disp_widgetc        = echo "$(subst ",\",$(cmd_widgetc))"
@@ -94,10 +100,13 @@ disp_compile.c.host = $($(verbose)_disp_compile.c.host)
 disp_link.c.host    = $($(verbose)_disp_link.c.host)
 disp_link_so.c.host = $($(verbose)_disp_link_so.c.host)
 
-disp_cp             = $($(verbose)_disp_cp)
 disp_ar             = $($(verbose)_disp_ar)
 disp_ranlib         = $($(verbose)_disp_ranlib)
 disp_ld             = $($(verbose)_disp_ld)
+
+disp_ld.host        = $($(verbose)_disp_ld.host)
+
+disp_cp             = $($(verbose)_disp_cp)
 disp_clean          = $($(verbose)_disp_clean)
 
 disp_widgetc        = $($(verbose)_disp_widgetc)
@@ -115,10 +124,13 @@ _cmd_compile.c.host = $(HOSTCC) $(CFLAGS) $(CPPFLAGS) $($1_cflags) $($1_cppflags
 _cmd_link.c.host    = $(HOSTCC) $(CFLAGS) $($1_libraries) -o $$@ $$^ $($1_ldflags) $(LDFLAGS)
 _cmd_link_so.c.host = $(HOSTCC) $(CFLAGS) $($1_libraries) -o $$@ $$^ $($1_ldflags) $(LDFLAGS) -shared
 
-_cmd_cp             = $(CP) $$< $$@
 _cmd_ar             = $(AR) $$@ $$^
 _cmd_ranlib         = $(RANLIB) $$@
 _cmd_ld             = $(LD) -r -o $$@ $$^
+
+_cmd_ld.host        = $(HOSTLD) -r -o $$@ $$^
+
+_cmd_cp             = $(CP) $$< $$@
 _cmd_clean          = $(RM)
 
 _cmd_widgetc        = $(MKDIR) .$1/; $(CD) .$1; $(WIDGETC) -f ../$$< -o $$(subst .xws,,$$<)
@@ -136,10 +148,13 @@ cmd_compile.c.host = $(MKDIR) .$1/; echo "$(_cmd_compile.c.host)" > $$@.cmd ; $(
 cmd_link.c.host    = $(MKDIR) .$1/; echo "$(_cmd_link.c.host)" > $$@.cmd    ; $(_cmd_link.c.host)
 cmd_link_so.c.host = $(MKDIR) .$1/; echo "$(_cmd_link_so.c.host)" > $$@.cmd ; $(_cmd_link_so.c.host)
 
-cmd_cp             = $(_cmd_cp)
 cmd_ar             = $(MKDIR) .$1/; echo "$(_cmd_ar)" > $$@.cmd             ; $(_cmd_ar)
 cmd_ranlib         = $(MKDIR) .$1/; echo "$(_cmd_ranlib)" >> $$@.cmd        ; $(_cmd_ranlib)
 cmd_ld             = $(MKDIR) .$1/; echo "$(_cmd_ld)" > $$@.cmd             ; $(_cmd_ld)
+
+cmd_ld.host        = $(MKDIR) .$1/; echo "$(_cmd_ld.host)" > $$@.cmd        ; $(_cmd_ld.host)
+
+cmd_cp             = $(_cmd_cp)
 cmd_clean          = $(MKDIR) .$1/; echo "$(_cmd_clean) $1 .$1" > $$@.cmd   ; $(_cmd_clean)
 
 cmd_widgetc        = $(MKDIR) .$1/; echo "$(_cmd_widgetc)" > $$@.cmd        ; $(_cmd_widgetc)
@@ -157,10 +172,13 @@ do_compile.c.host = @$(disp_compile.c.host) ; $(cmd_compile.c.host)
 do_link.c.host    = @$(disp_link.c.host)    ; $(cmd_link.c.host)
 do_link_so.c.host = @$(disp_link_so.c.host) ; $(cmd_link_so.c.host)
 
-do_cp             = @$(disp_cp)             ; $(cmd_cp)
 do_ar             = @$(disp_ar)             ; $(cmd_ar)
 do_ranlib         = @$(disp_ranlib)         ; $(cmd_ranlib)
 do_ld             = @$(disp_ld)             ; $(cmd_ld)
+
+do_ld.host        = @$(disp_ld.host)        ; $(cmd_ld.host)
+
+do_cp             = @$(disp_cp)             ; $(cmd_cp)
 do_clean          = @$(disp_clean)          ; $(cmd_clean)
 
 do_widgetc        = @$(disp_widgetc)        ; $(cmd_widgetc)
@@ -267,6 +285,13 @@ define target_host-variables
 	$(do_link.c.host)
 endef
 
+define target_o_host-variables
+    $(eval $(call target_host-defaults,$1,$2))
+    
+    .$1/$1:
+	$(do_ld.host)
+endef
+
 define target_empty-defaults
     targets-empty += $1
     
@@ -304,6 +329,7 @@ $(eval $(foreach T,$(target_a-y),$(eval $(call target_a-variables,$T,$($T_files-
 $(eval $(foreach T,$(target_o-y),$(eval $(call target_o-variables,$T,$($T_files-y)))))
 
 $(eval $(foreach T,$(target.host-y),$(eval $(call target_host-variables,$T,$($T_files-y)))))
+$(eval $(foreach T,$(target_o.host-y),$(eval $(call target_o_host-variables,$T,$($T_files-y)))))
 
 $(eval $(foreach T,$(target-n),$(eval $(call target_empty-defaults,$T))))
 $(eval $(foreach T,$(target-),$(eval $(call target_empty-defaults,$T))))

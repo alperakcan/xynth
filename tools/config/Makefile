@@ -1,8 +1,8 @@
 
 subdir-y = lxdialog
 
-target-y := conf
-target-y += mconf
+target.host-y := conf
+target.host-y += mconf
 
 conf_files-y = conf.c zconf_tab.c
 

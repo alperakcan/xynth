@@ -1,5 +1,5 @@
 
-target_o-y = lxdialog.o
+target_o.host-y = lxdialog.o
 
 lxdialog.o_files-y = checklist.c \
                      menubox.c \

@@ -328,7 +328,7 @@ int s_video_svga_server_init (s_server_conf_t *cfg)
 	priv = (s_video_svga_data_t *) s_malloc(sizeof(s_video_svga_data_t));
 	server->driver->driver_data = (void *) priv;
 	
-	priv->console_fd = s_video_helper_console_init();
+	priv->console_fd = s_video_helper_console_init(cfg);
 	if (priv->console_fd < 0) {
 		debugf(DSER, "Unable to get console");
 		goto err0;
