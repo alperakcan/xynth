@@ -51,13 +51,13 @@ typedef struct s_thread_api_s {
 	void (*thread_exit) (void *ret);
 } s_thread_api_t;
 
-#if defined(THREAD_PSPDEV)
+#if defined(CONFIG_THREAD_PSPDEV)
 	#include "thread_pspdev.c"
 	static s_thread_api_t *s_thread_api = &s_thread_pspdev;
-#elif defined(THREAD_PTHREADS)
+#elif defined(CONFIG_THREAD_PTHREADS)
 	#include "thread_pthreads.c"
 	static s_thread_api_t *s_thread_api = &s_thread_pthreads;
-#elif defined(THREAD_WIN32)
+#elif defined(CONFIG_THREAD_WINDOWS)
 	#include "thread_win32.c"
 	static s_thread_api_t *s_thread_api = &s_thread_win32;
 #else

@@ -13,8 +13,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(VIDEO_SDL)
-
 #include "../../../lib/xynth_.h"
 #include "server.h"
 #include "sdl.h"
@@ -75,5 +73,3 @@ void s_video_sdl_mouse_uninit (void)
 	priv->mouse_fd[1] = -1;
 	s_server_cursor_uninit();
 }
-
-#endif /* VIDEO_SDL */

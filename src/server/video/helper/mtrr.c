@@ -13,7 +13,9 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(VIDEO_HELPER_MTRR)
+#include "config.h"
+
+#if defined(CONFIG_VIDEO_HELPER_MTRR)
 
 #include <asm/mtrr.h>
 #include <sys/ioctl.h>
@@ -44,4 +46,4 @@ void s_video_helper_mtrr_add (unsigned int base, unsigned int size)
 	close(fd);
 }
 
-#endif /* VIDEO_HELPER_MTRR */
+#endif /* CONFIG_VIDEO_HELPER_MTRR */

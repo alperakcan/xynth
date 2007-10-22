@@ -16,7 +16,7 @@
 #include "../lib/xynth_.h"
 #include "server.h"
 
-#if defined(THEME_PLUGIN)
+#if defined(CONFIG_THEME_PLUGIN)
 	#include <dlfcn.h>
 #else
 	#include "theme_static.h"
@@ -28,13 +28,13 @@ void s_server_theme_set (char *name)
 	THEME_FORM f;
 	THEME_STATE v;
 
-#if defined(THEME_PLUGIN)
+#if defined(CONFIG_THEME_PLUGIN)
 	char *error;
 	void *handle;
 	void (*theme_init) (s_theme_t *theme);
 
         if (name == NULL) {
-		handle = dlopen(THEMEDIR "/silverado.so", RTLD_LAZY);
+		handle = dlopen(CONFIG_PATH_INSTALL CONFIG_PATH_THEMES "/silverado.so", RTLD_LAZY);
 	} else {
 		handle = dlopen(name, RTLD_LAZY);
 	}
@@ -76,7 +76,7 @@ void s_server_theme_set (char *name)
 	s_font_init(&(server->theme.font[1]), "arial.ttf");
 	s_font_set_size(server->theme.font[1], server->theme.form[1][TOP_3].h - 8);
 	
-#if defined(THEME_PLUGIN)
+#if defined(CONFIG_THEME_PLUGIN)
 	dlclose(handle);
 #endif
 

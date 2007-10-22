@@ -13,7 +13,9 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(VIDEO_HELPER_MOUSE)
+#include "config.h"
+
+#if defined(CONFIG_VIDEO_HELPER_MOUSE)
 
 /* mouse library functions (mouse_1.c) and mouse driver (mouse_2.c) are heavily
  * based on svgalib source code. here is the comments taken from the original
@@ -55,7 +57,7 @@
 #include <math.h>
 
 
-#if defined(DEBUG)
+#if defined(CONFIG_DEBUG)
 /*
 	#define DEBUG_MOUSE
 	#define DEBUG_ACCEL
@@ -267,13 +269,13 @@ static int ms_init (void)
 				debugf(DFAT | DSER | DSYS, "MOUSE : Out of memory in mouse init !");
 			} else {
 				int i;
-#if defined(DEBUG_ACCEL)
+#if defined(CONFIG_DEBUG_ACCEL)
 				debugf(DSER, "MOUSE : ms.accel.powertable :");
 #endif
 				for (i = 1; i < ms.accel.thresh; i++) {
 					ms.accel.powertable[i] = pow((double) (i - 1) / (ms.accel.thresh-1), ms.accel.power)
 								 * (ms.accel.mult - ms.accel.offset) + ms.accel.offset;
-#if defined(DEBUG_ACCEL)
+#if defined(CONFIG_DEBUG_ACCEL)
 					debugf(DSER, "MOUSE :	%ld => %f (%f)", (long)i,
 										 (double) ms.accel.powertable[i] * i,
 										 (double) ms.accel.powertable[i]);
@@ -283,7 +285,7 @@ static int ms_init (void)
 		}
 	}
 
-#if defined(DEBUG_ACCEL)
+#if defined(CONFIG_DEBUG_ACCEL)
 	debugf(DSER, "MOUSE : ms.accel.type: %ld",		(long) ms.accel.type);
 	debugf(DSER, "MOUSE : ms.accel.force: %ld",	(long) ms.accel.force);
 	debugf(DSER, "MOUSE : ms.accel.thresh: %ld",	(long) ms.accel.thresh);
@@ -470,12 +472,12 @@ again:
 	i = 0;
 	if (bytesread >= 1)
 		nu_bytes += bytesread;
-#if defined(DEBUG_MOUSE)
+#if defined(CONFIG_DEBUG_MOUSE)
 	debugf(DSER, "MOUSE : #bytes in buffer: %d", nu_bytes);
 #endif
 handle_packets:
 	/* Handle packets in buffer. */
-#if defined(DEBUG_MOUSE)
+#if defined(CONFIG_DEBUG_MOUSE)
 	debugf(DSER, "MOUSE : Bytes left in buffer: %d at %d, packet is %d bytes", nu_bytes - i,
 											i,
 											mouse_proto[ms.type][4]);
@@ -539,7 +541,7 @@ handle_packets:
 	/* Check header byte. */
 	if ((buf[i] & mouse_proto[ms.type][0]) != mouse_proto[ms.type][1]) {
 		/* Not a header byte. */
-#if defined(DEBUG_MOUSE)
+#if defined(CONFIG_DEBUG_MOUSE)
 		debugf(DSER, "MOUSE : Bad header byte: %c %d", (buf[i] & 0177), buf[i]);
 #endif
 		i++;
@@ -613,13 +615,13 @@ handle_packets:
 				wheel = (buf[i + 6] & 0x30) >> 3;
 				if (buf[i+6] & 0x40)
 					wheel = -wheel;
-#if defined(DEBUG_WHEEL)
+#if defined(CONFIG_DEBUG_WHEEL)
 				debugf(DSER, "MOUSE : Wheel turned (0x%02x)", wheel);
 #endif
 				/* RX-axis */
 				if(ms.wheel_delta) {
 					drx = ((wheel < 0) ? (-ms.wheel_delta) : ms.wheel_delta);
-#if defined(DEBUG_WHEEL)
+#if defined(CONFIG_DEBUG_WHEEL)
 					debugf(DSER, "MOUSE : RX axis delta = %d", drx);
 #endif
 				}
@@ -634,13 +636,13 @@ handle_packets:
 			dy = (char) (((buf[i] & 0x0C) << 4) | (buf[i + 2] & 0x3F));
 			/* Did we turn the wheel? */
 			if((wheel = buf[i + 3] & 0x0f) != 0) {
-#if defined(DEBUG_WHEEL)
+#if defined(CONFIG_DEBUG_WHEEL)
 				debugf(DSER, "MOUSE : Wheel turned (0x%02x)", wheel);
 #endif
 				/* RX-axis */
 				if(ms.wheel_delta) {
 					drx = ((wheel > 7) ? (-ms.wheel_delta) : ms.wheel_delta);
-#if defined(DEBUG_WHEEL)
+#if defined(CONFIG_DEBUG_WHEEL)
 					debugf(DSER, "MOUSE : RX axis delta = %d", drx);
 #endif
 				}
@@ -682,7 +684,7 @@ handle_packets:
 			dy = (buf[i] & 0x20) ? -(buf[i + 2] - 256) : -buf[i + 2];
 			/* Did we turn the wheel? */
 			if((wheel = buf[i + 3]) != 0) {
-#if defined(DEBUG_WHEEL)
+#if defined(CONFIG_DEBUG_WHEEL)
 				debugf(DSER, "MOUSE : Wheel turned (0x%02x)", wheel);
 #endif
 				/* RX reports as 1 or F, RY reports as 2 or E */
@@ -694,10 +696,10 @@ handle_packets:
 						case 14:	dry = ms.wheel_delta; break;
 						case 15:	drx = -ms.wheel_delta; break;
 					}
-#if defined(DEBUG_WHEEL)
+#if defined(CONFIG_DEBUG_WHEEL)
 					debugf(DSER, "MOUSE : RX axis delta = %d : RY axis delta = %d", drx, dry);
 #endif
-#if defined(DEBUG_WHEEL)
+#if defined(CONFIG_DEBUG_WHEEL)
 					debugf(DSER, "MOUSE : .");
 #endif
 				}
@@ -711,17 +713,17 @@ handle_packets:
 			dy = (buf[i] & 0x20) ? -(buf[i + 2] - 256) : -buf[i + 2];
 			/* Did we turn the wheel? */
 			if((wheel = buf[i + 3]) != 0) {
-#if defined(DEBUG_WHEEL)
+#if defined(CONFIG_DEBUG_WHEEL)
 				debugf(DSER, "MOUSE : Wheel turned (0x%02x)", wheel);
 #endif
 				/* RX-axis */
 				if(ms.wheel_delta) {
 					drx = ((wheel > 0x7f) ? (-ms.wheel_delta) : ms.wheel_delta);
-#if defined(DEBUG_WHEEL)
+#if defined(CONFIG_DEBUG_WHEEL)
 					debugf(DSER, "MOUSE : RX axis delta = %d", drx);
 #endif
 				}
-#if defined(DEBUG_WHEEL)
+#if defined(CONFIG_DEBUG_WHEEL)
 				debugf(DSER, "MOUSE : .");
 #endif
 			}
@@ -735,17 +737,17 @@ handle_packets:
 			dy = (buf[i] & 0x20) ? -(buf[i + 2] - 256) : -buf[i + 2];
 			/* Did we turn the wheel? */
 			if(((wheel = buf[i + 3]) & 15) != 0) {
-#if defined(DEBUG_WHEEL)
+#if defined(CONFIG_DEBUG_WHEEL)
 				debugf(DSER, "MOUSE : Wheel turned (0x%02x)", wheel);
 #endif
 				/* RX-axis */
 				if(ms.wheel_delta) {
 					drx = ((wheel > 7) ? (-ms.wheel_delta) : ms.wheel_delta);
-#if defined(DEBUG_WHEEL)
+#if defined(CONFIG_DEBUG_WHEEL)
 					debugf(DSER, "MOUSE : RX axis delta = %d", drx);
 #endif
 				}
-#if defined(DEBUG_WHEEL)
+#if defined(CONFIG_DEBUG_WHEEL)
 				debugf(DSER, "MOUSE : .");
 #endif
 			}
@@ -792,7 +794,7 @@ handle_packets:
 					}
 					/*    if (fabs(dx) < sorb_trans_thresh[1]) dx = 0; */
 					i += 13;
-#if defined(DEBUG_MOUSE)
+#if defined(CONFIG_DEBUG_MOUSE)
 					debugf(DSER, "MOUSE : Got D packet! but=%d, x=%d y=%d z=%d rx=%d ry=%d rz=%d",
 						    but, dx, dy, dz, drx, dry, drz);
 #endif
@@ -802,18 +804,18 @@ handle_packets:
 					but=0177 & buf[i+2];
 					if (but == MOUSE_RESETBUTTON)
 						mouse_orientation = 1 - mouse_orientation;
-#if defined(DEBUG_MOUSE)
+#if defined(CONFIG_DEBUG_MOUSE)
 					debugf(DSER, "MOUSE : Got K packet! but=%d, x=%d y=%d z=%d rx=%d ry=%d rz=%d",
 					            but, dx, dy, dz, drx, dry, drz);
 #endif
 					i += 6;
 					break;
 				case 'R':
-#if defined(DEBUG_MOUSE)
+#if defined(CONFIG_DEBUG_MOUSE)
 					debugf(DSER, "MOUSE : Got init string!");
 #endif
 					for (j = i; ((buf[j] != 13) && (j < nu_bytes)); j++) {
-#if defined(DEBUG_MOUSE)
+#if defined(CONFIG_DEBUG_MOUSE)
 						debugf(DSER, "MOUSE : %c",(buf[j] & 0177));
 					}
 					debugf(DSER, "MOUSE : ");
@@ -825,7 +827,7 @@ handle_packets:
 					i = j + 1;
 					break;
 				default:
-#if defined(DEBUG_MOUSE)
+#if defined(CONFIG_DEBUG_MOUSE)
 					debugf(DSER, "MOUSE : Got unknown packet!");
 #endif
 					i++;
@@ -855,18 +857,18 @@ handle_packets:
 	switch (ms.accel.type) {
 		int delta;
 		case MOUSE_ACCEL_TYPE_NORMAL:
-#if defined(DEBUG_ACCEL)
+#if defined(CONFIG_DEBUG_ACCEL)
 			debugf(DSER, "MOUSE : %ld", (long) dx);
 #endif
 			if (abs(dx) > ms.accel.thresh) dx = (int) ((float) dx * ms.accel.mult);
 			if (abs(dy) > ms.accel.thresh) dy = (int) ((float) dy * ms.accel.mult);
 			if (abs(dz) > ms.accel.thresh) dz = (int) ((float) dz * ms.accel.mult);
-#if defined(DEBUG_ACCEL)
+#if defined(CONFIG_DEBUG_ACCEL)
 			debugf(DSER, "MOUSE : %ld", (long) dx);
 #endif
 			break;
 		case MOUSE_ACCEL_TYPE_POWER:
-#if defined(DEBUG_ACCEL)
+#if defined(CONFIG_DEBUG_ACCEL)
 			debugf(DSER, "MOUSE : %ld", (long) dx);
 #endif
 			delta = abs(dx);
@@ -875,7 +877,7 @@ handle_packets:
 			dy = (delta >= ms.accel.thresh) ? (float) dy * ms.accel.mult : (float) dy * ms.accel.powertable[delta];
 			delta = abs(dz);
 			dz = (delta >= ms.accel.thresh) ? (float) dz * ms.accel.mult : (float) dz * ms.accel.powertable[delta];
-#if defined(DEBUG_ACCEL)
+#if defined(CONFIG_DEBUG_ACCEL)
 			debugf(DSER, "MOUSE : %ld", (long) dx);
 #endif
 			break;
@@ -896,4 +898,4 @@ handle_packets:
 	goto handle_packets;
 }
 
-#endif /* VIDEO_HELPER_MOUSE */
+#endif /* CONFIG_VIDEO_HELPER_MOUSE */

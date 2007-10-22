@@ -13,7 +13,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(PIPE_POSIX)
+#if defined(CONFIG_PIPE_POSIX)
 
 static int s_pipe_posix_init (void)
 {
@@ -32,11 +32,11 @@ static int s_pipe_posix_pipe (int filedes[2])
 
 static int s_pipe_posix_poll (struct pollfd *ufds, nfds_t nfds, int timeout)
 {
-#if defined(HAVE_POLL)
+#if defined(CONFIG_POLL_POLL)
 
 	return poll(ufds, nfds, timeout);
 
-#else /* HAVE_POLL */
+#else /* CONFIG_POLL_POLL */
 	/* poll() emulation using select()
 	 */
 	nfds_t i;
@@ -109,7 +109,7 @@ static int s_pipe_posix_poll (struct pollfd *ufds, nfds_t nfds, int timeout)
 	}
 	return rval;
 
-#endif /* HAVE_POLL */
+#endif /* CONFIG_POLL_POLL */
 }
 
 static int s_pipe_posix_read (int fd, void *buf, unsigned int count)
@@ -137,4 +137,4 @@ static s_pipe_api_t s_pipe_posix = {
 	s_pipe_posix_close
 };
 
-#endif /* PIPE_POSIX */
+#endif /* CONFIG_PIPE_POSIX */

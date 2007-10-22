@@ -1,8 +1,5 @@
 
-include ../../../Makefile.cfg
-include ../../../Makefile.parse
-
-DIR = src/widget/widgetr/
+-include ../../../.config
 
 #WIDGET_SCRIPT_ENGINE_JS = Y
 
@@ -13,24 +10,17 @@ SPIDER_MONKEY_INC = $(SPIDER_MONKEY)/src $(SPIDER_MONKEY)/src/Linux_All_DBG.OBJ
 SPIDER_MONKEY_LIB = $(SPIDER_MONKEY)/src/Linux_All_DBG.OBJ/libjs.a  -lm  $(SPIDER_MONKEY)/src/editline/Linux_All_DBG.OBJ/libedit.a
 endif
 
-CFLAGS += $(SPIDER_MONKEY_CFLAGS)
-INCDIR += . .. ../../lib $(SPIDER_MONKEY_INC)
-LIBDIR += ../../lib ../../widget
+target-$(CONFIG_WIDGET_WIDGETR) = widgetr
 
-LIBDIR-$(PLATFORM_MINGW) = ../../server/video/gdi/pthread_w32
-LDFLAGS-$(PLATFORM_MINGW) = -lpthreadGC2
+widgetr_cflags-y    += $(SPIDER_MONKEY_CFLAGS)
+widgetr_includes-y  += . .. ../../lib $(SPIDER_MONKEY_INC)
+widgetr_libraries-y += . ../ ../../lib/
+widgetr_ldflags-y   += -lwidget -lxynth
+widgetr_files-y     += widgetr.c \
+                       code.c \
+                       js.c
 
-LDFLAGS-$(PLATFORM_PSPDEV) = -lm -lpspdebug -lpspdisplay -lpspge -lpspctrl -lpspsdk -lc -lpsputility -lpspuser -lpspkernel -lpspnet -lpspnet_inet
+include ../../../Makefile.lib
 
-LDFLAGS += -lwidget -lxynth $(SPIDER_MONKEY_LIB)
-
-OBJS = widgetr.o code.o js.o
-
-TARGET = widgetr
-
-include ../../../Makefile.rules
-
-dist: all
-ifneq ($(TARGET),)
-	cp -a $(TARGET) ../../../$(DISTBINDIR)
-endif
+dist:
+	$(CP) widgetr ../../../dist/$(CONFIG_PATH_BIN)/widgetr

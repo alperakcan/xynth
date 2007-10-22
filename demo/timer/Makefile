@@ -1,27 +1,26 @@
 
-include ../../Makefile.cfg
-include ../../Makefile.parse
+-include ../../.config
 
-DIR = src/demo/timer/
-
-INCDIR  = ../../src/lib
-LIBDIR  = ../../src/lib
-LDFLAGS = -lxynth
-
-OBJS = timer.o
-
-ifeq ($(SINGLE_APP), Y)
-TARGET_A = single_timer.a
-CFLAGS  += -Dmain=timer_main
+ifeq ($(CONFIG_SINGLE_APPLICATION), y)
+target-n = timer
+target_o-y = single_timer.o
 else
-TARGET = timer
+target-y = timer
+target_o-n = single_timer.o
 endif
 
-EXTRA_CLEAN = timer single_timer.a
+timer_files-y     = timer.c
+timer_includes-y  = ../../src/lib
+timer_libraries-y = ../../src/lib/
+timer_ldflags-y   = -lxynth
 
-include ../../Makefile.rules
+single_timer.o_files-y    = timer.c
+single_timer.o_includes-y = ../../src/lib
+single_timer.o_cflags-y   = -Dmain=timer_main
 
-dist: all
-ifneq ($(TARGET),)
-	cp -a $(TARGET) ../../$(DISTBINDIR)
+include ../../Makefile.lib
+
+ifneq ($(CONFIG_SINGLE_APPLICATION), y)
+dist:
+	$(CP) timer ../../dist/$(CONFIG_PATH_BIN)/timer
 endif

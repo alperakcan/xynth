@@ -27,6 +27,7 @@ extern "C" {
 #include <string.h>
 #include <stdarg.h>
 #include <ctype.h>
+#include "config.h"
 #include "xynth.h"
 
 #define S_SERVER_DIR		"/tmp/.Xynth"
@@ -58,7 +59,7 @@ extern "C" {
 #define MIN(a, b)	((a) < (b) ? (a) : (b))
 #define MAX(a, b)	((a) > (b) ? (a) : (b))
 
-#if defined(DEBUG)
+#if defined(CONFIG_DEBUG)
 	#define debugf(a, b...)	s_debug_debugf(a, __FILE__, __LINE__, (char *) __FUNCTION__, b);
 #else
 	#define debugf(a, b...) {\
@@ -68,25 +69,25 @@ extern "C" {
 	}
 #endif
 
-#if defined(PLATFORM_LINUX)
+#if defined(CONFIG_PLATFORM_LINUX)
 	#include <sys/time.h>
-#elif defined(PLATFORM_GP2X)
+#elif defined(CONFIG_PLATFORM_GP2X)
 	#include <sys/time.h>
-#elif defined(PLATFORM_PSPDEV)
+#elif defined(CONFIG_PLATFORM_PSPDEV)
 	#include <sys/time.h>
 	unsigned int sleep (unsigned int sec);
 	void usleep (unsigned long msec);
-#elif defined(PLATFORM_MINGW)
+#elif defined(CONFIG_PLATFORM_MINGW)
 	unsigned int sleep (unsigned int sec);
 	void usleep (unsigned long msec);
 #endif
 
-#if defined(HAVE_POLL)
+#if defined(CONFIG_POLL_POLL)
 	#include <sys/poll.h>
 #else
 	#include <fcntl.h>
 	#include <sys/time.h>
-#if !(defined(PLATFORM_MINGW))
+#if !(defined(CONFIG_PLATFORM_MINGW))
 	#include <sys/select.h>
 #endif
 
@@ -104,16 +105,16 @@ extern "C" {
 	typedef unsigned int nfds_t;
 #endif
 
-#if defined(SOCKET_BSD)
+#if defined(CONFIG_SOCKET_POSIX)
 	#include <sys/types.h>
 	#include <sys/socket.h>
-#if defined(IPC_UDS)
+#if defined(CONFIG_IPC_UDS)
 	#include <sys/un.h>
 #endif
 	#include <netinet/in.h>
 	#include <arpa/inet.h>
 	typedef struct sockaddr s_sockaddr_t;
-#elif defined(SOCKET_PIPE)
+#elif defined(CONFIG_SOCKET_PIPE)
 	#define AF_PIPE		0x0001
 #if !defined(SOCK_STREAM)
 	#define SOCK_STREAM	0x0001

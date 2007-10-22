@@ -1,0 +1,109 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
+/*
+ * Automatically generated header file: don't edit
+ */
+
+/* Version Number */
+#define XYNTH_VERSION "(null)"
+#define XYNTH_BUILDTIME "(null)"
+
+#define CONFIG_DEBUG 1
+#define CONFIG_SINGLE_APPLICATION 1
+#undef CONFIG_PLATFORM_LINUX
+#undef CONFIG_PLATFORM_PSPDEV
+#define CONFIG_PLATFORM_MINGW 1
+#undef CONFIG_PLATFORM_GP2X
+
+/*
+ * Video Drivers
+ */
+#undef CONFIG_VIDEO_VESA
+#undef CONFIG_VIDEO_SVGALIB
+#undef CONFIG_VIDEO_FBDEV
+#undef CONFIG_VIDEO_SDL
+#undef CONFIG_VIDEO_CACA
+#undef CONFIG_VIDEO_PSPDEV
+#define CONFIG_VIDEO_GDI 1
+#undef CONFIG_VIDEO_NULL
+
+/*
+ * Video Driver Helper
+ */
+#define CONFIG_VIDEO_HELPER 1
+#define CONFIG_VIDEO_HELPER_MODES 1
+#undef CONFIG_VIDEO_HELPER_CONSOLE
+#undef CONFIG_VIDEO_HELPER_KEYBOARD
+#undef CONFIG_VIDEO_HELPER_MOUSE
+#undef CONFIG_VIDEO_HELPER_MTRR
+#define CONFIG_THREAD_PTHREADS 1
+#undef CONFIG_THREAD_WINDOWS
+#undef CONFIG_THREAD_PSPDEV
+
+/*
+ * Communication Method
+ */
+#undef CONFIG_PIPE_POSIX
+#define CONFIG_PIPE_MEMORY 1
+#undef CONFIG_SOCKET_POSIX
+#define CONFIG_SOCKET_PIPE 1
+#undef CONFIG_POLL_POLL
+#undef CONFIG_POLL_SELECT
+#undef CONFIG_IPC_TCP
+#undef CONFIG_IPC_UDS
+#define CONFIG_IPC_PIPE 1
+
+/*
+ * Image Support
+ */
+#define CONFIG_IMAGE_PNG 1
+#define CONFIG_IMAGE_GIF 1
+#define CONFIG_IMAGE_XPM 1
+
+/*
+ * Theme support
+ */
+#undef CONFIG_THEME_PLUGIN
+#undef CONFIG_THEME_KERAMIK
+#undef CONFIG_THEME_MICROGUI
+#undef CONFIG_THEME_SILVERADO
+
+/*
+ * Widget Library
+ */
+#define CONFIG_WIDGET_WIDGET 1
+#define CONFIG_WIDGET_WIDGETC 1
+#define CONFIG_WIDGET_WIDGETR 1
+
+/*
+ * Demo Applications
+ */
+#define CONFIG_DEMO_APPLICATIONS 1
+#define CONFIG_DEMO_CHILD 1
+#define CONFIG_DEMO_DESKTOP 1
+#define CONFIG_DEMO_HIDE 1
+#undef CONFIG_DEMO_LOAD
+#define CONFIG_DEMO_SIMPLE 1
+#define CONFIG_DEMO_OBJECT 1
+#define CONFIG_DEMO_ONSCREENKEYBOARD 1
+#define CONFIG_DEMO_TEMP 1
+#undef CONFIG_DEMO_TERM
+#define CONFIG_DEMO_TIMER 1
+#define CONFIG_DEMO_LOGOUT 1
+#define CONFIG_DEMO_IMAGE 1
+#define CONFIG_DEMO_WIDGETX 1
+
+/*
+ * Paths
+ */
+#define CONFIG_PATH_INSTALL "../"
+#define CONFIG_PATH_BIN "bin"
+#define CONFIG_PATH_LIB "lib"
+#define CONFIG_PATH_INCLUDE "include"
+#define CONFIG_PATH_SHARE "share/xynth"
+#define CONFIG_PATH_FONTS "share/xynth/fonts"
+#define CONFIG_PATH_CONFIGS "share/xynth/configs"
+#define CONFIG_PATH_THEMES "share/xynth/themes"
+
+#endif /* CONFIG_H */

@@ -1,27 +1,26 @@
 
-include ../../Makefile.cfg
-include ../../Makefile.parse
+-include ../../.config
 
-DIR = src/demo/simple/
-
-INCDIR  = ../../src/lib
-LIBDIR  = ../../src/lib
-LDFLAGS = -lxynth
-
-OBJS = simple.o
-
-ifeq ($(SINGLE_APP), Y)
-TARGET_A = single_simple.a
-CFLAGS  += -Dmain=simple_main
+ifeq ($(CONFIG_SINGLE_APPLICATION), y)
+target-n = simple
+target_o-y = single_simple.o
 else
-TARGET = simple
+target-y = simple
+target_o-n = single_simple.o
 endif
 
-EXTRA_CLEAN = simple single_simple.a
+simple_files-y     = simple.c
+simple_includes-y  = ../../src/lib
+simple_libraries-y = ../../src/lib/
+simple_ldflags-y   = -lxynth
 
-include ../../Makefile.rules
+single_simple.o_files-y    = simple.c
+single_simple.o_includes-y = ../../src/lib
+single_simple.o_cflags-y   = -Dmain=simple_main
 
-dist: all
-ifneq ($(TARGET),)
-	cp -a $(TARGET) ../../$(DISTBINDIR)
+include ../../Makefile.lib
+
+ifneq ($(CONFIG_SINGLE_APPLICATION), y)
+dist:
+	$(CP) simple ../../dist/$(CONFIG_PATH_BIN)/simple
 endif

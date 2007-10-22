@@ -15,7 +15,7 @@
 
 #include "xynth_.h"
 
-#if defined(PLATFORM_PSPDEV)
+#if defined(CONFIG_PLATFORM_PSPDEV)
 
 #include <pspkernel.h>
 #include <pspthreadman.h>
@@ -34,7 +34,7 @@ unsigned int sleep (unsigned int sec)
 	return 0;
 }
 
-#elif defined(PLATFORM_MINGW)
+#elif defined(CONFIG_PLATFORM_MINGW)
 
 #include <windows.h>
 #include <time.h>
@@ -57,6 +57,10 @@ unsigned int sleep (unsigned int sec)
 	usleep(sec * 1000 * 1000);
 	return 0;
 }
+
+#elif defined(CONFIG_PLATFORM_LINUX)
+
+#include <sys/time.h>
 
 #endif
 

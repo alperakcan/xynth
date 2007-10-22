@@ -13,15 +13,13 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(VIDEO_FBDev)
-
 #include <sys/ioctl.h>
 #include <fcntl.h>
 #include <unistd.h>
 
 #include "../../../lib/xynth_.h"
 #include "server.h"
-#include "../helper/helper.h"
+#include "helper.h"
 #include "fbdev.h"
 
 int fb_console_fd;
@@ -168,5 +166,3 @@ void fb_dump_vscr (struct fb_var_screeninfo *vscr)
 	printf("vmode: %u\n", vscr->vmode);
 }
 #endif
-
-#endif /* VIDEO_FBDev */

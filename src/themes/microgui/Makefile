@@ -1,14 +1,12 @@
 
-include ../../../Makefile.cfg
-include ../../../Makefile.parse
+-include ../../../.config
 
-DIR = src/themes/microgui/
+target_so-y = microgui.so
 
-OBJS          = microgui.o
-INCDIR        = ../../lib ../../server
-TARGET_SO     = microgui.so
+microgui.so_files-y    = microgui.c
+microgui.so_includes-y = ../../lib ../../server
 
-include ../../../Makefile.rules
+include ../../../Makefile.lib
 
-dist: all
-	cp -a $(TARGET_SO) ../../../$(DISTTHEMEDIR)
+dist:
+	$(CP) microgui.so ../../../dist/$(CONFIG_PATH_THEMES)/microgui.so

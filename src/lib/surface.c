@@ -13,13 +13,13 @@
  *                                                                         *
  ***************************************************************************/
 
-#if !defined(SINGLE_APP)
+#include "xynth_.h"
+
+#if !defined(CONFIG_SINGLE_APPLICATION)
 	#include <sys/shm.h>
 	#include <sys/mman.h>
 	#include <fcntl.h>
 #endif
-
-#include "xynth_.h"
 
 int s_surface_init (s_window_t *window)
 {
@@ -55,7 +55,7 @@ void s_surface_shm_attach (s_window_t *window)
 		window->surface->matrix = window->parent->surface->matrix;
 		return;
 	}
-#if defined(SINGLE_APP)
+#if defined(CONFIG_SINGLE_APPLICATION)
 	addr = (void *) window->surface->matrix;
 #else
         if ((addr = (void *) shmat(window->surface->shm_mid, NULL, SHM_RDONLY)) < 0) {
@@ -80,7 +80,7 @@ void s_surface_linear (s_window_t *window)
 		window->surface->linear_buf = window->parent->surface->linear_buf;
 		return;
 	}
-#if defined(SINGLE_APP)
+#if defined(CONFIG_SINGLE_APPLICATION)
 	addr = (void *) window->surface->linear_buf;
 #else
 	if (window->surface->need_expose & SURFACE_NEEDEXPOSE) {
@@ -116,7 +116,7 @@ void s_surface_uninit (s_window_t *window)
 	if (window->surface == NULL) {
 		return;
 	}
-#if defined(SINGLE_APP)
+#if defined(CONFIG_SINGLE_APPLICATION)
 #else
 	if ((window->type & WINDOW_MAIN) &&
 	    (!(window->surface->need_expose & SURFACE_NEEDSTREAM))) {

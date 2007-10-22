@@ -1,12 +1,6 @@
 
-include ../../Makefile.cfg
-include ../../Makefile.parse
-
-all:
-	@true
-
-clean:
-	@true
+-include ../../.config
+include ../../Makefile.lib
 
 dist:
-	cp -a *.ttf ../../$(DISTFONTDIR)
+	$(CP) *.ttf ../../dist/$(CONFIG_PATH_FONTS)/

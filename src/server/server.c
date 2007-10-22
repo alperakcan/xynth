@@ -16,67 +16,67 @@
 #include "../lib/xynth_.h"
 #include "server.h"
 
-#if defined(PLATFORM_LINUX)
+#if defined(CONFIG_PLATFORM_LINUX)
 	#include <fcntl.h>
 #endif
-#if !defined(SINGLE_APP)
+#if !defined(CONFIG_SINGLE_APPLICATION)
 	#include <sys/shm.h>
 #endif
 
-#if defined(VIDEO_FBDev)
+#if defined(CONFIG_VIDEO_FBDEV)
 	extern s_video_driver_t s_video_fbdev;
 #endif
-#if defined(VIDEO_VESA)
+#if defined(CONFIG_VIDEO_VESA)
 	extern s_video_driver_t s_video_vesa;
 #endif
-#if defined(VIDEO_SVGALib)
+#if defined(CONFIG_VIDEO_SVGALIB)
 	extern s_video_driver_t s_video_svga;
 #endif
-#if defined(VIDEO_SDL)
+#if defined(CONFIG_VIDEO_SDL)
 	extern s_video_driver_t s_video_sdl;
 #endif
-#if defined(VIDEO_GDI)
+#if defined(CONFIG_VIDEO_GDI)
 	extern s_video_driver_t s_video_gdi;
 #endif
-#if defined(VIDEO_PSPDEV)
+#if defined(CONFIG_VIDEO_PSPDEV)
 	extern s_video_driver_t s_video_pspdev;
 #endif
-#if defined(VIDEO_GP2X)
+#if defined(CONFIG_VIDEO_GP2X)
 	extern s_video_driver_t s_video_gp2x;
 #endif
-#if defined(VIDEO_CACA)
+#if defined(CONFIG_VIDEO_CACA)
 	extern s_video_driver_t s_video_caca;
 #endif
-#if defined(VIDEO_NULL)
+#if defined(CONFIG_VIDEO_NULL)
 	extern s_video_driver_t s_video_null;
 #endif
 
 static s_video_driver_t *video_drivers[] = {
-#if defined(VIDEO_FBDev)
+#if defined(CONFIG_VIDEO_FBDEV)
 	&s_video_fbdev,
 #endif
-#if defined(VIDEO_VESA)
+#if defined(CONFIG_VIDEO_VESA)
 	&s_video_vesa,
 #endif
-#if defined(VIDEO_SVGALib)
+#if defined(CONFIG_VIDEO_SVGALIB)
 	&s_video_svga,
 #endif
-#if defined(VIDEO_SDL)
+#if defined(CONFIG_VIDEO_SDL)
 	&s_video_sdl,
 #endif
-#if defined(VIDEO_GDI)
+#if defined(CONFIG_VIDEO_GDI)
 	&s_video_gdi,
 #endif
-#if defined(VIDEO_PSPDEV)
+#if defined(CONFIG_VIDEO_PSPDEV)
 	&s_video_pspdev,
 #endif
-#if defined(VIDEO_GP2X)
+#if defined(CONFIG_VIDEO_GP2X)
 	&s_video_gp2x,
 #endif
-#if defined(VIDEO_CACA)
+#if defined(CONFIG_VIDEO_CACA)
 	&s_video_caca,
 #endif
-#if defined(VIDEO_NULL)
+#if defined(CONFIG_VIDEO_NULL)
 	&s_video_null,
 #endif
 	NULL,
@@ -118,12 +118,12 @@ char * s_server_cfg_token (char **ptr)
 int s_server_cfg (s_server_conf_t *config)
 {
 	int ret = 0;
-#if defined(PLATFORM_PSPDEV)
+#if defined(CONFIG_PLATFORM_PSPDEV)
 	config->general.driver = strdup("pspdev");
 	config->general.mode = strdup("480x272x16M32");
 	config->mouse.type = strdup("MOUSE_PSPDEV");
 	config->mouse.device = strdup("/dev/null");
-#elif defined(PLATFORM_GP2X)
+#elif defined(CONFIG_PLATFORM_GP2X)
 	config->general.driver = strdup("gp2x");
 	config->general.mode = strdup("320x240x64K");
 	config->mouse.type = strdup("MOUSE_GP2XDEV");
@@ -136,8 +136,8 @@ int s_server_cfg (s_server_conf_t *config)
 	s_config_var_t *var;
 
 	s_config_init(&cfg);
-	if (s_config_parse(cfg, CONFDIR "xynth.conf")) {
-		debugf(DSER, "Configuration file parsing failed (%s)", CONFDIR "xynth.conf");
+	if (s_config_parse(cfg, CONFIG_PATH_INSTALL CONFIG_PATH_CONFIGS "/xynth.conf")) {
+		debugf(DSER, "Configuration file parsing failed (%s)", CONFIG_PATH_INSTALL CONFIG_PATH_CONFIGS "/xynth.conf");
 		s_config_uninit(cfg);
 		return -1;
 	}
@@ -311,13 +311,13 @@ int s_server_init (void)
 	void *addr;
 	s_server_conf_t config;
 
-#if defined(PLATFORM_LINUX)
+#if defined(CONFIG_PLATFORM_LINUX)
 	int fd[2];
 	setvbuf(stdout, (char *) NULL, _IONBF, 0);
 	setvbuf(stderr, (char *) NULL, _IONBF, 0);
 	fd[0] = fcntl(fileno(stdout), F_DUPFD, 0);
 	fd[1] = fcntl(fileno(stderr), F_DUPFD, 0);
-#elif defined(PLATFORM_GP2X)
+#elif defined(CONFIG_PLATFORM_GP2X)
 	setvbuf(stdout, (char *) NULL, _IONBF, 0);
 	setvbuf(stderr, (char *) NULL, _IONBF, 0);
 #endif
@@ -381,7 +381,7 @@ int s_server_init (void)
 			server->window->surface->height = server->origin_w;
 		}
 		server->window->surface->need_expose = SURFACE_NEEDEXPOSE;
-#if defined(SINGLE_APP)
+#if defined(CONFIG_SINGLE_APPLICATION)
 		addr = (void *) s_malloc(sizeof(char) * server->window->surface->width * server->window->surface->height * server->window->surface->bytesperpixel);
 #else
 		if ((server->rotate_shm_id = shmget(IPC_PRIVATE, sizeof(char) * server->window->surface->width * server->window->surface->height * server->window->surface->bytesperpixel, IPC_CREAT | 0644)) < 0) {
@@ -411,14 +411,14 @@ int s_server_init (void)
 	}
 	server->window->surface->linear_buf_height = server->window->surface->height;
 
-#if defined(PLATFORM_LINUX)
+#if defined(CONFIG_PLATFORM_LINUX)
 	close(fileno(stdout));
 	fcntl(fd[0], F_DUPFD, 0);
 	close(fileno(stderr));
 	fcntl(fd[1], F_DUPFD, 0);
 #endif
 
-#if defined(SINGLE_APP)
+#if defined(CONFIG_SINGLE_APPLICATION)
 	addr = (void *) s_malloc(sizeof(char) * server->window->surface->width * server->window->surface->height);
 #else
         if ((server->window->surface->shm_mid = shmget(IPC_PRIVATE, sizeof(char) * server->window->surface->width * server->window->surface->height, IPC_CREAT | 0644)) < 0) {
@@ -521,7 +521,7 @@ void s_server_uninit (void)
 		server->driver->server_uninit();
 	}
 
-#if defined(SINGLE_APP)
+#if defined(CONFIG_SINGLE_APPLICATION)
 	s_free(server->window->surface->matrix);
 #else
 	shmdt(server->window->surface->matrix);

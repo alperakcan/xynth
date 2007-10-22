@@ -1,14 +1,12 @@
 
-include ../../../Makefile.cfg
-include ../../../Makefile.parse
+-include ../../../.config
 
-DIR = src/themes/silverado/
+target_so-y = silverado.so
 
-OBJS          = silverado.o
-INCDIR        = ../../lib ../../server
-TARGET_SO     = silverado.so
+silverado.so_files-y    = silverado.c
+silverado.so_includes-y = ../../lib ../../server
 
-include ../../../Makefile.rules
+include ../../../Makefile.lib
 
-dist: all
-	cp -a $(TARGET_SO) ../../../$(DISTTHEMEDIR)
+dist:
+	$(CP) silverado.so ../../../dist/$(CONFIG_PATH_THEMES)/silverado.so

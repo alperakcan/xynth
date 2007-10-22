@@ -13,33 +13,35 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(VIDEO_HELPER_CONSOLE)
+#include "config.h"
+
+#if defined(CONFIG_VIDEO_HELPER_CONSOLE)
 /* console.c */
 int s_video_helper_console_init (void);
 int s_video_helper_console_switch (int vt);
-#endif /* VIDEO_HELPER_CONSOLE */
+#endif /* CONFIG_VIDEO_HELPER_CONSOLE */
 
-#if defined(VIDEO_HELPER_IRMAN)
+#if defined(CONFIG_VIDEO_HELPER_IRMAN)
 int s_video_helper_irman_init (char *port);
 char * s_video_helper_irman_getcode (void);
 int s_video_helper_irman_uninit (void);
-#endif /* VIDEO_HERLPER_IRMAN */
+#endif /* CONFIG_VIDEO_HERLPER_IRMAN */
 
-#if defined(VIDEO_HELPER_IRIMAF)
+#if defined(CONFIG_VIDEO_HELPER_IRIMAF)
 int s_video_helper_irimaf_init (void);
 int s_video_helper_irimaf_uninit (void);
 char * s_video_helper_irimaf_getcode (void);
-#endif /* VIDEO_HELPER_IRIMAF */
+#endif /* CONFIG_VIDEO_HELPER_IRIMAF */
 
-#if defined(VIDEO_HELPER_KBD)
+#if defined(CONFIG_VIDEO_HELPER_KEYBOARD)
 /* kbd.c */
 void s_video_helper_kbd_set_attr (void);
 int s_video_helper_kbd_init (s_server_conf_t *cfg, int kfd);
 int s_video_helper_kbd_update (s_video_input_data_t *keybd);
 void s_video_helper_kbd_uninit (void);
-#endif /* VIDEO_HELPER_KBD */
+#endif /* CONFIG_VIDEO_HELPER_KEYBOARD */
 
-#if defined(VIDEO_HELPER_MODES)
+#if defined(CONFIG_VIDEO_HELPER_MODES)
 /* modes.c */
 
 typedef enum {
@@ -218,25 +220,25 @@ typedef struct s_video_helper_mode_info_s {
 } s_video_helper_mode_info_t;
 
 int s_video_helper_mode_find (s_server_conf_t *cfg, s_video_helper_mode_info_t **gmode);
-#endif /* VIDEO_HELPER_MODES */
+#endif /* CONFIG_VIDEO_HELPER_MODES */
 
-#if defined(VIDEO_HELPER_MOUSE)
+#if defined(CONFIG_VIDEO_HELPER_MOUSE)
 /* mouse.c */
 int s_video_helper_mouse_init (s_server_conf_t *cfg);
 int s_video_helper_mouse_update (s_video_input_data_t *mouse);
 void s_video_helper_mouse_uninit (void);
 void s_video_helper_mouse_setxrange (int x1, int x2);
 void s_video_helper_mouse_setyrange (int y1, int y2);
-#endif /* VIDEO_HELPER_MOUSE */
+#endif /* CONFIG_VIDEO_HELPER_MOUSE */
 
-#if defined(VIDEO_HELPER_MTRR)
+#if defined(CONFIG_VIDEO_HELPER_MTRR)
 /* mtrr.c */
 void s_video_helper_mtrr_add (unsigned int base, unsigned int size);
-#endif /* VIDEO_HELPER_MTRR */
+#endif /* CONFIG_VIDEO_HELPER_MTRR */
 
-#if defined(VIDEO_HELPER_TSCREEN)
+#if defined(CONFIG_VIDEO_HELPER_TSCREEN)
 /* tscreen.c */
 int s_video_helper_touchscreen_init (s_server_conf_t *cfg);
 int s_video_helper_touchscreen_update (s_video_input_data_mouse_t *mouse);
 void s_video_helper_touchscreen_uninit (void);
-#endif /* VIDEO_HELPER_TSCREEN */
+#endif /* CONFIG_VIDEO_HELPER_TSCREEN */

@@ -13,7 +13,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(THREAD_WIN32)
+#if defined(CONFIG_THREAD_WINDOWS)
 
 #include <windows.h>
 
@@ -173,4 +173,4 @@ static s_thread_api_t s_thread_win32 = {
 	s_thread_win32_thread_exit,
 };
 
-#endif /* THREAD_WIN32 */
+#endif /* CONFIG_THREAD_WINDOWS */

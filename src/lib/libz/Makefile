@@ -1,13 +1,19 @@
 
-include ../../../Makefile.cfg
-include ../../../Makefile.parse
+target_o-y = libz.o
 
-DIR = src/lib/libz/
+libz.o_includes-y = ./
 
-INCDIR = ./
-OBJS += adler32.o compress.o crc32.o gzio.o uncompr.o deflate.o trees.o zutil.o \
-        inflate.o infback.o inftrees.o inffast.o
+libz.o_files-y = adler32.c \
+                 compress.c \
+                 crc32.c \
+                 gzio.c \
+                 uncompr.c \
+                 deflate.c \
+                 trees.c \
+                 zutil.c \
+                 inflate.c \
+                 infback.c \
+                 inftrees.c \
+                 inffast.c
 
-TARGET_O = libz.o
-
-include ../../../Makefile.rules
+include ../../../Makefile.lib

@@ -16,7 +16,9 @@
 /*this code is heavly based on libirman
  */
 
-#if defined(VIDEO_HELPER_IRMAN)
+#include "config.h"
+
+#if defined(CONFIG_VIDEO_HELPER_IRMAN)
 
 #include <stdio.h>
 #include <stdlib.h>

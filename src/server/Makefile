@@ -1,144 +1,75 @@
 
-include ../../Makefile.cfg
-include ../../Makefile.parse
+-include ../../.config
 
-DIR = src/server/
+subdir-$(CONFIG_VIDEO_FBDEV)    = ./video/fb
+subdir-$(CONFIG_VIDEO_SDL)     += ./video/sdl
+subdir-$(CONFIG_VIDEO_SVGALIB) += ./video/svga
+subdir-$(CONFIG_VIDEO_VESA)    += ./video/vesa
+subdir-$(CONFIG_VIDEO_PSPDEV)  += ./video/pspdev
+subdir-$(CONFIG_VIDEO_GDI)     += ./video/gdi
+subdir-$(CONFIG_VIDEO_GP2X)    += ./video/gp2x
+subdir-$(CONFIG_VIDEO_CACA)    += ./video/caca
+subdir-$(CONFIG_VIDEO_NULL)    += ./video/null
+subdir-$(CONFIG_VIDEO_HELPER)  += ./video/helper
 
-INCDIR += . ../lib
-LIBDIR += ../lib
+target-$(CONFIG_PLATFORM_LINUX) = xynth
 
-TARGET-$(PLATFORM_LINUX)  = xynth
-TARGET-$(PLATFORM_PSPDEV) = xynth.elf
-TARGET-$(PLATFORM_MINGW)  = xynth.exe
-TARGET-$(PLATFORM_GP2X)   = xynth
+xynth_files-y = event.c \
+                id.c \
+                irr.c \
+                kbd.c \
+                mouse.c \
+                priority.c \
+                server.c \
+                single.c \
+                socket.c \
+                start.c \
+                surface.c \
+                theme.c \
+                window.c \
+                window_handler.c \
+                window_move_resize.c
 
-OBJS = event.o id.o irr.o kbd.o mouse.o priority.o single.o server.o socket.o start.o \
-       surface.o theme.o window.o window_handler.o window_move_resize.o
+xynth_files-$(CONFIG_VIDEO_FBDEV)   += ./video/fb/video_fb.o
+xynth_files-$(CONFIG_VIDEO_SDL)     += ./video/sdl/video_sdl.o
+xynth_files-$(CONFIG_VIDEO_SVGALIB) += ./video/svga/video_svga.o
+xynth_files-$(CONFIG_VIDEO_VESA)    += ./video/vesa/video_vesa.o
+xynth_files-$(CONFIG_VIDEO_PSPDEV)  += ./video/pspdev/video_pspdev.o
+xynth_files-$(CONFIG_VIDEO_GDI)     += ./video/gdi/video_gdi.o
+xynth_files-$(CONFIG_VIDEO_GP2X)    += ./video/gp2x/video_gp2x.o
+xynth_files-$(CONFIG_VIDEO_CACA)    += ./video/caca/video_caca.o
+xynth_files-$(CONFIG_VIDEO_NULL)    += ./video/null/video_null.o
+xynth_files-$(CONFIG_VIDEO_HELPER)  += ./video/helper/video_helper.o
 
-OBJS-$(VIDEO_FBDev)       += video/fb/fb.o video/fb/kbd.o video/fb/server.o video/fb/timing.o
-VLDFLAGS-$(VIDEO_FBDev)   += -lm
-
-OBJS-$(VIDEO_SDL)         += video/sdl/event.o video/sdl/kbd.o video/sdl/mouse.o video/sdl/server.o
-CFLAGS-$(VIDEO_SDL)       += $(shell sdl-config --cflags)
-VLDFLAGS-$(VIDEO_SDL)     += $(shell sdl-config --libs)
-
-OBJS-$(VIDEO_SVGALib)     += video/svga/kbd.o video/svga/server.o
-VLDFLAGS-$(VIDEO_SVGALib) += -lvga -lm
-
-OBJS-$(VIDEO_VESA)        += video/vesa/kbd.o video/vesa/server.o video/vesa/lrmi-0.10/lrmi.o
-
-TARGET-$(VIDEO_PSPDEV)     = xynth.elf
-OBJS-$(VIDEO_PSPDEV)      += video/pspdev/event.o video/pspdev/kbd.o video/pspdev/mouse.o video/pspdev/server.o
-VLDFLAGS-$(VIDEO_PSPDEV)  += -lm -lpspdebug -lpspdisplay -lpspge -lpspctrl -lpspsdk -lc -lpspnet -lpspnet_inet -lpspnet_apctl -lpspnet_resolver -lpsputility -lpspuser -lpspkernel
-
-OBJS-$(VIDEO_GDI)         += video/gdi/event.o video/gdi/kbd.o video/gdi/mouse.o video/gdi/server.o
-LIBDIR-$(VIDEO_GDI)       += video/gdi/pthread_w32
-VLDFLAGS-$(VIDEO_GDI)     += -lpthreadGC2 -lgdi32
-TARGET-$(VIDEO_GDI)        = xynth.exe
-
-OBJS-$(VIDEO_GP2X)        += video/gp2x/event.o video/gp2x/kbd.o video/gp2x/mouse.o video/gp2x/server.o
-VLDFLAGS-$(VIDEO_GP2X)    += -lpthread -lm -static
-
-OBJS-$(VIDEO_CACA)        += video/caca/event.o video/caca/kbd.o video/caca/mouse.o video/caca/server.o
-VLDFLAGS-$(VIDEO_CACA)    += -lcaca -lslang -lX11 -L/usr/X11R6/lib -lncurses -lncurses  -lm
-
-OBJS-$(VIDEO_NULL)        += video/null/kbd.o video/null/mouse.o video/null/server.o
-
-OBJS-$(VIDEO_HELPER)      += video/helper/console.o video/helper/irman.o video/helper/kbd.o video/helper/modes.o \
-                             video/helper/mouse.o video/helper/mtrr.o video/helper/tscreen.o
-
-VLDFLAGS-$(VIDEO_HELPER_TSCREEN) += -lts
-
-ifeq ($(SINGLE_APP), Y)
-	EXTRA_OBJS-$(DEMO_CHILD) += ../../demo/child/single_child.a
-	EXTRA_OBJS-$(DEMO_DESKTOP) += ../../demo/desktop/single_desktop.a
-	EXTRA_OBJS-$(DEMO_HIDE) += ../../demo/hide/single_hide.a
-	EXTRA_OBJS-$(DEMO_LOAD) += ../../demo/load/single_load.a
-	EXTRA_OBJS-$(DEMO_SIMPLE) += ../../demo/simple/single_simple.a
-	EXTRA_OBJS-$(DEMO_OBJECT) += ../../demo/object/single_object.a
-	EXTRA_OBJS-$(DEMO_ONSCREENKEYBOARD) += ../../demo/onscreenkeyboard/single_onscreenkeyboard.a
-	EXTRA_OBJS-$(DEMO_TEMP) += ../../demo/temp/single_temp.a
-	EXTRA_OBJS-$(DEMO_TERM) += ../../demo/term/single_term.a
-	EXTRA_OBJS-$(DEMO_TIMER) += ../../demo/timer/single_timer.a
-	EXTRA_OBJS-$(DEMO_LOGOUT) += ../../demo/xynthlogout/single_xynthlogout.a
-	EXTRA_OBJS-$(DEMO_WIDGETX) += ../../demo/widgetx/single_widgetx.a
+ifeq ($(CONFIG_SINGLE_APPLICATION), y)
+xynth_files-$(CONFIG_DEMO_CHILD)    += ../../demo/child/single_child.o
+xynth_files-$(CONFIG_DEMO_DESKTOP)  += ../../demo/desktop/single_desktop.o
+xynth_files-$(CONFIG_DEMO_HIDE)     += ../../demo/hide/single_hide.o
+xynth_files-$(CONFIG_DEMO_LOAD)     += ../../demo/load/single_load.o
+xynth_files-$(CONFIG_DEMO_SIMPLE)   += ../../demo/simple/single_simple.o
+xynth_files-$(CONFIG_DEMO_OBJECT)   += ../../demo/object/single_object.o
+xynth_files-$(CONFIG_DEMO_TEMP)     += ../../demo/temp/single_temp.o
+xynth_files-$(CONFIG_DEMO_TERM)     += ../../demo/term/single_term.o
+xynth_files-$(CONFIG_DEMO_TIMER)    += ../../demo/timer/single_timer.o
+xynth_files-$(CONFIG_DEMO_LOGOUT)   += ../../demo/xynthlogout/single_xynthlogout.o
+xynth_files-$(CONFIG_DEMO_IMAGE)    += ../../demo/img/single_img.o
+xynth_files-$(CONFIG_DEMO_ONSCREENKEYBOARD) += ../../demo/onscreenkeyboard/single_onscreenkeyboard.o
+xynth_files-$(CONFIG_DEMO_WIDGETX)  += ../../demo/widgetx/single_widgetx.o
 endif
 
-LIBDIR-$(WIDGET_LIB)  += ../widget
-LDFLAGS-$(WIDGET_LIB) += -lwidget
-LDFLAGS-Y             += $(VLDFLAGS-Y)
+xynth_ldflags-$(CONFIG_VIDEO_FBDEV) += -lm
+xynth_ldflags-$(CONFIG_VIDEO_SDL)   += $(shell sdl-config --libs)
+xynth_ldflags-$(CONFIG_VIDEO_CACA)  += -lcaca
 
-LDFLAGS-$(THEME_PLUGIN) += -ldl
+xynth_includes-y             += ./ ../lib/
+xynth_libraries-y            += ../lib/
+xynth_ldflags-y              += -lxynth
 
-OBJS       += $(OBJS-Y)
-EXTRA_OBJS += $(EXTRA_OBJS-Y)
-LDFLAGS    += -lxynth
-TARGET      = $(TARGET-Y)
+ifeq ($(CONFIG_WIDGET_LIBRARY), y)
+xynth_ldflags-y              += -lwidget
+endif
 
-EXTRA_CLEAN = xynth xynth.exe xynth.elf $(OBJS-N) $(OBJS-)
+include ../../Makefile.lib
 
-include ../../Makefile.rules
-
-dist: all
-	cp -a $(TARGET) ../../$(DISTBINDIR)
-ifeq ($(PLATFORM_MINGW), Y)
-ifeq ($(THREAD_PTHREADS), Y)
-	cp -a video/gdi/pthread_w32/pthreadGC2.dll ../../$(DISTBINDIR)
-endif
-else
-ifeq ($(PLATFORM_PSPDEV), Y)
-	psp-fixup-imports ../../$(DISTBINDIR)/$(TARGET)
-	mksfo 'Xynth Windowing System' ../../$(DISTBINDIR)/param.sfo
-ifeq ($(PSP_FW_VERSION), 150)
-	mkdir -p ../../$(DISTBINDIR)/__SCE__xynth
-	psp-strip ../../$(DISTBINDIR)/$(TARGET) -o ../../$(DISTBINDIR)/__SCE__xynth/eboot.pbp
-#	psp-packer ../../$(DISTBINDIR)/__SCE__xynth/eboot.pbp
-	mkdir -p ../../$(DISTBINDIR)/%__SCE__xynth
-	pack-pbp ../../$(DISTBINDIR)/%__SCE__xynth/eboot.pbp \
-	         ../../$(DISTBINDIR)/param.sfo \
-	         ../../tools/pspdev/icon0.png \
-	         NULL \
-	         NULL \
-	         ../../tools/pspdev/pic1.png \
-	         NULL \
-	         NULL \
-	         NULL
-else
-ifeq ($(PSP_FW_VERSION), 1.0)
-	mkdir -p ../../$(DISTBINDIR)/xynth
-	psp-strip ../../$(DISTBINDIR)/$(TARGET) -o ../../$(DISTBINDIR)/$(TARGET).strip
-	psp-packer ../../$(DISTBINDIR)/$(TARGET).strip
-	pack-pbp ../../$(DISTBINDIR)/xynth/eboot.pbp \
-	         ../../$(DISTBINDIR)/param.sfo \
-	         ../../tools/pspdev/icon0.png \
-	         NULL \
-	         NULL \
-	         ../../tools/pspdev/pic1.png \
-	         NULL \
-	         ../../$(DISTBINDIR)/$(TARGET).strip \
-	         NULL
-	rm ../../$(DISTBINDIR)/$(TARGET).strip
-endif
-endif
-else
-ifeq ($(PLATFORM_GP2X), Y)
-	echo "#!/bin/bash"                          >  ../../$(DISTTOPDIR)/$(TARGET).gpu
-	echo "sync"                                 >> ../../$(DISTTOPDIR)/$(TARGET).gpu
-	echo "mount /mnt/sd -o remount,sync"        >> ../../$(DISTTOPDIR)/$(TARGET).gpu
-	echo "export PATH=\`pwd\`/bin:\$$PATH"          >> ../../$(DISTTOPDIR)/$(TARGET).gpu
-	echo "export LD_LIBRARY_PATH=\`pwd\`/lib:\$$LD_LIBRARY_PATH" >> ../../$(DISTTOPDIR)/$(TARGET).gpu
-	echo "cd bin"                               >> ../../$(DISTTOPDIR)/$(TARGET).gpu
-ifeq ($(SINGLE_APP), Y)
-	echo "./xynth &> ../xynth.log"              >> ../../$(DISTTOPDIR)/$(TARGET).gpu
-else
-	echo "./xynth &> ../xynth.log& sleep 2; ./desktop &> ../xynth_desktop.log" >> ../../$(DISTTOPDIR)/$(TARGET).gpu
-endif
-	echo "sync"                                 >> ../../$(DISTTOPDIR)/$(TARGET).gpu
-	echo "mount /mnt/sd -o remount,async"       >> ../../$(DISTTOPDIR)/$(TARGET).gpu
-	echo "cd /usr/gp2x"                         >> ../../$(DISTTOPDIR)/$(TARGET).gpu
-	echo "exec ./gp2xmenu"                      >> ../../$(DISTTOPDIR)/$(TARGET).gpu
-	chmod +x ../../$(DISTTOPDIR)/$(TARGET).gpu
-	cp ../../tools/gp2x/xynth.png ../../$(DISTTOPDIR)
-endif
-endif
-endif
+dist:
+	$(CP) xynth ../../dist/$(CONFIG_PATH_BIN)/xynth

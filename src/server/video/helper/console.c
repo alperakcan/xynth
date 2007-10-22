@@ -13,7 +13,9 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(VIDEO_HELPER_CONSOLE)
+#include "config.h"
+
+#if defined(CONFIG_VIDEO_HELPER_CONSOLE)
 
 #include <unistd.h>
 #include <signal.h>
@@ -320,4 +322,4 @@ int s_video_helper_console_switch (int vt)
 	return 0;
 }
 
-#endif /* VIDEO_HELPER_CONSOLE */
+#endif /* CONFIG_VIDEO_HELPER_CONSOLE */

@@ -13,8 +13,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(VIDEO_GP2X)
-
 #include "../../../lib/xynth_.h"
 #include "server.h"
 #include "../helper/helper.h"
@@ -55,5 +53,3 @@ void s_video_gp2x_mouse_uninit (void)
 	priv->mouse_fd[1] = -1;
 	s_server_cursor_uninit();
 }
-
-#endif /* VIDEO_GP2X */

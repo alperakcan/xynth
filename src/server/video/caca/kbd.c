@@ -13,8 +13,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(VIDEO_CACA)
-
 #include "../../../lib/xynth_.h"
 #include "server.h"
 #include "caca.h"
@@ -55,5 +53,3 @@ void s_video_caca_kbd_uninit (void)
 	priv->keybd_fd[0] = -1;
 	priv->keybd_fd[1] = -1;
 }
-
-#endif /* VIDEO_CACA */

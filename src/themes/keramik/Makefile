@@ -1,14 +1,12 @@
 
-include ../../../Makefile.cfg
-include ../../../Makefile.parse
+-include ../../../.config
 
-DIR = src/themes/keramik/
+target_so-y = keramik.so
 
-OBJS          = keramik.o
-INCDIR        = ../../lib ../../server
-TARGET_SO     = keramik.so
+keramik.so_files-y    = keramik.c
+keramik.so_includes-y = ../../lib ../../server
 
-include ../../../Makefile.rules
+include ../../../Makefile.lib
 
-dist: all
-	cp -a $(TARGET_SO) ../../../$(DISTTHEMEDIR)
+dist:
+	$(CP) keramik.so ../../../dist/$(CONFIG_PATH_THEMES)/keramik.so

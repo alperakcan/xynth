@@ -1,27 +1,26 @@
 
-include ../../Makefile.cfg
-include ../../Makefile.parse
+-include ../../.config
 
-DIR = src/demo/onscreenkeyboard/
-
-INCDIR  = ../../src/lib
-LIBDIR  = ../../src/lib
-LDFLAGS = -lxynth
-
-OBJS = onscreenkeyboard.o
-
-ifeq ($(SINGLE_APP), Y)
-TARGET_A = single_onscreenkeyboard.a
-CFLAGS  += -Dmain=onscreenkeyboard_main
+ifeq ($(CONFIG_SINGLE_APPLICATION), y)
+target-n = onscreenkeyboard
+target_o-y = single_onscreenkeyboard.o
 else
-TARGET = onscreenkeyboard
+target-y = onscreenkeyboard
+target_o-n = single_onscreenkeyboard.o
 endif
 
-EXTRA_CLEAN = onscreenkeyboard single_onscreenkeyboard.a
+onscreenkeyboard_files-y     = onscreenkeyboard.c
+onscreenkeyboard_includes-y  = ../../src/lib
+onscreenkeyboard_libraries-y = ../../src/lib/
+onscreenkeyboard_ldflags-y   = -lxynth
 
-include ../../Makefile.rules
+single_onscreenkeyboard.o_files-y    = onscreenkeyboard.c
+single_onscreenkeyboard.o_includes-y = ../../src/lib
+single_onscreenkeyboard.o_cflags-y   = -Dmain=onscreenkeyboard_main
 
-dist: all
-ifneq ($(TARGET),)
-	cp -a $(TARGET) ../../$(DISTBINDIR)
+include ../../Makefile.lib
+
+ifneq ($(CONFIG_SINGLE_APPLICATION), y)
+dist:
+	$(CP) onscreenkeyboard ../../dist/$(CONFIG_PATH_BIN)/onscreenkeyboard
 endif

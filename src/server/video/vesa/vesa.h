@@ -13,7 +13,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(VIDEO_VESA)
+#include "config.h"
 
 typedef struct vbe_s {
 	struct vbe_info_block *info;
@@ -39,5 +39,3 @@ int s_video_vesa_server_init (s_server_conf_t *cfg);
 void s_video_vesa_surface_uninit (void);
 void s_video_vesa_server_surface_setrgbpalette (void);
 void s_video_vesa_server_surface_init (int mode);
-
-#endif /* VIDEO_VESA */

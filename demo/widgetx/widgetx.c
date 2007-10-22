@@ -76,7 +76,7 @@ void button_focus_pressed (w_object_t *object, int button)
 	w_object_show(obj[r]->object);
 }
 
-#if defined(SINGLE_APP)
+#if defined(CONFIG_SINGLE_APPLICATION)
 int widgetx_main (int argc, char *argv[]);
 s_single_app_t single_widgetx = {
 	widgetx_main,

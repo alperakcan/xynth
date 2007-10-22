@@ -1,27 +1,26 @@
 
-include ../../Makefile.cfg
-include ../../Makefile.parse
+-include ../../.config
 
-DIR = src/demo/xynthlogout/
-
-INCDIR  = ../../src/lib
-LIBDIR  = ../../src/lib
-LDFLAGS = -lxynth
-
-OBJS = xynthlogout.o
-
-ifeq ($(SINGLE_APP), Y)
-TARGET_A = single_xynthlogout.a
-CFLAGS  += -Dmain=xynthlogout_main
+ifeq ($(CONFIG_SINGLE_APPLICATION), y)
+target-n = xynthlogout
+target_o-y = single_xynthlogout.o
 else
-TARGET = xynthlogout
+target-y = xynthlogout
+target_o-n = single_xynthlogout.o
 endif
 
-EXTRA_CLEAN = xynthlogout single_xynthlogout.a
+xynthlogout_files-y     = xynthlogout.c
+xynthlogout_includes-y  = ../../src/lib
+xynthlogout_libraries-y = ../../src/lib/
+xynthlogout_ldflags-y   = -lxynth
 
-include ../../Makefile.rules
+single_xynthlogout.o_files-y    = xynthlogout.c
+single_xynthlogout.o_includes-y = ../../src/lib
+single_xynthlogout.o_cflags-y   = -Dmain=xynthlogout_main
 
-dist: all
-ifneq ($(TARGET),)
-	cp -a $(TARGET) ../../$(DISTBINDIR)
+include ../../Makefile.lib
+
+ifneq ($(CONFIG_SINGLE_APPLICATION), y)
+dist:
+	$(CP) xynthlogout ../../dist/$(CONFIG_PATH_BIN)/xynthlogout
 endif

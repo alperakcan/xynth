@@ -17,8 +17,8 @@
 #include "../lib/xynth_.h"
 #include "server.h"
 
-#if !defined(IPC_UDS) && !defined(IPC_TCP) && !defined(IPC_PIPE)
-	#error "You must select at least one of IPC_UDS, IPC_TCP, IPC_PIPE"
+#if !defined(CONFIG_IPC_UDS) && !defined(CONFIG_IPC_TCP) && !defined(CONFIG_IPC_PIPE)
+	#error "You must select at least one of CONFIG_IPC_UDS, CONFIG_IPC_TCP, CONFIG_IPC_PIPE"
 #endif
 
 #define s_socket_recv(a, b, c)	if (s_socket_api_recv(a, b, c) != c) { return -1; }
@@ -502,7 +502,7 @@ err:		debugf(DSER, "Error occured when requesting (%d) from client[%d]. Closing 
 int s_server_socket_uninit (s_window_t *window, s_pollfd_t *pfd)
 {
 	s_socket_api_close(pfd->fd);
-#if defined(IPC_UDS)
+#if defined(CONFIG_IPC_UDS)
 	unlink(S_SERVER_SOC_NAME);
 #endif
 	return 0;
@@ -520,7 +520,7 @@ int s_server_socket_ierr_f (s_window_t *window, s_pollfd_t *pfd)
 
 int s_server_socket_init_uds (void)
 {
-#if defined(IPC_UDS)
+#if defined(CONFIG_IPC_UDS)
 	int fd;
 	struct sockaddr_un soc = {AF_UNIX, S_SERVER_SOC_NAME};
 	int len = sizeof(soc.sun_family) + strlen(soc.sun_path);
@@ -546,7 +546,7 @@ int s_server_socket_init_uds (void)
 
 int s_server_socket_init_tcp (void)
 {
-#if defined(IPC_TCP)
+#if defined(CONFIG_IPC_TCP)
 	int fd;
 	int len;
 	struct sockaddr_in soc;
@@ -574,7 +574,7 @@ int s_server_socket_init_tcp (void)
 
 int s_server_socket_init_pipe (void)
 {
-#if defined(IPC_PIPE)
+#if defined(CONFIG_IPC_PIPE)
 	int fd;
 	s_sockaddr_t soc = {AF_PIPE, S_SERVER_SOC_PIPE};
 	int len = sizeof(soc.sa_family) + strlen(soc.sa_addr);

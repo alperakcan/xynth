@@ -52,8 +52,8 @@ int s_font_init (s_font_t **font, char *name)
 		debugf(0, "FT_Init_FreeType");
 		goto err0;
 	}
-        name_ = (char *) s_malloc(strlen(FONTDIR) + strlen(name) + 2);
-        sprintf(name_, "%s/%s", FONTDIR, name);
+        name_ = (char *) s_malloc(strlen(CONFIG_PATH_INSTALL CONFIG_PATH_FONTS) + strlen(name) + 2);
+        sprintf(name_, "%s/%s", CONFIG_PATH_INSTALL CONFIG_PATH_FONTS, name);
 	if (FT_New_Face((*font)->ft->library, name_, 0, &((*font)->ft->face))) {
 		debugf(0, "FT_New_Face (%s)", name_);
 		goto err1;

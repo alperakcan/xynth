@@ -13,8 +13,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(VIDEO_SDL)
-
 #include "../../../lib/xynth_.h"
 #include "server.h"
 #include "sdl.h"
@@ -175,5 +173,3 @@ void s_video_sdl_kbd_uninit (void)
 	priv->keybd_fd[0] = -1;
 	priv->keybd_fd[1] = -1;
 }
-
-#endif /* VIDEO_SDL */

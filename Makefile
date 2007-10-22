@@ -1,122 +1,73 @@
 
-include Makefile.cfg
-include Makefile.parse
+-include .config
 
-.PHONY := all clean dist install optimize doxy-doc xynth.pc test strip update pspdev
+help:
+	@echo ""
+	@echo "make help         - this text"
+	@echo "make menuconfig   - open menu configuration"
+	@echo "make all          - build everything"
+	@echo "make dist         - install everything to dist path"
+	@echo "make install      - install everything to install path"
+	@echo ""
+	@echo "make clean        - clean everything"
+	@echo "make distclean    - clean much more"
+	@echo ""
+	@echo "make linux        - linux default configuration"
+	@echo "make linux-single - linux single app configuration"
+	@echo "make mingw        - mingw default configuration"
+	@echo "make pspdev       - pspdev default configuration"
+	@echo "make gp2x         - linux default configuration"
+	@echo ""
 
-all:
-	@$(MAKE) --no-print-directory -C src
+check_goal := $(filter-out menuconfig, $(MAKECMDGOALS))
+check_goal := $(filter-out distclean, $(check_goal))
+check_goal := $(filter-out clean, $(check_goal))
+check_goal := $(filter-out linux, $(check_goal))
+check_goal := $(filter-out linux-single, $(check_goal))
+check_goal := $(filter-out mingw, $(check_goal))
+check_goal := $(filter-out pspdev, $(check_goal))
+check_goal := $(filter-out gp2x, $(check_goal))
+check_goal := $(strip $(check_goal))
 
-clean:
-	@$(MAKE) --no-print-directory clean -C src
-	@$(MAKE) --no-print-directory clean -C tools/theme
-	@$(MAKE) --no-print-directory clean -C tools/optimize
-	rm -f xynth.pc
-	rm -rf dist
-	rm -rf doc
+ifneq ($(check_goal),)
+ifneq "$(CONFIG_CONFIGURED)" "y"
+    $(error You must first run make menuconfig)
+endif
+endif
 
-dist: all xynth.pc
-	rm -rf dist
-	mkdir -p $(DISTTOPDIR)
-	mkdir -p $(DISTINCDIR)
-	mkdir -p $(DISTLIBDIR)
-	mkdir -p $(DISTBINDIR)
-	mkdir -p $(DISTCONFDIR)
-	mkdir -p $(DISTFONTDIR)
-	mkdir -p $(DISTTHEMEDIR)
-	@$(MAKE) --no-print-directory dist -C src
-	mkdir -p $(DISTPKGCONFIG)
-	cp xynth.pc $(DISTPKGCONFIG)/xynth.pc
+subdir-y := tools/config
+subdir-y += src
+subdir-n := tools/theme
+subdir-n += tools/optimize
+
+include Makefile.lib
+
+.PHONY: linux linux-single mingw pspdev gp2x
+linux linux-single mingw pspdev gp2x:
+	$(CP) configs/$@.config .config
+	$(CP) configs/$@.h src/lib/config.h
+
+.PHONY: menuconfig
+menuconfig: tools/config_all
+	tools/config/mconf configs/Config
+
+.PHONY: distclean
+distclean: clean
+	@$(RM) .config .config.cmd .config.old src/lib/config.h dist
+
+.PHONY: distdirs
+distdirs: __FORCE
+	$(MKDIR) dist
+	$(MKDIR) dist/$(CONFIG_PATH_BIN)
+	$(MKDIR) dist/$(CONFIG_PATH_LIB)
+	$(MKDIR) dist/$(CONFIG_PATH_INCLUDE)
+	$(MKDIR) dist/$(CONFIG_PATH_SHARE)
+	$(MKDIR) dist/$(CONFIG_PATH_FONTS)
+	$(MKDIR) dist/$(CONFIG_PATH_CONFIGS)
+	$(MKDIR) dist/$(CONFIG_PATH_THEMES)
+
+dist: distdirs
+	@true
 
 install: dist
-ifeq ($(PLATFORM_LINUX), Y)
-	mkdir -p $(INSTALLDIR)
-	cp -af dist/* $(INSTALLDIR)
-	ldconfig
-else
-ifeq ($(PLATFORM_MINGW), Y)
-	mkdir -p c:/xynth
-	cp -af dist/* c:/xynth
-else
-ifeq ($(PLATFORM_PSPDEV), Y)
-	rm -rf $(DISTINCDIR)
-	rm -rf $(DISTLIBDIR)
-	rm -rf $(DISTCONFDIR)
-	rm -rf $(DISTTHEMEDIR)
-	mkdir -p dist/psp/game
-	cp -af dist/bin/__SCE__xynth dist/psp/game
-ifeq ($(PSP_FW_VERSION), 150)
-	cp -af dist/bin/%__SCE__xynth dist/psp/game
-endif
-	cp -af dist/share dist/psp/game/__SCE__xynth
-	rm -rf dist/share
-	rm -rf dist/bin
-else
-ifeq ($(PLATFORM_GP2X), Y)
-	rm -rf $(DISTINCDIR)
-	rm -rf $(DISTLIBDIR)
-	rm -rf $(DISTCONFDIR)
-	rm -rf $(DISTTHEMEDIR)
-	gp2x-strip -xsR .note -R .comment dist/bin/xynth
-endif
-endif
-endif
-endif
-
-optimize:
-	$(MAKE) -C tools/optimize
-
-doxy-doc:
-	rm -rf doc
-	EXCLUDE_PATTERNS='*/dist/* \
-	                  */demo/* \
-			  */tools/* \
-			  */ports/* \
-			  */themes/* \
-			  */libz/* \
-			  */libpng/* \
-			  */freetype2/* \
-			  */expat/* \
-			  */pixman/* \
-			  */lrmi-*/* \
-			  */pthread_w32/*' \
-	SRCDIR='.' \
-	PROJECT='xynth' \
-	DOCDIR='doc' \
-	VERSION='0.8.40' \
-	PERL_PATH='perl' \
-	HAVE_DOT='NO' \
-	GENERATE_MAN='NO' \
-	GENERATE_RTF='NO' \
-	GENERATE_XML='NO' \
-	GENERATE_HTMLHELP='NO' \
-	GENERATE_CHI='NO' \
-	GENERATE_HTML='YES' \
-	GENERATE_LATEX='NO' \
-	doxygen ./doxygen.cfg
-
-xynth.pc: Makefile.parse Makefile.cfg
-	@rm -rf xynth.pc
-	@echo > subs.sed
-	@echo "s,@prefix@,${INSTALLDIR},g"     >> subs.sed
-	@echo "s,@version@,${XYNTH_VERSION},g" >> subs.sed
-ifeq ($(WIDGET_LIB), Y)
-	@echo "s,@widget_libs@,-lwidget,g"     >> subs.sed
-endif
-	@sed -f subs.sed $@.in > $@
-	@rm -rf subs.sed
-
-test: clean all dist install
-
-update: clean
-	svn update
-
-strip: dist
-	@$(foreach F, $(wildcard $(DISTBINDIR)/*), $(STRIP) $(F) > /dev/null 2>&1;)
-	@$(foreach F, $(wildcard $(DISTLIBDIR)/lib*), $(STRIP) $(F) > /dev/null 2>&1;)
-	@$(foreach F, $(wildcard $(DISTTHEMEDIR)/*), $(STRIP) $(F) > /dev/null 2>&1;)
-
-pspdev:
-	mount /mnt/sdb1
-	cp -Rf dist/psp/game/*xynth* /mnt/sdb1/psp/game/
-	umount /mnt/sdb1
+	$(CP) ./dist/* $(CONFIG_PATH_INSTALL)/

@@ -13,8 +13,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(VIDEO_PSPDEV)
-
 #include "../../../lib/xynth_.h"
 #include "server.h"
 #include "../helper/helper.h"
@@ -191,5 +189,3 @@ void s_video_pspdev_server_surface_update (s_rect_t *coor)
 	}
 #endif
 }
-
-#endif /* VIDEO_PSPDEV */

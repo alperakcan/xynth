@@ -674,7 +674,7 @@ int s_surface_create_from_data (s_surface_t **surface, int width, int height, in
 			s->blueoffset = 0;
 			s->greenoffset = 3;
 			s->redoffset = 6;
-#if defined(VIDEO_PSPDEV)
+#if defined(CONFIG_VIDEO_PSPDEV)
 			s->blueoffset = 6;
 			s->greenoffset = 3;
 			s->redoffset = 0;
@@ -689,7 +689,7 @@ int s_surface_create_from_data (s_surface_t **surface, int width, int height, in
 			s->blueoffset = 0;
 			s->greenoffset = 5;
 			s->redoffset = 10;
-#if defined(VIDEO_PSPDEV)
+#if defined(CONFIG_VIDEO_PSPDEV)
 			s->blueoffset = 10;
 			s->greenoffset = 5;
 			s->redoffset = 0;
@@ -704,7 +704,7 @@ int s_surface_create_from_data (s_surface_t **surface, int width, int height, in
 			s->blueoffset = 0;
 			s->greenoffset = 5;
 			s->redoffset = 11;
-#if defined(VIDEO_PSPDEV)
+#if defined(CONFIG_VIDEO_PSPDEV)
 			s->blueoffset = 11;
 			s->greenoffset = 5;
 			s->redoffset = 0;
@@ -719,7 +719,7 @@ int s_surface_create_from_data (s_surface_t **surface, int width, int height, in
                         s->blueoffset = 0;
                         s->greenoffset = 6;
                         s->redoffset = 12;
-#if defined(VIDEO_PSPDEV)
+#if defined(CONFIG_VIDEO_PSPDEV)
 			s->blueoffset = 12;
 			s->greenoffset = 6;
 			s->redoffset = 0;
@@ -735,7 +735,7 @@ int s_surface_create_from_data (s_surface_t **surface, int width, int height, in
 			s->blueoffset = 0;
 			s->greenoffset = 8;
 			s->redoffset = 16;
-#if defined(VIDEO_PSPDEV)
+#if defined(CONFIG_VIDEO_PSPDEV)
 			s->blueoffset = 16;
 			s->greenoffset = 8;
 			s->redoffset = 0;

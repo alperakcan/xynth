@@ -37,7 +37,7 @@ void s_server_kbd_switch_handler (s_window_t *window, s_event_t *event, s_handle
 	};
 
 	if (f >= 0) {
-#if defined(VIDEO_HELPER_CONSOLE)
+#if defined(CONFIG_VIDEO_HELPER_CONSOLE)
 		int s_video_helper_console_switch (int);
 		s_video_helper_console_switch(f);
 #endif

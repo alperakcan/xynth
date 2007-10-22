@@ -13,7 +13,9 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(VIDEO_HELPER_MOUSE)
+#include "config.h"
+
+#if defined(CONFIG_VIDEO_HELPER_MOUSE)
 
 #include "../../../lib/xynth_.h"
 #include "server.h"
@@ -128,4 +130,4 @@ void s_video_helper_mouse_setyrange (int y1, int y2)
 	mouse_setrange_6d(0, 0, y1, y2, 0, 0, 0, 0, 0, 0, 0, 0, MOUSE_YDIM);
 }
 
-#endif /* VIDEO_HELPER_MOUSE */
+#endif /* CONFIG_VIDEO_HELPER_MOUSE */

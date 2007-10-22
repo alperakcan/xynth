@@ -15,8 +15,8 @@
 
 #include "xynth_.h"
 
-#if !defined(IPC_UDS) && !defined(IPC_TCP) && !defined(IPC_PIPE)
-	#error "You must select at least one of IPC_UDS, IPC_TCP, IPC_PIPE"
+#if !defined(CONFIG_IPC_UDS) && !defined(CONFIG_IPC_TCP) && !defined(CONFIG_IPC_PIPE)
+	#error "You must select at least one of CONFIG_IPC_UDS, CONFIG_IPC_TCP, CONFIG_IPC_PIPE"
 #endif
 
 #define s_socket_recv(a, b, c)	if (s_socket_api_recv(a, b, c) != c) { return -1; }
@@ -576,7 +576,7 @@ int s_socket_api_closew_f (s_window_t *window, s_pollfd_t *pfd)
 
 int s_socket_init_uds (s_window_t *window)
 {
-#if defined(IPC_UDS)
+#if defined(CONFIG_IPC_UDS)
 	int fd;
         struct sockaddr_un server = {AF_UNIX, S_SERVER_SOC_NAME};
 
@@ -599,7 +599,7 @@ err0:	return -1;
 
 int s_socket_init_tcp (s_window_t *window)
 {
-#if defined(IPC_TCP)
+#if defined(CONFIG_IPC_TCP)
         int fd;
 	struct sockaddr_in server;
 	server.sin_family = AF_INET;
@@ -624,7 +624,7 @@ err0:	return -1;
 
 int s_socket_init_pipe (s_window_t *window)
 {
-#if defined(IPC_PIPE)
+#if defined(CONFIG_IPC_PIPE)
 	int fd;
         s_sockaddr_t server = {AF_PIPE, S_SERVER_SOC_PIPE};
 

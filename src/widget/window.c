@@ -269,7 +269,7 @@ int w_window_init (w_window_t **window, S_WINDOW type, w_window_t *parent)
 	(*window) = (w_window_t *) s_malloc(sizeof(w_window_t));
 	s_window_init(&((*window)->window));
 	s_window_new((*window)->window, type, (parent) ? parent->window : NULL);
-//	s_window_set_resizeable((*window)->window, 0);
+	s_window_set_resizeable((*window)->window, 0);
 	w_object_init(*window, &((*window)->object), NULL, NULL);
 	s_list_init(&((*window)->images));
 	s_list_init(&((*window)->fonts));

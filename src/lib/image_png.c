@@ -15,7 +15,7 @@
 
 #include "xynth_.h"
 
-#if defined(IMAGE_PNG)
+#if defined(CONFIG_IMAGE_PNG)
 
 #include <png.h>
 

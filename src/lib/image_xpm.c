@@ -15,7 +15,7 @@
 
 #include "xynth_.h"
 
-#if defined(IMAGE_XPM)
+#if defined(CONFIG_IMAGE_XPM)
 
 #define BUFFSIZE	(1 << 20)
 
