@@ -13,7 +13,9 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(VIDEO_HELPER_MODES)
+#include "config.h"
+
+#if defined(CONFIG_VIDEO_HELPER_MODES)
 
 #include "../../../lib/xynth_.h"
 #include "server.h"
@@ -196,4 +198,4 @@ int s_video_helper_mode_find (s_server_conf_t *cfg, s_video_helper_mode_info_t *
 	return -1;
 }
 
-#endif /* VIDEO_HELPER_MODES */
+#endif /* CONFIG_VIDEO_HELPER_MODES */

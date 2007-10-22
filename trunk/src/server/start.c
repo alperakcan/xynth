@@ -53,9 +53,9 @@ static void s_server_handler_change_theme (s_window_t *window, s_event_t *event,
 	static int theme_n = 0;
 	
 	switch (theme_n) {
-		case 2: s_server_theme_set(THEMEDIR "/keramik.so");   break;
-		case 1: s_server_theme_set(THEMEDIR "/microgui.so");  break;
-		case 0: s_server_theme_set(THEMEDIR "/silverado.so"); break;
+		case 2: s_server_theme_set(CONFIG_PATH_INSTALL CONFIG_PATH_THEMES "/keramik.so");   break;
+		case 1: s_server_theme_set(CONFIG_PATH_INSTALL CONFIG_PATH_THEMES "/microgui.so");  break;
+		case 0: s_server_theme_set(CONFIG_PATH_INSTALL CONFIG_PATH_THEMES "/silverado.so"); break;
 	}
 	theme_n += 1;
 	theme_n %= 3;
@@ -66,7 +66,7 @@ static void s_server_handler_quit (s_window_t *window, s_event_t *event, s_handl
 	s_server_quit(window);
 }
 
-#if defined(PLATFORM_PSPDEV)
+#if defined(CONFIG_PLATFORM_PSPDEV)
 
 #include <pspkernel.h>
 #include <pspdebug.h>
@@ -107,7 +107,7 @@ int main (int argc, char *argv[])
 {
 	s_handler_t *hndl;
 
-#if defined(PLATFORM_PSPDEV)
+#if defined(CONFIG_PLATFORM_PSPDEV)
 	pspDebugScreenInit();
 	s_server_psp_setup_callbacks();
 #endif
@@ -151,9 +151,9 @@ int main (int argc, char *argv[])
 	hndl->mouse.r = s_server_handler_quit;
 	s_handler_add(server->window, hndl);
 
-#if defined(SINGLE_APP)
+#if defined(CONFIG_SINGLE_APPLICATION)
 	s_server_single_start();
-#endif /* SINGLE_APP */
+#endif /* CONFIG_SINGLE_APPLICATION */
 
 	while (server->window->running > 0) {
 		if (s_socket_listen_wait(server->window, -1)) {
@@ -162,16 +162,16 @@ int main (int argc, char *argv[])
 		}
 	}
 
-#if defined(SINGLE_APP)
+#if defined(CONFIG_SINGLE_APPLICATION)
 	s_server_single_stop();
-#endif /* SINGLE_APP */
+#endif /* CONFIG_SINGLE_APPLICATION */
 
 	s_server_uninit();
 
-#if defined(PLATFORM_PSPDEV)
+#if defined(CONFIG_PLATFORM_PSPDEV)
 	sceKernelDelayThread(2500000);
 	sceKernelExitGame();
-#endif /* PLATFORM_PSPDEV */
+#endif /* CONFIG_PLATFORM_PSPDEV */
 	
 	return 0;
 }

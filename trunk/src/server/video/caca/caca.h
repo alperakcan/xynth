@@ -13,8 +13,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(VIDEO_CACA)
-
+#include "config.h"
 #include <caca.h>
 
 typedef struct s_video_caca_data_s {
@@ -43,5 +42,3 @@ void s_video_caca_server_uninit (void);
 int s_video_caca_server_init (s_server_conf_t *cfg);
 void s_video_caca_server_surface_update (s_rect_t *coor);
 void s_video_caca_server_fullscreen (void);
-
-#endif /* VIDEO_CACA */

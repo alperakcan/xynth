@@ -15,7 +15,7 @@
 
 #include "xynth_.h"
 
-#if defined(IMAGE_GIF)
+#if defined(CONFIG_IMAGE_GIF)
 
 /* this code is heavily based on SDL_image gif source code
    www.libsdl.org/projects/SDL_image/

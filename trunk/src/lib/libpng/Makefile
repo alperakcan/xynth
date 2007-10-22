@@ -1,15 +1,22 @@
 
-include ../../../Makefile.cfg
-include ../../../Makefile.parse
+target_o-y = libpng.o
 
-DIR = src/lib/libpng/
+libpng.o_includes-y = ./ \
+                      ../libz
+libpng.o_files-y = png.c \
+                   pngerror.c \
+                   pngget.c \
+                   pngmem.c \
+                   pngpread.c \
+                   pngread.c \
+                   pngrio.c \
+                   pngrtran.c \
+                   pngrutil.c \
+                   pngset.c \
+                   pngtrans.c \
+                   pngwio.c \
+                   pngwrite.c \
+                   pngwtran.c \
+                   pngwutil.c
 
-INCDIR = ./ ../libz
-OBJS += png.o pngerror.o pngget.o pngmem.o \
-        pngpread.o pngread.o pngrio.o pngrtran.o \
-        pngrutil.o pngset.o pngtrans.o pngwio.o \
-        pngwrite.o pngwtran.o pngwutil.o
-
-TARGET_O = libpng.o
-
-include ../../../Makefile.rules
+include ../../../Makefile.lib

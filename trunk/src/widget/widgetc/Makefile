@@ -1,21 +1,17 @@
 
-include ../../../Makefile.cfg
-include ../../../Makefile.parse
+-include ../../../.config
 
-DIR = src/widget/widgetc/
+target.host-$(CONFIG_WIDGET_WIDGETC) = widgetc
 
-LDFLAGS = -lexpat
-INCDIR = ./ ../ ../../lib
+widgetc_includes-y = ./ ../ ../../lib/
+widgetc_files-y    = widgetc.c \
+                     list.c \
+                     code.c \
+                     header.c \
+                     xml.c
+widgetc_ldflags-y  = -lexpat
 
-OBJS = widgetc.o list.o code.o header.o xml.o
+include ../../../Makefile.lib
 
-TARGET_HOST = widgetc
-
-#CC := PATH=/usr/bin:${PATH} gcc
-
-include ../../../Makefile.rules
-
-dist: all
-ifneq ($(TARGET),)
-	cp -a $(TARGET) ../../../$(DISTBINDIR)
-endif
+dist:
+	$(CP) widgetc ../../../dist/$(CONFIG_PATH_BIN)/widgetc

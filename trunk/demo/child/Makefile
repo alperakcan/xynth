@@ -1,27 +1,26 @@
 
-include ../../Makefile.cfg
-include ../../Makefile.parse
+-include ../../.config
 
-DIR = src/demo/child/
-
-INCDIR  = ../../src/lib
-LIBDIR  = ../../src/lib
-LDFLAGS = -lxynth
-
-OBJS = child.o
-
-ifeq ($(SINGLE_APP), Y)
-TARGET_A = single_child.a
-CFLAGS  += -Dmain=child_main
+ifeq ($(CONFIG_SINGLE_APPLICATION), y)
+target-n = child
+target_o-y = single_child.o
 else
-TARGET = child
+target-y = child
+target_o-n = single_child.o
 endif
 
-EXTRA_CLEAN = child single_child.a
+child_files-y     = child.c
+child_includes-y  = ../../src/lib
+child_libraries-y = ../../src/lib/
+child_ldflags-y   = -lxynth
 
-include ../../Makefile.rules
+single_child.o_files-y    = child.c
+single_child.o_includes-y = ../../src/lib
+single_child.o_cflags-y   = -Dmain=child_main
 
-dist: all
-ifneq ($(TARGET),)
-	cp -a $(TARGET) ../../$(DISTBINDIR)
+include ../../Makefile.lib
+
+ifneq ($(CONFIG_SINGLE_APPLICATION), y)
+dist:
+	$(CP) child ../../dist/$(CONFIG_PATH_BIN)/child
 endif

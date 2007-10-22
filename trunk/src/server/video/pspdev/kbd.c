@@ -13,8 +13,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(VIDEO_PSPDEV)
-
 #include "../../../lib/xynth_.h"
 #include "server.h"
 #include "pspdev.h"
@@ -32,5 +30,3 @@ int s_video_pspdev_kbd_update (s_video_input_data_t *keybd)
 void s_video_pspdev_kbd_uninit (void)
 {
 }
-
-#endif /* VIDEO_PSPDEV */

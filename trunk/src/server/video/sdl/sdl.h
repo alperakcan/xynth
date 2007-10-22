@@ -13,7 +13,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(VIDEO_SDL)
+#include "config.h"
 
 #include <SDL.h>
 
@@ -42,5 +42,3 @@ void s_video_sdl_server_uninit (void);
 int s_video_sdl_server_init (s_server_conf_t *cfg);
 void s_video_sdl_server_surface_update (s_rect_t *coor);
 void s_video_sdl_server_fullscreen (void);
-
-#endif /* VIDEO_SDL */

@@ -13,8 +13,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(VIDEO_GDI)
-
 #include "../../../lib/xynth_.h"
 #include "server.h"
 #include "gdi.h"
@@ -372,5 +370,3 @@ void s_video_gdi_kbd_uninit (void)
 	priv->keybd_fd[0] = -1;
 	priv->keybd_fd[1] = -1;
 }
-
-#endif /* VIDEO_GDI */

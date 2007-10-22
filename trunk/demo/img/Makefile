@@ -1,27 +1,26 @@
 
-include ../../Makefile.cfg
-include ../../Makefile.parse
+-include ../../.config
 
-DIR = src/demo/img/
-
-INCDIR  = ../../src/lib
-LIBDIR  = ../../src/lib
-LDFLAGS = -lxynth
-
-OBJS = img.o
-
-ifeq ($(SINGLE_APP), Y)
-TARGET_A = single_img.a
-CFLAGS  += -Dmain=img_main
+ifeq ($(CONFIG_SINGLE_APPLICATION), y)
+target-n = img
+target_o-y = single_img.o
 else
-TARGET = img
+target-y = img
+target_o-n = single_img.o
 endif
 
-EXTRA_CLEAN = img single_img.a
+img_files-y     = img.c
+img_includes-y  = ../../src/lib
+img_libraries-y = ../../src/lib/
+img_ldflags-y   = -lxynth
 
-include ../../Makefile.rules
+single_img.o_files-y    = img.c
+single_img.o_includes-y = ../../src/lib
+single_img.o_cflags-y   = -Dmain=img_main
 
-dist: all
-ifneq ($(TARGET),)
-	cp -a $(TARGET) ../../$(DISTBINDIR)
+include ../../Makefile.lib
+
+ifneq ($(CONFIG_SINGLE_APPLICATION), y)
+dist:
+	$(CP) img ../../dist/$(CONFIG_PATH_BIN)/img
 endif

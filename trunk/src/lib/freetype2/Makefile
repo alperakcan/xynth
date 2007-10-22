@@ -1,16 +1,18 @@
 
-include ../../../Makefile.cfg
-include ../../../Makefile.parse
+target_o-y = libfreetype2.o
 
-DIR = src/lib/freetype2/
+libfreetype2.o_includes-y = ./ \
+                            ./include
+libfreetype2.o_cflags-y = -DFT2_BUILD_LIBRARY
+libfreetype2.o_files-y = ftbase.c \
+                         ftbitmap.c \
+                         ftdebug.c \
+                         ftglyph.c \
+                         ftinit.c \
+                         ftsystem.c \
+                         autofit.c \
+                         sfnt.c \
+                         smooth.c \
+                         truetype.c
 
-INCDIR = ./ ./include
-CFLAGS += -DFT2_BUILD_LIBRARY
-OBJS += ftbase.o ftbitmap.o ftdebug.o ftglyph.o \
-        ftinit.o ftsystem.o autofit.o sfnt.o \
-        smooth.o truetype.o
-
-
-TARGET_O = libfreetype2.o
-
-include ../../../Makefile.rules
+include ../../../Makefile.lib

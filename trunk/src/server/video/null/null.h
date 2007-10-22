@@ -13,7 +13,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(VIDEO_NULL)
+#include "config.h"
 
 int s_video_null_kbd_init (s_server_conf_t *cfg);
 int s_video_null_kbd_update (s_video_input_data_t *keybd);
@@ -30,5 +30,3 @@ void s_video_null_server_uninit (void);
 int s_video_null_server_init (s_server_conf_t *cfg);
 void s_video_null_server_surface_update (s_rect_t *coor);
 void s_video_null_server_fullscreen (void);
-
-#endif /* VIDEO_NULL */

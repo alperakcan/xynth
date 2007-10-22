@@ -13,7 +13,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(VIDEO_GP2X)
+#include "config.h"
 
 enum {
 	GP2X_UP = 0x1,           GP2X_LEFT = 0x4,	    GP2X_DOWN = 0x10,   GP2X_RIGHT = 0x40,
@@ -48,5 +48,3 @@ void s_video_gp2x_server_surface_update (s_rect_t *coor);
 void s_video_gp2x_server_fullscreen (void);
 
 void * s_video_gp2x_event_parse (void *arg);
-
-#endif /* VIDEO_GP2X */

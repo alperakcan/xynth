@@ -13,8 +13,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(VIDEO_CACA)
-
 #include "../../../lib/xynth_.h"
 #include "server.h"
 #include "caca.h"
@@ -32,5 +30,3 @@ int s_video_caca_mouse_update (s_video_input_data_t *mouse)
 void s_video_caca_mouse_uninit (void)
 {
 }
-
-#endif /* VIDEO_CACA */

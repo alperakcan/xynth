@@ -32,10 +32,10 @@ typedef struct s_socket_api_s {
 	int (*close) (int fd);
 } s_socket_api_t;
 
-#if defined(SOCKET_BSD)
+#if defined(CONFIG_SOCKET_POSIX)
 	#include "socket_bsd.c"
 	static s_socket_api_t *s_socket_api = &s_socket_api_bsd;
-#elif defined(SOCKET_PIPE)
+#elif defined(CONFIG_SOCKET_PIPE)
 	#include "socket_pipe.c"
 	static s_socket_api_t *s_socket_api = &s_socket_api_pipe;
 #else

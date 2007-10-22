@@ -1,27 +1,26 @@
 
-include ../../Makefile.cfg
-include ../../Makefile.parse
+-include ../../.config
 
-DIR = src/demo/temp/
-
-INCDIR  = ../../src/lib
-LIBDIR  = ../../src/lib
-LDFLAGS = -lxynth
-
-OBJS = temp.o
-
-ifeq ($(SINGLE_APP), Y)
-TARGET_A = single_temp.a
-CFLAGS  += -Dmain=temp_main
+ifeq ($(CONFIG_SINGLE_APPLICATION), y)
+target-n = temp
+target_o-y = single_temp.o
 else
-TARGET = temp
+target-y = temp
+target_o-n = single_temp.o
 endif
 
-EXTRA_CLEAN = temp single_temp.a
+temp_files-y     = temp.c
+temp_includes-y  = ../../src/lib
+temp_libraries-y = ../../src/lib/
+temp_ldflags-y   = -lxynth
 
-include ../../Makefile.rules
+single_temp.o_files-y    = temp.c
+single_temp.o_includes-y = ../../src/lib
+single_temp.o_cflags-y   = -Dmain=temp_main
 
-dist: all
-ifneq ($(TARGET),)
-	cp -a $(TARGET) ../../$(DISTBINDIR)
+include ../../Makefile.lib
+
+ifneq ($(CONFIG_SINGLE_APPLICATION), y)
+dist:
+	$(CP) temp ../../dist/$(CONFIG_PATH_BIN)/temp
 endif

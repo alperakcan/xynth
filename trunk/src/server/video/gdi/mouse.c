@@ -13,8 +13,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(VIDEO_GDI)
-
 #include "../../../lib/xynth_.h"
 #include "server.h"
 #include "gdi.h"
@@ -53,5 +51,3 @@ void s_video_gdi_mouse_uninit (void)
 	priv->mouse_fd[1] = -1;
 	s_server_cursor_uninit();
 }
-
-#endif /* VIDEO_GDI */

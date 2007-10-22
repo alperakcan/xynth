@@ -1,19 +1,12 @@
 
-include ../Makefile.cfg
-include ../Makefile.parse
+-include ../.config
 
-DIR = src/
+subdir-y += fonts
+subdir-y += configs
+subdir-y += lib
+subdir-$(CONFIG_WIDGET_LIBRARY)   += widget
+subdir-$(CONFIG_DEMO_APPLICATIONS) += ../demo
+subdir-$(CONFIG_THEME_PLUGIN) += themes
+subdir-y += server
 
-SUBDIR-Y += fonts
-SUBDIR-Y += configs
-SUBDIR-Y += lib
-SUBDIR-$(WIDGET_LIB) += widget
-SUBDIR-Y += ../demo
-SUBDIR-$(THEME_PLUGIN)   += themes
-SUBDIR-Y += server
-#SUBDIR-$(PYTHON_BINDING) += python
-
-include ../Makefile.rules
-
-dist:
-	@$(foreach F, $(SUBDIR-Y), $(MAKE) dist -C $F || exit 1;)
+include ../Makefile.lib

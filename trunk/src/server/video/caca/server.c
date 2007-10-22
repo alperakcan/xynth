@@ -13,8 +13,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(VIDEO_CACA)
-
 #include "../../../lib/xynth_.h"
 #include "server.h"
 #include "../helper/helper.h"
@@ -205,5 +203,3 @@ void s_video_caca_server_surface_update (s_rect_t *coor)
 void s_video_caca_server_fullscreen (void)
 {
 }
-
-#endif /* VIDEO_CACA */

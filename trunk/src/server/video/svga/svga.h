@@ -13,7 +13,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(VIDEO_SVGALib)
+#include "config.h"
 
 typedef struct s_video_svga_data_s {
 	int console_fd;
@@ -29,5 +29,3 @@ int s_video_svga_server_init (s_server_conf_t *cfg);
 void s_video_svga_surface_uninit (void);
 void s_video_svga_server_surface_setrgbpalette (void);
 void s_video_svga_server_surface_init (int mode);
-
-#endif /* VIDEO_SVGALib */

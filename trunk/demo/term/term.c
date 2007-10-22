@@ -13,8 +13,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(DEMO_TERM)
-
 #include <fcntl.h>
 #include <ctype.h>
 #include <stdio.h>
@@ -1119,12 +1117,10 @@ int main (int argc, char *argv[])
 	return 0;
 }
 
-#if defined(SINGLE_APP)
+#if defined(CONFIG_SINGLE_APPLICATION)
 s_single_app_t single_term = {
 	term_main,
 	1,
 	{"term"}
 };
 #endif
-
-#endif /* DEMO_TERM */

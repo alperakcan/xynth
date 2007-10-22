@@ -13,14 +13,12 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(VIDEO_SDL)
-
 #include "../../../lib/xynth_.h"
 #include "server.h"
 #include "../helper/helper.h"
 #include "sdl.h"
 
-#if defined(SINGLE_APP)
+#if defined(CONFIG_SINGLE_APPLICATION)
 #else
 	#include <sys/shm.h>
 #endif
@@ -76,7 +74,7 @@ void s_video_sdl_server_uninit (void)
 		return;
 	}
 	priv =  server->driver->driver_data;
-#if defined(SINGLE_APP)
+#if defined(CONFIG_SINGLE_APPLICATION)
 	s_free((void *) server->window->surface->linear_mem_base);
 #else
 	shmdt((void *) server->window->surface->linear_mem_base);
@@ -175,7 +173,7 @@ int s_video_sdl_server_init (s_server_conf_t *cfg)
 				server->window->surface->redlength = 8;
 				break;
 		}
-#if defined(SINGLE_APP)
+#if defined(CONFIG_SINGLE_APPLICATION)
 		addr = (void *) s_malloc(sizeof(char) * server->window->surface->width * server->window->surface->height * server->window->surface->bytesperpixel);
 #else
 		if ((priv->screen_shm_mid = shmget(IPC_PRIVATE, sizeof(char) * server->window->surface->width * server->window->surface->height * server->window->surface->bytesperpixel, IPC_CREAT | 0644)) < 0) {
@@ -218,5 +216,3 @@ void s_video_sdl_server_fullscreen (void)
 	s_video_sdl_data_t *priv = server->driver->driver_data;
 	SDL_WM_ToggleFullScreen(priv->screen);
 }
-
-#endif /* VIDEO_SDL */

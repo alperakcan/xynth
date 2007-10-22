@@ -1,41 +1,39 @@
 
-include ../../Makefile.cfg
-include ../../Makefile.parse
+-include ../../.config
 
-DIR = src/demo/desktop/
-
-DESKTOPDIR = $(INSTALLDIR)/$(SHAREDIR)/desktop
-CFLAGS += -DDESKTOPDIR=\"$(DESKTOPDIR)\"
-INCDIR  = ../../src/lib
-LIBDIR  = ../../src/lib
-LDFLAGS = -lxynth
-
-OBJS = desktop.o main.o menu.o taskbar.o
-
-ifeq ($(SINGLE_APP), Y)
-TARGET_A = single_desktop.a
-CFLAGS  += -Dmain=desktop_main
+ifeq ($(CONFIG_SINGLE_APPLICATION), y)
+target-n = desktop
+target_o-y = single_desktop.o
 else
-TARGET = desktop
+target-y = desktop
+target_o-n = single_desktop.o
 endif
 
-EXTRA_CLEAN = desktop single_desktop.a
+desktop_files-y = desktop.c main.c menu.c taskbar.c
+desktop_cflags-y = -DDESKTOPDIR=\"$(CONFIG_PATH_INSTALL)/$(CONFIG_PATH_SHARE)/desktop\"
+desktop_includes-y = ../../src/lib/
+desktop_libraries-y = ../../src/lib/
+desktop_ldflags-y = -lxynth
 
-EXTRA_DEPEND_FILES = *.h
+single_desktop.o_files-y = $(desktop_files-y)
+single_desktop.o_cflags-y = $(desktop_cflags-y) -Dmain=desktop_main
+single_desktop.o_includes-y = $(desktop_includes-y)
+single_desktop.o_libraries-y = $(desktop_libraries-y)
+single_desktop.o_ldflags-y = $(desktop_ldflags-y)
 
-include ../../Makefile.rules
+include ../../Makefile.lib
 
-dist: all
-ifneq ($(TARGET),)
-	cp -a $(TARGET) ../../$(DISTBINDIR)
+dist:
+ifneq ($(CONFIG_SINGLE_APPLICATION), y)
+	$(CP) desktop ../../dist/$(CONFIG_PATH_BIN)/desktop
 endif
-	mkdir -p ../../$(DISTTOPDIR)/$(SHAREDIR)/desktop
-	mkdir -p ../../$(DISTTOPDIR)/$(SHAREDIR)/desktop/cfg/
-	mkdir -p ../../$(DISTTOPDIR)/$(SHAREDIR)/desktop/img/
-	mkdir -p ../../$(DISTTOPDIR)/$(SHAREDIR)/desktop/img/icons
-	mkdir -p ../../$(DISTTOPDIR)/$(SHAREDIR)/desktop/img/widget
-	mkdir -p ../../$(DISTTOPDIR)/$(SHAREDIR)/desktop/img/wpaper
-	cp cfg/*.cfg ../../$(DISTTOPDIR)/$(SHAREDIR)/desktop/cfg
-	cp img/icons/*.png ../../$(DISTTOPDIR)/$(SHAREDIR)/desktop/img/icons
-	cp img/widget/*.png ../../$(DISTTOPDIR)/$(SHAREDIR)/desktop/img/widget
-	cp img/wpaper/*.png ../../$(DISTTOPDIR)/$(SHAREDIR)/desktop/img/wpaper
+	$(MKDIR) ../../dist/$(CONFIG_PATH_SHARE)/desktop
+	$(MKDIR) ../../dist/$(CONFIG_PATH_SHARE)/desktop/cfg/
+	$(MKDIR) ../../dist/$(CONFIG_PATH_SHARE)/desktop/img/
+	$(MKDIR) ../../dist/$(CONFIG_PATH_SHARE)/desktop/img/icons
+	$(MKDIR) ../../dist/$(CONFIG_PATH_SHARE)/desktop/img/widget
+	$(MKDIR) ../../dist/$(CONFIG_PATH_SHARE)/desktop/img/wpaper
+	$(CP) cfg/*.cfg ../../dist/$(CONFIG_PATH_SHARE)/desktop/cfg
+	$(CP) img/icons/*.png ../../dist/$(CONFIG_PATH_SHARE)/desktop/img/icons
+	$(CP) img/widget/*.png ../../dist/$(CONFIG_PATH_SHARE)/desktop/img/widget
+	$(CP) img/wpaper/*.png ../../dist/$(CONFIG_PATH_SHARE)/desktop/img/wpaper

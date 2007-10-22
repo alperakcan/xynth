@@ -1,72 +1,68 @@
 
-include ../../Makefile.cfg
-include ../../Makefile.parse
+-include ../../.config
 
-DIR = src/lib/
+subdir-y  = ./libz
+subdir-y += ./libpng
+subdir-y += ./freetype2
+subdir-y += ./expat
+subdir-y += ./pixman
 
-3RDPARTY-Y   += libz
-INCDIR-Y     += ./libz
-EXTRA_OBJS-Y += ./libz/libz.o
+target_a-y = libxynth.a
 
-ifeq ($(IMAGE_PNG), Y)
-3RDPARTY-Y   += libpng
-INCDIR-Y     += ./libpng
-EXTRA_OBJS-Y += ./libpng/libpng.o
-endif
+libxynth.a_includes-y := ./
+libxynth.a_includes-y += ./libz
+libxynth.a_includes-y += ./libpng
+libxynth.a_includes-y += ./freetype2/include
+libxynth.a_includes-y += ./expat
+libxynth.a_includes-y += ./pixman
 
-3RDPARTY-Y   += freetype2
-INCDIR-Y     += ./freetype2/include
-EXTRA_OBJS-Y += ./freetype2/libfreetype2.o
+libxynth.a_files-y = alloc.c \
+                     child.c \
+                     config.c \
+                     debug.c \
+                     driver.c \
+                     event.c \
+                     eventq.c \
+                     font.c \
+                     gettext.c \
+                     gettime.c \
+                     grlib.c \
+                     handler.c \
+                     hashtable.c \
+                     image.c \
+                     image_gif.c \
+                     image_png.c \
+                     image_xpm.c \
+                     list.c \
+                     pipe_api.c \
+                     pollfd.c \
+                     rect.c \
+                     region.c \
+                     render.c \
+                     socket.c \
+                     socket_api.c \
+                     surface.c \
+                     thread.c \
+                     timer.c \
+                     window.c \
+                     xml.c
 
-3RDPARTY-Y   += expat
-INCDIR-Y     += ./expat
-EXTRA_OBJS-Y += ./expat/libexpat.o
+libxynth.a_files-y += ./expat/libexpat.o
+libxynth.a_files-y += ./freetype2/libfreetype2.o
+libxynth.a_files-y += ./libpng/libpng.o
+libxynth.a_files-y += ./libz/libz.o
+libxynth.a_files-y += ./pixman/libpixman.o
 
-3RDPARTY-Y   += pixman
-INCDIR-Y     += ./pixman
-EXTRA_OBJS-Y += ./pixman/libpixman.o
+target_so-y = libxynth.so
 
-OBJS = alloc.o child.o config.o debug.o driver.o event.o eventq.o font.o \
-       gettext.o gettime.o grlib.o handler.o hashtable.o image.o image_gif.o \
-       image_png.o image_xpm.o list.o pipe_api.o pollfd.o rect.o region.o \
-       render.o socket.o socket_api.o surface.o thread.o timer.o window.o xml.o
+libxynth.so_includes-y = $(libxynth.a_includes-y)
+libxynth.so_ldflags-y = -lpthread \
+                        -lm
+libxynth.so_files-y = $(libxynth.a_files-y)
 
-INCDIR += $(INCDIR-Y)
-EXTRA_OBJS += $(EXTRA_OBJS-Y)
+include ../../Makefile.lib
 
-TARGET_A-$(PLATFORM_LINUX)  = libxynth.a
-TARGET_SO-$(PLATFORM_LINUX) = libxynth.so
-LDFLAGS-$(PLATFORM_LINUX)  += -lpthread -lm
-
-TARGET_A-$(PLATFORM_PSPDEV)  = libxynth.a
-
-TARGET_A-$(PLATFORM_MINGW)  = libxynth.a
-ifeq ($(PLATFORM_MINGW), Y)
-INCDIR-$(THREAD_PTHREADS)  += ../server/video/gdi/pthread_w32
-endif
-
-TARGET_A-$(PLATFORM_GP2X)  = libxynth.a
-TARGET_SO-$(PLATFORM_GP2X) = libxynth.so
-LDFLAGS-$(PLATFORM_GP2X)  += -lpthread -lm
-
-TARGET_A  = $(TARGET_A-Y)
-TARGET_SO = $(TARGET_SO-Y)
-
-EXTRA_CLEAN = libxynth.a libxynth.so
-
-EXTRA_TARGETS = extra_build
-EXTRA_TARGETS_CLEAN = extra_clean
-
-EXTRA_DEPEND_FILES = *.h
-
-include ../../Makefile.rules
-
-extra_build:
-	@$(foreach F, $(3RDPARTY-Y), $(MAKE) -C $F || exit 1;)
-
-extra_clean:
-	@$(foreach F, $(3RDPARTY-Y) $(3RDPARTY-N) $(3RDPARTY-), $(MAKE) -C $F clean || exit 1;)
-
-dist: all
-	cp -a xynth.h ../../$(DISTINCDIR)
-	cp -a $(TARGET_A) $(TARGET_SO) $(TARGET) ../../$(DISTLIBDIR)
+dist:
+	$(CP) xynth.h ../../dist/$(CONFIG_PATH_INCLUDE)/xynth.h
+	$(CP) libxynth.a ../../dist/$(CONFIG_PATH_LIB)/libxynth.a
+	$(CP) libxynth.so ../../dist/$(CONFIG_PATH_LIB)/libxynth.so

@@ -1,45 +1,30 @@
 
-include ../../Makefile.cfg
-include ../../Makefile.parse
+-include ../../.config
 
-DIR = src/demo/widgetx/
+WIDGETC = ../../../src/widget/widgetc/.widgetc/widgetc 
 
-INCDIR  = ../../src/lib ../../src/widget
-LIBDIR  = ../../src/widget ../../src/lib
-LDFLAGS = -lwidget -lxynth
-
-ifeq ($(PLATFORM_MINGW), Y)
-WIDGETC = ../../src/widget/widgetc/widgetc.exe
+ifeq ($(CONFIG_SINGLE_APPLICATION), y)
+target-n = widgetx
+target_o-y = single_widgetx.o
 else
-WIDGETC = ../../src/widget/widgetc/widgetc
+target-y = widgetx
+target_o-n = single_widgetx.o
 endif
 
-have_widgetc := $(wildcard $(WIDGETC))
+widgetx_files-y     = widgetx.xws widgetx.c
+widgetx_includes-y  = ../../src/lib ../../src/widget .widgetx
+widgetx_libraries-y = ../../src/lib ../../src/widget
+widgetx_ldflags-y   = -lwidget -lxynth
 
-ifeq ($(strip $(have_widgetc)),)
+single_widgetx.o_files-y    = widgetx.xws widgetx.c
+single_widgetx.o_includes-y = ../../src/lib ../../src/widget .single_widgetx.o
+single_widgetx.o_libraries  = ../../src/lib ../../src/widget
+single_widgetx.o_cflags-y   = -Dmain=widgetx_main -DCONFIG_SINGLE_APPLICATION
 
-include ../../Makefile.rules
 
-else
+include ../../Makefile.lib
 
-OBJS = widgetx.o widgetx_xml.o
-
-ifeq ($(SINGLE_APP), Y)
-TARGET_A = single_widgetx.a
-CFLAGS  += -Dmain=widgetx_main
-else
-TARGET = widgetx
+ifneq ($(CONFIG_SINGLE_APPLICATION), y)
+dist:
+	$(CP) widgetx ../../dist/$(CONFIG_PATH_BIN)/widgetx
 endif
-
-include ../../Makefile.rules
-
-widgetx_xml.c: widgetx.xml $(WIDGETC)
-	$(WIDGETC) -f widgetx.xml -o widgetx
-endif
-
-dist: all
-ifneq ($(TARGET),)
-	cp -a $(TARGET) ../../$(DISTBINDIR)
-endif
-
-EXTRA_CLEAN = widgetx single_widgetx.a widgetx_xml.c widgetx_xml.h widgetx.o widgetx_xml.o

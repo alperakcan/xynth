@@ -13,8 +13,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(VIDEO_GDI)
-
+#include "config.h"
 #include <windows.h>
 
 #define GDI_MAX_KEYS 256
@@ -50,5 +49,3 @@ void s_video_gdi_server_uninit (void);
 int s_video_gdi_server_init (s_server_conf_t *cfg);
 void s_video_gdi_server_surface_update (s_rect_t *coor);
 void s_video_gdi_server_fullscreen (void);
-
-#endif /* VIDEO_GDI */

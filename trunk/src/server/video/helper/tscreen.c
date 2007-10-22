@@ -16,7 +16,9 @@
 /* Touch screen support with tslib patch came from Ali Utku Selen
  */
 
-#if defined(VIDEO_HELPER_TSCREEN)
+#include "config.h"
+
+#if defined(CONFIG_VIDEO_HELPER_TSCREEN)
 
 #include "../../../lib/xynth_.h"
 #include "server.h"
@@ -80,4 +82,4 @@ void s_video_helper_touchscreen_uninit (void)
 	debugf(DSER, "Touchscreen uninitialized");
 }
 
-#endif /* VIDEO_HELPER_TSCREEN */
+#endif /* CONFIG_VIDEO_HELPER_TSCREEN */

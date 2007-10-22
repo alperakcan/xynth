@@ -1,16 +1,25 @@
 
-include ../../../Makefile.cfg
-include ../../../Makefile.parse
+target_o-y = libpixman.o
 
-DIR = src/lib/pixman/
+libpixman.o_includes-y = ./
+libpixman.o_cflags-y = -DHAVE_CONFIG_H
+libpixman.o_files-y = fbcompose.c \
+                      fbedge.c \
+                      fbpict.c \
+                      fbtrap.c \
+                      icblt.c \
+                      icbltone.c \
+                      iccolor.c \
+                      icformat.c \
+                      icimage.c \
+                      icpixels.c \
+                      icrect.c \
+                      icstipple.c \
+                      ictransform.c \
+                      ictrap.c \
+                      ictri.c \
+                      icutil.c \
+                      pixregion.c \
+                      renderedge.c
 
-INCDIR = .
-CFLAGS += -DHAVE_CONFIG_H
-OBJS += fbcompose.o fbedge.o fbpict.o fbtrap.o icblt.o \
-        icbltone.o iccolor.o icformat.o icimage.o \
-        icpixels.o icrect.o icstipple.o ictransform.o \
-        ictrap.o ictri.o icutil.o pixregion.o renderedge.o
-
-TARGET_O = libpixman.o
-
-include ../../../Makefile.rules
+include ../../../Makefile.lib

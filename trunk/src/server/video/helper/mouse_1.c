@@ -13,7 +13,9 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(VIDEO_HELPER_MOUSE)
+#include "config.h"
+
+#if defined(CONFIG_VIDEO_HELPER_MOUSE)
 
 /* mouse library functions (mouse_1.c) and mouse driver (mouse_2.c) are heavily
  * based on svgalib source code. here is the comments taken from the original
@@ -239,4 +241,4 @@ static void mouse_getposition_6d (int *x, int *y, int *z, int *rx, int *ry, int 
 	if (btns) *btns = ms.mouse_button;
 }
 
-#endif /* VIDEO_HELPER_MOUSE */
+#endif /* CONFIG_VIDEO_HELPER_MOUSE */

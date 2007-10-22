@@ -277,7 +277,7 @@ int s_server_pri_id (int pri);
 void s_server_pri_del (int id);
 
 /* single.c */
-#if defined(SINGLE_APP)
+#if defined(CONFIG_SINGLE_APPLICATION)
 void * s_server_single_app_start (void *arg);
 void s_server_single_start (void);
 void s_server_single_stop (void);

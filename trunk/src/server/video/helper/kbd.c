@@ -13,7 +13,9 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(VIDEO_HELPER_KBD)
+#include "config.h"
+
+#if defined(CONFIG_VIDEO_HELPER_KEYBOARD)
 
 #include <signal.h>
 #include <termios.h>
@@ -287,4 +289,4 @@ void s_video_helper_kbd_uninit (void)
 	s_video_helper_keybd.fd = -1;
 }
 
-#endif /* VIDEO_HELPER_KBD */
+#endif /* CONFIG_VIDEO_HELPER_KEYBOARD */

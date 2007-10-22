@@ -13,7 +13,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(THREAD_PSPDEV)
+#if defined(CONFIG_THREAD_PSPDEV)
 
 #include <pspkernel.h>
 #include <pspkerneltypes.h>
@@ -182,4 +182,4 @@ static s_thread_api_t s_thread_pspdev = {
 	s_thread_pspdev_thread_exit,
 };
 
-#endif /* THREAD_PSPDEV */
+#endif /* CONFIG_THREAD_PSPDEV */

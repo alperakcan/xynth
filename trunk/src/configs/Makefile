@@ -1,12 +1,6 @@
 
-include ../../Makefile.cfg
-include ../../Makefile.parse
-
-all:
-	@true
-
-clean:
-	@true
+-include ../../.config
+include ../../Makefile.lib
 
 dist:
-	cp -a *.conf ../../$(DISTCONFDIR)
+	$(CP) *.conf ../../dist/$(CONFIG_PATH_CONFIGS)

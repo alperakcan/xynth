@@ -1,13 +1,10 @@
 
-include ../../../Makefile.cfg
-include ../../../Makefile.parse
+target_o-y = libexpat.o
 
-DIR = src/lib/expat/
+libexpat.o_files-y = xmlparse.c \
+                     xmltok.c \
+                     xmlrole.c
+libexpat.o_includes-y = ./
+libexpat.o_cflags-y = -DHAVE_EXPAT_CONFIG_H
 
-INCDIR = .
-CFLAGS += -DHAVE_EXPAT_CONFIG_H
-OBJS += xmlparse.o xmltok.o xmlrole.o
-
-TARGET_O = libexpat.o
-
-include ../../../Makefile.rules
+include ../../../Makefile.lib

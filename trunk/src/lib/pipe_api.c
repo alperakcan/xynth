@@ -28,10 +28,10 @@ typedef struct s_pipe_api_s {
 	int (*close) (int fd);
 } s_pipe_api_t;
 
-#if defined(PIPE_POSIX)
+#if defined(CONFIG_PIPE_POSIX)
 	#include "pipe_posix.c"
 	static s_pipe_api_t *s_pipe_api = &s_pipe_posix;
-#elif defined(PIPE_MEM)
+#elif defined(CONFIG_PIPE_MEMORY)
 	#include "pipe_mem.c"
 	static s_pipe_api_t *s_pipe_api = &s_pipe_mem;
 #endif

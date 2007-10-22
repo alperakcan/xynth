@@ -13,8 +13,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(VIDEO_SVGALib)
-
 #include "../../../lib/xynth_.h"
 #include "server.h"
 #include "svga.h"
@@ -174,21 +172,17 @@ static struct {
 };
 
 s_video_input_t s_video_svga_input_keybd = {
-	.keybd = {
-		VIDEO_INPUT_KEYBD,
-		s_video_svga_kbd_init,
-		s_video_helper_kbd_update,
-		s_video_helper_kbd_uninit,
-	}
+	VIDEO_INPUT_KEYBD,
+	s_video_svga_kbd_init,
+	s_video_helper_kbd_update,
+	s_video_helper_kbd_uninit,
 };
 
 s_video_input_t s_video_svga_input_mouse = {
-	.mouse = {
-		VIDEO_INPUT_MOUSE,
-		s_video_helper_mouse_update,
-		s_video_helper_mouse_uninit,
-		s_video_helper_mouse_init,
-	}
+	VIDEO_INPUT_MOUSE,
+	s_video_helper_mouse_init,
+	s_video_helper_mouse_update,
+	s_video_helper_mouse_uninit,
 };
 
 s_video_input_t *s_video_svga_input[] = {
@@ -367,5 +361,3 @@ int s_video_svga_server_init (s_server_conf_t *cfg)
 err0:	s_free(priv);
 	return -1;
 }
-
-#endif /* VIDEO_SVGALib */

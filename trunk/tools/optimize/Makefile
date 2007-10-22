@@ -1,9 +1,8 @@
 
-include ../../Makefile.cfg
-include ../../Makefile.parse
+include ../../Makefile.lib
 
 all:
 	NM=$(NM) STRIP="$(STRIP)" sh xynth.sh
 
 clean:
-	rm -f syms.args syms.all syms.def syms.undef objs.txt
+	$(RM) syms.args syms.all syms.def syms.undef objs.txt

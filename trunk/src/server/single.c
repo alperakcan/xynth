@@ -13,91 +13,93 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(SINGLE_APP)
+#include "config.h"
+
+#if defined(CONFIG_SINGLE_APPLICATION)
 
 #include "../lib/xynth_.h"
 #include "server.h"
 
-#if defined(DEMO_DESKTOP)
+#if defined(CONFIG_DEMO_DESKTOP)
 	extern s_single_app_t single_desktop;
-#endif /* DEMO_DESKTOP */
-#if defined(DEMO_CHILD)
+#endif /* CONFIG_DEMO_DESKTOP */
+#if defined(CONFIG_DEMO_CHILD)
 	extern s_single_app_t single_child;
-#endif /* DEMO_CHILD */
-#if defined(DEMO_HIDE)
+#endif /* CONFIG_DEMO_CHILD */
+#if defined(CONFIG_DEMO_HIDE)
 	extern s_single_app_t single_hide;
-#endif /* DEMO_HIDE */
-#if defined(DEMO_LOAD)
+#endif /* CONFIG_DEMO_HIDE */
+#if defined(CONFIG_DEMO_LOAD)
 	extern s_single_app_t single_load;
-#endif /* DEMO_LOAD */
-#if defined(DEMO_SIMPLE)
+#endif /* CONFIG_DEMO_LOAD */
+#if defined(CONFIG_DEMO_SIMPLE)
 	extern s_single_app_t single_simple;
-#endif /* DEMO_SIMPLE */
-#if defined(DEMO_OBJECT)
+#endif /* CONFIG_DEMO_SIMPLE */
+#if defined(CONFIG_DEMO_OBJECT)
 	extern s_single_app_t single_object;
-#endif /* DEMO_OBJECT */
-#if defined(DEMO_SETUPWIZARD)
+#endif /* CONFIG_DEMO_OBJECT */
+#if defined(CONFIG_DEMO_SETUPWIZARD)
 	extern s_single_app_t single_setupwizard;
-#endif /* DEMO_SETUPWIZARD */
-#if defined(DEMO_ONSCREENKEYBOARD)
+#endif /* CONFIG_DEMO_SETUPWIZARD */
+#if defined(CONFIG_DEMO_ONSCREENKEYBOARD)
 	extern s_single_app_t single_onscreenkeyboard;
-#endif /* DEMO_ONSCREENKEYBOARD */
-#if defined(DEMO_TEMP)
+#endif /* CONFIG_DEMO_ONSCREENKEYBOARD */
+#if defined(CONFIG_DEMO_TEMP)
 	extern s_single_app_t single_temp;
-#endif /* DEMO_TEMP */
-#if defined(DEMO_TERM)
+#endif /* CONFIG_DEMO_TEMP */
+#if defined(CONFIG_DEMO_TERM)
 	extern s_single_app_t single_term;
-#endif /* DEMO_TERM */
-#if defined(DEMO_TIMER)
+#endif /* CONFIG_DEMO_TERM */
+#if defined(CONFIG_DEMO_TIMER)
 	extern s_single_app_t single_timer;
-#endif /* DEMO_TIMER */
-#if defined(DEMO_LOGOUT)
+#endif /* CONFIG_DEMO_TIMER */
+#if defined(CONFIG_DEMO_LOGOUT)
 	extern s_single_app_t single_xynthlogout;
-#endif /* DEMO_LOGOUT */
-#if defined(DEMO_WIDGETX)
+#endif /* CONFIG_DEMO_LOGOUT */
+#if defined(CONFIG_DEMO_WIDGETX)
 	extern s_single_app_t single_widgetx;
-#endif /* DEMO_WIDGETX */
+#endif /* CONFIG_DEMO_WIDGETX */
 
 s_single_app_t *s_server_single_apps[] = {
-#if defined(DEMO_DESKTOP)
+#if defined(CONFIG_DEMO_DESKTOP)
 	&single_desktop,
-#endif /* DEMO_DESKTOP */
-#if defined(DEMO_CHILD)
+#endif /* CONFIG_DEMO_DESKTOP */
+#if defined(CONFIG_DEMO_CHILD)
 	&single_child,
-#endif /* DEMO_CHILD */
-#if defined(DEMO_HIDE)
+#endif /* CONFIG_DEMO_CHILD */
+#if defined(CONFIG_DEMO_HIDE)
 	&single_hide,
-#endif /* DEMO_HIDE */
-#if defined(DEMO_LOAD)
+#endif /* CONFIG_DEMO_HIDE */
+#if defined(CONFIG_DEMO_LOAD)
 	&single_load,
-#endif /* DEMO_LOAD */
-#if defined(DEMO_SIMPLE)
+#endif /* CONFIG_DEMO_LOAD */
+#if defined(CONFIG_DEMO_SIMPLE)
 	&single_simple,
-#endif /* DEMO_SIMPLE */
-#if defined(DEMO_OBJECT)
+#endif /* CONFIG_DEMO_SIMPLE */
+#if defined(CONFIG_DEMO_OBJECT)
 	&single_object,
-#endif /* DEMO_OBJECT */
-#if defined(DEMO_SETUPWIZARD)
+#endif /* CONFIG_DEMO_OBJECT */
+#if defined(CONFIG_DEMO_SETUPWIZARD)
 	&single_setupwizard,
-#endif /* DEMO_SETUPWIZARD */
-#if defined(DEMO_ONSCREENKEYBOARD)
+#endif /* CONFIG_DEMO_SETUPWIZARD */
+#if defined(CONFIG_DEMO_ONSCREENKEYBOARD)
 	&single_onscreenkeyboard,
-#endif /* DEMO_ONSCREENKEYBOARD */
-#if defined(DEMO_TEMP)
+#endif /* CONFIG_DEMO_ONSCREENKEYBOARD */
+#if defined(CONFIG_DEMO_TEMP)
 	&single_temp,
-#endif /* DEMO_TEMP */
-#if defined(DEMO_TERM)
+#endif /* CONFIG_DEMO_TEMP */
+#if defined(CONFIG_DEMO_TERM)
 	&single_term,
-#endif /* DEMO_TERM */
-#if defined(DEMO_TIMER)
+#endif /* CONFIG_DEMO_TERM */
+#if defined(CONFIG_DEMO_TIMER)
 	&single_timer,
-#endif /* DEMO_TIMER */
-#if defined(DEMO_LOGOUT)
+#endif /* CONFIG_DEMO_TIMER */
+#if defined(CONFIG_DEMO_LOGOUT)
 	&single_xynthlogout,
-#endif /* DEMO_LOGOUT */
-#if defined(DEMO_WIDGETX)
+#endif /* CONFIG_DEMO_LOGOUT */
+#if defined(CONFIG_DEMO_WIDGETX)
 	&single_widgetx,
-#endif /* DEMO_WIDGETX */
+#endif /* CONFIG_DEMO_WIDGETX */
 	NULL
 };
 
@@ -113,7 +115,7 @@ void s_server_single_start (void)
 {
 	s_single_app_t **sa;
 	debugf(DSER, "starting applications");
-#if defined(DEMO_DESKTOP)
+#if defined(CONFIG_DEMO_DESKTOP)
 	for (sa = s_server_single_apps; *sa; sa++) {
 		if (strcmp((*sa)->argv[0], "desktop") == 0) {
 			s_thread_create(s_server_single_app_start, *sa);
@@ -139,4 +141,4 @@ void s_server_single_stop (void)
 	}
 }
 
-#endif /* SINGLE_APP */
+#endif /* CONFIG_SINGLE_APPLICATION */

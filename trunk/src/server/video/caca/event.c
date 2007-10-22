@@ -13,8 +13,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(VIDEO_CACA)
-
 #include "../../../lib/xynth_.h"
 #include "server.h"
 #include "caca.h"
@@ -66,5 +64,3 @@ void * s_video_caca_event_parse (void *arg)
 
 end:	return NULL;
 }
-
-#endif /* VIDEO_CACA */

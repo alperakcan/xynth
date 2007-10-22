@@ -1,27 +1,26 @@
 
-include ../../Makefile.cfg
-include ../../Makefile.parse
+-include ../../.config
 
-DIR = src/demo/object
-
-INCDIR  = ../../src/lib ../../src/widget
-LIBDIR  = ../../src/widget ../../src/lib
-LDFLAGS = -lwidget -lxynth
-
-OBJS = object.o
-
-ifeq ($(SINGLE_APP), Y)
-TARGET_A = single_object.a
-CFLAGS  += -Dmain=object_main
+ifeq ($(CONFIG_SINGLE_APPLICATION), y)
+target-n = object
+target_o-y = single_object.o
 else
-TARGET = object
+target-y = object
+target_o-n = single_object.o
 endif
 
-EXTRA_CLEAN = object single_object.a
+object_files-y     = object.c
+object_includes-y  = ../../src/lib ../../src/widget
+object_libraries-y = ../../src/lib/ ../../src/widget/
+object_ldflags-y   = -lwidget -lxynth
 
-include ../../Makefile.rules
+single_object.o_files-y    = object.c
+single_object.o_includes-y = ../../src/lib ../../src/widget
+single_object.o_cflags-y   = -Dmain=object_main
 
-dist: all
-ifneq ($(TARGET),)
-	cp -a $(TARGET) ../../$(DISTBINDIR)
+include ../../Makefile.lib
+
+ifneq ($(CONFIG_SINGLE_APPLICATION), y)
+dist:
+	$(CP) object ../../dist/$(CONFIG_PATH_BIN)/object
 endif

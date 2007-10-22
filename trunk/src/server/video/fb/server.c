@@ -13,8 +13,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(VIDEO_FBDev)
-
 #include "../../../lib/xynth_.h"
 #include "server.h"
 #include "../helper/helper.h"
@@ -43,7 +41,7 @@ s_video_input_t s_video_fb_input_irr = {
 	s_video_helper_irr_uninit,
 };
 
-#if defined(VIDEO_HELPER_TSCREEN)
+#if defined(CONFIG_VIDEO_HELPER_TSCREEN)
 s_video_input_t s_video_fb_input_tscreen = {
 	VIDEO_INPUT_MOUSE,
 	s_video_helper_touchscreen_init,
@@ -56,7 +54,7 @@ s_video_input_t *s_video_fb_input[] = {
 	&s_video_fb_input_irr,
 	&s_video_fb_input_keybd,
 	&s_video_fb_input_mouse,
-#if defined(VIDEO_HELPER_TSCREEN)
+#if defined(CONFIG_VIDEO_HELPER_TSCREEN)
 	&s_video_fb_input_tscreen,
 #endif
 	NULL,
@@ -324,5 +322,3 @@ void fb_server_setmode (s_server_conf_t *cfg, s_video_helper_mode_info_t *gmode)
 			debugf(DSER | DSYS | DFAT, "FBDEV : Unsupported visual(%d) requested", fb.f_scr.visual);
 	}
 }
-
-#endif /* VIDEO_FBDev */

@@ -1,0 +1,448 @@
+
+mainmenu "Xynth Windowing System Configuration"
+
+config CONFIG_DEBUG
+    bool "Debugging support"
+    default y
+
+config CONFIG_SINGLE_APPLICATION
+    bool "Link them all"
+    default n
+
+choice
+    prompt "Platform Selection"
+    default CONFIG_PLATFORM_LINUX
+    help
+	linux:
+	pspdev:
+	mingw:
+	gp2x
+
+config CONFIG_PLATFORM_LINUX
+    bool "linux"
+
+config CONFIG_PLATFORM_PSPDEV
+    bool "pspdev"
+
+config CONFIG_PLATFORM_MINGW
+    bool "mingw"
+    select CONFIG_SINGLE_APPLICATION
+
+config CONFIG_PLATFORM_GP2X
+    bool "gp2x"
+
+endchoice
+
+menu "Video Drivers"
+
+config CONFIG_VIDEO_VESA
+    bool "VESA VBE video output support"
+    default y
+    depends on CONFIG_PLATFORM_LINUX
+    select CONFIG_VIDEO_HELPER
+    select CONFIG_VIDEO_HELPER_CONSOLE
+    select CONFIG_VIDEO_HELPER_KEYBOARD
+    select CONFIG_VIDEO_HELPER_MOUSE
+    select CONFIG_VIDEO_HELPER_MODES
+    help
+	LRMI
+	http://sourceforge.net/projects/lrmi
+
+config CONFIG_VIDEO_SVGALIB
+    bool "SVGALib video output support"
+    default y
+    depends on CONFIG_PLATFORM_LINUX
+    select CONFIG_VIDEO_HELPER
+    select CONFIG_VIDEO_HELPER_CONSOLE
+    select CONFIG_VIDEO_HELPER_KEYBOARD
+    select CONFIG_VIDEO_HELPER_MOUSE
+    select CONFIG_VIDEO_HELPER_MODES
+    select CONFIG_VIDEO_HELPER_MTRR
+    help
+	SVGALib
+	http://www.svgalib.org
+
+config CONFIG_VIDEO_FBDEV
+    bool "Linux Frame Buffer output support"
+    default y
+    depends on CONFIG_PLATFORM_LINUX
+    select CONFIG_VIDEO_HELPER
+    select CONFIG_VIDEO_HELPER_CONSOLE
+    select CONFIG_VIDEO_HELPER_KEYBOARD
+    select CONFIG_VIDEO_HELPER_MOUSE
+    select CONFIG_VIDEO_HELPER_MODES
+    select CONFIG_VIDEO_HELPER_MTRR
+    help
+	linux kernel frame buffer driver
+	http://www.kernel.org
+
+config CONFIG_VIDEO_SDL
+    bool "SDL video output support"
+    default y
+    depends on CONFIG_PLATFORM_LINUX
+    select CONFIG_VIDEO_HELPER
+    select CONFIG_VIDEO_HELPER_MODES
+    help
+	SDL Library
+	http://libsdl.org
+
+config CONFIG_VIDEO_CACA
+    bool "CACA video output support"
+    default y
+    depends on CONFIG_PLATFORM_LINUX
+    select CONFIG_VIDEO_HELPER
+    select CONFIG_VIDEO_HELPER_MODES
+    help
+	CACA
+	http://libcaca.zoy.org
+
+config CONFIG_VIDEO_PSPDEV
+    bool "PSPDev video output support"
+    default y
+    depends on CONFIG_PLATFORM_PSPDEV
+    help
+	Play Station Portable SDK
+	http://www.pspdev.org
+
+config CONFIG_VIDEO_GDI
+    bool "GDI video output support"
+    default y
+    depends on CONFIG_PLATFORM_MINGW
+    select CONFIG_VIDEO_HELPER
+    select CONFIG_VIDEO_HELPER_MODES
+    help
+	GDI
+	http://msdn.microsoft.com
+
+config CONFIG_VIDEO_NULL
+    bool "NULL video output support"
+    default y
+    help
+	NULL video example driver
+
+menu "Video Driver Helper"
+
+config CONFIG_VIDEO_HELPER
+    bool "Video helper modules"
+    default n
+    help
+	Video drivers helper modules
+
+config CONFIG_VIDEO_HELPER_MODES
+    bool "Resolutions module"
+    default n
+    depends on CONFIG_VIDEO_HELPER
+    help
+	Resolutions module
+
+config CONFIG_VIDEO_HELPER_CONSOLE
+    bool "Console handling module"
+    default n
+    depends on CONFIG_PLATFORM_LINUX
+    depends on CONFIG_VIDEO_HELPER
+    help
+	Console handling module
+
+config CONFIG_VIDEO_HELPER_KEYBOARD
+    bool "Keyboard handling module"
+    default n
+    depends on CONFIG_PLATFORM_LINUX
+    depends on CONFIG_VIDEO_HELPER
+    help
+	Keyboard handling module
+
+config CONFIG_VIDEO_HELPER_MOUSE
+    bool "Mouse handling module"
+    default n
+    depends on CONFIG_PLATFORM_LINUX
+    depends on CONFIG_VIDEO_HELPER
+    help
+	Mouse handling module
+
+config CONFIG_VIDEO_HELPER_MTRR
+    bool "MTRR handling module"
+    default n
+    depends on CONFIG_PLATFORM_LINUX
+    depends on CONFIG_VIDEO_HELPER
+    help
+	MTRR handling module
+
+endmenu
+
+endmenu
+
+choice
+    prompt "Thread Method"
+    default CONFIG_THREAD_PTHREADS if CONFIG_PLATFORM_LINUX
+    default CONFIG_THREAD_PTHREADS if CONFIG_PLATFORM_MINGW
+    default CONFIG_THREAD_PTHREADS if CONFIG_PLATFORM_GP2X
+    default CONFIG_THREAD_PSPDEV if CONFIG_PLATFORM_PSPDEV
+    help
+	pthreads:
+	windows:
+	pspdev:
+
+config CONFIG_THREAD_PTHREADS
+    bool "pthreads"
+    depends on (CONFIG_PLATFORM_LINUX || CONFIG_PLATFORM_GP2X || CONFIG_PLATFORM_MINGW)
+
+config CONFIG_THREAD_WINDOWS
+    depends on CONFIG_PLATFORM_MINGW
+    bool "windows"
+
+config CONFIG_THREAD_PSPDEV
+    bool "pspdev"
+    depends on CONFIG_PLATFORM_PSPDEV
+
+endchoice
+
+menu "Communication Method"
+
+choice
+    prompt "Pipe Method"
+    default CONFIG_PIPE_POSIX if CONFIG_PLATFORM_LINUX || CONFIG_PLATFORM_GP2X
+    default CONFIG_PIPE_MEMORY if CONFIG_PLATFORM_MINGW || CONFIG_PLATFORM_PSPDEV
+
+config CONFIG_PIPE_POSIX
+    bool "posix"
+    depends on CONFIG_PLATFORM_LINUX || CONFIG_PLATFORM_GP2X
+
+config CONFIG_PIPE_MEMORY
+    bool "memory"
+    depends on CONFIG_SOCKET_PIPE
+    select CONFIG_SINGLE_APPLICATION
+
+endchoice
+
+choice
+    prompt "Socket Method"
+    default CONFIG_SOCKET_POSIX if CONFIG_PLATFORM_LINUX || CONFIG_PLATFORM_GP2X
+    default CONFIG_SOCKET_PIPE if CONFIG_PLATFORM_MINGW || CONFIG_PLATFORM_PSPDEV
+
+config CONFIG_SOCKET_POSIX
+    bool "posix"
+    depends on CONFIG_PLATFORM_LINUX || CONFIG_PLATFORM_GP2X
+    select CONFIG_IPC_UDS
+
+config CONFIG_SOCKET_PIPE
+    bool "pipe"
+    select CONFIG_IPC_PIPE
+
+endchoice
+
+choice
+    prompt "Poll Method"
+    default CONFIG_POLL_POLL if CONFIG_PLATFORM_LINUX || CONFIG_PLATFORM_GP2X
+    depends on CONFIG_PIPE_POSIX
+
+config CONFIG_POLL_POLL
+    bool "poll"
+
+config CONFIG_POLL_SELECT
+    bool "select"
+
+endchoice
+
+config CONFIG_IPC_TCP
+    bool "IPC on TCP"
+    default y
+    depends on CONFIG_SOCKET_POSIX
+    help
+	IPC on TCP
+
+config CONFIG_IPC_UDS
+    bool "IPC on UDS"
+    default y
+    depends on CONFIG_SOCKET_POSIX
+    help
+	IPC on UDS
+
+config CONFIG_IPC_PIPE
+    bool "IPC on pipe"
+    default y
+    depends on CONFIG_SOCKET_PIPE
+    help
+	IPC on pipe
+
+endmenu
+
+menu "Image Support"
+
+config CONFIG_IMAGE_PNG
+    bool "PNG support"
+    default y
+
+config CONFIG_IMAGE_GIF
+    bool "GIF support"
+    default y
+
+config CONFIG_IMAGE_XPM
+    bool "XPM support"
+    default y
+
+endmenu
+
+menu "Theme support"
+
+config CONFIG_THEME_PLUGIN
+    bool "Theme plugin support"
+    default y
+
+config CONFIG_THEME_KERAMIK
+    bool "Theme Keramik"
+    default y
+    depends on CONFIG_THEME_PLUGIN
+
+config CONFIG_THEME_MICROGUI
+    bool "Theme Microgui"
+    default y
+    depends on CONFIG_THEME_PLUGIN
+
+config CONFIG_THEME_SILVERADO
+    bool "Theme silverado"
+    default y
+    depends on CONFIG_THEME_PLUGIN
+
+endmenu
+
+menu "Widget Library"
+
+config CONFIG_WIDGET_LIBRARY
+    bool "Compile Widget Library"
+    default y
+    
+config CONFIG_WIDGET_STATIC
+    bool "Compile Widget Static Library"
+    default y
+    depends on CONFIG_WIDGET_LIBRARY
+
+config CONFIG_WIDGET_SHARED
+    bool "Compile Widget Shared Library"
+    default y
+    depends on CONFIG_WIDGET_LIBRARY
+
+config CONFIG_WIDGET_WIDGETC
+    bool "Compile Widgetc"
+    default y
+    depends on CONFIG_WIDGET_LIBRARY
+
+config CONFIG_WIDGET_WIDGETR
+    bool "Compile Widgetr"
+    default y
+    depends on CONFIG_WIDGET_LIBRARY
+
+endmenu
+
+menu "Demo Applications"
+
+config CONFIG_DEMO_APPLICATIONS
+    bool "Build demo applications"
+    default y
+
+config CONFIG_DEMO_CHILD
+    bool "Build child demo"
+    default y
+    depends on CONFIG_DEMO_APPLICATIONS
+
+config CONFIG_DEMO_DESKTOP
+    bool "Build desktop demo"
+    default y
+    depends on CONFIG_DEMO_APPLICATIONS
+
+config CONFIG_DEMO_HIDE
+    bool "Build hide demo"
+    default y
+    depends on CONFIG_DEMO_APPLICATIONS
+
+config CONFIG_DEMO_LOAD
+    bool "Build load demo"
+    default y
+    depends on CONFIG_DEMO_APPLICATIONS && (CONFIG_PLATFORM_LINUX || CONFIG_PLATFORM_GP2X)
+
+config CONFIG_DEMO_SIMPLE
+    bool "Build simple demo"
+    default y
+    depends on CONFIG_DEMO_APPLICATIONS
+
+config CONFIG_DEMO_OBJECT
+    bool "Build object demo"
+    default y
+    depends on CONFIG_DEMO_APPLICATIONS && CONFIG_WIDGET_LIBRARY
+
+config CONFIG_DEMO_ONSCREENKEYBOARD
+    bool "Build onscreenkeyboard demo"
+    default y
+    depends on CONFIG_DEMO_APPLICATIONS
+
+config CONFIG_DEMO_TEMP
+    bool "Build temp demo"
+    default y
+    depends on CONFIG_DEMO_APPLICATIONS
+
+config CONFIG_DEMO_TERM
+    bool "Build term demo"
+    default y
+    depends on CONFIG_DEMO_APPLICATIONS && (CONFIG_PLATFORM_LINUX || CONFIG_PLATFORM_GP2X)
+
+config CONFIG_DEMO_TIMER
+    bool "Build timer demo"
+    default y
+    depends on CONFIG_DEMO_APPLICATIONS
+
+config CONFIG_DEMO_LOGOUT
+    bool "Build logout demo"
+    default y
+    depends on CONFIG_DEMO_APPLICATIONS
+
+config CONFIG_DEMO_IMAGE
+    bool "Build image demo"
+    default y
+    depends on CONFIG_DEMO_APPLICATIONS
+
+config CONFIG_DEMO_WIDGETX
+    bool "Build widgetx demo"
+    default y
+    depends on CONFIG_DEMO_APPLICATIONS && CONFIG_WIDGET_WIDGETC
+
+config CONFIG_DEMO_XDIALOG
+    bool "Build xdialog demo"
+    default y
+    depends on CONFIG_DEMO_APPLICATIONS && CONFIG_WIDGET_LIBRARY
+
+endmenu
+
+menu "Paths"
+
+config CONFIG_PATH_INSTALL
+    string "Install path"
+    default "/usr/local/"
+
+config CONFIG_PATH_BIN
+    string "Bin path"
+    default "bin"
+
+config CONFIG_PATH_LIB
+    string "Lib path"
+    default "lib"
+
+config CONFIG_PATH_INCLUDE
+    string "Include path"
+    default "include"
+
+config CONFIG_PATH_SHARE
+    string "Share path"
+    default "share/xynth"
+
+config CONFIG_PATH_FONTS
+    string "Fonts path"
+    default "share/xynth/fonts"
+
+config CONFIG_PATH_CONFIGS
+    string "Configs path"
+    default "share/xynth/configs"
+
+config CONFIG_PATH_THEMES
+    string "Theme path"
+    default "share/xynth/themes"
+
+endmenu

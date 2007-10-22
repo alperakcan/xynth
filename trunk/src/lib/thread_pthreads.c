@@ -13,11 +13,11 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(THREAD_PTHREADS)
+#if defined(CONFIG_THREAD_PTHREADS)
 
 #include <pthread.h>
 
-#if defined(PLATFORM_MINGW)
+#if defined(CONFIG_PLATFORM_MINGW)
 #include <windows.h>
 #endif
 
@@ -243,7 +243,7 @@ static int s_thread_pthreads_thread_join (s_thread_t *tid, void **ret)
 
 static int s_thread_pthreads_thread_self (void)
 {
-#if defined(PLATFORM_MINGW)
+#if defined(CONFIG_PLATFORM_MINGW)
 	return *(int *) pthread_self().p;
 #else
 	return (int) pthread_self();
@@ -303,4 +303,4 @@ static s_thread_api_t s_thread_pthreads = {
 	s_thread_pthreads_thread_exit,
 };
 
-#endif /* THREAD_PTHREADS */
+#endif /* CONFIG_THREAD_PTHREADS */

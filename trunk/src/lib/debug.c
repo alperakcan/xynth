@@ -15,7 +15,7 @@
 
 #include "xynth_.h"
 
-#if defined(PLATFORM_PSPDEV)
+#if defined(CONFIG_PLATFORM_PSPDEV)
 	#include <pspdebug.h>
 	/* for psplink
 	#define printf	pspDebugScreenPrintf
@@ -29,7 +29,7 @@ void s_debug_debugf (unsigned short flags, char *file, int line, char *func, cha
 	char *p;
 	va_list args;
 
-#if !defined(DEBUG)
+#if !defined(CONFIG_DEBUG)
 	if ((flags & DFAT) == 0) {
 		return;
 	}

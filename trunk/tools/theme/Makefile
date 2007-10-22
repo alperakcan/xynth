@@ -1,13 +1,9 @@
 
-include ../../Makefile.cfg
-include ../../Makefile.parse
+target.host-y = theme
 
-INCDIR  = ../../src/lib ../../src/server
-LIBDIR  = ../../src/lib
-LDFLAGS = $(LIBDIR)/libxynth.a -lpthread -lm
+theme_includes-y  = ../../src/lib ../../src/server
+theme_libraries-y = ../../src/lib
+theme_ldflags-y   = -lxynth -lpthread -lm -static
+theme_files-y     = theme.c
 
-OBJS = theme.o
-
-TARGET_HOST = theme
-
-include ../../Makefile.rules
+include ../../Makefile.lib

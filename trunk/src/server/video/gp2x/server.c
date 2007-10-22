@@ -13,8 +13,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(VIDEO_GP2X)
-
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -147,5 +145,3 @@ void s_video_gp2x_server_surface_update (s_rect_t *coor)
 void s_video_gp2x_server_fullscreen (void)
 {
 }
-
-#endif /* VIDEO_GP2X */

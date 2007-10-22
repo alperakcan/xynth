@@ -13,8 +13,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(VIDEO_GDI)
-
 #include "../../../lib/xynth_.h"
 #include "server.h"
 #include "../helper/helper.h"
@@ -230,5 +228,3 @@ err1:	ReleaseDC(priv->hwndMain, mainwindow);
         }
 err0:   free(ptr);
 }
-
-#endif /* VIDEO_GDI */

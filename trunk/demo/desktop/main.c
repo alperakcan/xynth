@@ -37,7 +37,7 @@ int desktop_self_system (char *command)
 			break;
 		}
 	}
-#if defined(SINGLE_APP)
+#if defined(CONFIG_SINGLE_APPLICATION)
 	{
 		void * s_server_single_app_start (void *arg);
 		extern s_single_app_t *s_server_single_apps[];
@@ -102,7 +102,7 @@ int main (int argc, char *argv[])
 	return 0;
 }
 
-#if defined(SINGLE_APP)
+#if defined(CONFIG_SINGLE_APPLICATION)
 s_single_app_t single_desktop = {
 	desktop_main,
 	1,

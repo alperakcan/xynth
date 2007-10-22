@@ -13,8 +13,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(VIDEO_GDI)
-
 #include "../../../lib/xynth_.h"
 #include "server.h"
 #include "gdi.h"
@@ -205,5 +203,3 @@ void * s_video_gdi_create_window (void *arg)
 
 	return (void *) msg.wParam;
 }
-
-#endif /* VIDEO_GDI */

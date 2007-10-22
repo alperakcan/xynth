@@ -1,42 +1,36 @@
 
-include ../../Makefile.cfg
-include ../../Makefile.parse
+-include ../../.config
 
-DIR = src/widget/
+target_so-$(CONFIG_WIDGET_SHARED) = libwidget.so
 
-INCDIR = ./ ../lib
+libwidget.so_includes-y = ./ ../lib
+libwidget.so_files-y = button.c \
+                       checkbox.c \
+                       editbox.c \
+                       effect.c \
+                       frame.c \
+                       object.c \
+                       progressbar.c \
+                       signal.c \
+                       scrollbuffer.c \
+                       textbox.c \
+                       window.c \
+                       listbox.c \
+                       clistbox.c
+libwidget.so_libraries-y = ../lib/
+libwidget.so_ldflags-y   = -lxynth
 
-OBJS = button.o checkbox.o editbox.o effect.o frame.o object.o progressbar.o \
-       signal.o scrollbuffer.o textbox.o window.o listbox.o clistbox.o
+target_a-$(CONFIG_WIDGET_STATIC) = libwidget.a
 
-ifeq ($(PLATFORM_LINUX), Y)
-TARGET_A  = libwidget.a
-TARGET_SO = libwidget.so
-LIBDIR    = ../lib
-LDFLAGS   = -lxynth
-else
-ifeq ($(PLATFORM_PSPDEV), Y)
-TARGET_A  = libwidget.a
-else
-ifeq ($(PLATFORM_MINGW), Y)
-TARGET_A  = libwidget.a
-else
-ifeq ($(PLATFORM_GP2X), Y)
-TARGET_A  = libwidget.a
-endif
-endif
-endif
-endif
+libwidget.a_includes-y = $(libwidget.so_includes-y)
+libwidget.a_files-y    = $(libwidget.so_files-y)
 
-EXTRA_CLEAN = libwidget.a libwidget.so
+esubdir-$(CONFIG_WIDGET_WIDGETC) := widgetc
+esubdir-$(CONFIG_WIDGET_WIDGETR) += widgetr
 
-SUBDIR-Y += widgetc
-SUBDIR-Y += widgetr
+include ../../Makefile.lib
 
-include ../../Makefile.rules
-
-dist: all
-	cp widgetc/widgetc ../../$(DISTBINDIR)
-	cp widgetr/widgetr ../../$(DISTBINDIR)
-	cp widget.h ../../$(DISTINCDIR)
-	cp -a $(TARGET_A) $(TARGET_SO) $(TARGET) ../../$(DISTLIBDIR)
+dist:
+	$(CP) widget.h ../../dist/$(CONFIG_PATH_INCLUDE)
+	$(CP) libwidget.so ../../dist/$(CONFIG_PATH_LIB)
+	$(CP) libwidget.a ../../dist/$(CONFIG_PATH_LIB)

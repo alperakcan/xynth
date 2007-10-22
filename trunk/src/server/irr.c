@@ -25,7 +25,7 @@ static s_video_helper_irr_codes_t *irr_codes = NULL;
 int s_video_helper_irr_init (s_server_conf_t *cfg)
 {
 	if (strcasecmp(cfg->irr.type, "IRR_IRMAN") == 0) {
-		#if defined(VIDEO_HELPER_IRMAN)
+		#if defined(CONFIG_VIDEO_HELPER_IRMAN)
 		irr_type = IRR_IRMAN;
 		return s_video_helper_irman_init(cfg->irr.device);
 		#endif
@@ -36,7 +36,7 @@ int s_video_helper_irr_init (s_server_conf_t *cfg)
 void s_video_helper_irr_uninit (void)
 {
 	if (irr_type == IRR_IRMAN) {
-		#if defined(VIDEO_HELPER_IRMAN)
+		#if defined(CONFIG_VIDEO_HELPER_IRMAN)
 		s_video_helper_irman_uninit();
 		#endif
 	}
@@ -45,7 +45,7 @@ void s_video_helper_irr_uninit (void)
 int s_video_helper_irr_update (s_video_input_data_t *keybd)
 {
 	if (irr_type == IRR_IRMAN) {
-		#if defined(VIDEO_HELPER_IRMAN)
+		#if defined(CONFIG_VIDEO_HELPER_IRMAN)
 		char *code;
 		s_video_helper_irr_codes_t *codes;
 		code = s_video_helper_irman_getcode();

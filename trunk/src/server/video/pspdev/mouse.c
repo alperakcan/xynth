@@ -13,8 +13,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(VIDEO_PSPDEV)
-
 #include "../../../lib/xynth_.h"
 #include "server.h"
 #include "../helper/helper.h"
@@ -57,5 +55,3 @@ void s_video_pspdev_mouse_uninit (void)
 	priv->mouse_fd[1] = -1;
 	s_server_cursor_uninit();
 }
-
-#endif /* VIDEO_PSPDEV */

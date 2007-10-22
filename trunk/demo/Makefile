@@ -1,24 +1,19 @@
 
-include ../Makefile.cfg
-include ../Makefile.parse
+-include ../.config
 
-DIR = src/demo/
+subdir-$(CONFIG_DEMO_CHILD)    = child
+subdir-$(CONFIG_DEMO_DESKTOP) += desktop
+subdir-$(CONFIG_DEMO_HIDE)    += hide
+subdir-$(CONFIG_DEMO_LOAD)    += load
+subdir-$(CONFIG_DEMO_SIMPLE)  += simple
+subdir-$(CONFIG_DEMO_OBJECT)  += object
+subdir-$(CONFIG_DEMO_TEMP)    += temp
+subdir-$(CONFIG_DEMO_TERM)    += term
+subdir-$(CONFIG_DEMO_TIMER)   += timer
+subdir-$(CONFIG_DEMO_LOGOUT)  += xynthlogout
+subdir-$(CONFIG_DEMO_IMAGE)   += img
+subdir-$(CONFIG_DEMO_ONSCREENKEYBOARD) += onscreenkeyboard
+subdir-$(CONFIG_DEMO_WIDGETX) += widgetx
+subdir-$(CONFIG_DEMO_XDIALOG) += xdialog
 
-SUBDIR-$(DEMO_CHILD)    = child
-SUBDIR-$(DEMO_DESKTOP) += desktop
-SUBDIR-$(DEMO_HIDE)    += hide
-SUBDIR-$(DEMO_LOAD)    += load
-SUBDIR-$(DEMO_SIMPLE)  += simple
-SUBDIR-$(DEMO_OBJECT)  += object
-SUBDIR-$(DEMO_TEMP)    += temp
-SUBDIR-$(DEMO_TERM)    += term
-SUBDIR-$(DEMO_TIMER)   += timer
-SUBDIR-$(DEMO_LOGOUT)  += xynthlogout
-SUBDIR-$(DEMO_IMAGE)   += img
-SUBDIR-$(DEMO_ONSCREENKEYBOARD) += onscreenkeyboard
-SUBDIR-$(DEMO_WIDGETX) += widgetx
-
-include ../Makefile.rules
-
-dist:
-	@$(foreach F, $(SUBDIR-Y), $(MAKE) dist -C $F || exit 1;)
+include ../Makefile.lib

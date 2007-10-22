@@ -13,8 +13,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#if defined(VIDEO_FBDev)
-
 #include <math.h>
 
 #include "../../../lib/xynth_.h"
@@ -421,5 +419,3 @@ void main(int argc,char *argv[])
 		t.vSyncPol);
 }
 #endif  /* TESTING */
-
-#endif /* VIDEO_FBDev */
