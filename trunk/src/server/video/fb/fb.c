@@ -118,7 +118,7 @@ void fb_close (void)
 void fb_init (s_server_conf_t *cfg)
 {
 	if (strcmp(cfg->keyboard.keyboard, "console") == 0) {
-		fb_console_fd = s_video_helper_console_init();
+		fb_console_fd = s_video_helper_console_init(cfg);
 		if (fb_console_fd < 0) {
 			debugf(DSER, "Unable to get console");
 			return;

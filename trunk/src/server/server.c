@@ -155,6 +155,8 @@ int s_server_cfg (s_server_conf_t *config)
 					config->general.mode = strdup(var->value);
 				} else if (strcasecmp(var->name, "rotate") == 0) {
 					config->general.rotate = atoi(var->value);
+				} else if (strcasecmp(var->name, "console") == 0) {
+					config->general.console = strdup(var->value);
 				}
 			} else if (strcasecmp(cat->name, "mouse") == 0) {
 				if (strcasecmp(var->name, "type") == 0) {
@@ -463,6 +465,7 @@ int s_server_init (void)
 		s_handler_init(&(server->whndl[i]));
 	}
 
+	s_free(config.general.console);
 	s_free(config.general.driver);
 	s_free(config.general.mode);
 	s_free(config.mouse.type);
@@ -476,7 +479,8 @@ int s_server_init (void)
 
 	return 0;
 
-err0:	s_free(config.general.driver);
+err0:	s_free(config.general.console);
+	s_free(config.general.driver);
 	s_free(config.general.mode);
 	s_free(config.mouse.type);
 	s_free(config.mouse.device);

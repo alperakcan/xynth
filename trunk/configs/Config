@@ -71,7 +71,6 @@ config CONFIG_VIDEO_FBDEV
     select CONFIG_VIDEO_HELPER_KEYBOARD
     select CONFIG_VIDEO_HELPER_MOUSE
     select CONFIG_VIDEO_HELPER_MODES
-    select CONFIG_VIDEO_HELPER_MTRR
     help
 	linux kernel frame buffer driver
 	http://www.kernel.org

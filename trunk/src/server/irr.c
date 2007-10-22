@@ -6,6 +6,8 @@
 typedef enum {
 	IRR_NONE,
 	IRR_IRMAN,
+	IRR_IMAF,
+	IRR_AIR,
 } IRR_TYPE;
 
 static IRR_TYPE irr_type = IRR_NONE;

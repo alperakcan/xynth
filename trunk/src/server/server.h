@@ -145,6 +145,7 @@ struct s_server_conf_s {
 		char *driver;
 		char *mode;
 		int rotate;
+		char *console;
 	} general;
 	struct {
 		char *type;

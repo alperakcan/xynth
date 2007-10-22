@@ -18,6 +18,8 @@ help:
 	@echo "make pspdev       - pspdev default configuration"
 	@echo "make gp2x         - linux default configuration"
 	@echo ""
+	@echo "make seachange    - linux / davinci (seachange) default configuration"
+	@echo ""
 
 check_goal := $(filter-out menuconfig, $(MAKECMDGOALS))
 check_goal := $(filter-out distclean, $(check_goal))
@@ -27,6 +29,7 @@ check_goal := $(filter-out linux-single, $(check_goal))
 check_goal := $(filter-out mingw, $(check_goal))
 check_goal := $(filter-out pspdev, $(check_goal))
 check_goal := $(filter-out gp2x, $(check_goal))
+check_goal := $(filter-out seachange, $(check_goal))
 check_goal := $(strip $(check_goal))
 
 ifneq ($(check_goal),)
@@ -42,10 +45,11 @@ subdir-n += tools/optimize
 
 include Makefile.lib
 
-.PHONY: linux linux-single mingw pspdev gp2x
-linux linux-single mingw pspdev gp2x:
+.PHONY: linux linux-single mingw pspdev gp2x seachange
+linux linux-single mingw pspdev gp2x seachange:
 	$(CP) configs/$@.config .config
 	$(CP) configs/$@.h src/lib/config.h
+	if [ -e "src/configs/$@.conf" ]; then $(CP) src/configs/$@.conf src/configs/xynth.conf; fi
 
 .PHONY: menuconfig
 menuconfig: tools/config_all

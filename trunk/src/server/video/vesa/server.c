@@ -350,7 +350,7 @@ int s_video_vesa_server_init (s_server_conf_t *cfg)
 	priv->vbe.mode_n = -1;
 	priv->console_fd = -1;
 	
-	priv->console_fd = s_video_helper_console_init();
+	priv->console_fd = s_video_helper_console_init(cfg);
 	if (priv->console_fd < 0) {
 		debugf(DSER, "Unable to get console");
 		goto err0;
