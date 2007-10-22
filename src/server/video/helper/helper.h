@@ -33,6 +33,12 @@ int s_video_helper_irimaf_uninit (void);
 char * s_video_helper_irimaf_getcode (void);
 #endif /* CONFIG_VIDEO_HELPER_IRIMAF */
 
+#if defined(CONFIG_VIDEO_HELPER_IRAIR)
+int s_video_helper_irair_init (void);
+int s_video_helper_irair_uninit (void);
+char * s_video_helper_irair_getcode (void);
+#endif /* CONFIG_VIDEO_HELPER_IRAIR */
+
 #if defined(CONFIG_VIDEO_HELPER_KEYBOARD)
 /* kbd.c */
 void s_video_helper_kbd_set_attr (void);
@@ -206,7 +212,9 @@ typedef enum {
 	M720x480x64K,		/* 158 */
 	M640x448x64K,		/* 159 */
 	M1280x800x64K,		/* 160 */
-	MAX_MODES,		/* 161 */
+	M720x576x64K,		/* 161 */
+	M640x512x64K,		/* 162 */
+	MAX_MODES,		/* 163 */
 } GENERIC_MODES;
 
 typedef struct s_video_helper_mode_info_s {

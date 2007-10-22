@@ -6,6 +6,8 @@ target_o-$(CONFIG_VIDEO_HELPER) = video_helper.o
 video_helper.o_files-y = console.c \
                          helper.h \
                          irman.c \
+                         irimaf.c \
+                         irair.c \
                          kbd.c \
                          kbd.h \
                          modes.c \
