@@ -34,12 +34,12 @@ void s_debug_debugf (unsigned short flags, char *file, int line, char *func, cha
 		return;
 	}
 #endif
-	printf("[0x%08X] ", s_thread_self());
+	fprintf(stderr, "[0x%08X] ", s_thread_self());
 
-	if (flags & DFAT) { printf("FATAL : ");   }
-	if (flags & DSYS) { printf("SYSERR : ");  }
-	if (flags & DSER) { printf("SERVER :: "); }
-	if (flags & DCLI) { printf("CLIENT :: "); }
+	if (flags & DFAT) { fprintf(stderr, "FATAL : ");   }
+	if (flags & DSYS) { fprintf(stderr, "SYSERR : ");  }
+	if (flags & DSER) { fprintf(stderr, "SERVER :: "); }
+	if (flags & DCLI) { fprintf(stderr, "CLIENT :: "); }
 	
 	s = 100;
 	if ((p = s_malloc(sizeof(char) * s)) == NULL) {
@@ -63,13 +63,13 @@ void s_debug_debugf (unsigned short flags, char *file, int line, char *func, cha
 		}
 	}
 
-	printf(p);
+	fprintf(stderr, p);
 	s_free(p);
 
 	if (flags & DSYS) {
-		printf(" : %s", strerror(errno));
+		fprintf(stderr, " : %s", strerror(errno));
 	}
-	printf(" [%s (%s:%d)]\n", func, file, line);
+	fprintf(stderr, " [%s (%s:%d)]\n", func, file, line);
 	if (flags & DFAT) {
 		goto err;
 	}

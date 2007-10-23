@@ -96,7 +96,7 @@ int w_object_update_to_surface (w_object_t *object, s_surface_t *surface, s_rect
 #if defined(WIDGET_OPTIMIZE_MEMORY) && WIDGET_OPTIMIZE_MEMORY == 3
 	if (object->parent != NULL) {
 		object->surface->matrix = (unsigned char *) s_malloc(sizeof(char) * object->surface->width * object->surface->height + 10);
-		object->surface->vbuf = (char *) s_calloc(1, object->surface->width * object->surface->height * object->surface->bytesperpixel + 1);
+		object->surface->vbuf = (unsigned char *) s_calloc(1, object->surface->width * object->surface->height * object->surface->bytesperpixel + 1);
 		memset(object->surface->matrix, 0xff, sizeof(char) * object->surface->width * object->surface->height);
 		if (object->draw != NULL) {
 			object->draw(object);

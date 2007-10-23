@@ -6,6 +6,15 @@
 
 #include "xdialog.h"
 
+static const int pbutton_width = 50;
+static const int pbutton_height = 25;
+static const int object_space = 10;
+
+void xd_msgbox_pbutton_clicked (w_pushbutton_t *pbutton)
+{
+	w_window_quit(pbutton->object->window);
+}
+
 int xd_msgbox_callback (int argc, char *argv[])
 {
 	int x;
@@ -17,19 +26,19 @@ int xd_msgbox_callback (int argc, char *argv[])
 	w_window_t *window;
 	w_frame_t *frame;
 	w_textbox_t *textbox;
-	w_button_t *button;
+	w_pushbutton_t *pbutton;
 
 	text = argv[0];
 	height = atoi(argv[1]);
 	width = atoi(argv[2]);
 	
-	w_window_init(&window, WINDOW_MAIN, NULL);
+	w_window_init(&window, WINDOW_MAIN | WINDOW_NOFORM, NULL);
 
-	x = (window->window->surface->width - width) / 2;
-	y = (window->window->surface->height - height) / 2;
+	x = (window->window->surface->linear_buf_width - width) / 2;
+	y = (window->window->surface->linear_buf_height - height) / 2;
 	w_window_set_coor(window, x, y, width, height);
 	
-	w_frame_init(window, &frame, FRAME_PANEL | FRAME_RAISED, window->object);
+	w_frame_init(window, &frame, FRAME_PANEL | FRAME_SUNKEN, window->object);
 	w_object_move(frame->object, 0, 0, width, height);
 	w_object_show(frame->object);
 	
@@ -37,12 +46,17 @@ int xd_msgbox_callback (int argc, char *argv[])
 	w_textbox_set_properties(textbox->object, TEXTBOX_WRAP);
 	w_textbox_set_style(textbox->object, FRAME_PANEL, FRAME_SUNKEN);
 	w_textbox_set_str(textbox->object, text);
-	w_object_move(textbox->object, 10, 10, width - 20, height - 20);
+	w_object_move(textbox->object, object_space, object_space, width - (object_space * 2), height - pbutton_height - (object_space * 3));
 	w_object_show(textbox->object);
 	
+	w_pushbutton_init(window, &pbutton, frame->object);
+	w_pushbutton_set_text(pbutton->object, "OK");
+	w_pushbutton_set_clicked(pbutton->object, xd_msgbox_pbutton_clicked);
+	w_object_move(pbutton->object, (width - pbutton_width) / 2, height - pbutton_height - object_space, pbutton_width, pbutton_height);
+	w_object_show(pbutton->object);
+	
 	w_object_show(window->object);
-	s_window_show(window->window);
-	s_window_main(window->window);
+	w_window_main(window);
 	
 	return 0;
 }
