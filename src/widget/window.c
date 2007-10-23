@@ -234,6 +234,12 @@ int w_window_font_add (w_window_t *window, char *font)
 	return 0;
 }
 
+int w_window_quit (w_window_t *window)
+{
+	s_window_quit(window->window);
+	return 0;
+}
+
 int w_window_main (w_window_t *window)
 {
 	s_window_show(window->window);

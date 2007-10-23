@@ -162,8 +162,15 @@ void w_textbox_lines_calculate (w_object_t *object)
 					strw = strlen(strline);
 					if (ptrline[ptrw - 1] != ' ' &&
 					    strline[strw - 1] != ' ') {
+						int have_space = 0;
 					    	ptr = strdup(ptrline);
-					    	for (strw = strlen(ptr) - 1; strw >= 0; strw--) {
+					    	for (strw = 0; ptr[strw]; strw++) {
+					    		if (ptr[strw] == ' ') {
+					    			have_space = 1;
+					    			break;
+					    		}
+					    	}
+					    	for (strw = strlen(ptr) - 1; have_space && strw >= 0; strw--) {
 					    		if (ptr[strw] != ' ') {
 					    			chars--;
 					    			ptr[strw] = '\0';
@@ -242,17 +249,19 @@ void w_textbox_draw_ (w_object_t *object)
 			}
 		}
 		s_image_get_mat(glyph->img);
+		w = object->content->w - x;
+		h = object->content->h - (y + glyph->size - glyph->yMax);
 		if ((textbox->frame->style & FRAME_MSHAPE) == FRAME_NOFRAME) {
 			s_putmaskpart(object->surface->matrix, object->surface->width, object->surface->height,
 			              x, y + glyph->size - glyph->yMax, w, h, glyph->img->w, glyph->img->h, glyph->img->mat, 0, 0);
 			s_putboxpartrgb(object->surface, x, y + glyph->size - glyph->yMax, w, h,
 			                glyph->img->w, glyph->img->h, glyph->img->rgba, 0, 0);
-		} else { 
+		} else {
 			s_putboxpartrgba(object->surface, x, y + glyph->size - glyph->yMax, w, h,
 			                 glyph->img->w, glyph->img->h, glyph->img->rgba, 0, 0);		
 		}
 	}
-end:	;
+end:	return;
 }
 
 void w_textbox_draw (w_object_t *object)

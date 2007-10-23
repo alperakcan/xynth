@@ -321,11 +321,15 @@ void w_listbox_uninit (w_object_t *object);
 struct w_pushbutton_s {
 	w_object_t *object;
 	w_button_t *button;
-	void (*clicked) (w_object_t *);
+	w_textbox_t *textbox;
+	void (*clicked) (w_pushbutton_t *);
 };
 
-int w_pushbutton_init (w_window_t *window, w_pushbutton_t **pushbutton, w_object_t *parent);
-int w_pushbutton_set_clicked (w_object_t *object, void (*clicked) (w_object_t *));
+int w_pushbutton_set_text (w_object_t *object, char *text);
+int w_pushbutton_set_clicked (w_object_t *object, void (*clicked) (w_pushbutton_t *));
+void w_pushbutton_draw (w_object_t *object);
+void w_pushbutton_geometry (w_object_t *object);
+int w_pushbutton_init (w_window_t *window, w_pushbutton_t **pbutton, w_object_t *parent);
 void w_pushbutton_uninit (w_object_t *object);
 
 /* button.c */
@@ -590,5 +594,6 @@ s_font_t * w_window_font_get (w_window_t *window, char *font);
 int w_window_font_add (w_window_t *window, char *font);
 int w_window_uninit (w_window_t *window);
 int w_window_main (w_window_t *window);
+int w_window_quit (w_window_t *window);
 
 #endif /* W_WIDGET_H_ */
