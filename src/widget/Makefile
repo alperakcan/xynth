@@ -11,6 +11,7 @@ libwidget.so_files-y = button.c \
                        frame.c \
                        object.c \
                        progressbar.c \
+                       pushbutton.c \
                        signal.c \
                        scrollbuffer.c \
                        textbox.c \
