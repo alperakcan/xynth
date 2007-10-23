@@ -36,11 +36,11 @@ typedef struct w_editbox_s w_editbox_t;
 typedef struct w_frame_image_s w_frame_image_t;
 typedef struct w_frame_s w_frame_t;
 typedef struct w_progressbar_s w_progressbar_t;
+typedef struct w_pushbutton_s w_pushbutton_t;
 typedef struct w_scrollbufferbar_s w_scrollbufferbar_t;
 typedef struct w_scrollbuffer_s w_scrollbuffer_t;
 typedef struct w_textbox_s w_textbox_t;
 typedef struct w_window_s w_window_t;
-
 typedef struct w_effect_s w_effect_t;
 typedef struct w_signal_s w_signal_t;
 
@@ -110,20 +110,22 @@ typedef enum {
 	OBJECT_EDITBOX 		= 0x4,
 	/** widget is progressbar */
 	OBJECT_PROGRESSBAR 	= 0x5,
+	/** widget is pushbutton */
+	OBJECT_PUSHBUTTON       = 0x6,
 	/** widget is checkbox */
-	OBJECT_CHECKBOX		= 0x6,
+	OBJECT_CHECKBOX		= 0x7,
 	/** widget is scrollbuffer */
-	OBJECT_SCROLLBUFFER	= 0x7,
+	OBJECT_SCROLLBUFFER	= 0x8,
 	/** widget is scrollbufferbar */
-	OBJECT_SCROLLBUFFERBAR	= 0x8,
+	OBJECT_SCROLLBUFFERBAR	= 0x9,
 	/** widget is listbox */
-	OBJECT_LISTBOX          = 0x9,
+	OBJECT_LISTBOX          = 0xa,
 	/** widget is control listbox */
-	OBJECT_CLISTBOX         = 0xa,
+	OBJECT_CLISTBOX         = 0xb,
 	/** widget is window */
-	OBJECT_WINDOW		= 0xb,
+	OBJECT_WINDOW		= 0xc,
 	/** number of widgets */
-	OBJECT_OBJECTS 		= 0xc
+	OBJECT_OBJECTS 		= 0xd
 } OBJECT;
 
 /** object struct
@@ -314,6 +316,17 @@ int w_listbox_set_inactive_style (w_object_t *object, unsigned int shape, unsign
 int w_listbox_set_item_height (w_object_t *object, int size);
 int w_listbox_init (w_window_t *window, w_listbox_t **listbox, w_object_t *parent);
 void w_listbox_uninit (w_object_t *object);
+
+/* pushbutton.c */
+struct w_pushbutton_s {
+	w_object_t *object;
+	w_button_t *button;
+	void (*clicked) (w_object_t *);
+};
+
+int w_pushbutton_init (w_window_t *window, w_pushbutton_t **pushbutton, w_object_t *parent);
+int w_pushbutton_set_clicked (w_object_t *object, void (*clicked) (w_object_t *));
+void w_pushbutton_uninit (w_object_t *object);
 
 /* button.c */
 struct w_button_s {

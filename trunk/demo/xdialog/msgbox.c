@@ -33,6 +33,13 @@ int xd_msgbox_callback (int argc, char *argv[])
 	w_object_move(frame->object, 0, 0, width, height);
 	w_object_show(frame->object);
 	
+	w_textbox_init(window, &textbox, frame->object);
+	w_textbox_set_properties(textbox->object, TEXTBOX_WRAP);
+	w_textbox_set_style(textbox->object, FRAME_PANEL, FRAME_SUNKEN);
+	w_textbox_set_str(textbox->object, text);
+	w_object_move(textbox->object, 10, 10, width - 20, height - 20);
+	w_object_show(textbox->object);
+	
 	w_object_show(window->object);
 	s_window_show(window->window);
 	s_window_main(window->window);
