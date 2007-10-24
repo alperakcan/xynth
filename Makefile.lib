@@ -5,28 +5,30 @@
 # (C) 2007 
 #
 
-CFLAGS += -Wall -pipe -g -O2 -s -fsigned-char -fno-strict-aliasing
+CFLAGS += -Wall -pipe -g -O2 -fsigned-char -fno-strict-aliasing
 
-MAKE   := $(MAKE) --no-print-directory
+MAKE       := $(MAKE) --no-print-directory
 
-CC     := gcc
-LD     := ld
-AR     := ar rcs
-RANLIB := ranlib
+CC         := gcc
+LD         := ld
+AR         := ar rcs
+RANLIB     := ranlib
+STRIP      := strip
 
-HOSTCC := gcc
-HOSTLD := ld
-HOSTAR := ar rcs
+HOSTCC     := gcc
+HOSTLD     := ld
+HOSTAR     := ar rcs
 HOSTRANLIB := ranlib
+HOSTSTRIP  := strip
 
-SED    := sed
+SED        := sed
 
-CD     := cd
-CP     := cp -af
-RM     := rm -rf
-MKDIR  := mkdir -p
+CD         := cd
+CP         := cp -af
+RM         := rm -rf
+MKDIR      := mkdir -p
 
-#WIDGETC := widgetc
+#WIDGETC    := widgetc
 
 all:
 
@@ -59,6 +61,7 @@ pur_disp_ld             = echo "  LD         $(pur_objects)"
 pur_disp_ld.host        = echo "  HOSTLD     $(pur_objects)"
 
 pur_disp_cp             = echo "  CP         $(pur_objects)"
+pur_disp_mkdir          = echo "  MKDIR      $(pur_objects)"
 pur_disp_clean          = echo "  CLEAN      $$(subst _clean,,$(pur_objects))"
 
 pur_disp_widgetc        = echo "  WIDGETC    $(pur_objects)"
@@ -83,6 +86,7 @@ ver_disp_ld             = echo "$(subst ",\",$(cmd_ld))"
 ver_disp_ld.host        = echo "$(subst ",\",$(cmd_ld.host))"
 
 ver_disp_cp             = echo "$(subst ",\",$(cmd_cp))"
+ver_disp_mkdir          = echo "$(subst ",\",$(cmd_mkdir))"
 ver_disp_clean          = echo "$(subst ",\",$(cmd_clean) $1 .$1 $$@.cmd)"
 
 ver_disp_widgetc        = echo "$(subst ",\",$(cmd_widgetc))"
@@ -107,6 +111,7 @@ disp_ld             = $($(verbose)_disp_ld)
 disp_ld.host        = $($(verbose)_disp_ld.host)
 
 disp_cp             = $($(verbose)_disp_cp)
+disp_mkdir          = $($(verbose)_disp_mkdir)
 disp_clean          = $($(verbose)_disp_clean)
 
 disp_widgetc        = $($(verbose)_disp_widgetc)
@@ -114,12 +119,12 @@ disp_widgetc        = $($(verbose)_disp_widgetc)
 #
 # _CMD
 #
-_cmd_depend.c       = $(MKDIR) .$1/; $(CC) $(CFLAGS) $(CPPFLAGS) $($1_cflags) $($1_cppflags) $($1_includes) -M $$< | $(SED) 's,\($$*\.o\) *:,.$1/\1 $$@: ,' > $$@
-_cmd_compile.c      = $(MKDIR) .$1/; $(CC) $(CFLAGS) $(CPPFLAGS) $($1_cflags) $($1_cppflags) $($1_includes) -c -o $$@ $$<
-_cmd_link.c         = $(MKDIR) .$1/; $(CC) $($1_libraries) -o $$@ $$^ $($1_ldflags) $(LDFLAGS)
-_cmd_link_so.c      = $(MKDIR) .$1/; $(CC) $($1_libraries) -o $$@ $$^ $($1_ldflags) $(LDFLAGS) -shared
+_cmd_depend.c       = $(CC) $(CFLAGS) $(CPPFLAGS) $($1_cflags) $($1_cppflags) $($1_includes) -M $$< | $(SED) 's,\($$*\.o\) *:,.$1/\1 $$@: ,' > $$@
+_cmd_compile.c      = $(CC) $(CFLAGS) $(CPPFLAGS) $($1_cflags) $($1_cppflags) $($1_includes) -c -o $$@ $$<
+_cmd_link.c         = $(CC) $($1_libraries) -o $$@ $$^ $($1_ldflags) $(LDFLAGS)
+_cmd_link_so.c      = $(CC) $($1_libraries) -o $$@ $$^ $($1_ldflags) $(LDFLAGS) -shared
 
-_cmd_depend.c.host  = $(MKDIR) .$1/; $(HOSTCC) $(CFLAGS) $(CPPFLAGS) $($1_cflags) $($1_cppflags) $($1_includes) -M $$< | $(SED) 's,\($$*\.o\) *:,.$1/\1 $$@: ,' > $$@
+_cmd_depend.c.host  = $(HOSTCC) $(CFLAGS) $(CPPFLAGS) $($1_cflags) $($1_cppflags) $($1_includes) -M $$< | $(SED) 's,\($$*\.o\) *:,.$1/\1 $$@: ,' > $$@
 _cmd_compile.c.host = $(HOSTCC) $(CFLAGS) $(CPPFLAGS) $($1_cflags) $($1_cppflags) $($1_includes) -c -o $$@ $$<
 _cmd_link.c.host    = $(HOSTCC) $(CFLAGS) $($1_libraries) -o $$@ $$^ $($1_ldflags) $(LDFLAGS)
 _cmd_link_so.c.host = $(HOSTCC) $(CFLAGS) $($1_libraries) -o $$@ $$^ $($1_ldflags) $(LDFLAGS) -shared
@@ -131,43 +136,45 @@ _cmd_ld             = $(LD) -r -o $$@ $$^
 _cmd_ld.host        = $(HOSTLD) -r -o $$@ $$^
 
 _cmd_cp             = $(CP) $$< $$@
+_cmd_mkdir          = $(MKDIR) $$@
 _cmd_clean          = $(RM)
 
-_cmd_widgetc        = $(MKDIR) .$1/; $(CD) .$1; $(WIDGETC) -f ../$$< -o $$(subst .xws,,$$<)
+_cmd_widgetc        = $(CD) .$1; $(WIDGETC) -f ../$$< -o $$(subst .xws,,$$<)
 
 #
 # CMD
 #
-cmd_depend.c       = $(MKDIR) .$1/; echo "$(_cmd_depend.c)" > $$@.cmd       ; $(_cmd_depend.c)
-cmd_compile.c      = $(MKDIR) .$1/; echo "$(_cmd_compile.c)" > $$@.cmd      ; $(_cmd_compile.c)
-cmd_link.c         = $(MKDIR) .$1/; echo "$(_cmd_link.c)" > $$@.cmd         ; $(_cmd_link.c)
-cmd_link_so.c      = $(MKDIR) .$1/; echo "$(_cmd_link_so.c)" > $$@.cmd      ; $(_cmd_link_so.c)
+cmd_depend.c       = echo "$(_cmd_depend.c)" > $$@.cmd       ; $(_cmd_depend.c)
+cmd_compile.c      = echo "$(_cmd_compile.c)" > $$@.cmd      ; $(_cmd_compile.c)
+cmd_link.c         = echo "$(_cmd_link.c)" > $$@.cmd         ; $(_cmd_link.c)
+cmd_link_so.c      = echo "$(_cmd_link_so.c)" > $$@.cmd      ; $(_cmd_link_so.c)
 
-cmd_depend.c.host  = $(MKDIR) .$1/; echo "$(_cmd_depend.c.host)" > $$@.cmd  ; $(_cmd_depend.c.host)
-cmd_compile.c.host = $(MKDIR) .$1/; echo "$(_cmd_compile.c.host)" > $$@.cmd ; $(_cmd_compile.c.host)
-cmd_link.c.host    = $(MKDIR) .$1/; echo "$(_cmd_link.c.host)" > $$@.cmd    ; $(_cmd_link.c.host)
-cmd_link_so.c.host = $(MKDIR) .$1/; echo "$(_cmd_link_so.c.host)" > $$@.cmd ; $(_cmd_link_so.c.host)
+cmd_depend.c.host  = echo "$(_cmd_depend.c.host)" > $$@.cmd  ; $(_cmd_depend.c.host)
+cmd_compile.c.host = echo "$(_cmd_compile.c.host)" > $$@.cmd ; $(_cmd_compile.c.host)
+cmd_link.c.host    = echo "$(_cmd_link.c.host)" > $$@.cmd    ; $(_cmd_link.c.host)
+cmd_link_so.c.host = echo "$(_cmd_link_so.c.host)" > $$@.cmd ; $(_cmd_link_so.c.host)
 
-cmd_ar             = $(MKDIR) .$1/; echo "$(_cmd_ar)" > $$@.cmd             ; $(_cmd_ar)
-cmd_ranlib         = $(MKDIR) .$1/; echo "$(_cmd_ranlib)" >> $$@.cmd        ; $(_cmd_ranlib)
-cmd_ld             = $(MKDIR) .$1/; echo "$(_cmd_ld)" > $$@.cmd             ; $(_cmd_ld)
+cmd_ar             = echo "$(_cmd_ar)" > $$@.cmd             ; $(_cmd_ar)
+cmd_ranlib         = echo "$(_cmd_ranlib)" >> $$@.cmd        ; $(_cmd_ranlib)
+cmd_ld             = echo "$(_cmd_ld)" > $$@.cmd             ; $(_cmd_ld)
 
-cmd_ld.host        = $(MKDIR) .$1/; echo "$(_cmd_ld.host)" > $$@.cmd        ; $(_cmd_ld.host)
+cmd_ld.host        = echo "$(_cmd_ld.host)" > $$@.cmd        ; $(_cmd_ld.host)
 
 cmd_cp             = $(_cmd_cp)
-cmd_clean          = $(MKDIR) .$1/; echo "$(_cmd_clean) $1 .$1" > $$@.cmd   ; $(_cmd_clean)
+cmd_mkdir          = $(_cmd_mkdir)
+cmd_clean          = echo "$(_cmd_clean) $1 .$1" > $$@.cmd   ; $(_cmd_clean)
 
-cmd_widgetc        = $(MKDIR) .$1/; echo "$(_cmd_widgetc)" > $$@.cmd        ; $(_cmd_widgetc)
+cmd_widgetc        = echo "$(_cmd_widgetc)" > $$@.cmd        ; $(_cmd_widgetc)
 
 #
 # DO
 #
-do_depend.c       = @$(disp_depend.c)       ; $(cmd_depend.c)
+do_depend.c       = @$(MKDIR) .$1; $(disp_depend.c)       ; $(cmd_depend.c)
 do_compile.c      = @$(disp_compile.c)      ; $(cmd_compile.c)
 do_link.c         = @$(disp_link.c)         ; $(cmd_link.c)
 do_link_so.c      = @$(disp_link_so.c)      ; $(cmd_link_so.c)
 
-do_depend.c.host  = @$(disp_depend.c.host)  ; $(cmd_depend.c.host)
+do_depend.c.host  = @$(MKDIR) .$1; $(disp_depend.c.host)  ; $(cmd_depend.c.host)
 do_compile.c.host = @$(disp_compile.c.host) ; $(cmd_compile.c.host)
 do_link.c.host    = @$(disp_link.c.host)    ; $(cmd_link.c.host)
 do_link_so.c.host = @$(disp_link_so.c.host) ; $(cmd_link_so.c.host)
@@ -179,9 +186,10 @@ do_ld             = @$(disp_ld)             ; $(cmd_ld)
 do_ld.host        = @$(disp_ld.host)        ; $(cmd_ld.host)
 
 do_cp             = @$(disp_cp)             ; $(cmd_cp)
+do_mkdir          = @$(disp_mkdir)          ; $(cmd_mkdir)
 do_clean          = @$(disp_clean)          ; $(cmd_clean)
 
-do_widgetc        = @$(disp_widgetc)        ; $(cmd_widgetc)
+do_widgetc        = @$(MKDIR) .$1; $(disp_widgetc)        ; $(cmd_widgetc)
 
 #
 # Functions
