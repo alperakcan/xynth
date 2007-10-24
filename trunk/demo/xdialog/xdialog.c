@@ -91,6 +91,7 @@ int main (int argc, char *argv[])
 						if ((argc - a) == xd_widgets[i]->nargs) {
 							if (xd_widgets[i]->func != NULL) {
 								r = xd_widgets[i]->func(argc - a, &argv[a]);
+								break;
 							}
 						} else {
 						}
