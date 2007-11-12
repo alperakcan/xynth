@@ -1,7 +1,7 @@
 
 -include ../../.config
 
-subdir-y  = ./libz
+subdir-y := ./libz
 subdir-y += ./libpng
 subdir-y += ./freetype2
 subdir-y += ./expat
