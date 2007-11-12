@@ -19,6 +19,36 @@
 	#error "You must select at least one of CONFIG_IPC_UDS, CONFIG_IPC_TCP, CONFIG_IPC_PIPE"
 #endif
 
+typedef struct s_socket_data_name_s {
+	char *name;
+	S_SOC_DATA data;
+} s_socket_data_name_t;
+
+const char * s_socket_data_to_name (S_SOC_DATA sdata)
+{
+	static s_socket_data_name_t dnames[] = {
+		{"SOC_DATA_NOTHING", SOC_DATA_NOTHING},
+		{"SOC_DATA_NEW", SOC_DATA_NEW},
+		{"SOC_DATA_SHOW", SOC_DATA_SHOW},
+		{"SOC_DATA_CLOSE", SOC_DATA_CLOSE},
+		{"SOC_DATA_CLOSE_SERVER", SOC_DATA_CLOSE_SERVER},
+		{"SOC_DATA_EVENT", SOC_DATA_EVENT},
+		{"SOC_DATA_EXPOSE", SOC_DATA_EXPOSE},
+		{"SOC_DATA_DISPLAY", SOC_DATA_DISPLAY},
+		{"SOC_DATA_FORMDRAW", SOC_DATA_FORMDRAW},
+		{"SOC_DATA_CONFIGURE", SOC_DATA_CONFIGURE},
+		{"SOC_DATA_DESKTOP", SOC_DATA_DESKTOP},
+	};
+	static unsigned int dsize = sizeof(dnames) / sizeof(s_socket_data_name_t);
+	unsigned int i;
+	for (i = 0; i < dsize; i++) {
+		if (dnames[i].data == sdata) {
+			return dnames[i].name;
+		}
+	}
+	return "Unknown";
+}
+
 #define s_socket_recv(a, b, c)	if (s_socket_api_recv(a, b, c) != c) { return -1; }
 #define s_socket_send(a, b, c)	if (s_socket_api_send(a, b, c) != c) { return -1; }
 
@@ -210,6 +240,8 @@ again:	if (window->running <= 0) {
 		debugf(DCLI, "[%d] Error occured when requesting (%d) from server", window->id, req);
 		goto err0;
 	}
+	
+	debugf(DCLI, "[%d] Requesting 0x%08x (%s) from server", window->id, req, s_socket_data_to_name(req));
 
 	switch (req) {
 		case SOC_DATA_NEW:
@@ -250,6 +282,9 @@ again:	if (window->running <= 0) {
 		case SOC_DATA_NOTHING:
 		case SOC_DATA_FORMDRAW:
 			break;
+		default:
+			debugf(DSER, "Unhandled request 0x%08x (%s), this should not happen", req, s_socket_data_to_name(req));
+			goto err0;
 	}
 
 	s_thread_mutex_unlock(window->socket_mutex);
@@ -400,6 +435,8 @@ int s_socket_listen_parse (s_window_t *window, int soc)
 		goto err0;
 	}
 
+	debugf(DCLI, "[%d] Received 0x%08x (%s) from server", window->id, req, s_socket_data_to_name(req));
+
 	switch (req) {
 		case SOC_DATA_EVENT:
 			ret = s_socket_listen_event(window, soc);
@@ -420,6 +457,10 @@ int s_socket_listen_parse (s_window_t *window, int soc)
 		case SOC_DATA_FORMDRAW:
 		case SOC_DATA_CONFIGURE:
 		case SOC_DATA_CLOSE_SERVER:
+			break;
+		default:
+			debugf(DSER, "Unhandled request 0x%08x (%s), this should not happen", req, s_socket_data_to_name(req));
+			goto err0;
 			break;
 	}
 
