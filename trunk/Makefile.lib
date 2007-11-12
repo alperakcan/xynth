@@ -214,7 +214,7 @@ define target-defaults_base
     targets-deps += $($1_depends)
     targets-clns += $1_clean
     
-    $($1_depends): $($1_wheaders)
+    $($1_depends): $($1_depends-y) $($1_wheaders)
 
     $($1_wsources): .$1/%_xml.c: %.xws
 	$(do_widgetc)
@@ -314,16 +314,17 @@ endef
 
 define subdir-defaults
     subdirs += $1
+    
+    $1: $1_all
 
-    $(addsuffix _$2, $1): __FORCE
-	@$(MAKE) -C $$(subst _$2,,$$@) $2
-endef
+    $(addsuffix _all, $1): $($1_depends-y) __FORCE
+	@$(MAKE) -C $$(subst _all,,$$@) all
 
-define esubdir-defaults
-    esubdirs += $1
+    $(addsuffix _dist, $1): $($1_depends-y) __FORCE
+	@$(MAKE) -C $$(subst _dist,,$$@) dist
 
-    $(addsuffix _$2, $1): __FORCE
-	@$(MAKE) -C $$(subst _$2,,$$@) $2
+    $(addsuffix _clean, $1): __FORCE
+	@$(MAKE) -C $$(subst _clean,,$$@) clean
 endef
 
 #
@@ -349,33 +350,22 @@ $(eval $(foreach T,$(target_o-n),$(eval $(call target_empty-defaults,$T))))
 $(eval $(foreach T,$(target_o-),$(eval $(call target_empty-defaults,$T))))
 
 # generate subdir targets
-$(eval $(foreach S,$(subdir-y),$(eval $(call subdir-defaults,$S,all))))
-$(eval $(foreach S,$(subdir-y),$(eval $(call subdir-defaults,$S,dist))))
-$(eval $(foreach S,$(subdir-y),$(eval $(call subdir-defaults,$S,clean))))
-
-$(eval $(foreach S,$(esubdir-y),$(eval $(call esubdir-defaults,$S,all))))
-$(eval $(foreach S,$(esubdir-y),$(eval $(call esubdir-defaults,$S,dist))))
-$(eval $(foreach S,$(esubdir-y),$(eval $(call esubdir-defaults,$S,clean))))
+$(eval $(foreach S,$(subdir-y),$(eval $(call subdir-defaults,$S))))
 
 $(eval $(foreach S,$(subdir-n),$(eval $(call subdir_empty-defaults,$S,clean))))
 $(eval $(foreach S,$(subdir-),$(eval $(call subdir_empty-defaults,$S,clean))))
-$(eval $(foreach S,$(esubdir-n),$(eval $(call subdir_empty-defaults,$S,clean))))
-$(eval $(foreach S,$(esubdir-),$(eval $(call subdir_empty-defaults,$S,clean))))
 
 # generic tags
 all: $(addsuffix _all, $(subdirs))
 all: $(targets-blds)
-all: $(addsuffix _all, $(esubdirs))
 all: __FORCE
 
-dist: all
 dist: $(addsuffix _dist, $(subdirs))
-dist: $(addsuffix _dist, $(esubdirs))
+dist: all
 dist: __FORCE
 
 clean: $(addsuffix _clean, $(subdir-y) $(subdir-n) $(subdir-))
 clean: $(targets-clns)
-clean: $(addsuffix _clean, $(esubdir-y) $(esubdir-n) $(subdir-))
 clean: $(addsuffix _clean, $(targets-empty))
 clean: __FORCE
 

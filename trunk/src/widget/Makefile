@@ -1,7 +1,13 @@
 
 -include ../../.config
 
+subdir-$(CONFIG_WIDGET_WIDGETC) := widgetc
+subdir-$(CONFIG_WIDGET_WIDGETR) += widgetr
+
 target_so-$(CONFIG_WIDGET_SHARED) = libwidget.so
+
+widgetc_depends-y = libwidget.so
+widgetr_depends-y = libwidget.so
 
 libwidget.so_includes-y = ./ ../lib
 libwidget.so_files-y = button.c \
@@ -25,9 +31,6 @@ target_a-$(CONFIG_WIDGET_STATIC) = libwidget.a
 
 libwidget.a_includes-y = $(libwidget.so_includes-y)
 libwidget.a_files-y    = $(libwidget.so_files-y)
-
-esubdir-$(CONFIG_WIDGET_WIDGETC) := widgetc
-esubdir-$(CONFIG_WIDGET_WIDGETR) += widgetr
 
 include ../../Makefile.lib
 
