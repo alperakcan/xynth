@@ -64,14 +64,16 @@ xynth_ldflags-$(CONFIG_VIDEO_CACA)  += -lcaca
 xynth_libraries-$(CONFIG_VIDEO_HELPER_IRIMAF) += $(PRJROOT)/sysapps/imedia/imedia/imaf/src/
 xynth_ldflags-$(CONFIG_VIDEO_HELPER_IRIMAF)   += -limaf
 
-xynth_includes-y             += ./ ../lib/
-xynth_libraries-y            += ../lib/
-xynth_ldflags-y              += -lxynth
+xynth_includes-y  += ./ ../lib
+xynth_libraries-y += ../lib
+xynth_ldflags-y   += -lxynth
 
 ifeq ($(CONFIG_WIDGET_LIBRARY), y)
-xynth_libraries-y            += ../widget/
-xynth_ldflags-y              += -lwidget
+xynth_libraries-y += ../widget
+xynth_ldflags-y   += -lwidget
 endif
+
+xynth_ldflags-y   += -ldl
 
 include ../../Makefile.lib
 
