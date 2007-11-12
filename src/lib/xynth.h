@@ -2265,6 +2265,13 @@ typedef enum {
 
 /* socket.c */
 
+/** @brief get name of data
+  *
+  * @param data - the data
+  * @return pointer to name of data
+  */
+const char * s_socket_data_to_name (S_SOC_DATA sdata); 
+
 /** @brief send new window request to server
   *
   * @param *window - the window

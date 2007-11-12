@@ -285,6 +285,7 @@ int s_server_socket_listen_parse (int soc)
 	if (s_socket_api_recv(soc, &soc_data, sizeof(soc_data)) != sizeof(soc_data)) {
 		return -1;
 	}
+	debugf(DSER, "Received 0x%08x (%s) from client [%d]", soc_data, s_socket_data_to_name(soc_data), id);
 	switch (soc_data) {
 		case SOC_DATA_NEW:
 			return s_server_socket_listen_new(id);
@@ -308,6 +309,10 @@ int s_server_socket_listen_parse (int soc)
 			return s_server_socket_listen_close_server(id);
 		case SOC_DATA_DESKTOP:
 		case SOC_DATA_NOTHING:
+			break;
+		default:
+			debugf(DSER, "Unhandled request 0x%08x (%s), this should not happen", soc_data, s_socket_data_to_name(soc_data));
+			return -1;
 			break;
 	}
 
@@ -467,6 +472,8 @@ err:		debugf(DSER, "Error occured when requesting (%d) from client[%d]. Closing 
 		return -1;
 	}
 
+	debugf(DSER, "Requesting 0x%08x (%s) from client [%d]", req, s_socket_data_to_name(req), id);
+
 	if (s_socket_api_send(server->client[id].soc, &req, sizeof(req)) != sizeof(req)) {
 		return -1;
 	}
@@ -493,6 +500,10 @@ err:		debugf(DSER, "Error occured when requesting (%d) from client[%d]. Closing 
 		case SOC_DATA_FORMDRAW:
 		case SOC_DATA_CONFIGURE:
 		case SOC_DATA_CLOSE_SERVER:
+			break;
+		default:
+			debugf(DSER, "Unhandled request 0x%08x (%s), this should not happen", req, s_socket_data_to_name(req));
+			return -1;
 			break;
 	}
 
