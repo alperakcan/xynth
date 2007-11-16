@@ -309,7 +309,7 @@ endef
 
 define subdir_empty-defaults
     $(addsuffix _$2, $1): __FORCE
-	@$(MAKE) -C $$(subst _$2,,$$@) $2
+	@$($1_makeflags-y) $(MAKE) -C $$(subst _$2,,$$@) $2
 endef
 
 define subdir-defaults
@@ -318,13 +318,13 @@ define subdir-defaults
     $1: $1_all
 
     $(addsuffix _all, $1): $($1_depends-y) __FORCE
-	@$(MAKE) -C $$(subst _all,,$$@) all
+	@$($1_makeflags-y) $(MAKE) -C $$(subst _all,,$$@) all
 
     $(addsuffix _dist, $1): $($1_depends-y) __FORCE
-	@$(MAKE) -C $$(subst _dist,,$$@) dist
+	@$($1_makeflags-y) $(MAKE) -C $$(subst _dist,,$$@) dist
 
     $(addsuffix _clean, $1): __FORCE
-	@$(MAKE) -C $$(subst _clean,,$$@) clean
+	@$($1_makeflags-y) $(MAKE) -C $$(subst _clean,,$$@) clean
 endef
 
 #
