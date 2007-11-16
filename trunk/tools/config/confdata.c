@@ -8,20 +8,38 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <unistd.h>
 
 #define LKC_DIRECT_LINK
 #include "lkc.h"
 
+static void conf_warning(const char *fmt, ...)
+	__attribute__ ((format (printf, 1, 2)));
+
+static const char *conf_filename;
+static int conf_lineno, conf_warnings, conf_unsaved;
+
 const char conf_def_filename[] = ".config";
 
-const char conf_defname[] = "defconfig";
+const char conf_defname[] = "scripts/defconfig";
 
 const char *conf_confnames[] = {
-	".config",
+	conf_def_filename,
 	conf_defname,
 	NULL,
 };
+
+static void conf_warning(const char *fmt, ...)
+{
+	va_list ap;
+	va_start(ap, fmt);
+	fprintf(stderr, "%s:%d:warning: ", conf_filename, conf_lineno);
+	vfprintf(stderr, fmt, ap);
+	fprintf(stderr, "\n");
+	va_end(ap);
+	conf_warnings++;
+}
 
 static char *conf_expand_value(const char *in)
 {
@@ -65,15 +83,12 @@ char *conf_get_default_confname(void)
 	return name;
 }
 
-int conf_read(const char *name)
+int conf_read_simple(const char *name)
 {
 	FILE *in = NULL;
 	char line[1024];
 	char *p, *p2;
-	int lineno = 0;
 	struct symbol *sym;
-	struct property *prop;
-	struct expr *e;
 	int i;
 
 	if (name) {
@@ -84,25 +99,32 @@ int conf_read(const char *name)
 			name = conf_expand_value(name);
 			in = zconf_fopen(name);
 			if (in) {
-				printf("#\n"
-				       "# using defaults found in %s\n"
-				       "#\n", name);
+				printf(_("#\n"
+				         "# using defaults found in %s\n"
+				         "#\n"), name);
 				break;
 			}
 		}
 	}
-
 	if (!in)
 		return 1;
 
+	conf_filename = name;
+	conf_lineno = 0;
+	conf_warnings = 0;
+	conf_unsaved = 0;
+
 	for_all_symbols(i, sym) {
 		sym->flags |= SYMBOL_NEW | SYMBOL_CHANGED;
+		if (sym_is_choice(sym))
+			sym->flags &= ~SYMBOL_NEW;
 		sym->flags &= ~SYMBOL_VALID;
 		switch (sym->type) {
 		case S_INT:
 		case S_HEX:
 		case S_STRING:
-			free(sym->user.val);
+			if (sym->user.val)
+				free(sym->user.val);
 		default:
 			sym->user.val = NULL;
 			sym->user.tri = no;
@@ -110,13 +132,13 @@ int conf_read(const char *name)
 	}
 
 	while (fgets(line, sizeof(line), in)) {
-		lineno++;
+		conf_lineno++;
 		sym = NULL;
 		switch (line[0]) {
 		case '#':
-			if (line[1]!=' ')
+			if (memcmp(line + 2, "CONFIG_", 7))
 				continue;
-			p = strchr(line + 2, ' ');
+			p = strchr(line + 9, ' ');
 			if (!p)
 				continue;
 			*p++ = 0;
@@ -124,7 +146,10 @@ int conf_read(const char *name)
 				continue;
 			sym = sym_find(line + 2);
 			if (!sym) {
-				fprintf(stderr, "%s:%d: trying to assign nonexistent symbol %s\n", name, lineno, line + 2);
+				conf_warning("trying to assign nonexistent symbol %s", line + 9);
+				break;
+			} else if (!(sym->flags & SYMBOL_NEW)) {
+				conf_warning("trying to reassign symbol %s", sym->name);
 				break;
 			}
 			switch (sym->type) {
@@ -137,18 +162,24 @@ int conf_read(const char *name)
 				;
 			}
 			break;
-
-		case 'A' ... 'Z':
-			p = strchr(line, '=');
+		case 'C':
+			if (memcmp(line, "CONFIG_", 7)) {
+				conf_warning("unexpected data");
+				continue;
+			}
+			p = strchr(line + 7, '=');
 			if (!p)
 				continue;
 			*p++ = 0;
 			p2 = strchr(p, '\n');
 			if (p2)
 				*p2 = 0;
-			sym = sym_find(line);
+			sym = sym_find(line + 0);
 			if (!sym) {
-				fprintf(stderr, "%s:%d: trying to assign nonexistent symbol %s\n", name, lineno, line);
+				conf_warning("trying to assign nonexistent symbol %s", line + 7);
+				break;
+			} else if (!(sym->flags & SYMBOL_NEW)) {
+				conf_warning("trying to reassign symbol %s", sym->name);
 				break;
 			}
 			switch (sym->type) {
@@ -169,6 +200,7 @@ int conf_read(const char *name)
 					sym->flags &= ~SYMBOL_NEW;
 					break;
 				}
+				conf_warning("symbol value '%s' invalid for %s", p, sym->name);
 				break;
 			case S_STRING:
 				if (*p++ != '"')
@@ -181,8 +213,8 @@ int conf_read(const char *name)
 					memmove(p2, p2 + 1, strlen(p2));
 				}
 				if (!p2) {
-					fprintf(stderr, "%s:%d: invalid string found\n", name, lineno);
-					exit(1);
+					conf_warning("invalid string found");
+					continue;
 				}
 			case S_INT:
 			case S_HEX:
@@ -190,8 +222,9 @@ int conf_read(const char *name)
 					sym->user.val = strdup(p);
 					sym->flags &= ~SYMBOL_NEW;
 				} else {
-					fprintf(stderr, "%s:%d: symbol value '%s' invalid for %s\n", name, lineno, p, sym->name);
-					exit(1);
+					if (p[0]) /* bbox */
+						conf_warning("symbol value '%s' invalid for %s", p, sym->name);
+					continue;
 				}
 				break;
 			default:
@@ -201,6 +234,7 @@ int conf_read(const char *name)
 		case '\n':
 			break;
 		default:
+			conf_warning("unexpected data");
 			continue;
 		}
 		if (sym && sym_is_choice_value(sym)) {
@@ -209,25 +243,63 @@ int conf_read(const char *name)
 			case no:
 				break;
 			case mod:
-				if (cs->user.tri == yes)
-					/* warn? */;
+				if (cs->user.tri == yes) {
+					conf_warning("%s creates inconsistent choice state", sym->name);
+					cs->flags |= SYMBOL_NEW;
+				}
 				break;
 			case yes:
-				if (cs->user.tri != no)
-					/* warn? */;
-				cs->user.val = sym;
+				if (cs->user.tri != no) {
+					conf_warning("%s creates inconsistent choice state", sym->name);
+					cs->flags |= SYMBOL_NEW;
+				} else
+					cs->user.val = sym;
 				break;
 			}
 			cs->user.tri = E_OR(cs->user.tri, sym->user.tri);
-			cs->flags &= ~SYMBOL_NEW;
 		}
 	}
 	fclose(in);
 
 	if (modules_sym)
 		sym_calc_value(modules_sym);
+	return 0;
+}
+
+int conf_read(const char *name)
+{
+	struct symbol *sym;
+	struct property *prop;
+	struct expr *e;
+	int i;
+
+	if (conf_read_simple(name))
+		return 1;
+
 	for_all_symbols(i, sym) {
 		sym_calc_value(sym);
+		if (sym_is_choice(sym) || (sym->flags & SYMBOL_AUTO))
+			goto sym_ok;
+		if (sym_has_value(sym) && (sym->flags & SYMBOL_WRITE)) {
+			/* check that calculated value agrees with saved value */
+			switch (sym->type) {
+			case S_BOOLEAN:
+			case S_TRISTATE:
+				if (sym->user.tri != sym_get_tristate_value(sym))
+					break;
+				if (!sym_is_choice(sym))
+					goto sym_ok;
+			default:
+				if (!strcmp(sym->curr.val, sym->user.val))
+					goto sym_ok;
+				break;
+			}
+		} else if (!sym_has_value(sym) && !(sym->flags & SYMBOL_WRITE))
+			/* no previous value and not saved */
+			goto sym_ok;
+		conf_unsaved++;
+		/* maybe print value in verbose mode... */
+	sym_ok:
 		if (sym_has_value(sym) && !sym_is_choice_value(sym)) {
 			if (sym->visible == no)
 				sym->flags |= SYMBOL_NEW;
@@ -235,8 +307,10 @@ int conf_read(const char *name)
 			case S_STRING:
 			case S_INT:
 			case S_HEX:
-				if (!sym_string_within_range(sym, sym->user.val))
+				if (!sym_string_within_range(sym, sym->user.val)) {
 					sym->flags |= SYMBOL_NEW;
+					sym->flags &= ~SYMBOL_VALID;
+				}
 			default:
 				break;
 			}
@@ -249,25 +323,10 @@ int conf_read(const char *name)
 				sym->flags |= e->right.sym->flags & SYMBOL_NEW;
 	}
 
-	sym_change_count = 1;
+	sym_change_count = conf_warnings || conf_unsaved;
 
 	return 0;
 }
-
-struct menu *next_menu(struct menu *menu)
-{
-	if (menu->list) return menu->list;
-	do {
-		if (menu->next) {
-			menu = menu->next;
-			break;
-		}
-	} while ((menu = menu->parent));
-
-	return menu;
-}
-
-#define SYMBOL_FORCEWRITE (1<<31)
 
 int conf_write(const char *name)
 {
@@ -278,10 +337,9 @@ int conf_write(const char *name)
 	char dirname[128], tmpname[128], newname[128];
 	int type, l;
 	const char *str;
-
-	/* busybox`s code */
-	const char *opt_name;
-	int use_flg;
+	time_t now;
+	int use_timestamp = 1;
+	char *env;
 
 	dirname[0] = 0;
 	if (name && name[0]) {
@@ -314,37 +372,50 @@ int conf_write(const char *name)
 		out_h = fopen(".tmpconfig.h", "w");
 		if (!out_h)
 			return 1;
+		file_write_dep(NULL);
 	}
-	fprintf(out, "#\n"
-		     "# Automatically generated make config: don't edit\n"
-		     "#\n\n");
+	sym = sym_lookup("XYNTH_VERSION", 0);
+	sym_calc_value(sym);
+	time(&now);
+	env = getenv("KCONFIG_NOTIMESTAMP");
+	if (env && *env)
+		use_timestamp = 0;
 
-	/* busybox`s code */
+	fprintf(out, _("#\n"
+		       "# Automatically generated make config: don't edit\n"
+		       "# Xynth version: %s\n"
+		       "%s%s"
+		       "#\n\n"),
+		     sym_get_string_value(sym),
+		     use_timestamp ? "# " : "",
+		     use_timestamp ? ctime(&now) : "");
 	if (out_h) {
-		fprintf(out_h, "#ifndef CONFIG_H\n#define CONFIG_H\n\n");
+		char buf[sizeof("#define AUTOCONF_TIMESTAMP "
+				"\"YYYY-MM-DD HH:MM:SS some_timezone\"\n")];
+		buf[0] = '\0';
+		if (use_timestamp) {
+			size_t ret = \
+				strftime(buf, sizeof(buf), "#define AUTOCONF_TIMESTAMP "
+					"\"%Y-%m-%d %H:%M:%S %Z\"\n", localtime(&now));
+			/* if user has Factory timezone or some other odd install, the
+			 * %Z above will overflow the string leaving us with undefined
+			 * results ... so let's try again without the timezone.
+			 */
+			if (ret == 0)
+				strftime(buf, sizeof(buf), "#define AUTOCONF_TIMESTAMP "
+					"\"%Y-%m-%d %H:%M:%S\"\n", localtime(&now));
+		}
 		fprintf(out_h, "/*\n"
-			     " * Automatically generated header file: don't edit\n"
-			     " */\n\n"
-			     "/* Version Number */\n"
-			     "#define XYNTH_VERSION \"%s\"\n"
-			     "#define XYNTH_BUILDTIME \"%s\"\n",
-			     getenv("VERSION"),
-			     getenv("BUILDTIME"));
-		if (getenv("EXTRA_VERSION"))
-			fprintf(out_h, "#define XYNTH_EXTRA_VERSION \"%s\"\n", 
-			               getenv("EXTRA_VERSION"));
-		fprintf(out_h, "\n");
+			       " * Automatically generated C config: don't edit\n"
+			       " * Xynth version: %s\n"
+			       " */\n"
+			       "%s"
+			       "\n\n",
+			       sym_get_string_value(sym),
+			       buf);
 	}
-	/* end busybox`s code */
-
 	if (!sym_change_count)
 		sym_clear_all_valid();
-
-	/* Force write of all non-duplicate symbols. */
-
-	/* Write out everything by default. */
-	for(menu = rootmenu.list; menu; menu = next_menu(menu))
-		if (menu->sym) menu->sym->flags |= SYMBOL_FORCEWRITE;
 
 	menu = rootmenu.list;
 	while (menu) {
@@ -364,47 +435,37 @@ int conf_write(const char *name)
 					       " */\n", str);
 		} else if (!(sym->flags & SYMBOL_CHOICE)) {
 			sym_calc_value(sym);
-			if (!(sym->flags & SYMBOL_FORCEWRITE))
+/* bbox: we want to all syms
+			if (!(sym->flags & SYMBOL_WRITE))
 				goto next;
-
-			sym->flags &= ~SYMBOL_FORCEWRITE;
+*/
+			sym->flags &= ~SYMBOL_WRITE;
 			type = sym->type;
 			if (type == S_TRISTATE) {
 				sym_calc_value(modules_sym);
 				if (modules_sym->curr.tri == no)
 					type = S_BOOLEAN;
 			}
-
-			/* busybox`s code */
-			opt_name = strchr(sym->name, '_');
-			if(opt_name == NULL)
-				opt_name = sym->name;
-			else
-				opt_name++;
-			use_flg = 1;
-			/* end busybox`s code */
-
 			switch (type) {
 			case S_BOOLEAN:
 			case S_TRISTATE:
 				switch (sym_get_tristate_value(sym)) {
 				case no:
 					fprintf(out, "# %s is not set\n", sym->name);
-					if (out_h)
+					if (out_h) {
 						fprintf(out_h, "#undef %s\n", sym->name);
-					use_flg = 0;    /* busybox`s code */
+					}
 					break;
 				case mod:
-#if 0   /* busybox`s code */
 					fprintf(out, "%s=m\n", sym->name);
 					if (out_h)
 						fprintf(out_h, "#define %s_MODULE 1\n", sym->name);
-#endif  /* busybox`s code */
 					break;
 				case yes:
 					fprintf(out, "%s=y\n", sym->name);
-					if (out_h)
+					if (out_h) {
 						fprintf(out_h, "#define %s 1\n", sym->name);
+					}
 					break;
 				}
 				break;
@@ -430,34 +491,47 @@ int conf_write(const char *name)
 					}
 				} while (*str);
 				fputs("\"\n", out);
-				if (out_h)
+				if (out_h) {
 					fputs("\"\n", out_h);
+				}
 				break;
 			case S_HEX:
 				str = sym_get_string_value(sym);
 				if (str[0] != '0' || (str[1] != 'x' && str[1] != 'X')) {
-					fprintf(out, "%s=%s\n", sym->name, *str ? str : "0");
-					if (out_h)
+					fprintf(out, "%s=%s\n", sym->name, str);
+					if (out_h) {
 						fprintf(out_h, "#define %s 0x%s\n", sym->name, str);
+					}
 					break;
 				}
 			case S_INT:
 				str = sym_get_string_value(sym);
-				fprintf(out, "%s=%s\n", sym->name, *str ? str : "0");
-				if (out_h)
+				fprintf(out, "%s=%s\n", sym->name, str);
+				if (out_h) {
 					fprintf(out_h, "#define %s %s\n", sym->name, str);
+				}
 				break;
 			}
 		}
-next:
-		menu = next_menu(menu);
+
+	next:
+		if (menu->list) {
+			menu = menu->list;
+			continue;
+		}
+		if (menu->next)
+			menu = menu->next;
+		else while ((menu = menu->parent)) {
+			if (menu->next) {
+				menu = menu->next;
+				break;
+			}
+		}
 	}
 	fclose(out);
 	if (out_h) {
-		fprintf(out_h, "\n#endif /* CONFIG_H */\n");
 		fclose(out_h);
 		rename(".tmpconfig.h", "src/lib/config.h");
-		file_write_dep(NULL);
 	}
 	if (!name || basename != conf_def_filename) {
 		if (!name)

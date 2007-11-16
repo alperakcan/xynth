@@ -33,8 +33,8 @@ int file_write_dep(const char *name)
 	FILE *out;
 
 	if (!name)
-		name = ".config.cmd";
-	out = fopen(".config.tmp", "w");
+		name = ".kconfig.d";
+	out = fopen("..config.tmp", "w");
 	if (!out)
 		return 1;
 	fprintf(out, "deps_config := \\\n");
@@ -44,9 +44,9 @@ int file_write_dep(const char *name)
 		else
 			fprintf(out, "\t%s\n", file->name);
 	}
-	fprintf(out, "\n.config src/lib/config.h: $(deps_config)\n\n$(deps_config):\n");
+	fprintf(out, "\n.config include/autoconf.h: $(deps_config)\n\n$(deps_config):\n");
 	fclose(out);
-	rename(".config.tmp", name);
+	rename("..config.tmp", name);
 	return 0;
 }
 
@@ -101,7 +101,7 @@ void str_printf(struct gstr *gs, const char *fmt, ...)
 	va_end(ap);
 }
 
-/* Retreive value of growable string */
+/* Retrieve value of growable string */
 const char *str_get(struct gstr *gs)
 {
 	return gs->s;
