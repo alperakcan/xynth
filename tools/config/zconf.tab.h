@@ -74,11 +74,10 @@
      T_ON = 290,
      T_SELECT = 291,
      T_RANGE = 292,
-     T_DEFINE = 293,
-     T_OR = 294,
-     T_AND = 295,
-     T_EQUAL = 296,
-     T_NOT = 297
+     T_OR = 293,
+     T_AND = 294,
+     T_EQUAL = 295,
+     T_NOT = 296
    };
 #endif
 /* Tokens.  */
@@ -117,11 +116,10 @@
 #define T_ON 290
 #define T_SELECT 291
 #define T_RANGE 292
-#define T_DEFINE 293
-#define T_OR 294
-#define T_AND 295
-#define T_EQUAL 296
-#define T_NOT 297
+#define T_OR 293
+#define T_AND 294
+#define T_EQUAL 295
+#define T_NOT 296
 
 
 
@@ -137,7 +135,7 @@ typedef union YYSTYPE
 	struct menu *menu;
 }
 /* Line 1489 of yacc.c.  */
-#line 141 "zconf.tab.h"
+#line 139 "zconf.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

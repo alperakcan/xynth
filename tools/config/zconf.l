@@ -117,7 +117,6 @@ n	[A-Za-z0-9_]
 	"select"		BEGIN(PARAM); return T_SELECT;
 	"enable"		BEGIN(PARAM); return T_SELECT;
 	"range"			BEGIN(PARAM); return T_RANGE;
-	"define"		BEGIN(PARAM); return T_DEFINE;
 	{n}+	{
 		alloc_string(yytext, yyleng);
 		zconflval.string = text;
