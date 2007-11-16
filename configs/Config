@@ -1,6 +1,10 @@
 
 mainmenu "Xynth Windowing System Configuration"
 
+config CONFIG_CONFIGURED
+    bool
+    default y
+
 config CONFIG_DEBUG
     bool "Debugging support"
     default y

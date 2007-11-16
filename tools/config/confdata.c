@@ -317,10 +317,7 @@ int conf_write(const char *name)
 	}
 	fprintf(out, "#\n"
 		     "# Automatically generated make config: don't edit\n"
-		     "#\n"
-		     "\n"
-		     "CONFIG_CONFIGURED=y\n"
-		     "\n");
+		     "#\n\n");
 
 	/* busybox`s code */
 	if (out_h) {
