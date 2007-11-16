@@ -75,7 +75,6 @@ static struct menu *current_menu, *current_entry;
 %token T_ON
 %token T_SELECT
 %token T_RANGE
-%token T_DEFINE
 
 %left T_OR
 %left T_AND
@@ -226,23 +225,6 @@ config_option: T_RANGE symbol symbol if_expr T_EOL
 {
 	menu_add_expr(P_RANGE, expr_alloc_comp(E_RANGE,$2, $3), $4);
 	printd(DEBUG_PARSE, "%s:%d:range\n", zconf_curname(), zconf_lineno());
-};
-
-config_option: T_DEFINE T_WORD T_WORD expr if_expr T_EOL
-{
-	struct symbol *sym = sym_lookup($3, 0);
-	sym->flags |= SYMBOL_OPTIONAL;
-	menu_add_entry(sym);
-	if (strcmp($2, "string") == 0) {
-		menu_set_type(S_STRING);
-	} else if (strcmp($2, "int") == 0) {
-		menu_set_type(S_INT);
-	} else if (strcmp($2, "hex") == 0) {
-		menu_set_type(S_HEX);
-	}
-	menu_add_expr(P_DEFAULT, $4, $5);
-	menu_end_entry();
-	printf("%s:%d:define %s\n", zconf_curname(), zconf_lineno(), $2);
 };
 
 /* choice entry */
