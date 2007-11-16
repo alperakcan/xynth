@@ -54,7 +54,7 @@ menuconfig: tools/config_all
 
 .PHONY: distclean
 distclean: clean
-	@$(RM) .config .config.cmd .config.old src/lib/config.h dist
+	@$(RM) .config .config.cmd .config.old .kconfig.d .tmpconfig.h src/lib/config.h dist
 
 .PHONY: distdirs
 distdirs: __FORCE
