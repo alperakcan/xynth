@@ -159,7 +159,7 @@ load:
 			if (strncmp(p, "is not set", 10))
 				continue;
 			if (def == S_DEF_USER) {
-				sym = sym_find(line + 9);
+				sym = sym_find(line + 2);
 				if (!sym) {
 					conf_warning("trying to assign nonexistent symbol %s", line + 9);
 					break;
@@ -199,7 +199,7 @@ load:
 					*p2 = 0;
 			}
 			if (def == S_DEF_USER) {
-				sym = sym_find(line + 7);
+				sym = sym_find(line + 0);
 				if (!sym) {
 					conf_warning("trying to assign nonexistent symbol %s", line + 7);
 					break;
@@ -462,19 +462,19 @@ int conf_write(const char *name)
 			case S_TRISTATE:
 				switch (sym_get_tristate_value(sym)) {
 				case no:
-					fprintf(out, "# CONFIG_%s is not set\n", sym->name);
+					fprintf(out, "# %s is not set\n", sym->name);
 					break;
 				case mod:
-					fprintf(out, "CONFIG_%s=m\n", sym->name);
+					fprintf(out, "%s=m\n", sym->name);
 					break;
 				case yes:
-					fprintf(out, "CONFIG_%s=y\n", sym->name);
+					fprintf(out, "%s=y\n", sym->name);
 					break;
 				}
 				break;
 			case S_STRING:
 				str = sym_get_string_value(sym);
-				fprintf(out, "CONFIG_%s=\"", sym->name);
+				fprintf(out, "%s=\"", sym->name);
 				while (1) {
 					l = strcspn(str, "\"\\");
 					if (l) {
@@ -490,12 +490,12 @@ int conf_write(const char *name)
 			case S_HEX:
 				str = sym_get_string_value(sym);
 				if (str[0] != '0' || (str[1] != 'x' && str[1] != 'X')) {
-					fprintf(out, "CONFIG_%s=%s\n", sym->name, str);
+					fprintf(out, "%s=%s\n", sym->name, str);
 					break;
 				}
 			case S_INT:
 				str = sym_get_string_value(sym);
-				fprintf(out, "CONFIG_%s=%s\n", sym->name, str);
+				fprintf(out, "%s=%s\n", sym->name, str);
 				break;
 			}
 		}
@@ -657,11 +657,6 @@ int conf_write_autoconf(void)
 
 	sym_clear_all_valid();
 
-	file_write_dep("include/config/auto.conf.cmd");
-
-	if (conf_split_config())
-		return 1;
-
 	out = fopen(".tmpconfig", "w");
 	if (!out)
 		return 1;
@@ -700,19 +695,19 @@ int conf_write_autoconf(void)
 			case no:
 				break;
 			case mod:
-				fprintf(out, "CONFIG_%s=m\n", sym->name);
-				fprintf(out_h, "#define CONFIG_%s_MODULE 1\n", sym->name);
+				fprintf(out, "%s=m\n", sym->name);
+				fprintf(out_h, "#define %s_MODULE 1\n", sym->name);
 				break;
 			case yes:
-				fprintf(out, "CONFIG_%s=y\n", sym->name);
-				fprintf(out_h, "#define CONFIG_%s 1\n", sym->name);
+				fprintf(out, "%s=y\n", sym->name);
+				fprintf(out_h, "#define %s 1\n", sym->name);
 				break;
 			}
 			break;
 		case S_STRING:
 			str = sym_get_string_value(sym);
-			fprintf(out, "CONFIG_%s=\"", sym->name);
-			fprintf(out_h, "#define CONFIG_%s \"", sym->name);
+			fprintf(out, "%s=\"", sym->name);
+			fprintf(out_h, "#define %s \"", sym->name);
 			while (1) {
 				l = strcspn(str, "\"\\");
 				if (l) {
@@ -732,14 +727,14 @@ int conf_write_autoconf(void)
 		case S_HEX:
 			str = sym_get_string_value(sym);
 			if (str[0] != '0' || (str[1] != 'x' && str[1] != 'X')) {
-				fprintf(out, "CONFIG_%s=%s\n", sym->name, str);
-				fprintf(out_h, "#define CONFIG_%s 0x%s\n", sym->name, str);
+				fprintf(out, "%s=%s\n", sym->name, str);
+				fprintf(out_h, "#define %s 0x%s\n", sym->name, str);
 				break;
 			}
 		case S_INT:
 			str = sym_get_string_value(sym);
-			fprintf(out, "CONFIG_%s=%s\n", sym->name, str);
-			fprintf(out_h, "#define CONFIG_%s %s\n", sym->name, str);
+			fprintf(out, "%s=%s\n", sym->name, str);
+			fprintf(out_h, "#define %s %s\n", sym->name, str);
 			break;
 		default:
 			break;
@@ -750,17 +745,8 @@ int conf_write_autoconf(void)
 
 	name = getenv("KCONFIG_AUTOHEADER");
 	if (!name)
-		name = "include/linux/autoconf.h";
+		name = "src/lib/config.h";
 	if (rename(".tmpconfig.h", name))
-		return 1;
-	name = getenv("KCONFIG_AUTOCONFIG");
-	if (!name)
-		name = "include/config/auto.conf";
-	/*
-	 * This must be the last step, kbuild has a dependency on auto.conf
-	 * and this marks the successful completion of the previous steps.
-	 */
-	if (rename(".tmpconfig", name))
 		return 1;
 
 	return 0;
