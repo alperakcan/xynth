@@ -256,7 +256,7 @@ static void zconf_endhelp(void)
  * ./name
  * $(srctree)/name
  * The latter is used when srctree is separate from objtree
- * when compiling the kernel.
+ * when compiling xynth.
  * Return NULL if file is not found.
  */
 FILE *zconf_fopen(const char *name)
