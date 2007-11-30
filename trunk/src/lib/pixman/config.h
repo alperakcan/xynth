@@ -15,10 +15,10 @@
 
 /* Define to 1 if the PDF backend can be tested (need poppler and other
    dependencies for pdf2png) */
-/* #undef CAIRO_CAN_TEST_PDF_SURFACE */
+#define CAIRO_CAN_TEST_PDF_SURFACE 1
 
 /* Define to 1 if the SVG backend can be tested */
-/* #undef CAIRO_CAN_TEST_SVG_SURFACE */
+#define CAIRO_CAN_TEST_SVG_SURFACE 1
 
 /* define in the extra test surface have been built into cairo for the test
    suite */
@@ -36,13 +36,13 @@
 #define HAVE_DLFCN_H 1
 
 /* Define to 1 if you have the `FcFini' function. */
-/* #undef HAVE_FCFINI */
+#define HAVE_FCFINI 1
 
 /* FT_Bitmap_Size structure includes y_ppem field */
 #define HAVE_FT_BITMAP_SIZE_Y_PPEM 1
 
 /* Define to 1 if you have the `FT_GlyphSlot_Embolden' function. */
-/* #undef HAVE_FT_GLYPHSLOT_EMBOLDEN */
+#define HAVE_FT_GLYPHSLOT_EMBOLDEN 1
 
 /* Define to 1 if you have the `FT_Load_Sfnt_Table' function. */
 #define HAVE_FT_LOAD_SFNT_TABLE 1
@@ -52,6 +52,9 @@
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
+
+/* Define to 1 if you have the <libgen.h> header file. */
+#define HAVE_LIBGEN_H 1
 
 /* Define to 1 if you have the <memory.h> header file. */
 #define HAVE_MEMORY_H 1
@@ -114,13 +117,13 @@
 #define PACKAGE_NAME "cairo"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "cairo 1.4.2"
+#define PACKAGE_STRING "cairo 1.4.10"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "cairo"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "1.4.2"
+#define PACKAGE_VERSION "1.4.10"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
@@ -129,7 +132,11 @@
 //#define USE_MMX 1
 
 /* Version number of package */
-#define VERSION "1.4.2"
+#define VERSION "1.4.10"
+
+/* Define to the value your compiler uses to support the warn-unused-result
+   attribute */
+#define WARN_UNUSED_RESULT __attribute__((__warn_unused_result__))
 
 /* Define to 1 if your processor stores words with the most significant byte
    first (like Motorola and SPARC, unlike Intel and VAX). */

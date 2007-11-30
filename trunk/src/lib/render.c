@@ -56,21 +56,21 @@ static pixman_operator_t _s_render_pixman_operator (S_RENDER_OPERATOR operator)
 	}
 }
 
-static pixman_format_t * _s_render_create_pixman_format (S_RENDER_FORMAT render_format)
+static int _s_render_create_pixman_format (pixman_format_t *pixman_format, S_RENDER_FORMAT render_format)
 {
 	switch (render_format) {
 		case S_RENDER_FORMAT_A1:
-			return s_render_pixman_format_create(PIXMAN_FORMAT_NAME_A1);
+			return s_render_pixman_format_init(pixman_format, PIXMAN_FORMAT_NAME_A1);
 		case S_RENDER_FORMAT_A8:
-			return s_render_pixman_format_create(PIXMAN_FORMAT_NAME_A8);
+			return s_render_pixman_format_init(pixman_format, PIXMAN_FORMAT_NAME_A8);
 		case S_RENDER_FORMAT_RGB16:
-			return s_render_pixman_format_create(PIXMAN_FORMAT_NAME_RGB16_565);
+			return s_render_pixman_format_init(pixman_format, PIXMAN_FORMAT_NAME_RGB16_565);
 		case S_RENDER_FORMAT_RGB24:
-			return s_render_pixman_format_create(PIXMAN_FORMAT_NAME_RGB24);
+			return s_render_pixman_format_init(pixman_format, PIXMAN_FORMAT_NAME_RGB24);
 		case S_RENDER_FORMAT_ARGB32:
-			return s_render_pixman_format_create(PIXMAN_FORMAT_NAME_ARGB32);
+			return s_render_pixman_format_init(pixman_format, PIXMAN_FORMAT_NAME_ARGB32);
 		default:
-			return NULL;
+			return -1;
 	}
 }
 
@@ -84,8 +84,9 @@ int s_render_uninit (s_render_t *render)
 
 int s_render_init (s_render_t **render, S_RENDER_FORMAT render_format, int width, int height)
 {
+	int ret;
 	s_render_t *rnd;
-	pixman_format_t *pixman_format;
+	pixman_format_t pixman_format;
 	
 	rnd = (s_render_t *) malloc(sizeof(s_render_t));
 	if (rnd == NULL) {
@@ -99,12 +100,11 @@ int s_render_init (s_render_t **render, S_RENDER_FORMAT render_format, int width
 	}
 	memset(rnd->pixman, 0, sizeof(s_render_pixman_t));
 	
-	pixman_format = _s_render_create_pixman_format(render_format);
-	if (pixman_format == NULL) {
+	ret = _s_render_create_pixman_format(&pixman_format, render_format);
+	if (ret != 1) {
 		goto err2;
 	}
-	rnd->pixman->pixman_image = s_render_pixman_image_create(pixman_format, width, height);
-	s_render_pixman_format_destroy(pixman_format);
+	rnd->pixman->pixman_image = s_render_pixman_image_create(&pixman_format, width, height);
 	if (rnd->pixman->pixman_image == NULL) {
 		goto err3;
 	}
@@ -127,8 +127,9 @@ err0:	*render = NULL;
 
 int s_render_init_for_data (s_render_t **render, unsigned char *data, S_RENDER_FORMAT render_format, int width, int height, int bpp, int stride)
 {
+	int ret;
 	s_render_t *rnd;
-	pixman_format_t *pixman_format;
+	pixman_format_t pixman_format;
 	
 	rnd = (s_render_t *) malloc(sizeof(s_render_t));
 	if (rnd == NULL) {
@@ -142,12 +143,11 @@ int s_render_init_for_data (s_render_t **render, unsigned char *data, S_RENDER_F
 	}
 	memset(rnd->pixman, 0, sizeof(s_render_pixman_t));
 	
-	pixman_format = _s_render_create_pixman_format(render_format);
-	if (pixman_format == NULL) {
+	ret = _s_render_create_pixman_format(&pixman_format, render_format);
+	if (ret != 1) {
 		goto err2;
 	}
-	rnd->pixman->pixman_image = s_render_pixman_image_create_for_data((pixman_bits_t *) data, pixman_format, width, height, bpp, stride);
-	s_render_pixman_format_destroy(pixman_format);
+	rnd->pixman->pixman_image = s_render_pixman_image_create_for_data((pixman_bits_t *) data, &pixman_format, width, height, bpp, stride);
 	if (rnd->pixman->pixman_image == NULL) {
 		goto err3;
 	}
@@ -260,16 +260,17 @@ pixman_region_status_t pixman_region_addrect (pixman_region16_t *region, int x1,
 int s_render_set_clip (s_render_t *render, int nrects, s_rect_t *rects)
 {
 	int i;
-	pixman_region16_t *pixman_region;
-	pixman_region = s_render_pixman_region_create();
-	if (pixman_region == NULL) {
-		return -1;
+	pixman_region16_t pixman_region;
+	if (nrects > 0) {
+		s_render_pixman_region_init(&pixman_region);
+		for (i = 0; i < nrects; i++) {
+			pixman_region_addrect(&pixman_region, rects[i].x, rects[i].y, rects[i].w + rects[i].x, rects[i].h + rects[i].y);
+		}
+		s_render_pixman_image_set_clip_region(render->pixman->pixman_image, &pixman_region);
+		s_render_pixman_region_fini(&pixman_region);
+	} else {
+		s_render_pixman_image_set_clip_region(render->pixman->pixman_image, NULL);
 	}
-	for (i = 0; i < nrects; i++) {
-		pixman_region_addrect(pixman_region, rects[i].x, rects[i].y, rects[i].w + rects[i].x, rects[i].h + rects[i].y);
-	}
-	s_render_pixman_image_set_clip_region(render->pixman->pixman_image, pixman_region);
-	s_render_pixman_region_destroy(pixman_region);
 	render->has_clip = (nrects > 0) ? 1 : 0;
 	return 0;
 }
