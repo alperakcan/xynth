@@ -61,13 +61,21 @@ distdirs: __FORCE
 	$(MKDIR) dist
 	$(MKDIR) dist/$(CONFIG_PATH_BIN)
 	$(MKDIR) dist/$(CONFIG_PATH_LIB)
+	$(MKDIR) dist/$(CONFIG_PATH_LIB)/pkgconfig
 	$(MKDIR) dist/$(CONFIG_PATH_INCLUDE)
 	$(MKDIR) dist/$(CONFIG_PATH_SHARE)
 	$(MKDIR) dist/$(CONFIG_PATH_FONTS)
 	$(MKDIR) dist/$(CONFIG_PATH_CONFIGS)
 	$(MKDIR) dist/$(CONFIG_PATH_THEMES)
 
-dist: distdirs
+.PHONY: xynth.pc
+xynth.pc: xynth.pc.in
+	$(SED) -e 's,@prefix@,$(CONFIG_PATH_INSTALL)/,g' \
+	       -e 's,@version@,0.9.00,g' \
+	       -e 's,@widget_libs@,-lwidget,g' \
+	       xynth.pc.in > dist/$(CONFIG_PATH_LIB)/pkgconfig/xynth.pc
+
+dist: distdirs xynth.pc
 	@true
 
 install: dist
