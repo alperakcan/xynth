@@ -91,6 +91,24 @@ SOFTWARE.
   typedef unsigned __int32 uint32_t;
   typedef __int64 int64_t;
   typedef unsigned __int64 uint64_t;
+# ifndef INT16_MIN
+#  define INT16_MIN	(-32767-1)
+# endif
+# ifndef INT16_MAX
+#  define INT16_MAX	(32767)
+# endif
+# ifndef UINT16_MAX
+#  define UINT16_MAX	(65535)
+# endif
+# ifndef INT32_MIN
+#  define INT32_MIN	(-2147483647-1)
+# endif
+# ifndef INT32_MAX
+#  define INT32_MAX	(2147483647)
+# endif
+# ifndef UINT32_MAX
+#  define UINT32_MAX	(0xffffffffU)
+# endif
 #else
 #error Cannot find definitions for fixed-width integral types (uint8_t, uint32_t, etc.)
 #endif

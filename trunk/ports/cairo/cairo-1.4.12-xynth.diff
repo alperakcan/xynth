@@ -1,6 +1,6 @@
-diff -Naur cairo-1.4.10/boilerplate/Makefile.am cairo-1.4.10-xynth/boilerplate/Makefile.am
---- cairo-1.4.10/boilerplate/Makefile.am	2007-04-27 20:02:33.000000000 +0300
-+++ cairo-1.4.10-xynth/boilerplate/Makefile.am	2007-11-30 11:10:35.000000000 +0200
+diff -Naur cairo-1.4.12/boilerplate/Makefile.am cairo-1.4.12-xynth/boilerplate/Makefile.am
+--- cairo-1.4.12/boilerplate/Makefile.am	2007-11-27 08:20:12.000000000 +0200
++++ cairo-1.4.12-xynth/boilerplate/Makefile.am	2007-11-30 14:42:06.000000000 +0200
 @@ -20,6 +20,11 @@
  libcairoboilerplate_la_SOURCES += cairo-boilerplate-directfb-private.h
  endif
@@ -13,9 +13,9 @@ diff -Naur cairo-1.4.10/boilerplate/Makefile.am cairo-1.4.10-xynth/boilerplate/M
  if CAIRO_HAS_GLITZ_SURFACE
  libcairoboilerplate_la_SOURCES += cairo-boilerplate-glitz.c
  libcairoboilerplate_la_SOURCES += cairo-boilerplate-glitz-private.h
-diff -Naur cairo-1.4.10/boilerplate/cairo-boilerplate-xynth-private.h cairo-1.4.10-xynth/boilerplate/cairo-boilerplate-xynth-private.h
---- cairo-1.4.10/boilerplate/cairo-boilerplate-xynth-private.h	1970-01-01 02:00:00.000000000 +0200
-+++ cairo-1.4.10-xynth/boilerplate/cairo-boilerplate-xynth-private.h	2007-11-30 11:10:35.000000000 +0200
+diff -Naur cairo-1.4.12/boilerplate/cairo-boilerplate-xynth-private.h cairo-1.4.12-xynth/boilerplate/cairo-boilerplate-xynth-private.h
+--- cairo-1.4.12/boilerplate/cairo-boilerplate-xynth-private.h	1970-01-01 02:00:00.000000000 +0200
++++ cairo-1.4.12-xynth/boilerplate/cairo-boilerplate-xynth-private.h	2007-11-30 14:42:06.000000000 +0200
 @@ -0,0 +1,9 @@
 +
 +#include <cairo.h>
@@ -26,9 +26,9 @@ diff -Naur cairo-1.4.10/boilerplate/cairo-boilerplate-xynth-private.h cairo-1.4.
 +extern cairo_surface_t * create_xynth_surface (const char *name, cairo_content_t content, int width, int height, cairo_boilerplate_mode_t mode, void **closure); 
 +
 +CAIRO_END_DECLS
-diff -Naur cairo-1.4.10/boilerplate/cairo-boilerplate-xynth.c cairo-1.4.10-xynth/boilerplate/cairo-boilerplate-xynth.c
---- cairo-1.4.10/boilerplate/cairo-boilerplate-xynth.c	1970-01-01 02:00:00.000000000 +0200
-+++ cairo-1.4.10-xynth/boilerplate/cairo-boilerplate-xynth.c	2007-11-30 11:10:35.000000000 +0200
+diff -Naur cairo-1.4.12/boilerplate/cairo-boilerplate-xynth.c cairo-1.4.12-xynth/boilerplate/cairo-boilerplate-xynth.c
+--- cairo-1.4.12/boilerplate/cairo-boilerplate-xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ cairo-1.4.12-xynth/boilerplate/cairo-boilerplate-xynth.c	2007-11-30 14:42:06.000000000 +0200
 @@ -0,0 +1,43 @@
 +
 +#include <stdio.h>
@@ -73,9 +73,9 @@ diff -Naur cairo-1.4.10/boilerplate/cairo-boilerplate-xynth.c cairo-1.4.10-xynth
 +	}
 +	return NULL;
 +}
-diff -Naur cairo-1.4.10/boilerplate/cairo-boilerplate.c cairo-1.4.10-xynth/boilerplate/cairo-boilerplate.c
---- cairo-1.4.10/boilerplate/cairo-boilerplate.c	2007-06-07 20:44:46.000000000 +0300
-+++ cairo-1.4.10-xynth/boilerplate/cairo-boilerplate.c	2007-11-30 11:10:35.000000000 +0200
+diff -Naur cairo-1.4.12/boilerplate/cairo-boilerplate.c cairo-1.4.12-xynth/boilerplate/cairo-boilerplate.c
+--- cairo-1.4.12/boilerplate/cairo-boilerplate.c	2007-11-27 08:20:12.000000000 +0200
++++ cairo-1.4.12-xynth/boilerplate/cairo-boilerplate.c	2007-11-30 14:42:06.000000000 +0200
 @@ -33,6 +33,9 @@
  #if CAIRO_HAS_DIRECTFB_SURFACE
  #include "cairo-boilerplate-directfb-private.h"
@@ -105,9 +105,9 @@ diff -Naur cairo-1.4.10/boilerplate/cairo-boilerplate.c cairo-1.4.10-xynth/boile
  };
  
  cairo_boilerplate_target_t **
-diff -Naur cairo-1.4.10/configure.in cairo-1.4.10-xynth/configure.in
---- cairo-1.4.10/configure.in	2007-06-28 00:05:20.000000000 +0300
-+++ cairo-1.4.10-xynth/configure.in	2007-11-30 11:10:35.000000000 +0200
+diff -Naur cairo-1.4.12/configure.in cairo-1.4.12-xynth/configure.in
+--- cairo-1.4.12/configure.in	2007-11-27 08:31:15.000000000 +0200
++++ cairo-1.4.12-xynth/configure.in	2007-11-30 14:42:06.000000000 +0200
 @@ -237,6 +237,14 @@
  
  dnl ===========================================================================
@@ -123,7 +123,7 @@ diff -Naur cairo-1.4.10/configure.in cairo-1.4.10-xynth/configure.in
  CAIRO_BACKEND_ENABLE(xlib, Xlib, xlib, XLIB_SURFACE, auto, [
    xlib_REQUIRES="x11"
    PKG_CHECK_MODULES(xlib, $xlib_REQUIRES, ,
-@@ -951,6 +959,7 @@
+@@ -959,6 +967,7 @@
  echo "  glitz:         $use_glitz"
  echo "  BeOS:          $use_beos"
  echo "  DirectFB:      $use_directfb"
@@ -131,7 +131,7 @@ diff -Naur cairo-1.4.10/configure.in cairo-1.4.10-xynth/configure.in
  echo ""
  echo "the following font backends:"
  echo "  FreeType:      $use_ft"
-@@ -1014,3 +1023,7 @@
+@@ -1022,3 +1031,7 @@
  if test x"$use_directfb" = "xyes" ; then
       echo "$WARNING_MESSAGE" | sed 's/@BACKEND@/DirectFB/'
  fi
@@ -139,9 +139,9 @@ diff -Naur cairo-1.4.10/configure.in cairo-1.4.10-xynth/configure.in
 +if test x"$use_xynth" = "xyes" ; then
 +     echo "$WARNING_MESSAGE" | sed 's/@BACKEND@/Xynth/'
 +fi
-diff -Naur cairo-1.4.10/perf/cairo-perf.c cairo-1.4.10-xynth/perf/cairo-perf.c
---- cairo-1.4.10/perf/cairo-perf.c	2007-06-27 21:00:55.000000000 +0300
-+++ cairo-1.4.10-xynth/perf/cairo-perf.c	2007-11-30 11:10:35.000000000 +0200
+diff -Naur cairo-1.4.12/perf/cairo-perf.c cairo-1.4.12-xynth/perf/cairo-perf.c
+--- cairo-1.4.12/perf/cairo-perf.c	2007-11-27 08:20:12.000000000 +0200
++++ cairo-1.4.12-xynth/perf/cairo-perf.c	2007-11-30 14:42:06.000000000 +0200
 @@ -84,6 +84,7 @@
      case CAIRO_SURFACE_TYPE_WIN32:
      case CAIRO_SURFACE_TYPE_BEOS:
@@ -150,9 +150,9 @@ diff -Naur cairo-1.4.10/perf/cairo-perf.c cairo-1.4.10-xynth/perf/cairo-perf.c
  #if CAIRO_VERSION_MAJOR > 1 || (CAIRO_VERSION_MAJOR == 1 && CAIRO_VERSION_MINOR > 2)
      case CAIRO_SURFACE_TYPE_OS2:
  #endif
-diff -Naur cairo-1.4.10/src/Makefile.am cairo-1.4.10-xynth/src/Makefile.am
---- cairo-1.4.10/src/Makefile.am	2007-06-15 22:06:05.000000000 +0300
-+++ cairo-1.4.10-xynth/src/Makefile.am	2007-11-30 11:10:35.000000000 +0200
+diff -Naur cairo-1.4.12/src/Makefile.am cairo-1.4.12-xynth/src/Makefile.am
+--- cairo-1.4.12/src/Makefile.am	2007-11-27 08:20:12.000000000 +0200
++++ cairo-1.4.12-xynth/src/Makefile.am	2007-11-30 14:42:06.000000000 +0200
 @@ -118,6 +118,12 @@
  backend_pkgconfigs += cairo-directfb.pc
  endif
@@ -176,7 +176,7 @@ diff -Naur cairo-1.4.10/src/Makefile.am cairo-1.4.10-xynth/src/Makefile.am
  
  cairoincludedir = $(includedir)/cairo
  cairoinclude_HEADERS =			\
-@@ -249,6 +256,7 @@
+@@ -250,6 +257,7 @@
  	$(libcairo_win32_sources)		\
  	$(libcairo_os2_sources)			\
  	$(libcairo_directfb_sources)		\
@@ -184,9 +184,9 @@ diff -Naur cairo-1.4.10/src/Makefile.am cairo-1.4.10-xynth/src/Makefile.am
  	cairoint.h
  
  libcairo_la_LDFLAGS = -version-info @VERSION_INFO@ -no-undefined $(export_symbols)
-diff -Naur cairo-1.4.10/src/cairo-pdf.pc cairo-1.4.10-xynth/src/cairo-pdf.pc
---- cairo-1.4.10/src/cairo-pdf.pc	1970-01-01 02:00:00.000000000 +0200
-+++ cairo-1.4.10-xynth/src/cairo-pdf.pc	2007-11-30 11:13:52.000000000 +0200
+diff -Naur cairo-1.4.12/src/cairo-pdf.pc cairo-1.4.12-xynth/src/cairo-pdf.pc
+--- cairo-1.4.12/src/cairo-pdf.pc	1970-01-01 02:00:00.000000000 +0200
++++ cairo-1.4.12-xynth/src/cairo-pdf.pc	2007-11-30 14:42:06.000000000 +0200
 @@ -0,0 +1,12 @@
 +prefix=/opt/gtk
 +exec_prefix=NONE
@@ -200,9 +200,9 @@ diff -Naur cairo-1.4.10/src/cairo-pdf.pc cairo-1.4.10-xynth/src/cairo-pdf.pc
 +Requires: cairo 
 +Libs: -lz 
 +Cflags: -I${includedir}/cairo 
-diff -Naur cairo-1.4.10/src/cairo-ps.pc cairo-1.4.10-xynth/src/cairo-ps.pc
---- cairo-1.4.10/src/cairo-ps.pc	1970-01-01 02:00:00.000000000 +0200
-+++ cairo-1.4.10-xynth/src/cairo-ps.pc	2007-11-30 11:13:52.000000000 +0200
+diff -Naur cairo-1.4.12/src/cairo-ps.pc cairo-1.4.12-xynth/src/cairo-ps.pc
+--- cairo-1.4.12/src/cairo-ps.pc	1970-01-01 02:00:00.000000000 +0200
++++ cairo-1.4.12-xynth/src/cairo-ps.pc	2007-11-30 14:42:06.000000000 +0200
 @@ -0,0 +1,12 @@
 +prefix=/opt/gtk
 +exec_prefix=NONE
@@ -216,9 +216,9 @@ diff -Naur cairo-1.4.10/src/cairo-ps.pc cairo-1.4.10-xynth/src/cairo-ps.pc
 +Requires: cairo 
 +Libs: 
 +Cflags: -I${includedir}/cairo 
-diff -Naur cairo-1.4.10/src/cairo-svg.pc cairo-1.4.10-xynth/src/cairo-svg.pc
---- cairo-1.4.10/src/cairo-svg.pc	1970-01-01 02:00:00.000000000 +0200
-+++ cairo-1.4.10-xynth/src/cairo-svg.pc	2007-11-30 11:13:52.000000000 +0200
+diff -Naur cairo-1.4.12/src/cairo-svg.pc cairo-1.4.12-xynth/src/cairo-svg.pc
+--- cairo-1.4.12/src/cairo-svg.pc	1970-01-01 02:00:00.000000000 +0200
++++ cairo-1.4.12-xynth/src/cairo-svg.pc	2007-11-30 14:42:06.000000000 +0200
 @@ -0,0 +1,12 @@
 +prefix=/opt/gtk
 +exec_prefix=NONE
@@ -232,9 +232,9 @@ diff -Naur cairo-1.4.10/src/cairo-svg.pc cairo-1.4.10-xynth/src/cairo-svg.pc
 +Requires: cairo 
 +Libs: 
 +Cflags: -I${includedir}/cairo 
-diff -Naur cairo-1.4.10/src/cairo-xlib-xrender.pc cairo-1.4.10-xynth/src/cairo-xlib-xrender.pc
---- cairo-1.4.10/src/cairo-xlib-xrender.pc	1970-01-01 02:00:00.000000000 +0200
-+++ cairo-1.4.10-xynth/src/cairo-xlib-xrender.pc	2007-11-30 11:13:52.000000000 +0200
+diff -Naur cairo-1.4.12/src/cairo-xlib-xrender.pc cairo-1.4.12-xynth/src/cairo-xlib-xrender.pc
+--- cairo-1.4.12/src/cairo-xlib-xrender.pc	1970-01-01 02:00:00.000000000 +0200
++++ cairo-1.4.12-xynth/src/cairo-xlib-xrender.pc	2007-11-30 14:42:06.000000000 +0200
 @@ -0,0 +1,12 @@
 +prefix=/opt/gtk
 +exec_prefix=NONE
@@ -248,9 +248,9 @@ diff -Naur cairo-1.4.10/src/cairo-xlib-xrender.pc cairo-1.4.10-xynth/src/cairo-x
 +Requires: cairo-xlib xrender >= 0.6 
 +Libs: 
 +Cflags: -I${includedir}/cairo 
-diff -Naur cairo-1.4.10/src/cairo-xlib.pc cairo-1.4.10-xynth/src/cairo-xlib.pc
---- cairo-1.4.10/src/cairo-xlib.pc	1970-01-01 02:00:00.000000000 +0200
-+++ cairo-1.4.10-xynth/src/cairo-xlib.pc	2007-11-30 11:13:51.000000000 +0200
+diff -Naur cairo-1.4.12/src/cairo-xlib.pc cairo-1.4.12-xynth/src/cairo-xlib.pc
+--- cairo-1.4.12/src/cairo-xlib.pc	1970-01-01 02:00:00.000000000 +0200
++++ cairo-1.4.12-xynth/src/cairo-xlib.pc	2007-11-30 14:42:06.000000000 +0200
 @@ -0,0 +1,12 @@
 +prefix=/opt/gtk
 +exec_prefix=NONE
@@ -264,9 +264,9 @@ diff -Naur cairo-1.4.10/src/cairo-xlib.pc cairo-1.4.10-xynth/src/cairo-xlib.pc
 +Requires: cairo x11 
 +Libs: 
 +Cflags: -I${includedir}/cairo 
-diff -Naur cairo-1.4.10/src/cairo-xynth-surface.c cairo-1.4.10-xynth/src/cairo-xynth-surface.c
---- cairo-1.4.10/src/cairo-xynth-surface.c	1970-01-01 02:00:00.000000000 +0200
-+++ cairo-1.4.10-xynth/src/cairo-xynth-surface.c	2007-11-30 11:40:20.000000000 +0200
+diff -Naur cairo-1.4.12/src/cairo-xynth-surface.c cairo-1.4.12-xynth/src/cairo-xynth-surface.c
+--- cairo-1.4.12/src/cairo-xynth-surface.c	1970-01-01 02:00:00.000000000 +0200
++++ cairo-1.4.12-xynth/src/cairo-xynth-surface.c	2007-11-30 14:42:06.000000000 +0200
 @@ -0,0 +1,594 @@
 +
 +#include <xynth.h>
@@ -862,16 +862,16 @@ diff -Naur cairo-1.4.10/src/cairo-xynth-surface.c cairo-1.4.10-xynth/src/cairo-x
 +{
 +	return surface->backend == &cairo_xynth_surface_backend;
 +}
-diff -Naur cairo-1.4.10/src/cairo-xynth.h cairo-1.4.10-xynth/src/cairo-xynth.h
---- cairo-1.4.10/src/cairo-xynth.h	1970-01-01 02:00:00.000000000 +0200
-+++ cairo-1.4.10-xynth/src/cairo-xynth.h	2007-11-30 11:10:35.000000000 +0200
+diff -Naur cairo-1.4.12/src/cairo-xynth.h cairo-1.4.12-xynth/src/cairo-xynth.h
+--- cairo-1.4.12/src/cairo-xynth.h	1970-01-01 02:00:00.000000000 +0200
++++ cairo-1.4.12-xynth/src/cairo-xynth.h	2007-11-30 14:42:06.000000000 +0200
 @@ -0,0 +1,3 @@
 +
 +cairo_surface_t * cairo_xynth_surface_create (unsigned int width, unsigned int height, cairo_format_t cairo_format);
 +cairo_surface_t * cairo_xynth_surface_create_with_content (cairo_content_t content, int width, int height);
-diff -Naur cairo-1.4.10/src/cairo.h cairo-1.4.10-xynth/src/cairo.h
---- cairo-1.4.10/src/cairo.h	2007-06-07 20:44:01.000000000 +0300
-+++ cairo-1.4.10-xynth/src/cairo.h	2007-11-30 11:10:35.000000000 +0200
+diff -Naur cairo-1.4.12/src/cairo.h cairo-1.4.12-xynth/src/cairo.h
+--- cairo-1.4.12/src/cairo.h	2007-11-27 08:20:12.000000000 +0200
++++ cairo-1.4.12-xynth/src/cairo.h	2007-11-30 14:42:06.000000000 +0200
 @@ -1435,6 +1435,7 @@
   * @CAIRO_SURFACE_TYPE_DIRECTFB: The surface is of type directfb
   * @CAIRO_SURFACE_TYPE_SVG: The surface is of type svg
@@ -890,10 +890,10 @@ diff -Naur cairo-1.4.10/src/cairo.h cairo-1.4.10-xynth/src/cairo.h
  } cairo_surface_type_t;
  
  cairo_public cairo_surface_type_t
-diff -Naur cairo-1.4.10/src/cairoint.h cairo-1.4.10-xynth/src/cairoint.h
---- cairo-1.4.10/src/cairoint.h	2007-06-15 22:06:05.000000000 +0300
-+++ cairo-1.4.10-xynth/src/cairoint.h	2007-11-30 11:10:35.000000000 +0200
-@@ -2073,6 +2073,9 @@
+diff -Naur cairo-1.4.12/src/cairoint.h cairo-1.4.12-xynth/src/cairoint.h
+--- cairo-1.4.12/src/cairoint.h	2007-11-27 08:20:12.000000000 +0200
++++ cairo-1.4.12-xynth/src/cairoint.h	2007-11-30 14:42:06.000000000 +0200
+@@ -2074,6 +2074,9 @@
  _cairo_surface_is_image (const cairo_surface_t *surface);
  
  cairo_private cairo_bool_t
@@ -903,9 +903,9 @@ diff -Naur cairo-1.4.10/src/cairoint.h cairo-1.4.10-xynth/src/cairoint.h
  _cairo_surface_is_meta (const cairo_surface_t *surface);
  
  /* cairo_pen.c */
-diff -Naur cairo-1.4.10/test/get-clip.c cairo-1.4.10-xynth/test/get-clip.c
---- cairo-1.4.10/test/get-clip.c	2007-04-27 20:02:34.000000000 +0300
-+++ cairo-1.4.10-xynth/test/get-clip.c	2007-11-30 11:10:35.000000000 +0200
+diff -Naur cairo-1.4.12/test/get-clip.c cairo-1.4.12-xynth/test/get-clip.c
+--- cairo-1.4.12/test/get-clip.c	2007-04-27 20:02:34.000000000 +0300
++++ cairo-1.4.12-xynth/test/get-clip.c	2007-11-30 14:42:06.000000000 +0200
 @@ -138,6 +138,7 @@
      case CAIRO_SURFACE_TYPE_WIN32:
      case CAIRO_SURFACE_TYPE_BEOS:
