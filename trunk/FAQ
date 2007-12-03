@@ -2,10 +2,18 @@ Look what we have, quick answers to easy questions ;)
     
 Questions;
     
-    Q1. I could not find any question that refers to my problem?
+    Q1. I get blank screen when I open xynth ?
+    
+    Q2. I could not find any question that refers to my problem?
     
 Answers;
 
-    Q1. I could not find any question that refers to my problem?
+    Q1. I get blank screen when I open xynth ?
+    
+    A1. Change screen mode from your xynth.conf file
+    
+        mode = WidthxHeightxColors
 
-    A1. At this point you should read BUGS file.
+    Q2. I could not find any question that refers to my problem?
+
+    A2. At this point you should read BUGS file.
