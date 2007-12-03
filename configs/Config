@@ -226,22 +226,6 @@ endchoice
 menu "Communication Method"
 
 choice
-    prompt "Pipe Method"
-    default CONFIG_PIPE_POSIX if CONFIG_PLATFORM_LINUX || CONFIG_PLATFORM_GP2X
-    default CONFIG_PIPE_MEMORY if CONFIG_PLATFORM_MINGW || CONFIG_PLATFORM_PSPDEV
-
-config CONFIG_PIPE_POSIX
-    bool "posix"
-    depends on CONFIG_PLATFORM_LINUX || CONFIG_PLATFORM_GP2X
-
-config CONFIG_PIPE_MEMORY
-    bool "memory"
-    depends on CONFIG_SOCKET_PIPE
-    select CONFIG_SINGLE_APPLICATION
-
-endchoice
-
-choice
     prompt "Socket Method"
     default CONFIG_SOCKET_POSIX if CONFIG_PLATFORM_LINUX || CONFIG_PLATFORM_GP2X
     default CONFIG_SOCKET_PIPE if CONFIG_PLATFORM_MINGW || CONFIG_PLATFORM_PSPDEV
@@ -254,6 +238,22 @@ config CONFIG_SOCKET_POSIX
 config CONFIG_SOCKET_PIPE
     bool "pipe"
     select CONFIG_IPC_PIPE
+    depends on CONFIG_SINGLE_APPLICATION
+
+endchoice
+
+choice
+    prompt "Pipe Method"
+    default CONFIG_PIPE_POSIX if CONFIG_PLATFORM_LINUX || CONFIG_PLATFORM_GP2X
+    default CONFIG_PIPE_MEMORY if CONFIG_PLATFORM_MINGW || CONFIG_PLATFORM_PSPDEV
+
+config CONFIG_PIPE_POSIX
+    bool "posix"
+    depends on CONFIG_PLATFORM_LINUX || CONFIG_PLATFORM_GP2X
+
+config CONFIG_PIPE_MEMORY
+    bool "memory"
+    depends on CONFIG_SOCKET_PIPE
 
 endchoice
 
