@@ -1,26 +1,15 @@
-diff -Naur MPlayer-1.0rc1/Makefile MPlayer-1.0rc1-xynth/Makefile
---- MPlayer-1.0rc1/Makefile	2006-10-23 01:32:31.000000000 +0300
-+++ MPlayer-1.0rc1-xynth/Makefile	2006-10-24 02:28:52.000000000 +0300
-@@ -75,6 +75,7 @@
-           $(DIRECTFB_LIB) \
-           $(CACA_LIB) \
- 	  $(VESA_LIB) \
-+	  $(XYNTH_LIB) \
- 
- ifeq ($(VIDIX),yes)
- VO_LIBS += vidix/libvidix.a
-diff -Naur MPlayer-1.0rc1/configure MPlayer-1.0rc1-xynth/configure
---- MPlayer-1.0rc1/configure	2006-10-23 01:32:31.000000000 +0300
-+++ MPlayer-1.0rc1-xynth/configure	2006-10-24 02:28:52.000000000 +0300
-@@ -326,6 +326,7 @@
-   --enable-dga[=n]       build with DGA [n in {1, 2} ] support [autodetect]
-   --enable-vesa          build with VESA support [autodetect]
-   --enable-svga          build with SVGAlib support [autodetect]
-+  --enable-xynth         build with Xynyh Windowing System support [autodetect]
-   --enable-sdl           build with SDL render support [autodetect]
-   --enable-aa            build with AAlib render support [autodetect]
-   --enable-caca          build with CACA render support [autodetect]
-@@ -1596,6 +1597,7 @@
+diff -Naur MPlayer-1.0rc2/configure MPlayer-1.0rc2-xynth/configure
+--- MPlayer-1.0rc2/configure	2007-10-07 22:49:33.000000000 +0300
++++ MPlayer-1.0rc2-xynth/configure	2007-12-04 13:55:44.000000000 +0200
+@@ -352,6 +352,7 @@
+   --enable-dga1            enable DGA 1 support [autodetect]
+   --enable-vesa            enable VESA video output [autodetect]
+   --enable-svga            enable SVGAlib video output [autodetect]
++  --enable-xynth           enable Xynyh Windowing System support [autodetect]
+   --enable-sdl             enable SDL video output [autodetect]
+   --enable-aa              enable AAlib video output [autodetect]
+   --enable-caca            enable CACA  video output [autodetect]
+@@ -542,6 +543,7 @@
  _aa=auto
  _caca=auto
  _svga=auto
@@ -28,7 +17,7 @@ diff -Naur MPlayer-1.0rc1/configure MPlayer-1.0rc1-xynth/configure
  _vesa=auto
  _fbdev=auto
  _dvb=auto
-@@ -1793,6 +1795,8 @@
+@@ -853,6 +855,8 @@
    --disable-caca)	_caca=no	;;
    --enable-svga)	_svga=yes	;;
    --disable-svga)	_svga=no	;;
@@ -37,7 +26,7 @@ diff -Naur MPlayer-1.0rc1/configure MPlayer-1.0rc1-xynth/configure
    --enable-vesa)	_vesa=yes	;;
    --disable-vesa)	_vesa=no	;;
    --enable-fbdev)	_fbdev=yes	;;
-@@ -4251,6 +4255,27 @@
+@@ -4427,6 +4431,27 @@
  echores "$_svga"
  
  
@@ -52,7 +41,7 @@ diff -Naur MPlayer-1.0rc1/configure MPlayer-1.0rc1-xynth/configure
 +fi
 +if test "$_xynth" = yes ; then
 +  _def_xynth='#define HAVE_XYNTH 1'
-+  _ld_xynth='-lxynth'
++  _libs_mplayer='-lxynth'
 +  _vosrc="$_vosrc vo_xynth.c"
 +  _vomodules="xynth $_vomodules"
 +else
@@ -65,15 +54,7 @@ diff -Naur MPlayer-1.0rc1/configure MPlayer-1.0rc1-xynth/configure
  echocheck "FBDev"
  if test "$_fbdev" = auto ; then
    _fbdev=no
-@@ -7518,6 +7543,7 @@
- GIF_LIB = $_ld_gif
- SDL_LIB = $_ld_sdl
- SVGA_LIB = $_ld_svga
-+XYNTH_LIB = $_ld_xynth
- VESA_LIB = $_ld_vesa
- AA_LIB = $_ld_aa
- CACA_LIB = $_ld_caca
-@@ -8371,6 +8397,7 @@
+@@ -8456,6 +8481,7 @@
  $_def_dvb
  $_def_dvb_in
  $_def_svga
@@ -81,9 +62,9 @@ diff -Naur MPlayer-1.0rc1/configure MPlayer-1.0rc1-xynth/configure
  $_def_vesa
  $_def_xdpms
  $_def_aa
-diff -Naur MPlayer-1.0rc1/libvo/video_out.c MPlayer-1.0rc1-xynth/libvo/video_out.c
---- MPlayer-1.0rc1/libvo/video_out.c	2006-10-23 01:32:26.000000000 +0300
-+++ MPlayer-1.0rc1-xynth/libvo/video_out.c	2006-10-24 02:28:52.000000000 +0300
+diff -Naur MPlayer-1.0rc2/libvo/video_out.c MPlayer-1.0rc2-xynth/libvo/video_out.c
+--- MPlayer-1.0rc2/libvo/video_out.c	2007-10-07 22:49:28.000000000 +0300
++++ MPlayer-1.0rc2-xynth/libvo/video_out.c	2007-12-04 13:51:06.000000000 +0200
 @@ -86,6 +86,7 @@
  extern vo_functions_t video_out_fbdev;
  extern vo_functions_t video_out_fbdev2;
@@ -92,7 +73,7 @@ diff -Naur MPlayer-1.0rc1/libvo/video_out.c MPlayer-1.0rc1-xynth/libvo/video_out
  extern vo_functions_t video_out_png;
  extern vo_functions_t video_out_ggi;
  extern vo_functions_t video_out_aa;
-@@ -201,6 +202,9 @@
+@@ -206,6 +207,9 @@
  #ifdef HAVE_SVGALIB
  	&video_out_svga,
  #endif
@@ -102,9 +83,9 @@ diff -Naur MPlayer-1.0rc1/libvo/video_out.c MPlayer-1.0rc1-xynth/libvo/video_out
  #ifdef HAVE_AA
  	&video_out_aa,
  #endif
-diff -Naur MPlayer-1.0rc1/libvo/vo_xynth.c MPlayer-1.0rc1-xynth/libvo/vo_xynth.c
---- MPlayer-1.0rc1/libvo/vo_xynth.c	1970-01-01 02:00:00.000000000 +0200
-+++ MPlayer-1.0rc1-xynth/libvo/vo_xynth.c	2006-08-17 21:57:20.000000000 +0300
+diff -Naur MPlayer-1.0rc2/libvo/vo_xynth.c MPlayer-1.0rc2-xynth/libvo/vo_xynth.c
+--- MPlayer-1.0rc2/libvo/vo_xynth.c	1970-01-01 02:00:00.000000000 +0200
++++ MPlayer-1.0rc2-xynth/libvo/vo_xynth.c	2007-12-04 13:51:06.000000000 +0200
 @@ -0,0 +1,495 @@
 +/***************************************************************************
 +    begin                : Thu Jan 22 2004
