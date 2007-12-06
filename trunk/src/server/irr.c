@@ -6,7 +6,6 @@
 typedef enum {
 	IRR_NONE,
 	IRR_IRMAN,
-	IRR_IMAF,
 	IRR_AIR,
 } IRR_TYPE;
 
@@ -31,11 +30,6 @@ int s_video_helper_irr_init (s_server_conf_t *cfg)
 		irr_type = IRR_IRMAN;
 		return s_video_helper_irman_init(cfg->irr.device);
 		#endif
-	} else if (strcasecmp(cfg->irr.type, "IRR_IMAF") == 0) {
-		#if defined(CONFIG_VIDEO_HELPER_IRIMAF)
-		irr_type = IRR_IMAF;
-		return s_video_helper_irimaf_init();
-		#endif
 	} else if (strcasecmp(cfg->irr.type, "IRR_AIR") == 0) {
 		#if defined(CONFIG_VIDEO_HELPER_IRAIR)
 		irr_type = IRR_AIR;
@@ -51,10 +45,6 @@ void s_video_helper_irr_uninit (void)
 		#if defined(CONFIG_VIDEO_HELPER_IRMAN)
 		s_video_helper_irman_uninit();
 		#endif
-	} else if (irr_type == IRR_IMAF) {
-		#if defined(CONFIG_VIDEO_HELPER_IRIMAF)
-		s_video_helper_irimaf_uninit();
-		#endif
 	} else if (irr_type == IRR_AIR) {
 		#if defined(CONFIG_VIDEO_HELPER_IRAIR)
 		s_video_helper_irair_uninit();
@@ -69,24 +59,6 @@ int s_video_helper_irr_update (s_video_input_data_t *keybd)
 		char *code;
 		s_video_helper_irr_codes_t *codes;
 		code = s_video_helper_irman_getcode();
-		if (code) {
-			for (i = 0; i < irr_codes_size; i++) {
-				codes = &irr_codes[i];
-				if (strcmp(codes->code, code) == 0) {
-					keybd->keybd.state = KEYBD_PRESSED;
-					keybd->keybd.button = codes->key;
-					keybd->keybd.keycode = codes->key;
-					return i;
-				}
-			}
-		}
-		#endif
-	} else if (irr_type == IRR_IMAF) {
-		#if defined(CONFIG_VIDEO_HELPER_IRIMAF)
-		int i;
-		char *code;
-		s_video_helper_irr_codes_t *codes;
-		code = s_video_helper_irimaf_getcode();
 		if (code) {
 			for (i = 0; i < irr_codes_size; i++) {
 				codes = &irr_codes[i];

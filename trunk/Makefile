@@ -75,8 +75,10 @@ xynth.pc: xynth.pc.in
 	       -e 's,@widget_libs@,-lwidget,g' \
 	       xynth.pc.in > dist/$(CONFIG_PATH_LIB)/pkgconfig/xynth.pc
 
+.PHONY: dist
 dist: distdirs xynth.pc
 	@true
 
+.PHONY: install
 install: dist
 	$(CP) ./dist/* $(CONFIG_PATH_INSTALL)/

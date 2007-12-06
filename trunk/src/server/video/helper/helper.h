@@ -27,12 +27,6 @@ char * s_video_helper_irman_getcode (void);
 int s_video_helper_irman_uninit (void);
 #endif /* CONFIG_VIDEO_HERLPER_IRMAN */
 
-#if defined(CONFIG_VIDEO_HELPER_IRIMAF)
-int s_video_helper_irimaf_init (void);
-int s_video_helper_irimaf_uninit (void);
-char * s_video_helper_irimaf_getcode (void);
-#endif /* CONFIG_VIDEO_HELPER_IRIMAF */
-
 #if defined(CONFIG_VIDEO_HELPER_IRAIR)
 int s_video_helper_irair_init (void);
 int s_video_helper_irair_uninit (void);

@@ -178,14 +178,6 @@ config CONFIG_VIDEO_HELPER_IRMAN
     help
 	IRMAN input module
 
-config CONFIG_VIDEO_HELPER_IRIMAF
-    bool "IRIMAF input module"
-    default n
-    depends on CONFIG_PLATFORM_LINUX
-    depends on CONFIG_VIDEO_HELPER
-    help
-	IRIMAF input module
-
 config CONFIG_VIDEO_HELPER_IRAIR
     bool "IRAIR input module"
     default n
