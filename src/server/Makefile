@@ -61,9 +61,6 @@ xynth_ldflags-$(CONFIG_VIDEO_FBDEV) += -lm
 xynth_ldflags-$(CONFIG_VIDEO_SDL)   += $(shell sdl-config --libs)
 xynth_ldflags-$(CONFIG_VIDEO_CACA)  += -lcaca
 
-xynth_libraries-$(CONFIG_VIDEO_HELPER_IRIMAF) += $(PRJROOT)/sysapps/imedia/imedia/imaf/src/
-xynth_ldflags-$(CONFIG_VIDEO_HELPER_IRIMAF)   += -limaf
-
 xynth_includes-y  += ./ ../lib
 xynth_libraries-y += ../lib
 xynth_ldflags-y   += -lxynth
