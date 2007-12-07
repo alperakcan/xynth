@@ -212,6 +212,37 @@ int w_object_refresh (w_object_t *object)
 	return 0;
 }
 
+int w_object_set_effect (w_object_t *object, EFFECT effect)
+{
+	object->effect->effect = effect;
+	return 0;
+}
+
+int w_object_set_draw (w_object_t *object, void (*draw) (w_object_t *))
+{
+	object->draw = draw;
+	return 0;
+}
+
+int w_object_set_event (w_object_t *object, void (*event) (w_object_t *, s_event_t *))
+{
+	object->event = event;
+	return 0;
+}
+
+int w_object_set_onload (w_object_t *object, void (*onload) (w_object_t *))
+{
+	object->onload = onload;
+	return 0;
+}
+
+int w_object_set_unload (w_object_t *object, void (*unload) (w_object_t *))
+{
+	object->unload = unload;
+	return 0;
+}
+
+
 int w_object_set_content (w_object_t *object, int x, int y, int w, int h)
 {
 	object->content->x = x;

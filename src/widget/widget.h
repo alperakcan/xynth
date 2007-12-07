@@ -179,6 +179,11 @@ int w_object_update_to_surface (w_object_t *object, s_surface_t *surface, s_rect
 int w_object_update (w_object_t *object, s_rect_t *coor);
 int w_object_draw (w_object_t *object);
 int w_object_refresh (w_object_t *object);
+int w_object_set_effect (w_object_t *object, EFFECT effect);
+int w_object_set_draw (w_object_t *object, void (*draw) (w_object_t *));
+int w_object_set_event (w_object_t *object, void (*event) (w_object_t *, s_event_t *));
+int w_object_set_onload (w_object_t *object, void (*onload) (w_object_t *));
+int w_object_set_unload (w_object_t *object, void (*unload) (w_object_t *));
 int w_object_set_content (w_object_t *object, int x, int y, int w, int h);
 int w_object_move_correct (w_object_t *object);
 int w_object_move_silent (w_object_t *object, int x, int y, int w, int h);
@@ -304,10 +309,12 @@ int w_listbox_item_add (w_object_t *object, w_listbox_item_t *item);
 int w_listbox_item_del (w_object_t *object, w_listbox_item_t *item);
 w_listbox_item_t * w_listbox_item_active_get (w_object_t *object);
 int w_listbox_item_active_set (w_object_t *object, w_listbox_item_t *listbox_item);
+
 void w_listbox_slide (w_object_t *object, int vertical, int horizontal, int *ytotal, int *yoffset);
 void w_listbox_draw (w_object_t *object);
 void w_listbox_geometry (w_object_t *object);
 void w_listbox_event (w_object_t *object, s_event_t *event);
+int w_listbox_set_changed (w_object_t *object, void (*changed) (w_object_t *object, int active));
 void w_listbox_scrollbuffer_set (w_object_t *object, w_object_t *scrollbuffer);
 int w_listbox_set_style (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow);
 int w_listbox_set_itemimage (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs);
@@ -410,11 +417,13 @@ int w_clistbox_item_del (w_object_t *object, w_clistbox_item_t *item);
 int w_clistbox_clear (w_object_t *object);
 w_clistbox_item_t * w_clistbox_item_active_get (w_object_t *object);
 int w_clistbox_item_active_set (w_object_t *object, w_clistbox_item_t *listbox_item);
+
 void w_clistbox_slide (w_object_t *object, int vertical, int horizontal, int *ytotal, int *yoffset);
 void w_clistbox_draw (w_object_t *object);
 void w_clistbox_geometry (w_object_t *object);
 void w_clistbox_event (w_object_t *object, s_event_t *event);
 void w_clistbox_scrollbuffer_set (w_object_t *object, w_object_t *scrollbuffer);
+int w_clistbox_set_changed (w_object_t *object, void (*changed) (w_object_t *object, int active));
 int w_clistbox_set_style (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow);
 int w_clistbox_set_itemimage (w_object_t *object, unsigned int style, unsigned int rotation, unsigned int nimgs, char **imgs);
 int w_clistbox_set_active_style (w_object_t *object, unsigned int shape, unsigned int shadow);

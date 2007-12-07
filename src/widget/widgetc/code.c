@@ -388,7 +388,7 @@ void code_generate_object_listbox (s_xml_node_t *node)
 		tmp->dontparse = 1;
 	}
 	while ((tmp = s_xml_node_get_path(node, "changed")) != NULL) {
-		fprintf(g_source, "%s->changed = %s;\n", nid, tmp->value);
+		fprintf(g_source, "w_listbox_set_changed(%s->object, %s);\n", nid, tmp->value);
 		tmp->dontparse = 1;
 	}
 	while ((tmp = s_xml_node_get_path(node, "itemheight")) != NULL) {
@@ -428,7 +428,7 @@ void code_generate_object_clistbox (s_xml_node_t *node)
 		tmp->dontparse = 1;
 	}
 	while ((tmp = s_xml_node_get_path(node, "changed")) != NULL) {
-		fprintf(g_source, "%s->changed = %s;\n", nid, tmp->value);
+		fprintf(g_source, "w_clistbox_set_changed(%s->object, %s);\n", nid, tmp->value);
 		tmp->dontparse = 1;
 	}
 	while ((tmp = s_xml_node_get_path(node, "itemheight")) != NULL) {
@@ -460,7 +460,7 @@ void code_generate_effect (s_xml_node_t *node)
 	s_xml_node_t *tmp;
 	char *effect = s_xml_node_get_path_value(node, "effect");
 	char *pid = s_xml_node_get_attr_value(node->parent, "id");
-	fprintf(g_source, "%s->object->effect->effect = %s;\n", pid, (effect) ? effect : "0");
+	fprintf(g_source, "w_object_set_effect(%s->object, %s);\n", pid, (effect) ? effect : "0");
 	if ((tmp = s_xml_node_get_path(node, "effect")) != NULL) { tmp->dontparse = 1; }
 }
 
@@ -480,25 +480,25 @@ void code_generate_show (s_xml_node_t *node)
 void code_generate_draw (s_xml_node_t *node)
 {
 	char *pid = s_xml_node_get_attr_value(node->parent, "id");
-	fprintf(g_source, "%s->object->draw = %s;\n", pid, node->value);
+	fprintf(g_source, "w_object_set_draw(%s->object, %s);\n", pid, node->value);
 }
 
 void code_generate_event (s_xml_node_t *node)
 {
 	char *pid = s_xml_node_get_attr_value(node->parent, "id");
-	fprintf(g_source, "%s->object->event = %s;\n", pid, node->value);
+	fprintf(g_source, "w_object_set_event(%s->object, %s);\n", pid, node->value);
 }
 
 void code_generate_onload (s_xml_node_t *node)
 {
 	char *pid = s_xml_node_get_attr_value(node->parent, "id");
-	fprintf(g_source, "%s->object->onload = %s;\n", pid, node->value);
+	fprintf(g_source, "w_object_set_onload(%s->object, %s);\n", pid, node->value);
 }
 
 void code_generate_unload (s_xml_node_t *node)
 {
 	char *pid = s_xml_node_get_attr_value(node->parent, "id");
-	fprintf(g_source, "%s->object->unload = %s;\n", pid, node->value);
+	fprintf(g_source, "w_object_set_unload(%s->object, %s);\n", pid, node->value);
 }
 
 void code_generate_object (s_xml_node_t *node)
