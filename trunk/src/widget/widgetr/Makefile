@@ -15,7 +15,7 @@ target-$(CONFIG_WIDGET_WIDGETR) = widgetr
 widgetr_cflags-y    += $(SPIDER_MONKEY_CFLAGS)
 widgetr_includes-y  += . .. ../../lib $(SPIDER_MONKEY_INC)
 widgetr_libraries-y += . ../ ../../lib/
-widgetr_ldflags-y   += -lwidget -lxynth
+widgetr_ldflags-y   += -lwidget -lxynth $(SPIDER_MONKEY_LIB)
 widgetr_files-y     += widgetr.c \
                        code.c \
                        js.c
