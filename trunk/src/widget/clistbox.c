@@ -267,6 +267,14 @@ void w_clistbox_scrollbuffer_set (w_object_t *object, w_object_t *scrollbuffer)
 	lb->scrollbuffer = scrollbuffer;
 }
 
+int w_clistbox_set_changed (w_object_t *object, void (*changed) (w_object_t *object, int active))
+{
+	w_listbox_t *lb;
+	lb = object->data[OBJECT_CLISTBOX];
+	lb->changed = changed;
+	return 0;
+}
+
 int w_clistbox_set_style (w_object_t *object, FRAME_SHAPE shape, FRAME_SHADOW shadow)
 {
 	return w_frame_set_style(object, shape, shadow);
