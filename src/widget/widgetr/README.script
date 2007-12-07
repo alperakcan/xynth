@@ -1,0 +1,22 @@
+
+    - Java Script Suppot
+
+    Widgetr is using Spider Monkey for Java Scripting Engine. SpiderMonkey is
+Gecko's JavaScript engine written in C. It is used in various Mozilla products,
+including Firefox, and is available under MPL/GPL/LGPL tri-license.
+
+    - Checkout the latest spider monkey codes;
+    
+    cvs -d :pserver:anonymous@cvs-mirror.mozilla.org:/cvsroot login
+    cvs -d :pserver:anonymous@cvs-mirror.mozilla.org:/cvsroot co -l mozilla/js/src mozilla/js/src/config mozilla/js/src/editline mozilla/js/src/fdlibm
+    
+    - Build spider monkey
+    
+    cd mozilla/js/src
+    make -f Makefile.ref
+    
+    - Enable java engine for Widgetr
+    
+    Enable sicript engine js in makefile
+    
+    WIDGET_SCRIPT_ENGINE_JS = Y
