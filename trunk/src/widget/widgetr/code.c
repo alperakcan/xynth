@@ -752,6 +752,7 @@ void code_parse (s_hashtable_t *htable, s_xml_node_t *file, s_xml_node_t *style,
 	s_hashtable_add(htable, "FRAME_TABWIDGETPANEL", (void *) FRAME_TABWIDGETPANEL);
 	s_hashtable_add(htable, "FRAME_GROUPBOXPANEL", (void *) FRAME_GROUPBOXPANEL);
 	s_hashtable_add(htable, "FRAME_EMPTY", (void *) FRAME_EMPTY);
+
 	s_hashtable_add(htable, "FRAME_PLAIN", (void *) FRAME_PLAIN);
 	s_hashtable_add(htable, "FRAME_RAISED", (void *) FRAME_RAISED);
 	s_hashtable_add(htable, "FRAME_SUNKEN", (void *) FRAME_SUNKEN);

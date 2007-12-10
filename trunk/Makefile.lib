@@ -194,6 +194,7 @@ do_widgetc        = @$(MKDIR) .$1; $(disp_widgetc)        ; $(cmd_widgetc)
 #
 # Functions
 #
+
 define target-defaults_base
     $(eval $1_sources   = $(filter %.c,$2))
     $(eval $1_headers   = $(filter %.h,$2))
@@ -332,30 +333,36 @@ endef
 #
 
 # generate target variables
+
 $(eval $(foreach T,$(target-y),$(eval $(call target-variables,$T,$($T_files-y)))))
-$(eval $(foreach T,$(target_so-y),$(eval $(call target_so-variables,$T,$($T_files-y)))))
-$(eval $(foreach T,$(target_a-y),$(eval $(call target_a-variables,$T,$($T_files-y)))))
 $(eval $(foreach T,$(target_o-y),$(eval $(call target_o-variables,$T,$($T_files-y)))))
+$(eval $(foreach T,$(target_a-y),$(eval $(call target_a-variables,$T,$($T_files-y)))))
+$(eval $(foreach T,$(target_so-y),$(eval $(call target_so-variables,$T,$($T_files-y)))))
 
 $(eval $(foreach T,$(target.host-y),$(eval $(call target_host-variables,$T,$($T_files-y)))))
 $(eval $(foreach T,$(target_o.host-y),$(eval $(call target_o_host-variables,$T,$($T_files-y)))))
 
 $(eval $(foreach T,$(target-n),$(eval $(call target_empty-defaults,$T))))
 $(eval $(foreach T,$(target-),$(eval $(call target_empty-defaults,$T))))
+
 $(eval $(foreach T,$(target_so-n),$(eval $(call target_empty-defaults,$T))))
 $(eval $(foreach T,$(target_so-),$(eval $(call target_empty-defaults,$T))))
+
 $(eval $(foreach T,$(target_a-n),$(eval $(call target_empty-defaults,$T))))
 $(eval $(foreach T,$(target_a-),$(eval $(call target_empty-defaults,$T))))
+
 $(eval $(foreach T,$(target_o-n),$(eval $(call target_empty-defaults,$T))))
 $(eval $(foreach T,$(target_o-),$(eval $(call target_empty-defaults,$T))))
 
 # generate subdir targets
+
 $(eval $(foreach S,$(subdir-y),$(eval $(call subdir-defaults,$S))))
 
 $(eval $(foreach S,$(subdir-n),$(eval $(call subdir_empty-defaults,$S,clean))))
 $(eval $(foreach S,$(subdir-),$(eval $(call subdir_empty-defaults,$S,clean))))
 
 # generic tags
+
 all: $(addsuffix _all, $(subdirs))
 all: $(targets-blds)
 all: __FORCE
