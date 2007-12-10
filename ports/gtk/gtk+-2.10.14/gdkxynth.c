@@ -488,14 +488,6 @@ void gdk_screen_get_monitor_geometry (GdkScreen *screen, gint monitor_num, GdkRe
 	LEAVE();
 }
 
-GdkColormap * gdk_colormap_new (GdkVisual *visual, gboolean allocate)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-	return 0;
-}
-
 void _gdk_cursor_destroy (GdkCursor *cursor)
 {
 	ENTER();
@@ -673,13 +665,6 @@ GdkAtom gdk_atom_intern_static_string (const gchar *atom_name)
 	return 0;
 }
 
-void _gdk_windowing_init (void)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-}
-
 void  gdk_window_set_geometry_hints (GdkWindow *window, GdkGeometry *geometry, GdkWindowHints geom_mask)
 {
 	ENTER();
@@ -692,14 +677,6 @@ void gdk_display_beep (GdkDisplay *display)
 	ENTER();
 	ASSERT();
 	LEAVE();
-}
-
-GdkColormap * gdk_screen_get_system_colormap (GdkScreen *screen)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-	return 0;
 }
 
 void  gdk_device_get_state (GdkDevice *device, GdkWindow *window, gdouble *axes, GdkModifierType *mask)
@@ -891,14 +868,6 @@ gboolean gdk_keyboard_grab_info_libgtk_only (GdkDisplay *display, GdkWindow **gr
 	return 0;
 }
 
-GType gdk_colormap_get_type (void)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-	return 0;
-}
-
 void gdk_display_warp_pointer (GdkDisplay *display, GdkScreen *screen, gint x, gint y)
 {
 	ENTER();
@@ -960,14 +929,6 @@ GdkPixmap * gdk_bitmap_create_from_data (GdkDrawable *drawable, const gchar *dat
 }
 
 GdkCursor * gdk_cursor_new_for_display (GdkDisplay *display, GdkCursorType cursor_type)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-	return 0;
-}
-
-GdkVisual * gdk_screen_get_system_visual (GdkScreen * screen)
 {
 	ENTER();
 	ASSERT();
@@ -1327,14 +1288,6 @@ void gdk_window_move_resize (GdkWindow *window, gint x, gint y, gint width, gint
 	ENTER();
 	ASSERT();
 	LEAVE();
-}
-
-GdkDisplay * gdk_display_open (const gchar *display_name)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-	return 0;
 }
 
 gboolean gdk_display_request_selection_notification (GdkDisplay *display, GdkAtom selection)

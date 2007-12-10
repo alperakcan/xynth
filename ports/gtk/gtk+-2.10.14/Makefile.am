@@ -18,6 +18,12 @@ LDADDS = 		\
 noinst_LTLIBRARIES = libgdk-xynth.la
 
 libgdk_xynth_la_SOURCES =	\
+	gdkcolor-xynth.c \
+	gdkdisplay-xynth.c \
+	gdkglobals-xynth.c \
+	gdkkeys-xynth.c \
+	gdkmain-xynth.c \
+	gdkvisual-xynth.c \
 	gdkxynth.c
 
 libgdkinclude_HEADERS =		\
