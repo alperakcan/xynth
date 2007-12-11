@@ -84,7 +84,7 @@ int s_region_num_rectangles (s_region_t *region)
 	if (region) {
 		return region->nrects;
 	}
-	return -1;
+	return 0;
 }
 
 s_rect_t * s_region_rectangles (s_region_t *region)
