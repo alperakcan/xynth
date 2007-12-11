@@ -9,6 +9,8 @@ help:
 	@echo "make dist         - install everything to dist path"
 	@echo "make install      - install everything to install path"
 	@echo ""
+	@echo "make doxy-doc     - build doxygen documentation"
+	@echo ""
 	@echo "make clean        - clean everything"
 	@echo "make distclean    - clean much more"
 	@echo ""
@@ -16,10 +18,11 @@ help:
 	@echo "make linux-single - linux single app configuration"
 	@echo "make mingw        - mingw default configuration"
 	@echo "make pspdev       - pspdev default configuration"
-	@echo "make gp2x         - linux default configuration"
+	@echo "make gp2x         - gp2x default configuration"
 	@echo ""
 
 check_goal := $(filter-out menuconfig, $(MAKECMDGOALS))
+check_goal := $(filter-out doxy-doc, $(MAKECMDGOALS))
 check_goal := $(filter-out distclean, $(check_goal))
 check_goal := $(filter-out clean, $(check_goal))
 check_goal := $(filter-out linux, $(check_goal))
@@ -54,7 +57,7 @@ menuconfig: tools/config_all
 
 .PHONY: distclean
 distclean: clean
-	@$(RM) .config .config.cmd .config.old .kconfig.d .tmpconfig.h .tmpconfig src/lib/config.h dist
+	@$(RM) .config .config.cmd .config.old .kconfig.d .tmpconfig.h .tmpconfig src/lib/config.h dist doc
 
 .PHONY: distdirs
 distdirs: __FORCE
@@ -82,3 +85,22 @@ dist: distdirs xynth.pc
 .PHONY: install
 install: dist
 	$(CP) ./dist/* $(CONFIG_PATH_INSTALL)/
+
+.PHONY: doxy-doc
+doxy-doc:
+	SRCDIR='.' \
+	PROJECT='xynth' \
+	DOCDIR='doc' \
+	VERSION='0.9.00' \
+	PERL_PATH='/usr/bin/perl' \
+	HAVE_DOT='NO' \
+	GENERATE_MAN='NO' \
+	GENERATE_RTF='NO' \
+	GENERATE_XML='NO' \
+	GENERATE_HTMLHELP='NO' \
+	GENERATE_CHI='NO' \
+	GENERATE_HTML='YES' \
+	GENERATE_LATEX='NO' \
+	EXCLUDE_PATTERNS='dist ports tools demo expat freetype2 libpng libz pixman pthread_w32' \
+	/usr/bin/doxygen \
+	./doxygen.cfg

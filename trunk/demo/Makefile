@@ -1,7 +1,7 @@
 
 -include ../.config
 
-subdir-$(CONFIG_DEMO_CHILD)    = child
+subdir-$(CONFIG_DEMO_CHILD)   := child
 subdir-$(CONFIG_DEMO_DESKTOP) += desktop
 subdir-$(CONFIG_DEMO_HIDE)    += hide
 subdir-$(CONFIG_DEMO_LOAD)    += load

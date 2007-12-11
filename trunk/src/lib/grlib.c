@@ -16,6 +16,31 @@
 #include "xynth_.h"
 #include "mem.h"
 
+#define clipc(a, b, c, d, fonk)\
+	int nrects;\
+	s_rect_t crect;\
+	s_rect_t *crects;\
+	if (surface->clip == NULL) {\
+		crect.x = a;\
+		crect.y = b;\
+		crect.w = c;\
+		crect.h = d;\
+		fonk;\
+	} else {\
+		s_rect_t cintr;\
+		cintr.x = a;\
+		cintr.y = b;\
+		cintr.w = c;\
+		cintr.h = d;\
+		nrects = s_region_num_rectangles(surface->clip);\
+		crects = s_region_rectangles(surface->clip);\
+		while (nrects--) {\
+			if (s_rect_intersect(&crects[nrects], &cintr, &crect) == 0) {\
+				fonk;\
+			}\
+		}\
+	}
+
 #define clipr(a, b, c, d)\
 	int x0;\
 	int y0;\
@@ -73,16 +98,18 @@ void s_colorrgb (s_surface_t *surface, int c, int *r, int *g, int *b)
 
 void s_setpixel (s_surface_t *surface, int x, int y, int c)
 {
+	clipc(x, y, 1, 1, 
 	if (surface->mode & SURFACE_VIRTUAL) {
-		clipv(x, y, 1, 1);
+		clipv(crect.x, crect.y, crect.w, crect.h);
 		bpp_setpixel(surface, coor.x, coor.y, c);
 	}
 	if (surface->mode & SURFACE_REAL) {
-		clipr(x, y, 1, 1);
+		clipr(crect.x, crect.y, crect.w, crect.h);
 		gr_sendstream(
 			bpp_setpixel_o(surface, *(surface->id), coor.x, coor.y, c);
 		);
 	}
+	);
 }
 
 void s_setpixelrgb (s_surface_t *surface, int x, int y, int r, int g, int b)
@@ -135,46 +162,16 @@ void s_getpixelrgb (s_surface_t *surface, int x, int y, int *r, int *g, int *b)
 
 void s_hline (s_surface_t *surface, int x1, int y, int x2, int c)
 {
-	int x1_ = x1;
-	int x2_ = x2;
-
-	if (x1_ > x2_) {
-		x1 = x2_;
-		x2 = x1_;
-	}
-
-	if (surface->mode & SURFACE_VIRTUAL) {
-		clipv(x1, y, x2 - x1 + 1, 1);
-		bpp_hline(surface, coor.x, coor.y, coor.w + coor.x - 1, c);
-	}
-	if (surface->mode & SURFACE_REAL) {
-		clipr(x1, y, x2 - x1 + 1, 1);
-		gr_sendstream(
-			bpp_hline_o(surface, *(surface->id), coor.x, coor.y, coor.w + coor.x - 1, c);
-		);
-	}
+	int x1_ = MIN(x1, x2);
+	int x2_ = MAX(x1, x2);
+	s_fillbox(surface, x1_, y, x2_ - x1_ + 1, 1, c);
 }
 
 void s_vline (s_surface_t *surface, int x, int y1, int y2, int c)
 {
-	int y1_ = y1;
-	int y2_ = y2;
-
-	if (y1_ > y2_) {
-		y1 = y2_;
-		y2 = y1_;
-	}
-
-	if (surface->mode & SURFACE_VIRTUAL) {
-		clipv(x, y1, 1, y2 - y1 + 1);
-		bpp_vline(surface, coor.x, coor.y, coor.h + coor.y - 1, c);
-	}
-	if (surface->mode & SURFACE_REAL) {
-		clipr(x, y1, 1, y2 - y1 + 1);
-		gr_sendstream(
-			bpp_vline_o(surface, *(surface->id), coor.x, coor.y, coor.h + coor.y - 1, c);
-		);
-	}
+	int y1_ = MIN(y1, y2);
+	int y2_ = MAX(y1, y2);
+	s_fillbox(surface, x, y1_, 1, y2_ - y1_ + 1, c);
 }
 
 void s_line (s_surface_t *surface, int x1, int y1, int x2, int y2, int c)
@@ -247,16 +244,18 @@ void s_line (s_surface_t *surface, int x1, int y1, int x2, int y2, int c)
 
 void s_fillbox (s_surface_t *surface, int x, int y, int w, int h, int c)
 {
+	clipc(x, y, w, h,
 	if (surface->mode & SURFACE_VIRTUAL) {
-		clipv(x, y, w, h);
+		clipv(crect.x, crect.y, crect.w, crect.h);
 		bpp_fillbox(surface, coor.x, coor.y, coor.w, coor.h, c);
 	}
 	if (surface->mode & SURFACE_REAL) {
-		clipr(x, y, w, h);
+		clipr(crect.x, crect.y, crect.w, crect.h);
 		gr_sendstream(
 			bpp_fillbox_o(surface, *(surface->id), coor.x, coor.y, coor.w, coor.h, c);
 		);
 	}
+	);
 }
 
 void s_putbox (s_surface_t *surface, int x, int y, int w, int h, void *sp)
@@ -286,83 +285,95 @@ void s_putboxrgba (s_surface_t *surface, int x, int y, int w, int h, unsigned in
 
 void s_getbox (s_surface_t *surface, int x, int y, int w, int h, void *dp)
 {
-	clipv(x, y, w, h);
+	clipc(x, y, w, h,
+	clipv(crect.x, crect.y, crect.w, crect.h);
 	bpp_getbox(surface, coor.x, coor.y, coor.w, coor.h, dp + (y0 * w + x0) * surface->bytesperpixel);
+	);
 }
 
 void s_putboxpart (s_surface_t *surface, int x, int y, int w, int h, int bw, int bh, void *sp, int xo, int yo)
 {
 	clipb();
+	clipc(x, y, w, h,
 	if (surface->mode & SURFACE_VIRTUAL) {
-		clipv(x, y, w, h);
+		clipv(crect.x, crect.y, crect.w, crect.h);
 		bpp_putbox(surface, coor.x, coor.y, coor.w, coor.h, sp + ((yo + y0) * bw + xo + x0) * surface->bytesperpixel, bw);
 	}
 	if (surface->mode & SURFACE_REAL) {
-		clipr(x, y, w, h);
+		clipr(crect.x, crect.y, crect.w, crect.h);
 		gr_sendstream(
 			bpp_putbox_o(surface, *(surface->id), coor.x, coor.y, coor.w, coor.h, sp + ((yo + y0) * bw + xo + x0) * surface->bytesperpixel, bw);
 		);
 	}
+	);
 }
 
 void s_putboxpartmask (s_surface_t *surface, int x, int y, int w, int h, int bw, int bh, char *sp, unsigned char *sm, int xo, int yo)
 {
 	clipb();
+	clipc(x, y, w, h,
 	if (surface->mode & SURFACE_VIRTUAL) {
-		clipv(x, y, w, h);
+		clipv(crect.x, crect.y, crect.w, crect.h);
 		bpp_putbox_mask(surface, coor.x, coor.y, coor.w, coor.h, sp + ((yo + y0) * bw + xo + x0) * surface->bytesperpixel, sm + ((yo + y0) * bw + xo + x0), bw);
 	}
 	if (surface->mode & SURFACE_REAL) {
-		clipr(x, y, w, h);
+		clipr(crect.x, crect.y, crect.w, crect.h);
 		gr_sendstream(
 			bpp_putbox_mask_o(surface, *(surface->id), coor.x, coor.y, coor.w, coor.h, sp + ((yo + y0) * bw + xo + x0) * surface->bytesperpixel, sm + ((yo + y0) * bw + xo + x0), bw);
 		);
 	}
+	);
 }
 
 void s_putboxpartalpha (s_surface_t *surface, int x, int y, int w, int h, int bw, int bh, void *sp, unsigned char *sm, int xo, int yo)
 {
 	clipb();
+	clipc(x, y, w, h,
 	if (surface->mode & SURFACE_VIRTUAL) {
-		clipv(x, y, w, h);
+		clipv(crect.x, crect.y, crect.w, crect.h);
 		bpp_putbox_alpha(surface, coor.x, coor.y, coor.w, coor.h, sp + ((yo + y0) * bw + xo + x0) * surface->bytesperpixel, sm + ((yo + y0) * bw + xo + x0), bw);
 	}
 	if (surface->mode & SURFACE_REAL) {
-		clipr(x, y, w, h);
+		clipr(crect.x, crect.y, crect.w, crect.h);
 		gr_sendstream(
 			bpp_putbox_alpha_o(surface, *(surface->id), coor.x, coor.y, coor.w, coor.h, sp + ((yo + y0) * bw + xo + x0) * surface->bytesperpixel, sm + ((yo + y0) * bw + xo + x0), bw);
 		);
 	}
+	);
 }
 
 void s_putboxpartrgb (s_surface_t *surface, int x, int y, int w, int h, int bw, int bh, unsigned int *rgba, int xo, int yo)
 {
 	clipb();
+	clipc(x, y, w, h,
 	if (surface->mode & SURFACE_VIRTUAL) {
-		clipv(x, y, w, h);
+		clipv(crect.x, crect.y, crect.w, crect.h);
 		bpp_putbox_rgb(surface, coor.x, coor.y, coor.w, coor.h, rgba + ((yo + y0) * bw + xo + x0), bw);
 	}
 	if (surface->mode & SURFACE_REAL) {
-		clipr(x, y, w, h);
+		clipr(crect.x, crect.y, crect.w, crect.h);
 		gr_sendstream(
 			bpp_putbox_rgb_o(surface, *(surface->id), coor.x, coor.y, coor.w, coor.h, rgba + ((yo + y0) * bw + xo + x0), bw);
 		);
 	}
+	);
 }
 
 void s_putboxpartrgba (s_surface_t *surface, int x, int y, int w, int h, int bw, int bh, unsigned int *rgba, int xo, int yo)
 {
 	clipb();
+	clipc(x, y, w, h,
 	if (surface->mode & SURFACE_VIRTUAL) {
-		clipv(x, y, w, h);
+		clipv(crect.x, crect.y, crect.w, crect.h);
 		bpp_putbox_rgba(surface, coor.x, coor.y, coor.w, coor.h, rgba + ((yo + y0) * bw + xo + x0), bw);
 	}
 	if (surface->mode & SURFACE_REAL) {
-		clipr(x, y, w, h);
+		clipr(crect.x, crect.y, crect.w, crect.h);
 		gr_sendstream(
 			bpp_putbox_rgba_o(surface, *(surface->id), coor.x, coor.y, coor.w, coor.h, rgba + ((yo + y0) * bw + xo + x0), bw);
 		);
 	}
+	);
 }
 
 void s_copybox (s_surface_t *surface, int x1, int y1, int w, int h, int x2, int y2)
@@ -655,6 +666,9 @@ int s_surface_destroy (s_surface_t *surface)
 		if (surface->evbuf == 0 && surface->vbuf) {
 			free(surface->vbuf);
 		}
+		if (surface->clip != NULL) {
+			s_region_destroy(surface->clip);
+		}
 		free(surface);
 	}
 	return 0;
@@ -776,4 +790,29 @@ int s_surface_create (s_surface_t **surface, int width, int height, int bitsperp
 	return 0;
 err0:	*surface = NULL;
 	return -1;
+}
+
+int s_surface_set_clip_region (s_surface_t *surface, s_region_t *region)
+{
+	int nrect;
+	s_rect_t *rects;
+	if (surface->clip != NULL) {
+		s_region_destroy(surface->clip);
+		surface->clip = NULL;
+	}
+	if (region == NULL) {
+		return 0;
+	}
+	if (s_region_create(&surface->clip)) {
+		return -1;
+	}
+	nrect = s_region_num_rectangles(region);
+	rects = s_region_rectangles(region);
+	while (nrect--) {
+		if (s_region_addrect(surface->clip, &rects[nrect])) {
+			s_region_destroy(surface->clip);
+			return -1;
+		}
+	}
+	return 0;
 }

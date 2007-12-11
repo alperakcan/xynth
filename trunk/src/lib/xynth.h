@@ -23,8 +23,6 @@
 typedef struct s_font_ft_s s_font_ft_t;
 typedef struct s_gettext_s s_gettext_t;
 
-typedef struct s_window_s s_window_t;
-
 typedef struct s_config_var_s s_config_var_t;
 typedef struct s_config_cat_s s_config_cat_t;
 typedef struct s_config_s s_config_t;
@@ -41,6 +39,7 @@ typedef struct s_list_node_s s_list_node_t;
 typedef struct s_pollfd_s s_pollfd_t;
 typedef struct s_pollfds_s s_pollfds_t;
 typedef struct s_rect_s s_rect_t;
+typedef struct s_region_s s_region_t;
 typedef struct s_surface_s s_surface_t;
 typedef struct s_thread_s s_thread_t;
 typedef struct s_thread_sem_s s_thread_sem_t;
@@ -48,6 +47,7 @@ typedef struct s_thread_cond_s s_thread_cond_t;
 typedef struct s_thread_mutex_s s_thread_mutex_t;
 typedef struct s_timer_s s_timer_t;
 typedef struct s_timers_s s_timers_t;
+typedef struct s_window_s s_window_t;
 typedef struct s_xml_node_attr_s s_xml_node_attr_t;
 typedef struct s_xml_node_s s_xml_node_t;
 
@@ -1077,7 +1077,7 @@ void s_copybox (s_surface_t *surface, int x1, int y1, int w, int h, int x2, int 
   *        and height. surface buffer will be allocated internal with the size
   *        of width * height * bytesperpixel.
   *
-  * @param **susrface   - the surface
+  * @param **surface   - the surface
   * @param width        - width
   * @param height       - height
   * @param bitsperpixel - bitsperpixel
@@ -1089,7 +1089,7 @@ int s_surface_create (s_surface_t **surface, int width, int height, int bitsperp
   *        and height. vbuf will be the virtual buffer of the surface. the
   *        source pixmap memory (vbuf) has the size w * h * bytesperpixel.
   *
-  * @param **susrface   - the surface
+  * @param **surface   - the surface
   * @param width        - width
   * @param height       - height
   * @param bitsperpixel - bitsperpixel
@@ -1105,6 +1105,16 @@ int s_surface_create_from_data (s_surface_t **surface, int width, int height, in
   * @return 0 on success.
   */
 int s_surface_destroy (s_surface_t *surface);
+
+/** @brief set a clip region for surface. region is dublicated so caller must
+  *        destroy region, not to allow memory leaks. a NULL region indicates
+  *        that no clipping required while drawing on surface.
+  *
+  * @param *surface - the surface
+  * @param *region - the region
+  * @return 0 on succuess.
+  */
+int s_surface_set_clip_region (s_surface_t *surface, s_region_t *region);
 
 /** @brief copies and converts the source buffer (sb) which is sbitspp bitsperpixel, to destination
   *        buffer (db) which is dbitspp bitsperpixel. db will be alocated internally.
@@ -2116,11 +2126,12 @@ int s_rect_difference (s_rect_t *r1, s_rect_t *r0, s_list_t *list);
 /*@}*/
 
 /* region.c */
-typedef struct s_region_s {
+
+struct s_region_s {
 	s_rect_t extents;
 	int nrects;
 	s_rect_t *rects;
-} s_region_t;
+};
 
 int s_region_create (s_region_t **region);
 int s_region_destroy (s_region_t *region);
@@ -2267,7 +2278,7 @@ typedef enum {
 
 /** @brief get name of data
   *
-  * @param data - the data
+  * @param sdata - the data
   * @return pointer to name of data
   */
 const char * s_socket_data_to_name (S_SOC_DATA sdata); 
@@ -2509,6 +2520,8 @@ struct s_surface_s {
 	int width;
 	/** surface virtual buffer height */
 	int height;
+	/** surface clip region */
+	s_region_t *clip;
 	/** vbuf is external */
 	unsigned int evbuf;
 	/** surface's virtual buffer */
