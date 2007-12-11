@@ -479,3 +479,24 @@ GType _gdk_window_impl_get_type (void)
 	LEAVE();
 	return type;
 }
+
+GdkWindow * gdk_xynth_window_new (GdkWindow *parent, GdkWindowAttr *attributes, gint attributes_mask)
+{
+	ENTER();
+	ASSERT();
+	LEAVE();
+	return NULL;
+}
+
+GdkWindow * gdk_window_new (GdkWindow *parent, GdkWindowAttr *attributes, gint attributes_mask)
+{
+	GdkWindow *window;
+	ENTER();
+	if (attributes == NULL) {
+		LEAVE();
+		return NULL;
+	}
+	window = gdk_xynth_window_new(parent, attributes, attributes_mask);
+	LEAVE();
+	return window;
+}

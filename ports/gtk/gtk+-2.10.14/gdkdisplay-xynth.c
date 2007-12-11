@@ -1,6 +1,20 @@
 
 #include "gdkxynth.h"
 
+GdkScreen * gdk_display_get_default_screen (GdkDisplay *display)
+{
+	ENTER();
+	LEAVE();
+	return _gdk_screen;
+}
+
+void _gdk_windowing_set_default_display (GdkDisplay *display)
+{
+	ENTER();
+	_gdk_display = GDK_DISPLAY_XYNTH(display);
+	LEAVE();
+}
+
 GType gdk_display_xynth_get_type (void)
 {
 	static GType object_type = 0;

@@ -115,6 +115,10 @@ struct _GdkDrawableImplXYNTHClass {
 
 GType gdk_drawable_impl_xynth_get_type (void);
 
+/* gdkevents-xynth.c */
+
+void _gdk_events_init (void);
+
 /* gdkwndow-xynth.c */
 
 typedef struct _GdkWindowImplXYNTH      GdkWindowImplXYNTH;

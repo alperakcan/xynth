@@ -81,14 +81,6 @@ void gdk_device_set_key (GdkDevice *device, guint index, guint keyval, GdkModifi
 	LEAVE();
 }
 
-gboolean gdk_screen_get_setting (GdkScreen *screen, const gchar *name, GValue *value)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-	return 0;
-}
-
 gboolean gdk_keymap_translate_keyboard_state (GdkKeymap *keymap, guint keycode, GdkModifierType state, gint group, guint *keyval, gint *effective_group, gint *level, GdkModifierType *consumed_modifiers)
 {
 	ENTER();
@@ -188,14 +180,6 @@ void gdk_device_set_axis_use (GdkDevice *device, guint index, GdkAxisUse use)
 	LEAVE();
 }
 
-GdkWindow * gdk_window_new (GdkWindow *parent, GdkWindowAttr *attributes, gint attributes_mask)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-	return 0;
-}
-
 gchar * gdk_set_locale (void)
 {
 	ENTER();
@@ -280,14 +264,6 @@ gboolean gdk_device_get_axis (GdkDevice *device, gdouble *axes, GdkAxisUse use, 
 	return 0;
 }
 
-gint gdk_screen_get_number (GdkScreen *screen)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-	return 0;
-}
-
 GType gdk_image_get_type (void)
 {
 	ENTER();
@@ -356,14 +332,6 @@ gint gdk_screen_get_width (GdkScreen *screen)
 	return 0;
 }
 
-GType gdk_drag_context_get_type (void)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-	return 0;
-}
-
 GdkDragContext * gdk_drag_begin (GdkWindow *window, GList *targets)
 {
 	ENTER();
@@ -409,13 +377,6 @@ void _gdk_windowing_get_pointer (GdkDisplay *display, GdkScreen **screen, gint *
 }
 
 void _gdk_windowing_window_clear_area (GdkWindow *window, gint x, gint y, gint width, gint height)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-}
-
-void _gdk_windowing_set_default_display (GdkDisplay *display)
 {
 	ENTER();
 	ASSERT();
@@ -545,14 +506,6 @@ void gdk_display_sync (GdkDisplay *display)
 }
 
 gint gdk_text_width (GdkFont *font, const gchar *text, gint text_length)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-	return 0;
-}
-
-GdkWindow * gdk_screen_get_root_window (GdkScreen *screen)
 {
 	ENTER();
 	ASSERT();
@@ -882,14 +835,6 @@ guint gdk_keyval_from_name (const gchar *keyval_name)
 	return 0;
 }
 
-GdkDisplay * gdk_screen_get_display (GdkScreen *screen)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-	return 0;
-}
-
 void gdk_window_reparent (GdkWindow *window, GdkWindow *new_parent, gint x, gint y)
 {
 	ENTER();
@@ -944,14 +889,6 @@ gchar * gdk_wcstombs (const GdkWChar *src)
 }
 
 gint gdk_screen_get_n_monitors (GdkScreen *screen)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-	return 0;
-}
-
-GdkScreen * gdk_display_get_default_screen (GdkDisplay *display)
 {
 	ENTER();
 	ASSERT();
@@ -1260,14 +1197,6 @@ void gdk_window_move_resize (GdkWindow *window, gint x, gint y, gint width, gint
 }
 
 gboolean gdk_display_request_selection_notification (GdkDisplay *display, GdkAtom selection)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-	return 0;
-}
-
-GdkColormap * gdk_screen_get_default_colormap (GdkScreen *screen)
 {
 	ENTER();
 	ASSERT();
