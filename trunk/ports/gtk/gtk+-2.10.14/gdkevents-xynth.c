@@ -43,3 +43,10 @@ void _gdk_events_init (void)
 	
 	LEAVE();
 }
+
+gboolean gdk_screen_get_setting (GdkScreen *screen, const gchar *name, GValue *value)
+{
+	ENTER();
+	LEAVE();
+	return FALSE;
+}
