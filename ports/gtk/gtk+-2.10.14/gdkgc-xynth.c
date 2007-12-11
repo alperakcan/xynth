@@ -141,8 +141,8 @@ static void gdk_gc_xynth_finalize (GObject *object)
 	if (private->values.tile) {
 		g_object_unref(private->values.tile);
 	}
-	if (G_OBJECT_CLASS (parent_class)->finalize) {
-		G_OBJECT_CLASS(parent_class)->finalize (object);
+	if (G_OBJECT_CLASS(parent_class)->finalize) {
+		G_OBJECT_CLASS(parent_class)->finalize(object);
 	}
 	LEAVE();
 }
@@ -152,8 +152,8 @@ static void gdk_gc_xynth_class_init (GdkGCXYNTHClass *klass)
 	GdkGCClass   *gc_class;
 	GObjectClass *object_class;
 	ENTER();
-	gc_class     = GDK_GC_CLASS (klass);
-	object_class = G_OBJECT_CLASS (klass);
+	gc_class     = GDK_GC_CLASS(klass);
+	object_class = G_OBJECT_CLASS(klass);
 	parent_class = g_type_class_peek_parent(klass);
 	object_class->finalize = gdk_gc_xynth_finalize;
 	gc_class->get_values = gdk_xynth_gc_get_values;
