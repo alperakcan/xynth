@@ -49,85 +49,14 @@ GdkDisplay * gdk_display_open (const gchar *display_name)
 	gdk_screen_set_default_colormap(_gdk_screen, gdk_screen_get_system_colormap(_gdk_screen));
 
 	_gdk_windowing_window_init();
+	_gdk_windowing_image_init();
+	_gdk_input_init();
+	_gdk_dnd_init();
 	
-	ASSERT();
+	_gdk_events_init();
+
+	g_signal_emit_by_name(gdk_display_manager_get(), "display_opened", _gdk_display);
+	
 	LEAVE();
-	return 0;
-#if 0
-	  DFBResult  ret;
-	  IDirectFB              *directfb;
-	  IDirectFBDisplayLayer  *layer;
-	  IDirectFBInputDevice   *keyboard;
-
-	  int argc=0;
-	  char **argv=NULL;
-
-	#if 1  /* arg hack arg support broken*/
-	  if(directfb_args ) {
-		argc=2;
-		argv = (char **)g_malloc(sizeof(char *)*argc);
-		argv[0] = "simple";
-		argv[1] = "--dfb:system=SDL";
-	  }
-	#endif
-
-	  ret = DirectFBInit (&argc,&argv);
-	  if (ret != DFB_OK)
-	{
-	      DirectFBError ("gdk_display_open: DirectFBInit", ret);
-	      return NULL;
-	    }
-
-	    ret = DirectFBCreate (&directfb);
-
-	  if (ret != DFB_OK)
-	    {
-	      DirectFBError ("gdk_display_open: DirectFBCreate", ret);
-	      return NULL;
-	    }
-	  _gdk_display = g_object_new(GDK_TYPE_DISPLAY_DFB,NULL);
-	  _gdk_display->directfb=directfb;
-
-	  ret = directfb->GetDisplayLayer (directfb, DLID_PRIMARY, &layer);
-	  if (ret != DFB_OK)
-	    {
-	      DirectFBError ("gdk_display_open: GetDisplayLayer", ret);
-	      directfb->Release (directfb);
-		  directfb = NULL;
-	      return NULL;
-	    }
-
-
-	  ret=directfb->GetInputDevice (directfb, DIDID_KEYBOARD, &keyboard);
-
-	  if (ret != DFB_OK){
-	      DirectFBError ("gdk_display_open: GetDisplayLayer", ret);
-	   	return NULL;
-	  }
-
-	  _gdk_display->layer=layer;
-	  _gdk_display->keyboard=keyboard;
-
-	    _gdk_directfb_keyboard_init ();
-
-	  _gdk_screen = g_object_new (GDK_TYPE_SCREEN, NULL);
-
-	  _gdk_visual_init ();
-
-	  gdk_screen_set_default_colormap (_gdk_screen,
-	                                   gdk_screen_get_system_colormap (_gdk_screen));
-	  _gdk_windowing_window_init ();
-	  _gdk_windowing_image_init ();
-
-	  _gdk_input_init ();
-	  _gdk_dnd_init ();
-
-	  _gdk_events_init ();
-	  layer->EnableCursor (layer, 1);
-
-	  g_signal_emit_by_name (gdk_display_manager_get (),
-				 "display_opened", _gdk_display);
-
-	  return GDK_DISPLAY_OBJECT(_gdk_display);
-#endif
+	return GDK_DISPLAY_OBJECT(_gdk_display);
 }

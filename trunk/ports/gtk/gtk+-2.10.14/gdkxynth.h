@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include <xynth.h>
 
@@ -49,6 +50,17 @@
 }
 
 G_BEGIN_DECLS
+
+/* gdkcursor-xynth */
+
+typedef struct _GdkCursorXYNTH GdkCursorXYNTH;
+
+struct _GdkCursorXYNTH {
+	GdkCursor cursor;
+	gint hot_x;
+	gint hot_y;
+	s_surface_t *surface;
+};
 
 /* gdkdisplay-xynth.c */
 
@@ -132,6 +144,10 @@ struct _GdkWindowImplXYNTHClass {
 
 void _gdk_windowing_window_init (void);
 
+/* gdkdnd-xynth.c */
+
+void _gdk_dnd_init (void);
+
 /* gdkkeys-xynth.c */
 
 void _gdk_xynth_keyboard_init (void);
@@ -163,7 +179,17 @@ struct _GdkGCXYNTHClass {
 GdkGC * _gdk_xynth_gc_new (GdkDrawable *drawable, GdkGCValues *values, GdkGCValuesMask values_mask);
 
 /* gdkimage-xynth.c */
+
+void _gdk_windowing_image_init (void);
 GdkImage * _gdk_xynth_copy_to_image (GdkDrawable *drawable, GdkImage *image, gint src_x, gint src_y, gint dest_x, gint dest_y, gint width, gint height);
+
+/* gdkinput-xynth.c */
+
+struct _GdkDeviceClass {
+	GObjectClass parent_class;
+};
+
+void _gdk_input_init (void);
 
 /* gdkglobals-xynth.c */
 
