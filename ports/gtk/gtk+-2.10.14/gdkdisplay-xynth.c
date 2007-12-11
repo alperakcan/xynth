@@ -48,7 +48,9 @@ GdkDisplay * gdk_display_open (const gchar *display_name)
 
 	gdk_screen_set_default_colormap(_gdk_screen, gdk_screen_get_system_colormap(_gdk_screen));
 
-	  ASSERT();
+	_gdk_windowing_window_init();
+	
+	ASSERT();
 	LEAVE();
 	return 0;
 #if 0

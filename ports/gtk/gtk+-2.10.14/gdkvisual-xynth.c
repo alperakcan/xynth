@@ -11,7 +11,7 @@ struct _GdkVisualClass {
 
 static void gdk_visual_finalize (GObject *object)
 {
-	g_error ("A GdkVisual object was finalized. This should not happen");
+	g_error("A GdkVisual object was finalized. This should not happen");
 }
 
 static void gdk_visual_class_init (GObjectClass *class)
