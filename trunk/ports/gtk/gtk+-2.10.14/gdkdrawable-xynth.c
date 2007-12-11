@@ -3,6 +3,84 @@
 
 static gpointer parent_class = NULL;
 
+void _gdk_xynth_draw_rectangle (GdkDrawable *drawable, GdkGC *gc, gint filled, gint x, gint y, gint width, gint height)
+{
+	ENTER();
+	ASSERT();
+	LEAVE();
+}
+
+static void gdk_xynth_draw_arc (GdkDrawable *drawable, GdkGC *gc, gint filled, gint x, gint y, gint width, gint height, gint angle1, gint angle2)
+{
+	ENTER();
+	ASSERT();
+	LEAVE();
+}
+
+static void gdk_xynth_draw_polygon (GdkDrawable *drawable, GdkGC *gc, gint filled, GdkPoint *points, gint npoints)
+{
+	ENTER();
+	ASSERT();
+	LEAVE();
+}
+
+static void gdk_xynth_draw_text (GdkDrawable *drawable, GdkFont *font, GdkGC *gc, gint x, gint y, const gchar *text, gint text_length)
+{
+	ENTER();
+	ASSERT();
+	LEAVE();
+}
+
+static void gdk_xynth_draw_text_wc (GdkDrawable *drawable, GdkFont *font, GdkGC *gc, gint x, gint y, const GdkWChar *text, gint text_length)
+{
+	ENTER();
+	ASSERT();
+	LEAVE();
+}
+
+static void gdk_xynth_draw_drawable (GdkDrawable *drawable, GdkGC *gc, GdkDrawable *src, gint xsrc, gint ysrc, gint xdest, gint ydest, gint width, gint height)
+{
+	ENTER();
+	ASSERT();
+	LEAVE();
+}
+
+static void gdk_xynth_draw_points (GdkDrawable *drawable, GdkGC *gc, GdkPoint *points, gint npoints)
+{
+	ENTER();
+	ASSERT();
+	LEAVE();
+}
+
+static void gdk_xynth_draw_segments (GdkDrawable *drawable, GdkGC *gc, GdkSegment *segs, gint nsegs)
+{
+	ENTER();
+	ASSERT();
+	LEAVE();
+}
+
+static void gdk_xynth_draw_lines (GdkDrawable *drawable, GdkGC *gc, GdkPoint *points, gint npoints)
+{
+	ENTER();
+	ASSERT();
+	LEAVE();
+}
+
+static void gdk_xynth_draw_image (GdkDrawable *drawable, GdkGC *gc, GdkImage *image, gint xsrc, gint ysrc, gint xdest, gint ydest, gint width, gint height)
+{
+	ENTER();
+	ASSERT();
+	LEAVE();
+}
+
+static cairo_surface_t * gdk_xynth_ref_cairo_surface (GdkDrawable *drawable)
+{
+	ENTER();
+	ASSERT();
+	LEAVE();
+	return NULL;
+}
+
 static void gdk_xynth_set_colormap (GdkDrawable *drawable, GdkColormap *colormap)
 {
 	GdkDrawableImplXYNTH *impl;
@@ -20,6 +98,45 @@ static void gdk_xynth_set_colormap (GdkDrawable *drawable, GdkColormap *colormap
 		g_object_ref(colormap);
 	}
 	LEAVE();
+}
+
+static GdkColormap * gdk_xynth_get_colormap (GdkDrawable *drawable)
+{
+	ENTER();
+	ASSERT();
+	LEAVE();
+	return NULL;
+}
+
+static gint gdk_xynth_get_depth (GdkDrawable *drawable)
+{
+	ENTER();
+	ASSERT();
+	LEAVE();
+	return 0;
+}
+
+static GdkVisual * gdk_xynth_get_visual (GdkDrawable *drawable)
+{
+	ENTER();
+	ASSERT();
+	LEAVE();
+	return NULL;
+}
+
+static void gdk_xynth_get_size (GdkDrawable *drawable, gint *width, gint *height)
+{
+	ENTER();
+	ASSERT();
+	LEAVE();
+}
+
+static GdkScreen * gdk_xynth_get_screen (GdkDrawable *drawable)
+{
+	ENTER();
+	ASSERT();
+	LEAVE();
+	return NULL;
 }
 
 static void gdk_drawable_impl_xynth_finalize (GObject *object)

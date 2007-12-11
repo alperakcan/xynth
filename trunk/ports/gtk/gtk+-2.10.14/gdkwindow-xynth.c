@@ -117,7 +117,7 @@ static void gdk_window_impl_xynth_finalize (GObject *object)
 {
 	GdkWindowImplXYNTH *impl;
 	ENTER();
-	impl = GDK_WINDOW_IMPL_XYNTH(obect);
+	impl = GDK_WINDOW_IMPL_XYNTH(object);
 	if (GDK_WINDOW_IS_MAPPED(impl->drawable.wrapper)) {
 		gdk_window_hide(impl->drawable.wrapper);
 	}
