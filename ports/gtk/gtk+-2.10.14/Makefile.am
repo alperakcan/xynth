@@ -21,7 +21,9 @@ libgdk_xynth_la_SOURCES =	\
 	gdkcolor-xynth.c \
 	gdkdisplay-xynth.c \
 	gdkdrawable-xynth.c \
+	gdkgc-xynth.c \
 	gdkglobals-xynth.c \
+	gdkimage-xynth.c \
 	gdkkeys-xynth.c \
 	gdkmain-xynth.c \
 	gdkscreen-xynth.c \

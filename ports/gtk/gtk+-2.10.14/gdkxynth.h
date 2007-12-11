@@ -101,6 +101,8 @@ struct _GdkDrawableImplXYNTHClass {
 	GdkDrawableClass parent_class;
 };
 
+GType gdk_drawable_impl_xynth_get_type (void);
+
 /* gdkwndow-xynth.c */
 
 typedef struct _GdkWindowImplXYNTH      GdkWindowImplXYNTH;
@@ -137,6 +139,31 @@ void _gdk_xynth_keyboard_init (void);
 /* gdkvisual-xynth.c */
 
 void _gdk_visual_init (void);
+
+/* gdkgc-xynth.c */
+
+typedef struct _GdkGCXYNTH      GdkGCXYNTH;
+typedef struct _GdkGCXYNTHClass GdkGCXYNTHClass;
+
+#define GDK_TYPE_GC_XYNTH       (gdk_gc_xynth_get_type())
+#define GDK_GC_XYNTH(object)    (G_TYPE_CHECK_INSTANCE_CAST((object), GDK_TYPE_GC_XYNTH, GdkGCXYNTH))
+#define GDK_IS_GC_XYNTH(object) (G_TYPE_CHECK_INSTANCE_TYPE((object), GDK_TYPE_GC_XYNTH))
+
+struct _GdkGCXYNTH {
+	GdkGC           parent_instance;
+	GdkRegion       *clip_region;
+	GdkGCValuesMask values_mask;
+	GdkGCValues     values;
+};
+
+struct _GdkGCXYNTHClass {
+	GdkGCClass      parent_class;
+};
+
+GdkGC * _gdk_xynth_gc_new (GdkDrawable *drawable, GdkGCValues *values, GdkGCValuesMask values_mask);
+
+/* gdkimage-xynth.c */
+GdkImage * _gdk_xynth_copy_to_image (GdkDrawable *drawable, GdkImage *image, gint src_x, gint src_y, gint dest_x, gint dest_y, gint width, gint height);
 
 /* gdkglobals-xynth.c */
 
