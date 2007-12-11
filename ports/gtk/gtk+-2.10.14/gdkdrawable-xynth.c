@@ -110,10 +110,13 @@ static GdkColormap * gdk_xynth_get_colormap (GdkDrawable *drawable)
 
 static gint gdk_xynth_get_depth (GdkDrawable *drawable)
 {
+	int bpp;
+	GdkDrawableImplXYNTH *impl;
 	ENTER();
-	ASSERT();
+	impl = GDK_DRAWABLE_IMPL_XYNTH(drawable);
+	bpp = impl->surface->bitsperpixel;
 	LEAVE();
-	return 0;
+	return bpp;
 }
 
 static GdkVisual * gdk_xynth_get_visual (GdkDrawable *drawable)

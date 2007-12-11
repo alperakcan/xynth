@@ -120,14 +120,6 @@ void gdk_window_focus (GdkWindow *window, guint32 timestamp)
 	LEAVE();
 }
 
-GType gdk_device_get_type (void)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-	return 0;
-}
-
 gboolean gdk_property_get (GdkWindow *window, GdkAtom property, GdkAtom type, gulong offset, gulong length, gint pdelete, GdkAtom *actual_property_type, gint *actual_format_type, gint *actual_length, guchar **data)
 {
 	ENTER();
@@ -906,14 +898,6 @@ void gdk_window_reparent (GdkWindow *window, GdkWindow *new_parent, gint x, gint
 }
 
 GdkPixmap * gdk_bitmap_create_from_data (GdkDrawable *drawable, const gchar *data, gint width, gint height)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-	return 0;
-}
-
-GdkCursor * gdk_cursor_new_for_display (GdkDisplay *display, GdkCursorType cursor_type)
 {
 	ENTER();
 	ASSERT();
