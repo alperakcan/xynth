@@ -423,14 +423,6 @@ void _gdk_windowing_window_clear_area (GdkWindow *window, gint x, gint y, gint w
 	LEAVE();
 }
 
-GType _gdk_window_impl_get_type (void)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-	return 0;
-}
-
 void _gdk_windowing_set_default_display (GdkDisplay *display)
 {
 	ENTER();
@@ -743,13 +735,6 @@ GdkFont * gdk_font_load_for_display (GdkDisplay *display, const gchar *font_name
 	ASSERT();
 	LEAVE();
 	return 0;
-}
-
-void gdk_screen_set_default_colormap (GdkScreen *screen, GdkColormap *colormap)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
 }
 
 gboolean gdk_drag_motion (GdkDragContext *context, GdkWindow *dest_window, GdkDragProtocol protocol, gint x_root, gint y_root, GdkDragAction suggested_action, GdkDragAction possible_actions, guint32 time)
