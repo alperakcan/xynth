@@ -8,3 +8,4 @@ GdkVisual       *system_visual = NULL;
 
 GdkWindow       *_gdk_parent_root = NULL;
 
+GdkCursor       *_gdk_xynth_pointer_grab_cursor        = NULL;

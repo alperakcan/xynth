@@ -201,5 +201,6 @@ extern GdkDisplayXYNTH *_gdk_display;
 extern GdkScreen       *_gdk_screen;
 extern GdkVisual       *system_visual;
 extern GdkWindow       *_gdk_parent_root;
+extern GdkCursor       *_gdk_xynth_pointer_grab_cursor;
 
 G_END_DECLS
