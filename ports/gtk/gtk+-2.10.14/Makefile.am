@@ -25,11 +25,13 @@ libgdk_xynth_la_SOURCES =	\
 	gdkdrawable-xynth.c \
 	gdkevents-xynth.c \
 	gdkgc-xynth.c \
+	gdkgeometry-xynth.c \
 	gdkglobals-xynth.c \
 	gdkimage-xynth.c \
 	gdkinput-xynth.c \
 	gdkkeys-xynth.c \
 	gdkmain-xynth.c \
+	gdkpixmap-xynth.c \
 	gdkscreen-xynth.c \
 	gdkvisual-xynth.c \
 	gdkwindow-xynth.c \

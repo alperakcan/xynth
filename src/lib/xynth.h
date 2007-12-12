@@ -1077,7 +1077,7 @@ void s_copybox (s_surface_t *surface, int x1, int y1, int w, int h, int x2, int 
   *        and height. surface buffer will be allocated internal with the size
   *        of width * height * bytesperpixel.
   *
-  * @param **surface   - the surface
+  * @param **surface    - the surface
   * @param width        - width
   * @param height       - height
   * @param bitsperpixel - bitsperpixel
@@ -1085,11 +1085,23 @@ void s_copybox (s_surface_t *surface, int x1, int y1, int w, int h, int x2, int 
   */
 int s_surface_create (s_surface_t **surface, int width, int height, int bitsperpixel);
 
+/** @brief creates a sub surface, as virtual with the given bitsperpixel, width,
+  *        and height. surface buffer will be shared with parent surface.
+  *
+  * @param **surface    - the surface
+  * @param width        - width
+  * @param height       - height
+  * @param bitsperpixel - bitsperpixel
+  * @param *parent      - parent surface
+  * @return 0 on success.
+  */
+int s_surface_create_sub (s_surface_t **surface, int x, int y, int width, int height, int bitsperpixel, s_surface_t *parent);
+
 /** @brief creates a surface, as virtual with the given bitsperpixel, width,
   *        and height. vbuf will be the virtual buffer of the surface. the
   *        source pixmap memory (vbuf) has the size w * h * bytesperpixel.
   *
-  * @param **surface   - the surface
+  * @param **surface    - the surface
   * @param width        - width
   * @param height       - height
   * @param bitsperpixel - bitsperpixel
@@ -2528,9 +2540,15 @@ struct s_surface_s {
         unsigned char *vbuf;
 	/** virtual buffers' seen part on screen */
 	s_rect_t *buf;
-	/** window coordinated that hold surface on screen (if any) */
+	/** window coordinate that hold surface on screen (if any) */
 	s_rect_t *win;
-	/** memory mapped shared buffer, this is the readl video buffer (usually) */
+	/** surface mutes */
+	s_thread_mutex_t *subm;
+	/** sub surfaces */
+	s_list_t *subs;
+	/** parent surface */
+	s_surface_t *parent;
+	/** memory mapped shared buffer, this is the real video buffer (usually) */
 	unsigned char *linear_buf;
 	/** video buffer width */
 	int linear_buf_width;

@@ -79,3 +79,49 @@ GType gdk_colormap_get_type (void)
 	LEAVE();
 	return object_type;
 }
+
+gint gdk_colormap_alloc_colors (GdkColormap *colormap, GdkColor *colors, gint ncolors, gboolean writeable, gboolean best_match, gboolean *success)
+{
+	gint i;
+	GdkVisual *visual;
+	
+	ENTER();
+	if (GDK_IS_COLORMAP(colormap) == 0) {
+		LEAVE();
+		return 0;
+	}
+	if (colors == NULL) {
+		LEAVE();
+		return 0;
+	}
+	if (success == NULL) {
+		LEAVE();
+		return 0;
+	}
+	switch (colormap->visual->type) {
+		case GDK_VISUAL_TRUE_COLOR:
+			visual = colormap->visual;
+			for (i = 0; i < ncolors; i++) {
+				colors[i].pixel = (((colors[i].red   >> (16 - visual->red_prec))   << visual->red_shift) +
+						   ((colors[i].green >> (16 - visual->green_prec)) << visual->green_shift) +
+						   ((colors[i].blue  >> (16 - visual->blue_prec))  << visual->blue_shift));
+				success[i] = TRUE;
+			}
+			break;
+		default:
+			ERROR();
+			for (i = 0; i < ncolors; i++) {
+				success[i] = FALSE;
+			}
+			break;
+	}
+	LEAVE();
+	return 0;
+}
+
+GdkScreen * gdk_colormap_get_screen (GdkColormap *cmap)
+{
+	ENTER();
+	LEAVE();
+	return _gdk_screen;
+}
