@@ -202,8 +202,49 @@ GdkGC * _gdk_xynth_gc_new (GdkDrawable *drawable, GdkGCValues *values, GdkGCValu
 	private = GDK_GC_XYNTH(gc);
 	private->values.cap_style = GDK_CAP_BUTT;
 	
-	gdk_xynth_gc_set_values (gc, values, values_mask);
+	gdk_xynth_gc_set_values(gc, values, values_mask);
 	
 	LEAVE();
 	return gc;
+}
+
+static void gc_unset_clip_mask (GdkGC *gc)
+{
+	GdkGCXYNTH *data;
+	ENTER();
+	data = GDK_GC_XYNTH(gc);
+	if (data->values.clip_mask) {
+		g_object_unref(data->values.clip_mask);
+		data->values.clip_mask = NULL;
+		data->values_mask &= ~GDK_GC_CLIP_MASK;
+	}
+	LEAVE();
+}
+
+void _gdk_windowing_gc_set_clip_region (GdkGC *gc, GdkRegion *region)
+{
+	GdkGCXYNTH *data;
+	ENTER();
+	if (gc == NULL) {
+		LEAVE();
+		return;
+	}
+	data = GDK_GC_XYNTH(gc);
+	if (region == data->clip_region) {
+		LEAVE();
+		return;
+	}
+	if (data->clip_region) {
+		gdk_region_destroy(data->clip_region);
+		data->clip_region = NULL;
+	}
+	if (region) {
+		data->clip_region = gdk_region_copy(region);
+	}
+	gc->clip_x_origin = 0;
+	gc->clip_y_origin = 0;
+	data->values.clip_x_origin = 0;
+	data->values.clip_y_origin = 0;
+	gc_unset_clip_mask(gc);
+	LEAVE();
 }

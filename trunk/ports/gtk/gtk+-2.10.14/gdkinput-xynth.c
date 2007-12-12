@@ -70,3 +70,16 @@ void _gdk_input_init (void)
 	_gdk_input_ignore_core = FALSE;
 	LEAVE();
 }
+
+void gdk_xynth_mouse_get_info (gint *x, gint *y, GdkModifierType *mask)
+{
+	if (x) {
+		*x = _gdk_xynth_mouse_x;
+	}
+	if (y) {
+		*y = _gdk_xynth_mouse_y;
+	}
+	if (mask) {
+		*mask = _gdk_xynth_modifiers;
+	}
+}

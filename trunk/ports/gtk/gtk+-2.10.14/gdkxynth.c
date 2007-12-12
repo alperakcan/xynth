@@ -5,13 +5,6 @@ const GOptionEntry _gdk_windowing_args[] = {
 	{ NULL }
 };
 
-void gdk_window_show (GdkWindow *window)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-}
-
 gint gdk_text_property_to_utf8_list_for_display (GdkDisplay *display, GdkAtom encoding, gint format, const guchar *text, gint length, gchar ***list)
 {
 	ENTER();
@@ -204,13 +197,6 @@ GdkCursor * gdk_cursor_new_from_name (GdkDisplay  *display, const gchar *name)
 	return 0;
 }
 
-void gdk_window_unmaximize (GdkWindow *window)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-}
-
 void gdk_drag_abort (GdkDragContext *context, guint32 time)
 {
 	ENTER();
@@ -287,14 +273,6 @@ void gdk_window_move (GdkWindow *window, gint x, gint y)
 	LEAVE();
 }
 
-GdkPixmap * gdk_pixmap_new (GdkDrawable *drawable, gint width, gint height, gint depth)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-	return 0;
-}
-
 void gdk_drag_drop (GdkDragContext *context, guint32 time)
 {
 	ENTER();
@@ -369,13 +347,6 @@ void _gdk_windowing_get_pointer (GdkDisplay *display, GdkScreen **screen, gint *
 	LEAVE();
 }
 
-void _gdk_windowing_window_clear_area (GdkWindow *window, gint x, gint y, gint width, gint height)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-}
-
 void _gdk_windowing_window_destroy (GdkWindow *window, gboolean recursing, gboolean foreign_destroy)
 {
 	ENTER();
@@ -412,13 +383,6 @@ void gdk_display_flush (GdkDisplay *display)
 	LEAVE();
 }
 
-void gdk_window_set_accept_focus (GdkWindow *window, gboolean accept_focus)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-}
-
 void gdk_screen_get_monitor_geometry (GdkScreen *screen, gint monitor_num, GdkRectangle *dest)
 {
 	ENTER();
@@ -440,13 +404,6 @@ void gdk_property_delete (GdkWindow *window, GdkAtom property)
 	LEAVE();
 }
 
-void gdk_window_deiconify (GdkWindow *window)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-}
-
 gboolean gdk_font_equal (const GdkFont *fonta, const GdkFont *fontb)
 {
 	ENTER();
@@ -456,13 +413,6 @@ gboolean gdk_font_equal (const GdkFont *fonta, const GdkFont *fontb)
 }
 
 void gdk_window_register_dnd (GdkWindow *window)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-}
-
-void gdk_window_set_keep_below (GdkWindow *window, gboolean setting)
 {
 	ENTER();
 	ASSERT();
@@ -512,20 +462,6 @@ gint gdk_mbstowcs (GdkWChar *dest, const gchar *src, gint dest_max)
 	ASSERT();
 	LEAVE();
 	return 0;
-}
-
-void gdk_window_unstick (GdkWindow *window)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-}
-
-void _gdk_windowing_window_get_offsets (GdkWindow *window, gint *x_offset, gint *y_offset)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
 }
 
 gboolean gdk_display_supports_cursor_color (GdkDisplay *display)
@@ -593,13 +529,6 @@ GdkAtom gdk_atom_intern_static_string (const gchar *atom_name)
 	ASSERT();
 	LEAVE();
 	return 0;
-}
-
-void  gdk_window_set_geometry_hints (GdkWindow *window, GdkGeometry *geometry, GdkWindowHints geom_mask)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
 }
 
 void gdk_display_beep (GdkDisplay *display)
@@ -761,14 +690,6 @@ gint gdk_error_trap_pop (void)
 	return 0;
 }
 
-GdkWindow * _gdk_windowing_window_at_pointer (GdkDisplay *display, gint *win_x, gint *win_y)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-	return 0;
-}
-
 void _gdk_font_destroy (GdkFont *font)
 {
 	ENTER();
@@ -798,26 +719,12 @@ void gdk_display_warp_pointer (GdkDisplay *display, GdkScreen *screen, gint x, g
 	LEAVE();
 }
 
-void gdk_window_set_modal_hint (GdkWindow *window, gboolean modal)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-}
-
 gint gdk_font_id (const GdkFont *font)
 {
 	ENTER();
 	ASSERT();
 	LEAVE();
 	return 0;
-}
-
-void gdk_window_raise (GdkWindow *window)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
 }
 
 guint gdk_keyval_from_name (const gchar *keyval_name)
@@ -912,13 +819,6 @@ GdkDisplay * gdk_cursor_get_display (GdkCursor *cursor)
 	return 0;
 }
 
-void _gdk_windowing_gc_set_clip_region (GdkGC *gc, GdkRegion *region)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-}
-
 void gdk_window_set_role (GdkWindow *window, const gchar *role)
 {
 	ENTER();
@@ -962,27 +862,6 @@ void gdk_window_begin_resize_drag (GdkWindow *window, GdkWindowEdge edge, gint b
 }
 
 void gdk_colormap_free_colors (GdkColormap *colormap, GdkColor *colors, gint ncolors)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-}
-
-void gdk_window_enable_synchronized_configure (GdkWindow *window)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-}
-
-void gdk_window_set_focus_on_map (GdkWindow *window, gboolean focus_on_map)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-}
-
-void gdk_window_unfullscreen (GdkWindow *window)
 {
 	ENTER();
 	ASSERT();
@@ -1058,22 +937,7 @@ void gdk_window_set_title (GdkWindow *window, const gchar *title)
 	LEAVE();
 }
 
-GdkScreen * gdk_colormap_get_screen (GdkColormap *cmap)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-	return 0;
-}
-
 void gdk_window_hide (GdkWindow *window)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-}
-
-void gdk_notify_startup_complete (void)
 {
 	ENTER();
 	ASSERT();
@@ -1095,26 +959,12 @@ GdkWindow * gdk_window_foreign_new_for_display (GdkDisplay *display, GdkNativeWi
 	return 0;
 }
 
-void gdk_window_set_type_hint (GdkWindow *window, GdkWindowTypeHint hint)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-}
-
 GdkEventMask gdk_window_get_events (GdkWindow *window)
 {
 	ENTER();
 	ASSERT();
 	LEAVE();
 	return 0;
-}
-
-void gdk_window_set_keep_above (GdkWindow *window, gboolean setting)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
 }
 
 void  gdk_window_input_shape_combine_mask (GdkWindow *window, GdkBitmap *mask, gint x, gint y)
@@ -1130,13 +980,6 @@ gint gdk_screen_get_height_mm (GdkScreen *screen)
 	ASSERT();
 	LEAVE();
 	return 0;
-}
-
-void gdk_window_set_icon_list (GdkWindow *window, GList *pixbufs)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
 }
 
 void gdk_drag_status (GdkDragContext *context, GdkDragAction action, guint32 time)
@@ -1158,14 +1001,6 @@ void gdk_window_lower (GdkWindow *window)
 	ENTER();
 	ASSERT();
 	LEAVE();
-}
-
-gboolean _gdk_windowing_window_queue_antiexpose (GdkWindow *window, GdkRegion *area)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-	return 0;
 }
 
 void gdk_window_begin_move_drag (GdkWindow *window, gint button, gint root_x, gint root_y, guint32 timestamp)
@@ -1197,42 +1032,12 @@ void gdk_display_pointer_ungrab (GdkDisplay *display, guint32 time)
 	LEAVE();
 }
 
-void gdk_window_set_background (GdkWindow *window, const GdkColor *color)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-}
-
-gint gdk_colormap_alloc_colors (GdkColormap *colormap, GdkColor *colors, gint ncolors, gboolean writeable, gboolean best_match, gboolean *success)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-	return 0;
-}
-
 gint gdk_display_get_n_screens (GdkDisplay *display)
 {
 	ENTER();
 	ASSERT();
 	LEAVE();
 	return 0;
-}
-
-GType _gdk_pixmap_impl_get_type (void)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-	return 0;
-}
-
-void gdk_window_set_icon (GdkWindow *window, GdkWindow *icon_window, GdkPixmap *pixmap, GdkBitmap *mask)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
 }
 
 void gdk_window_resize (GdkWindow *window, gint width, gint height)

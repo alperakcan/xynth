@@ -19,9 +19,20 @@ void gdk_xynth_window_id_table_remove (int xynth_id)
 	LEAVE();
 }
 
+void gdk_xynth_window_id_table_insert (int xynth_id, GdkWindow   *window)
+{
+	ENTER();
+	if (!window_id_ht) {
+		window_id_ht = g_hash_table_new(g_direct_hash, g_direct_equal);
+	}
+	g_hash_table_insert(window_id_ht, GUINT_TO_POINTER(xynth_id), window);
+	LEAVE();
+}
+
 static int create_xynth_window (GdkWindowImplXYNTH *impl, s_window_t *parent, S_WINDOW window_type, s_rect_t *position)
 {
 	s_window_t *xynth;
+	s_surface_t *surface;
 	ENTER();
 	if (s_window_init(&xynth)) {
 		LEAVE();
@@ -35,11 +46,18 @@ static int create_xynth_window (GdkWindowImplXYNTH *impl, s_window_t *parent, S_
 	if (impl->input_only) {
 		impl->drawable.surface = NULL;
 	} else {
-		impl->drawable.surface = xynth->surface;
+		/* here we use double buffer, which will increase memory
+		 * but, good thing is; ;< i do not know if this has any adv.
+		 */
+		if (s_surface_create(&surface, position->w, position->h, xynth->surface->bitsperpixel)) {
+			ASSERT();
+		}
+		impl->drawable.surface = surface;
 	}
 	if (position) {
 		s_window_set_coor(xynth, WINDOW_NOFORM, position->x, position->y, position->w, position->h);
 	}
+	ERROR("create window thread\n");
 	impl->xynth = xynth;
 	LEAVE();
 	return 0;
@@ -92,17 +110,26 @@ static GdkRegion * gdk_window_impl_xynth_get_visible_region (GdkDrawable *drawab
 	GdkRectangle rect;
 	GdkDrawableImplXYNTH *priv;
 	ENTER();
+	ERROR("update oll surface->buf`s, surface->width's, and use surface->win instead, since they all are sub surfaces (except windows)");
 	priv = GDK_DRAWABLE_IMPL_XYNTH(drawable);
+	ENTER();
 	rect.x = 0;
+	ENTER();
 	rect.y = 0;
+	ENTER();
 	rect.width = 0;
+	ENTER();
 	rect.height = 0;
+	ENTER();
 	if (priv->surface) {
+		ENTER();
 		rect.x      = priv->surface->buf->x;
 		rect.y      = priv->surface->buf->y;
 		rect.width  = priv->surface->buf->w;
 		rect.height = priv->surface->buf->h;
+		ENTER();
 	}
+	ENTER();
 	region = gdk_region_rectangle(&rect);
 	LEAVE();
 	return region;
@@ -247,10 +274,15 @@ static void gdk_window_impl_xynth_invalidate_maybe_recurse (GdkPaintable *painta
 
 	GdkRegion *visible_region;
 	GList *tmp_list;
-
-	g_return_if_fail(window != NULL);
-	g_return_if_fail(GDK_IS_WINDOW(window));
-
+	
+	if (window == NULL) {
+		LEAVE();
+		return;
+	}
+	if (GDK_IS_WINDOW(window) == 0) {
+		LEAVE();
+		return;
+	}
 	if (GDK_WINDOW_DESTROYED(window)) {
 		LEAVE();
 		return;
@@ -351,7 +383,7 @@ static void gdk_window_impl_xynth_process_updates (GdkPaintable *paintable, gboo
 			gdk_region_intersect(expose_region, window_region);
 			gdk_region_destroy(window_region);
 
-			if (!gdk_region_empty (expose_region) && (private->event_mask & GDK_EXPOSURE_MASK)) {
+			if (!gdk_region_empty(expose_region) && (private->event_mask & GDK_EXPOSURE_MASK)) {
 				GdkEvent event;
 				event.expose.type = GDK_EXPOSE;
 				event.expose.window = g_object_ref(window);
@@ -367,7 +399,7 @@ static void gdk_window_impl_xynth_process_updates (GdkPaintable *paintable, gboo
 			}
 		}
 		if (!save_region) {
-			gdk_region_destroy (update_area);
+			gdk_region_destroy(update_area);
 		}
 	}
 	
@@ -427,7 +459,6 @@ static void gdk_window_impl_xynth_end_paint (GdkPaintable *paintable)
 				impl->paint_region->extents.y2
 			};
 			DEBUG("End Paint, must update: (%d %d %d %d)", rect.x, rect.y, rect.w, rect.h);
-			ERROR("Not implemented");
 			gdk_region_destroy(impl->paint_region);
 			impl->paint_region = NULL;
 		}
@@ -497,6 +528,30 @@ void gdk_window_set_events (GdkWindow *window, GdkEventMask event_mask)
 	LEAVE();
 }
 
+GdkWindow * _gdk_windowing_window_at_pointer (GdkDisplay *display, gint *win_x, gint *win_y)
+{
+	GdkWindow *retval;
+	gint       wx, wy;
+	ENTER();
+	if (!win_x || !win_y) {
+		gdk_xynth_mouse_get_info(&wx, &wy, NULL);
+	}
+	if (win_x) {
+		wx = *win_x;
+	}
+	if (win_y) {
+		wy = *win_y;
+	}
+	retval = gdk_xynth_child_at(_gdk_parent_root, &wx, &wy);
+	if (win_x) {
+		*win_x = wx;
+	}
+	if (win_y) {
+		*win_y = wy;
+	}
+	return retval;
+}
+
 void _gdk_xynth_calc_abs (GdkWindow *window)
 {
 	GList *list;
@@ -540,6 +595,23 @@ GdkWindow * gdk_xynth_window_find_toplevel (GdkWindow *window)
 	return _gdk_parent_root;
 }
 
+static GdkWindow * gdk_xynth_find_common_ancestor (GdkWindow *win1, GdkWindow *win2)
+{
+	GdkWindowObject *a;
+	GdkWindowObject *b;
+	ENTER();
+	for (a = GDK_WINDOW_OBJECT(win1); a; a = a->parent) {
+		for (b = GDK_WINDOW_OBJECT(win2); b; b = b->parent) {
+			if (a == b) {
+				LEAVE();
+				return GDK_WINDOW(a);
+			}
+		}
+	}
+	LEAVE();
+	return NULL;
+}
+
 void gdk_xynth_window_send_crossing_events (GdkWindow *src, GdkWindow *dest, GdkCrossingMode mode)
 {
 	GdkWindow       *c;
@@ -577,7 +649,6 @@ void gdk_xynth_window_send_crossing_events (GdkWindow *src, GdkWindow *dest, Gdk
 			impl    = GDK_WINDOW_IMPL_XYNTH(private->impl);
 			if (impl->xynth) {
 				DEBUG("set window cursor");
-				ASSERT();
 			}
 			last_cursor = cursor;
 		}
@@ -749,11 +820,33 @@ void gdk_window_set_cursor (GdkWindow *window, GdkCursor *cursor)
 		xynth_cursor = (GdkCursorXYNTH *) impl->cursor;
 		/* this branch takes care of setting the cursor for unmapped windows */
 		DEBUG("set window cursor");
-		ASSERT();
+		//ASSERT();
 	}
 	if (old_cursor) {
 		gdk_cursor_unref(old_cursor);
 	}
+	LEAVE();
+}
+
+void gdk_window_set_type_hint (GdkWindow *window, GdkWindowTypeHint hint)
+{
+	ENTER();
+	if (GDK_IS_WINDOW(window) == 0) {
+		LEAVE();
+		return;
+	}
+	if (GDK_WINDOW_DESTROYED(window)) {
+		LEAVE();
+		return;
+	}
+	GDK_NOTE(MISC, g_print("gdk_window_set_type_hint: 0x%x: %d\n", GDK_WINDOW_XYNTH_ID(window), hint));
+	((GdkWindowImplXYNTH *) ((GdkWindowObject *) window)->impl)->type_hint = hint;
+	LEAVE();
+}
+
+void gdk_window_enable_synchronized_configure (GdkWindow *window)
+{
+	ENTER();
 	LEAVE();
 }
 
@@ -794,6 +887,7 @@ GdkWindow * gdk_xynth_window_new (GdkWindow *parent, GdkWindowAttr *attributes, 
 	impl = GDK_WINDOW_IMPL_XYNTH(private->impl);
 	impl->drawable.wrapper = GDK_DRAWABLE(window);
 	impl->gdkWindow        = window;
+	impl->xynth            = NULL;
 
 	private->x = x;
 	private->y = y;
@@ -883,9 +977,21 @@ GdkWindow * gdk_xynth_window_new (GdkWindow *parent, GdkWindowAttr *attributes, 
 
 	gdk_window_set_cursor(window, ((attributes_mask & GDK_WA_CURSOR) ? (attributes->cursor) : NULL));
 	
-	ASSERT();
+	if (parent_private) {
+		parent_private->children = g_list_prepend(parent_private->children, window);
+	}
+	/* we hold a reference count on ourselves */
+	g_object_ref(window);
+	if (impl->xynth) {
+		impl->xynth_id = impl->xynth->id;
+		gdk_xynth_window_id_table_insert(impl->xynth_id, window);
+		gdk_xynth_event_windows_add(window);
+	}
+	if (attributes_mask & GDK_WA_TYPE_HINT) {
+		gdk_window_set_type_hint(window, attributes->type_hint);
+	}
 	LEAVE();
-	return NULL;
+	return window;
 }
 
 GdkWindow * gdk_window_new (GdkWindow *parent, GdkWindowAttr *attributes, gint attributes_mask)
@@ -899,4 +1005,442 @@ GdkWindow * gdk_window_new (GdkWindow *parent, GdkWindowAttr *attributes, gint a
 	window = gdk_xynth_window_new(parent, attributes, attributes_mask);
 	LEAVE();
 	return window;
+}
+
+void gdk_window_set_background (GdkWindow *window, const GdkColor *color)
+{
+	GdkWindowObject *private;
+	ENTER();
+	if (GDK_IS_WINDOW(window) == 0) {
+		LEAVE();
+		return;
+	}
+	if (color == NULL) {
+		LEAVE();
+		return;
+	}
+	private = GDK_WINDOW_OBJECT(window);
+	private->bg_color = *color;
+	if (private->bg_pixmap &&
+            private->bg_pixmap != GDK_PARENT_RELATIVE_BG &&
+            private->bg_pixmap != GDK_NO_BG) {
+		g_object_unref(private->bg_pixmap);
+	}
+	private->bg_pixmap = NULL;
+	LEAVE();
+}
+
+void gdk_window_set_accept_focus (GdkWindow *window, gboolean accept_focus)
+{
+	GdkWindowObject *private;
+	ENTER();
+	if (window == NULL) {
+		LEAVE();
+		return;
+	}
+	if (GDK_IS_WINDOW(window) == 0) {
+		LEAVE();
+		return;
+	}
+	private = (GdkWindowObject *) window;
+	accept_focus = accept_focus != FALSE;
+	if (private->accept_focus != accept_focus) {
+		private->accept_focus = accept_focus;
+	}
+	LEAVE();
+}
+
+void gdk_window_set_focus_on_map (GdkWindow *window, gboolean focus_on_map)
+{
+	GdkWindowObject *private;
+	ENTER();
+	if (window == NULL) {
+		LEAVE();
+		return;
+	}
+	if (GDK_IS_WINDOW(window) == 0) {
+		LEAVE();
+		return;
+	}
+	private = (GdkWindowObject *) window;
+	focus_on_map = focus_on_map != FALSE;
+	if (private->focus_on_map != focus_on_map) {
+		private->focus_on_map = focus_on_map;
+	}
+	LEAVE();
+}
+
+void gdk_window_set_modal_hint (GdkWindow *window, gboolean modal)
+{
+	GdkWindowImplXYNTH *impl;
+	ENTER();
+	if (window == NULL) {
+		LEAVE();
+		return;
+	}
+	if (GDK_IS_WINDOW(window) == 0) {
+		LEAVE();
+		return;
+	}
+	if (GDK_WINDOW_DESTROYED(window)) {
+		LEAVE();
+		return;
+	}
+	impl = GDK_WINDOW_IMPL_XYNTH(GDK_WINDOW_OBJECT(window)->impl);
+	if (impl->xynth) {
+		NIY();
+	}
+	LEAVE();
+}
+
+void gdk_window_set_icon_list (GdkWindow *window, GList *pixbufs)
+{
+	ENTER();
+	if (window == NULL) {
+		LEAVE();
+		return;
+	}
+	if (GDK_IS_WINDOW(window) == 0) {
+		LEAVE();
+		return;
+	}
+	if (GDK_WINDOW_DESTROYED(window)) {
+		LEAVE();
+		return;
+	}
+	NIY();
+	LEAVE();
+}
+
+void gdk_window_set_icon (GdkWindow *window, GdkWindow *icon_window, GdkPixmap *pixmap, GdkBitmap *mask)
+{
+	ENTER();
+	if (window == NULL) {
+		LEAVE();
+		return;
+	}
+	if (GDK_IS_WINDOW(window) == 0) {
+		LEAVE();
+		return;
+	}
+	if (GDK_WINDOW_DESTROYED(window)) {
+		LEAVE();
+		return;
+	}
+	NIY();
+	LEAVE();
+}
+
+void gdk_window_set_geometry_hints (GdkWindow *window, GdkGeometry *geometry, GdkWindowHints  geom_mask)
+{
+	ENTER();
+	if (window == NULL) {
+		LEAVE();
+		return;
+	}
+	if (GDK_IS_WINDOW(window) == 0) {
+		LEAVE();
+		return;
+	}
+	if (GDK_WINDOW_DESTROYED(window)) {
+		LEAVE();
+		return;
+	}
+	NIY();
+	LEAVE();
+}
+
+void gdk_window_unmaximize (GdkWindow *window)
+{
+	ENTER();
+	if (window == NULL) {
+		LEAVE();
+		return;
+	}
+	if (GDK_IS_WINDOW(window) == 0) {
+		LEAVE();
+		return;
+	}
+	if (GDK_WINDOW_DESTROYED(window)) {
+		LEAVE();
+		return;
+	}
+	NIY();
+	LEAVE();
+}
+
+void gdk_window_unstick (GdkWindow *window)
+{
+	ENTER();
+	if (window == NULL) {
+		LEAVE();
+		return;
+	}
+	if (GDK_IS_WINDOW(window) == 0) {
+		LEAVE();
+		return;
+	}
+	if (GDK_WINDOW_DESTROYED(window)) {
+		LEAVE();
+		return;
+	}
+	NIY();
+	LEAVE();
+}
+
+void gdk_window_deiconify (GdkWindow *window)
+{
+	ENTER();
+	if (window == NULL) {
+		LEAVE();
+		return;
+	}
+	if (GDK_IS_WINDOW(window) == 0) {
+		LEAVE();
+		return;
+	}
+	if (GDK_WINDOW_DESTROYED(window)) {
+		LEAVE();
+		return;
+	}
+	gdk_window_show(window);
+	LEAVE();
+}
+
+static gboolean all_parents_shown (GdkWindowObject *private)
+{
+	ENTER();
+	while (GDK_WINDOW_IS_MAPPED(private)) {
+		if (private->parent) {
+			private = GDK_WINDOW_OBJECT (private)->parent;
+		} else {
+			LEAVE();
+			return TRUE;
+		}
+	}
+	LEAVE();
+	return FALSE;
+}
+
+static void send_map_events (GdkWindowObject *private)
+{
+	GList *list;
+	GdkWindow *event_win;
+	ENTER();
+	if (!GDK_WINDOW_IS_MAPPED(private)) {
+		LEAVE();
+		return;
+	}
+	event_win = gdk_xynth_other_event_window((GdkWindow *) private, GDK_MAP);
+	if (event_win) {
+		gdk_xynth_event_make(event_win, GDK_MAP);
+	}
+	for (list = private->children; list; list = list->next) {
+		send_map_events(list->data);
+	}
+	LEAVE();
+}
+
+static void show_window_internal (GdkWindow *window, gboolean raise)
+{
+	GdkWindow *mousewin;
+	GdkWindowObject *private;
+	GdkWindowImplXYNTH *impl;
+	ENTER();
+	private = GDK_WINDOW_OBJECT(window);
+	impl = GDK_WINDOW_IMPL_XYNTH(private->impl);
+	if (!private->destroyed && !GDK_WINDOW_IS_MAPPED(private)) {
+		private->state &= ~GDK_WINDOW_STATE_WITHDRAWN;
+		if (raise) {
+			gdk_window_raise(window);
+		}
+		if (all_parents_shown(GDK_WINDOW_OBJECT(private)->parent)) {
+			send_map_events(private);
+			mousewin = gdk_window_at_pointer(NULL, NULL);
+			gdk_xynth_window_send_crossing_events(NULL, mousewin, GDK_CROSSING_NORMAL);
+			if (private->input_only) {
+				LEAVE();
+				return;
+			}
+			gdk_window_invalidate_rect(window, NULL, TRUE);
+		}
+	}
+	if (impl->xynth) {
+		s_window_show(impl->xynth);
+	}
+	LEAVE();
+}
+
+void gdk_window_show (GdkWindow *window)
+{
+	ENTER();
+	if (window == NULL) {
+		LEAVE();
+		return;
+	}
+	if (GDK_IS_WINDOW(window) == 0) {
+		LEAVE();
+		return;
+	}
+	if (GDK_WINDOW_DESTROYED(window)) {
+		LEAVE();
+		return;
+	}
+	show_window_internal(window, TRUE);
+	LEAVE();
+}
+
+static gboolean gdk_xynth_window_raise (GdkWindow *window)
+{
+	GdkWindowObject *parent;
+	ENTER();
+	parent = GDK_WINDOW_OBJECT(window)->parent;
+	if (parent->children->data == window) {
+		LEAVE();
+		return FALSE;
+	}
+	parent->children = g_list_remove(parent->children, window);
+	parent->children = g_list_prepend(parent->children, window);
+	LEAVE();
+	return TRUE;
+}
+
+void gdk_window_raise (GdkWindow *window)
+{
+	GdkWindowImplXYNTH *impl;
+	ENTER();
+	if (window == NULL) {
+		LEAVE();
+		return;
+	}
+	if (GDK_IS_WINDOW(window) == 0) {
+		LEAVE();
+		return;
+	}
+	if (GDK_WINDOW_DESTROYED(window)) {
+		LEAVE();
+		return;
+	}
+	impl = GDK_WINDOW_IMPL_XYNTH(GDK_WINDOW_OBJECT(window)->impl);
+	if (impl->xynth) {
+		DEBUG("Raise window");
+	} else {
+		if (gdk_xynth_window_raise(window)) {
+			gdk_window_invalidate_rect(window, NULL, TRUE);
+		}
+	}
+	LEAVE();
+}
+
+void gdk_window_unfullscreen (GdkWindow *window)
+{
+	ENTER();
+	if (window == NULL) {
+		LEAVE();
+		return;
+	}
+	if (GDK_IS_WINDOW(window) == 0) {
+		LEAVE();
+		return;
+	}
+	if (GDK_WINDOW_DESTROYED(window)) {
+		LEAVE();
+		return;
+	}
+	NIY();
+	LEAVE();
+}
+
+void gdk_window_set_keep_above (GdkWindow *window, gboolean setting)
+{
+	ENTER();
+	if (window == NULL) {
+		LEAVE();
+		return;
+	}
+	if (GDK_IS_WINDOW(window) == 0) {
+		LEAVE();
+		return;
+	}
+	if (GDK_WINDOW_DESTROYED(window)) {
+		LEAVE();
+		return;
+	}
+	NIY();
+	LEAVE();
+}
+
+void gdk_window_set_keep_below (GdkWindow *window, gboolean setting)
+{
+	ENTER();
+	if (window == NULL) {
+		LEAVE();
+		return;
+	}
+	if (GDK_IS_WINDOW(window) == 0) {
+		LEAVE();
+		return;
+	}
+	if (GDK_WINDOW_DESTROYED(window)) {
+		LEAVE();
+		return;
+	}
+	NIY();
+	LEAVE();
+}
+
+void _gdk_windowing_window_clear_area (GdkWindow *window, gint x, gint y, gint width, gint height)
+{
+	GdkWindowObject      *private;
+	GdkDrawableImplXYNTH *impl;
+	GdkPixmap            *bg_pixmap;
+	GdkWindowObject      *relative_to;
+	GdkGC                *gc = NULL;
+	gint                  dx = 0;
+	gint                  dy = 0;
+
+	ENTER();
+	if (GDK_IS_WINDOW(window) == 0) {
+		LEAVE();
+		return;
+	}
+	if (GDK_WINDOW_DESTROYED(window)) {
+		LEAVE();
+		return;
+	}
+	private = GDK_WINDOW_OBJECT(window);
+	impl = GDK_DRAWABLE_IMPL_XYNTH(private->impl);
+	if (width == 0 ) {  
+		width = impl->width-x;
+	}
+	if (height == 0) {  
+		height = impl->height-y;
+	}
+	bg_pixmap = private->bg_pixmap;
+	for (relative_to = private; relative_to && bg_pixmap == GDK_PARENT_RELATIVE_BG; relative_to = relative_to->parent) {
+		bg_pixmap = relative_to->bg_pixmap;
+		dx += relative_to->x;
+		dy += relative_to->y;
+	}
+	if (bg_pixmap == GDK_NO_BG) {
+		LEAVE();
+		return;
+	}
+	if (bg_pixmap && bg_pixmap != GDK_PARENT_RELATIVE_BG) {
+		GdkGCValues  values;
+		values.fill = GDK_TILED;
+		values.tile = bg_pixmap;
+		values.ts_x_origin = - dx;
+		values.ts_y_origin = - dy;
+		gc = gdk_gc_new_with_values(GDK_DRAWABLE (impl), &values, GDK_GC_FILL | GDK_GC_TILE | GDK_GC_TS_X_ORIGIN | GDK_GC_TS_Y_ORIGIN);
+	} else {
+		GdkGCValues  values;
+		values.foreground = relative_to->bg_color;
+		gc = gdk_gc_new_with_values (GDK_DRAWABLE (impl), &values, GDK_GC_FOREGROUND);
+	}
+	gdk_draw_rectangle(GDK_DRAWABLE(impl), gc, TRUE, x, y, width, height);
+	if (gc) {
+		g_object_unref(gc);
+	}
+	LEAVE();
 }

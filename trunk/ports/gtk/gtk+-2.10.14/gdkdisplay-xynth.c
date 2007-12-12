@@ -74,3 +74,22 @@ GdkDisplay * gdk_display_open (const gchar *display_name)
 	LEAVE();
 	return GDK_DISPLAY_OBJECT(_gdk_display);
 }
+
+s_surface_t * gdk_display_xynth_create_surface (GdkDisplayXYNTH *display, int bpp, int width, int height)
+{
+	s_surface_t *surface;
+	ENTER();
+	if (s_surface_create(&surface, width, height, bpp)) {
+		LEAVE();
+		return NULL;
+	}
+	LEAVE();
+	return surface;
+
+}
+
+void gdk_notify_startup_complete (void)
+{
+	ENTER();
+	LEAVE();
+}

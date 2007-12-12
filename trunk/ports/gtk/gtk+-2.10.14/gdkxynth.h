@@ -16,7 +16,7 @@
 #include "gdkinternals.h"
 #include "gdkalias.h"
 
-#define XYNTH_DEBUG 98
+#define XYNTH_DEBUG 99
 
 #if XYNTH_DEBUG != 0
 #define DEBUG(fmt...) {\
@@ -84,6 +84,7 @@ struct _GdkDisplayXYNTHClass {
 };
 
 GType gdk_display_xynth_get_type (void);
+s_surface_t * gdk_display_xynth_create_surface (GdkDisplayXYNTH *display, int bpp, int width, int height);
 
 /* gdkdrawable-xynth.c */
 
@@ -104,6 +105,7 @@ struct _GdkDrawableImplXYNTH {
 	gint                  height;
 	gint                  abs_x;
 	gint                  abs_y;
+	GdkColor              color;
 	GdkColormap           *colormap;
 	s_surface_t           *surface;
 	cairo_surface_t       *cairo_surface;
@@ -115,9 +117,27 @@ struct _GdkDrawableImplXYNTHClass {
 
 GType gdk_drawable_impl_xynth_get_type (void);
 
+/* gdppixmap-xynth.c */
+
+typedef struct _GdkPixmapImplXYNTH           GdkPixmapImplXYNTH;
+typedef struct _GdkPixmapImplXYNTHClass      GdkPixmapImplXYNTHClass;
+
+struct _GdkPixmapImplXYNTH {
+	GdkDrawableImplXYNTH parent_instance;
+};
+
+struct _GdkPixmapImplXYNTHClass {
+	GdkDrawableImplXYNTHClass parent_class;
+};
+
+GType gdk_pixmap_impl_xynth_get_type (void);
+
 /* gdkevents-xynth.c */
 
 void _gdk_events_init (void);
+guint32 gdk_xynth_get_time (void);
+GdkWindow * gdk_xynth_child_at (GdkWindow *window, gint *winx, gint *winy);
+void gdk_xynth_event_windows_add (GdkWindow *window);
 
 /* gdkwndow-xynth.c */
 
@@ -127,6 +147,7 @@ typedef struct _GdkWindowImplXYNTHClass GdkWindowImplXYNTHClass;
 #define GDK_TYPE_WINDOW_IMPL_XYNTH         (gdk_window_impl_xynth_get_type())
 #define GDK_WINDOW_IMPL_XYNTH(object)      (G_TYPE_CHECK_INSTANCE_CAST((object), GDK_TYPE_WINDOW_IMPL_XYNTH, GdkWindowImplXYNTH))
 #define GDK_IS_WINDOW_IMPL_XYNTH(object)   (G_TYPE_CHECK_INSTANCE_TYPE((object), GDK_TYPE_WINDOW_IMPL_XYNTH))
+#define GDK_WINDOW_XYNTH_ID(win)           (GDK_WINDOW_IMPL_XYNTH(GDK_WINDOW_OBJECT(win)->impl)->xynth_id)
 
 struct _GdkWindowImplXYNTH {
 	GdkDrawableImplXYNTH drawable;
@@ -194,6 +215,13 @@ struct _GdkDeviceClass {
 };
 
 void _gdk_input_init (void);
+void gdk_xynth_mouse_get_info (gint *x, gint *y, GdkModifierType *mask);
+
+/* gdkmain-xynth.c */
+
+GdkWindow * gdk_xynth_other_event_window (GdkWindow *window, GdkEventType type);
+GdkWindow * gdk_xynth_pointer_event_window (GdkWindow *window, GdkEventType type);
+GdkEvent * gdk_xynth_event_make (GdkWindow *window, GdkEventType type);
 
 /* gdkglobals-xynth.c */
 
@@ -201,6 +229,13 @@ extern GdkDisplayXYNTH *_gdk_display;
 extern GdkScreen       *_gdk_screen;
 extern GdkVisual       *system_visual;
 extern GdkWindow       *_gdk_parent_root;
+extern GdkWindow       *_gdk_xynth_pointer_grab_window;
 extern GdkCursor       *_gdk_xynth_pointer_grab_cursor;
+extern gboolean         _gdk_xynth_pointer_grab_owner_events;
+extern GdkEventMask     _gdk_xynth_pointer_grab_events;
+
+extern int              _gdk_xynth_mouse_x;
+extern int              _gdk_xynth_mouse_y;
+extern GdkModifierType  _gdk_xynth_modifiers;
 
 G_END_DECLS
