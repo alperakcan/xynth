@@ -272,13 +272,6 @@ GType gdk_image_get_type (void)
 	return 0;
 }
 
-void gdk_window_set_cursor (GdkWindow *window, GdkCursor *cursor)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-}
-
 GdkCursor * gdk_cursor_new_from_pixbuf (GdkDisplay *display, GdkPixbuf *pixbuf, gint x, gint y)
 {
 	ENTER();
@@ -920,13 +913,6 @@ GdkDisplay * gdk_cursor_get_display (GdkCursor *cursor)
 }
 
 void _gdk_windowing_gc_set_clip_region (GdkGC *gc, GdkRegion *region)
-{
-	ENTER();
-	ASSERT();
-	LEAVE();
-}
-
-void gdk_window_set_events (GdkWindow *window, GdkEventMask event_mask)
 {
 	ENTER();
 	ASSERT();
