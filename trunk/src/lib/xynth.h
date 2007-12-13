@@ -1091,11 +1091,10 @@ int s_surface_create (s_surface_t **surface, int width, int height, int bitsperp
   * @param **surface    - the surface
   * @param width        - width
   * @param height       - height
-  * @param bitsperpixel - bitsperpixel
   * @param *parent      - parent surface
   * @return 0 on success.
   */
-int s_surface_create_sub (s_surface_t **surface, int x, int y, int width, int height, int bitsperpixel, s_surface_t *parent);
+int s_surface_create_sub (s_surface_t **surface, int x, int y, int width, int height, s_surface_t *parent);
 
 /** @brief creates a surface, as virtual with the given bitsperpixel, width,
   *        and height. vbuf will be the virtual buffer of the surface. the
