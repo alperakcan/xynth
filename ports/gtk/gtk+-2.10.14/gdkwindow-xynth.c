@@ -8,6 +8,7 @@ static GHashTable *window_id_ht = NULL;
 static guint update_idle = 0;
 static GSList *update_windows = NULL;
 
+static GdkWindow *gdk_xynth_focused_window            = NULL;
 static GdkWindow *gdk_xynth_window_containing_pointer = NULL;
 
 void gdk_xynth_window_id_table_remove (int xynth_id)
@@ -19,7 +20,7 @@ void gdk_xynth_window_id_table_remove (int xynth_id)
 	LEAVE();
 }
 
-void gdk_xynth_window_id_table_insert (int xynth_id, GdkWindow   *window)
+void gdk_xynth_window_id_table_insert (int xynth_id, GdkWindow *window)
 {
 	ENTER();
 	if (!window_id_ht) {
@@ -27,6 +28,17 @@ void gdk_xynth_window_id_table_insert (int xynth_id, GdkWindow   *window)
 	}
 	g_hash_table_insert(window_id_ht, GUINT_TO_POINTER(xynth_id), window);
 	LEAVE();
+}
+
+GdkWindow * gdk_xynth_window_id_table_lookup (int xynth_id)
+{
+	GdkWindow *window = NULL;
+	ENTER();
+	if (window_id_ht) {
+		window = (GdkWindow *) g_hash_table_lookup(window_id_ht, GUINT_TO_POINTER(xynth_id));
+	}
+	LEAVE();
+	return window;
 }
 
 static int create_xynth_window (GdkWindowImplXYNTH *impl, s_window_t *parent, S_WINDOW window_type, s_rect_t *position)
@@ -46,12 +58,16 @@ static int create_xynth_window (GdkWindowImplXYNTH *impl, s_window_t *parent, S_
 	if (impl->input_only) {
 		impl->drawable.surface = NULL;
 	} else {
+#if 0
 		/* here we use double buffer, which will increase memory
 		 * but, good thing is; ;< i do not know if this has any adv.
 		 */
 		if (s_surface_create(&surface, position->w, position->h, xynth->surface->bitsperpixel)) {
 			ASSERT();
 		}
+#else
+		surface = xynth->surface;
+#endif
 		impl->drawable.surface = surface;
 	}
 	if (position) {
@@ -96,7 +112,9 @@ void _gdk_windowing_window_init (void)
 	pos.y = 0;
 	pos.w = _gdk_display->xynth->surface->linear_buf_width;
 	pos.h = _gdk_display->xynth->surface->linear_buf_height;
-	create_xynth_window(impl, _gdk_display->xynth, WINDOW_CHILD, &pos);
+	
+	impl->xynth = _gdk_display->xynth;
+	impl->drawable.surface = _gdk_display->xynth->surface;
 
 	private->depth = impl->drawable.surface->bitsperpixel;
 	gdk_drawable_set_colormap(GDK_DRAWABLE (_gdk_parent_root), gdk_colormap_get_system());
@@ -116,10 +134,10 @@ static GdkRegion * gdk_window_impl_xynth_get_visible_region (GdkDrawable *drawab
 	rect.width = 0;
 	rect.height = 0;
 	if (priv->surface) {
-		rect.x      = priv->surface->win->x;
-		rect.y      = priv->surface->win->y;
-		rect.width  = priv->surface->win->w;
-		rect.height = priv->surface->win->h;
+		rect.x      = 0; //priv->surface->win->x;
+		rect.y      = 0; //priv->surface->win->y;
+		rect.width  = priv->surface->buf->w;
+		rect.height = priv->surface->buf->h;
 	}
 	region = gdk_region_rectangle(&rect);
 	LEAVE();
@@ -1438,5 +1456,46 @@ void _gdk_windowing_window_clear_area (GdkWindow *window, gint x, gint y, gint w
 	if (gc) {
 		g_object_unref(gc);
 	}
+	LEAVE();
+}
+
+void _gdk_xynth_move_resize_child (GdkWindow *window, gint x, gint y, gint width, gint height)
+{
+	ASSERT();
+}
+
+void gdk_xynth_change_focus (GdkWindow *new_focus_window)
+{
+	GdkEventFocus *event;
+	GdkWindow     *old_win;
+	GdkWindow     *new_win;
+	GdkWindow     *event_win;
+	ENTER();
+	if (_gdk_xynth_pointer_grab_window) {
+		LEAVE();
+		return;
+	}
+	old_win = gdk_xynth_focused_window;
+	new_win = gdk_xynth_window_find_toplevel(new_focus_window);
+	if (old_win == new_win) {
+		LEAVE();
+		return;
+	}
+	if (old_win) {
+		event_win = gdk_xynth_keyboard_event_window(old_win, GDK_FOCUS_CHANGE);
+		if (event_win) {
+			event = (GdkEventFocus *) gdk_xynth_event_make(event_win, GDK_FOCUS_CHANGE);
+			event->in = FALSE;
+		}
+	}
+	event_win = gdk_xynth_keyboard_event_window(new_win, GDK_FOCUS_CHANGE);
+	if (event_win) {
+		event = (GdkEventFocus *) gdk_xynth_event_make(event_win, GDK_FOCUS_CHANGE);
+		event->in = TRUE;
+	}
+	if (gdk_xynth_focused_window) {
+		g_object_unref(gdk_xynth_focused_window);
+	}
+	gdk_xynth_focused_window = g_object_ref(new_win);
 	LEAVE();
 }

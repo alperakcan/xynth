@@ -16,7 +16,7 @@
 #include "gdkinternals.h"
 #include "gdkalias.h"
 
-#define XYNTH_DEBUG 99
+#define XYNTH_DEBUG 98
 
 #if XYNTH_DEBUG != 0
 #define DEBUG(fmt...) {\
@@ -220,8 +220,19 @@ void gdk_xynth_mouse_get_info (gint *x, gint *y, GdkModifierType *mask);
 /* gdkmain-xynth.c */
 
 GdkWindow * gdk_xynth_other_event_window (GdkWindow *window, GdkEventType type);
+GdkWindow * gdk_xynth_keyboard_event_window (GdkWindow *window, GdkEventType type);
 GdkWindow * gdk_xynth_pointer_event_window (GdkWindow *window, GdkEventType type);
 GdkEvent * gdk_xynth_event_make (GdkWindow *window, GdkEventType type);
+
+/* gdkwindow-xynth.c */
+
+void gdk_xynth_window_id_table_remove (int xynth_id);
+void gdk_xynth_window_id_table_insert (int xynth_id, GdkWindow *window);
+GdkWindow * gdk_xynth_window_id_table_lookup (int xynth_id);
+void _gdk_xynth_calc_abs (GdkWindow *window);
+void _gdk_xynth_move_resize_child (GdkWindow *window, gint x, gint y, gint width, gint height);
+GdkWindow * gdk_xynth_other_event_window (GdkWindow *window, GdkEventType type);
+void gdk_xynth_change_focus (GdkWindow *new_focus_window);
 
 /* gdkglobals-xynth.c */
 
@@ -233,6 +244,9 @@ extern GdkWindow       *_gdk_xynth_pointer_grab_window;
 extern GdkCursor       *_gdk_xynth_pointer_grab_cursor;
 extern gboolean         _gdk_xynth_pointer_grab_owner_events;
 extern GdkEventMask     _gdk_xynth_pointer_grab_events;
+extern GdkWindow       *_gdk_xynth_keyboard_grab_window;
+extern gboolean         _gdk_xynth_keyboard_grab_owner_events;
+extern GdkEventMask     _gdk_xynth_keyboard_grab_events;
 
 extern int              _gdk_xynth_mouse_x;
 extern int              _gdk_xynth_mouse_y;
