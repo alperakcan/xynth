@@ -848,32 +848,44 @@ err0:	*surface = NULL;
 	return -1;
 }
 
-int s_surface_create_sub (s_surface_t **surface, int x, int y, int width, int height, int bitsperpixel, s_surface_t *parent)
+int s_surface_create_sub (s_surface_t **surface, int x, int y, int width, int height, s_surface_t *parent)
 {
+	s_rect_t p;
+	s_rect_t r;
 	s_surface_t *s;
 	if (parent == NULL) {
 		goto err0;
 	}
 	s_thread_mutex_lock(parent->subm);
-	if (s_surface_create_from_data(&s, width, height, bitsperpixel, NULL)) {
+	if (s_surface_create_from_data(&s, parent->width, parent->height, parent->bitsperpixel, parent->vbuf)) {
 		goto err1;
 	}
 	s_list_add(parent->subs, s, -1);
 	s->parent = parent;
-	s->buf->x = x;
-	s->buf->y = y;
-	s->buf->w = width;
-	s->buf->h = height;
-	s->win->x = parent->win->x + x;
-	s->win->y = parent->win->y + y;
-	s->win->w = parent->win->w + width;
-	s->win->h = parent->win->h + height;
-	s->evbuf = 1;
-	s->vbuf = parent->vbuf;
+	p.x = 0;
+	p.y = 0;
+	p.w = parent->buf->w;
+	p.h = parent->buf->h;
+	r.x = x;
+	r.y = y;
+	r.w = width;
+	r.h = height;
+	if (s_rect_intersect(&p, &r, s->buf)) {
+		goto err2;
+	}
+	r.x = s->buf->x + parent->win->x;
+	r.y = s->buf->y + parent->win->y;
+	r.w = s->buf->w;
+	r.h = s->buf->h;
+	if (s_rect_intersect(&p, &r, s->win)) {
+		goto err3;
+	}
 	s_thread_mutex_unlock(parent->subm);
 	*surface = s;
 	return 0;
-err1:
+err3:
+err2:
+err1:	s_thread_mutex_unlock(parent->subm);
 err0:	*surface = NULL;
 	return -1;
 }

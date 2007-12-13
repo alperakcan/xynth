@@ -57,7 +57,7 @@ static int create_xynth_window (GdkWindowImplXYNTH *impl, s_window_t *parent, S_
 	if (position) {
 		s_window_set_coor(xynth, WINDOW_NOFORM, position->x, position->y, position->w, position->h);
 	}
-	ERROR("create window thread\n");
+	s_window_main(xynth);
 	impl->xynth = xynth;
 	LEAVE();
 	return 0;
@@ -110,26 +110,17 @@ static GdkRegion * gdk_window_impl_xynth_get_visible_region (GdkDrawable *drawab
 	GdkRectangle rect;
 	GdkDrawableImplXYNTH *priv;
 	ENTER();
-	ERROR("update oll surface->buf`s, surface->width's, and use surface->win instead, since they all are sub surfaces (except windows)");
 	priv = GDK_DRAWABLE_IMPL_XYNTH(drawable);
-	ENTER();
 	rect.x = 0;
-	ENTER();
 	rect.y = 0;
-	ENTER();
 	rect.width = 0;
-	ENTER();
 	rect.height = 0;
-	ENTER();
 	if (priv->surface) {
-		ENTER();
-		rect.x      = priv->surface->buf->x;
-		rect.y      = priv->surface->buf->y;
-		rect.width  = priv->surface->buf->w;
-		rect.height = priv->surface->buf->h;
-		ENTER();
+		rect.x      = priv->surface->win->x;
+		rect.y      = priv->surface->win->y;
+		rect.width  = priv->surface->win->w;
+		rect.height = priv->surface->win->h;
 	}
-	ENTER();
 	region = gdk_region_rectangle(&rect);
 	LEAVE();
 	return region;
@@ -441,9 +432,12 @@ static void gdk_window_impl_xynth_begin_paint_region (GdkPaintable *paintable, G
 
 static void gdk_window_impl_xynth_end_paint (GdkPaintable *paintable)
 {
+	GdkWindowImplXYNTH *wimpl;
 	GdkDrawableImplXYNTH *impl;
+	
 	ENTER();
 	impl = GDK_DRAWABLE_IMPL_XYNTH(paintable);
+	wimpl = GDK_WINDOW_IMPL_XYNTH(impl);
 	if (impl->paint_depth <= 0) {
 		LEAVE();
 		return;
@@ -455,10 +449,12 @@ static void gdk_window_impl_xynth_end_paint (GdkPaintable *paintable)
 			s_rect_t rect = {
 				impl->paint_region->extents.x1,
 				impl->paint_region->extents.y1,
-				impl->paint_region->extents.x2,
-				impl->paint_region->extents.y2
+				impl->paint_region->extents.x2 - impl->paint_region->extents.x1,
+				impl->paint_region->extents.y2 - impl->paint_region->extents.y2
 			};
-			DEBUG("End Paint, must update: (%d %d %d %d)", rect.x, rect.y, rect.w, rect.h);
+			DEBUG("End Paint, must update: (%d %d %d %d) (%d %d %d %d)", rect.x, rect.y, rect.w, rect.h, impl->surface->win->x, impl->surface->win->y, impl->surface->win->w, impl->surface->win->h);
+			DEBUG("xynth(%p), surface(%p)", wimpl->xynth, impl->surface);
+			s_putbox(wimpl->xynth->surface, 0, 0, impl->surface->width, impl->surface->height, impl->surface->vbuf);
 			gdk_region_destroy(impl->paint_region);
 			impl->paint_region = NULL;
 		}
