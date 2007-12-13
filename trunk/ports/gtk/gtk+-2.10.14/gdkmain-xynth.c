@@ -51,10 +51,7 @@ GdkWindow * gdk_xynth_other_event_window (GdkWindow *window, GdkEventType type)
 	ENTER();
 	w = window;
 	while (w != _gdk_parent_root) {
-		/* Huge hack, so that we don't propagate events to GtkWindow->frame */
-		if ((w != window) &&
-		    (GDK_WINDOW_OBJECT (w)->window_type != GDK_WINDOW_CHILD) &&
-		    (g_object_get_data (G_OBJECT (w), "gdk-window-child-handler"))) {
+		if ((w != window) && (GDK_WINDOW_OBJECT(w)->window_type != GDK_WINDOW_CHILD) && (g_object_get_data(G_OBJECT(w), "gdk-window-child-handler"))) {
 			break;
 		}
 		evmask = GDK_WINDOW_OBJECT(w)->event_mask;
@@ -66,6 +63,31 @@ GdkWindow * gdk_xynth_other_event_window (GdkWindow *window, GdkEventType type)
 	}
 	LEAVE();
 	return NULL;
+}
+
+GdkWindow * gdk_xynth_keyboard_event_window (GdkWindow *window, GdkEventType type)
+{
+	GdkWindow *w;
+	guint32 evmask;
+	ENTER();
+	if (_gdk_xynth_keyboard_grab_window && !_gdk_xynth_keyboard_grab_owner_events) {
+		LEAVE();
+		return _gdk_xynth_keyboard_grab_window;
+	}
+	w = window;
+	while (w != _gdk_parent_root) {
+		if ((w != window) && (GDK_WINDOW_OBJECT(w)->window_type != GDK_WINDOW_CHILD) && (g_object_get_data(G_OBJECT(w), "gdk-window-child-handler"))) {
+			break;
+		}
+		evmask = GDK_WINDOW_OBJECT(w)->event_mask;
+		if (evmask & type_masks[type]) {
+			LEAVE();
+			return w;
+		}
+		w = gdk_window_get_parent(w);
+	}
+	LEAVE();
+	return w;
 }
 
 GdkWindow * gdk_xynth_pointer_event_window (GdkWindow *window, GdkEventType type)

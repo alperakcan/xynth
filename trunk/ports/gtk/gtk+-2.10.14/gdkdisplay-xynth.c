@@ -51,6 +51,10 @@ GdkDisplay * gdk_display_open (const gchar *display_name)
 		ERROR("Can not open xynth window");
 		return NULL;
 	}
+	if (s_window_new(xynth, WINDOW_MAIN, NULL)) {
+		ERROR("Can not open xynth window");
+		return NULL;
+	}
 	s_thread_create(s_window_main, xynth);
 	
 	_gdk_display = g_object_new(GDK_TYPE_DISPLAY_XYNTH, NULL);
