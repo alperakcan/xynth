@@ -247,8 +247,52 @@ static void gdk_xynth_draw_points (GdkDrawable *drawable, GdkGC *gc, GdkPoint *p
 
 static void gdk_xynth_draw_segments (GdkDrawable *drawable, GdkGC *gc, GdkSegment *segs, gint nsegs)
 {
+	gint i;
+	s_rect_t rect;
+	s_region_t *region;
+	GdkRegion *clip;
+	GdkDrawableImplXYNTH *impl;
 	ENTER();
-	ASSERT();
+	if (nsegs < 1) {
+		LEAVE();
+		return;
+	}
+	impl = GDK_DRAWABLE_IMPL_XYNTH(drawable);
+	if (!gdk_xynth_setup_for_drawing(impl, GDK_GC_XYNTH(gc))) {
+		LEAVE();
+		return;
+	}
+	clip = gdk_xynth_clip_region(drawable, gc, NULL);
+	if (s_region_create(&region)) {
+		ASSERT();
+	}
+	for (i = 0; i < clip->numRects; i++) {
+		rect.x = clip->rects[i].x1;
+		rect.y = clip->rects[i].y1,
+		rect.w = clip->rects[i].x2 - clip->rects[i].x1;
+		rect.h = clip->rects[i].y2 - clip->rects[i].y1;
+		s_region_addrect(region, &rect);
+	}
+	if (s_surface_set_clip_region(impl->surface, region)) {
+		ASSERT();
+	}
+	for (i = 0; i < nsegs; i++) {
+		s_line(impl->surface, segs[i].x1, segs[i].y1, segs[i].x2, segs[i].y2, s_rgbcolor(impl->surface, impl->color.red >> 8, impl->color.green >> 8, impl->color.blue >> 8));
+	}
+	if (s_surface_set_clip_region(impl->surface, NULL)) {
+		ASSERT();
+	}
+	if (s_region_destroy(region)) {
+		ASSERT();
+	}
+	gdk_region_destroy (clip);
+
+	/* everything below can be omitted if the drawing is buffered */
+	if (impl->buffered) {
+		LEAVE();
+		return;
+	}
+	NIY();
 	LEAVE();
 }
 
@@ -268,10 +312,25 @@ static void gdk_xynth_draw_image (GdkDrawable *drawable, GdkGC *gc, GdkImage *im
 
 static cairo_surface_t * gdk_xynth_ref_cairo_surface (GdkDrawable *drawable)
 {
+	GdkDrawableImplXYNTH *impl;
 	ENTER();
-	ASSERT();
+	impl = GDK_DRAWABLE_IMPL_XYNTH(drawable);
+	if (GDK_IS_DRAWABLE(drawable) == 0) {
+		LEAVE();
+		return NULL;
+	}
+	if (GDK_IS_DRAWABLE_IMPL_XYNTH(drawable) == 0) {
+		LEAVE();
+		return NULL;
+	}
+	if (impl->cairo_surface == NULL) {
+		ASSERT();
+	} else {
+		cairo_surface_reference(impl->cairo_surface);
+	}
+	g_assert(impl->cairo_surface != NULL);
 	LEAVE();
-	return NULL;
+	return impl->cairo_surface;
 }
 
 static void gdk_xynth_set_colormap (GdkDrawable *drawable, GdkColormap *colormap)
