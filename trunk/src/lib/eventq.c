@@ -55,12 +55,11 @@ int s_eventq_uninit (s_window_t *window)
 int s_eventq_add (s_window_t *window, s_event_t *event)
 {
         int ret;
-
 	s_thread_mutex_lock(window->eventq->mut);
-        ret = s_list_add(window->eventq->queue, event, -1);
-        s_thread_cond_signal(window->eventq->cond);
+	event->window = window;
+	ret = s_list_add(window->eventq->queue, event, -1);
+	s_thread_cond_signal(window->eventq->cond);
 	s_thread_mutex_unlock(window->eventq->mut);
-
 	return ret;
 }
 
