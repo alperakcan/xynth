@@ -256,6 +256,7 @@ int s_event_copy (s_event_t *event, s_event_t **nevent)
 		return -1;
 	}
 	tmp->type = event->type;
+	tmp->window = event->window;
 	memcpy(tmp->mouse, event->mouse, sizeof(s_mouse_t));
 	memcpy(tmp->keybd, event->keybd, sizeof(s_keybd_t));
 	memcpy(tmp->expose->rect, event->expose->rect, sizeof(s_rect_t));

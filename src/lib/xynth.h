@@ -460,6 +460,8 @@ typedef struct s_event_s {
 	s_desktop_t *desktop;
 	/** timer event */
 	s_timer_t *timer;
+	/** event window */
+	s_window_t *window;
 	/** void event */
 	void *data;
 } s_event_t;
