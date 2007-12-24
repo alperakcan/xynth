@@ -26,7 +26,6 @@ int s_surface_init (s_window_t *window)
 	window->surface = (s_surface_t *) s_calloc(1, sizeof(s_surface_t));
 	window->surface->buf = (s_rect_t *) s_calloc(1, sizeof(s_rect_t));
 	window->surface->win = (s_rect_t *) s_calloc(1, sizeof(s_rect_t));
-	window->surface->id = &(window->id);
 	window->surface->window = window;
 	return 0;
 }

@@ -2538,7 +2538,7 @@ struct s_surface_s {
 	/** vbuf is external */
 	unsigned int evbuf;
 	/** surface's virtual buffer */
-        unsigned char *vbuf;
+	unsigned char *vbuf;
 	/** virtual buffers' seen part on screen */
 	s_rect_t *buf;
 	/** window coordinate that hold surface on screen (if any) */
@@ -2566,15 +2566,13 @@ struct s_surface_s {
 	/** shared memory buffer for screen matrix */
 	unsigned char *matrix;
 	/** shared video memory id */
-        int shm_sid;
+	int shm_sid;
 	/** this is either, 0, SURFACE_NEEDSTREAM, or SURFACE_NEEDEXPOSE */
 	S_SURFACE_MODE need_expose;
 	/** device name */
 	char *device;
-	/** ugly hack for overlay operations, window->surface->id = &(window->client->id) */
-        int *id;
 	/** ugly hack, window->surface->window = window */
-        s_window_t *window;
+	s_window_t *window;
 };
 
 /* surface.c */
