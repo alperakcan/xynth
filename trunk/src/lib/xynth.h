@@ -3120,9 +3120,6 @@ struct s_window_s {
 	s_event_t *event;
 	/** socket request and listen mutex */
 	s_thread_mutex_t *socket_mutex;
-	
-	/** used for self implementation gettext */
-	s_gettext_t *gettext;
 
 	/** atevent event callback */
 	void (*atevent) (s_window_t *, s_event_t *);

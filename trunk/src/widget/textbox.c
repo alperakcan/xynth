@@ -16,11 +16,11 @@
 #include "../lib/xynth_.h"
 #include "widget.h"
 
-#if 0
+#if 1
 #include <libintl.h>
 #define _(str) gettext(str)
 #else
-#define _(str) s_gettext(object->window->window, str)
+#define _(str) (str)
 #endif
 
 void w_textbox_slide (w_object_t *object, int vertical, int horizontal, int *ytotal, int *yoffset)
