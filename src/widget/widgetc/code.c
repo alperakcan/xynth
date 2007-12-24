@@ -102,11 +102,11 @@ void code_generate_window (s_xml_node_t *node)
 	char *nid = s_xml_node_get_attr_value(node, "id");
 	char *ntype = s_xml_node_get_attr_value(node, "type");
 	fprintf(g_source, "w_window_init(&%s, %s, NULL);\n", nid, ntype);
-	fprintf(g_source, "s_setlocale(%s->window, 0, \"\");\n"
-	                  "s_bindtextdomain(%s->window, \"%s\", \"/usr/local/share/xynth/messages/\");\n"
-	                  "s_textdomain(%s->window, \"%s\");\n", nid, nid, g_name, nid, g_name);
+	fprintf(g_source, "setlocale(0, \"\");\n"
+	                  "bindtextdomain(\"%s\", \"/usr/local/share/xynth/messages/\");\n"
+	                  "textdomain(\"%s\");\n", g_name, g_name);
 	if ((tmp = s_xml_node_get_path(node, "language")) != NULL) {
-		fprintf(g_source, "s_setlocale(%s->window, 0, %s);\n", nid, tmp->value);
+		fprintf(g_source, "setlocale(0, %s);\n", nid, tmp->value);
 		tmp->dontparse = 1;
 	}
 	if ((tmp = s_xml_node_get_path(node, "title")) != NULL) {

@@ -43,6 +43,7 @@ static void node_generate_sources (s_xml_node_t *node)
 	        "#include <time.h>\n"
 	        "#include <xynth.h>\n"
 	        "#include <widget.h>\n"
+	        "#include <libintl.h>\n"
 	        "\n");
 	header_generate(node, g_header);
 	fprintf(g_header, "\n");

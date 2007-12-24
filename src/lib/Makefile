@@ -24,7 +24,6 @@ libxynth.a_files-y = alloc.c \
                      event.c \
                      eventq.c \
                      font.c \
-                     gettext.c \
                      gettime.c \
                      grlib.c \
                      handler.c \
