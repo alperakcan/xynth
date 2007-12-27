@@ -25,7 +25,8 @@ int s_region_create (s_region_t **region)
 	memset(reg, 0, sizeof(s_region_t));
 	*region = reg;
 	return 0;
-err0:	return -1;
+err0:	*region = NULL;
+	return -1;
 }
 
 int s_region_destroy (s_region_t *region)
