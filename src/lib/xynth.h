@@ -2148,10 +2148,15 @@ struct s_region_s {
 
 int s_region_create (s_region_t **region);
 int s_region_destroy (s_region_t *region);
+int s_region_extents_calculate (s_region_t *region);
+int s_region_delrect (s_region_t *region, s_rect_t *rect);
 int s_region_addrect (s_region_t *region, s_rect_t *rect);
 int s_region_num_rectangles (s_region_t *region);
 s_rect_t * s_region_rectangles (s_region_t *region);
 int s_region_extents (s_region_t *region, s_rect_t *extents);
+int s_region_copy (s_region_t **region, s_region_t *src);
+int s_region_unify (s_region_t *region);
+int s_region_combine (s_region_t *region);
 
 /* render.c */
 typedef struct s_render_s s_render_t;
