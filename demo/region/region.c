@@ -6,12 +6,21 @@
 #include <time.h>
 #include <xynth.h>
 
-#define DEBUG 0
+#define DEBUG   0
+#define DEFINED 0
 
 void print_usage_exit (void)
 {
 	exit(-1);
 }
+
+#if DEFINED
+s_rect_t rects_defined[] = {
+/*   5 */ {   2,   4,   1,   2 },
+/*   9 */ {   0,   0,   4,   5 },
+/*  10 */ {   0,   0,   3,   5 },
+};
+#endif
 
 s_rect_t * create_rects (int width, int height, int nrects)
 {
@@ -22,15 +31,32 @@ s_rect_t * create_rects (int width, int height, int nrects)
 	if (rs == NULL) {
 		return NULL;
 	}
-	for (n = 0, r = rs; n < nrects; n++, r++) {
+	n = 0;
+	r = rs;
+#if DEFINED
+	memcpy(rs, rects_defined, sizeof(rects_defined));
+#else
+#if DEBUG
+	printf("s_rect_t rects_defined[] = {\n");
+#endif
+	while (n < nrects) {
 		r->x = rand() % width;
 		r->y = rand() % height;
 		r->w = rand() % (width - r->x);
 		r->h = rand() % (height - r->y);
+		if (r->w <= 0 || r->h <= 0) {
+			continue;
+		}
 #if DEBUG
-		printf("%3d :: %3d, %3d, %3d, %3d\n", n, r->x, r->y, r->w, r->h);
+		printf("/* %3d */ { %3d, %3d, %3d, %3d },\n", n, r->x, r->y, r->w, r->h);
 #endif
+		n++;
+		r++;
 	}
+#if DEBUG
+	printf("};\n");
+#endif
+#endif
 	return rs;
 }
 
@@ -267,6 +293,7 @@ int test_unify (int width, int height, int nrects)
 	if (s_region_extents(region, &extents)) {
 		return -4;
 	}
+	printf("extents: %d %d, %d %d\n", extents.x, extents.y, extents.w, extents.h);
 	regionm = create_matrix(region);
 	if (regionm == NULL) {
 		return -5;
@@ -276,6 +303,10 @@ int test_unify (int width, int height, int nrects)
 		return -6;
 	}
 	times[1] = s_gettimeofday();
+	if (s_region_extents(region, &extents)) {
+		return -4;
+	}
+	printf("extents: %d %d, %d %d\n", extents.x, extents.y, extents.w, extents.h);
 	regionu = create_matrix(region);
 	if (regionu == NULL) {
 		return -7;
