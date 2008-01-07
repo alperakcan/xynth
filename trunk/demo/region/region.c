@@ -22,6 +22,20 @@ s_rect_t rects_defined[] = {
 };
 #endif
 
+int find_in_rects (s_rect_t *rects, int nrects, s_rect_t *rect)
+{
+	int n;
+	for (n = 0; n < nrects; n++) {
+		if (rects[n].x == rect->x &&
+		    rects[n].y == rect->y &&
+		    rects[n].w == rect->w &&
+		    rects[n].h == rect->h) {
+			return 0;
+		}
+	}
+	return -1;
+}
+
 s_rect_t * create_rects (int width, int height, int nrects)
 {
 	int n;
@@ -50,8 +64,10 @@ s_rect_t * create_rects (int width, int height, int nrects)
 #if DEBUG
 		printf("/* %3d */ { %3d, %3d, %3d, %3d },\n", n, r->x, r->y, r->w, r->h);
 #endif
-		n++;
-		r++;
+		if (find_in_rects(rs, n, r) != 0) {
+			n++;
+			r++;
+		}
 	}
 #if DEBUG
 	printf("};\n");
@@ -60,21 +76,7 @@ s_rect_t * create_rects (int width, int height, int nrects)
 	return rs;
 }
 
-int find_in_rects (s_rect_t *rects, int nrects, s_rect_t *rect)
-{
-	int n;
-	for (n = 0; n < nrects; n++) {
-		if (rects[n].x == rect->x &&
-		    rects[n].y == rect->y &&
-		    rects[n].w == rect->w &&
-		    rects[n].h == rect->h) {
-			return 0;
-		}
-	}
-	return -1;
-}
-
-char * create_matrix (s_region_t *region)
+char * create_matrix (s_region_t *region, int width, int height, int order)
 {
 	int n;
 	int x;
@@ -85,15 +87,20 @@ char * create_matrix (s_region_t *region)
 	n = s_region_num_rectangles(region);
 	r = s_region_rectangles(region);
 	s_region_extents(region, &extents);
-	matrix = (char *) malloc(sizeof(char) * extents.w * extents.h);
+	matrix = (char *) malloc(sizeof(char) * width * height);
 	if (matrix == NULL) {
 		return NULL;
 	}
-	memset(matrix, 0, sizeof(char) * extents.w * extents.h);
+	memset(matrix, 0, sizeof(char) * width * height);
+	for (y = 0; y < region->extents.h; y++) {
+		for (x = 0; x < region->extents.w; x++) {
+			*(matrix + ((region->extents.y + y) * width) + (region->extents.x + x)) = !order;
+		}
+	}
 	for (n = 0; n < s_region_num_rectangles(region); n++) {
 		for (y = 0; y < r->h; y++) {
 			for (x = 0; x < r->w; x++) {
-				*(matrix + ((r->y - extents.y + y) * extents.w) + (r->x - extents.x + x)) = 1;
+				*(matrix + ((r->y + y) * width) + (r->x + x)) = order;
 			}
 		}
 		r++;
@@ -102,8 +109,8 @@ char * create_matrix (s_region_t *region)
 	{
 		char *m;
 		m = matrix;
-		for (y = 0; y < extents.h; y++) {
-			for (x = 0; x < extents.w; x++) {
+		for (y = 0; y < height; y++) {
+			for (x = 0; x < width; x++) {
 				if (*m) {
 					printf("*");
 				} else {
@@ -166,7 +173,7 @@ int test_delrect (int width, int height, int nrects)
 	int d;
 	s_rect_t *rects;
 	s_region_t *region;
-	unsigned long long times[2];
+	unsigned long long times[3];
 	printf("running %s\n", __FUNCTION__);
 	rects = create_rects(width, height, nrects);
 	if (rects == NULL) {
@@ -180,12 +187,15 @@ int test_delrect (int width, int height, int nrects)
 			return -3;
 		}
 	}
-	times[0] = s_gettimeofday();
+	times[2] = 0;
 	while (s_region_num_rectangles(region) != 0) {
 		d = rand() % nrects;
+		times[0] = s_gettimeofday();
 		if (s_region_delrect(region, &rects[d])) {
 			return -4;
 		}
+		times[1] = s_gettimeofday();
+		times[2] += times[1] - times[0];
 		for (n = 0; n < s_region_num_rectangles(region); n++) {
 			if (find_in_rects(rects, nrects, &region->rects[n])) {
 				return -5;
@@ -195,12 +205,11 @@ int test_delrect (int width, int height, int nrects)
 			return -6;
 		}
 	}
-	times[1] = s_gettimeofday();
 	if (s_region_destroy(region)) {
 		return -7;
 	}
 	free(rects);
-	printf("took %llu ms\n", times[1] - times[0]);
+	printf("took %llu ms\n", times[2]);
 	return 0;
 }
 
@@ -274,9 +283,10 @@ int test_unify (int width, int height, int nrects)
 	char *regionm;
 	char *regionu;
 	s_rect_t *rects;
-	s_rect_t extents;
+	s_rect_t extentsr;
+	s_rect_t extentsu;
 	s_region_t *region;
-	unsigned long long times[2];
+	unsigned long long times[6];
 	printf("running %s\n", __FUNCTION__);
 	rects = create_rects(width, height, nrects);
 	if (rects == NULL) {
@@ -290,37 +300,112 @@ int test_unify (int width, int height, int nrects)
 			return -3;
 		}
 	}
-	if (s_region_extents(region, &extents)) {
+	if (s_region_extents(region, &extentsr)) {
 		return -4;
 	}
-	printf("extents: %d %d, %d %d\n", extents.x, extents.y, extents.w, extents.h);
-	regionm = create_matrix(region);
+	times[0] = s_gettimeofday();
+	regionm = create_matrix(region, width, height, 1);
+	times[1] = s_gettimeofday();
 	if (regionm == NULL) {
 		return -5;
 	}
-	times[0] = s_gettimeofday();
+	printf("region nrects: %d\n", region->nrects);
+	times[2] = s_gettimeofday();
 	if (s_region_unify(region)) {
 		return -6;
 	}
-	times[1] = s_gettimeofday();
-	if (s_region_extents(region, &extents)) {
-		return -4;
-	}
-	printf("extents: %d %d, %d %d\n", extents.x, extents.y, extents.w, extents.h);
-	regionu = create_matrix(region);
-	if (regionu == NULL) {
+	times[3] = s_gettimeofday();
+	printf("region nrects: %d\n", region->nrects);
+	if (s_region_extents(region, &extentsu)) {
 		return -7;
 	}
-	if (s_region_destroy(region)) {
+	if (extentsr.x != extentsu.x ||
+	    extentsr.y != extentsu.y ||
+	    extentsr.w != extentsu.w ||
+	    extentsr.h != extentsu.h) {
 		return -8;
 	}
-	if (memcmp(regionu, regionm, sizeof(char) * extents.w * extents.h)) {
+	times[4] = s_gettimeofday();
+	regionu = create_matrix(region, width, height, 1);
+	times[5] = s_gettimeofday();
+	if (regionu == NULL) {
 		return -9;
+	}
+	if (s_region_destroy(region)) {
+		return -10;
+	}
+	if (memcmp(regionu, regionm, sizeof(char) * width * height)) {
+		return -11;
 	}
 	free(rects);
 	free(regionm);
 	free(regionu);
-	printf("took %llu ms\n", times[1] - times[0]);
+	printf("took %llu ms (created in %llu ms, %llu ms)\n", times[3] - times[2], times[1] - times[0], times[5] - times[4]);
+	return 0;
+}
+
+int test_reverse (int width, int height, int nrects)
+{
+	int n;
+	char *regionm;
+	char *regionu;
+	s_rect_t *rects;
+	s_rect_t extentsr;
+	s_rect_t extentsu;
+	s_region_t *region;
+	s_region_t *regionr;
+	unsigned long long times[6];
+	printf("running %s\n", __FUNCTION__);
+	rects = create_rects(width, height, nrects);
+	if (rects == NULL) {
+		return -1;
+	}
+	if (s_region_create(&region)) {
+		return -2;
+	}
+	for (n = 0; n < nrects; n++) {
+		if (s_region_addrect(region, &rects[n])) {
+			return -3;
+		}
+	}
+	if (s_region_extents(region, &extentsr)) {
+		return -4;
+	}
+	times[0] = s_gettimeofday();
+	regionm = create_matrix(region, width, height, 0);
+	times[1] = s_gettimeofday();
+	if (regionm == NULL) {
+		return -5;
+	}
+	printf("region nrects: %d\n", region->nrects);
+	times[2] = s_gettimeofday();
+	if (s_region_reverse(region, &regionr)) {
+		return -6;
+	}
+	times[3] = s_gettimeofday();
+	printf("region nrects: %d\n", regionr->nrects);
+	if (s_region_extents(regionr, &extentsu)) {
+		return -7;
+	}
+	times[4] = s_gettimeofday();
+	regionu = create_matrix(regionr, width, height, 1);
+	times[5] = s_gettimeofday();
+	if (regionu == NULL) {
+		return -8;
+	}
+	if (s_region_destroy(region)) {
+		return -9;
+	}
+	if (s_region_destroy(regionr)) {
+		return -10;
+	}
+	if (memcmp(regionu, regionm, sizeof(char) * width * height)) {
+		return -11;
+	}
+	free(rects);
+	free(regionm);
+	free(regionu);
+	printf("took %llu ms (created in %llu ms, %llu ms)\n", times[3] - times[2], times[1] - times[0], times[5] - times[4]);
 	return 0;
 }
 
@@ -349,7 +434,7 @@ int test_combine (int width, int height, int nrects)
 	if (s_region_extents(region, &extents)) {
 		return -4;
 	}
-	regionm = create_matrix(region);
+	regionm = create_matrix(region, width, height, 1);
 	if (regionm == NULL) {
 		return -5;
 	}
@@ -358,7 +443,7 @@ int test_combine (int width, int height, int nrects)
 		return -6;
 	}
 	times[1] = s_gettimeofday();
-	regionu = create_matrix(region);
+	regionu = create_matrix(region, width, height, 1);
 	if (regionu == NULL) {
 		return -7;
 	}
@@ -381,6 +466,7 @@ int (*test_functions[]) (int, int, int) = {
 	&test_copy,
 	&test_extents,
 	&test_unify,
+	&test_reverse,
 	&test_combine,
 	NULL
 };
@@ -423,7 +509,7 @@ int main (int argc, char *argv[])
 	}
 	
 	if (seed == 0) {
-		seed = time(NULL);
+		seed = s_gettimeofday();
 	}
 	
 	printf("width = %d, height = %d, nrects = %d, seed = %u\n", width, height, nrects, seed);

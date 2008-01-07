@@ -172,7 +172,7 @@ void s_video_gdi_server_surface_update (s_rect_t *coor)
         if (priv->bpp_windows == 0) {
                 return;
         }
-	if (s_rect_intersect(&clip, coor, &inter)) {
+	if (s_region_rect_intersect(&clip, coor, &inter)) {
 		return;
 	}
 

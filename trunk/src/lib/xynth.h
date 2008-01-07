@@ -2020,37 +2020,6 @@ int s_pollfds_uninit (s_window_t *window);
   *
   * @code
   *
-  * {
-  *	s_rect_t r
-  *	s_rect_t rect r1 = (s_rect_t) {10, 10, 20, 20};
-  *	s_rect_t rect r2 = (s_rect_t) {15, 15, 20, 20};
-  *	if (s_rect_intersect(&r1, &r2, &r)) {
-  *		// no intersection
-  *	}
-  *	// intersectig region is r
-  * }
-  *
-  * {
-  *	s_list_t *diff;
-  *	s_rect_t rect r1 = (s_rect_t) {10, 10, 20, 20};
-  *	s_rect_t rect r2 = (s_rect_t) {15, 15, 20, 20};
-  *
-  *	s_list_init(&diff);
-  *	if (s_rect_difference(&r1, &r2, diff) < 0) {
-  *		// will not happen
-  *	}
-  *
-  *	// walk through the difference list
-  *	for (pos = 0; !s_list_eol(list, pos); pos++) {
-  *		s_rect_t *rtmp = (s_rect_t *) s_list_get(list, pos);
-  *		// do what ever you want with the rectangle
-  *		s_list_remove(list, pos);
-  *		s_free(rtmp);
-  *	}
-  *
-  *	s_list_uninit(list);
-  * }
-  *
   * @endcode
   */
 
@@ -2071,24 +2040,6 @@ struct s_rect_s {
 };
 
 /* rect.c */
-
-/** @brief calculates the merging area of r1 and r2.
-  *
-  * @param *r1 - pointer to a rect
-  * @param *r2 - pointer to a rect
-  * @param *r  - on success r will be the merging area
-  * @returns 0 on success, 1 on error.
-  */
-int s_rect_merge (s_rect_t *r1, s_rect_t *r2, s_rect_t *r);
-
-/** @brief calculates the intersection area of r1 and r2.
-  *
-  * @param *r1 - pointer to a rect
-  * @param *r2 - pointer to a rect
-  * @param *r  - on success r will be the intersection area
-  * @returns 0 on success, 1 on error.
-  */
-int s_rect_intersect (s_rect_t *r1, s_rect_t *r2, s_rect_t *r);
 
 /** @brief performs clip on rectangle (x, y, w, h).
   *        clip region is the surface's virtual buffer area
@@ -2116,26 +2067,6 @@ int s_rect_clip_virtual (s_surface_t *surface, int x, int y, int w, int h, s_rec
   */
 int s_rect_clip_real (s_surface_t *surface, int x, int y, int w, int h, s_rect_t *coor);
 
-/** @brief adds the rectangle (x, y, w, h) to the list
-  *
-  * @param *list - list to add
-  * @param x     - x
-  * @param y     - y
-  * @param w     - w
-  * @param h     - h
-  * @returns 0 on success, 1 on error.
-  */
-int s_rect_difference_add (s_list_t *list, int x, int y, int w, int h);
-
-/** @brief adds the difference of r1 form r0 to the list
-  *
-  * @param *r1   - rectangle
-  * @param *r0   - rectangle
-  * @param *list - list
-  * @returns number of differences on success, -1 on error.
-  */
-int s_rect_difference (s_rect_t *r1, s_rect_t *r0, s_list_t *list);
-
 /*@}*/
 
 /* region.c */
@@ -2149,6 +2080,7 @@ struct s_region_s {
 int s_region_create (s_region_t **region);
 int s_region_destroy (s_region_t *region);
 int s_region_extents_calculate (s_region_t *region);
+int s_region_subrect (s_region_t *region, s_rect_t *rect);
 int s_region_delrect (s_region_t *region, s_rect_t *rect);
 int s_region_addrect (s_region_t *region, s_rect_t *rect);
 int s_region_num_rectangles (s_region_t *region);
@@ -2156,7 +2088,12 @@ s_rect_t * s_region_rectangles (s_region_t *region);
 int s_region_extents (s_region_t *region, s_rect_t *extents);
 int s_region_copy (s_region_t **region, s_region_t *src);
 int s_region_unify (s_region_t *region);
+int s_region_reverse (s_region_t *region, s_region_t **result);
 int s_region_combine (s_region_t *region);
+int s_region_rect_union (s_rect_t *rect1, s_rect_t *rect2, s_rect_t *result);
+int s_region_rect_intersect (s_rect_t *rect1, s_rect_t *rect2, s_rect_t *result);
+int s_region_rect_substract (s_rect_t *rect1, s_rect_t *rect2, s_region_t *result);
+
 
 /* render.c */
 typedef struct s_render_s s_render_t;

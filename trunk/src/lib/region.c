@@ -45,7 +45,6 @@ int s_region_extents_calculate (s_region_t *region)
 	int n;
 	s_rect_t *e;
 	s_rect_t *r;
-	
 	r = region->rects;
 	n = region->nrects;
 	e = &region->extents;
@@ -57,21 +56,32 @@ int s_region_extents_calculate (s_region_t *region)
 		return 0;
 	}
 	*e = *r;
-
+	n--;
+	r++;
 	while (n--) {
-		int ex2 = e->x + e->w;
-		int ey2 = e->y + e->h;
-		int rx2 = r->x + r->w;
-		int ry2 = r->y + r->h;
-
-		e->x = MIN(e->x, r->x);
-		e->y = MIN(e->y, r->y);
-		e->w = MAX(ex2, rx2) - e->x;
-		e->h = MAX(ey2, ry2) - e->y;
-
+		s_region_rect_union(e, r, e);
 		r++;
 	}
-	
+	return 0;
+}
+
+int s_region_subrect (s_region_t *region, s_rect_t *rect)
+{
+	int n;
+	s_rect_t r;
+	s_rect_t t;
+	for (n = 0; n < region->nrects; n++) {
+		r = region->rects[n];
+		if (s_region_rect_intersect(&r, rect, &t) == 0) {
+			if (s_region_rect_substract(&r, &t, region)) {
+				return -1;
+			}
+			if (s_region_delrect(region, &r)) {
+				return -1;
+			}
+			n--;
+		}
+	}
 	return 0;
 }
 
@@ -85,10 +95,8 @@ int s_region_delrect (s_region_t *region, s_rect_t *rect)
 	}
 	for (n = 0; n < region->nrects;) {
 		r = &region->rects[n];
-		if (r->x == rect->x &&
-		    r->y == rect->y &&
-		    r->w == rect->w &&
-		    r->h == rect->h) {
+		if (!(r->x - rect->x || r->y - rect->y ||
+		      r->w - rect->w || r->h - rect->h)) {
 			if (region->nrects == 1) {
 				region->nrects = 0;
 				free(region->rects);
@@ -109,6 +117,7 @@ int s_region_delrect (s_region_t *region, s_rect_t *rect)
 			free(region->rects);
 			region->rects = rs;
 			s_region_extents_calculate(region);
+			break;
 		} else {
 			n++;
 		}
@@ -119,14 +128,22 @@ err0:	return -1;
 
 int s_region_addrect (s_region_t *region, s_rect_t *rect)
 {
+	int n;
+	s_rect_t *r;
 	if (region == NULL) {
 		goto err0;
 	}
 	if (rect->w <= 0 || rect->h <= 0) {
 		return 0;
 	}
-	if (s_region_delrect(region, rect)) {
-		return -1;
+	r = region->rects;
+	n = region->nrects;
+	while (n--) {
+		if (!(r->x - rect->x || r->y - rect->y ||
+		      r->w - rect->w || r->h - rect->h)) {
+			return 0;
+		}
+		r++;
 	}
 	region->rects = (s_rect_t *) realloc(region->rects, sizeof(s_rect_t) * (region->nrects + 1));
 	if (region->rects != NULL) {
@@ -135,7 +152,11 @@ int s_region_addrect (s_region_t *region, s_rect_t *rect)
 	} else {
 		goto err0;
 	}
-	s_region_extents_calculate(region);
+	if (region->nrects == 1) {
+		region->extents = *rect;
+	} else {
+		s_region_rect_union(&region->extents, rect, &region->extents);
+	}
 	return 0;
 err0:	return -1;
 }
@@ -185,6 +206,23 @@ err0:	*region = NULL;
 	return -1;
 }
 
+int s_region_rect_union (s_rect_t *rect1, s_rect_t *rect2, s_rect_t *result)
+{
+	int x31;
+	int x32;
+	int y31;
+	int y32;
+	x31 = MIN(rect1->x, rect2->x);
+	x32 = MAX(rect1->x + rect1->w, rect2->x + rect2->w);
+	y31 = MIN(rect1->y, rect2->y);
+	y32 = MAX(rect1->y + rect1->h, rect2->y + rect2->h);
+	result->x = x31;
+	result->y = y31;
+	result->w = x32 - x31;
+	result->h = y32 - y31;
+	return 0;
+}
+
 int s_region_rect_intersect (s_rect_t *rect1, s_rect_t *rect2, s_rect_t *result)
 {
 	int x31;
@@ -226,7 +264,6 @@ int s_region_rect_substract (s_rect_t *rect1, s_rect_t *rect2, s_region_t *resul
 		             ........
 		             ........
 		 */
-		printf("adding rect: %d %d, %d %d\n", rect1->x, rect1->y, rect1->w, rect1->h);
 		if (s_region_addrect(result, rect1)) {
 			return -1;
 		} else {
@@ -250,7 +287,6 @@ int s_region_rect_substract (s_rect_t *rect1, s_rect_t *rect2, s_region_t *resul
 	rtmp.y = y0;
 	rtmp.w = x1 - x0;
 	rtmp.h = h0;
-	if (rtmp.w > 0 && rtmp.h > 0) printf("adding rect: %d %d, %d %d\n", rtmp.x, rtmp.y, rtmp.w, rtmp.h);
 	if (s_region_addrect(result, &rtmp)) {
 		return -1;
 	}
@@ -258,7 +294,6 @@ int s_region_rect_substract (s_rect_t *rect1, s_rect_t *rect2, s_region_t *resul
 	rtmp.y = y0;
 	rtmp.w = w1;
 	rtmp.h = y1 - y0;
-	if (rtmp.w > 0 && rtmp.h > 0) printf("adding rect: %d %d, %d %d\n", rtmp.x, rtmp.y, rtmp.w, rtmp.h);
 	if (s_region_addrect(result, &rtmp)) {
 		return -1;
 	}
@@ -266,7 +301,6 @@ int s_region_rect_substract (s_rect_t *rect1, s_rect_t *rect2, s_region_t *resul
 	rtmp.y = y0;
 	rtmp.w = (x0 + w0) - (x1 + w1);
 	rtmp.h = h0;
-	if (rtmp.w > 0 && rtmp.h > 0) printf("adding rect: %d %d, %d %d\n", rtmp.x, rtmp.y, rtmp.w, rtmp.h);
 	if (s_region_addrect(result, &rtmp)) {
 		return -1;
 	}
@@ -274,7 +308,6 @@ int s_region_rect_substract (s_rect_t *rect1, s_rect_t *rect2, s_region_t *resul
 	rtmp.y = y1 + h1;
 	rtmp.w = w1;
 	rtmp.h = (y0 + h0) - (y1 + h1);
-	if (rtmp.w > 0 && rtmp.h > 0) printf("adding rect: %d %d, %d %d\n", rtmp.x, rtmp.y, rtmp.w, rtmp.h);
 	if (s_region_addrect(result, &rtmp)) {
 		return -1;
 	}
@@ -283,39 +316,64 @@ int s_region_rect_substract (s_rect_t *rect1, s_rect_t *rect2, s_region_t *resul
 
 int s_region_unify (s_region_t *region)
 {
-	int i;
-	int j;
-	s_rect_t rtmp;
-	s_rect_t rdel;
-	printf("nrects: %d\n", region->nrects);
-	for (i = 0; i < s_region_num_rectangles(region); i++) {
-		for (j = i + 1; j < s_region_num_rectangles(region);) {
-			if (s_region_rect_intersect(&region->rects[i], &region->rects[j], &rtmp) == 0) {
-				rdel.x = region->rects[j].x;
-				rdel.y = region->rects[j].y;
-				rdel.w = region->rects[j].w;
-				rdel.h = region->rects[j].h;
-				printf("deleted rect: %d %d, %d %d, "
-				       "intersected with: %d %d, %d %d, "
-				       "intersection: %d %d, %d %d\n",
-				       rdel.x, rdel.y, rdel.w, rdel.h,
-				       region->rects[i].x, region->rects[i].y, region->rects[i].w, region->rects[i].h,
-				       rtmp.x, rtmp.y, rtmp.w, rtmp.h);
-				if (s_region_delrect(region, &rdel)) {
-					goto err0;
-				}
-				if (s_region_rect_substract(&rdel, &rtmp, region)) {
-					goto err0;
-				}
-			} else {
-				j++;
-			}
-		}
+	int n;
+	s_rect_t *r;
+	s_rect_t ext;
+	s_region_t *rev;
+	/* idea is simple
+	 * unified = reverse(reverse(region))
+	 */
+	if (s_region_reverse(region, &rev)) {
+		return -1;
 	}
-	s_region_extents_calculate(region);
-	printf("nrects: %d\n", region->nrects);
+	ext = region->extents;
+	region->nrects = 0;
+	free(region->rects);
+	region->rects = NULL;
+	region->extents.x = 0;
+	region->extents.y = 0;
+	region->extents.w = 0;
+	region->extents.h = 0;
+	if (s_region_addrect(region, &ext)) {
+		return -1;
+	}
+	r = s_region_rectangles(rev);
+	n = s_region_num_rectangles(rev);
+	while (n--) {
+		if (s_region_subrect(region, r)) {
+			s_region_destroy(rev);
+			return -1;
+		}
+		r++;
+	}
+	s_region_destroy(rev);
 	return 0;
-err0:	return -1;
+}
+
+int s_region_reverse (s_region_t *region, s_region_t **result)
+{
+	int n;
+	s_rect_t *r;
+	s_region_t *rg;
+	if (s_region_create(&rg)) {
+		*result = NULL;
+		return -1;
+	}
+	if (s_region_addrect(rg, &region->extents)) {
+		s_region_destroy(rg);
+		return -1;
+	}
+	r = s_region_rectangles(region);
+	n = s_region_num_rectangles(region);
+	while (n--) {
+		if (s_region_subrect(rg, r)) {
+			s_region_destroy(rg);
+			return -1;
+		}
+		r++;
+	}
+	*result = rg;
+	return 0;
 }
 
 int s_region_combine (s_region_t *region)

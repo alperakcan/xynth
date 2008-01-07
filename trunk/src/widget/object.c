@@ -73,7 +73,7 @@ int w_object_update_to_surface (w_object_t *object, s_surface_t *surface, s_rect
 	if (object == NULL) {
 		goto end;
 	}
-	if (s_rect_intersect(coor, object->surface->win, &bound)) {
+	if (s_region_rect_intersect(coor, object->surface->win, &bound)) {
 		goto end;
 	}
 	update = bound;
@@ -83,10 +83,10 @@ int w_object_update_to_surface (w_object_t *object, s_surface_t *surface, s_rect
 		rtmp.y = tmp->parent->content->y + tmp->parent->surface->win->y;
 		rtmp.w = tmp->parent->content->w;
 		rtmp.h = tmp->parent->content->h;
-		if (s_rect_intersect(&rtmp, tmp->parent->surface->win, &content)) {
+		if (s_region_rect_intersect(&rtmp, tmp->parent->surface->win, &content)) {
 			goto end;
 		}
-		if (s_rect_intersect(&bound, &content, &update)) {
+		if (s_region_rect_intersect(&bound, &content, &update)) {
 			goto end;
 		}
 		bound = update;
@@ -143,7 +143,7 @@ int w_object_update_clip (w_object_t *object, s_rect_t *coor)
 	clip.w = coor->w;
 	clip.h = coor->h;
 	 while ((object = object->parent) != NULL) {
-		if (s_rect_intersect(&clip, object->surface->win, &rect)) {
+		if (s_region_rect_intersect(&clip, object->surface->win, &rect)) {
 			return -1;
 		}
 		clip.x = rect.x;
@@ -173,7 +173,7 @@ int w_object_update (w_object_t *object, s_rect_t *coor)
 	clip.y = 0;
 	clip.w = object->window->window->surface->width;
 	clip.h = object->window->window->surface->height;
-	if (s_rect_intersect(&clip, coor, &rect) != 0) {
+	if (s_region_rect_intersect(&clip, coor, &rect) != 0) {
 		return 0;
 	}
 	if (object->draw == NULL) {
@@ -181,7 +181,7 @@ int w_object_update (w_object_t *object, s_rect_t *coor)
 	} else {
 		object->draw(object);
 	}
-	if (s_rect_intersect(&rect, object->surface->win, &clip) == 0) {
+	if (s_region_rect_intersect(&rect, object->surface->win, &clip) == 0) {
 		w_object_update_to_surface(object, object->surface, &clip, effect, EFFECT_SHOW | EFFECT_HIDE);
 		s_putboxpart(object->window->window->surface, clip.x, clip.y, clip.w, clip.h, object->surface->width, object->surface->height, object->surface->vbuf, clip.x, clip.y);
 	}
@@ -289,7 +289,7 @@ int w_object_move_silent (w_object_t *object, int x, int y, int w, int h)
 		 */
 		*(object->surface->buf) = new;
 #else
-        	if (s_rect_intersect(&new, object->parent->content, object->surface->buf)) {
+        	if (s_region_rect_intersect(&new, object->parent->content, object->surface->buf)) {
 	        	/* error, do not draw this child */
         		object->surface->buf->x = x;
         		object->surface->buf->y = y;
@@ -359,9 +359,10 @@ int w_object_move_silent (w_object_t *object, int x, int y, int w, int h)
 
 int w_object_move (w_object_t *object, int x, int y, int w, int h)
 {
+	int n;
+	s_rect_t *r;
 	s_rect_t old;
-	s_rect_t *tmp;
-	s_list_t *diff;
+	s_region_t *region;
 	old = *object->surface->win;
 	w_object_move_silent(object, x, y, w, h);
 	if (object->parent != NULL &&
@@ -370,15 +371,15 @@ int w_object_move (w_object_t *object, int x, int y, int w, int h)
 	     old.y != object->surface->win->y ||
 	     old.w != object->surface->win->w ||
 	     old.h != object->surface->win->h)) {
-		s_list_init(&diff);
-		s_rect_difference(&old, object->surface->win, diff);
-		while (!s_list_eol(diff, 0)) {
-			tmp = (s_rect_t *) s_list_get(diff, 0);
-			w_object_update(object, tmp);
-			s_list_remove(diff, 0);
-			s_free(tmp);
+		s_region_create(&region);
+		s_region_rect_substract(&old, object->surface->win, region);
+		r = s_region_rectangles(region);
+		n = s_region_num_rectangles(region);
+		while (n--) {
+			w_object_update(object, r);
+			r++;
 		}
-		s_list_uninit(diff);
+		s_region_destroy(region);
 		w_object_update(object, object->surface->win);
 	}
 	return 0;
@@ -444,7 +445,7 @@ int w_object_childatposition (w_object_t *object, int x, int y, w_object_t **chi
 	pos = 0;
 	while (!s_list_eol(object->shown, pos)) {
 		w_object_t *obj = (w_object_t *) s_list_get(object->shown, pos);
-		if (s_rect_intersect(obj->surface->buf, &coor, &rect)) {
+		if (s_region_rect_intersect(obj->surface->buf, &coor, &rect)) {
 		} else {
 			(*child) = obj;
 		}

@@ -136,11 +136,12 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 	int p_old;
 	int ontop;
 	int **dm;
-	int dpos;
-	s_rect_t *rtmp;
-	s_list_t *diff;
+	
+	int n;
+	s_rect_t *r;
+	s_region_t *region;
 
-	s_list_init(&diff);
+	s_region_create(&region);
 
 	p = s_server_id_pri(id);
 	p_old = s_server_pri_id(0);
@@ -161,61 +162,66 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 		server->pri[0] = id;
 	}
 
-        switch (flag) {
+	switch (flag) {
+		case SURFACE_FOCUS:
+			if ((i = s_server_pri_id(1)) >= 0) {
+				s_server_window_calculate(i);
+			}
+			/* no break */
+		case SURFACE_CLOSE:
+			if ((i = s_server_pri_id(0)) >= 0) {
+				s_server_window_calculate(i);
+			}
+			break;
+		case SURFACE_CHANGED:
+			s_server_window_calculate(id);
+			break;
+		case SURFACE_REFRESH:
+			for (i = 0; i < S_CLIENTS_MAX; i++) {
+				if (server->id[i] >= 0) {
+					s_server_window_title(i, server->client[i].title.str);
+					s_server_window_calculate(i);
+				}
+			}
+			break;
+		case SURFACE_REDRAW:
+			break;
+	}
+
+	switch (flag) {
 		case SURFACE_CLOSE:
 			/* CLOSED;
 			   closed window`s rectangle
 			   window form area of the one`s that will get the priority (pri == 0)
 			 */
-			{
-				s_list_t *diff_;
-				s_list_init(&diff_);
-				if ((i = s_server_pri_id(0)) >= 0) {
-					s_rect_difference(&server->client[i].win, &server->client[i].buf, diff_);
-				}
-				while (!s_list_eol(diff_, 0)) {
-					rtmp = (s_rect_t *) s_list_get(diff_, 0);
-					s_rect_difference(rtmp, c0, diff);
-					s_list_remove(diff_, 0);
-					s_free(rtmp);
-				}
-				s_list_uninit(diff_);
-				s_rect_difference_add(diff, c0->x, c0->y, c0->w, c0->h);
+			if ((i = s_server_pri_id(0)) >= 0) {
+				s_region_rect_substract(&server->client[i].win, &server->client[i].buf, region);
 			}
+			s_region_subrect(region, c0);
+			s_region_addrect(region, c0);
 			break;
 		case SURFACE_FOCUS:
 			/* FOCUSED;
 			   window form area of the one`s that lost priority (pri == 1)
 			   priority gained window`s rectangle (pri == 0)
 			 */
-			{
-				s_list_t *diff_;
-				s_list_init(&diff_);
-				if ((i = s_server_pri_id(1)) >= 0) {
-					s_rect_difference(&server->client[i].win, &server->client[i].buf, diff_);
-				}
-				while (!s_list_eol(diff_, 0)) {
-					rtmp = (s_rect_t *) s_list_get(diff_, 0);
-					s_rect_difference(rtmp, &server->client[id].win, diff);
-					s_list_remove(diff_, 0);
-					s_free(rtmp);
-				}
-				s_list_uninit(diff_);
-				s_rect_difference_add(diff, server->client[id].win.x, server->client[id].win.y,
-				                            server->client[id].win.w, server->client[id].win.h);
+			if ((i = s_server_pri_id(1)) >= 0) {
+				s_region_rect_substract(&server->client[i].win, &server->client[i].buf, region);
 			}
+			s_region_subrect(region, &server->client[id].win);
+			s_region_addrect(region, &server->client[id].win);
 			break;
 		case SURFACE_CHANGED:
 			/* CHANGED;
 			   changed ones old rectangle (win, c0)
 			   changed ones new rectangle (win, c1)
 			 */
-			s_rect_difference(c0, c1, diff);
-			s_rect_difference_add(diff, c1->x, c1->y, c1->w, c1->h);
+			s_region_rect_substract(c0, c1, region);
+			s_region_addrect(region, c1);
 			break;
 		case SURFACE_REDRAW:
 		case SURFACE_REFRESH:
-			s_rect_difference_add(diff, c0->x, c0->y, c0->w, c0->h);
+			s_region_addrect(region, c0);
 			break;
 		default:
 			debugf(DSER | DFAT, "Unknown surface changed flag");
@@ -251,38 +257,12 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 		}
 	}
 #endif
-
-	dpos = 0;
-	while (!s_list_eol(diff, dpos)) {
-		rtmp = (s_rect_t *) s_list_get(diff, dpos);
-		s_server_surface_matrix_del_coor(rtmp);
-		dpos++;
-	}
-
-	switch (flag) {
-		case SURFACE_FOCUS:
-			if ((i = s_server_pri_id(1)) >= 0) {
-				s_server_window_calculate(i);
-			}
-			/* no break */
-		case SURFACE_CLOSE:
-			if ((i = s_server_pri_id(0)) >= 0) {
-				s_server_window_calculate(i);
-			}
-			break;
-		case SURFACE_CHANGED:
-			s_server_window_calculate(id);
-			break;
-		case SURFACE_REFRESH:
-			for (i = 0; i < S_CLIENTS_MAX; i++) {
-				if (server->id[i] >= 0) {
-					s_server_window_title(i, server->client[i].title.str);
-					s_server_window_calculate(i);
-				}
-			}
-			break;
-		case SURFACE_REDRAW:
-			break;
+	
+	r = s_region_rectangles(region);
+	n = s_region_num_rectangles(region);
+	while (n--) {
+		s_server_surface_matrix_del_coor(r);
+		r++;
 	}
 
         /* -1 alwaysonbottom
@@ -293,12 +273,12 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 		for (p = S_CLIENTS_MAX - 1; p >= 0; p--) {
 			if (((i = s_server_pri_id(p)) >= 0) &&
 			    (server->client[i].alwaysontop == ontop)) {
-				dpos = 0;
-				while (!s_list_eol(diff, dpos)) {
-					rtmp = (s_rect_t *) s_list_get(diff, dpos);
-					s_server_window_matrix_add(i, rtmp);
-					s_server_surface_matrix_add(i, rtmp);
-					dpos++;
+				r = s_region_rectangles(region);
+				n = s_region_num_rectangles(region);
+				while (n--) {
+					s_server_window_matrix_add(i, r);
+					s_server_surface_matrix_add(i, r);
+					r++;
 				}
 			}
 		}
@@ -311,44 +291,44 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 	s_server_cursor_matrix_add();
 	s_server_cursor_draw();
 	
-	dm = (int **) s_malloc(sizeof(int *) * diff->nb_elt);
-	for (i = 0; i < diff->nb_elt; i++) {
+	dm = (int **) s_malloc(sizeof(int *) * region->nrects);
+	for (i = 0; i < region->nrects; i++) {
 		dm[i] = (int *) s_malloc(sizeof(int) * S_CLIENTS_MAX);
 	}
 
-	dpos = 0;
-	while (!s_list_eol(diff, dpos)) {
-		rtmp = (s_rect_t *) s_list_get(diff, dpos);
-		memset(dm[dpos], 0, sizeof(int) * S_CLIENTS_MAX);
-		s_server_surface_matrix_find(rtmp, dm[dpos]);
-		dpos++;
+	r = s_region_rectangles(region);
+	n = s_region_num_rectangles(region);
+	while (n--) {
+		memset(dm[n], 0, sizeof(int) * S_CLIENTS_MAX);
+		s_server_surface_matrix_find(r, dm[n]);
+		r++;
 	}
 	
-	dpos = 0;
-	while (!s_list_eol(diff, dpos)) {
-		rtmp = (s_rect_t *) s_list_get(diff, dpos);
+	r = s_region_rectangles(region);
+	n = s_region_num_rectangles(region);
+	while (n--) {
 		for (i = S_CLIENTS_MAX - 1; i >= 0; i--) {
-			if (dm[dpos][i]) {
-				s_server_socket_request(SOC_DATA_EXPOSE, i, rtmp);
+			if (dm[n][i]) {
+				s_server_socket_request(SOC_DATA_EXPOSE, i, r);
 			}
 		}
-		dpos++;
+		r++;
 	}
 	
-	dpos = 0;
-	while (!s_list_eol(diff, dpos)) {
-		rtmp = (s_rect_t *) s_list_get(diff, dpos);
+	r = s_region_rectangles(region);
+	n = s_region_num_rectangles(region);
+	while (n--) {
 		for (i = S_CLIENTS_MAX - 1; i >= 0; i--) {
-			if (dm[dpos][i]) {
-				s_server_window_form(i, rtmp);
+			if (dm[n][i]) {
+				s_server_window_form(i, r);
 				if (i == p_old) {
 					p_old = -1;
 				}
 			}
 		}
-		dpos++;
+		r++;
 	}
-
+	
 	/* tell the priority (only the focus) change if not told */
 	if ((p_old >= 0) &&
 	    (p_old != s_server_id_pri(id))) {
@@ -357,28 +337,23 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 		s_server_socket_request(SOC_DATA_EXPOSE, p_old, &rfake);
 	}
 	
-	dpos = 0;
-	while (!s_list_eol(diff, dpos)) {
-		rtmp = (s_rect_t *) s_list_get(diff, dpos);
-		s_server_surface_background(rtmp);
+	r = s_region_rectangles(region);
+	n = s_region_num_rectangles(region);
+	while (n--) {
+		s_server_surface_background(r);
 		if (flag == SURFACE_REFRESH) {
-			s_server_surface_clean(rtmp);
+			s_server_surface_clean(r);
 		}
-		s_server_surface_update(rtmp);
-		dpos++;
+		s_server_surface_update(r);
+		r++;
 	}
 
-	for (i = 0; i < diff->nb_elt; i++) {
+	for (i = 0; i < region->nrects; i++) {
 		s_free(dm[i]);
 	}
 	s_free(dm);
 	
-	while (!s_list_eol(diff, 0)) {
-		rtmp = (s_rect_t *) s_list_get(diff, 0);
-		s_list_remove(diff, 0);
-		s_free(rtmp);
-	}
-	s_list_uninit(diff);
+	s_region_destroy(region);
 }
 
 int s_server_id_pri (int id)
