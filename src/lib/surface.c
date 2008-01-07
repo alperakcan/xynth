@@ -21,29 +21,7 @@
 	#include <fcntl.h>
 #endif
 
-int s_surface_init (s_window_t *window)
-{
-	window->surface = (s_surface_t *) s_calloc(1, sizeof(s_surface_t));
-	window->surface->buf = (s_rect_t *) s_calloc(1, sizeof(s_rect_t));
-	window->surface->win = (s_rect_t *) s_calloc(1, sizeof(s_rect_t));
-	window->surface->window = window;
-	return 0;
-}
-
-void s_surface_attach (s_window_t *window)
-{
-	window->surface->vbuf = (unsigned char *) s_calloc(sizeof(char), window->surface->width *
-	                                                                 window->surface->height *
-	                                                                 window->surface->bytesperpixel + 1);
-	window->surface->mode = SURFACE_VIRTUAL;
-        if (window->surface->need_expose & SURFACE_NEEDSTREAM) {
-		return;
-	}
-	s_surface_shm_attach(window);
-       	s_surface_linear(window);
-}
-
-void s_surface_shm_attach (s_window_t *window)
+void s_surface_attach_matrix (s_window_t *window)
 {
 	void *addr;
 	
@@ -64,7 +42,7 @@ void s_surface_shm_attach (s_window_t *window)
         window->surface->matrix = (unsigned char *) addr;
 }
 
-void s_surface_linear (s_window_t *window)
+void s_surface_attach_buffer (s_window_t *window)
 {
 	int fd;
 	void *addr;
@@ -108,6 +86,27 @@ void s_surface_linear (s_window_t *window)
 	}
 #endif
 	window->surface->linear_buf = (unsigned char *) addr;
+}
+
+int s_surface_attach (s_window_t *window)
+{
+	window->surface->mode = SURFACE_VIRTUAL;
+//	window->surface->need_expose = SURFACE_NEEDSTREAM;
+	if (window->surface->need_expose & SURFACE_NEEDSTREAM) {
+		return 0;
+	}
+	s_surface_attach_matrix(window);
+       	s_surface_attach_buffer(window);
+       	return 0;
+}
+
+int s_surface_init (s_window_t *window)
+{
+	window->surface = (s_surface_t *) s_calloc(1, sizeof(s_surface_t));
+	window->surface->buf = (s_rect_t *) s_calloc(1, sizeof(s_rect_t));
+	window->surface->win = (s_rect_t *) s_calloc(1, sizeof(s_rect_t));
+	window->surface->window = window;
+       	return 0;
 }
 
 void s_surface_uninit (s_window_t *window)

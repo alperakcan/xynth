@@ -113,8 +113,9 @@ int s_window_new (s_window_t *window, S_WINDOW type, s_window_t *parent)
 	}
 
 	s_socket_request(window, SOC_DATA_NEW);
-//	window->surface->need_expose = SURFACE_NEEDSTREAM;
-	s_surface_attach(window);
+	window->surface->vbuf = (unsigned char *) s_calloc(sizeof(char), window->surface->width *
+	                                                                 window->surface->height *
+	                                                                 window->surface->bytesperpixel);
 
 	return 0;
 err:	return 1;
@@ -125,10 +126,9 @@ int s_window_init (s_window_t **window)
 	s_window_t *w;
 
 	w = (s_window_t *) s_calloc(1, sizeof(s_window_t));
-	if (s_surface_init(w))       { goto err1; }
-	if (s_pollfds_init(w))       { goto err2; }
-	if (s_timers_init(w))        { goto err3; }
-	if (s_socket_init(w))        { goto err4; }
+	if (s_pollfds_init(w))       { goto err1; }
+	if (s_timers_init(w))        { goto err2; }
+	if (s_socket_init(w))        { goto err3; }
         if (s_handlers_init(w))      { goto err4; }
 	if (s_childs_init(w))        { goto err5; }
 	if (s_eventq_init(w))        { goto err6; }
@@ -143,16 +143,20 @@ int s_window_init (s_window_t **window)
 	w->mouse_entered = 0;
 	*window = w;
 
-        if (s_socket_request(w, SOC_DATA_DISPLAY)) { goto err8; }
+	if (s_surface_init(w))                     { goto err8; }
+	if (s_socket_request(w, SOC_DATA_DISPLAY)) { goto err9; }
+	if (s_surface_attach(w))                   { goto err10; }
 
 	return 0;
+err10:
+err9:	s_surface_uninit(w);
 err8:	s_event_uninit(w->event);
 err7:	s_eventq_uninit(w);
 err6:	s_childs_uninit(w);
 err5:	s_handlers_uninit(w);
-err4:	s_timers_uninit(w);
-err3:	s_pollfds_uninit(w);
-err2:	s_free(w->surface);
+err4:
+err3:	s_timers_uninit(w);
+err2:	s_pollfds_uninit(w);
 err1:	s_free(w);
 	debugf(DCLI | DFAT, "Cannot connect to server");
 	return -1;
