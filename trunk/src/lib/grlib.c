@@ -19,22 +19,11 @@
 #define clipc(a, b, c, d, fonk)\
 	int nrects;\
 	s_rect_t crect;\
-	s_rect_t wrect;\
 	s_rect_t *crects;\
-	if (surface->parent != NULL) {\
-		wrect.x = a;\
-		wrect.y = b;\
-		wrect.w = c;\
-		wrect.h = d;\
-		if (s_region_rect_intersect(&wrect, surface->win, &crect) != 0) {\
-			return;\
-		}\
-	} else {\
-		crect.x = a;\
-		crect.y = b;\
-		crect.w = c;\
-		crect.h = d;\
-	}\
+	crect.x = a;\
+	crect.y = b;\
+	crect.w = c;\
+	crect.h = d;\
 	if (surface->clip == NULL) {\
 		fonk;\
 	} else {\
@@ -673,31 +662,13 @@ int s_putmaskpart (unsigned char *dp, int dw, int dh, int x, int y, int w, int h
 
 int s_surface_destroy (s_surface_t *surface)
 {
-	s_surface_t *c;
 	if (surface) {
-		s_thread_mutex_lock(surface->subm);
-		if (surface->parent) {
-			s_thread_mutex_lock(surface->parent->subm);
-			s_list_remove(surface->parent->subs, s_list_get_pos(surface->parent->subs, surface));
-		}
 		if (surface->evbuf == 0 && surface->vbuf) {
 			free(surface->vbuf);
 		}
 		if (surface->clip != NULL) {
 			s_region_destroy(surface->clip);
 		}
-		while (!s_list_eol(surface->subs, 0)) {
-			c = s_list_get(surface->subs, 0);
-			s_list_remove(surface->subs, 0);
-			c->parent = NULL;
-			s_surface_destroy(c);
-		}
-		if (surface->parent) {
-			s_thread_mutex_unlock(surface->parent->subm);
-		}
-		s_thread_mutex_unlock(surface->subm);
-		s_list_uninit(surface->subs);
-		s_thread_mutex_destroy(surface->subm);
 		free(surface->buf);
 		free(surface->win);
 		free(surface);
@@ -711,12 +682,6 @@ int s_surface_create_from_data (s_surface_t **surface, int width, int height, in
 
 	s = (s_surface_t *) s_malloc(sizeof(s_surface_t));
 	memset(s, 0, sizeof(s_surface_t));
-	if (s_thread_mutex_init(&s->subm)) {
-		goto err0;
-	}
-	if (s_list_init(&s->subs)) {
-		goto err1;
-	}
 	s->buf = (s_rect_t *) s_malloc(sizeof(s_rect_t));
 	memset(s->buf, 0, sizeof(s_rect_t));
 	s->win = (s_rect_t *) s_malloc(sizeof(s_rect_t));
@@ -800,7 +765,7 @@ int s_surface_create_from_data (s_surface_t **surface, int width, int height, in
 			s->redlength = 8;
 			break;
 		default:
-			goto err2;
+			goto err0;
 	}
         
         s->bluemask = ((1 << s->bluelength) - 1) << s->blueoffset;
@@ -827,8 +792,6 @@ int s_surface_create_from_data (s_surface_t **surface, int width, int height, in
 
 	*surface = s;
 	return 0;
-err2:	s_list_uninit(s->subs);
-err1:	s_thread_mutex_destroy(s->subm);
 err0:	s_free(s);
 	*surface = NULL;
 	return -1;
@@ -844,48 +807,6 @@ int s_surface_create (s_surface_t **surface, int width, int height, int bitsperp
 	s->vbuf = (unsigned char *) s_malloc(s->width * s->height * s->bytesperpixel);
 	*surface = s;
 	return 0;
-err0:	*surface = NULL;
-	return -1;
-}
-
-int s_surface_create_sub (s_surface_t **surface, int x, int y, int width, int height, s_surface_t *parent)
-{
-	s_rect_t p;
-	s_rect_t r;
-	s_surface_t *s;
-	if (parent == NULL) {
-		goto err0;
-	}
-	s_thread_mutex_lock(parent->subm);
-	if (s_surface_create_from_data(&s, parent->width, parent->height, parent->bitsperpixel, parent->vbuf)) {
-		goto err1;
-	}
-	s_list_add(parent->subs, s, -1);
-	s->parent = parent;
-	p.x = 0;
-	p.y = 0;
-	p.w = parent->buf->w;
-	p.h = parent->buf->h;
-	r.x = x;
-	r.y = y;
-	r.w = width;
-	r.h = height;
-	if (s_region_rect_intersect(&p, &r, s->buf)) {
-		goto err2;
-	}
-	r.x = s->buf->x + parent->win->x;
-	r.y = s->buf->y + parent->win->y;
-	r.w = s->buf->w;
-	r.h = s->buf->h;
-	if (s_region_rect_intersect(&p, &r, s->win)) {
-		goto err3;
-	}
-	s_thread_mutex_unlock(parent->subm);
-	*surface = s;
-	return 0;
-err3:
-err2:
-err1:	s_thread_mutex_unlock(parent->subm);
 err0:	*surface = NULL;
 	return -1;
 }
