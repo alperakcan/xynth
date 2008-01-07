@@ -2079,6 +2079,7 @@ struct s_region_s {
 
 int s_region_create (s_region_t **region);
 int s_region_destroy (s_region_t *region);
+int s_region_clear (s_region_t *region);
 int s_region_extents_calculate (s_region_t *region);
 int s_region_subrect (s_region_t *region, s_rect_t *rect);
 int s_region_delrect (s_region_t *region, s_rect_t *rect);
@@ -2093,7 +2094,6 @@ int s_region_combine (s_region_t *region);
 int s_region_rect_union (s_rect_t *rect1, s_rect_t *rect2, s_rect_t *result);
 int s_region_rect_intersect (s_rect_t *rect1, s_rect_t *rect2, s_rect_t *result);
 int s_region_rect_substract (s_rect_t *rect1, s_rect_t *rect2, s_region_t *result);
-
 
 /* render.c */
 typedef struct s_render_s s_render_t;
