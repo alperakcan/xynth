@@ -242,7 +242,7 @@ void s_video_vesa_server_goto_back (void)
 	s_video_vesa_data_t *priv = (s_video_vesa_data_t *) server->driver->driver_data;
 	s_video_vesa_text_mode();
 	s_video_vesa_restore_state(priv->vbe.state);
-	s_server_surface_lock_real();
+	s_server_surface_lock();
 }
 
 void s_video_vesa_server_comefrom_back (void)

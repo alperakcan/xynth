@@ -35,7 +35,6 @@ libxynth.a_files-y = alloc.c \
                      list.c \
                      pipe_api.c \
                      pollfd.c \
-                     rect.c \
                      region.c \
                      render.c \
                      socket.c \

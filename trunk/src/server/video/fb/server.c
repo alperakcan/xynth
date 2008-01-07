@@ -81,7 +81,7 @@ void fb_server_restore (void)
 
 void fb_server_goto_back (void)
 {
-	s_server_surface_lock_real();
+	s_server_surface_lock();
 	fb_putvaro();
 }
 

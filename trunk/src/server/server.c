@@ -605,7 +605,7 @@ void s_server_surface_update (s_rect_t *coor)
 	} else {
 		s_rect_t clip;
 		if (server->driver->server_surface_update != NULL) {
-			if (s_rect_clip_virtual(server->window->surface, coor->x, coor->y, coor->w, coor->h, &clip)) {
+			if (s_region_rect_intersect(server->window->surface->buf, coor, &clip)) {
 				return;
 			}
 			server->driver->server_surface_update(&clip);

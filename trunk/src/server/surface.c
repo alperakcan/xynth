@@ -143,65 +143,31 @@ void s_server_surface_matrix_add (int id, s_rect_t *coor)
 
 void s_server_surface_matrix_del (int id)
 {
-	s_server_surface_matrix_add_id(S_MATRIX_DELETED, &server->client[id].buf);
+	s_server_surface_matrix_add_id(S_MATRIX_FREE, &server->client[id].buf);
 }
 
 void s_server_surface_matrix_del_coor (s_rect_t *coor)
 {
-	s_server_surface_matrix_add_id(S_MATRIX_DELETED, coor);
+	s_server_surface_matrix_add_id(S_MATRIX_FREE, coor);
 }
 
 void s_server_surface_clean (s_rect_t *coor)
 {
-	s_rect_t intersect;
-
-	if (s_rect_clip_virtual(server->window->surface, coor->x, coor->y, coor->w, coor->h, &intersect)) {
+	s_rect_t clip;
+	if (s_region_rect_intersect(server->window->surface->buf, coor, &clip)) {
 		return;
 	}
-
-	bpp_fillbox_o(server->window->surface, S_MATRIX_FREE, intersect.x, intersect.y, intersect.w, intersect.h, 0);
+	bpp_fillbox_o(server->window->surface, S_MATRIX_FREE, clip.x, clip.y, clip.w, clip.h, 0);
 }
 
-void s_server_surface_background (s_rect_t *coor)
-{
-	int h;
-	int w;
-	int w_;
-	s_rect_t intersect;
-	unsigned char *tmp;
-
-	tmp = server->window->surface->matrix;
-
-	if (s_rect_clip_virtual(server->window->surface, coor->x, coor->y, coor->w, coor->h, &intersect)) {
-		return;
-	}
-	bpp_fillbox_o(server->window->surface, S_MATRIX_DELETED, intersect.x, intersect.y, intersect.w, intersect.h, 0);
-	
-	h = intersect.h;
-        w = intersect.w;
-        w_ = server->window->surface->width - w;
-        tmp += ((intersect.y * server->window->surface->width) + intersect.x);
-
-	while (h--) {
-		w = intersect.w;
-		while (w--) {
-			if (*tmp == S_MATRIX_DELETED) {
-				*tmp = S_MATRIX_FREE;
-			}
-			tmp++;
-		}
-		tmp += w_;
-	}
-}
-
-void s_server_surface_lock_real (void)
+void s_server_surface_lock (void)
 {
 	s_rect_t coor;
 	coor.x = 0;
 	coor.y = 0;
 	coor.w = server->window->surface->width;
 	coor.h = server->window->surface->height;
-	s_server_surface_matrix_add_id(S_MATRIX_DELETED, &coor);
+	s_server_surface_matrix_add_id(S_MATRIX_LOCKED, &coor);
 }
 
 void s_server_surface_refresh (void)

@@ -135,6 +135,62 @@ void s_surface_uninit (s_window_t *window)
 	window->surface = NULL;
 }
 
+int s_surface_clip_virtual (s_surface_t *surface, int x, int y, int w, int h, s_rect_t *coor)
+{
+	s_rect_t thip;
+	s_rect_t clip;
+
+	thip.x = x;
+	thip.y = y;
+	thip.w = w;
+	thip.h = h;
+
+	clip.x = 0;
+	clip.y = 0;
+	clip.w = surface->width;
+	clip.h = surface->height;
+
+	if (s_region_rect_intersect(&thip, &clip, coor)) {
+		return -1;
+	}
+	return 0;
+}
+
+int s_surface_clip_real (s_surface_t *surface, int x, int y, int w, int h, s_rect_t *coor)
+{
+        s_rect_t that;
+	s_rect_t thip;
+	s_rect_t cliv;
+	s_rect_t clir;
+	
+        thip.x = x;
+	thip.y = y;
+	thip.w = w;
+	thip.h = h;
+
+	cliv.x = 0;
+	cliv.y = 0;
+	cliv.w = MIN(surface->buf->w, surface->width);
+	cliv.h = MIN(surface->buf->h, surface->height);
+
+	clir.x = 0;
+	clir.y = 0;
+	clir.w = surface->linear_buf_width;
+	clir.h = surface->linear_buf_height;
+
+	if (s_region_rect_intersect(&thip, &cliv, &that)) {
+		return -1;
+	}
+	that.x += surface->buf->x;
+	that.y += surface->buf->y;
+	if (s_region_rect_intersect(&clir, &that, coor)) {
+		return -1;
+	}
+	coor->x -= surface->buf->x;
+	coor->y -= surface->buf->y;
+	return 0;
+}
+
 void s_surface_changed (s_window_t *window, s_rect_t *changed)
 {
 	int x;
@@ -147,7 +203,7 @@ void s_surface_changed (s_window_t *window, s_rect_t *changed)
 	
 	x = changed->x - window->surface->buf->x;
 	y = changed->y - window->surface->buf->y;
-	if (s_rect_clip_real(window->surface, x, y, changed->w, changed->h, &coor)) {
+	if (s_surface_clip_real(window->surface, x, y, changed->w, changed->h, &coor)) {
 		return;
 	}
 

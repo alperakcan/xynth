@@ -2001,64 +2001,14 @@ int s_pollfds_uninit (s_window_t *window);
 
 /*@}*/
 
-/** @defgroup client_rect Client Library - Rect API
-  * @brief s_rect_* api is designed for rectangular operations.
-  *
-  * @example
-  * typical usage of rect api;
-  *
-  * @code
-  *
-  * @endcode
-  */
+/* region.c */
 
-/** @addtogroup client_rect */
-/*@{*/
-
-/** rect struct
-  */
 struct s_rect_s {
-	/** x coordinate */
 	int x;
-	/** y coordinate */
 	int y;
-	/** width */
 	int w;
-	/** height */
 	int h;
 };
-
-/* rect.c */
-
-/** @brief performs clip on rectangle (x, y, w, h).
-  *        clip region is the surface's virtual buffer area
-  *
-  * @param *surface - surface
-  * @param x        - x
-  * @param y        - y
-  * @param w        - w
-  * @param h        - h
-  * @param *coor    - on success coor will be the clipped area
-  * @returns 0 on success, 1 on error.
-  */
-int s_rect_clip_virtual (s_surface_t *surface, int x, int y, int w, int h, s_rect_t *coor);
-
-/** @brief performs clip on rectangle (x, y, w, h).
-  *        clip region is the surface's virtual buffer area
-  *
-  * @param *surface - surface
-  * @param x        - x
-  * @param y        - y
-  * @param w        - w
-  * @param h        - h
-  * @param *coor    - on success coor will be the clipped area
-  * @returns 0 on success, 1 on error.
-  */
-int s_rect_clip_real (s_surface_t *surface, int x, int y, int w, int h, s_rect_t *coor);
-
-/*@}*/
-
-/* region.c */
 
 struct s_region_s {
 	s_rect_t extents;
@@ -2537,6 +2487,32 @@ void s_surface_linear (s_window_t *window);
   * @returns no return
   */
 void s_surface_uninit (s_window_t *window);
+
+/** @brief performs clip on rectangle (x, y, w, h).
+  *        clip region is the surface's virtual buffer area
+  *
+  * @param *surface - surface
+  * @param x        - x
+  * @param y        - y
+  * @param w        - w
+  * @param h        - h
+  * @param *coor    - on success coor will be the clipped area
+  * @returns 0 on success, 1 on error.
+  */
+int s_surface_clip_virtual (s_surface_t *surface, int x, int y, int w, int h, s_rect_t *coor);
+
+/** @brief performs clip on rectangle (x, y, w, h).
+  *        clip region is the surface's real buffer area
+  *
+  * @param *surface - surface
+  * @param x        - x
+  * @param y        - y
+  * @param w        - w
+  * @param h        - h
+  * @param *coor    - on success coor will be the clipped area
+  * @returns 0 on success, 1 on error.
+  */
+int s_surface_clip_real (s_surface_t *surface, int x, int y, int w, int h, s_rect_t *coor);
 
 /** @brief expose event handler
   *
