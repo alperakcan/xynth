@@ -2463,23 +2463,23 @@ int s_surface_init (s_window_t *window);
 /** @brief create and attach the device buffer to surface
   *
   * @param *window - the window
-  * @returns no return
+  * @returns 0 on success
   */
-void s_surface_attach (s_window_t *window);
+int s_surface_attach (s_window_t *window);
 
 /** @brief attach to the matrix buffer
   *
   * @param *window - the window
   * @returns no return
   */
-void s_surface_shm_attach (s_window_t *window);
+void s_surface_attach_matrix (s_window_t *window);
 
 /** @brief attach to the video buffer
   *
   * @param *window - the window
   * @returns no return
   */
-void s_surface_linear (s_window_t *window);
+void s_surface_attach_buffer (s_window_t *window);
 
 /** @brief uninitialize the surface struct
   *
