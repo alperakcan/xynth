@@ -57,10 +57,6 @@ void s_server_pri_set (S_SURFACE_CHNGF flag, ...)
 		}
 	}
 
-	if (flag != SURFACE_REDRAW) {
-		s_server_window_handlers_del_mouse();
-	}
-	
 	i = s_server_pri_id(0);
 	if ((i >= 0) &&
 	    (server->client[i].type & WINDOW_TEMP)) {
@@ -284,6 +280,7 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 		}
 	}
 
+	s_server_window_handlers_del_mouse();
 	if ((i = s_server_pri_id(0)) >= 0) {
 		s_server_window_handlers_add_mouse(i);
 	}
