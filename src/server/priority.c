@@ -340,10 +340,7 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 	r = s_region_rectangles(region);
 	n = s_region_num_rectangles(region);
 	while (n--) {
-		s_server_surface_background(r);
-		if (flag == SURFACE_REFRESH) {
-			s_server_surface_clean(r);
-		}
+		s_server_surface_clean(r);
 		s_server_surface_update(r);
 		r++;
 	}

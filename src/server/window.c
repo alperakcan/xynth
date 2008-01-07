@@ -152,7 +152,7 @@ void s_server_putbox (s_window_t *window, int id, s_rect_t *coor, int x, int y, 
 	if (s_region_rect_intersect(coor, &icoor, &intr)) {
 		return;
 	}
-	if (s_rect_clip_virtual(window->surface, intr.x, intr.y, intr.w, intr.h, &to)) {
+	if (s_region_rect_intersect(window->surface->buf, &intr, &to)) {
 		return;
 	}
 	add = (to.y - icoor.y) * img->w + (to.x - icoor.x);
@@ -293,7 +293,7 @@ void s_server_window_matrix_add (int id, s_rect_t *_coor_)
 
 void s_server_window_matrix_del (int id, s_rect_t *_coor_)
 {
-	s_server_window_matrix(id, S_MATRIX_DELETED, _coor_);
+	s_server_window_matrix(id, S_MATRIX_FREE, _coor_);
 }
 
 void s_server_window_matrix (int id, int mi, s_rect_t *_coor_)

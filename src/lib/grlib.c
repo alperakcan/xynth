@@ -45,7 +45,7 @@
 	int x0;\
 	int y0;\
 	s_rect_t coor;\
-	if (s_rect_clip_real(surface, a, b, c, d, &coor)) {\
+	if (s_surface_clip_real(surface, a, b, c, d, &coor)) {\
 		return;\
 	}\
 	x0 = coor.x - a;\
@@ -55,7 +55,7 @@
 	int x0;\
 	int y0;\
 	s_rect_t coor;\
-	if (s_rect_clip_virtual(surface, a, b, c, d, &coor)) {\
+	if (s_surface_clip_virtual(surface, a, b, c, d, &coor)) {\
 		return;\
 	}\
 	x0 = coor.x - a;\

@@ -319,8 +319,7 @@ void s_server_surface_matrix_add (int id, s_rect_t *coor);
 void s_server_surface_matrix_del (int id);
 void s_server_surface_matrix_del_coor (s_rect_t *coor);
 void s_server_surface_clean (s_rect_t *coor);
-void s_server_surface_background (s_rect_t *coor);
-void s_server_surface_lock_real (void);
+void s_server_surface_lock (void);
 void s_server_surface_refresh (void);
 
 /* window.c */
@@ -383,7 +382,7 @@ void s_server_window_handlers_del_mouse (void);
 void s_server_window_handlers_add_mouse (int id);
 
 /* window_move_resize.c */
-void s_server_window_lines_draw_ (s_rect_t *coor, s_rect_t *rect, int c);
+void s_server_window_lines_draw_ (s_rect_t *coor, int c);
 void s_server_window_lines_draw (s_rect_t *lnew);
 void s_server_window_lines_clear_ (s_rect_t *told, s_rect_t *tnew);
 void s_server_window_lines_clear (s_rect_t *lold, s_rect_t *lnew);

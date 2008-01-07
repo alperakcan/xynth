@@ -16,19 +16,20 @@
 #include "../lib/xynth_.h"
 #include "server.h"
 
-void s_server_window_lines_draw_ (s_rect_t *coor, s_rect_t *rect, int c)
+void s_server_window_lines_draw_ (s_rect_t *coor, int c)
 {
-	if (!s_rect_clip_virtual(server->window->surface, coor->x, coor->y, coor->w, coor->h, rect)) {
-		s_server_surface_matrix_add_id(S_MATRIX_MRBOX, rect);
-		bpp_fillbox_o(server->window->surface, S_MATRIX_MRBOX, rect->x, rect->y, rect->w, rect->h, c);
-		s_server_surface_update(rect);
+	s_rect_t rect;
+	if (s_region_rect_intersect(server->window->surface->buf, coor, &rect)) {
+		return;
 	}
+	s_server_surface_matrix_add_id(S_MATRIX_MRBOX, &rect);
+	bpp_fillbox_o(server->window->surface, S_MATRIX_MRBOX, rect.x, rect.y, rect.w, rect.h, c);
+	s_server_surface_update(&rect);
 }
 
 void s_server_window_lines_draw (s_rect_t *bnew)
 {
 	int color;
-	s_rect_t rect;
 	s_rect_t coor;
 
 	color = s_rgbcolor(server->window->surface, 222, 222, 222);
@@ -37,25 +38,25 @@ void s_server_window_lines_draw (s_rect_t *bnew)
 	coor.y = bnew->y;
 	coor.w = bnew->w;
 	coor.h = 1;
-	s_server_window_lines_draw_(&coor, &rect, color);
+	s_server_window_lines_draw_(&coor, color);
 
 	coor.x = bnew->x;
 	coor.y = bnew->y;
 	coor.w = 1;
 	coor.h = bnew->h;
-	s_server_window_lines_draw_(&coor, &rect, color);
+	s_server_window_lines_draw_(&coor, color);
 
 	coor.x = bnew->x;
 	coor.y = bnew->y + bnew->h - 1;
 	coor.w = bnew->w;
 	coor.h = 1;
-	s_server_window_lines_draw_(&coor, &rect, color);
+	s_server_window_lines_draw_(&coor, color);
 
 	coor.x = bnew->x + bnew->w - 1;
 	coor.y = bnew->y;
 	coor.w = 1;
 	coor.h = bnew->h;
-	s_server_window_lines_draw_(&coor, &rect, color);
+	s_server_window_lines_draw_(&coor, color);
 }
 
 void s_server_window_lines_clear_ (s_rect_t *told, s_rect_t *tnew)

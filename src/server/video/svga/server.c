@@ -206,7 +206,7 @@ s_video_driver_t s_video_svga = {
 
 void s_video_svga_server_goto_back (void)
 {
-	s_server_surface_lock_real();
+	s_server_surface_lock();
 }
 
 void s_video_svga_server_comefrom_back (void)

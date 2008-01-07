@@ -187,24 +187,34 @@ void s_server_cursor_select (S_MOUSE_CURSOR c)
 
 void s_server_cursor_position (int x, int y)
 {
-        s_rect_t coor;
+	s_rect_t cold;
+	s_rect_t cnew;
+	s_rect_t cmer;
 	s_rect_t clip;
-
+	
 	if (server->cursor.sw == 0) {
 		return;
 	}
+	
+	cold.x = server->cursor.x;
+	cold.y = server->cursor.y;
+	cold.w = server->cursor.img->w;
+	cold.h = server->cursor.img->h;
 
-	coor.x = MIN(x, server->cursor.x);
-	coor.y = MIN(y, server->cursor.y);
-	coor.w = MAX(x + server->cursor.img->w, server->cursor.x + server->cursor.img->w) - coor.x;
-	coor.h = MAX(y + server->cursor.img->h, server->cursor.y + server->cursor.img->h) - coor.y;
-	if (s_rect_clip_virtual(server->window->surface, coor.x, coor.y, coor.w, coor.h, &clip)) {
+	cnew.x = x;
+	cnew.y = y;
+	cnew.w = server->cursor.img->w;
+	cnew.h = server->cursor.img->h;
+	
+	if (s_region_rect_union(&cold, &cnew, &cmer)) {
 		return;
 	}
-
+	if (s_region_rect_intersect(server->window->surface->buf, &cmer, &clip)) {
+		return;
+	}
+	
 	server->cursor.x = x;
 	server->cursor.y = y;
-
 	s_server_pri_set(SURFACE_REDRAW, &clip);
 }
 
