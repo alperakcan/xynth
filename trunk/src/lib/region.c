@@ -40,6 +40,18 @@ int s_region_destroy (s_region_t *region)
 	return 0;
 }
 
+int s_region_clear (s_region_t *region)
+{
+	region->nrects = 0;
+	region->extents.x = 0;
+	region->extents.y = 0;
+	region->extents.w = 0;
+	region->extents.h = 0;
+	free(region->rects);
+	region->rects = NULL;
+	return 0;
+}
+
 int s_region_extents_calculate (s_region_t *region)
 {
 	int n;
@@ -206,6 +218,74 @@ err0:	*region = NULL;
 	return -1;
 }
 
+int s_region_unify (s_region_t *region)
+{
+	int n;
+	s_rect_t *r;
+	s_rect_t ext;
+	s_region_t *rev;
+	/* idea is simple
+	 * unified = reverse(reverse(region))
+	 */
+	if (s_region_reverse(region, &rev)) {
+		return -1;
+	}
+	if (s_region_extents(region, &ext)) {
+		s_region_destroy(rev);
+		return -1;
+	}
+	if (s_region_clear(region)) {
+		s_region_destroy(rev);
+		return -1;
+	}
+	if (s_region_addrect(region, &ext)) {
+		s_region_destroy(rev);
+		return -1;
+	}
+	r = s_region_rectangles(rev);
+	n = s_region_num_rectangles(rev);
+	while (n--) {
+		if (s_region_subrect(region, r)) {
+			s_region_destroy(rev);
+			return -1;
+		}
+		r++;
+	}
+	s_region_destroy(rev);
+	return 0;
+}
+
+int s_region_reverse (s_region_t *region, s_region_t **result)
+{
+	int n;
+	s_rect_t *r;
+	s_region_t *rg;
+	if (s_region_create(&rg)) {
+		*result = NULL;
+		return -1;
+	}
+	if (s_region_addrect(rg, &region->extents)) {
+		s_region_destroy(rg);
+		return -1;
+	}
+	r = s_region_rectangles(region);
+	n = s_region_num_rectangles(region);
+	while (n--) {
+		if (s_region_subrect(rg, r)) {
+			s_region_destroy(rg);
+			return -1;
+		}
+		r++;
+	}
+	*result = rg;
+	return 0;
+}
+
+int s_region_combine (s_region_t *region)
+{
+	return 0;
+}
+
 int s_region_rect_union (s_rect_t *rect1, s_rect_t *rect2, s_rect_t *result)
 {
 	int x31;
@@ -311,73 +391,5 @@ int s_region_rect_substract (s_rect_t *rect1, s_rect_t *rect2, s_region_t *resul
 	if (s_region_addrect(result, &rtmp)) {
 		return -1;
 	}
-	return 0;
-}
-
-int s_region_unify (s_region_t *region)
-{
-	int n;
-	s_rect_t *r;
-	s_rect_t ext;
-	s_region_t *rev;
-	/* idea is simple
-	 * unified = reverse(reverse(region))
-	 */
-	if (s_region_reverse(region, &rev)) {
-		return -1;
-	}
-	ext = region->extents;
-	region->nrects = 0;
-	free(region->rects);
-	region->rects = NULL;
-	region->extents.x = 0;
-	region->extents.y = 0;
-	region->extents.w = 0;
-	region->extents.h = 0;
-	if (s_region_addrect(region, &ext)) {
-		return -1;
-	}
-	r = s_region_rectangles(rev);
-	n = s_region_num_rectangles(rev);
-	while (n--) {
-		if (s_region_subrect(region, r)) {
-			s_region_destroy(rev);
-			return -1;
-		}
-		r++;
-	}
-	s_region_destroy(rev);
-	return 0;
-}
-
-int s_region_reverse (s_region_t *region, s_region_t **result)
-{
-	int n;
-	s_rect_t *r;
-	s_region_t *rg;
-	if (s_region_create(&rg)) {
-		*result = NULL;
-		return -1;
-	}
-	if (s_region_addrect(rg, &region->extents)) {
-		s_region_destroy(rg);
-		return -1;
-	}
-	r = s_region_rectangles(region);
-	n = s_region_num_rectangles(region);
-	while (n--) {
-		if (s_region_subrect(rg, r)) {
-			s_region_destroy(rg);
-			return -1;
-		}
-		r++;
-	}
-	*result = rg;
-	return 0;
-}
-
-int s_region_combine (s_region_t *region)
-{
-	s_region_extents_calculate(region);
 	return 0;
 }
