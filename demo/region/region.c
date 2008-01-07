@@ -464,7 +464,7 @@ int test_combine (int width, int height, int nrects)
 	if (s_region_destroy(region)) {
 		return -8;
 	}
-	if (memcmp(regionu, regionm, sizeof(char) * extents.w * extents.h)) {
+	if (memcmp(regionu, regionm, sizeof(char) * width * height)) {
 		return -9;
 	}
 	free(rects);
