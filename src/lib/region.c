@@ -99,7 +99,6 @@ int s_region_delrect (s_region_t *region, s_rect_t *rect)
 {
 	int n;
 	s_rect_t *r;
-	s_rect_t *rs;
 	for (n = 0; n < region->nrects;) {
 		r = &region->rects[n];
 		if (!(r->x - rect->x || r->y - rect->y ||
@@ -110,19 +109,11 @@ int s_region_delrect (s_region_t *region, s_rect_t *rect)
 				region->rects = NULL;
 				break;
 			}
-			rs = (s_rect_t *) malloc(sizeof(s_rect_t) * (region->nrects - 1));
-			if (rs == NULL) {
-				return -1;
-			}
 			region->nrects -= 1;
-			if (n > 0) {
-				memcpy(rs, region->rects, n * sizeof(s_rect_t));
-			}
 			if (n < region->nrects) {
-				memcpy(rs + n, region->rects + n + 1, (region->nrects - n) * sizeof(s_rect_t));
+				memmove(region->rects + n, region->rects + n + 1, (region->nrects - n) * sizeof(s_rect_t));
 			}
-			free(region->rects);
-			region->rects = rs;
+			region->rects = (s_rect_t *) realloc(region->rects, sizeof(s_rect_t) * region->nrects);
 			s_region_extents_calculate(region);
 			break;
 		} else {
