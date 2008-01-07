@@ -69,7 +69,7 @@ KAFFE_GR_FUNC_DECL(jobject, Java_java_awt_Toolkit_graInitGraphics, jobject tgt, 
 		coor.y = gr->y0 + yClip;
 		coor.w = wClip;
 		coor.h = hClip;
-		if (s_rect_intersect(&(gr->clip), &coor, &inter) == 0) {
+		if (s_region_rect_intersect(&(gr->clip), &coor, &inter) == 0) {
 			s_fillbox(gr->surface, inter.x, inter.y, inter.w, inter.h, bg);
 		}
 	}
@@ -111,7 +111,7 @@ KAFFE_GR_FUNC_DECL(void, Java_java_awt_Toolkit_graFillRect, jint x, jint y, jint
 		coor.y = gr->y0 + y;
 		coor.w = width;
 		coor.h = height;
-		if (s_rect_intersect(&(gr->clip), &coor, &inter) == 0) {
+		if (s_region_rect_intersect(&(gr->clip), &coor, &inter) == 0) {
 			s_fillbox(gr->surface, inter.x, inter.y, inter.w, inter.h, gr->fg);
 		}
 	}
@@ -147,7 +147,7 @@ KAFFE_GR_FUNC_DECL(void, Java_java_awt_Toolkit_graClearRect, jint x, jint y, jin
 	coor.y = gr->y0 + y;
 	coor.w = width;
 	coor.h = height;
-	if (s_rect_intersect(&(gr->clip), &coor, &inter) == 0) {
+	if (s_region_rect_intersect(&(gr->clip), &coor, &inter) == 0) {
 		s_fillbox(gr->surface, inter.x, inter.y, inter.w, inter.h, gr->bg);
 	}
 	DEBUGF("Leave");
@@ -193,7 +193,7 @@ KAFFE_GR_FUNC_DECL(void, Java_java_awt_Toolkit_graDrawImageScaled, jobject nimg,
 	coor.y = gr->y0 + y0;
 	coor.w = srfs->width;
 	coor.h = srfs->height;
-	if (s_rect_intersect(&(gr->clip), &coor, &inter) == 0) {
+	if (s_region_rect_intersect(&(gr->clip), &coor, &inter) == 0) {
 		s_putboxpart(gr->surface, inter.x, inter.y, inter.w, inter.h, srfs->width, srfs->height, srfs->vbuf, inter.x - coor.x, inter.y - coor.y);
 	}
 	s_surface_destroy(srfi);
@@ -235,7 +235,7 @@ KAFFE_GR_FUNC_DECL(void, Java_java_awt_Toolkit_graFill3DRect, jint x, jint y, ji
 	coor.y = gr->y0 + y + 1;
 	coor.w = width - 2;
 	coor.h = height - 2;
-	if (s_rect_intersect(&(gr->clip), &coor, &inter) == 0) {
+	if (s_region_rect_intersect(&(gr->clip), &coor, &inter) == 0) {
 		s_fillbox(gr->surface, inter.x, inter.y, inter.w, inter.h, gr->fg);
 	}
 	Java_java_awt_Toolkit_graDraw3DRect(env, clazz, jgr, x, y, width - 1, height - 1, raised, rgb);
@@ -263,7 +263,7 @@ KAFFE_GR_FUNC_DECL(void, Java_java_awt_Toolkit_graDrawString, jstring jstr, jint
 	coor.y = gr->y0 + y - gr->font->glyph.yMax;
 	coor.w = gr->font->glyph.img->w;
 	coor.h = gr->font->glyph.img->h;
-	if (s_rect_intersect(&(gr->clip), &coor, &inter) == 0) {
+	if (s_region_rect_intersect(&(gr->clip), &coor, &inter) == 0) {
 		s_putboxpartrgba(gr->surface, inter.x, inter.y, inter.w, inter.h, coor.w, coor.h, gr->font->glyph.img->rgba, inter.x - coor.x, inter.y - coor.y);
 	}
 	AWT_FREE(str);
@@ -331,7 +331,7 @@ KAFFE_GR_FUNC_DECL(void, Java_java_awt_Toolkit_graDrawChars, jcharArray jChars, 
 	coor.y = gr->y0 + y - gr->font->glyph.yMax;
 	coor.w = gr->font->glyph.img->w;
 	coor.h = gr->font->glyph.img->h;
-	if (s_rect_intersect(&(gr->clip), &coor, &inter) == 0) {
+	if (s_region_rect_intersect(&(gr->clip), &coor, &inter) == 0) {
 		s_putboxpartrgba(gr->surface, inter.x, inter.y, inter.w, inter.h, coor.w, coor.h, gr->font->glyph.img->rgba, inter.x - coor.x, inter.y - coor.y);
 	}
 	AWT_FREE(str);
@@ -352,7 +352,7 @@ KAFFE_GR_FUNC_DECL(void, Java_java_awt_Toolkit_graCopyArea, jint x, jint y, jint
 	coor.y = gr->y0 + y + yDelta;
 	coor.w = width;
 	coor.h = height;
-	if (s_rect_intersect(&(gr->clip), &coor, &inter) == 0) {
+	if (s_region_rect_intersect(&(gr->clip), &coor, &inter) == 0) {
 		s_putboxpart(gr->surface, inter.x, inter.y, inter.w, inter.h, coor.w, coor.h, vbuf, inter.x - coor.x, inter.y - coor.y);
 	}
 	AWT_FREE(vbuf);

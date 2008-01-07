@@ -32,7 +32,7 @@ void s_server_surface_matrix_find (s_rect_t *coor, int *dm)
 	clip.h = server->window->surface->height;
 	tmp = server->window->surface->matrix;
 
-	if (s_rect_intersect(&clip, coor, &inter)) {
+	if (s_region_rect_intersect(&clip, coor, &inter)) {
 		return;
 	}
 
@@ -65,7 +65,7 @@ void s_server_surface_matrix_add_this (int id, s_rect_t *coor, s_rect_t *mcoor, 
 	s_rect_t inter;
 	unsigned char *tmp;
 
-	if (s_rect_intersect(coor, mcoor, &intr_)) {
+	if (s_region_rect_intersect(coor, mcoor, &intr_)) {
 		return;
 	}
 
@@ -74,7 +74,7 @@ void s_server_surface_matrix_add_this (int id, s_rect_t *coor, s_rect_t *mcoor, 
 	clip.w = server->window->surface->width;
 	clip.h = server->window->surface->height;
 
-	if (s_rect_intersect(&intr_, &clip, &inter)) {
+	if (s_region_rect_intersect(&intr_, &clip, &inter)) {
 		return;
 	}
 
@@ -114,7 +114,7 @@ void s_server_surface_matrix_add_id (int id, s_rect_t *coor)
 	clip.h = server->window->surface->height;
 	tmp = server->window->surface->matrix;
 
-	if (s_rect_intersect(coor, &clip, &inter)) {
+	if (s_region_rect_intersect(coor, &clip, &inter)) {
 		return;
 	}
 	
@@ -135,7 +135,7 @@ void s_server_surface_matrix_add_id (int id, s_rect_t *coor)
 void s_server_surface_matrix_add (int id, s_rect_t *coor)
 {
 	s_rect_t inter;
-	if (s_rect_intersect(coor, &server->client[id].buf, &inter)) {
+	if (s_region_rect_intersect(coor, &server->client[id].buf, &inter)) {
 		return;
 	}
 	s_server_surface_matrix_add_id(id, &inter);

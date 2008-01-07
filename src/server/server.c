@@ -580,7 +580,7 @@ void s_server_surface_update (s_rect_t *coor)
 		clip.y = 0;
 		clip.w = server->window->surface->width;
 		clip.h = server->window->surface->height;
-		if (s_rect_intersect(&clip, coor, &inter)) {
+		if (s_region_rect_intersect(&clip, coor, &inter)) {
 			return;
 		}
 

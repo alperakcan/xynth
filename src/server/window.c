@@ -149,7 +149,7 @@ void s_server_putbox (s_window_t *window, int id, s_rect_t *coor, int x, int y, 
 	icoor.w = img->w;
 	icoor.h = img->h;
 
-	if (s_rect_intersect(coor, &icoor, &intr)) {
+	if (s_region_rect_intersect(coor, &icoor, &intr)) {
 		return;
 	}
 	if (s_rect_clip_virtual(window->surface, intr.x, intr.y, intr.w, intr.h, &to)) {
@@ -261,7 +261,7 @@ void s_server_window_form (int id, s_rect_t *_coor_)
 		return;
 	}
 
-	if (s_rect_intersect(_coor_, &coor_, &coor)) {
+	if (s_region_rect_intersect(_coor_, &coor_, &coor)) {
 		return;
 	}
 
@@ -281,7 +281,7 @@ void s_server_window_form (int id, s_rect_t *_coor_)
 	}
 
 	/* title */
-	if ((!s_rect_intersect(&coor, &coort, &intersect)) && (server->client[id].win.w > server->theme.form_min.w)) {
+	if ((!s_region_rect_intersect(&coor, &coort, &intersect)) && (server->client[id].win.w > server->theme.form_min.w)) {
 		s_server_putbox(server->window, id, &intersect, coort.x, coort.y + server->theme.text_v_off[v] - server->client[id].title.hy[v] + (server->theme.form[v][TOP_3].handler->h - server->client[id].title.hh[v]) / 2, &server->client[id].title.img[v]);
 	}
 }
@@ -307,7 +307,7 @@ void s_server_window_matrix (int id, int mi, s_rect_t *_coor_)
 		return;
 	}
 
-	if (s_rect_intersect(_coor_, &coor_, &coor)) {
+	if (s_region_rect_intersect(_coor_, &coor_, &coor)) {
 		return;
 	}
 

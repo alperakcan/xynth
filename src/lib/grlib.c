@@ -26,7 +26,7 @@
 		wrect.y = b;\
 		wrect.w = c;\
 		wrect.h = d;\
-		if (s_rect_intersect(&wrect, surface->win, &crect) != 0) {\
+		if (s_region_rect_intersect(&wrect, surface->win, &crect) != 0) {\
 			return;\
 		}\
 	} else {\
@@ -46,7 +46,7 @@
 		nrects = s_region_num_rectangles(surface->clip);\
 		crects = s_region_rectangles(surface->clip);\
 		while (nrects--) {\
-			if (s_rect_intersect(&crects[nrects], &cintr, &crect) == 0) {\
+			if (s_region_rect_intersect(&crects[nrects], &cintr, &crect) == 0) {\
 				fonk;\
 			}\
 		}\
@@ -78,7 +78,7 @@
 	s_rect_t intr;\
 	thip.x = 0; thip.y = 0; thip.w = bw; thip.h = bh;\
 	clip.x = xo; clip.y = yo; clip.w = w; clip.h = h;\
-	if (s_rect_intersect(&thip, &clip, &intr)) {\
+	if (s_region_rect_intersect(&thip, &clip, &intr)) {\
 		return;\
 	}\
 	xo = intr.x; yo = intr.y; w = intr.w; h = intr.h;
@@ -160,7 +160,7 @@ int s_getpixel (s_surface_t *surface, int x, int y)
 	clip.y = 0;
 	clip.w = surface->width;
 	clip.h = surface->height;
-	if (s_rect_intersect(&thix, &clip, &coor)) {
+	if (s_region_rect_intersect(&thix, &clip, &coor)) {
 		return 0;
 	}
 	return (bpp_getpixel(surface, coor.x, coor.y));
@@ -634,7 +634,7 @@ int s_putmaskpart (unsigned char *dp, int dw, int dh, int x, int y, int w, int h
 	clip.w = bw;
 	clip.h = bh;
 
-	if (s_rect_intersect(&thip, &clip, &coor)) {
+	if (s_region_rect_intersect(&thip, &clip, &coor)) {
 		return -1;
 	}
 	
@@ -648,7 +648,7 @@ int s_putmaskpart (unsigned char *dp, int dw, int dh, int x, int y, int w, int h
 	clip.w = dw;
 	clip.h = dh;
 	
-	if (s_rect_intersect(&thip, &clip, &coor)) {
+	if (s_region_rect_intersect(&thip, &clip, &coor)) {
 		return -1;
 	}
 	
@@ -870,14 +870,14 @@ int s_surface_create_sub (s_surface_t **surface, int x, int y, int width, int he
 	r.y = y;
 	r.w = width;
 	r.h = height;
-	if (s_rect_intersect(&p, &r, s->buf)) {
+	if (s_region_rect_intersect(&p, &r, s->buf)) {
 		goto err2;
 	}
 	r.x = s->buf->x + parent->win->x;
 	r.y = s->buf->y + parent->win->y;
 	r.w = s->buf->w;
 	r.h = s->buf->h;
-	if (s_rect_intersect(&p, &r, s->win)) {
+	if (s_region_rect_intersect(&p, &r, s->win)) {
 		goto err3;
 	}
 	s_thread_mutex_unlock(parent->subm);
