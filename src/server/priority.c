@@ -249,11 +249,11 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 							       "UNKNOWN",
 							       c0->x, c0->y, c0->w, c0->h);
 		}
-		dpos = 0;
-		while (!s_list_eol(diff, dpos)) {
-			rtmp = (s_rect_t *) s_list_get(diff, dpos);
-			debugf(DSER, "\t%d %d %d %d", rtmp->x, rtmp->y, rtmp->w, rtmp->h);
-			dpos++;
+		r = s_region_rectangles(region);
+		n = s_region_num_rectangles(region);
+		while (n--) {
+			debugf(DSER, "\t%d %d %d %d", r->x, r->y, r->w, r->h);
+			r++;
 		}
 	}
 #endif
