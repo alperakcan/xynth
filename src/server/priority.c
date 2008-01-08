@@ -136,6 +136,8 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 	int n;
 	s_rect_t *r;
 	s_region_t *region;
+	
+	unsigned long long times[2];
 
 	s_region_create(&region);
 
@@ -254,6 +256,13 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 	}
 #endif
 	
+	times[0] = s_gettimeofday();
+
+	s_server_window_handlers_del_mouse();
+	if ((i = s_server_pri_id(0)) >= 0) {
+		s_server_window_handlers_add_mouse(i);
+	}
+
 	r = s_region_rectangles(region);
 	n = s_region_num_rectangles(region);
 	while (n--) {
@@ -261,6 +270,7 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 		r++;
 	}
 
+#if 1
         /* -1 alwaysonbottom
             0 regular
 	   +1 alwaysontop
@@ -278,11 +288,6 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 				}
 			}
 		}
-	}
-
-	s_server_window_handlers_del_mouse();
-	if ((i = s_server_pri_id(0)) >= 0) {
-		s_server_window_handlers_add_mouse(i);
 	}
 
 	s_server_cursor_matrix_add();
@@ -326,6 +331,14 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 		r++;
 	}
 	
+	r = s_region_rectangles(region);
+	n = s_region_num_rectangles(region);
+	while (n--) {
+		s_server_surface_clean(r);
+		s_server_surface_update(r);
+		r++;
+	}
+
 	/* tell the priority (only the focus) change if not told */
 	if ((p_old >= 0) &&
 	    (p_old != s_server_id_pri(id))) {
@@ -333,6 +346,109 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 		rfake.x = 0; rfake.y = 0; rfake.w = 0; rfake.h = 0;
 		s_server_socket_request(SOC_DATA_EXPOSE, p_old, &rfake);
 	}
+	
+	for (i = 0; i < region->nrects; i++) {
+		s_free(dm[i]);
+	}
+	s_free(dm);
+#else
+	int ri;
+	int rp;
+	int rj;
+	int rk;
+	int rn;
+	s_rect_t *rr;
+	s_region_t reg;
+	s_region_t regsb[S_CLIENTS_MAX];
+	s_region_t regsw[S_CLIENTS_MAX];
+
+	memset(&reg, 0, sizeof(s_region_t));
+	memset(regsb, 0, sizeof(s_region_t) * S_CLIENTS_MAX);
+	memset(regsw, 0, sizeof(s_region_t) * S_CLIENTS_MAX);
+	
+	for (rp = S_CLIENTS_MAX - 1; rp >= 0; rp--) {
+		ri = s_server_pri_id(rp);
+		if (ri < 0) {
+			continue;
+		}
+		s_region_clear(&regsb[ri]);
+		s_region_addrect(&regsb[ri], &server->client[ri].buf);
+		for (ontop = server->client[ri].alwaysontop; ontop <= 1; ontop++) {
+			for (rj = rp - 1; rj >= 0; rj--) {
+				rk = s_server_pri_id(rj);
+				if (rk < 0) {
+					continue;
+				}
+				if (server->client[rk].alwaysontop != ontop) {
+					continue;
+				}
+				s_region_subrect(&regsb[ri], &server->client[rk].buf);
+			}
+		}
+	}
+	
+	for (rp = S_CLIENTS_MAX - 1; rp >= 0; rp--) {
+		ri = s_server_pri_id(rp);
+		if (ri < 0) {
+			continue;
+		}
+		s_region_clear(&regsw[ri]);
+		s_region_addrect(&regsw[ri], &server->client[ri].win);
+		for (ontop = server->client[ri].alwaysontop; ontop <= 1; ontop++) {
+			for (rj = rp - 1; rj >= 0; rj--) {
+				rk = s_server_pri_id(rj);
+				if (rk < 0) {
+					continue;
+				}
+				if (server->client[rk].alwaysontop != ontop) {
+					continue;
+				}
+				s_region_subrect(&regsw[ri], &server->client[rk].win);
+			}
+		}
+	}
+	
+	for (rp = S_CLIENTS_MAX - 1; rp >= 0; rp--) {
+		ri = s_server_pri_id(rp);
+		if (ri < 0) {
+			continue;
+		}
+		s_region_clear(&reg);
+		s_region_intregion(&regsb[ri], region, &reg);
+		rr = s_region_rectangles(&reg);
+		rn = s_region_num_rectangles(&reg);
+		while (rn--) {
+			s_server_surface_matrix_add(ri, rr);
+			s_server_socket_request(SOC_DATA_EXPOSE, ri, rr);
+			if (ri == p_old) {
+				p_old = -1;
+			}
+			rr++;
+		}
+	}
+	
+	for (rp = S_CLIENTS_MAX - 1; rp >= 0; rp--) {
+		ri = s_server_pri_id(rp);
+		if (ri < 0) {
+			continue;
+		}
+		s_region_clear(&reg);
+		s_region_intregion(&regsw[ri], region, &reg);
+		rr = s_region_rectangles(&reg);
+		rn = s_region_num_rectangles(&reg);
+		while (rn--) {
+			s_server_window_matrix_add(ri, rr);
+			s_server_window_form(ri, rr);
+			if (ri == p_old) {
+				p_old = -1;
+			}
+			rr++;
+		}
+		s_region_clear(&reg);
+	}
+	
+	s_server_cursor_matrix_add();
+	s_server_cursor_draw();
 	
 	r = s_region_rectangles(region);
 	n = s_region_num_rectangles(region);
@@ -342,11 +458,22 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 		r++;
 	}
 
-	for (i = 0; i < region->nrects; i++) {
-		s_free(dm[i]);
+	/* tell the priority (only the focus) change if not told */
+	if ((p_old >= 0) &&
+	    (p_old != s_server_id_pri(id))) {
+		s_rect_t rfake;
+		rfake.x = 0; rfake.y = 0; rfake.w = 0; rfake.h = 0;
+		s_server_socket_request(SOC_DATA_EXPOSE, p_old, &rfake);
 	}
-	s_free(dm);
 	
+	s_region_clear(&reg);
+	for (ri = 0; ri < S_CLIENTS_MAX; ri++) {
+		s_region_clear(&regsb[ri]);
+		s_region_clear(&regsw[ri]);
+	}
+#endif
+	times[1] = s_gettimeofday();
+	printf("took: %llu\n", times[1] - times[0]);
 	s_region_destroy(region);
 }
 
