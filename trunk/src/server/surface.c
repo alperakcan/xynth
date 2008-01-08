@@ -141,11 +141,6 @@ void s_server_surface_matrix_add (int id, s_rect_t *coor)
 	s_server_surface_matrix_add_id(id, &inter);
 }
 
-void s_server_surface_matrix_del (int id)
-{
-	s_server_surface_matrix_add_id(S_MATRIX_FREE, &server->client[id].buf);
-}
-
 void s_server_surface_matrix_del_coor (s_rect_t *coor)
 {
 	s_server_surface_matrix_add_id(S_MATRIX_FREE, coor);

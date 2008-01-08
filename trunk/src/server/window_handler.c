@@ -16,16 +16,19 @@
 #include "../lib/xynth_.h"
 #include "server.h"
 
-#define s_server_window_btn_y(a)\
-	int id = s_server_pri_id(0);\
-	if (id < 0) {\
-		return;\
-	}\
-	if (id == server->cursor.xyid) {\
-		s_server_mouse_setcursor(a);\
-	} else {\
-		s_server_mouse_setcursor(server->client[id].cursor);\
+void s_server_window_btn_resize_o (S_MOUSE_CURSOR cursor)
+{
+	int id;
+	id = s_server_pri_id(0);
+	if (id < 0) {
+		return;
 	}
+	if (id == server->cursor.xyid) {
+		s_server_mouse_setcursor(cursor);
+	} else {
+		s_server_mouse_setcursor(server->client[id].cursor);
+	}
+}
 
 void s_server_window_btn_resize_oh (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
@@ -38,35 +41,35 @@ void s_server_window_btn_resize_oh (s_window_t *window, s_event_t *event, s_hand
 }
 void s_server_window_btn_resize_u_o (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
-	s_server_window_btn_y(MOUSE_CURSOR_SIZEV);
+	s_server_window_btn_resize_o(MOUSE_CURSOR_SIZEV);
 }
 void s_server_window_btn_resize_ur_o (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
-	s_server_window_btn_y(MOUSE_CURSOR_SIZES);
+	s_server_window_btn_resize_o(MOUSE_CURSOR_SIZES);
 }
 void s_server_window_btn_resize_r_o (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
-	s_server_window_btn_y(MOUSE_CURSOR_SIZEH);
+	s_server_window_btn_resize_o(MOUSE_CURSOR_SIZEH);
 }
 void s_server_window_btn_resize_dr_o (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
-	s_server_window_btn_y(MOUSE_CURSOR_SIZEB);
+	s_server_window_btn_resize_o(MOUSE_CURSOR_SIZEB);
 }
 void s_server_window_btn_resize_d_o (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
-	s_server_window_btn_y(MOUSE_CURSOR_SIZEV);
+	s_server_window_btn_resize_o(MOUSE_CURSOR_SIZEV);
 }
 void s_server_window_btn_resize_dl_o (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
-	s_server_window_btn_y(MOUSE_CURSOR_SIZES);
+	s_server_window_btn_resize_o(MOUSE_CURSOR_SIZES);
 }
 void s_server_window_btn_resize_l_o (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
-	s_server_window_btn_y(MOUSE_CURSOR_SIZEH);
+	s_server_window_btn_resize_o(MOUSE_CURSOR_SIZEH);
 }
 void s_server_window_btn_resize_ul_o (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
-	s_server_window_btn_y(MOUSE_CURSOR_SIZEB);
+	s_server_window_btn_resize_o(MOUSE_CURSOR_SIZEB);
 }
 
 #define s_server_window_btn_x(a, b)\

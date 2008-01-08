@@ -186,70 +186,69 @@ int s_server_window_form_mat_verbose (int id)
         return 0;
 }
 
-void s_server_window_form_mat (int v, int id, int mi, s_rect_t *coor, void (*func) (s_window_t *, int, s_rect_t *, int, int, s_image_t *))
+void s_server_window_form_mat (int v, int id, s_rect_t *coor, void (*func) (s_window_t *, int, s_rect_t *, int, int, s_image_t *))
 {
 	int i;
 	/* top */
-	func(server->window, mi, coor, server->client[id].form[TOP_L].x, server->client[id].form[TOP_L].y, &server->theme.form[v][TOP_L]);
+	func(server->window, id, coor, server->client[id].form[TOP_L].x, server->client[id].form[TOP_L].y, &server->theme.form[v][TOP_L]);
 	for (i = 0; i < server->client[id].form[TOP_1].w; i += server->theme.form[v][TOP_1].w) {
-		func(server->window, mi, coor, server->client[id].form[TOP_1].x + i, server->client[id].form[TOP_1].y, &server->theme.form[v][TOP_1]);
+		func(server->window, id, coor, server->client[id].form[TOP_1].x + i, server->client[id].form[TOP_1].y, &server->theme.form[v][TOP_1]);
 	}
 	if (server->client[id].win.w >= server->theme.form_min.w) {
-		func(server->window, mi, coor, server->client[id].form[TOP_2].x, server->client[id].form[TOP_2].y, &server->theme.form[v][TOP_2]);
+		func(server->window, id, coor, server->client[id].form[TOP_2].x, server->client[id].form[TOP_2].y, &server->theme.form[v][TOP_2]);
 		if ((i = server->client[id].form[TOP_3].w / server->theme.form[v][TOP_3].w) > 0) {
 			while (i--) {
-				func(server->window, mi, coor, server->client[id].form[TOP_3].x + i * server->theme.form[v][TOP_3].w, server->client[id].form[TOP_3].y, &server->theme.form[v][TOP_3]);
+				func(server->window, id, coor, server->client[id].form[TOP_3].x + i * server->theme.form[v][TOP_3].w, server->client[id].form[TOP_3].y, &server->theme.form[v][TOP_3]);
 			}
 		}
 		if (server->client[id].form[TOP_3].w % server->theme.form[v][TOP_3].w) {
-			func(server->window, mi, coor, server->client[id].form[TOP_4].x - server->theme.form[v][TOP_3].w, server->client[id].form[TOP_3].y, &server->theme.form[v][TOP_3]);
+			func(server->window, id, coor, server->client[id].form[TOP_4].x - server->theme.form[v][TOP_3].w, server->client[id].form[TOP_3].y, &server->theme.form[v][TOP_3]);
 		}
-		func(server->window, mi, coor, server->client[id].form[TOP_4].x, server->client[id].form[TOP_4].y, &server->theme.form[v][TOP_4]);
+		func(server->window, id, coor, server->client[id].form[TOP_4].x, server->client[id].form[TOP_4].y, &server->theme.form[v][TOP_4]);
 	}
 	if ((i = server->client[id].form[TOP_5].w / server->theme.form[v][TOP_5].w) > 0) {
 		while (i--) {
-			func(server->window, mi, coor, server->client[id].form[TOP_5].x + i * server->theme.form[v][TOP_5].w, server->client[id].form[TOP_5].y, &server->theme.form[v][TOP_5]);
+			func(server->window, id, coor, server->client[id].form[TOP_5].x + i * server->theme.form[v][TOP_5].w, server->client[id].form[TOP_5].y, &server->theme.form[v][TOP_5]);
 		}
 	}
 	if (server->client[id].form[TOP_5].w % server->theme.form[v][TOP_5].w) {
-		func(server->window, mi, coor, server->client[id].form[TOP_R].x - server->theme.form[v][TOP_5].w, server->client[id].form[TOP_5].y, &server->theme.form[v][TOP_5]);
+		func(server->window, id, coor, server->client[id].form[TOP_R].x - server->theme.form[v][TOP_5].w, server->client[id].form[TOP_5].y, &server->theme.form[v][TOP_5]);
 	}
-	func(server->window, mi, coor, server->client[id].form[TOP_R].x, server->client[id].form[TOP_R].y, &server->theme.form[v][TOP_R]);
+	func(server->window, id, coor, server->client[id].form[TOP_R].x, server->client[id].form[TOP_R].y, &server->theme.form[v][TOP_R]);
 	/* left */
 	if ((i = server->client[id].form[LEFT].h / server->theme.form[v][LEFT].h) > 0) {
 		while (i--) {
-			func(server->window, mi, coor, server->client[id].form[LEFT].x, server->client[id].form[LEFT].y + i * server->theme.form[v][LEFT].h, &server->theme.form[v][LEFT]);
+			func(server->window, id, coor, server->client[id].form[LEFT].x, server->client[id].form[LEFT].y + i * server->theme.form[v][LEFT].h, &server->theme.form[v][LEFT]);
 		}
 	}
 	if (server->client[id].form[LEFT].h % server->theme.form[v][LEFT].h) {
-		func(server->window, mi, coor, server->client[id].form[LEFT].x, server->client[id].form[BTM_L].y - server->theme.form[v][LEFT].h, &server->theme.form[v][LEFT]);
+		func(server->window, id, coor, server->client[id].form[LEFT].x, server->client[id].form[BTM_L].y - server->theme.form[v][LEFT].h, &server->theme.form[v][LEFT]);
 	}
         /* right */
 	if ((i = server->client[id].form[RIGHT].h / server->theme.form[v][RIGHT].h) > 0) {
 		while (i--) {
-			func(server->window, mi, coor, server->client[id].form[RIGHT].x, server->client[id].form[RIGHT].y + i * server->theme.form[v][RIGHT].h, &server->theme.form[v][RIGHT]);
+			func(server->window, id, coor, server->client[id].form[RIGHT].x, server->client[id].form[RIGHT].y + i * server->theme.form[v][RIGHT].h, &server->theme.form[v][RIGHT]);
 		}
 	}
 	if (server->client[id].form[RIGHT].h % server->theme.form[v][RIGHT].h) {
-		func(server->window, mi, coor, server->client[id].form[RIGHT].x, server->client[id].form[BTM_R].y - server->theme.form[v][RIGHT].h, &server->theme.form[v][RIGHT]);
+		func(server->window, id, coor, server->client[id].form[RIGHT].x, server->client[id].form[BTM_R].y - server->theme.form[v][RIGHT].h, &server->theme.form[v][RIGHT]);
 	}
         /* buttom */
-        func(server->window, mi, coor, server->client[id].form[BTM_L].x, server->client[id].form[BTM_L].y, &server->theme.form[v][BTM_L]);
+        func(server->window, id, coor, server->client[id].form[BTM_L].x, server->client[id].form[BTM_L].y, &server->theme.form[v][BTM_L]);
         if ((i = server->client[id].form[BTM].w / server->theme.form[v][BTM].w) > 0) {
 		while (i--) {
-			func(server->window, mi, coor, server->client[id].form[BTM].x + i * server->theme.form[v][BTM].w, server->client[id].form[BTM].y, &server->theme.form[v][BTM]);
+			func(server->window, id, coor, server->client[id].form[BTM].x + i * server->theme.form[v][BTM].w, server->client[id].form[BTM].y, &server->theme.form[v][BTM]);
 		}
 	}
 	if (server->client[id].form[BTM].w % server->theme.form[v][BTM].w) {
-		func(server->window, mi, coor, server->client[id].form[BTM_R].x - server->theme.form[v][BTM].w, server->client[id].form[BTM].y, &server->theme.form[v][BTM]);
+		func(server->window, id, coor, server->client[id].form[BTM_R].x - server->theme.form[v][BTM].w, server->client[id].form[BTM].y, &server->theme.form[v][BTM]);
 	}
-        func(server->window, mi, coor, server->client[id].form[BTM_R].x, server->client[id].form[BTM_R].y, &server->theme.form[v][BTM_R]);
+        func(server->window, id, coor, server->client[id].form[BTM_R].x, server->client[id].form[BTM_R].y, &server->theme.form[v][BTM_R]);
 }
 
 void s_server_window_form (int id, s_rect_t *_coor_)
 {
 	int v = 0;
-	int mi = id;
 	s_rect_t coort;
 	s_rect_t intersect;
 
@@ -270,7 +269,7 @@ void s_server_window_form (int id, s_rect_t *_coor_)
         coort.w = server->client[id].form[TOP_3].w;
         coort.h = server->theme.form[v][TOP_3].handler->h;
 
-	s_server_window_form_mat(v, id, mi, &coor, s_server_putbox);
+	s_server_window_form_mat(v, id, &coor, s_server_putbox);
 
 	/* buttons */
 	s_server_putbox(server->window, id, &coor, server->client[id].button[MENU].x, server->client[id].button[MENU].y, &server->theme.button[v][MENU]);
@@ -288,16 +287,6 @@ void s_server_window_form (int id, s_rect_t *_coor_)
 
 void s_server_window_matrix_add (int id, s_rect_t *_coor_)
 {
-	s_server_window_matrix(id, id, _coor_);
-}
-
-void s_server_window_matrix_del (int id, s_rect_t *_coor_)
-{
-	s_server_window_matrix(id, S_MATRIX_FREE, _coor_);
-}
-
-void s_server_window_matrix (int id, int mi, s_rect_t *_coor_)
-{
 	int v = 0;
 	s_rect_t coor;
 	s_rect_t coor_ = server->client[id].win;
@@ -311,7 +300,7 @@ void s_server_window_matrix (int id, int mi, s_rect_t *_coor_)
 		return;
 	}
 
-	s_server_window_form_mat(v, id, mi, &coor, s_server_putmat);
+	s_server_window_form_mat(v, id, &coor, s_server_putmat);
 }
 
 void s_server_window_calculate (int id)
