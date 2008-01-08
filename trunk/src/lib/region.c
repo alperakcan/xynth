@@ -154,6 +154,51 @@ int s_region_addrect (s_region_t *region, s_rect_t *rect)
 	return 0;
 }
 
+int s_region_subregion (s_region_t *region, s_region_t *sub)
+{
+	int n;
+	s_rect_t *r;
+	r = s_region_rectangles(sub);
+	n = s_region_num_rectangles(sub);
+	while (n--) {
+		if (s_region_subrect(region, r)) {
+			return -1;
+		}
+		r++;
+	}
+	return 0;
+}
+
+int s_region_delregion (s_region_t *region, s_region_t *del)
+{
+	int n;
+	s_rect_t *r;
+	r = s_region_rectangles(del);
+	n = s_region_num_rectangles(del);
+	while (n--) {
+		if (s_region_delrect(region, r)) {
+			return -1;
+		}
+		r++;
+	}
+	return 0;
+}
+
+int s_region_addregion (s_region_t *region, s_region_t *add)
+{
+	int n;
+	s_rect_t *r;
+	r = s_region_rectangles(add);
+	n = s_region_num_rectangles(add);
+	while (n--) {
+		if (s_region_addrect(region, r)) {
+			return -1;
+		}
+		r++;
+	}
+	return 0;
+}
+
 int s_region_num_rectangles (s_region_t *region)
 {
 	return region->nrects;
