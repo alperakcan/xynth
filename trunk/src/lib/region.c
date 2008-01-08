@@ -75,6 +75,24 @@ int s_region_extents_calculate (s_region_t *region)
 	return 0;
 }
 
+int s_region_intrect (s_region_t *region, s_rect_t *rect, s_region_t *result)
+{
+	int n;
+	s_rect_t t;
+	s_rect_t *r;
+	r = s_region_rectangles(region);
+	n = s_region_num_rectangles(region);
+	while (n--) {
+		if (s_region_rect_intersect(r, rect, &t) == 0) {
+			if (s_region_addrect(result, &t)) {
+				return -1;
+			}
+		}
+		r++;
+	}
+	return 0;
+}
+
 int s_region_subrect (s_region_t *region, s_rect_t *rect)
 {
 	int n;
@@ -150,6 +168,21 @@ int s_region_addrect (s_region_t *region, s_rect_t *rect)
 		region->extents = *rect;
 	} else {
 		s_region_rect_union(&region->extents, rect, &region->extents);
+	}
+	return 0;
+}
+
+int s_region_intregion (s_region_t *region, s_region_t *intersect, s_region_t *result)
+{
+	int n;
+	s_rect_t *r;
+	r = s_region_rectangles(intersect);
+	n = s_region_num_rectangles(intersect);
+	while (n--) {
+		if (s_region_intrect(region, r, result)) {
+			return -1;
+		}
+		r++;
 	}
 	return 0;
 }
