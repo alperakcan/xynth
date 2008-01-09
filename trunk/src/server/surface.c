@@ -16,44 +16,6 @@
 #include "../lib/xynth_.h"
 #include "server.h"
 
-void s_server_surface_matrix_find (s_rect_t *coor, int *dm)
-{
-	int i;
-	int h;
-	int w;
-	int w_;
-	s_rect_t clip;
-	s_rect_t inter;
-	unsigned char *tmp;
-
-	clip.x = 0;
-	clip.y = 0;
-	clip.w = server->window->surface->width;
-	clip.h = server->window->surface->height;
-	tmp = server->window->surface->matrix;
-
-	if (s_region_rect_intersect(&clip, coor, &inter)) {
-		return;
-	}
-
-        h = inter.h;
-        w = inter.w;
-        w_ = clip.w - inter.w;
-        tmp += ((inter.y * clip.w) + inter.x);
-
-	while (h--) {
-		w = inter.w;
-		while (w--) {
-			i = *tmp;
-			if (i < S_CLIENTS_MAX) {
-				dm[i] = 1;
-			}
-			tmp++;
-		}
-		tmp += w_;
-	}
-}
-
 void s_server_surface_matrix_add_this (int id, s_rect_t *coor, s_rect_t *mcoor, unsigned char *mat)
 {
 	int h;
