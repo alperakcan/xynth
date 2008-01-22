@@ -285,7 +285,9 @@ int s_server_socket_listen_parse (int soc)
 	if (s_socket_api_recv(soc, &soc_data, sizeof(soc_data)) != sizeof(soc_data)) {
 		return -1;
 	}
+#if 0
 	debugf(DSER, "Received 0x%08x (%s) from client [%d]", soc_data, s_socket_data_to_name(soc_data), id);
+#endif
 	switch (soc_data) {
 		case SOC_DATA_NEW:
 			return s_server_socket_listen_new(id);
@@ -472,7 +474,9 @@ err:		debugf(DSER, "Error occured when requesting (%d) from client[%d]. Closing 
 		return -1;
 	}
 
+#if 0
 	debugf(DSER, "Requesting 0x%08x (%s) from client [%d]", req, s_socket_data_to_name(req), id);
+#endif
 
 	if (s_socket_api_send(server->client[id].soc, &req, sizeof(req)) != sizeof(req)) {
 		return -1;

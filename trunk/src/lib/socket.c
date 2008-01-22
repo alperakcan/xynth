@@ -241,7 +241,9 @@ again:	if (window->running <= 0) {
 		goto err0;
 	}
 	
+#if 0
 	debugf(DCLI, "[%d] Requesting 0x%08x (%s) from server", window->id, req, s_socket_data_to_name(req));
+#endif
 
 	switch (req) {
 		case SOC_DATA_NEW:
@@ -435,7 +437,9 @@ int s_socket_listen_parse (s_window_t *window, int soc)
 		goto err0;
 	}
 
+#if 0
 	debugf(DCLI, "[%d] Received 0x%08x (%s) from server", window->id, req, s_socket_data_to_name(req));
+#endif
 
 	switch (req) {
 		case SOC_DATA_EVENT:
