@@ -92,7 +92,7 @@ int w_listbox_item_add (w_object_t *object, w_listbox_item_t *item)
 	} else {
 		lb->active = s_list_get_pos(lb->items, active);
 	}
-//	w_object_draw(object);
+	//w_object_draw(object);
 	return 0;
 }
 
@@ -114,7 +114,7 @@ int w_listbox_item_del (w_object_t *object, w_listbox_item_t *item)
 	if (lb->active < 0) {
 		lb->active = 0;
 	}
-//	w_object_draw(object);
+	//w_object_draw(object);
 	return 0;
 }
 
@@ -172,6 +172,7 @@ void w_listbox_slide (w_object_t *object, int vertical, int horizontal, int *yto
 	//w_object_update(object, object->surface->win);
 	(*ytotal) = lb->height;
 	(*yoffset) = lb->yoffset;
+	//printf("%d %d -> %d %d\n", vertical, horizontal, lb->height, lb->yoffset);
 }
 
 void w_listbox_draw (w_object_t *object)
@@ -270,6 +271,7 @@ void w_listbox_scrollbuffer_set (w_object_t *object, w_object_t *scrollbuffer)
 	w_listbox_t *lb;
 	lb = object->data[OBJECT_LISTBOX];
 	lb->scrollbuffer = scrollbuffer;
+	w_scrollbuffer_set_slide(scrollbuffer, w_listbox_slide);
 }
 
 int w_listbox_set_changed (w_object_t *object, void (*changed) (w_object_t *object, int active))
