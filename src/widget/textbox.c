@@ -146,6 +146,7 @@ void w_textbox_lines_calculate (w_object_t *object)
 					}
 				}
 				if (limit) {
+#if 0
 					while (ptrline[0] == ' ') {
 						for (ptrw = 0; ptrline[ptrw] && ptrline[ptrw + 1]; ptrw++) {
 							ptrline[ptrw] = ptrline[ptrw + 1];
@@ -158,6 +159,7 @@ void w_textbox_lines_calculate (w_object_t *object)
 						}
 						strline[strw] = '\0';
 					}
+#endif
 					ptrw = strlen(ptrline);
 					strw = strlen(strline);
 					if (ptrline[ptrw - 1] != ' ' &&
@@ -232,12 +234,12 @@ void w_textbox_draw_ (w_object_t *object)
 		if (!(textbox->properties & TEXTBOX_HCENTER) || object->content->w == w) {
 			x = object->content->x;
 		} else {
-			x = (object->content->w - w) / 2;
+			x = object->content->x + (object->content->w - w) / 2;
 		}
 		if (!(textbox->properties & TEXTBOX_VCENTER) || object->content->h == h) {
 			y = object->content->y;
 		} else {
-			y = (object->content->h - h) / 2;
+			y = object->content->y + (object->content->h - h) / 2;
 		}
 		y += glyph->lineskip * line;
 		y += textbox->yoffset;
