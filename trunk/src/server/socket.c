@@ -285,7 +285,7 @@ int s_server_socket_listen_parse (int soc)
 	if (s_socket_api_recv(soc, &soc_data, sizeof(soc_data)) != sizeof(soc_data)) {
 		return -1;
 	}
-#if 0
+#if 1
 	debugf(DSER, "Received 0x%08x (%s) from client [%d]", soc_data, s_socket_data_to_name(soc_data), id);
 #endif
 	switch (soc_data) {
@@ -474,7 +474,7 @@ err:		debugf(DSER, "Error occured when requesting (%d) from client[%d]. Closing 
 		return -1;
 	}
 
-#if 0
+#if 1
 	debugf(DSER, "Requesting 0x%08x (%s) from client [%d]", req, s_socket_data_to_name(req), id);
 #endif
 
