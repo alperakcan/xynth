@@ -241,7 +241,7 @@ again:	if (window->running <= 0) {
 		goto err0;
 	}
 	
-#if 0
+#if 1
 	debugf(DCLI, "[%d] Requesting 0x%08x (%s) from server", window->id, req, s_socket_data_to_name(req));
 #endif
 
@@ -437,7 +437,7 @@ int s_socket_listen_parse (s_window_t *window, int soc)
 		goto err0;
 	}
 
-#if 0
+#if 1
 	debugf(DCLI, "[%d] Received 0x%08x (%s) from server", window->id, req, s_socket_data_to_name(req));
 #endif
 
@@ -534,7 +534,7 @@ int s_socket_listen_wait (s_window_t *window, int timeout)
 		case -1:
 			retval = -1;
 			goto end;
-		default :
+		default:
 			for (i = 0; i < len; i++) {
 				pfd = s_pollfd_find(window, polfd[i].fd);
 				if (pfd == NULL) {

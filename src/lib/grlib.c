@@ -664,14 +664,14 @@ int s_surface_destroy (s_surface_t *surface)
 {
 	if (surface) {
 		if (surface->evbuf == 0 && surface->vbuf) {
-			free(surface->vbuf);
+			s_free(surface->vbuf);
 		}
 		if (surface->clip != NULL) {
 			s_region_destroy(surface->clip);
 		}
-		free(surface->buf);
-		free(surface->win);
-		free(surface);
+		s_free(surface->buf);
+		s_free(surface->win);
+		s_free(surface);
 	}
 	return 0;
 }
