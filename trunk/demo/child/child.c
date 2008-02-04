@@ -32,7 +32,7 @@ static void child_handler1c (s_window_t *window, s_event_t *event, s_handler_t *
 {
         i++;
 	i %= 3;
-
+	printf("alwaysontop: %d\n", (i == 2) ? -1 : i);
 	s_window_set_alwaysontop(window, (i == 2) ? -1 : i);
 }
 
