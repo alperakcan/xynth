@@ -286,8 +286,18 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 		}
 		s_region_clear(&regsb[ri]);
 		s_region_addrect(&regsb[ri], &server->client[ri].buf);
-		for (ontop = server->client[ri].alwaysontop; ontop <= 1; ontop++) {
-			for (rj = rp - 1; rj >= 0; rj--) {
+		for (rj = rp - 1; rj >= 0; rj--) {
+			rk = s_server_pri_id(rj);
+			if (rk < 0) {
+				continue;
+			}
+			if (server->client[rk].alwaysontop != server->client[ri].alwaysontop) {
+				continue;
+			}
+			s_region_subrect(&regsb[ri], &server->client[rk].buf);
+		}
+		for (ontop = server->client[ri].alwaysontop + 1; ontop <= 1; ontop++) {
+			for (rj = S_CLIENTS_MAX - 1; rj >= 0; rj--) {
 				rk = s_server_pri_id(rj);
 				if (rk < 0) {
 					continue;
@@ -307,8 +317,18 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 		}
 		s_region_clear(&regsw[ri]);
 		s_region_addrect(&regsw[ri], &server->client[ri].win);
-		for (ontop = server->client[ri].alwaysontop; ontop <= 1; ontop++) {
-			for (rj = rp - 1; rj >= 0; rj--) {
+		for (rj = rp - 1; rj >= 0; rj--) {
+			rk = s_server_pri_id(rj);
+			if (rk < 0) {
+				continue;
+			}
+			if (server->client[rk].alwaysontop != server->client[ri].alwaysontop) {
+				continue;
+			}
+			s_region_subrect(&regsw[ri], &server->client[rk].win);
+		}
+		for (ontop = server->client[ri].alwaysontop + 1; ontop <= 1; ontop++) {
+			for (rj = S_CLIENTS_MAX - 1; rj >= 0; rj--) {
 				rk = s_server_pri_id(rj);
 				if (rk < 0) {
 					continue;
