@@ -9,11 +9,11 @@ CFLAGS += -Wall -pipe -g -O2 -fsigned-char -fno-strict-aliasing
 
 MAKE       := $(MAKE) --no-print-directory
 
-CC         := gcc
-LD         := ld
-AR         := ar rcs
-RANLIB     := ranlib
-STRIP      := strip
+CC         := $(CROSS_PREFIX)gcc
+LD         := $(CROSS_PREFIX)ld
+AR         := $(CROSS_PREFIX)ar rcs
+RANLIB     := $(CROSS_PREFIX)ranlib
+STRIP      := $(CROSS_PREFIX)strip
 
 HOSTCC     := gcc
 HOSTLD     := ld
