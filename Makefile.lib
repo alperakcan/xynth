@@ -1,12 +1,119 @@
+# 
+# Makefile.lib 
+#
+# version   : 2.0
+# copyright : © 2002 - 2008 by Alper Akcan
+# email     : alper.akcan@gmail.com
+#
 
 #
-# Makefile.lib
-# Alper Akcan <distchx@yahoo.com>
-# (C) 2007 
+# Makefile Example using Makefile.lib
+#
+# target-y  = target1
+# target-y += target2
+#
+# target1_files-y = target_file_shared.c \
+#                   target1_file_2.c \
+#                   target1_file_3.c
+# target1_includes-y = ./ \
+#                      /opt/include
+# target1_libraries-y = ./ \
+#                       /opt/lib
+# target1_cflags-y = -DUSER_DEFINED \
+#                    -O0
+# target1_ldflags-y = -luserdefined
+#
+# target2_files-y = target_file_shared.c \
+#                   target2_file_2.c \
+#                   target2_file_3.c
+# target2_includes-y = ./ \
+#                      /opt/include
+# target2_libraries-y = ./ \
+#                       /opt/lib
+# target2_cflags-y = -DUSER_DEFINED \
+#                    -O0
+# target2_ldflags-y = -luserdefined
+#
+# include Makefile.lib
 #
 
-CFLAGS += -Wall -pipe -g -O2 -fsigned-char -fno-strict-aliasing
+#
+# Overview
+#
+# you can have more than one target, just add targets as you wish. you can
+# share files among targets, files will be compiled for each target with
+# approtiate flags.
+#
+# in addition targets may depend each other, so if your target depends on
+# target.so just add target.so to target's depend list with;
+#    target_depends-y = target.so
+#
+# targets may also depend to the subdirectories, so target commands will
+# not be executed until subdirs commands get executed.
+#
+# some usefull files are created in make process, for debugging and for speedup
+# .target/*.dep              : includes depend information for the file
+# .target/*.dep.cmd          : the command used for generating .dep file
+# .target/*.o                : object for the file
+# .target/*.o.cmd            : the command used for creating the object
+# .target/target[a,so,o]     : the target
+# .target/target[a,so,o].cmd : the command used for creating the target
+# target                     : the target
+#
 
+#
+# Available Targets
+#
+# target-[y,n, ]    : a binary target.
+#                     target will be created with $(CC) -o
+# target_o-[y,n, ]  : an object target.
+#                     target.o will be created with $(LD) -r -o
+# target_a-[y,n, ]  : a static library target.
+#                     target.a will be created with $(AR)
+# target_so-[y,n, ] : a shared library target.
+#                     target.so will be created with $(CC) -o -shared
+#
+# target.host-[y,n, ]    : a binary target.
+#                          target will be created with $(HOSTCC) -o
+# target.host_o-[y,n, ]  : an object target.
+#                          target.o will be created with $(HOSTLD) -r -o
+# target.host_a-[y,n, ]  : a static library target.
+#                          target.a will be created with $(HOSTAR)
+# target.host_so-[y,n, ] : a shared library target.
+#                          target.so will be created with $(HOSTCC) -o -shared
+#
+# subdir-[y,n, ] : subdirectory targets are executed with
+#                  $(subdir-y)_makeflags-y $(MAKE) -C $(subdir-y)
+#
+#
+# Available Target Flags
+#
+# $(TARGET)_makeflags-[y,n, ] : makeflags for target  will be passed to make
+#                               command only for corresponding target.
+# $(TARGET)_files-[y,n, ]     : files must match *.[cho] pattern. *.[ch] files
+#                               will be exemined with $(CC) -M command to
+#                               generate dependency files (*.dep) files. *.[o]
+#                               files will be used only in linking stage. all
+#                               files generated with make command will be
+#                               removed with $(RM) command.
+# $(TARGET)_cflags-[y,n, ]    : cflags will be added to global $(CFLAGS) for
+#                               corresponding target only.
+# $(TARGET)_cppflags-[y,n, ]  : cppflags will be added to global $(CPPFLAGS)
+#                               for corresponding target only.
+# $(TARGET)_includes-[y,n, ]  : a '-I' will be added to all words in includes
+#                               flag, and will be used only for corresponding
+#                               target.
+# $(TARGET)_libraries-[y,n, ] : a '-L' will be added to all words in libraries
+#                               flag, and will be used only for corresponding
+#                               target.
+# $(TARGET)_ldflags-[y,n, ]   : ldflags will be added to gloabal $(LDFLAGS) for
+#                               corresponding target only.
+# $(TARGET)_depends-[y,n, ]   : all words in depends flag will be added to
+#                               prerequisite's list.
+#
+
+override CFLAGS += -Wall -pipe -g -O2 -fsigned-char -fno-strict-aliasing 
+ 
 MAKE       := $(MAKE) --no-print-directory
 
 CC         := $(CROSS_PREFIX)gcc
@@ -119,15 +226,23 @@ disp_widgetc        = $($(verbose)_disp_widgetc)
 #
 # _CMD
 #
-_cmd_depend.c       = $(CC) $(CFLAGS) $(CPPFLAGS) $($1_cflags) $($1_cppflags) $($1_includes) -M $$< | $(SED) 's,\($$*\.o\) *:,.$1/\1 $$@: ,' > $$@
-_cmd_compile.c      = $(CC) $(CFLAGS) $(CPPFLAGS) $($1_cflags) $($1_cppflags) $($1_includes) -c -o $$@ $$<
+_cmd_depend.c       = $(CC) $(CFLAGS) $(CPPFLAGS) $($1_cflags) $($1_cppflags) \
+                      $($1_includes) -M $$< | $(SED) 's,\($$*\.o\) *:,.$1/\1 \
+                      $$@: ,' > $$@
+_cmd_compile.c      = $(CC) $(CFLAGS) $(CPPFLAGS) $($1_cflags) $($1_cppflags) \
+                      $($1_includes) -c -o $$@ $$<
 _cmd_link.c         = $(CC) $($1_libraries) -o $$@ $$^ $($1_ldflags) $(LDFLAGS)
 _cmd_link_so.c      = $(CC) $($1_libraries) -o $$@ $$^ $($1_ldflags) $(LDFLAGS) -shared
 
-_cmd_depend.c.host  = $(HOSTCC) $(CFLAGS) $(CPPFLAGS) $($1_cflags) $($1_cppflags) $($1_includes) -M $$< | $(SED) 's,\($$*\.o\) *:,.$1/\1 $$@: ,' > $$@
-_cmd_compile.c.host = $(HOSTCC) $(CFLAGS) $(CPPFLAGS) $($1_cflags) $($1_cppflags) $($1_includes) -c -o $$@ $$<
-_cmd_link.c.host    = $(HOSTCC) $(CFLAGS) $($1_libraries) -o $$@ $$^ $($1_ldflags) $(LDFLAGS)
-_cmd_link_so.c.host = $(HOSTCC) $(CFLAGS) $($1_libraries) -o $$@ $$^ $($1_ldflags) $(LDFLAGS) -shared
+_cmd_depend.c.host  = $(HOSTCC) $(CFLAGS) $(CPPFLAGS) $($1_cflags) \
+                      $($1_cppflags) $($1_includes) -M $$< | $(SED) \
+                      's,\($$*\.o\) *:,.$1/\1 $$@: ,' > $$@
+_cmd_compile.c.host = $(HOSTCC) $(CFLAGS) $(CPPFLAGS) $($1_cflags) \
+                      $($1_cppflags) $($1_includes) -c -o $$@ $$<
+_cmd_link.c.host    = $(HOSTCC) $(CFLAGS) $($1_libraries) -o $$@ $$^ \
+                      $($1_ldflags) $(LDFLAGS)
+_cmd_link_so.c.host = $(HOSTCC) $(CFLAGS) $($1_libraries) -o $$@ $$^ \
+                      $($1_ldflags) $(LDFLAGS) -shared
 
 _cmd_ar             = $(AR) $$@ $$^
 _cmd_ranlib         = $(RANLIB) $$@
@@ -144,15 +259,23 @@ _cmd_widgetc        = $(CD) .$1; $(WIDGETC) -f ../$$< -o $$(subst .xws,,$$<)
 #
 # CMD
 #
-cmd_depend.c       = echo "$(_cmd_depend.c)" > $$@.cmd       ; $(_cmd_depend.c)
-cmd_compile.c      = echo "$(_cmd_compile.c)" > $$@.cmd      ; $(_cmd_compile.c)
-cmd_link.c         = echo "$(_cmd_link.c)" > $$@.cmd         ; $(_cmd_link.c)
-cmd_link_so.c      = echo "$(_cmd_link_so.c)" > $$@.cmd      ; $(_cmd_link_so.c)
+cmd_depend.c       = echo "$(_cmd_depend.c)" > $$@.cmd       ; \
+                     $(_cmd_depend.c)
+cmd_compile.c      = echo "$(_cmd_compile.c)" > $$@.cmd      ; \
+                     $(_cmd_compile.c)
+cmd_link.c         = echo "$(_cmd_link.c)" > $$@.cmd         ; \
+                     $(_cmd_link.c)
+cmd_link_so.c      = echo "$(_cmd_link_so.c)" > $$@.cmd      ; \
+                     $(_cmd_link_so.c)
 
-cmd_depend.c.host  = echo "$(_cmd_depend.c.host)" > $$@.cmd  ; $(_cmd_depend.c.host)
-cmd_compile.c.host = echo "$(_cmd_compile.c.host)" > $$@.cmd ; $(_cmd_compile.c.host)
-cmd_link.c.host    = echo "$(_cmd_link.c.host)" > $$@.cmd    ; $(_cmd_link.c.host)
-cmd_link_so.c.host = echo "$(_cmd_link_so.c.host)" > $$@.cmd ; $(_cmd_link_so.c.host)
+cmd_depend.c.host  = echo "$(_cmd_depend.c.host)" > $$@.cmd  ; \
+                     $(_cmd_depend.c.host)
+cmd_compile.c.host = echo "$(_cmd_compile.c.host)" > $$@.cmd ; \
+                     $(_cmd_compile.c.host)
+cmd_link.c.host    = echo "$(_cmd_link.c.host)" > $$@.cmd    ; \
+                     $(_cmd_link.c.host)
+cmd_link_so.c.host = echo "$(_cmd_link_so.c.host)" > $$@.cmd ; \
+                     $(_cmd_link_so.c.host)
 
 cmd_ar             = echo "$(_cmd_ar)" > $$@.cmd             ; $(_cmd_ar)
 cmd_ranlib         = echo "$(_cmd_ranlib)" >> $$@.cmd        ; $(_cmd_ranlib)
@@ -198,9 +321,12 @@ do_widgetc        = @$(MKDIR) .$1; $(disp_widgetc)        ; $(cmd_widgetc)
 define target-defaults_base
     $(eval $1_sources   = $(filter %.c,$2))
     $(eval $1_headers   = $(filter %.h,$2))
-    $(eval $1_wsources  = $(addprefix .$1/, $(subst .xws,_xml.c,$(filter %.xws,$2))))
-    $(eval $1_wheaders  = $(addprefix .$1/, $(subst .xws,_xml.h,$(filter %.xws,$2))))
-    $(eval $1_objects   = $(addprefix .$1/, $(subst .c,.o,$($1_sources))))
+    $(eval $1_wsources  = $(addprefix .$1/, \
+                          $(subst .xws,_xml.c,$(filter %.xws,$2))))
+    $(eval $1_wheaders  = $(addprefix .$1/, \
+                          $(subst .xws,_xml.h,$(filter %.xws,$2))))
+    $(eval $1_objects   = $(addprefix .$1/, \
+                          $(subst .c,.o,$($1_sources))))
     $(eval $1_wobjects  = $(subst .c,.o,$($1_wsources)))
     $(eval $1_eobjects  = $(filter %.o,$2))
     $(eval $1_depends   = $(addprefix .$1/, $(subst .c,.dep,$($1_sources))))
@@ -334,13 +460,19 @@ endef
 
 # generate target variables
 
-$(eval $(foreach T,$(target-y),$(eval $(call target-variables,$T,$($T_files-y)))))
-$(eval $(foreach T,$(target_o-y),$(eval $(call target_o-variables,$T,$($T_files-y)))))
-$(eval $(foreach T,$(target_a-y),$(eval $(call target_a-variables,$T,$($T_files-y)))))
-$(eval $(foreach T,$(target_so-y),$(eval $(call target_so-variables,$T,$($T_files-y)))))
+$(eval $(foreach T,$(target-y), \
+	$(eval $(call target-variables,$T,$($T_files-y)))))
+$(eval $(foreach T,$(target_o-y), \
+	$(eval $(call target_o-variables,$T,$($T_files-y)))))
+$(eval $(foreach T,$(target_a-y), \
+	$(eval $(call target_a-variables,$T,$($T_files-y)))))
+$(eval $(foreach T,$(target_so-y), \
+	$(eval $(call target_so-variables,$T,$($T_files-y)))))
 
-$(eval $(foreach T,$(target.host-y),$(eval $(call target_host-variables,$T,$($T_files-y)))))
-$(eval $(foreach T,$(target_o.host-y),$(eval $(call target_o_host-variables,$T,$($T_files-y)))))
+$(eval $(foreach T,$(target.host-y), \
+	$(eval $(call target_host-variables,$T,$($T_files-y)))))
+$(eval $(foreach T,$(target_o.host-y), \
+	$(eval $(call target_o_host-variables,$T,$($T_files-y)))))
 
 $(eval $(foreach T,$(target-n),$(eval $(call target_empty-defaults,$T))))
 $(eval $(foreach T,$(target-),$(eval $(call target_empty-defaults,$T))))
@@ -357,7 +489,6 @@ $(eval $(foreach T,$(target_o-),$(eval $(call target_empty-defaults,$T))))
 # generate subdir targets
 
 $(eval $(foreach S,$(subdir-y),$(eval $(call subdir-defaults,$S))))
-
 $(eval $(foreach S,$(subdir-n),$(eval $(call subdir_empty-defaults,$S,clean))))
 $(eval $(foreach S,$(subdir-),$(eval $(call subdir_empty-defaults,$S,clean))))
 
