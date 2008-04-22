@@ -1,9 +1,18 @@
 
-Edit Makefile.cfg (or copy one of Makefile.cfg.*) and xynth.conf for your needs
+Edit xynth.conf for your needs
 
-make all
-make dist
-make install
+# make menuconfig
+# make all
+# make dist
+# make install
+
+You may also use defult configs with;
+
+make linux        - linux default configuration
+make linux-single - linux single app configuration
+make mingw        - mingw default configuration
+make pspdev       - pspdev default configuration
+make gp2x         - gp2x default configuration
 
 after instalation xynth.conf will be located at $(CONFDIR).
 
