@@ -5,6 +5,16 @@ config CONFIG_CONFIGURED
     bool
     default y
 
+config CONFIG_CROSS_PREFIX
+    string "Cross compile prefix"
+    default "psp-" if CONFIG_PLATFORM_PSPDEV
+
+config CONFIG_LIBRARY_SHARED
+    bool "Build shared library"
+
+config CONFIG_LIBRARY_STATIC
+    bool "Build static library"
+
 config CONFIG_DEBUG
     bool "Debugging support"
     default y
@@ -190,6 +200,8 @@ endmenu
 
 endmenu
 
+menu "Thread Options"
+
 choice
     prompt "Thread Method"
     default CONFIG_THREAD_PTHREADS if CONFIG_PLATFORM_LINUX
@@ -212,8 +224,14 @@ config CONFIG_THREAD_WINDOWS
 config CONFIG_THREAD_PSPDEV
     bool "pspdev"
     depends on CONFIG_PLATFORM_PSPDEV
+    select CONFIG_THREAD_EMULATION
 
 endchoice
+
+config CONFIG_THREAD_EMULATION
+    bool "Emulate condition variable/mutex"
+
+endmenu
 
 menu "Communication Method"
 
@@ -236,12 +254,12 @@ endchoice
 
 choice
     prompt "Pipe Method"
-    default CONFIG_PIPE_POSIX if CONFIG_PLATFORM_LINUX || CONFIG_PLATFORM_GP2X
-    default CONFIG_PIPE_MEMORY if CONFIG_PLATFORM_MINGW || CONFIG_PLATFORM_PSPDEV
+    default CONFIG_PIPE_POSIX if CONFIG_PLATFORM_LINUX || CONFIG_PLATFORM_GP2X || CONFIG_PLARFORM_PSPDEV
+    default CONFIG_PIPE_MEMORY if CONFIG_PLATFORM_MINGW
 
 config CONFIG_PIPE_POSIX
     bool "posix"
-    depends on CONFIG_PLATFORM_LINUX || CONFIG_PLATFORM_GP2X
+    depends on CONFIG_PLATFORM_LINUX || CONFIG_PLATFORM_GP2X || CONFIG_PLATFORM_PSPDEV
 
 config CONFIG_PIPE_MEMORY
     bool "memory"
@@ -256,6 +274,7 @@ choice
 
 config CONFIG_POLL_POLL
     bool "poll"
+    depends on CONFIG_PLATFORM_LINUX || CONFIG_PLATFORM_GP2X
 
 config CONFIG_POLL_SELECT
     bool "select"

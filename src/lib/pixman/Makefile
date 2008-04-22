@@ -1,4 +1,6 @@
 
+-include ../../../.config
+
 target_o-y = libpixman.o
 
 libpixman.o_includes-y = ./

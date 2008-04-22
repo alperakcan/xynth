@@ -22,7 +22,7 @@ help:
 	@echo ""
 
 check_goal := $(filter-out menuconfig, $(MAKECMDGOALS))
-check_goal := $(filter-out doxy-doc, $(MAKECMDGOALS))
+check_goal := $(filter-out doxy-doc, $(checkgoal))
 check_goal := $(filter-out distclean, $(check_goal))
 check_goal := $(filter-out clean, $(check_goal))
 check_goal := $(filter-out linux, $(check_goal))
@@ -84,7 +84,18 @@ dist: distdirs xynth.pc
 
 .PHONY: install
 install: dist
+ifeq ($(CONFIG_PLATFORM_PSPDEV), y)
+	$(MKDIR) dist/psp/game
+	$(CP) dist/bin/xynth dist/psp/game
+	$(CP) dist/bin/xynth% dist/psp/game
+	$(CP) dist/share dist/psp/game/xynth
+	$(RM) dist/$(CONFIG_PATH_BIN)
+	$(RM) dist/$(CONFIG_PATH_LIB)
+	$(RM) dist/$(CONFIG_PATH_INCLUDE)
+	$(RM) dist/share
+else
 	$(CP) ./dist/* $(CONFIG_PATH_INSTALL)/
+endif
 
 .PHONY: doxy-doc
 doxy-doc:

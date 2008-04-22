@@ -101,6 +101,7 @@ int s_region_subrect (s_region_t *region, s_rect_t *rect)
 	for (n = 0; n < region->nrects; n++) {
 		r = region->rects[n];
 		if (s_region_rect_intersect(&r, rect, &t) == 0) {
+			/* subrect calls unify region via add rect if necesary */
 			if (s_region_rect_substract(&r, &t, region)) {
 				return -1;
 			}

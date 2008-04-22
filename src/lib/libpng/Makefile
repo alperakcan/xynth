@@ -1,4 +1,6 @@
 
+-include ../../../.config
+
 target_o-y = libpng.o
 
 libpng.o_includes-y = ./ \

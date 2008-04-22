@@ -21,7 +21,7 @@
 #include <windows.h>
 #endif
 
-#if defined(THREAD_MUTEX_EMULATION)
+#if defined(CONFIG_THREAD_EMULATION)
 
 #include <semaphore.h>
 struct s_thread_sem_s {
@@ -102,7 +102,7 @@ static int s_thread_pthreads_sem_post (s_thread_sem_t *sem)
 err:	return -1;
 }
 
-#else /* THREAD_MUTEX_EMULATION */
+#else /* CONFIG_THREAD_EMULATION */
 
 struct s_thread_sem_s {
 	char foo;
@@ -256,7 +256,7 @@ static void s_thread_pthreads_thread_exit (void *ret)
 }
 
 static s_thread_api_t s_thread_pthreads = {
-#if defined(THREAD_MUTEX_EMULATION)
+#if defined(CONFIG_THREAD_EMULATION)
 	s_thread_pthreads_sem_create,
 	s_thread_pthreads_sem_destroy,
 	s_thread_pthreads_sem_wait,

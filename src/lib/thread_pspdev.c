@@ -13,6 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "xynth_.h"
+
 #if defined(CONFIG_THREAD_PSPDEV)
 
 #include <pspkernel.h>

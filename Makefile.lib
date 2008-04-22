@@ -114,13 +114,17 @@
 
 override CFLAGS += -Wall -pipe -g -O2 -fsigned-char -fno-strict-aliasing 
  
+ifeq ($(CONFIG_PLATFORM_PSPDEV), y)
+	CFLAGS += -G0 -D_PSP_FW_VERSION=150
+endif
+
 MAKE       := $(MAKE) --no-print-directory
 
-CC         := $(CROSS_PREFIX)gcc
-LD         := $(CROSS_PREFIX)ld
-AR         := $(CROSS_PREFIX)ar rcs
-RANLIB     := $(CROSS_PREFIX)ranlib
-STRIP      := $(CROSS_PREFIX)strip
+CC         := $(CONFIG_CROSS_PREFIX)gcc
+LD         := $(CONFIG_CROSS_PREFIX)ld
+AR         := $(CONFIG_CROSS_PREFIX)ar rcs
+RANLIB     := $(CONFIG_CROSS_PREFIX)ranlib
+STRIP      := $(CONFIG_CROSS_PREFIX)strip
 
 HOSTCC     := gcc
 HOSTLD     := ld

@@ -7,7 +7,7 @@ subdir-y += ./freetype2
 subdir-y += ./expat
 subdir-y += ./pixman
 
-target_a-y = libxynth.a
+target_a-$(CONFIG_LIBRARY_STATIC) = libxynth.a
 
 libxynth.a_includes-y := ./
 libxynth.a_includes-y += ./libz
@@ -15,6 +15,10 @@ libxynth.a_includes-y += ./libpng
 libxynth.a_includes-y += ./freetype2/include
 libxynth.a_includes-y += ./expat
 libxynth.a_includes-y += ./pixman
+
+ifeq ($(CONFIG_PLATFORM_PSPDEV), y)
+	libxynth.a_includes-y += $(shell psp-config -p)/include
+endif
 
 libxynth.a_files-y = alloc.c \
                      child.c \
@@ -51,7 +55,7 @@ libxynth.a_files-y += ./libpng/libpng.o
 libxynth.a_files-y += ./libz/libz.o
 libxynth.a_files-y += ./pixman/libpixman.o
 
-target_so-y = libxynth.so
+target_so-$(CONFIG_LIBRARY_SHARED) = libxynth.so
 
 libxynth.so_includes-y = $(libxynth.a_includes-y)
 libxynth.so_ldflags-y = -lpthread \
@@ -61,6 +65,10 @@ libxynth.so_files-y = $(libxynth.a_files-y)
 include ../../Makefile.lib
 
 dist:
+ifeq ($(CONFIG_PLATFORM_LINUX), y)
 	$(CP) xynth.h ../../dist/$(CONFIG_PATH_INCLUDE)/xynth.h
 	$(CP) libxynth.a ../../dist/$(CONFIG_PATH_LIB)/libxynth.a
 	$(CP) libxynth.so ../../dist/$(CONFIG_PATH_LIB)/libxynth.so
+else
+	@true
+endif

@@ -12,7 +12,7 @@ subdir-$(CONFIG_VIDEO_CACA)    += ./video/caca
 subdir-$(CONFIG_VIDEO_NULL)    += ./video/null
 subdir-$(CONFIG_VIDEO_HELPER)  += ./video/helper
 
-target-$(CONFIG_PLATFORM_LINUX) = xynth
+target-y  = xynth
 
 xynth_files-y = event.c \
                 id.c \
@@ -57,22 +57,56 @@ xynth_files-$(CONFIG_DEMO_ONSCREENKEYBOARD) += ../../demo/onscreenkeyboard/singl
 xynth_files-$(CONFIG_DEMO_WIDGETX)  += ../../demo/widgetx/single_widgetx.o
 endif
 
-xynth_ldflags-$(CONFIG_VIDEO_FBDEV) += -lm
+xynth_includes-$(CONFIG_VIDEO_PSPDEV) += $(shell psp-config -p)/include
+xynth_includes-y  += ./ ../lib
+
+xynth_libraries-y += ../lib
+xynth_libraries-$(CONFIG_VIDEO_PSPDEV) += $(shell psp-config -p)/lib
+
+xynth_ldflags-y += -lxynth
+xynth_ldflags-y += -lm
 xynth_ldflags-$(CONFIG_VIDEO_SDL)   += $(shell sdl-config --libs)
 xynth_ldflags-$(CONFIG_VIDEO_CACA)  += -lcaca
-
-xynth_includes-y  += ./ ../lib
-xynth_libraries-y += ../lib
-xynth_ldflags-y   += -lxynth
 
 ifeq ($(CONFIG_WIDGET_LIBRARY), y)
 xynth_libraries-y += ../widget
 xynth_ldflags-y   += -lwidget
 endif
 
+ifeq ($(CONFIG_THEME_PLUGIN), y)
 xynth_ldflags-y   += -ldl
+endif
+
+xynth_ldflags-$(CONFIG_VIDEO_PSPDEV) += -lpspdebug \
+                                        -lpspdisplay \
+                                        -lpspge \
+                                        -lpspctrl \
+                                        -lpspsdk \
+                                        -lc \
+                                        -lpspnet \
+                                        -lpspnet_inet \
+                                        -lpsputility \
+                                        -lpspuser \
+                                        -lpspkernel
 
 include ../../Makefile.lib
 
 dist:
+ifeq ($(CONFIG_PLATFORM_PSPDEV), y)
+	psp-fixup-imports xynth
+	mksfo 'Xynth Windowing System' param.sfo
+	$(MKDIR) ../../dist/$(CONFIG_PATH_BIN)/xynth
+	psp-strip xynth -o ../../dist/$(CONFIG_PATH_BIN)/xynth/eboot.pbp
+	$(MKDIR) ../../dist/$(CONFIG_PATH_BIN)/xynth%
+	pack-pbp ../../dist/$(CONFIG_PATH_BIN)/xynth%/eboot.pbp \
+	         param.sfo \
+	         ../../tools/pspdev/icon0.png \
+	         NULL \
+	         NULL \
+	         ../../tools/pspdev/pic1.png \
+	         NULL \
+	         NULL \
+	         NULL
+else
 	$(CP) xynth ../../dist/$(CONFIG_PATH_BIN)/xynth
+endif

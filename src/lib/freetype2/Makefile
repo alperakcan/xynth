@@ -1,4 +1,6 @@
 
+-include ../../../.config
+
 target_o-y = libfreetype2.o
 
 libfreetype2.o_includes-y = ./ \
