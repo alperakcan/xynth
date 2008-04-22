@@ -142,9 +142,13 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 	int rk;
 	int rn;
 	s_rect_t *rr;
-	s_region_t reg;
-	s_region_t regsb[S_CLIENTS_MAX];
-	s_region_t regsw[S_CLIENTS_MAX];
+
+	/* static declerations, will be fixed. these regions should be a part
+	   of client class.
+	 */
+	static s_region_t reg;
+	static s_region_t regsb[S_CLIENTS_MAX];
+	static s_region_t regsw[S_CLIENTS_MAX];
 
 	s_region_create(&region);
 
@@ -325,7 +329,7 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 			if (server->client[rk].alwaysontop != server->client[ri].alwaysontop) {
 				continue;
 			}
-			s_region_subrect(&regsw[ri], &server->client[rk].win);
+			s_region_subrect(&regsw[ri], &server->client[rk].buf);
 		}
 		for (ontop = server->client[ri].alwaysontop + 1; ontop <= 1; ontop++) {
 			for (rj = S_CLIENTS_MAX - 1; rj >= 0; rj--) {
@@ -336,7 +340,7 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 				if (server->client[rk].alwaysontop != ontop) {
 					continue;
 				}
-				s_region_subrect(&regsw[ri], &server->client[rk].win);
+				s_region_subrect(&regsw[ri], &server->client[rk].buf);
 			}
 		}
 	}
@@ -359,25 +363,30 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 			rr++;
 		}
 	}
-	
-	for (rp = S_CLIENTS_MAX - 1; rp >= 0; rp--) {
-		ri = s_server_pri_id(rp);
-		if (ri < 0) {
-			continue;
-		}
-		s_region_clear(&reg);
-		s_region_intregion(&regsw[ri], region, &reg);
-		rr = s_region_rectangles(&reg);
-		rn = s_region_num_rectangles(&reg);
-		while (rn--) {
-			s_server_window_matrix_add(ri, rr);
-			s_server_window_form(ri, rr);
-			if (ri == p_old) {
-				p_old = -1;
+
+	for (ontop = -1; ontop <= 1; ontop++) {	
+		for (rp = S_CLIENTS_MAX - 1; rp >= 0; rp--) {
+			ri = s_server_pri_id(rp);
+			if (ri < 0) {
+				continue;
 			}
-			rr++;
+			if (server->client[ri].alwaysontop != ontop) {
+				continue;
+			}
+			s_region_clear(&reg);
+			s_region_intregion(&regsw[ri], region, &reg);
+			rr = s_region_rectangles(&reg);
+			rn = s_region_num_rectangles(&reg);
+			while (rn--) {
+				s_server_window_matrix_add(ri, rr);
+				s_server_window_form(ri, rr);
+				if (ri == p_old) {
+					p_old = -1;
+				}
+				rr++;
+			}
+			s_region_clear(&reg);
 		}
-		s_region_clear(&reg);
 	}
 	
 	s_server_cursor_matrix_add();

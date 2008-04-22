@@ -1,4 +1,6 @@
 
+-include ../../../.config
+
 target_o-y = libz.o
 
 libz.o_includes-y = ./

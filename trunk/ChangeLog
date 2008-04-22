@@ -1,4 +1,13 @@
 
+Sun 20 Apr 2008 11:36:33 PM EEST
+	- region api
+	- server uses region to calculate printable areas, increased speed.
+	- region demo
+	- new demo for widget, widgetx has more than one frame
+	- server always on top fix
+	- pspdev build works again
+	- new build system
+
 Mon 22 Oct 2007 12:02:44 PM EEST
 	- revision 920
 	- released version 0.8.90
@@ -355,7 +364,7 @@ Wed 11 Apr 2007 04:45:31 PM EEST
 	M src/widget/widgetr/widgetr.c,
 	A xynth.pc.in :
 	
-	to many chages, widgetc and widgetr rewritten, mush more clean and safe.
+	to many chages, widgetc and widgetr rewritten, much more clean and safe.
 	an update for freetype library
 	new cairo port
 	new render api
