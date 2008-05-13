@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Sat Nov 8 2003
     copyright            : (C) 2003 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -58,7 +58,7 @@ int main (int argc, char *argv[])
 		       "\tgunzip us.map.gz\n"
 		       "\tcat * > usmap\n"
 		       "\t%s usmap > usmap.h\n\n", argv[0]);
-		printf("Alper Akcan, distchx@yahoo.com\n\n");
+		printf("Alper Akcan, alper.akcan@gmail.com\n\n");
 		return 0;
 	}
 

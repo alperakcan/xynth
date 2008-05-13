@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Fri Feb 21 2003
     copyright            : (C) 2003 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -59,13 +59,13 @@ void s_server_pri_set (S_SURFACE_CHNGF flag, ...)
 
 	i = s_server_pri_id(0);
 	if ((i >= 0) &&
-	    (server->client[i].type & WINDOW_TEMP)) {
+	    (server->client[i].type & WINDOW_TYPE_TEMP)) {
 		int ptmp = s_server_window_temp_parent(i);
 		if (flag == SURFACE_FOCUS) {
 			if (s_server_window_is_parent_temp(id, i)) {
 				s_server_window_close_temps(id);
 			} else {
-				if ((server->client[id].type & WINDOW_TEMP) &&
+				if ((server->client[id].type & WINDOW_TYPE_TEMP) &&
 				    (server->client[id].pid == i)) {
 				} else {
 					if (ptmp >= 0) {
@@ -90,7 +90,7 @@ void s_server_pri_set (S_SURFACE_CHNGF flag, ...)
 			if (i >= 0) {
 				s_server_mouse_setcursor(server->client[i].cursor);
 			} else {
-				s_server_mouse_setcursor(MOUSE_CURSOR_ARROW);
+				s_server_mouse_setcursor(CURSOR_TYPE_ARROW);
 			}
 			break;
 		case SURFACE_REDRAW:
@@ -100,9 +100,9 @@ void s_server_pri_set (S_SURFACE_CHNGF flag, ...)
         switch (flag) {
 		case SURFACE_FOCUS:
 		case SURFACE_CLOSE:
-			if (!(server->client[id].type & WINDOW_TEMP)) {
+			if (!(server->client[id].type & WINDOW_TYPE_TEMP)) {
 				for (i = 0; i < S_CLIENTS_MAX; i++) {
-					if (server->client[i].type & WINDOW_DESKTOP) {
+					if (server->client[i].type & WINDOW_TYPE_DESKTOP) {
 						if (!((flag == SURFACE_CLOSE) &&
 						      (id == i))) {
 							s_server_socket_request(SOC_DATA_DESKTOP, i);

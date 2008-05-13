@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Wed Mar 9 2005
     copyright            : (C) 2005 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -62,7 +62,7 @@ int main (int argc, char *argv[])
 
 	s_window_init(&window);
 
-	s_window_new(window, WINDOW_MAIN, NULL);
+	s_window_new(window, WINDOW_TYPE_MAIN, NULL);
 	mw = window->surface->width;
 	mh = window->surface->height;
 

@@ -1,7 +1,7 @@
 /*
  * Automatically generated C config: don't edit
  * Xynth version: 
- * Sun Apr 20 22:39:16 2008
+ * Fri May  9 19:46:42 2008
  */
 #define AUTOCONF_INCLUDED
 #define CONFIG_WIDGET_STATIC 1
@@ -55,7 +55,7 @@
 #define CONFIG_DEMO_TEMP 1
 #define CONFIG_SOCKET_POSIX 1
 #define CONFIG_DEMO_TERM 1
-#define UNAME_RELEASE "2.6.23.14-distch"
+#define UNAME_RELEASE "2.6.25.1-distch"
 #define CONFIG_POLL_POLL 1
 #define CONFIG_THEME_KERAMIK 1
 #define CONFIG_WIDGET_SHARED 1

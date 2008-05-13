@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Fri Feb 14 2003
     copyright            : (C) 2003 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -55,8 +55,8 @@ const char * s_socket_data_to_name (S_SOC_DATA sdata)
 int s_socket_request_new (s_window_t *window, int soc)
 {
 	int pid;
-	pid = (window->type & (WINDOW_TEMP | WINDOW_CHILD)) ? window->parent->id : -1;
-	s_socket_send(soc, &window->type, sizeof(S_WINDOW));
+	pid = (window->type & (WINDOW_TYPE_TEMP | WINDOW_TYPE_CHILD)) ? window->parent->id : -1;
+	s_socket_send(soc, &window->type, sizeof(s_window_type_t));
 	s_socket_send(soc, &pid, sizeof(int));
 	s_socket_send(soc, window->surface->buf, sizeof(s_rect_t));
 	s_socket_recv(soc, window->surface->buf, sizeof(s_rect_t));
@@ -112,7 +112,7 @@ int s_socket_request_configure (s_window_t *window, int soc, int form)
 	s_soc_data_configure_t *data;
 	data = (s_soc_data_configure_t *) s_calloc(1, sizeof(s_soc_data_configure_t));
 
-	data->form = (form) ? WINDOW_NOFORM : 0;
+	data->form = (form) ? WINDOW_TYPE_NOFORM : 0;
 	data->rnew = *(window->surface->buf);
 	data->resizeable = window->resizeable;
 	data->alwaysontop = window->alwaysontop;
@@ -206,7 +206,7 @@ int s_socket_request (s_window_t *window, S_SOC_DATA req, ...)
 	va_list ap;
 	int ret = 0;
 	char *title;
-	S_WINDOW form;
+	s_window_type_t form;
 	s_rect_t *coor;
 	s_event_t *event;
 	struct pollfd pollfd;
@@ -254,7 +254,7 @@ again:	if (window->running <= 0) {
 			break;
 		case SOC_DATA_CONFIGURE:
 			va_start(ap, req);
-			form = (S_WINDOW) va_arg(ap, S_WINDOW);
+			form = (s_window_type_t) va_arg(ap, s_window_type_t);
 			ret = s_socket_request_configure(window, pollfd.fd, (form) ? 1 : 0);
 			va_end(ap);
 			break;
@@ -297,7 +297,7 @@ err0:	s_thread_mutex_unlock(window->socket_mutex);
 
 int s_socket_listen_event (s_window_t *window, int soc)
 {
-	S_EVENT dtype;
+	s_event_type_t dtype;
 	s_soc_data_event_t *data;
 	data = (s_soc_data_event_t *) s_calloc(1, sizeof(s_soc_data_event_t));
 
@@ -306,7 +306,7 @@ int s_socket_listen_event (s_window_t *window, int soc)
 		return -1;
 	}
 	
-	dtype = data->type & (MOUSE_ENTERED | MOUSE_EXITED);
+	dtype = data->type & (EVENT_TYPE_MOUSE_ENTER | EVENT_TYPE_MOUSE_EXIT);
 	if ((dtype == 0) ||
 	    ((dtype != 0) &&
 	     (dtype != window->mouse_entered))) {
@@ -330,7 +330,7 @@ int s_socket_listen_close (s_window_t *window, int soc)
 int s_socket_listen_expose (s_window_t *window, int soc)
 {
 	int p_old;
-	S_EVENT change;
+	s_event_type_t change;
 	s_rect_t r_old;
 	s_soc_data_expose_t *data;
 	data = (s_soc_data_expose_t *) s_calloc(1, sizeof(s_soc_data_expose_t));
@@ -352,12 +352,12 @@ int s_socket_listen_expose (s_window_t *window, int soc)
 	
 	/* configure event */
 	change = 0;
-	if (r_old.x != window->surface->win->x) { change |= CONFIG_CHNGX; }
-	if (r_old.y != window->surface->win->y) { change |= CONFIG_CHNGY; }
-	if (r_old.w != window->surface->win->w) { change |= CONFIG_CHNGW; }
-	if (r_old.h != window->surface->win->h) { change |= CONFIG_CHNGH; }
+	if (r_old.x != window->surface->win->x) { change |= EVENT_TYPE_CONFIG_X; }
+	if (r_old.y != window->surface->win->y) { change |= EVENT_TYPE_CONFIG_Y; }
+	if (r_old.w != window->surface->win->w) { change |= EVENT_TYPE_CONFIG_W; }
+	if (r_old.h != window->surface->win->h) { change |= EVENT_TYPE_CONFIG_H; }
 	if (change != 0) {
-		window->event->type = CONFIG_EVENT | change;
+		window->event->type = EVENT_TYPE_CONFIG | change;
 		window->event->expose->rect->x = window->surface->buf->x;
 		window->event->expose->rect->y = window->surface->buf->y;
 		window->event->expose->rect->w = window->surface->buf->w;
@@ -367,8 +367,8 @@ int s_socket_listen_expose (s_window_t *window, int soc)
 	/* focus event */
 	if ((p_old != window->pri) &&
 	    ((p_old == 0) || (window->pri == 0))) {
-		window->event->type = FOCUS_EVENT;
-		window->event->type |= (window->pri == 0) ? FOCUSIN_EVENT : FOCUSOUT_EVENT;
+		window->event->type = EVENT_TYPE_FOCUS;
+		window->event->type |= (window->pri == 0) ? EVENT_TYPE_FOCUS_IN : EVENT_TYPE_FOCUS_OUT;
 		window->event->expose->rect->x = window->surface->win->x;
 		window->event->expose->rect->y = window->surface->win->y;
 		window->event->expose->rect->w = window->surface->win->w;
@@ -376,7 +376,7 @@ int s_socket_listen_expose (s_window_t *window, int soc)
 		s_event_changed(window);
 	}
 	/* expose event */
-	window->event->type = EXPOSE_EVENT;
+	window->event->type = EVENT_TYPE_EXPOSE;
 	window->event->expose->rect->x = data->changed.x;
 	window->event->expose->rect->y = data->changed.y;
 	window->event->expose->rect->w = data->changed.w;
@@ -401,7 +401,7 @@ int s_socket_listen_desktop (s_window_t *window, int soc)
 	}
 
         s_event_init(&event);
-	event->type = DESKTOP_EVENT;
+	event->type = EVENT_TYPE_DESKTOP;
 
 	for (i = 0; i < data->count; i++) {
 		desktopc = (s_desktop_client_t *) s_malloc(sizeof(s_desktop_client_t));
@@ -570,7 +570,7 @@ end:	i = 0;
 		if (tmr->interval <= 0) {
 			s_event_t *e;
 			s_event_init(&e);
-			e->type = TIMER_EVENT;
+			e->type = EVENT_TYPE_TIMER;
 			e->timer = tmr;
 			s_eventq_add(window, e);
 		}

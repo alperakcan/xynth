@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Sun Feb 2 2003
     copyright            : (C) 2003 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -31,7 +31,7 @@ int s_server_socket_listen_new (int id)
 	s_pollfd_t *ip;
 	s_pollfd_t *jp;
 
-	s_socket_recv(server->client[id].soc, &server->client[id].type, sizeof(S_WINDOW));
+	s_socket_recv(server->client[id].soc, &server->client[id].type, sizeof(s_window_type_t));
 	s_socket_recv(server->client[id].soc, &server->client[id].pid, sizeof(int));
 	s_socket_recv(server->client[id].soc, &server->client[id].buf, sizeof(s_rect_t));
 	/* just to close childs before their parent, socket listen order is in pollfds list order.
@@ -114,7 +114,7 @@ int s_server_socket_listen_configure (int id)
 	server->client[id].alwaysontop = data->alwaysontop;
 	server->client[id].cursor = data->cursor;
 
-	if (data->form & WINDOW_NOFORM) {
+	if (data->form & WINDOW_TYPE_NOFORM) {
 		data->rnew.x += (server->client[id].win.x - server->client[id].buf.x);
 		data->rnew.y += (server->client[id].win.y - server->client[id].buf.y);
 		data->rnew.w += (server->client[id].win.w - server->client[id].buf.w);
@@ -134,9 +134,9 @@ int s_server_socket_listen_configure (int id)
 	s_server_window_move_resize(id, &(data->rnew));
 
 	if (j) {
-		if (!(server->client[id].type & WINDOW_TEMP)) {
+		if (!(server->client[id].type & WINDOW_TYPE_TEMP)) {
 			for (i = 0; i < S_CLIENTS_MAX; i++) {
-				if (server->client[i].type & WINDOW_DESKTOP) {
+				if (server->client[i].type & WINDOW_TYPE_DESKTOP) {
 					s_server_socket_request(SOC_DATA_DESKTOP, i);
 				}
 			}
@@ -172,7 +172,7 @@ int s_server_socket_listen_stream (int id)
 
 int s_server_socket_listen_close_server (int id)
 {
-	if (server->client[id].type & WINDOW_DESKTOP) {
+	if (server->client[id].type & WINDOW_TYPE_DESKTOP) {
 		s_server_quit(server->window);
 	}
 	return 0;
@@ -224,15 +224,15 @@ int s_server_socket_listen_event (int id)
 		s_free(data);
 		return -1;
 	}
-	server->window->event->type = REMOTE_EVENT;
-	switch (data->type & (KEYBD_EVENT | MOUSE_EVENT)) {
-		case KEYBD_EVENT:
+	server->window->event->type = EVENT_TYPE_REMOTE;
+	switch (data->type & (EVENT_TYPE_KEYBOARD | EVENT_TYPE_MOUSE)) {
+		case EVENT_TYPE_KEYBOARD:
 			memset(&keybd, 0, sizeof(s_video_input_data_keybd_t));
 			keybd.ascii = data->keybd.ascii;
 			keybd.button = data->keybd.button;
 			keybd.keycode = data->keybd.keycode;
 			keybd.scancode = data->keybd.keycode;
-			keybd.state = data->type & (KEYBD_PRESSED | KEYBD_RELEASED);
+			keybd.state = data->type & (EVENT_TYPE_KEYBOARD_PRESSED | EVENT_TYPE_KEYBOARD_RELEASED);
 			s_server_event_parse_keyboard(&keybd);
 			s_server_event_changed();
 			break;
@@ -422,7 +422,7 @@ int s_server_socket_request_desktop (int id)
 
 	for (i = 0; i < S_CLIENTS_MAX; i++) {
 		if ((p = s_server_id_pri(i)) >= 0) {
-			if (!(server->client[i].type & WINDOW_TEMP)) {
+			if (!(server->client[i].type & WINDOW_TYPE_TEMP)) {
 				data->client[data->count].id = i;
 				data->client[data->count].pri = p;
 				strcpy(data->client[data->count].title, server->client[i].title.str);

@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Mon Sep 22 2003
     copyright            : (C) 2003 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -24,16 +24,16 @@ void s_server_kbd_switch_handler (s_window_t *window, s_event_t *event, s_handle
 	keybd = (s_video_input_t *) handler->data;
 
         switch (event->keybd->button) {
-		case S_KEYCODE_F1:  f = 1;  break;
-		case S_KEYCODE_F2:  f = 2;  break;
-		case S_KEYCODE_F3:  f = 3;  break;
-		case S_KEYCODE_F4:  f = 4;  break;
-		case S_KEYCODE_F5:  f = 5;  break;
-		case S_KEYCODE_F6:  f = 6;  break;
-		case S_KEYCODE_F7:  f = 7;  break;
-		case S_KEYCODE_F8:  f = 8;  break;
-		case S_KEYCODE_F9:  f = 9;  break;
-		case S_KEYCODE_F10: f = 10; break;
+		case KEYBOARD_BUTTON_F1:  f = 1;  break;
+		case KEYBOARD_BUTTON_F2:  f = 2;  break;
+		case KEYBOARD_BUTTON_F3:  f = 3;  break;
+		case KEYBOARD_BUTTON_F4:  f = 4;  break;
+		case KEYBOARD_BUTTON_F5:  f = 5;  break;
+		case KEYBOARD_BUTTON_F6:  f = 6;  break;
+		case KEYBOARD_BUTTON_F7:  f = 7;  break;
+		case KEYBOARD_BUTTON_F8:  f = 8;  break;
+		case KEYBOARD_BUTTON_F9:  f = 9;  break;
+		case KEYBOARD_BUTTON_F10: f = 10; break;
 	};
 
 	if (f >= 0) {
@@ -42,7 +42,7 @@ void s_server_kbd_switch_handler (s_window_t *window, s_event_t *event, s_handle
 		s_video_helper_console_switch(f);
 #endif
 		memset(server->window->event->keybd, 0, sizeof(s_keybd_t));
-		server->window->event->type &= ~KEYBD_MASK;
+		server->window->event->type &= ~EVENT_TYPE_KEYBOARD_MASK;
 	}
 }
 
@@ -71,7 +71,7 @@ int s_server_kbd_update (s_window_t *window, s_pollfd_t *pfd)
 	s_server_event_changed();
 	if (force_release) {
 		server->window->event->type = 0;
-		kdata.keybd.state = KEYBD_RELEASED;
+		kdata.keybd.state = EVENT_TYPE_KEYBOARD_RELEASED;
 		s_server_event_parse_keyboard(&(kdata.keybd));
 		s_server_event_changed();
 	}
@@ -103,33 +103,33 @@ void s_server_kbd_init (s_server_conf_t *cfg, s_video_input_t *keybd)
 
         s_handler_init(&hndl);
         hndl->type = KEYBD_HANDLER;
-	hndl->keybd.flag = KEYCODE_LALTF;
-	hndl->keybd.button = S_KEYCODE_F4;
+	hndl->keybd.flag = KEYBOARD_FLAG_LEFTALT;
+	hndl->keybd.button = KEYBOARD_BUTTON_F4;
 	hndl->keybd.p = s_server_kbd_window_close_handler;
 	s_handler_add(server->window, hndl);
 
         s_handler_init(&hndl);
         hndl->type = KEYBD_HANDLER;
-	hndl->keybd.flag = KEYCODE_LCTRLF | KEYCODE_LALTF;
-	hndl->keybd.button = S_KEYCODE_DELETE;
+	hndl->keybd.flag = KEYBOARD_FLAG_LEFTCTRL | KEYBOARD_FLAG_LEFTALT;
+	hndl->keybd.button = KEYBOARD_BUTTON_DELETE;
 	hndl->keybd.p = s_server_kbd_server_quit_handler;
 	s_handler_add(server->window, hndl);
 
 	for (i = 1; i <= 10; i++) {
 	        s_handler_init(&hndl);
         	hndl->type = KEYBD_HANDLER;
-		hndl->keybd.flag = KEYCODE_LCTRLF | KEYCODE_LALTF;
+		hndl->keybd.flag = KEYBOARD_FLAG_LEFTCTRL | KEYBOARD_FLAG_LEFTALT;
 	        switch (i) {
-			case 1:  hndl->keybd.button = S_KEYCODE_F1;  break;
-			case 2:  hndl->keybd.button = S_KEYCODE_F2;  break;
-			case 3:  hndl->keybd.button = S_KEYCODE_F3;  break;
-			case 4:  hndl->keybd.button = S_KEYCODE_F4;  break;
-			case 5:  hndl->keybd.button = S_KEYCODE_F5;  break;
-			case 6:  hndl->keybd.button = S_KEYCODE_F6;  break;
-			case 7:  hndl->keybd.button = S_KEYCODE_F7;  break;
-			case 8:  hndl->keybd.button = S_KEYCODE_F8;  break;
-			case 9:  hndl->keybd.button = S_KEYCODE_F9;  break;
-			case 10: hndl->keybd.button = S_KEYCODE_F10; break;
+			case 1:  hndl->keybd.button = KEYBOARD_BUTTON_F1;  break;
+			case 2:  hndl->keybd.button = KEYBOARD_BUTTON_F2;  break;
+			case 3:  hndl->keybd.button = KEYBOARD_BUTTON_F3;  break;
+			case 4:  hndl->keybd.button = KEYBOARD_BUTTON_F4;  break;
+			case 5:  hndl->keybd.button = KEYBOARD_BUTTON_F5;  break;
+			case 6:  hndl->keybd.button = KEYBOARD_BUTTON_F6;  break;
+			case 7:  hndl->keybd.button = KEYBOARD_BUTTON_F7;  break;
+			case 8:  hndl->keybd.button = KEYBOARD_BUTTON_F8;  break;
+			case 9:  hndl->keybd.button = KEYBOARD_BUTTON_F9;  break;
+			case 10: hndl->keybd.button = KEYBOARD_BUTTON_F10; break;
 		};
 		hndl->keybd.p = s_server_kbd_switch_handler;
 		hndl->data = keybd;
@@ -148,10 +148,10 @@ int s_server_kbd_uninit (s_window_t *window, s_pollfd_t *pfd)
         return 0;
 }
 
-S_KEYCODE_CODE s_server_keyname_to_keycode (char *name)
+s_keyboard_button_t s_server_keyname_to_keycode (char *name)
 {
 	unsigned int i;
-	for (i = 0; i < S_KEYCODE_CODES; i++) {
+	for (i = 0; i < KEYBOARD_BUTTON_MAX; i++) {
 		if (strcmp(name, s_keycodes_map[i].name) == 0) {
 			return s_keycodes_map[i].code;
 		}

@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Thu Sep 22 2005
     copyright            : (C) 2005 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -41,8 +41,8 @@ int s_video_pspdev_mouse_update (s_video_input_data_t *mouse)
 	mouse->mouse.x = pad_recv.x;
 	mouse->mouse.y = pad_recv.y;
 	mouse->mouse.buttons = 0;
-	mouse->mouse.buttons |= (pad_recv.buttons & PSP_CTRL_CROSS) ? MOUSE_LEFTBUTTON : 0;
-	mouse->mouse.buttons |= (pad_recv.buttons & PSP_CTRL_CIRCLE) ? MOUSE_RIGHTBUTTON : 0;
+	mouse->mouse.buttons |= (pad_recv.buttons & PSP_CTRL_CROSS) ? MOUSE_BUTTON_LEFT : 0;
+	mouse->mouse.buttons |= (pad_recv.buttons & PSP_CTRL_CIRCLE) ? MOUSE_BUTTON_RIGHT : 0;
 	return 0;
 }
 

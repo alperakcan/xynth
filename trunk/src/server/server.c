@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Wed Jan 29 2003
     copyright            : (C) 2003 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -184,7 +184,7 @@ int s_server_cfg (s_server_conf_t *config)
 					config->irr.device = strdup(var->value);
 				} else if (strcasecmp(var->name, "brate") == 0) {
 					config->irr.brate = strdup(var->value);
-				} else if (strncmp(var->name, "S_KEYCODE_", 10) == 0) {
+				} else if (strncmp(var->name, "KEYBOARD_BUTTON_", 10) == 0) {
 					s_server_irr_add_code(var->name, var->value);
 				} 
 			} else if (strcasecmp(cat->name, "monitor") == 0) {
@@ -333,7 +333,7 @@ int s_server_init (void)
 		server->client[i].type = 0;
 		server->client[i].resizeable = 1;
 		server->client[i].alwaysontop = 0;
-		server->client[i].cursor = MOUSE_CURSOR_ARROW;
+		server->client[i].cursor = CURSOR_TYPE_ARROW;
 	}
 	
         server->window = (s_window_t *) s_calloc(1, sizeof(s_window_t));

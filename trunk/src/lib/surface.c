@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Mon Feb 17 2003
     copyright            : (C) 2003 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -28,7 +28,7 @@ void s_surface_attach_matrix (s_window_t *window)
 	if (window->surface->need_expose & SURFACE_NEEDSTREAM) {
 		return;
 	}
-        if (window->type & (WINDOW_TEMP | WINDOW_CHILD)) {
+        if (window->type & (WINDOW_TYPE_TEMP | WINDOW_TYPE_CHILD)) {
 		window->surface->matrix = window->parent->surface->matrix;
 		return;
 	}
@@ -53,7 +53,7 @@ void s_surface_attach_buffer (s_window_t *window)
 	if (window->surface->need_expose & SURFACE_NEEDSTREAM) {
 		return;
 	}
-	if (window->type & (WINDOW_TEMP | WINDOW_CHILD)) {
+	if (window->type & (WINDOW_TYPE_TEMP | WINDOW_TYPE_CHILD)) {
 		window->surface->linear_buf = window->parent->surface->linear_buf;
 		return;
 	}
@@ -116,7 +116,7 @@ void s_surface_uninit (s_window_t *window)
 	}
 #if defined(CONFIG_SINGLE_APPLICATION)
 #else
-	if ((window->type & WINDOW_MAIN) &&
+	if ((window->type & WINDOW_TYPE_MAIN) &&
 	    (!(window->surface->need_expose & SURFACE_NEEDSTREAM))) {
 		if (window->surface->need_expose & SURFACE_NEEDEXPOSE) {
 			shmdt(window->surface->linear_buf);

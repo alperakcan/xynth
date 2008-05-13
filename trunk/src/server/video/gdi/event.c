@@ -42,16 +42,16 @@ LRESULT CALLBACK MainWndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lPa
 			s_video_gdi_server_surface_update(&coor);
 			break;
 		case WM_LBUTTONDOWN:
-                        priv->mouse.buttons |= MOUSE_LEFTBUTTON;
+                        priv->mouse.buttons |= MOUSE_BUTTON_LEFT;
                         goto mouse_event;
 		case WM_LBUTTONUP:
-                        priv->mouse.buttons &= ~MOUSE_LEFTBUTTON;
+                        priv->mouse.buttons &= ~MOUSE_BUTTON_LEFT;
                         goto mouse_event;
 		case WM_RBUTTONDOWN:
-                        priv->mouse.buttons |= MOUSE_RIGHTBUTTON;
+                        priv->mouse.buttons |= MOUSE_BUTTON_RIGHT;
                         goto mouse_event;
 		case WM_RBUTTONUP:
-                        priv->mouse.buttons &= ~MOUSE_RIGHTBUTTON;
+                        priv->mouse.buttons &= ~MOUSE_BUTTON_RIGHT;
                         goto mouse_event;
                 case WM_MOUSEMOVE:
 mouse_event:            priv->mouse.x = (((int) lParam) & 0xFFFF);
@@ -62,11 +62,11 @@ mouse_event:            priv->mouse.x = (((int) lParam) & 0xFFFF);
                         break;
                 case WM_KEYUP:
                 case WM_SYSKEYUP:
-                        priv->keybd.state = KEYBD_RELEASED;
+                        priv->keybd.state = EVENT_TYPE_KEYBOARD_RELEASED;
                         goto keybd_event;
                 case WM_KEYDOWN:
                 case WM_SYSKEYDOWN:
-                        priv->keybd.state = KEYBD_PRESSED;
+                        priv->keybd.state = EVENT_TYPE_KEYBOARD_PRESSED;
 keybd_event:            GetKeyboardState(keystate);
                         priv->keybd.scancode = (((unsigned int) lParam) >> 16) & 0xFF;
                         priv->keybd.button = priv->keymap[priv->keybd.scancode];

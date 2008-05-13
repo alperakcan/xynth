@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Thu Jan 30 2003
     copyright            : (C) 2003 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -23,7 +23,7 @@ static int i = 0;
 
 static void child_atevent (s_window_t *window, s_event_t *event)
 {
-	if (event->type & FOCUS_EVENT) {
+	if (event->type & EVENT_TYPE_FOCUS) {
 		debugf(DCLI, "[%d] %s focus", window->id, (window->pri == 0) ? "gained" : "lost");
 	}
 }
@@ -48,9 +48,9 @@ static void child_handler_1 (s_window_t *window, s_event_t *event, s_handler_t *
 
 static void child_handler_2 (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
-	s_window_set_coor(window, WINDOW_NOFORM, 0, 0, 0, 0);
+	s_window_set_coor(window, WINDOW_TYPE_NOFORM, 0, 0, 0, 0);
 	sleep(1);
-	s_window_set_coor(window, WINDOW_NOFORM, 100, 100, 100, 100);
+	s_window_set_coor(window, WINDOW_TYPE_NOFORM, 100, 100, 100, 100);
 }
 
 static void child_handler_open (s_window_t *window, s_event_t *event, s_handler_t *handler)
@@ -64,9 +64,9 @@ static void child_handler_open (s_window_t *window, s_event_t *event, s_handler_
 
 	s_window_init(&child);
 
-        s_window_new(child, WINDOW_CHILD, window);
+        s_window_new(child, WINDOW_TYPE_CHILD, window);
 
-	s_window_set_coor(child, WINDOW_NOFORM, window->surface->buf->x + 100,
+	s_window_set_coor(child, WINDOW_TYPE_NOFORM, window->surface->buf->x + 100,
 						window->surface->buf->y + 100,
 						window->surface->buf->w,
 						window->surface->buf->h);
@@ -90,7 +90,7 @@ static void child_handler_open (s_window_t *window, s_event_t *event, s_handler_
 	hndl->mouse.w = 20;
 	hndl->mouse.h = 20;
 	hndl->mouse.c = child_handler_open;
-	hndl->mouse.button = MOUSE_LEFTBUTTON;
+	hndl->mouse.button = MOUSE_BUTTON_LEFT;
 	s_handler_add(child, hndl);
 
 	s_fillbox(child->surface, 20, 0, 20, 20, s_rgbcolor(window->surface, 222, 222, 222));
@@ -102,7 +102,7 @@ static void child_handler_open (s_window_t *window, s_event_t *event, s_handler_
 	hndl->mouse.w = 20;
 	hndl->mouse.h = 20;
 	hndl->mouse.c = child_handler1c;
-	hndl->mouse.button = MOUSE_LEFTBUTTON;
+	hndl->mouse.button = MOUSE_BUTTON_LEFT;
 	s_handler_add(child, hndl);
 
 	s_fillbox(child->surface, 40, 0, 20, 20, s_rgbcolor(window->surface, 222, 222, 222));
@@ -114,7 +114,7 @@ static void child_handler_open (s_window_t *window, s_event_t *event, s_handler_
 	hndl->mouse.w = 20;
 	hndl->mouse.h = 20;
 	hndl->mouse.p = child_handler_2;
-	hndl->mouse.button = MOUSE_LEFTBUTTON;
+	hndl->mouse.button = MOUSE_BUTTON_LEFT;
 	s_handler_add(child, hndl);
 
 	s_window_show(child);
@@ -140,7 +140,7 @@ int main (int argc, char *argv[])
 
 	s_window_init(&window);
 
-	s_window_new(window, WINDOW_MAIN, NULL);
+	s_window_new(window, WINDOW_TYPE_MAIN, NULL);
 	mw = window->surface->width;
 	mh = window->surface->height;
 
@@ -161,7 +161,7 @@ int main (int argc, char *argv[])
 	hndl->mouse.w = 20;
 	hndl->mouse.h = 20;
 	hndl->mouse.c = child_handler_open;
-	hndl->mouse.button = MOUSE_LEFTBUTTON;
+	hndl->mouse.button = MOUSE_BUTTON_LEFT;
 	s_handler_add(window, hndl);
 
 	s_fillbox(window->surface, 20, 0, 20, 20, s_rgbcolor(window->surface, 222, 222, 222));
@@ -173,7 +173,7 @@ int main (int argc, char *argv[])
 	hndl->mouse.w = 20;
 	hndl->mouse.h = 20;
 	hndl->mouse.p = child_handler_1;
-	hndl->mouse.button = MOUSE_LEFTBUTTON;
+	hndl->mouse.button = MOUSE_BUTTON_LEFT;
 	s_handler_add(window, hndl);
 
 	s_fillbox(window->surface, 40, 0, 20, 20, s_rgbcolor(window->surface, 222, 222, 222));
@@ -185,7 +185,7 @@ int main (int argc, char *argv[])
 	hndl->mouse.w = 20;
 	hndl->mouse.h = 20;
 	hndl->mouse.p = child_handler_2;
-	hndl->mouse.button = MOUSE_LEFTBUTTON;
+	hndl->mouse.button = MOUSE_BUTTON_LEFT;
 	s_handler_add(window, hndl);
 
 	s_window_show(window);

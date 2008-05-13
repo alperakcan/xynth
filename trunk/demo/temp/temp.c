@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Thu Jan 30 2003
     copyright            : (C) 2003 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -25,7 +25,7 @@ static void temp_handler (s_window_t *window, s_event_t *event, s_handler_t *han
 	s_handler_t *hndl;
 	s_window_t *child;
 	s_window_init(&child);
-	s_window_new(child, WINDOW_TEMP | WINDOW_NOFORM, window);
+	s_window_new(child, WINDOW_TYPE_TEMP | WINDOW_TYPE_NOFORM, window);
 	s_window_set_coor(child, 0, window->surface->buf->x + 30,
 	                            window->surface->buf->y + 30,
 	                            150,
@@ -48,7 +48,7 @@ static void temp_handler (s_window_t *window, s_event_t *event, s_handler_t *han
 	hndl->mouse.w = 20;
 	hndl->mouse.h = 20;
 	hndl->mouse.p = temp_handler;
-	hndl->mouse.button = MOUSE_LEFTBUTTON;
+	hndl->mouse.button = MOUSE_BUTTON_LEFT;
 	s_handler_add(child, hndl);
 
 	s_window_show(child);
@@ -68,7 +68,7 @@ int main (int argc, char *argv[])
 
 	s_window_init(&window);
 
-	s_window_new(window, WINDOW_MAIN, NULL);
+	s_window_new(window, WINDOW_TYPE_MAIN, NULL);
 	mw = window->surface->width;
 	mh = window->surface->height;
 
@@ -89,7 +89,7 @@ int main (int argc, char *argv[])
 	hndl->mouse.w = 20;
 	hndl->mouse.h = 20;
 	hndl->mouse.p = temp_handler;
-	hndl->mouse.button = MOUSE_LEFTBUTTON;
+	hndl->mouse.button = MOUSE_BUTTON_LEFT;
 	s_handler_add(window, hndl);
 
 	s_window_show(window);

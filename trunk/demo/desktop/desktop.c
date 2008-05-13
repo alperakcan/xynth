@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Tue Oct 5 2004
     copyright            : (C) 2004 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -108,7 +108,7 @@ void desktop_icon (s_window_t *window, dtop_prog_t *dtopp, s_font_t *font)
 	hndl->mouse.w = img->handler->w;
 	hndl->mouse.h = img->handler->h;
 	hndl->mouse.c = desktop_icon_handler;
-	hndl->mouse.button = MOUSE_LEFTBUTTON;
+	hndl->mouse.button = MOUSE_BUTTON_LEFT;
 	hndl->data = dtopp;
 	s_handler_add(window, hndl);
 
@@ -173,7 +173,7 @@ void desktop_start (s_window_t *window, s_config_t *cfg)
 	s_config_var_t *var;
 	dtop_data_t *dtop_data;
 
-	s_window_set_coor(window, WINDOW_NOFORM, 0, 0, window->surface->width, window->surface->height - 30);
+	s_window_set_coor(window, WINDOW_TYPE_NOFORM, 0, 0, window->surface->width, window->surface->height - 30);
 	s_window_set_alwaysontop(window, -1);
 	s_window_set_resizeable(window, 0);
 
@@ -288,7 +288,7 @@ void desktop_start (s_window_t *window, s_config_t *cfg)
 	hndl->mouse.w = window->surface->width;
 	hndl->mouse.h = window->surface->height;
 	hndl->mouse.p = desktop_desktop_handler;
-	hndl->mouse.button = MOUSE_RIGHTBUTTON;
+	hndl->mouse.button = MOUSE_BUTTON_RIGHT;
 	hndl->data = 0;
 	s_handler_add(window, hndl);
 	

@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Thu Jan 30 2003
     copyright            : (C) 2003 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -79,16 +79,16 @@ extern int grantpt (int);
 extern int unlockpt (int);
 
 #define CTRLCODES	51
-static S_KEYCODE_CODE ctrlcodes_c[CTRLCODES] = {S_KEYCODE_a, S_KEYCODE_A, S_KEYCODE_b, S_KEYCODE_B, S_KEYCODE_c, S_KEYCODE_C,
-						S_KEYCODE_d, S_KEYCODE_D, S_KEYCODE_e, S_KEYCODE_E, S_KEYCODE_f, S_KEYCODE_F,
-						S_KEYCODE_g, S_KEYCODE_G, S_KEYCODE_h, S_KEYCODE_H, S_KEYCODE_k, S_KEYCODE_K,
-						S_KEYCODE_l, S_KEYCODE_L, S_KEYCODE_n, S_KEYCODE_N, S_KEYCODE_o, S_KEYCODE_O,
-						S_KEYCODE_p, S_KEYCODE_P, S_KEYCODE_q, S_KEYCODE_Q, S_KEYCODE_r, S_KEYCODE_R,
-						S_KEYCODE_s, S_KEYCODE_S, S_KEYCODE_t, S_KEYCODE_T, S_KEYCODE_u, S_KEYCODE_U,
-						S_KEYCODE_v, S_KEYCODE_V, S_KEYCODE_w, S_KEYCODE_W, S_KEYCODE_x, S_KEYCODE_X,
-						S_KEYCODE_y, S_KEYCODE_Y, S_KEYCODE_z, S_KEYCODE_Z,
-						S_KEYCODE_BRACKETLEFT, S_KEYCODE_BACKSLASH, S_KEYCODE_BRACKETRIGHT,
-						S_KEYCODE_ASCIICIRCUM, S_KEYCODE_UNDERSCORE};
+static s_keyboard_button_t ctrlcodes_c[CTRLCODES] = {KEYBOARD_BUTTON_a, KEYBOARD_BUTTON_A, KEYBOARD_BUTTON_b, KEYBOARD_BUTTON_B, KEYBOARD_BUTTON_c, KEYBOARD_BUTTON_C,
+						KEYBOARD_BUTTON_d, KEYBOARD_BUTTON_D, KEYBOARD_BUTTON_e, KEYBOARD_BUTTON_E, KEYBOARD_BUTTON_f, KEYBOARD_BUTTON_F,
+						KEYBOARD_BUTTON_g, KEYBOARD_BUTTON_G, KEYBOARD_BUTTON_h, KEYBOARD_BUTTON_H, KEYBOARD_BUTTON_k, KEYBOARD_BUTTON_K,
+						KEYBOARD_BUTTON_l, KEYBOARD_BUTTON_L, KEYBOARD_BUTTON_n, KEYBOARD_BUTTON_N, KEYBOARD_BUTTON_o, KEYBOARD_BUTTON_O,
+						KEYBOARD_BUTTON_p, KEYBOARD_BUTTON_P, KEYBOARD_BUTTON_q, KEYBOARD_BUTTON_Q, KEYBOARD_BUTTON_r, KEYBOARD_BUTTON_R,
+						KEYBOARD_BUTTON_s, KEYBOARD_BUTTON_S, KEYBOARD_BUTTON_t, KEYBOARD_BUTTON_T, KEYBOARD_BUTTON_u, KEYBOARD_BUTTON_U,
+						KEYBOARD_BUTTON_v, KEYBOARD_BUTTON_V, KEYBOARD_BUTTON_w, KEYBOARD_BUTTON_W, KEYBOARD_BUTTON_x, KEYBOARD_BUTTON_X,
+						KEYBOARD_BUTTON_y, KEYBOARD_BUTTON_Y, KEYBOARD_BUTTON_z, KEYBOARD_BUTTON_Z,
+						KEYBOARD_BUTTON_BRACKETLEFT, KEYBOARD_BUTTON_BACKSLASH, KEYBOARD_BUTTON_BRACKETRIGHT,
+						KEYBOARD_BUTTON_ASCIICIRCUM, KEYBOARD_BUTTON_UNDERSCORE};
 static char *ctrlcodes_s[CTRLCODES] = {"\001", "\001", "\002", "\002", "\003", "\003",
 				       "\004", "\004", "\005", "\005", "\006", "\006",
 				       "\007", "\007", "\010", "\010", "\013", "\013",
@@ -101,12 +101,12 @@ static char *ctrlcodes_s[CTRLCODES] = {"\001", "\001", "\002", "\002", "\003", "
 				       "\036", "\037"};
 
 #define KEYCODES	27
-static S_KEYCODE_CODE keycodes_c[KEYCODES] = {S_KEYCODE_F1, S_KEYCODE_F2, S_KEYCODE_F3, S_KEYCODE_F4, S_KEYCODE_F5,
-					      S_KEYCODE_F6, S_KEYCODE_F7, S_KEYCODE_F8, S_KEYCODE_F9, S_KEYCODE_F10,
-                                              S_KEYCODE_F11, S_KEYCODE_F12, S_KEYCODE_TAB, S_KEYCODE_END, S_KEYCODE_HOME,
-                                              S_KEYCODE_UP, S_KEYCODE_DOWN, S_KEYCODE_LEFT, S_KEYCODE_RIGHT, S_KEYCODE_RETURN,
-                                              S_KEYCODE_DELETE, S_KEYCODE_INSERT, S_KEYCODE_REMOVE, S_KEYCODE_ESCAPE,
-                                              S_KEYCODE_PAGEUP, S_KEYCODE_PAGEDOWN, S_KEYCODE_KP_ENTER};
+static s_keyboard_button_t keycodes_c[KEYCODES] = {KEYBOARD_BUTTON_F1, KEYBOARD_BUTTON_F2, KEYBOARD_BUTTON_F3, KEYBOARD_BUTTON_F4, KEYBOARD_BUTTON_F5,
+					      KEYBOARD_BUTTON_F6, KEYBOARD_BUTTON_F7, KEYBOARD_BUTTON_F8, KEYBOARD_BUTTON_F9, KEYBOARD_BUTTON_F10,
+                                              KEYBOARD_BUTTON_F11, KEYBOARD_BUTTON_F12, KEYBOARD_BUTTON_TAB, KEYBOARD_BUTTON_END, KEYBOARD_BUTTON_HOME,
+                                              KEYBOARD_BUTTON_UP, KEYBOARD_BUTTON_DOWN, KEYBOARD_BUTTON_LEFT, KEYBOARD_BUTTON_RIGHT, KEYBOARD_BUTTON_RETURN,
+                                              KEYBOARD_BUTTON_DELETE, KEYBOARD_BUTTON_INSERT, KEYBOARD_BUTTON_REMOVE, KEYBOARD_BUTTON_ESCAPE,
+                                              KEYBOARD_BUTTON_PAGEUP, KEYBOARD_BUTTON_PAGEDOWN, KEYBOARD_BUTTON_KP_ENTER};
 static char *keycodes_s[KEYCODES] = {"\033[[A", "\033[[B", "\033[[C", "\033[[D", "\033[[E", "\033[17~", "\033[18~",
 				     "\033[19~", "\033[20~", "\033[21~", "\033[23~", "\033[24~", "\t", "\033[4~",
 				     "\033[1~", "\033[A", "\033[B", "\033[D", "\033[C", "\n", "\010", "\033[2~",
@@ -985,8 +985,8 @@ static void atevent (s_window_t *window, s_event_t *event)
 {
         int i;
 
-	if (event->type & KEYBD_PRESSED) {
-		if (event->keybd->flag & KEYCODE_LCTRLF) {
+	if (event->type & EVENT_TYPE_KEYBOARD_PRESSED) {
+		if (event->keybd->flag & KEYBOARD_FLAG_LEFTCTRL) {
 			for (i = 0; i < CTRLCODES; i++) {
 				if (ctrlcodes_c[i] == event->keybd->button) {
 				        write(cmd_fd, ctrlcodes_s[i], strlen(ctrlcodes_s[i]));
@@ -1087,11 +1087,11 @@ int main (int argc, char *argv[])
 
 	s_window_init(&window);
 
-	s_window_new(window, WINDOW_MAIN, NULL);
+	s_window_new(window, WINDOW_TYPE_MAIN, NULL);
 
 	s_window_set_title(window, "Xyntherminal");
 	s_window_set_coor(window, 0, 100, 100, FONTW * SCREENW, FONTH * SCREENH);
-	s_window_set_coor(window, WINDOW_NOFORM, window->surface->buf->x, window->surface->buf->y, FONTW * SCREENW, FONTH * SCREENH);
+	s_window_set_coor(window, WINDOW_TYPE_NOFORM, window->surface->buf->x, window->surface->buf->y, FONTW * SCREENW, FONTH * SCREENH);
 	s_window_set_resizeable(window, 0);
 
 	s_free(window->surface->vbuf);

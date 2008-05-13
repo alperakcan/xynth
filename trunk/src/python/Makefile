@@ -1,29 +1,17 @@
 
-include ../../Makefile.cfg
-include ../../Makefile.parse
+-include ../../.config
 
-DIR = src/python/
+target_so-y = xynth.so
 
-INCDIR += ../lib /usr/include/python2.4
-LIBDIR += ../lib
+xynth.so_files-y = window.c \
+                   xynthpy.c \
+                   xynthpy.h
 
-OBJS = window.o xynthpy.o
+xynth.so_includes-y = ../lib \
+                      $(CONFIG_PYTHON_INCLUDES)
 
-ifeq ($(PLATFORM_LINUX), Y)
-TARGET_SO = xynth.so
-LDFLAGS   = -lpython2.4 -lxynth
-EXTRA_DEPEND_FILES = *.h
-else
-ifeq ($(PLATFORM_PSPDEV), Y)
-else
-ifeq ($(PLATFORM_MINGW), Y)
-else
-ifeq ($(PLATFORM_GP2X), Y)
-endif
-endif
-endif
-endif
+xynth.so_libraries-y = ../lib
 
-include ../../Makefile.rules
+xynth.so_ldflags-y = -$(CONFIG_PYTHON_LDFLAGS) -lxynth
 
-dist: all
+include ../../Makefile.lib

@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Mon Oct 20 2003
     copyright            : (C) 2003 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -565,10 +565,10 @@ handle_packets:
 			but = (but & 8) | ((buf[i] & 0x20) >> 3) | ((buf[i] & 0x10) >> 4);
 			dx = (char) (((buf[i] & 0x03) << 6) | (buf[i + 1] & 0x3F));
 			dy = (char) (((buf[i] & 0x0C) << 4) | (buf[i + 2] & 0x3F));
-			if((dx == 0) && (dy == 0) && (but == (prev &~ MOUSE_MIDDLEBUTTON)))
-				but = prev ^ MOUSE_MIDDLEBUTTON;
+			if((dx == 0) && (dy == 0) && (but == (prev &~ MOUSE_BUTTON_MIDDLE)))
+				but = prev ^ MOUSE_BUTTON_MIDDLE;
 			else
-				but |= prev & MOUSE_MIDDLEBUTTON;
+				but |= prev & MOUSE_BUTTON_MIDDLE;
 			prev = but;
 			break;
 #else
@@ -586,9 +586,9 @@ handle_packets:
 				nodev = 1;
 				break;
 			}
-			but = (buf[i + 3] & 0x08) ? MOUSE_LEFTBUTTON : 0 |
-			      (buf[i + 3] & 0x10) ? MOUSE_RIGHTBUTTON : 0 |
-			      (buf[i + 3] & 0x20) ? MOUSE_MIDDLEBUTTON : 0;
+			but = (buf[i + 3] & 0x08) ? MOUSE_BUTTON_LEFT : 0 |
+			      (buf[i + 3] & 0x10) ? MOUSE_BUTTON_RIGHT : 0 |
+			      (buf[i + 3] & 0x20) ? MOUSE_BUTTON_MIDDLE : 0;
 			/* The absolute position is returned, not the change in position, so
 			   we convert it. */
 			ax = ((buf[i + 0] & 0x03) << 14) | (buf[i + 1] << 7) | buf[i + 2];
@@ -610,7 +610,7 @@ handle_packets:
 			oldax = ax;
 			olday = ay;
 			if (buf[i] & 0x20 && dz) /* stylus has pressure */
-				but |= MOUSE_LEFTBUTTON;
+				but |= MOUSE_BUTTON_LEFT;
 			else if (buf[i+6] & 0x30) { /* roller is being turned */
 				wheel = (buf[i + 6] & 0x30) >> 3;
 				if (buf[i+6] & 0x40)
@@ -802,7 +802,7 @@ handle_packets:
 				case 'K':
 					/* Button press/release w/out motion */
 					but=0177 & buf[i+2];
-					if (but == MOUSE_RESETBUTTON)
+					if (but == MOUSE_BUTTON_RESET)
 						mouse_orientation = 1 - mouse_orientation;
 #if defined(CONFIG_DEBUG_MOUSE)
 					debugf(DSER, "MOUSE : Got K packet! but=%d, x=%d y=%d z=%d rx=%d ry=%d rz=%d",

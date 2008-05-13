@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Fri Jun 9 2006
     copyright            : (C) 2006 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -95,153 +95,153 @@ static image_bin_t image_orange = {
 };
 
 static osk_char_t chars[][9][4] = {
-	{{{'a', S_KEYCODE_a, 0, "a"},
-	  {',', S_KEYCODE_COMMA, 0, ","},
-	  {'c', S_KEYCODE_c, 0, "c"},
-	  {'b', S_KEYCODE_b, 0, "b"}},
-	 {{'d', S_KEYCODE_d, 0, "d"},
-	  {'.', S_KEYCODE_PERIOD, 0, "."},
-	  {'f', S_KEYCODE_f, 0, "f"},
-	  {'e', S_KEYCODE_e, 0, "e"}},
-	 {{'g', S_KEYCODE_g, 0, "g"},
-	  {'!', S_KEYCODE_EXCLAM, 0, "!"},
-	  {'i', S_KEYCODE_i, 0, "i"},
-	  {'h', S_KEYCODE_h, 0, "h"}},
-	 {{'j', S_KEYCODE_j, 0, "j"},
-	  {'-', S_KEYCODE_MINUS, 0, "-"},
-	  {'l', S_KEYCODE_l, 0, "l"},
-	  {'k', S_KEYCODE_k, 0, "k"}},
-	 {{'m', S_KEYCODE_m, 0, "m"},
-	  {0, S_KEYCODE_DELETE, 0, "del"},
-	  {'n', S_KEYCODE_n, 0, "n"},
-	  {' ', S_KEYCODE_SPACE, 0, "space"}},
-	 {{'o', S_KEYCODE_o, 0, "o"},
-	  {'?', S_KEYCODE_QUESTION, 0, "?"},
-	  {'q', S_KEYCODE_q, 0, "q"},
-	  {'p', S_KEYCODE_p, 0, "p"}},
-	 {{'r', S_KEYCODE_r, 0, "r"},
-	  {'(', S_KEYCODE_PARENLEFT, 0, "("},
-	  {'t', S_KEYCODE_t, 0, "t"},
-	  {'s', S_KEYCODE_s, 0, "s"}},
-	 {{'u', S_KEYCODE_u, 0, "u"},
-	  {':', S_KEYCODE_COLON, 0, ":"},
-	  {'w', S_KEYCODE_w, 0, "w"},
-	  {'v', S_KEYCODE_v, 0, "v"}},
-	 {{'x', S_KEYCODE_u, 0, "x"},
-	  {')', S_KEYCODE_PARENRIGHT, 0, ")"},
-	  {'z', S_KEYCODE_w, 0, "z"},
-	  {'y', S_KEYCODE_v, 0, "y"}}},
+	{{{'a', KEYBOARD_BUTTON_a, 0, "a"},
+	  {',', KEYBOARD_BUTTON_COMMA, 0, ","},
+	  {'c', KEYBOARD_BUTTON_c, 0, "c"},
+	  {'b', KEYBOARD_BUTTON_b, 0, "b"}},
+	 {{'d', KEYBOARD_BUTTON_d, 0, "d"},
+	  {'.', KEYBOARD_BUTTON_PERIOD, 0, "."},
+	  {'f', KEYBOARD_BUTTON_f, 0, "f"},
+	  {'e', KEYBOARD_BUTTON_e, 0, "e"}},
+	 {{'g', KEYBOARD_BUTTON_g, 0, "g"},
+	  {'!', KEYBOARD_BUTTON_EXCLAM, 0, "!"},
+	  {'i', KEYBOARD_BUTTON_i, 0, "i"},
+	  {'h', KEYBOARD_BUTTON_h, 0, "h"}},
+	 {{'j', KEYBOARD_BUTTON_j, 0, "j"},
+	  {'-', KEYBOARD_BUTTON_MINUS, 0, "-"},
+	  {'l', KEYBOARD_BUTTON_l, 0, "l"},
+	  {'k', KEYBOARD_BUTTON_k, 0, "k"}},
+	 {{'m', KEYBOARD_BUTTON_m, 0, "m"},
+	  {0, KEYBOARD_BUTTON_DELETE, 0, "del"},
+	  {'n', KEYBOARD_BUTTON_n, 0, "n"},
+	  {' ', KEYBOARD_BUTTON_SPACE, 0, "space"}},
+	 {{'o', KEYBOARD_BUTTON_o, 0, "o"},
+	  {'?', KEYBOARD_BUTTON_QUESTION, 0, "?"},
+	  {'q', KEYBOARD_BUTTON_q, 0, "q"},
+	  {'p', KEYBOARD_BUTTON_p, 0, "p"}},
+	 {{'r', KEYBOARD_BUTTON_r, 0, "r"},
+	  {'(', KEYBOARD_BUTTON_PARENLEFT, 0, "("},
+	  {'t', KEYBOARD_BUTTON_t, 0, "t"},
+	  {'s', KEYBOARD_BUTTON_s, 0, "s"}},
+	 {{'u', KEYBOARD_BUTTON_u, 0, "u"},
+	  {':', KEYBOARD_BUTTON_COLON, 0, ":"},
+	  {'w', KEYBOARD_BUTTON_w, 0, "w"},
+	  {'v', KEYBOARD_BUTTON_v, 0, "v"}},
+	 {{'x', KEYBOARD_BUTTON_u, 0, "x"},
+	  {')', KEYBOARD_BUTTON_PARENRIGHT, 0, ")"},
+	  {'z', KEYBOARD_BUTTON_w, 0, "z"},
+	  {'y', KEYBOARD_BUTTON_v, 0, "y"}}},
 
-	{{{'A', S_KEYCODE_A, 0, "A"},
-	  {'^', S_KEYCODE_ASCIICIRCUM, 0, "^"},
-	  {'C', S_KEYCODE_C, 0, "C"},
-	  {'B', S_KEYCODE_B, 0, "B"}},
-	 {{'D', S_KEYCODE_D, 0, "D"},
-	  {'@', S_KEYCODE_AT, 0, "@"},
-	  {'F', S_KEYCODE_F, 0, "F"},
-	  {'E', S_KEYCODE_E, 0, "E"}},
-	 {{'G', S_KEYCODE_G, 0, "G"},
-	  {'*', S_KEYCODE_ASTERISK, 0, "*"},
-	  {'I', S_KEYCODE_I, 0, "I"},
-	  {'H', S_KEYCODE_H, 0, "H"}},
-	 {{'J', S_KEYCODE_J, 0, "J"},
-	  {'_', S_KEYCODE_UNDERSCORE, 0, "_"},
-	  {'L', S_KEYCODE_L, 0, "L"},
-	  {'K', S_KEYCODE_K, 0, "K"}},
-	 {{'M', S_KEYCODE_M, 0, "M"},
-	  {0, S_KEYCODE_REMOVE, 0, "remove"},
-	  {'N', S_KEYCODE_N, 0, "N"},
-	  {'\n', S_KEYCODE_RETURN, 0, "enter"}},
-	 {{'O', S_KEYCODE_O, 0, "O"},
-	  {'\"', S_KEYCODE_QUOTEDBL, 0, "\""},
-	  {'Q', S_KEYCODE_Q, 0, "Q"},
-	  {'P', S_KEYCODE_P, 0, "P"}},
-	 {{'R', S_KEYCODE_R, 0, "R"},
-	  {'=', S_KEYCODE_EQUAL, 0, "="},
-	  {'T', S_KEYCODE_T, 0, "T"},
-	  {'S', S_KEYCODE_S, 0, "S"}},
-	 {{'U', S_KEYCODE_U, 0, "U"},
-	  {';', S_KEYCODE_SEMICOLON, 0, ";"},
-	  {'W', S_KEYCODE_W, 0, "W"},
-	  {'V', S_KEYCODE_V, 0, "V"}},
-	 {{'X', S_KEYCODE_U, 0, "X"},
-	  {'/', S_KEYCODE_SLASH, 0, "/"},
-	  {'Z', S_KEYCODE_W, 0, "Z"},
-	  {'Y', S_KEYCODE_V, 0, "Y"}}},
+	{{{'A', KEYBOARD_BUTTON_A, 0, "A"},
+	  {'^', KEYBOARD_BUTTON_ASCIICIRCUM, 0, "^"},
+	  {'C', KEYBOARD_BUTTON_C, 0, "C"},
+	  {'B', KEYBOARD_BUTTON_B, 0, "B"}},
+	 {{'D', KEYBOARD_BUTTON_D, 0, "D"},
+	  {'@', KEYBOARD_BUTTON_AT, 0, "@"},
+	  {'F', KEYBOARD_BUTTON_F, 0, "F"},
+	  {'E', KEYBOARD_BUTTON_E, 0, "E"}},
+	 {{'G', KEYBOARD_BUTTON_G, 0, "G"},
+	  {'*', KEYBOARD_BUTTON_ASTERISK, 0, "*"},
+	  {'I', KEYBOARD_BUTTON_I, 0, "I"},
+	  {'H', KEYBOARD_BUTTON_H, 0, "H"}},
+	 {{'J', KEYBOARD_BUTTON_J, 0, "J"},
+	  {'_', KEYBOARD_BUTTON_UNDERSCORE, 0, "_"},
+	  {'L', KEYBOARD_BUTTON_L, 0, "L"},
+	  {'K', KEYBOARD_BUTTON_K, 0, "K"}},
+	 {{'M', KEYBOARD_BUTTON_M, 0, "M"},
+	  {0, KEYBOARD_BUTTON_REMOVE, 0, "remove"},
+	  {'N', KEYBOARD_BUTTON_N, 0, "N"},
+	  {'\n', KEYBOARD_BUTTON_RETURN, 0, "enter"}},
+	 {{'O', KEYBOARD_BUTTON_O, 0, "O"},
+	  {'\"', KEYBOARD_BUTTON_QUOTEDBL, 0, "\""},
+	  {'Q', KEYBOARD_BUTTON_Q, 0, "Q"},
+	  {'P', KEYBOARD_BUTTON_P, 0, "P"}},
+	 {{'R', KEYBOARD_BUTTON_R, 0, "R"},
+	  {'=', KEYBOARD_BUTTON_EQUAL, 0, "="},
+	  {'T', KEYBOARD_BUTTON_T, 0, "T"},
+	  {'S', KEYBOARD_BUTTON_S, 0, "S"}},
+	 {{'U', KEYBOARD_BUTTON_U, 0, "U"},
+	  {';', KEYBOARD_BUTTON_SEMICOLON, 0, ";"},
+	  {'W', KEYBOARD_BUTTON_W, 0, "W"},
+	  {'V', KEYBOARD_BUTTON_V, 0, "V"}},
+	 {{'X', KEYBOARD_BUTTON_U, 0, "X"},
+	  {'/', KEYBOARD_BUTTON_SLASH, 0, "/"},
+	  {'Z', KEYBOARD_BUTTON_W, 0, "Z"},
+	  {'Y', KEYBOARD_BUTTON_V, 0, "Y"}}},
 
-	{{{'(', S_KEYCODE_PARENLEFT, 0, "("},
-	  {',', S_KEYCODE_COMMA, 0, ","},
-	  {')', S_KEYCODE_PARENRIGHT, 0, ")"},
-	  {'.', S_KEYCODE_PERIOD, 0, "."}},
-	 {{'<', S_KEYCODE_LESS, 0, "<"},
-	  {'\"', S_KEYCODE_QUOTEDBL, 0, "\""},
-	  {'>', S_KEYCODE_GREATER, 0, ">"},
-	  {'\'', S_KEYCODE_APOSTROPHE, 0, "\'"}},
-	 {{'[', S_KEYCODE_BRACKETLEFT, 0, "["},
-	  {'-', S_KEYCODE_MINUS, 0, "-"},
-	  {']', S_KEYCODE_BRACKETRIGHT, 0, "]"},
-	  {'_', S_KEYCODE_UNDERSCORE, 0, "_"}},
-	 {{'{', S_KEYCODE_BRACELEFT, 0, "{"},
-	  {'!', S_KEYCODE_EXCLAM, 0, "!"},
-	  {'}', S_KEYCODE_BRACERIGHT, 0, "}"},
-	  {'?', S_KEYCODE_QUESTION, 0, "?"}},
+	{{{'(', KEYBOARD_BUTTON_PARENLEFT, 0, "("},
+	  {',', KEYBOARD_BUTTON_COMMA, 0, ","},
+	  {')', KEYBOARD_BUTTON_PARENRIGHT, 0, ")"},
+	  {'.', KEYBOARD_BUTTON_PERIOD, 0, "."}},
+	 {{'<', KEYBOARD_BUTTON_LESS, 0, "<"},
+	  {'\"', KEYBOARD_BUTTON_QUOTEDBL, 0, "\""},
+	  {'>', KEYBOARD_BUTTON_GREATER, 0, ">"},
+	  {'\'', KEYBOARD_BUTTON_APOSTROPHE, 0, "\'"}},
+	 {{'[', KEYBOARD_BUTTON_BRACKETLEFT, 0, "["},
+	  {'-', KEYBOARD_BUTTON_MINUS, 0, "-"},
+	  {']', KEYBOARD_BUTTON_BRACKETRIGHT, 0, "]"},
+	  {'_', KEYBOARD_BUTTON_UNDERSCORE, 0, "_"}},
+	 {{'{', KEYBOARD_BUTTON_BRACELEFT, 0, "{"},
+	  {'!', KEYBOARD_BUTTON_EXCLAM, 0, "!"},
+	  {'}', KEYBOARD_BUTTON_BRACERIGHT, 0, "}"},
+	  {'?', KEYBOARD_BUTTON_QUESTION, 0, "?"}},
 	 {{0, 0, 0, ""},
-	  {0, S_KEYCODE_DELETE, 0, "del"},
+	  {0, KEYBOARD_BUTTON_DELETE, 0, "del"},
 	  {0, 0, 0, ""},
-	  {' ', S_KEYCODE_SPACE, 0, "space"}},
-	 {{'\\', S_KEYCODE_BACKSLASH, 0, "\\"},
-	  {'+', S_KEYCODE_PLUS, 0, "+"},
-	  {'/', S_KEYCODE_SLASH, 0, "/"},
-	  {'=', S_KEYCODE_EQUAL, 0, "="}},
-	 {{'@', S_KEYCODE_AT, 0, "@"},
-	  {':', S_KEYCODE_COLON, 0, ":"},
-	  {'#', S_KEYCODE_NUMBERSIGN, 0, "#"},
-	  {';', S_KEYCODE_SEMICOLON, 0, ";"}},
-	 {{'$', S_KEYCODE_DOLLAR, 0, "$"},
-	  {'~', S_KEYCODE_ASCIITILDE, 0, "~"},
-	  {'%', S_KEYCODE_PERCENT, 0, "%"},
-	  {'`', S_KEYCODE_GRAVE, 0, "`"}},
-	 {{'^', S_KEYCODE_ASCIICIRCUM, 0, "^"},
-	  {'*', S_KEYCODE_ASTERISK, 0, "*"},
-	  {'&', S_KEYCODE_AMPERSAND, 0, "&"},
-	  {'|', S_KEYCODE_BAR, 0, "|"}}},
+	  {' ', KEYBOARD_BUTTON_SPACE, 0, "space"}},
+	 {{'\\', KEYBOARD_BUTTON_BACKSLASH, 0, "\\"},
+	  {'+', KEYBOARD_BUTTON_PLUS, 0, "+"},
+	  {'/', KEYBOARD_BUTTON_SLASH, 0, "/"},
+	  {'=', KEYBOARD_BUTTON_EQUAL, 0, "="}},
+	 {{'@', KEYBOARD_BUTTON_AT, 0, "@"},
+	  {':', KEYBOARD_BUTTON_COLON, 0, ":"},
+	  {'#', KEYBOARD_BUTTON_NUMBERSIGN, 0, "#"},
+	  {';', KEYBOARD_BUTTON_SEMICOLON, 0, ";"}},
+	 {{'$', KEYBOARD_BUTTON_DOLLAR, 0, "$"},
+	  {'~', KEYBOARD_BUTTON_ASCIITILDE, 0, "~"},
+	  {'%', KEYBOARD_BUTTON_PERCENT, 0, "%"},
+	  {'`', KEYBOARD_BUTTON_GRAVE, 0, "`"}},
+	 {{'^', KEYBOARD_BUTTON_ASCIICIRCUM, 0, "^"},
+	  {'*', KEYBOARD_BUTTON_ASTERISK, 0, "*"},
+	  {'&', KEYBOARD_BUTTON_AMPERSAND, 0, "&"},
+	  {'|', KEYBOARD_BUTTON_BAR, 0, "|"}}},
 
 	{{{0, 0, 0, ""},
 	  {0, 0, 0, ""},
-	  {'1', S_KEYCODE_ONE, 0, "1"},
+	  {'1', KEYBOARD_BUTTON_ONE, 0, "1"},
 	  {0, 0, 0, ""}},
 	 {{0, 0, 0, ""},
 	  {0, 0, 0, ""},
-	  {'2', S_KEYCODE_TWO, 0, "2"},
+	  {'2', KEYBOARD_BUTTON_TWO, 0, "2"},
 	  {0, 0, 0, ""}},
 	 {{0, 0, 0, ""},
 	  {0, 0, 0, ""},
-	  {'3', S_KEYCODE_THREE, 0, "3"},
+	  {'3', KEYBOARD_BUTTON_THREE, 0, "3"},
 	  {0, 0, 0, ""}},
 	 {{0, 0, 0, ""},
 	  {0, 0, 0, ""},
-	  {'4', S_KEYCODE_FOUR, 0, "4"},
+	  {'4', KEYBOARD_BUTTON_FOUR, 0, "4"},
 	  {0, 0, 0, ""}},
 	 {{0, 0, 0, ""},
 	  {0, 0, 0, ""},
-	  {'5', S_KEYCODE_FIVE, 0, "5"},
+	  {'5', KEYBOARD_BUTTON_FIVE, 0, "5"},
 	  {0, 0, 0, ""}},
 	 {{0, 0, 0, ""},
 	  {0, 0, 0, ""},
-	  {'6', S_KEYCODE_SIX, 0, "6"},
+	  {'6', KEYBOARD_BUTTON_SIX, 0, "6"},
 	  {0, 0, 0, ""}},
 	 {{0, 0, 0, ""},
 	  {0, 0, 0, ""},
-	  {'7', S_KEYCODE_SEVEN, 0, "7"},
+	  {'7', KEYBOARD_BUTTON_SEVEN, 0, "7"},
 	  {0, 0, 0, ""}},
 	 {{0, 0, 0, ""},
 	  {0, 0, 0, ""},
-	  {'8', S_KEYCODE_EIGHT, 0, "8"},
+	  {'8', KEYBOARD_BUTTON_EIGHT, 0, "8"},
 	  {0, 0, 0, ""}},
 	 {{0, 0, 0, ""},
 	  {0, 0, 0, ""},
-	  {'9', S_KEYCODE_NINE, 0, "9"},
-	  {'0', S_KEYCODE_ZERO, 0, "0"}}}
+	  {'9', KEYBOARD_BUTTON_NINE, 0, "9"},
+	  {'0', KEYBOARD_BUTTON_ZERO, 0, "0"}}}
 };
 
 static int image_load (s_image_t *img, int w, int h, unsigned char *rgb)
@@ -398,13 +398,13 @@ static void handler_set_char (s_window_t *window, osk_char_t *chr)
 {
 	s_event_t *evt;
 	s_event_init(&evt);
-	evt->type = KEYBD_EVENT | KEYBD_PRESSED;
+	evt->type = EVENT_TYPE_KEYBOARD | EVENT_TYPE_KEYBOARD_PRESSED;
 	evt->keybd->ascii = chr->ascii;
 	evt->keybd->button = chr->button;
 	evt->keybd->keycode = chr->button;
 	evt->keybd->scancode = chr->scancode;
 	s_socket_request(window, SOC_DATA_EVENT, evt);
-	evt->type = KEYBD_EVENT | KEYBD_RELEASED;
+	evt->type = EVENT_TYPE_KEYBOARD | EVENT_TYPE_KEYBOARD_RELEASED;
 	s_socket_request(window, SOC_DATA_EVENT, evt);
 	s_event_uninit(evt);
 }
@@ -511,7 +511,7 @@ static void handler_set_map (s_window_t *window, s_event_t *event, s_handler_t *
 	draw_boxes(window);
 }
 
-static void handler_set (s_window_t *window, S_KEYCODE_CODE key, void (*func) (s_window_t *, s_event_t *, s_handler_t *))
+static void handler_set (s_window_t *window, s_keyboard_button_t key, void (*func) (s_window_t *, s_event_t *, s_handler_t *))
 {
 	s_handler_t *hndl;
 	s_handler_init(&hndl);
@@ -531,7 +531,7 @@ int main (int argc, char *argv[])
 	s_window_t *window;
 
 	s_window_init(&window);
-	s_window_new(window, WINDOW_MAIN /*| WINDOW_NOFORM*/, NULL);
+	s_window_new(window, WINDOW_TYPE_MAIN /*| WINDOW_TYPE_NOFORM*/, NULL);
 	s_window_set_title(window, "Demo - %s ", argv[0]);
 	s_window_set_resizeable(window, 0);
 	s_window_set_alwaysontop(window, 1);
@@ -540,7 +540,7 @@ int main (int argc, char *argv[])
 	h = BOX_H * 3;
 	x = (window->surface->linear_buf_width - w) / 2;
 	y = (window->surface->linear_buf_height - h) / 2;
-	s_window_set_coor(window, WINDOW_NOFORM, x, y, w, h);
+	s_window_set_coor(window, WINDOW_TYPE_NOFORM, x, y, w, h);
 
 	window->surface->width = window->surface->buf->w;
 	window->surface->height = window->surface->buf->h;
@@ -549,17 +549,17 @@ int main (int argc, char *argv[])
 	
 	draw_boxes(window);
 
-	handler_set(window, S_KEYCODE_RIGHTSHIFT, handler_shift_up);
-	handler_set(window, S_KEYCODE_LEFTSHIFT, handler_shift_down);
-	handler_set(window, S_KEYCODE_LEFT, handler_left);
-	handler_set(window, S_KEYCODE_RIGHT, handler_right);
-	handler_set(window, S_KEYCODE_UP, handler_up);
-	handler_set(window, S_KEYCODE_DOWN, handler_down);
-	handler_set(window, S_KEYCODE_SPACE, handler_set_map);
-	handler_set(window, S_KEYCODE_i, handler_set_up);
-	handler_set(window, S_KEYCODE_j, handler_set_left);
-	handler_set(window, S_KEYCODE_k, handler_set_down);
-	handler_set(window, S_KEYCODE_l, handler_set_right);
+	handler_set(window, KEYBOARD_BUTTON_RIGHTSHIFT, handler_shift_up);
+	handler_set(window, KEYBOARD_BUTTON_LEFTSHIFT, handler_shift_down);
+	handler_set(window, KEYBOARD_BUTTON_LEFT, handler_left);
+	handler_set(window, KEYBOARD_BUTTON_RIGHT, handler_right);
+	handler_set(window, KEYBOARD_BUTTON_UP, handler_up);
+	handler_set(window, KEYBOARD_BUTTON_DOWN, handler_down);
+	handler_set(window, KEYBOARD_BUTTON_SPACE, handler_set_map);
+	handler_set(window, KEYBOARD_BUTTON_i, handler_set_up);
+	handler_set(window, KEYBOARD_BUTTON_j, handler_set_left);
+	handler_set(window, KEYBOARD_BUTTON_k, handler_set_down);
+	handler_set(window, KEYBOARD_BUTTON_l, handler_set_right);
 
 	s_window_show(window);
 	s_window_main(window);

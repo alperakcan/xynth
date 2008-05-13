@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Tue Oct 5 2004
     copyright            : (C) 2004 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -211,7 +211,7 @@ void taskbar_clock_popup_atevent (s_window_t *window, s_event_t *event)
 	int y;
 	tbar_data_t *tbar_data;
 	tbar_clock_t *tbar_clock;
-	if (event->type & MOUSE_EVENT) {
+	if (event->type & EVENT_TYPE_MOUSE) {
 		tbar_data = (tbar_data_t *) window->parent->data;
 		tbar_clock = (tbar_clock_t *) tbar_data->tbar_clock;
 		x = event->mouse->x - window->parent->surface->buf->x;
@@ -264,7 +264,7 @@ void taskbar_clock_handler_o (s_window_t *window, s_event_t *event, s_handler_t 
 	text = (char *) s_malloc(sizeof(char) * 256);
 
 	s_window_init(&temp);
-        s_window_new(temp, WINDOW_TEMP | WINDOW_NOFORM, window);
+        s_window_new(temp, WINDOW_TYPE_TEMP | WINDOW_TYPE_NOFORM, window);
         s_window_set_alwaysontop(temp, 1);
 
 	/* W = C + Y + L + M + D (mod 7)
@@ -440,10 +440,10 @@ void taskbar_atevent (s_window_t *window, s_event_t *event)
         tbar_progs_t *tbar_progs;
         s_desktop_client_t *desktopc;
 	
-	if (event->type & MOUSE_EXITED) {
+	if (event->type & EVENT_TYPE_MOUSE_EXIT) {
 	}
 
-	if (!(event->type & DESKTOP_EVENT)) {
+	if (!(event->type & EVENT_TYPE_DESKTOP)) {
 		return;
 	}
 
@@ -476,7 +476,7 @@ void taskbar_start (s_window_t *window, s_config_t *cfg)
 	s_handler_t *hndl;
         tbar_data_t *tbar_data;
 
-	s_window_set_coor(window, WINDOW_NOFORM, 0, window->surface->height - 30, window->surface->width, 30);
+	s_window_set_coor(window, WINDOW_TYPE_NOFORM, 0, window->surface->height - 30, window->surface->width, 30);
 	s_window_set_alwaysontop(window, 1);
 	s_window_set_resizeable(window, 0);
 	s_window_atevent(window, taskbar_atevent);
@@ -548,7 +548,7 @@ void taskbar_start (s_window_t *window, s_config_t *cfg)
 	hndl->mouse.w = tbar_data->tbar_progs->rect.w;
 	hndl->mouse.h = tbar_data->tbar_progs->rect.h;
 	hndl->mouse.r = taskbar_progs_handler_r;
-	hndl->mouse.button = MOUSE_LEFTBUTTON;
+	hndl->mouse.button = MOUSE_BUTTON_LEFT;
 	s_handler_add(window, hndl);
 
 	s_handler_init(&hndl);
@@ -558,7 +558,7 @@ void taskbar_start (s_window_t *window, s_config_t *cfg)
 	hndl->mouse.w = tbar_data->tbar_smenu->rect.w;
 	hndl->mouse.h = tbar_data->tbar_smenu->rect.h;
 	hndl->mouse.p = taskbar_start_menu_handler_p;
-	hndl->mouse.button = MOUSE_LEFTBUTTON;
+	hndl->mouse.button = MOUSE_BUTTON_LEFT;
 	s_handler_add(window, hndl);
 	taskbar_start_menu_icon(window);
 

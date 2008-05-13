@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Fri Sep 8 2006
     copyright            : (C) 2006 - 2008 by Alper Akcan
-    email		 : distchx@yahoo.com, computationutku@yahoo.com
+    email		 : alper.akcan@gmail.com, computationutku@yahoo.com
     file author          : Alper Akcan, Utku Bulkan
  ***************************************************************************/
 

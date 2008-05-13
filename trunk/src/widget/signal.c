@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Thu Mar 10 2005
     copyright            : (C) 2005 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -21,7 +21,7 @@ void w_signal_send (w_object_t *from, w_object_t *to, void (*func) (w_signal_t *
 	s_event_t *event;
 	w_signal_t *signal;
 	s_event_init(&event);
-	event->type = SIGNAL_EVENT;
+	event->type = EVENT_TYPE_SIGNAL;
 	signal = (w_signal_t *) s_malloc(sizeof(w_signal_t));
 	signal->from = from;
 	signal->to  = to;
@@ -40,7 +40,7 @@ void w_signal_delete (w_object_t *object)
 	while (!s_list_eol(object->window->window->eventq->queue, pos)) {
 		event = (s_event_t *) s_list_get(object->window->window->eventq->queue, pos);
 		signal = (w_signal_t *) event->data;
-		if ((event->type == SIGNAL_EVENT) &&
+		if ((event->type == EVENT_TYPE_SIGNAL) &&
 		    ((signal->from == object) || (signal->to == object))) {
 			s_list_remove(object->window->window->eventq->queue, pos);
 			s_free(signal);

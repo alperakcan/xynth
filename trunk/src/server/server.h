@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Sun Feb 16 2003
     copyright            : (C) 2003 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -137,7 +137,7 @@ struct s_cursor_s {
 	int xyid;
 	int xyid_old;
 	s_image_t *img;
-	s_image_t images[MOUSE_CURSOR_MAX];
+	s_image_t images[CURSOR_TYPE_MAX];
 };
 
 struct s_server_conf_s {
@@ -183,8 +183,8 @@ struct s_clients_s {
 	int pid; /* parent id */
 	int resizeable;
 	int alwaysontop;
-	S_MOUSE_CURSOR cursor;
-	S_WINDOW type;
+	s_cursor_type_t cursor;
+	s_window_type_t type;
 	s_rect_t buf;
 	s_rect_t win;
 	/* theme related */
@@ -250,7 +250,7 @@ void s_server_kbd_server_quit_handler (s_window_t *window, s_event_t *event, s_h
 int s_server_kbd_update (s_window_t *window, s_pollfd_t *pfd);
 void s_server_kbd_init (s_server_conf_t *cfg, s_video_input_t *keybd);
 int s_server_kbd_uninit (s_window_t *window, s_pollfd_t *pfd);
-S_KEYCODE_CODE s_server_keyname_to_keycode (char *name);
+s_keyboard_button_t s_server_keyname_to_keycode (char *name);
 
 /* mouse.c */
 void s_server_cursor_uninit (void);
@@ -258,13 +258,13 @@ void s_server_cursor_init (void);
 void s_server_cursor_image_set (int which, int c0, int c1, unsigned int *c);
 void s_server_cursor_matrix_add (void);
 void s_server_cursor_draw (void);
-void s_server_cursor_select (S_MOUSE_CURSOR c);
+void s_server_cursor_select (s_cursor_type_t c);
 void s_server_cursor_position (int x, int y);
 int s_mouse_getx (void);
 int s_mouse_gety (void);
 void s_mouse_setxrange (s_window_t *window, int a, int b);
 void s_mouse_setyrange (s_window_t *window, int a, int b);
-void s_server_mouse_setcursor (S_MOUSE_CURSOR c);
+void s_server_mouse_setcursor (s_cursor_type_t c);
 void s_server_mouse_draw (void);
 int s_server_mouse_uninit (s_window_t *window, s_pollfd_t *pfd);
 int s_server_mouse_update (s_window_t *window, s_pollfd_t *pfd);

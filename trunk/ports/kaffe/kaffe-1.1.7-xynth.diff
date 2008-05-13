@@ -23,7 +23,7 @@ diff -Naur kaffe-1.1.7/README.xynth kaffe-1.1.7-xynth/README.xynth
 +# make
 +# make install
 +
-+ Alper Akcan <distchx@yahoo.com>
++ Alper Akcan <alper.akcan@gmail.com>
 +
 diff -Naur kaffe-1.1.7/configure.ac kaffe-1.1.7-xynth/configure.ac
 --- kaffe-1.1.7/configure.ac	2006-03-27 01:56:01.000000000 +0300
@@ -229,7 +229,7 @@ diff -Naur kaffe-1.1.7/libraries/clib/awt/xynth/Makefile.am kaffe-1.1.7-xynth/li
 +# Xynth-based AWT support for standard Java libraries
 +#
 +# Copyright (c) 2005
-+#       Alper Akcan <distchx@yahoo.com>
++#       Alper Akcan <alper.akcan@gmail.com>
 +#
 +
 +native_LTLIBRARIES = libxynthawt.la

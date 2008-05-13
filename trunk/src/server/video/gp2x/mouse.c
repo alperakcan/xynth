@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Thu Feb 2 2006
     copyright            : (C) 2006 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -39,8 +39,8 @@ int s_video_gp2x_mouse_update (s_video_input_data_t *mouse)
 	mouse->mouse.x = pad_recv.x;
 	mouse->mouse.y = pad_recv.y;
 	mouse->mouse.buttons = 0;
-	mouse->mouse.buttons |= (pad_recv.buttons & GP2X_L) ? MOUSE_LEFTBUTTON : 0;
-	mouse->mouse.buttons |= (pad_recv.buttons & GP2X_R) ? MOUSE_RIGHTBUTTON : 0;
+	mouse->mouse.buttons |= (pad_recv.buttons & GP2X_L) ? MOUSE_BUTTON_LEFT : 0;
+	mouse->mouse.buttons |= (pad_recv.buttons & GP2X_R) ? MOUSE_BUTTON_RIGHT : 0;
 	return 0;
 }
 

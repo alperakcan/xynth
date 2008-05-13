@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Wed Jan 29 2003
     copyright            : (C) 2003 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -123,21 +123,21 @@ int main (int argc, char *argv[])
 	s_handler_init(&hndl);
 	hndl->type = KEYBD_HANDLER;
 	hndl->keybd.flag = 0;
-	hndl->keybd.button = S_KEYCODE_F10;
+	hndl->keybd.button = KEYBOARD_BUTTON_F10;
 	hndl->keybd.p = s_server_handler_screen_shot;
 	s_handler_add(server->window, hndl);
 
 	s_handler_init(&hndl);
 	hndl->type = KEYBD_HANDLER;
 	hndl->keybd.flag = 0;
-	hndl->keybd.button = S_KEYCODE_F11;
+	hndl->keybd.button = KEYBOARD_BUTTON_F11;
 	hndl->keybd.p = s_server_handler_change_theme;
 	s_handler_add(server->window, hndl);
 
 	s_handler_init(&hndl);
 	hndl->type = KEYBD_HANDLER;
 	hndl->keybd.flag = 0;
-	hndl->keybd.button = S_KEYCODE_F12;
+	hndl->keybd.button = KEYBOARD_BUTTON_F12;
 	hndl->keybd.p = s_server_handler_fullscreen;
 	s_handler_add(server->window, hndl);
 
@@ -147,7 +147,7 @@ int main (int argc, char *argv[])
 	hndl->mouse.y = 0;
 	hndl->mouse.w = 20;
 	hndl->mouse.h = 20;
-	hndl->mouse.button = MOUSE_LEFTBUTTON;
+	hndl->mouse.button = MOUSE_BUTTON_LEFT;
 	hndl->mouse.r = s_server_handler_quit;
 	s_handler_add(server->window, hndl);
 

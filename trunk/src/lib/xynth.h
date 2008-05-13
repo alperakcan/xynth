@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Tue Oct 14 2003
     copyright            : (C) 2003 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -52,334 +52,334 @@ typedef struct s_xml_node_attr_s s_xml_node_attr_t;
 typedef struct s_xml_node_s s_xml_node_t;
 
 typedef enum {
-	MOUSE_CURSOR_WAIT    = 0x0,
-	MOUSE_CURSOR_CROSS   = 0x1,
-	MOUSE_CURSOR_IBEAM   = 0x2,
-	MOUSE_CURSOR_SIZEV   = 0x3,
-	MOUSE_CURSOR_SIZEH   = 0x4,
-	MOUSE_CURSOR_SIZES   = 0x5,
-	MOUSE_CURSOR_SIZEB   = 0x6,
-	MOUSE_CURSOR_SIZEA   = 0x7,
-	MOUSE_CURSOR_ARROW   = 0x8,
-	MOUSE_CURSOR_POINT   = 0x9,
-	MOUSE_CURSOR_SPLITV  = 0xA,
-	MOUSE_CURSOR_SPLITH  = 0xB,
-	MOUSE_CURSOR_FORBID  = 0xC,
-	MOUSE_CURSOR_UPARROW = 0xD,
-	MOUSE_CURSOR_NONE    = 0xE,
-	MOUSE_CURSOR_MAX     = 0xF
-} S_MOUSE_CURSOR;
+	CURSOR_TYPE_WAIT    = 0x0,
+	CURSOR_TYPE_CROSS   = 0x1,
+	CURSOR_TYPE_IBEAM   = 0x2,
+	CURSOR_TYPE_SIZEV   = 0x3,
+	CURSOR_TYPE_SIZEH   = 0x4,
+	CURSOR_TYPE_SIZES   = 0x5,
+	CURSOR_TYPE_SIZEB   = 0x6,
+	CURSOR_TYPE_SIZEA   = 0x7,
+	CURSOR_TYPE_ARROW   = 0x8,
+	CURSOR_TYPE_POINT   = 0x9,
+	CURSOR_TYPE_SPLITV  = 0xA,
+	CURSOR_TYPE_SPLITH  = 0xB,
+	CURSOR_TYPE_FORBID  = 0xC,
+	CURSOR_TYPE_UPARROW = 0xD,
+	CURSOR_TYPE_NONE    = 0xE,
+	CURSOR_TYPE_MAX     = 0xF
+} s_cursor_type_t;
 
 typedef enum {
-	KEYCODE_NMLCKF	= 0x01,
-	KEYCODE_CPLCKF	= 0x02,
-	KEYCODE_LCTRLF	= 0x04,
-	KEYCODE_RCTRLF	= 0x08,
-	KEYCODE_LSHIFTF	= 0x10,
-	KEYCODE_RSHIFTF	= 0x20,
-	KEYCODE_LALTF	= 0x40,
-	KEYCODE_RALTF	= 0x80,
-	KEYCODE_SHIFTF	= (KEYCODE_LSHIFTF | KEYCODE_RSHIFTF),
-	KEYCODE_CTRLF	= (KEYCODE_LCTRLF | KEYCODE_RCTRLF),
-	KEYCODE_ALTF	= (KEYCODE_LALTF | KEYCODE_LALTF),
-	KEYCODE_ALTGRF	= KEYCODE_RALTF
-} S_KEYCODE_FLAG;
+	KEYBOARD_FLAG_NUMLOCK	 = 0x01,
+	KEYBOARD_FLAG_CAPSLOCK	 = 0x02,
+	KEYBOARD_FLAG_LEFTCTRL	 = 0x04,
+	KEYBOARD_FLAG_RIGHTCTRL	 = 0x08,
+	KEYBOARD_FLAG_LEFTSHIFT	 = 0x10,
+	KEYBOARD_FLAG_RIGHTSHIFT = 0x20,
+	KEYBOARD_FLAG_LEFTALT	 = 0x40,
+	KEYBOARD_FLAG_RIGHTALT	 = 0x80,
+	KEYBOARD_FLAG_SHIFT	 = (KEYBOARD_FLAG_LEFTSHIFT | KEYBOARD_FLAG_RIGHTSHIFT),
+	KEYBOARD_FLAG_CTRL	 = (KEYBOARD_FLAG_LEFTCTRL | KEYBOARD_FLAG_RIGHTCTRL),
+	KEYBOARD_FLAG_ALT	 = (KEYBOARD_FLAG_LEFTALT | KEYBOARD_FLAG_LEFTALT),
+	KEYBOARD_FLAG_ALTGR	 = KEYBOARD_FLAG_RIGHTALT
+} s_keyboard_flag_t;
 
 typedef enum {
 /* Plain */
-/*   0 */  S_KEYCODE_ESCAPE,
-/*   1 */  S_KEYCODE_ONE,
-/*   2 */  S_KEYCODE_TWO,
-/*   3 */  S_KEYCODE_THREE,
-/*   4 */  S_KEYCODE_FOUR,
-/*   5 */  S_KEYCODE_FIVE,
-/*   6 */  S_KEYCODE_SIX,
-/*   7 */  S_KEYCODE_SEVEN,
-/*   8 */  S_KEYCODE_EIGHT,
-/*   9 */  S_KEYCODE_NINE,
-/*  10 */  S_KEYCODE_ZERO,
-/*  11 */  S_KEYCODE_MINUS,
-/*  12 */  S_KEYCODE_EQUAL,
-/*  13 */  S_KEYCODE_DELETE,
-/*  14 */  S_KEYCODE_TAB,
-/*  15 */  S_KEYCODE_q,
-/*  16 */  S_KEYCODE_w,
-/*  17 */  S_KEYCODE_e,
-/*  18 */  S_KEYCODE_r,
-/*  19 */  S_KEYCODE_t,
-/*  20 */  S_KEYCODE_y,
-/*  21 */  S_KEYCODE_u,
-/*  22 */  S_KEYCODE_i,
-/*  23 */  S_KEYCODE_o,
-/*  24 */  S_KEYCODE_p,
-/*  25 */  S_KEYCODE_BRACKETLEFT,
-/*  26 */  S_KEYCODE_BRACKETRIGHT,
-/*  27 */  S_KEYCODE_RETURN,
-/*  28 */  S_KEYCODE_LEFTCONTROL,
-/*  29 */  S_KEYCODE_a,
-/*  30 */  S_KEYCODE_s,
-/*  31 */  S_KEYCODE_d,
-/*  32 */  S_KEYCODE_f,
-/*  33 */  S_KEYCODE_g,
-/*  34 */  S_KEYCODE_h,
-/*  35 */  S_KEYCODE_j,
-/*  36 */  S_KEYCODE_k,
-/*  37 */  S_KEYCODE_l,
-/*  38 */  S_KEYCODE_SEMICOLON,
-/*  39 */  S_KEYCODE_APOSTROPHE,
-/*  40 */  S_KEYCODE_GRAVE,
-/*  41 */  S_KEYCODE_LEFTSHIFT,
-/*  42 */  S_KEYCODE_BACKSLASH,
-/*  43 */  S_KEYCODE_z,
-/*  44 */  S_KEYCODE_x,
-/*  45 */  S_KEYCODE_c,
-/*  46 */  S_KEYCODE_v,
-/*  47 */  S_KEYCODE_b,
-/*  48 */  S_KEYCODE_n,
-/*  49 */  S_KEYCODE_m,
-/*  50 */  S_KEYCODE_COMMA,
-/*  51 */  S_KEYCODE_PERIOD,
-/*  52 */  S_KEYCODE_SLASH,
-/*  53 */  S_KEYCODE_RIGHTSHIFT,
-/*  54 */  S_KEYCODE_KP_MULTIPLY,
-/*  55 */  S_KEYCODE_ALT,
-/*  56 */  S_KEYCODE_SPACE,
-/*  57 */  S_KEYCODE_CAPS_LOCK,
-/*  58 */  S_KEYCODE_F1,
-/*  59 */  S_KEYCODE_F2,
-/*  60 */  S_KEYCODE_F3,
-/*  61 */  S_KEYCODE_F4,
-/*  62 */  S_KEYCODE_F5,
-/*  63 */  S_KEYCODE_F6,
-/*  64 */  S_KEYCODE_F7,
-/*  65 */  S_KEYCODE_F8,
-/*  66 */  S_KEYCODE_F9,
-/*  67 */  S_KEYCODE_F10,
-/*  68 */  S_KEYCODE_NUM_LOCK,
-/*  69 */  S_KEYCODE_SCROLL_LOCK,
-/*  70 */  S_KEYCODE_KP_7,
-/*  71 */  S_KEYCODE_KP_8,
-/*  72 */  S_KEYCODE_KP_9,
-/*  73 */  S_KEYCODE_KP_SUBTRACT,
-/*  74 */  S_KEYCODE_KP_4,
-/*  75 */  S_KEYCODE_KP_5,
-/*  76 */  S_KEYCODE_KP_6,
-/*  77 */  S_KEYCODE_KP_ADD,
-/*  78 */  S_KEYCODE_KP_1,
-/*  79 */  S_KEYCODE_KP_2,
-/*  80 */  S_KEYCODE_KP_3,
-/*  81 */  S_KEYCODE_KP_0,
-/*  82 */  S_KEYCODE_KP_PERIOD,
-/*  83 */  S_KEYCODE_LAST_CONSOLE,
-/*  84 */  S_KEYCODE_LESS,
-/*  85 */  S_KEYCODE_F11,
-/*  86 */  S_KEYCODE_F12,
-/*  87 */  S_KEYCODE_KP_ENTER,
-/*  88 */  S_KEYCODE_RIGHTCONTROL,
-/*  89 */  S_KEYCODE_KP_DIVIDE,
-/*  90 */  S_KEYCODE_VOIDSYMBOL,
-/*  91 */  S_KEYCODE_ALTGR,
-/*  92 */  S_KEYCODE_BREAK,
-/*  93 */  S_KEYCODE_HOME,
-/*  94 */  S_KEYCODE_UP,
-/*  95 */  S_KEYCODE_PAGEUP,
-/*  96 */  S_KEYCODE_LEFT,
-/*  97 */  S_KEYCODE_RIGHT,
-/*  98 */  S_KEYCODE_END,
-/*  99 */  S_KEYCODE_DOWN,
-/* 100 */  S_KEYCODE_PAGEDOWN,
-/* 101 */  S_KEYCODE_INSERT,
-/* 102 */  S_KEYCODE_REMOVE,
-/* 103 */  S_KEYCODE_PAUSE,
+/*   0 */  KEYBOARD_BUTTON_ESCAPE,
+/*   1 */  KEYBOARD_BUTTON_ONE,
+/*   2 */  KEYBOARD_BUTTON_TWO,
+/*   3 */  KEYBOARD_BUTTON_THREE,
+/*   4 */  KEYBOARD_BUTTON_FOUR,
+/*   5 */  KEYBOARD_BUTTON_FIVE,
+/*   6 */  KEYBOARD_BUTTON_SIX,
+/*   7 */  KEYBOARD_BUTTON_SEVEN,
+/*   8 */  KEYBOARD_BUTTON_EIGHT,
+/*   9 */  KEYBOARD_BUTTON_NINE,
+/*  10 */  KEYBOARD_BUTTON_ZERO,
+/*  11 */  KEYBOARD_BUTTON_MINUS,
+/*  12 */  KEYBOARD_BUTTON_EQUAL,
+/*  13 */  KEYBOARD_BUTTON_DELETE,
+/*  14 */  KEYBOARD_BUTTON_TAB,
+/*  15 */  KEYBOARD_BUTTON_q,
+/*  16 */  KEYBOARD_BUTTON_w,
+/*  17 */  KEYBOARD_BUTTON_e,
+/*  18 */  KEYBOARD_BUTTON_r,
+/*  19 */  KEYBOARD_BUTTON_t,
+/*  20 */  KEYBOARD_BUTTON_y,
+/*  21 */  KEYBOARD_BUTTON_u,
+/*  22 */  KEYBOARD_BUTTON_i,
+/*  23 */  KEYBOARD_BUTTON_o,
+/*  24 */  KEYBOARD_BUTTON_p,
+/*  25 */  KEYBOARD_BUTTON_BRACKETLEFT,
+/*  26 */  KEYBOARD_BUTTON_BRACKETRIGHT,
+/*  27 */  KEYBOARD_BUTTON_RETURN,
+/*  28 */  KEYBOARD_BUTTON_LEFTCONTROL,
+/*  29 */  KEYBOARD_BUTTON_a,
+/*  30 */  KEYBOARD_BUTTON_s,
+/*  31 */  KEYBOARD_BUTTON_d,
+/*  32 */  KEYBOARD_BUTTON_f,
+/*  33 */  KEYBOARD_BUTTON_g,
+/*  34 */  KEYBOARD_BUTTON_h,
+/*  35 */  KEYBOARD_BUTTON_j,
+/*  36 */  KEYBOARD_BUTTON_k,
+/*  37 */  KEYBOARD_BUTTON_l,
+/*  38 */  KEYBOARD_BUTTON_SEMICOLON,
+/*  39 */  KEYBOARD_BUTTON_APOSTROPHE,
+/*  40 */  KEYBOARD_BUTTON_GRAVE,
+/*  41 */  KEYBOARD_BUTTON_LEFTSHIFT,
+/*  42 */  KEYBOARD_BUTTON_BACKSLASH,
+/*  43 */  KEYBOARD_BUTTON_z,
+/*  44 */  KEYBOARD_BUTTON_x,
+/*  45 */  KEYBOARD_BUTTON_c,
+/*  46 */  KEYBOARD_BUTTON_v,
+/*  47 */  KEYBOARD_BUTTON_b,
+/*  48 */  KEYBOARD_BUTTON_n,
+/*  49 */  KEYBOARD_BUTTON_m,
+/*  50 */  KEYBOARD_BUTTON_COMMA,
+/*  51 */  KEYBOARD_BUTTON_PERIOD,
+/*  52 */  KEYBOARD_BUTTON_SLASH,
+/*  53 */  KEYBOARD_BUTTON_RIGHTSHIFT,
+/*  54 */  KEYBOARD_BUTTON_KP_MULTIPLY,
+/*  55 */  KEYBOARD_BUTTON_ALT,
+/*  56 */  KEYBOARD_BUTTON_SPACE,
+/*  57 */  KEYBOARD_BUTTON_CAPS_LOCK,
+/*  58 */  KEYBOARD_BUTTON_F1,
+/*  59 */  KEYBOARD_BUTTON_F2,
+/*  60 */  KEYBOARD_BUTTON_F3,
+/*  61 */  KEYBOARD_BUTTON_F4,
+/*  62 */  KEYBOARD_BUTTON_F5,
+/*  63 */  KEYBOARD_BUTTON_F6,
+/*  64 */  KEYBOARD_BUTTON_F7,
+/*  65 */  KEYBOARD_BUTTON_F8,
+/*  66 */  KEYBOARD_BUTTON_F9,
+/*  67 */  KEYBOARD_BUTTON_F10,
+/*  68 */  KEYBOARD_BUTTON_NUM_LOCK,
+/*  69 */  KEYBOARD_BUTTON_SCROLL_LOCK,
+/*  70 */  KEYBOARD_BUTTON_KP_7,
+/*  71 */  KEYBOARD_BUTTON_KP_8,
+/*  72 */  KEYBOARD_BUTTON_KP_9,
+/*  73 */  KEYBOARD_BUTTON_KP_SUBTRACT,
+/*  74 */  KEYBOARD_BUTTON_KP_4,
+/*  75 */  KEYBOARD_BUTTON_KP_5,
+/*  76 */  KEYBOARD_BUTTON_KP_6,
+/*  77 */  KEYBOARD_BUTTON_KP_ADD,
+/*  78 */  KEYBOARD_BUTTON_KP_1,
+/*  79 */  KEYBOARD_BUTTON_KP_2,
+/*  80 */  KEYBOARD_BUTTON_KP_3,
+/*  81 */  KEYBOARD_BUTTON_KP_0,
+/*  82 */  KEYBOARD_BUTTON_KP_PERIOD,
+/*  83 */  KEYBOARD_BUTTON_LAST_CONSOLE,
+/*  84 */  KEYBOARD_BUTTON_LESS,
+/*  85 */  KEYBOARD_BUTTON_F11,
+/*  86 */  KEYBOARD_BUTTON_F12,
+/*  87 */  KEYBOARD_BUTTON_KP_ENTER,
+/*  88 */  KEYBOARD_BUTTON_RIGHTCONTROL,
+/*  89 */  KEYBOARD_BUTTON_KP_DIVIDE,
+/*  90 */  KEYBOARD_BUTTON_VOIDSYMBOL,
+/*  91 */  KEYBOARD_BUTTON_ALTGR,
+/*  92 */  KEYBOARD_BUTTON_BREAK,
+/*  93 */  KEYBOARD_BUTTON_HOME,
+/*  94 */  KEYBOARD_BUTTON_UP,
+/*  95 */  KEYBOARD_BUTTON_PAGEUP,
+/*  96 */  KEYBOARD_BUTTON_LEFT,
+/*  97 */  KEYBOARD_BUTTON_RIGHT,
+/*  98 */  KEYBOARD_BUTTON_END,
+/*  99 */  KEYBOARD_BUTTON_DOWN,
+/* 100 */  KEYBOARD_BUTTON_PAGEDOWN,
+/* 101 */  KEYBOARD_BUTTON_INSERT,
+/* 102 */  KEYBOARD_BUTTON_REMOVE,
+/* 103 */  KEYBOARD_BUTTON_PAUSE,
 /* Shift */
-/* 104 */  S_KEYCODE_EXCLAM,
-/* 105 */  S_KEYCODE_AT,
-/* 106 */  S_KEYCODE_NUMBERSIGN,
-/* 107 */  S_KEYCODE_DOLLAR,
-/* 108 */  S_KEYCODE_PERCENT,
-/* 109 */  S_KEYCODE_ASCIICIRCUM,
-/* 110 */  S_KEYCODE_AMPERSAND,
-/* 111 */  S_KEYCODE_ASTERISK,
-/* 112 */  S_KEYCODE_PARENLEFT,
-/* 113 */  S_KEYCODE_PARENRIGHT,
-/* 114 */  S_KEYCODE_UNDERSCORE,
-/* 115 */  S_KEYCODE_PLUS,
-/* 116 */  S_KEYCODE_Q,
-/* 117 */  S_KEYCODE_W,
-/* 118 */  S_KEYCODE_E,
-/* 119 */  S_KEYCODE_R,
-/* 120 */  S_KEYCODE_T,
-/* 121 */  S_KEYCODE_Y,
-/* 122 */  S_KEYCODE_U,
-/* 123 */  S_KEYCODE_I,
-/* 124 */  S_KEYCODE_O,
-/* 125 */  S_KEYCODE_P,
-/* 126 */  S_KEYCODE_BRACELEFT,
-/* 127 */  S_KEYCODE_BRACERIGHT,
-/* 128 */  S_KEYCODE_A,
-/* 129 */  S_KEYCODE_S,
-/* 130 */  S_KEYCODE_D,
-/* 131 */  S_KEYCODE_F,
-/* 132 */  S_KEYCODE_G,
-/* 133 */  S_KEYCODE_H,
-/* 134 */  S_KEYCODE_J,
-/* 135 */  S_KEYCODE_K,
-/* 136 */  S_KEYCODE_L,
-/* 137 */  S_KEYCODE_COLON,
-/* 138 */  S_KEYCODE_QUOTEDBL,
-/* 139 */  S_KEYCODE_ASCIITILDE,
-/* 140 */  S_KEYCODE_BAR,
-/* 141 */  S_KEYCODE_Z,
-/* 142 */  S_KEYCODE_X,
-/* 143 */  S_KEYCODE_C,
-/* 144 */  S_KEYCODE_V,
-/* 145 */  S_KEYCODE_B,
-/* 146 */  S_KEYCODE_N,
-/* 147 */  S_KEYCODE_M,
-/* 148 */  S_KEYCODE_GREATER,
-/* 149 */  S_KEYCODE_QUESTION,
-/* 150 */  S_KEYCODE_F13,
-/* 151 */  S_KEYCODE_F14,
-/* 152 */  S_KEYCODE_F15,
-/* 153 */  S_KEYCODE_F16,
-/* 154 */  S_KEYCODE_F17,
-/* 155 */  S_KEYCODE_F18,
-/* 156 */  S_KEYCODE_F19,
-/* 157 */  S_KEYCODE_F20,
-/* 158 */  S_KEYCODE_F21,
-/* 159 */  S_KEYCODE_F22,
-/* 160 */  S_KEYCODE_SHOW_MEMORY,
-/* 161 */  S_KEYCODE_F23,
-/* 162 */  S_KEYCODE_F24,
-/* 163 */  S_KEYCODE_SCROLL_BACKWARD,
-/* 164 */  S_KEYCODE_SCROLL_FORWARD,
+/* 104 */  KEYBOARD_BUTTON_EXCLAM,
+/* 105 */  KEYBOARD_BUTTON_AT,
+/* 106 */  KEYBOARD_BUTTON_NUMBERSIGN,
+/* 107 */  KEYBOARD_BUTTON_DOLLAR,
+/* 108 */  KEYBOARD_BUTTON_PERCENT,
+/* 109 */  KEYBOARD_BUTTON_ASCIICIRCUM,
+/* 110 */  KEYBOARD_BUTTON_AMPERSAND,
+/* 111 */  KEYBOARD_BUTTON_ASTERISK,
+/* 112 */  KEYBOARD_BUTTON_PARENLEFT,
+/* 113 */  KEYBOARD_BUTTON_PARENRIGHT,
+/* 114 */  KEYBOARD_BUTTON_UNDERSCORE,
+/* 115 */  KEYBOARD_BUTTON_PLUS,
+/* 116 */  KEYBOARD_BUTTON_Q,
+/* 117 */  KEYBOARD_BUTTON_W,
+/* 118 */  KEYBOARD_BUTTON_E,
+/* 119 */  KEYBOARD_BUTTON_R,
+/* 120 */  KEYBOARD_BUTTON_T,
+/* 121 */  KEYBOARD_BUTTON_Y,
+/* 122 */  KEYBOARD_BUTTON_U,
+/* 123 */  KEYBOARD_BUTTON_I,
+/* 124 */  KEYBOARD_BUTTON_O,
+/* 125 */  KEYBOARD_BUTTON_P,
+/* 126 */  KEYBOARD_BUTTON_BRACELEFT,
+/* 127 */  KEYBOARD_BUTTON_BRACERIGHT,
+/* 128 */  KEYBOARD_BUTTON_A,
+/* 129 */  KEYBOARD_BUTTON_S,
+/* 130 */  KEYBOARD_BUTTON_D,
+/* 131 */  KEYBOARD_BUTTON_F,
+/* 132 */  KEYBOARD_BUTTON_G,
+/* 133 */  KEYBOARD_BUTTON_H,
+/* 134 */  KEYBOARD_BUTTON_J,
+/* 135 */  KEYBOARD_BUTTON_K,
+/* 136 */  KEYBOARD_BUTTON_L,
+/* 137 */  KEYBOARD_BUTTON_COLON,
+/* 138 */  KEYBOARD_BUTTON_QUOTEDBL,
+/* 139 */  KEYBOARD_BUTTON_ASCIITILDE,
+/* 140 */  KEYBOARD_BUTTON_BAR,
+/* 141 */  KEYBOARD_BUTTON_Z,
+/* 142 */  KEYBOARD_BUTTON_X,
+/* 143 */  KEYBOARD_BUTTON_C,
+/* 144 */  KEYBOARD_BUTTON_V,
+/* 145 */  KEYBOARD_BUTTON_B,
+/* 146 */  KEYBOARD_BUTTON_N,
+/* 147 */  KEYBOARD_BUTTON_M,
+/* 148 */  KEYBOARD_BUTTON_GREATER,
+/* 149 */  KEYBOARD_BUTTON_QUESTION,
+/* 150 */  KEYBOARD_BUTTON_F13,
+/* 151 */  KEYBOARD_BUTTON_F14,
+/* 152 */  KEYBOARD_BUTTON_F15,
+/* 153 */  KEYBOARD_BUTTON_F16,
+/* 154 */  KEYBOARD_BUTTON_F17,
+/* 155 */  KEYBOARD_BUTTON_F18,
+/* 156 */  KEYBOARD_BUTTON_F19,
+/* 157 */  KEYBOARD_BUTTON_F20,
+/* 158 */  KEYBOARD_BUTTON_F21,
+/* 159 */  KEYBOARD_BUTTON_F22,
+/* 160 */  KEYBOARD_BUTTON_SHOW_MEMORY,
+/* 161 */  KEYBOARD_BUTTON_F23,
+/* 162 */  KEYBOARD_BUTTON_F24,
+/* 163 */  KEYBOARD_BUTTON_SCROLL_BACKWARD,
+/* 164 */  KEYBOARD_BUTTON_SCROLL_FORWARD,
 /* ALTGR */
-/* 165 */  S_KEYCODE_CURRENCY,
-/* 166 */  S_KEYCODE_CENT,
-/* 167 */  S_KEYCODE_HEX_C,
-/* 168 */  S_KEYCODE_HEX_A,
-/* 169 */  S_KEYCODE_SHOW_REGISTERS,
-/* 170 */  S_KEYCODE_HEX_7,
-/* 171 */  S_KEYCODE_HEX_8,
-/* 172 */  S_KEYCODE_HEX_9,
-/* 173 */  S_KEYCODE_HEX_D,
-/* 174 */  S_KEYCODE_HEX_4,
-/* 175 */  S_KEYCODE_HEX_5,
-/* 176 */  S_KEYCODE_HEX_6,
-/* 177 */  S_KEYCODE_HEX_E,
-/* 178 */  S_KEYCODE_HEX_1,
-/* 179 */  S_KEYCODE_HEX_2,
-/* 180 */  S_KEYCODE_HEX_3,
-/* 181 */  S_KEYCODE_HEX_0,
-/* 182 */  S_KEYCODE_HEX_F,
-/* 183 */  S_KEYCODE_HEX_B,
+/* 165 */  KEYBOARD_BUTTON_CURRENCY,
+/* 166 */  KEYBOARD_BUTTON_CENT,
+/* 167 */  KEYBOARD_BUTTON_HEX_C,
+/* 168 */  KEYBOARD_BUTTON_HEX_A,
+/* 169 */  KEYBOARD_BUTTON_SHOW_REGISTERS,
+/* 170 */  KEYBOARD_BUTTON_HEX_7,
+/* 171 */  KEYBOARD_BUTTON_HEX_8,
+/* 172 */  KEYBOARD_BUTTON_HEX_9,
+/* 173 */  KEYBOARD_BUTTON_HEX_D,
+/* 174 */  KEYBOARD_BUTTON_HEX_4,
+/* 175 */  KEYBOARD_BUTTON_HEX_5,
+/* 176 */  KEYBOARD_BUTTON_HEX_6,
+/* 177 */  KEYBOARD_BUTTON_HEX_E,
+/* 178 */  KEYBOARD_BUTTON_HEX_1,
+/* 179 */  KEYBOARD_BUTTON_HEX_2,
+/* 180 */  KEYBOARD_BUTTON_HEX_3,
+/* 181 */  KEYBOARD_BUTTON_HEX_0,
+/* 182 */  KEYBOARD_BUTTON_HEX_F,
+/* 183 */  KEYBOARD_BUTTON_HEX_B,
 /* User Defined */
-/* 184 */  S_KEYCODE_USER0,
-/* 185 */  S_KEYCODE_USER1,
-/* 186 */  S_KEYCODE_USER2,
-/* 187 */  S_KEYCODE_USER3,
-/* 188 */  S_KEYCODE_USER4,
-/* 189 */  S_KEYCODE_USER5,
-/* 190 */  S_KEYCODE_USER6,
-/* 191 */  S_KEYCODE_USER7,
-/* 192 */  S_KEYCODE_USER8,
-/* 193 */  S_KEYCODE_USER9,
-/* 194 */  S_KEYCODE_USER10,
-/* 195 */  S_KEYCODE_USER11,
-/* 196 */  S_KEYCODE_USER12,
-/* 197 */  S_KEYCODE_USER13,
-/* 198 */  S_KEYCODE_USER14,
-/* 199 */  S_KEYCODE_USER15,
-/* 200 */  S_KEYCODE_USER16,
-/* 201 */  S_KEYCODE_USER17,
-/* 202 */  S_KEYCODE_USER18,
-/* 203 */  S_KEYCODE_USER19,
-/* 204 */  S_KEYCODE_USER20,
-/* 205 */  S_KEYCODE_USER21,
-/* 206 */  S_KEYCODE_USER22,
-/* 207 */  S_KEYCODE_USER23,
-/* 208 */  S_KEYCODE_USER24,
-/* 209 */  S_KEYCODE_USER25,
-/* 210 */  S_KEYCODE_USER26,
-/* 211 */  S_KEYCODE_USER27,
-/* 212 */  S_KEYCODE_USER28,
-/* 213 */  S_KEYCODE_USER29,
-/* 214 */  S_KEYCODE_USER30,
-/* 215 */  S_KEYCODE_USER31,
-/* 216 */  S_KEYCODE_USER32,
-/* 217 */  S_KEYCODE_USER33,
-/* 218 */  S_KEYCODE_USER34,
-/* 219 */  S_KEYCODE_USER35,
-/* 220 */  S_KEYCODE_USER36,
-/* 221 */  S_KEYCODE_USER37,
-/* 222 */  S_KEYCODE_USER38,
-/* 223 */  S_KEYCODE_USER39,
-/* 224 */  S_KEYCODE_USER40,
-/* 225 */  S_KEYCODE_NOCODE,
-/* 226 */  S_KEYCODE_CODES
-} S_KEYCODE_CODE;
+/* 184 */  KEYBOARD_BUTTON_USER0,
+/* 185 */  KEYBOARD_BUTTON_USER1,
+/* 186 */  KEYBOARD_BUTTON_USER2,
+/* 187 */  KEYBOARD_BUTTON_USER3,
+/* 188 */  KEYBOARD_BUTTON_USER4,
+/* 189 */  KEYBOARD_BUTTON_USER5,
+/* 190 */  KEYBOARD_BUTTON_USER6,
+/* 191 */  KEYBOARD_BUTTON_USER7,
+/* 192 */  KEYBOARD_BUTTON_USER8,
+/* 193 */  KEYBOARD_BUTTON_USER9,
+/* 194 */  KEYBOARD_BUTTON_USER10,
+/* 195 */  KEYBOARD_BUTTON_USER11,
+/* 196 */  KEYBOARD_BUTTON_USER12,
+/* 197 */  KEYBOARD_BUTTON_USER13,
+/* 198 */  KEYBOARD_BUTTON_USER14,
+/* 199 */  KEYBOARD_BUTTON_USER15,
+/* 200 */  KEYBOARD_BUTTON_USER16,
+/* 201 */  KEYBOARD_BUTTON_USER17,
+/* 202 */  KEYBOARD_BUTTON_USER18,
+/* 203 */  KEYBOARD_BUTTON_USER19,
+/* 204 */  KEYBOARD_BUTTON_USER20,
+/* 205 */  KEYBOARD_BUTTON_USER21,
+/* 206 */  KEYBOARD_BUTTON_USER22,
+/* 207 */  KEYBOARD_BUTTON_USER23,
+/* 208 */  KEYBOARD_BUTTON_USER24,
+/* 209 */  KEYBOARD_BUTTON_USER25,
+/* 210 */  KEYBOARD_BUTTON_USER26,
+/* 211 */  KEYBOARD_BUTTON_USER27,
+/* 212 */  KEYBOARD_BUTTON_USER28,
+/* 213 */  KEYBOARD_BUTTON_USER29,
+/* 214 */  KEYBOARD_BUTTON_USER30,
+/* 215 */  KEYBOARD_BUTTON_USER31,
+/* 216 */  KEYBOARD_BUTTON_USER32,
+/* 217 */  KEYBOARD_BUTTON_USER33,
+/* 218 */  KEYBOARD_BUTTON_USER34,
+/* 219 */  KEYBOARD_BUTTON_USER35,
+/* 220 */  KEYBOARD_BUTTON_USER36,
+/* 221 */  KEYBOARD_BUTTON_USER37,
+/* 222 */  KEYBOARD_BUTTON_USER38,
+/* 223 */  KEYBOARD_BUTTON_USER39,
+/* 224 */  KEYBOARD_BUTTON_USER40,
+/* 225 */  KEYBOARD_BUTTON_NOCODE,
+/* 226 */  KEYBOARD_BUTTON_MAX
+} s_keyboard_button_t;
 
 typedef enum {
-	MOUSE_RIGHTBUTTON    = 0x00000001,
-	MOUSE_MIDDLEBUTTON   = 0x00000002,
-	MOUSE_LEFTBUTTON     = 0x00000004,
-	MOUSE_FOURTHBUTTON   = 0x00000008,
-	MOUSE_FIFTHBUTTON    = 0x00000010,
-	MOUSE_SIXTHBUTTON    = 0x00000020,
-	MOUSE_RESETBUTTON    = 0x00000040,
-	MOUSE_WHEELXBUTTON_U = 0x00000080,
-	MOUSE_WHEELXBUTTON_D = 0x00000100,
-	MOUSE_WHEELYBUTTON_U = 0x00000200,
-	MOUSE_WHEELYBUTTON_D = 0x00000400,
+	MOUSE_BUTTON_RIGHT       = 0x00000001,
+	MOUSE_BUTTON_MIDDLE      = 0x00000002,
+	MOUSE_BUTTON_LEFT        = 0x00000004,
+	MOUSE_BUTTON_FOURTH      = 0x00000008,
+	MOUSE_BUTTON_FIFTH       = 0x00000010,
+	MOUSE_BUTTON_SIXTH       = 0x00000020,
+	MOUSE_BUTTON_RESET       = 0x00000040,
+	MOUSE_BUTTON_WHEELX_UP   = 0x00000080,
+	MOUSE_BUTTON_WHEELX_DOWN = 0x00000100,
+	MOUSE_BUTTON_WHEELY_UP   = 0x00000200,
+	MOUSE_BUTTON_WHEELY_DOWN = 0x00000400,
 
-	MOUSE_USER0BUTTON    = 0x00000800,
-	MOUSE_USER1BUTTON    = 0x00001000,
-	MOUSE_USER2BUTTON    = 0x00002000,
-	MOUSE_USER3BUTTON    = 0x00004000,
-	MOUSE_USER4BUTTON    = 0x00008000,
-	MOUSE_USER5BUTTON    = 0x00010000,
-	MOUSE_USER6BUTTON    = 0x00020000,
-	MOUSE_USER7BUTTON    = 0x00040000,
-	MOUSE_USER8BUTTON    = 0x00080000,
-	MOUSE_USER9BUTTON    = 0x00100000,
-	MOUSE_USER10BUTTON   = 0x00200000,
+	MOUSE_BUTTON_USER0       = 0x00000800,
+	MOUSE_BUTTON_USER1       = 0x00001000,
+	MOUSE_BUTTON_USER2       = 0x00002000,
+	MOUSE_BUTTON_USER3       = 0x00004000,
+	MOUSE_BUTTON_USER4       = 0x00008000,
+	MOUSE_BUTTON_USER5       = 0x00010000,
+	MOUSE_BUTTON_USER6       = 0x00020000,
+	MOUSE_BUTTON_USER7       = 0x00040000,
+	MOUSE_BUTTON_USER8       = 0x00080000,
+	MOUSE_BUTTON_USER9       = 0x00100000,
+	MOUSE_BUTTON_USER10      = 0x00200000,
 
-	MOUSE_NONEBUTTON     = 0x00400000
-} S_MOUSECODE_CODE;
+	MOUSE_BUTTON_NONE        = 0x00400000
+} s_mouse_button_t;
 
 typedef enum {
-	NONE_EVENT     = 0x00000000,
-	QUIT_EVENT     = 0x00000001,
-	KEYBD_EVENT    = 0x00000002,
-	KEYBD_RELEASED = 0x00000004,
-	KEYBD_PRESSED  = 0x00000008,
-	KEYBD_IRREXTEN = 0x00000010,
-	MOUSE_EVENT    = 0x00000020,
-	MOUSE_OVER     = 0x00000040,
-	MOUSE_RELEASED = 0x00000080,
-	MOUSE_PRESSED  = 0x00000100,
-	MOUSE_CLICKED  = 0x00000200,
-	MOUSE_ENTERED  = 0x00000400,
-	MOUSE_EXITED   = 0x00000800,
-	MOUSE_HINT     = 0x00001000,
-	MOUSE_HINT2    = 0x00002000,
-	EXPOSE_EVENT   = 0x00004000,
-	CONFIG_EVENT   = 0x00008000,
-	CONFIG_CHNGX   = 0x00010000,
-	CONFIG_CHNGY   = 0x00020000,
-	CONFIG_CHNGW   = 0x00040000,
-	CONFIG_CHNGH   = 0x00080000,
-	FOCUS_EVENT    = 0x00100000,
-	FOCUSIN_EVENT  = 0x00200000, 
-	FOCUSOUT_EVENT = 0x00400000,
-	DESKTOP_EVENT  = 0x00800000,
-	TIMER_EVENT    = 0x01000000,
-	REMOTE_EVENT   = 0x02000000,
-	SIGNAL_EVENT   = 0x04000000,
-	KEYBD_MASK     = (KEYBD_EVENT | KEYBD_RELEASED | KEYBD_PRESSED | KEYBD_IRREXTEN),
-	MOUSE_MASK     = (MOUSE_EVENT | MOUSE_OVER | MOUSE_RELEASED | MOUSE_PRESSED | MOUSE_CLICKED | MOUSE_HINT | MOUSE_HINT2),
-	EVENT_MASK     = (QUIT_EVENT | KEYBD_EVENT | MOUSE_EVENT | EXPOSE_EVENT | CONFIG_EVENT | FOCUS_EVENT | DESKTOP_EVENT | TIMER_EVENT),
-} S_EVENT;
+	EVENT_TYPE_UNKNOWN                = 0x00000000,
+	EVENT_TYPE_QUIT                   = 0x00000001,
+	EVENT_TYPE_KEYBOARD               = 0x00000002,
+	EVENT_TYPE_KEYBOARD_RELEASED      = 0x00000004,
+	EVENT_TYPE_KEYBOARD_PRESSED       = 0x00000008,
+	EVENT_TYPE_KEYBOARD_EXTENSION_IRR = 0x00000010,
+	EVENT_TYPE_MOUSE                  = 0x00000020,
+	EVENT_TYPE_MOUSE_OVER             = 0x00000040,
+	EVENT_TYPE_MOUSE_RELEASED         = 0x00000080,
+	EVENT_TYPE_MOUSE_PRESSED          = 0x00000100,
+	EVENT_TYPE_MOUSE_CLICKED          = 0x00000200,
+	EVENT_TYPE_MOUSE_ENTER            = 0x00000400,
+	EVENT_TYPE_MOUSE_EXIT             = 0x00000800,
+	EVENT_TYPE_MOUSE_HINT1            = 0x00001000,
+	EVENT_TYPE_MOUSE_HINT2           = 0x00002000,
+	EVENT_TYPE_EXPOSE                 = 0x00004000,
+	EVENT_TYPE_CONFIG                 = 0x00008000,
+	EVENT_TYPE_CONFIG_X               = 0x00010000,
+	EVENT_TYPE_CONFIG_Y               = 0x00020000,
+	EVENT_TYPE_CONFIG_W               = 0x00040000,
+	EVENT_TYPE_CONFIG_H               = 0x00080000,
+	EVENT_TYPE_FOCUS                  = 0x00100000,
+	EVENT_TYPE_FOCUS_IN               = 0x00200000, 
+	EVENT_TYPE_FOCUS_OUT              = 0x00400000,
+	EVENT_TYPE_DESKTOP                = 0x00800000,
+	EVENT_TYPE_TIMER                  = 0x01000000,
+	EVENT_TYPE_REMOTE                 = 0x02000000,
+	EVENT_TYPE_SIGNAL                 = 0x04000000,
+	EVENT_TYPE_KEYBOARD_MASK          = (EVENT_TYPE_KEYBOARD | EVENT_TYPE_KEYBOARD_RELEASED | EVENT_TYPE_KEYBOARD_PRESSED | EVENT_TYPE_KEYBOARD_EXTENSION_IRR),
+	EVENT_TYPE_MOUSE_MASK             = (EVENT_TYPE_MOUSE | EVENT_TYPE_MOUSE_OVER | EVENT_TYPE_MOUSE_RELEASED | EVENT_TYPE_MOUSE_PRESSED | EVENT_TYPE_MOUSE_CLICKED | EVENT_TYPE_MOUSE_HINT1 | EVENT_TYPE_MOUSE_HINT2),
+	EVENT_TYPE_MASK                   = (EVENT_TYPE_QUIT | EVENT_TYPE_KEYBOARD | EVENT_TYPE_MOUSE | EVENT_TYPE_EXPOSE | EVENT_TYPE_CONFIG | EVENT_TYPE_FOCUS | EVENT_TYPE_DESKTOP | EVENT_TYPE_TIMER),
+} s_event_type_t;
 
 typedef struct s_font_glyph_s {
 	int yMin;
@@ -410,26 +410,26 @@ typedef struct s_mouse_s {
 	int y;
 	int x_old;
 	int y_old;
-	S_MOUSECODE_CODE b;
+	s_mouse_button_t b;
 	int clicks;		  /* click count	       */
-	S_MOUSECODE_CODE buttons; /* buttons bitwise ORed      */
+	s_mouse_button_t buttons; /* buttons bitwise ORed      */
 	long long time;		  /* event time	 	       */
 	int px;			  /* prev. pressed coor.       */
 	int py;
 	int pb;			  /* prev. pressed button      */
-	S_MOUSECODE_CODE pbuttons;/* prev. pressed buttons     */
+	s_mouse_button_t pbuttons;/* prev. pressed buttons     */
 	long long ctime;	  /* prev. clicked time	       */
-	S_MOUSE_CURSOR cursor;
+	s_cursor_type_t cursor;
 } s_mouse_t;
 
 typedef struct s_keybd_s {
 	int ascii;
 	int button;
 	int scancode;
-	S_KEYCODE_CODE keycode;
-	int state[S_KEYCODE_CODES];
+	s_keyboard_button_t keycode;
+	int state[KEYBOARD_BUTTON_MAX];
 	long long time;
-	S_KEYCODE_FLAG flag;
+	s_keyboard_flag_t flag;
 } s_keybd_t;
 
 typedef struct s_expose_s {
@@ -449,7 +449,7 @@ typedef struct s_dekstop_s {
 /** event struct */
 typedef struct s_event_s {
 	/** event type */
-	S_EVENT type;
+	s_event_type_t type;
 	/** mouse event */
 	s_mouse_t *mouse;
 	/** keyboard event */
@@ -1213,7 +1213,7 @@ int s_putmaskpart (unsigned char *dp, int dw, int dh, int x, int y, int w, int h
   * 	hndl->mouse.c = simpe_handle_clicked;
   * 	hndl->mouse.p = simpe_handle_pressed;
   * 	hndl->mouse.r = simpe_handle_released;
-  * 	hndl->mouse.button = MOUSE_LEFTBUTTON;
+  * 	hndl->mouse.button = MOUSE_BUTTON_LEFT;
   * 	s_handler_add(window, hndl);
   * }
   * @endcode
@@ -1276,7 +1276,7 @@ struct s_handler_mouse_s {
 	/** mouse button is released outside, but the previous press was on us */
 	void (*rh) (s_window_t *, s_event_t *, s_handler_t *);
 	/** internal private value */
-	S_EVENT hstate;
+	s_event_type_t hstate;
 };
 
 /** handler struct
@@ -2915,10 +2915,10 @@ int s_timers_uninit (s_window_t *window);
   * @code
   * void simple_atevent (s_window_t *window, s_event_t *event)
   * {
-  * 	if (event->type & KEYBD_EVENT) {
+  * 	if (event->type & EVENT_TYPE_KEYBOARD) {
   * 		debugf(DCLI, "[%d] event: 0x%08X, f: 0x%08X, b: %d, a:%c", window->id, event->type, event->keybd->flag, event->keybd->button, event->keybd->ascii);
   * 	}
-  * 	if (event->type & MOUSE_EVENT) {
+  * 	if (event->type & EVENT_TYPE_MOUSE) {
   * 		debugf(DCLI, "[%d] event->type : 0x%08X, button : 0x%08X, buttons : 0x%08X", window->id, event->type, event->mouse->b, event->mouse->buttons);
   * 	}
   * }
@@ -2938,7 +2938,7 @@ int s_timers_uninit (s_window_t *window);
   * 	int mh = 1000;
   * 	s_window_t *window;
   * 	s_window_init(&window);
-  * 	s_window_new(window, WINDOW_MAIN, NULL);
+  * 	s_window_new(window, WINDOW_TYPE_MAIN, NULL);
   * 	mw = window->surface->width;
   * 	mh = window->surface->height;
   * 	s_window_set_title(window, "Demo - %s", argv[0]);
@@ -2959,22 +2959,22 @@ int s_timers_uninit (s_window_t *window);
   */
 typedef enum {
 	/** dont calculate form area, for requested action */
-	WINDOW_NOFORM     = 0x0040,
+	WINDOW_TYPE_NOFORM  = 0x0040,
 	/** window main */
-	WINDOW_MAIN       = 0x0080,
+	WINDOW_TYPE_MAIN    = 0x0080,
 	/** window temp */
-	WINDOW_TEMP       = 0x0100,
+	WINDOW_TYPE_TEMP    = 0x0100,
 	/** window child */
-	WINDOW_CHILD      = 0x0200,
+	WINDOW_TYPE_CHILD   = 0x0200,
 	/** bitwise or`ed window types */
-	WINDOW_TYPES      = WINDOW_MAIN | WINDOW_TEMP | WINDOW_CHILD,
+	WINDOW_TYPES        = WINDOW_TYPE_MAIN | WINDOW_TYPE_TEMP | WINDOW_TYPE_CHILD,
 	/** window desktop, this is a bitwise or'ed property */
-	WINDOW_DESKTOP    = 0x0400,
+	WINDOW_TYPE_DESKTOP = 0x0400,
 	/** window input, this is a bitwise or`ed property
 	  * this type of window will receive all input events,
 	  * even if not shown */
-	WINDOW_INPUT      = 0x0800,
-} S_WINDOW;
+	WINDOW_TYPE_INPUT   = 0x0800,
+} s_window_type_t;
 
 /** window struct
   */
@@ -2986,7 +2986,7 @@ struct s_window_s {
 	/** self wake up socket */
 	int wsoc;
 	/** bitwise or'ed window type */
-	S_WINDOW type;
+	s_window_type_t type;
 
 	/** window id */
 	int id;
@@ -3000,7 +3000,7 @@ struct s_window_s {
 	/** window always ontop property, 0: normal, 1: ontop, -1:on buttom */
 	int alwaysontop;
 	/** window cursor */
-	S_MOUSE_CURSOR cursor;
+	s_cursor_type_t cursor;
 	/** is mouse over */
 	int mouse_entered;
 
@@ -3045,7 +3045,7 @@ struct s_window_s {
   * @param cursor  - the cursor type
   * @returns no returns
   */
-void s_window_set_cursor (s_window_t *window, S_MOUSE_CURSOR cursor);
+void s_window_set_cursor (s_window_t *window, s_cursor_type_t cursor);
 
 /** @brief sets the title for desired window
   *
@@ -3111,7 +3111,7 @@ void s_window_set_alwaysontop (s_window_t *window, int alwaysontop);
   * @param parent  - parent window for the given window
   * @returns no returns
   */
-int s_window_new (s_window_t *window, S_WINDOW type, s_window_t *parent);
+int s_window_new (s_window_t *window, s_window_type_t type, s_window_t *parent);
 
 /** @brief initiliazes the window struct, creates a connection to the server.
   *

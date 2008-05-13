@@ -1,6 +1,6 @@
 
 <application>
-	<window id="demo" type="WINDOW_MAIN">
+	<window id="demo" type="WINDOW_TYPE_MAIN">
 		<title>Object XML Demo</title>
 		<move>
 			<x>60</x>

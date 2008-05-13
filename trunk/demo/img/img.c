@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Thu Jan 30 2003
     copyright            : (C) 2003 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -75,53 +75,53 @@ static void img_atevent (s_window_t *window, s_event_t *event)
 	img_data_t *imgd;
 	imgd = window->data;
 
-	if (event->type & CONFIG_EVENT) {
-		if (event->type & (CONFIG_CHNGW |  CONFIG_CHNGH)) {
+	if (event->type & EVENT_TYPE_CONFIG) {
+		if (event->type & (EVENT_TYPE_CONFIG_W |  EVENT_TYPE_CONFIG_H)) {
 			img_show(window);
 		}
 	}
-	if ((event->type & KEYBD_EVENT) &&
-	    (event->type & KEYBD_PRESSED)) {
+	if ((event->type & EVENT_TYPE_KEYBOARD) &&
+	    (event->type & EVENT_TYPE_KEYBOARD_PRESSED)) {
 		switch (event->keybd->button) {
-			case S_KEYCODE_q:
-			case S_KEYCODE_Q:
+			case KEYBOARD_BUTTON_q:
+			case KEYBOARD_BUTTON_Q:
 				s_window_quit(window);
 				break;
-			case S_KEYCODE_r:
-			case S_KEYCODE_R:
+			case KEYBOARD_BUTTON_r:
+			case KEYBOARD_BUTTON_R:
 				img_show(window);
 				break;
-			case S_KEYCODE_s:
-			case S_KEYCODE_S:
+			case KEYBOARD_BUTTON_s:
+			case KEYBOARD_BUTTON_S:
 				imgd->imgs = (imgd->imgs + 1) % 2;
 				img_show(window);
 				break;
-			case S_KEYCODE_f:
-			case S_KEYCODE_F:
+			case KEYBOARD_BUTTON_f:
+			case KEYBOARD_BUTTON_F:
 				imgd->imgf = (imgd->imgf + 1) % 2;
 				s_window_set_alwaysontop(window, imgd->imgf);
 				if (imgd->imgf) {
-					s_window_set_coor(window, WINDOW_NOFORM, 0, 0, window->surface->width, window->surface->height);
+					s_window_set_coor(window, WINDOW_TYPE_NOFORM, 0, 0, window->surface->width, window->surface->height);
 				} else {
-				        s_window_set_coor(window, WINDOW_NOFORM, window->surface->width / 4,
+				        s_window_set_coor(window, WINDOW_TYPE_NOFORM, window->surface->width / 4,
                                 	                                         window->surface->height / 4,
                                                                           	 window->surface->width / 2,
                                                                                  window->surface->height / 2);
 				}
 				img_show(window);
 				break;
-			case S_KEYCODE_UP:
-			case S_KEYCODE_PAGEUP:
-			case S_KEYCODE_RETURN:
+			case KEYBOARD_BUTTON_UP:
+			case KEYBOARD_BUTTON_PAGEUP:
+			case KEYBOARD_BUTTON_RETURN:
 				if (imgd->imgl->nb_elt <= (imgd->imgp + 1)) {
 					break;
 				}
 				imgd->imgp++;
 				img_show(window);
 				break;
-			case S_KEYCODE_DOWN:
-			case S_KEYCODE_DELETE:
-			case S_KEYCODE_PAGEDOWN:
+			case KEYBOARD_BUTTON_DOWN:
+			case KEYBOARD_BUTTON_DELETE:
+			case KEYBOARD_BUTTON_PAGEDOWN:
 				if (imgd->imgp <= 0) {
 					break;
 				}
@@ -146,7 +146,7 @@ int main (int argc, char *argv[])
 	imgd = (img_data_t *) s_malloc(sizeof(img_data_t));
 
 	s_window_init(&window);
-	s_window_new(window, WINDOW_MAIN, NULL);
+	s_window_new(window, WINDOW_TYPE_MAIN, NULL);
         s_window_set_title(window, "Demo - %s ", argv[0]);
 
         window->data = imgd;
@@ -160,7 +160,7 @@ int main (int argc, char *argv[])
 		s_list_add(imgd->imgl, strdup(argv[i]), -1);
 	}
 
-        s_window_set_coor(window, WINDOW_NOFORM, window->surface->width / 4,
+        s_window_set_coor(window, WINDOW_TYPE_NOFORM, window->surface->width / 4,
                                                  window->surface->height / 4,
                                                  window->surface->width / 2,
                                                  window->surface->height / 2);

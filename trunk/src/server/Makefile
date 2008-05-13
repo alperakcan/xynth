@@ -107,6 +107,7 @@ ifeq ($(CONFIG_PLATFORM_PSPDEV), y)
 	         NULL \
 	         NULL \
 	         NULL
+	rm param.sfo
 else
 	$(CP) xynth ../../dist/$(CONFIG_PATH_BIN)/xynth
 endif

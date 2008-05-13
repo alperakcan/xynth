@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Thu Oct 21 2004
     copyright            : (C) 2004 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -515,8 +515,8 @@ int main (int argc, char *argv[])
 	load_data_t *ldata;
 
 	s_window_init(&window);
-	s_window_new(window, WINDOW_MAIN, NULL);
-	s_window_set_coor(window, WINDOW_NOFORM, 100, 100, 300, 300);
+	s_window_new(window, WINDOW_TYPE_MAIN, NULL);
+	s_window_set_coor(window, WINDOW_TYPE_NOFORM, 100, 100, 300, 300);
 	s_window_set_resizeable(window, 0);
 	s_window_set_title(window, "Xynth Load");
 

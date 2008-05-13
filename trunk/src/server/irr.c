@@ -13,7 +13,7 @@ static IRR_TYPE irr_type = IRR_NONE;
 
 typedef struct s_video_helper_irr_codes_s {
 	char *code;
-	S_KEYCODE_CODE key;
+	s_keyboard_button_t key;
 	unsigned int repeat;
 } s_video_helper_irr_codes_t;
 
@@ -63,7 +63,7 @@ int s_video_helper_irr_update (s_video_input_data_t *keybd)
 			for (i = 0; i < irr_codes_size; i++) {
 				codes = &irr_codes[i];
 				if (strcmp(codes->code, code) == 0) {
-					keybd->keybd.state = KEYBD_PRESSED;
+					keybd->keybd.state = EVENT_TYPE_KEYBOARD_PRESSED;
 					keybd->keybd.button = codes->key;
 					keybd->keybd.keycode = codes->key;
 					return i;
@@ -81,7 +81,7 @@ int s_video_helper_irr_update (s_video_input_data_t *keybd)
 			for (i = 0; i < irr_codes_size; i++) {
 				codes = &irr_codes[i];
 				if (strcmp(codes->code, code) == 0) {
-					keybd->keybd.state = KEYBD_PRESSED;
+					keybd->keybd.state = EVENT_TYPE_KEYBOARD_PRESSED;
 					keybd->keybd.button = codes->key;
 					keybd->keybd.keycode = codes->key;
 					return i;
@@ -199,12 +199,12 @@ int s_server_irr_update (s_window_t *window, s_pollfd_t *pfd)
 	irr_code = code;
 	irr_time = time; 
 	s_server_event_parse_keyboard(&(idata.irr));
-	server->window->event->type |= KEYBD_IRREXTEN;
+	server->window->event->type |= EVENT_TYPE_KEYBOARD_EXTENSION_IRR;
 	s_server_event_changed();
 	server->window->event->type = 0;
-	idata.keybd.state = KEYBD_RELEASED;
+	idata.keybd.state = EVENT_TYPE_KEYBOARD_RELEASED;
 	s_server_event_parse_keyboard(&(idata.irr));
-	server->window->event->type |= KEYBD_IRREXTEN;
+	server->window->event->type |= EVENT_TYPE_KEYBOARD_EXTENSION_IRR;
 	s_server_event_changed();
 	return 0;
 }

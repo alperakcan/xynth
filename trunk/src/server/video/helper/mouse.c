@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Wed Oct 8 2003
     copyright            : (C) 2003 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -94,17 +94,17 @@ int s_video_helper_mouse_update (s_video_input_data_t *mouse)
 
 	if (rx != 0) {
 		if (rx < 0) {
-			mouse->mouse.buttons |= MOUSE_WHEELXBUTTON_U;
+			mouse->mouse.buttons |= MOUSE_BUTTON_WHEELX_UP;
 		} else {
-			mouse->mouse.buttons |= MOUSE_WHEELXBUTTON_D;
+			mouse->mouse.buttons |= MOUSE_BUTTON_WHEELX_DOWN;
 		}
 	}
 
 	if (ry != 0) {
 		if (ry < 0) {
-			mouse->mouse.buttons |= MOUSE_WHEELYBUTTON_U;
+			mouse->mouse.buttons |= MOUSE_BUTTON_WHEELY_UP;
 		} else {
-			mouse->mouse.buttons |= MOUSE_WHEELYBUTTON_D;
+			mouse->mouse.buttons |= MOUSE_BUTTON_WHEELY_DOWN;
 		}
 	}
 

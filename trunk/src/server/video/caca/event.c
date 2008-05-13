@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Tue Dec 26 2006
     copyright            : (C) 2006 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -27,7 +27,7 @@ void * s_video_caca_event_parse (void *arg)
 	s_video_input_data_t data;
 	s_video_caca_data_t *priv = (s_video_caca_data_t *) server->driver->driver_data;
 	
-	event_mask = CACA_EVENT_ANY;
+	event_mask = CACA_EVENT_TYPE_ANY;
 
 	while (server->window->running != 1) {
 		usleep(20000);
@@ -35,18 +35,18 @@ void * s_video_caca_event_parse (void *arg)
 	
 	while ((event = caca_wait_event(event_mask)) >= 0) {
 		memset(&data, 0, sizeof(s_video_input_data_t));
-		switch (event & CACA_EVENT_ANY) {
-			case CACA_EVENT_KEY_PRESS:
-			case CACA_EVENT_KEY_RELEASE:
+		switch (event & CACA_EVENT_TYPE_ANY) {
+			case CACA_EVENT_TYPE_KEY_PRESS:
+			case CACA_EVENT_TYPE_KEY_RELEASE:
 				if (priv->keybd_fd[1] != -1) {
 					s_pipe_api_write(priv->keybd_fd[1], &data, sizeof(s_video_input_data_t));
 				}
 				break;
-			case CACA_EVENT_MOUSE_PRESS:
-			case CACA_EVENT_MOUSE_RELEASE:
-			case CACA_EVENT_MOUSE_MOTION:
+			case CACA_EVENT_TYPE_MOUSE_PRESS:
+			case CACA_EVENT_TYPE_MOUSE_RELEASE:
+			case CACA_EVENT_TYPE_MOUSE_MOTION:
 				break;
-			case CACA_EVENT_RESIZE:
+			case CACA_EVENT_TYPE_RESIZE:
 				coor.x = 0;
 				coor.y = 0;
 				coor.w = server->window->surface->width;

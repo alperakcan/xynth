@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Thu Feb 20 2003
     copyright            : (C) 2003 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -23,10 +23,10 @@ int s_event_mouse_handler_state (s_window_t *window, s_event_t *event, s_handler
         int h = mouse->h;
         int b = mouse->button;
 	
-	int overbit = MOUSE_OVER << 16;
-        int type = (event->type & MOUSE_CLICKED) ? event->type &= ~MOUSE_RELEASED : event->type;
+	int overbit = EVENT_TYPE_MOUSE_OVER << 16;
+        int type = (event->type & EVENT_TYPE_MOUSE_CLICKED) ? event->type &= ~EVENT_TYPE_MOUSE_RELEASED : event->type;
         
-	if ((type & (MOUSE_PRESSED | MOUSE_CLICKED | MOUSE_RELEASED)) &&
+	if ((type & (EVENT_TYPE_MOUSE_PRESSED | EVENT_TYPE_MOUSE_CLICKED | EVENT_TYPE_MOUSE_RELEASED)) &&
 	    !(event->mouse->b & b)) {
 		return -1;
 	}
@@ -36,29 +36,29 @@ int s_event_mouse_handler_state (s_window_t *window, s_event_t *event, s_handler
 			goto end;
 		}
 		mouse->hstate |= overbit;
-		if (type & (MOUSE_RELEASED | MOUSE_CLICKED)) {
+		if (type & (EVENT_TYPE_MOUSE_RELEASED | EVENT_TYPE_MOUSE_CLICKED)) {
 			if (mouse->hstate & event->mouse->b) {
 				mouse->hstate &= ~event->mouse->b;
-				return (type & ~MOUSE_EVENT);
+				return (type & ~EVENT_TYPE_MOUSE);
 			} else {
-				return (type & ~MOUSE_EVENT) | MOUSE_HINT;
+				return (type & ~EVENT_TYPE_MOUSE) | EVENT_TYPE_MOUSE_HINT1;
 			}
 		}
 		mouse->hstate |= event->mouse->b;
-		return (type & ~MOUSE_EVENT);
+		return (type & ~EVENT_TYPE_MOUSE);
 	} else {
 		if (over != 0) {
 			goto end;
 		}
-		if (type & (MOUSE_RELEASED | MOUSE_CLICKED)) {
+		if (type & (EVENT_TYPE_MOUSE_RELEASED | EVENT_TYPE_MOUSE_CLICKED)) {
 			if (mouse->hstate & event->mouse->b) {
 				mouse->hstate &= ~event->mouse->b;
-				return (type & ~MOUSE_EVENT) | MOUSE_HINT2;
+				return (type & ~EVENT_TYPE_MOUSE) | EVENT_TYPE_MOUSE_HINT2;
 			}
 		}
 		if (mouse->hstate & overbit) {
 			mouse->hstate &= ~overbit;
-			return (type & ~MOUSE_EVENT) | MOUSE_HINT2;
+			return (type & ~EVENT_TYPE_MOUSE) | EVENT_TYPE_MOUSE_HINT2;
 		}
 	}
 end:	return -1;
@@ -67,21 +67,21 @@ end:	return -1;
 int s_event_parse_handler_over (s_window_t *window, s_event_t *event, s_handler_t *work)
 {
 	switch (s_event_mouse_handler_state(window, event, &(work->mouse), 1)) {
-		case MOUSE_OVER:
+		case EVENT_TYPE_MOUSE_OVER:
 			if (work->mouse.o != NULL) {
 				s_thread_mutex_unlock(window->handlers->mut);
 				work->mouse.o(window, event, work);
 				s_thread_mutex_lock(window->handlers->mut);
 			}
 			goto not_over;
-		case MOUSE_PRESSED:
+		case EVENT_TYPE_MOUSE_PRESSED:
 			if (work->mouse.p != NULL) {
 				s_thread_mutex_unlock(window->handlers->mut);
 				work->mouse.p(window, event, work);
 				s_thread_mutex_lock(window->handlers->mut);
 			}
 			goto not_over;
-		case MOUSE_CLICKED:
+		case EVENT_TYPE_MOUSE_CLICKED:
 			if (work->mouse.c != NULL) {
 				s_thread_mutex_unlock(window->handlers->mut);
 				work->mouse.c(window, event, work);
@@ -92,14 +92,14 @@ int s_event_parse_handler_over (s_window_t *window, s_event_t *event, s_handler_
 				}
 			}
 			/* no break */
-		case MOUSE_RELEASED:
+		case EVENT_TYPE_MOUSE_RELEASED:
 			if (work->mouse.r != NULL) {
 				s_thread_mutex_unlock(window->handlers->mut);
 				work->mouse.r(window, event, work);
 				s_thread_mutex_lock(window->handlers->mut);
 			}
 			goto not_over;
-		case (MOUSE_RELEASED | MOUSE_HINT):
+		case (EVENT_TYPE_MOUSE_RELEASED | EVENT_TYPE_MOUSE_HINT1):
 			/* mouse button released, but the prev. press was not on us */
 			if (work->mouse.hr != NULL) {
 				s_thread_mutex_unlock(window->handlers->mut);
@@ -107,7 +107,7 @@ int s_event_parse_handler_over (s_window_t *window, s_event_t *event, s_handler_
 				s_thread_mutex_lock(window->handlers->mut);
 			}
 			goto not_over;
-		case (MOUSE_OVER | MOUSE_HINT):
+		case (EVENT_TYPE_MOUSE_OVER | EVENT_TYPE_MOUSE_HINT1):
 			/* on over, but mouse button is still pressed */
 			if (work->mouse.ho != NULL) {
 				s_thread_mutex_unlock(window->handlers->mut);
@@ -124,7 +124,7 @@ not_over:
 int s_event_parse_handler_notover (s_window_t *window, s_event_t *event, s_handler_t *work)
 {
 	switch (s_event_mouse_handler_state(window, event, &(work->mouse), 0)) {
-		case (MOUSE_OVER | MOUSE_HINT2):
+		case (EVENT_TYPE_MOUSE_OVER | EVENT_TYPE_MOUSE_HINT2):
 			/* not on over, but was on over */
 			if (work->mouse.oh != NULL) {
 				s_thread_mutex_unlock(window->handlers->mut);
@@ -132,7 +132,7 @@ int s_event_parse_handler_notover (s_window_t *window, s_event_t *event, s_handl
 				s_thread_mutex_lock(window->handlers->mut);
 			}
 			goto end;
-		case (MOUSE_OVER | MOUSE_HINT | MOUSE_HINT2):
+		case (EVENT_TYPE_MOUSE_OVER | EVENT_TYPE_MOUSE_HINT1 | EVENT_TYPE_MOUSE_HINT2):
 			/* not on over, but was on over. and button is still pressed */
 			if (work->mouse.hoh != NULL) {
 				s_thread_mutex_unlock(window->handlers->mut);
@@ -140,7 +140,7 @@ int s_event_parse_handler_notover (s_window_t *window, s_event_t *event, s_handl
 				s_thread_mutex_lock(window->handlers->mut);
 			}
 			goto end;
-		case (MOUSE_RELEASED | MOUSE_HINT2):
+		case (EVENT_TYPE_MOUSE_RELEASED | EVENT_TYPE_MOUSE_HINT2):
 			/* mouse button released outside, but the prev. press was on us */
 			if (work->mouse.rh != NULL) {
 				s_thread_mutex_unlock(window->handlers->mut);
@@ -187,7 +187,7 @@ int s_event_parse_keybd_handler (s_window_t *window, s_event_t *event, s_handler
 	if (((work->keybd.flag & event->keybd->flag) == (event->keybd->flag & ~KEYBD_MASL)) &&
 	    !(work->keybd.flag & ~event->keybd->flag) &&
 	     (event->keybd->button == work->keybd.button)) {
-		if (event->type & KEYBD_PRESSED) {
+		if (event->type & EVENT_TYPE_KEYBOARD_PRESSED) {
 			if (work->keybd.p != NULL) {
 				s_thread_mutex_unlock(window->handlers->mut);
 				work->keybd.p(window, event, work);
@@ -195,7 +195,7 @@ int s_event_parse_keybd_handler (s_window_t *window, s_event_t *event, s_handler
 			}
 			return 0;
 		}
-		if (event->type & KEYBD_RELEASED) {
+		if (event->type & EVENT_TYPE_KEYBOARD_RELEASED) {
 			if (work->keybd.r != NULL) {
 				s_thread_mutex_unlock(window->handlers->mut);
 				work->keybd.r(window, event, work);
@@ -267,7 +267,7 @@ int s_event_copy (s_event_t *event, s_event_t **nevent)
 int s_event_changed (s_window_t *window)
 {
 	s_event_t *event;
-	if (window->event->type & EVENT_MASK) {
+	if (window->event->type & EVENT_TYPE_MASK) {
 		if (!s_event_copy(window->event, &event)) {
 			s_eventq_add(window, event);
 		}

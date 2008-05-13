@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Tue Sep 14 2006
     copyright            : (C) 2006 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -52,9 +52,9 @@ void w_editbox_event (w_object_t *object, s_event_t *event)
 	char *ptr;
 	w_editbox_t *editbox;
 	editbox = object->data[OBJECT_EDITBOX];
-	if (event->type & KEYBD_EVENT) {
-		if (event->type & KEYBD_PRESSED) {
-			if (event->keybd->keycode == S_KEYCODE_DELETE) {
+	if (event->type & EVENT_TYPE_KEYBOARD) {
+		if (event->type & EVENT_TYPE_KEYBOARD_PRESSED) {
+			if (event->keybd->keycode == KEYBOARD_BUTTON_DELETE) {
 					str = strdup(editbox->textbox->str);
 					if (strlen(str) > 0) {
 						*(str + strlen(str) - 1) = '\0';

@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Thu Sep 22 2005
     copyright            : (C) 2005 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -32,7 +32,7 @@ typedef struct s_video_pspdev_data_s {
 } s_video_pspdev_data_t;
 
 void s_video_pspdev_mouse_cursor_init (void);
-void s_video_pspdev_mouse_setcursor (S_MOUSE_CURSOR c);
+void s_video_pspdev_mouse_setcursor (s_cursor_type_t c);
 void s_video_pspdev_mouse_draw (void);
 
 void * s_video_pspdev_event_parse (void *);
@@ -42,7 +42,7 @@ int s_video_pspdev_kbd_update (s_video_input_data_t *keybd);
 void s_video_pspdev_kbd_uninit (void);
 
 int s_video_pspdev_mouse_init (s_server_conf_t *cfg);
-void s_video_pspdev_mouse_setcursor (S_MOUSE_CURSOR c);
+void s_video_pspdev_mouse_setcursor (s_cursor_type_t c);
 void s_video_pspdev_mouse_draw (void);
 int s_video_pspdev_mouse_update (s_video_input_data_t *mouse);
 void s_video_pspdev_mouse_uninit (void);

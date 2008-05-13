@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Mon Aug 9 2004
     copyright            : (C) 2004 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -16,7 +16,7 @@
 #include "../lib/xynth_.h"
 #include "server.h"
 
-void s_server_window_btn_resize_o (S_MOUSE_CURSOR cursor)
+void s_server_window_btn_resize_o (s_cursor_type_t cursor)
 {
 	int id;
 	id = s_server_pri_id(0);
@@ -34,42 +34,42 @@ void s_server_window_btn_resize_oh (s_window_t *window, s_event_t *event, s_hand
 {
 	int id = s_server_pri_id(0);
 	if (id < 0) {
-		s_server_mouse_setcursor(MOUSE_CURSOR_ARROW);
+		s_server_mouse_setcursor(CURSOR_TYPE_ARROW);
 	} else {
 		s_server_mouse_setcursor(server->client[id].cursor);
 	}
 }
 void s_server_window_btn_resize_u_o (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
-	s_server_window_btn_resize_o(MOUSE_CURSOR_SIZEV);
+	s_server_window_btn_resize_o(CURSOR_TYPE_SIZEV);
 }
 void s_server_window_btn_resize_ur_o (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
-	s_server_window_btn_resize_o(MOUSE_CURSOR_SIZES);
+	s_server_window_btn_resize_o(CURSOR_TYPE_SIZES);
 }
 void s_server_window_btn_resize_r_o (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
-	s_server_window_btn_resize_o(MOUSE_CURSOR_SIZEH);
+	s_server_window_btn_resize_o(CURSOR_TYPE_SIZEH);
 }
 void s_server_window_btn_resize_dr_o (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
-	s_server_window_btn_resize_o(MOUSE_CURSOR_SIZEB);
+	s_server_window_btn_resize_o(CURSOR_TYPE_SIZEB);
 }
 void s_server_window_btn_resize_d_o (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
-	s_server_window_btn_resize_o(MOUSE_CURSOR_SIZEV);
+	s_server_window_btn_resize_o(CURSOR_TYPE_SIZEV);
 }
 void s_server_window_btn_resize_dl_o (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
-	s_server_window_btn_resize_o(MOUSE_CURSOR_SIZES);
+	s_server_window_btn_resize_o(CURSOR_TYPE_SIZES);
 }
 void s_server_window_btn_resize_l_o (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
-	s_server_window_btn_resize_o(MOUSE_CURSOR_SIZEH);
+	s_server_window_btn_resize_o(CURSOR_TYPE_SIZEH);
 }
 void s_server_window_btn_resize_ul_o (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
-	s_server_window_btn_resize_o(MOUSE_CURSOR_SIZEB);
+	s_server_window_btn_resize_o(CURSOR_TYPE_SIZEB);
 }
 
 #define s_server_window_btn_x(a, b)\
@@ -219,7 +219,7 @@ void s_server_window_handlers_add_mouse (int id)
 	hndl->mouse.y = server->client[id].button[MENU].y + server->theme.button[v][MENU].handler->y;
 	hndl->mouse.w = server->theme.button[v][MENU].handler->w;
 	hndl->mouse.h = server->theme.button[v][MENU].handler->h;
-	hndl->mouse.button = MOUSE_LEFTBUTTON;
+	hndl->mouse.button = MOUSE_BUTTON_LEFT;
 	hndl->mouse.p = s_server_window_btn_menu_p;
 	hndl->mouse.r = s_server_window_btn_menu_r;
 	hndl->mouse.oh = s_server_window_btn_menu_oh;
@@ -234,7 +234,7 @@ void s_server_window_handlers_add_mouse (int id)
 	hndl->mouse.y = server->client[id].button[HIDE].y + server->theme.button[v][HIDE].handler->y;
 	hndl->mouse.w = server->theme.button[v][HIDE].handler->w;
 	hndl->mouse.h = server->theme.button[v][HIDE].handler->h;
-	hndl->mouse.button = MOUSE_LEFTBUTTON;
+	hndl->mouse.button = MOUSE_BUTTON_LEFT;
 	hndl->mouse.p = s_server_window_btn_hide_p;
 	hndl->mouse.r = s_server_window_btn_hide_r;
 	hndl->mouse.oh = s_server_window_btn_hide_oh;
@@ -249,7 +249,7 @@ void s_server_window_handlers_add_mouse (int id)
 	hndl->mouse.y = server->client[id].button[CLOSE].y + server->theme.button[v][CLOSE].handler->y;
 	hndl->mouse.w = server->theme.button[v][CLOSE].handler->w;
 	hndl->mouse.h = server->theme.button[v][CLOSE].handler->h;
-	hndl->mouse.button = MOUSE_LEFTBUTTON;
+	hndl->mouse.button = MOUSE_BUTTON_LEFT;
 	hndl->mouse.p = s_server_window_btn_close_p;
 	hndl->mouse.r = s_server_window_btn_close_r;
 	hndl->mouse.oh = s_server_window_btn_close_oh;
@@ -265,7 +265,7 @@ void s_server_window_handlers_add_mouse (int id)
 		hndl->mouse.y = server->client[id].button[MAXIMIZE].y + server->theme.button[v][MAXIMIZE].handler->y;
 		hndl->mouse.w = server->theme.button[v][MAXIMIZE].handler->w;
 		hndl->mouse.h = server->theme.button[v][MAXIMIZE].handler->h;
-		hndl->mouse.button = MOUSE_LEFTBUTTON;
+		hndl->mouse.button = MOUSE_BUTTON_LEFT;
 		hndl->mouse.p = s_server_window_btn_maximize_p;
 		hndl->mouse.r = s_server_window_btn_maximize_r;
 		hndl->mouse.oh = s_server_window_btn_maximize_oh;
@@ -282,7 +282,7 @@ void s_server_window_handlers_add_mouse (int id)
 		hndl->mouse.y = server->client[id].form[TOP_2].y + server->theme.form[v][TOP_2].handler->y + 4;
 		hndl->mouse.w = server->client[id].form[TOP_2].w;
 		hndl->mouse.h = server->theme.form[v][TOP_2].handler->h - 4;
-		hndl->mouse.button = MOUSE_LEFTBUTTON;
+		hndl->mouse.button = MOUSE_BUTTON_LEFT;
 		hndl->mouse.p = s_server_window_btn_move;
 		s_handler_add(server->window, hndl);
 
@@ -293,7 +293,7 @@ void s_server_window_handlers_add_mouse (int id)
 		hndl->mouse.y = server->client[id].form[TOP_3].y + server->theme.form[v][TOP_3].handler->y + 4;
 		hndl->mouse.w = server->client[id].form[TOP_3].w;
 		hndl->mouse.h = server->theme.form[v][TOP_3].handler->h - 4;
-		hndl->mouse.button = MOUSE_LEFTBUTTON;
+		hndl->mouse.button = MOUSE_BUTTON_LEFT;
 		hndl->mouse.p = s_server_window_btn_move;
 		s_handler_add(server->window, hndl);
 
@@ -305,7 +305,7 @@ void s_server_window_handlers_add_mouse (int id)
 		hndl->mouse.y = server->client[id].form[TOP_4].y + server->theme.form[v][TOP_4].handler->y + 4;
 		hndl->mouse.w = server->client[id].form[TOP_4].w;
 		hndl->mouse.h = server->theme.form[v][TOP_4].handler->h - 4;
-		hndl->mouse.button = MOUSE_LEFTBUTTON;
+		hndl->mouse.button = MOUSE_BUTTON_LEFT;
 		hndl->mouse.p = s_server_window_btn_move;
 		s_handler_add(server->window, hndl);
 	}
@@ -317,7 +317,7 @@ void s_server_window_handlers_add_mouse (int id)
 	hndl->mouse.y = server->client[id].form[TOP_5].y + server->theme.form[v][TOP_5].handler->y + 4;
 	hndl->mouse.w = server->client[id].form[TOP_5].w;
 	hndl->mouse.h = server->theme.form[v][TOP_5].handler->h - 4;
-	hndl->mouse.button = MOUSE_LEFTBUTTON;
+	hndl->mouse.button = MOUSE_BUTTON_LEFT;
 	hndl->mouse.p = s_server_window_btn_move;
 	s_handler_add(server->window, hndl);
 
@@ -332,7 +332,7 @@ void s_server_window_handlers_add_mouse (int id)
 	hndl->mouse.y = server->client[id].form[TOP_1].y + server->theme.form[v][TOP_1].handler->y;
 	hndl->mouse.w = server->client[id].form[TOP_1].w;
 	hndl->mouse.h = 4;
-	hndl->mouse.button = MOUSE_LEFTBUTTON;
+	hndl->mouse.button = MOUSE_BUTTON_LEFT;
 	hndl->mouse.p = s_server_window_btn_resize_up;
 	hndl->mouse.o = s_server_window_btn_resize_u_o;
 	hndl->mouse.oh = s_server_window_btn_resize_oh;
@@ -346,7 +346,7 @@ void s_server_window_handlers_add_mouse (int id)
 		hndl->mouse.y = server->client[id].form[TOP_2].y + server->theme.form[v][TOP_2].handler->y;
 		hndl->mouse.w = server->client[id].form[TOP_2].w;
 		hndl->mouse.h = 4;
-		hndl->mouse.button = MOUSE_LEFTBUTTON;
+		hndl->mouse.button = MOUSE_BUTTON_LEFT;
 		hndl->mouse.p = s_server_window_btn_resize_up;
 		hndl->mouse.o = s_server_window_btn_resize_u_o;
 		hndl->mouse.oh = s_server_window_btn_resize_oh;
@@ -359,7 +359,7 @@ void s_server_window_handlers_add_mouse (int id)
 		hndl->mouse.y = server->client[id].form[TOP_3].y + server->theme.form[v][TOP_3].handler->y;
 		hndl->mouse.w = server->client[id].form[TOP_3].w;
 		hndl->mouse.h = 4;
-		hndl->mouse.button = MOUSE_LEFTBUTTON;
+		hndl->mouse.button = MOUSE_BUTTON_LEFT;
 		hndl->mouse.p = s_server_window_btn_resize_up;
 		hndl->mouse.o = s_server_window_btn_resize_u_o;
 		hndl->mouse.oh = s_server_window_btn_resize_oh;
@@ -372,7 +372,7 @@ void s_server_window_handlers_add_mouse (int id)
 		hndl->mouse.y = server->client[id].form[TOP_4].y + server->theme.form[v][TOP_4].handler->y;
 		hndl->mouse.w = server->client[id].form[TOP_4].w;
 		hndl->mouse.h = 4;
-		hndl->mouse.button = MOUSE_LEFTBUTTON;
+		hndl->mouse.button = MOUSE_BUTTON_LEFT;
 		hndl->mouse.p = s_server_window_btn_resize_up;
 		hndl->mouse.o = s_server_window_btn_resize_u_o;
 		hndl->mouse.oh = s_server_window_btn_resize_oh;
@@ -386,7 +386,7 @@ void s_server_window_handlers_add_mouse (int id)
 	hndl->mouse.y = server->client[id].form[TOP_5].y + server->theme.form[v][TOP_5].handler->y;
 	hndl->mouse.w = server->client[id].form[TOP_5].w;
 	hndl->mouse.h = 4;
-	hndl->mouse.button = MOUSE_LEFTBUTTON;
+	hndl->mouse.button = MOUSE_BUTTON_LEFT;
 	hndl->mouse.p = s_server_window_btn_resize_up;
 	hndl->mouse.o = s_server_window_btn_resize_u_o;
 	hndl->mouse.oh = s_server_window_btn_resize_oh;
@@ -399,7 +399,7 @@ void s_server_window_handlers_add_mouse (int id)
 	hndl->mouse.y = server->client[id].form[TOP_L].y + server->theme.form[v][TOP_L].handler->y;
 	hndl->mouse.w = server->theme.form[v][TOP_L].handler->w;
 	hndl->mouse.h = server->theme.form[v][TOP_L].handler->h;
-	hndl->mouse.button = MOUSE_LEFTBUTTON;
+	hndl->mouse.button = MOUSE_BUTTON_LEFT;
 	hndl->mouse.p = s_server_window_btn_resize_up_left;
 	hndl->mouse.o = s_server_window_btn_resize_ul_o;
 	hndl->mouse.oh = s_server_window_btn_resize_oh;
@@ -412,7 +412,7 @@ void s_server_window_handlers_add_mouse (int id)
 	hndl->mouse.y = server->client[id].form[TOP_R].y + server->theme.form[v][TOP_R].handler->y;
 	hndl->mouse.w = server->theme.form[v][TOP_R].handler->w;
 	hndl->mouse.h = server->theme.form[v][TOP_R].handler->h;
-	hndl->mouse.button = MOUSE_LEFTBUTTON;
+	hndl->mouse.button = MOUSE_BUTTON_LEFT;
 	hndl->mouse.p = s_server_window_btn_resize_up_right;
 	hndl->mouse.o = s_server_window_btn_resize_ur_o;
 	hndl->mouse.oh = s_server_window_btn_resize_oh;
@@ -425,7 +425,7 @@ void s_server_window_handlers_add_mouse (int id)
 	hndl->mouse.y = server->client[id].form[LEFT].y;
 	hndl->mouse.w = server->theme.form[v][LEFT].handler->w;
 	hndl->mouse.h = server->client[id].form[LEFT].h;
-	hndl->mouse.button = MOUSE_LEFTBUTTON;
+	hndl->mouse.button = MOUSE_BUTTON_LEFT;
 	hndl->mouse.p = s_server_window_btn_resize_left;
 	hndl->mouse.o = s_server_window_btn_resize_l_o;
 	hndl->mouse.oh = s_server_window_btn_resize_oh;
@@ -438,7 +438,7 @@ void s_server_window_handlers_add_mouse (int id)
 	hndl->mouse.y = server->client[id].form[RIGHT].y;
 	hndl->mouse.w = server->theme.form[v][RIGHT].handler->w;
 	hndl->mouse.h = server->client[id].form[RIGHT].h;
-	hndl->mouse.button = MOUSE_LEFTBUTTON;
+	hndl->mouse.button = MOUSE_BUTTON_LEFT;
 	hndl->mouse.p = s_server_window_btn_resize_right;
 	hndl->mouse.o = s_server_window_btn_resize_r_o;
 	hndl->mouse.oh = s_server_window_btn_resize_oh;
@@ -451,7 +451,7 @@ void s_server_window_handlers_add_mouse (int id)
 	hndl->mouse.y = server->client[id].form[BTM].y;
 	hndl->mouse.w = server->client[id].form[BTM].w;
 	hndl->mouse.h = server->theme.form[v][BTM].handler->h;
-	hndl->mouse.button = MOUSE_LEFTBUTTON;
+	hndl->mouse.button = MOUSE_BUTTON_LEFT;
 	hndl->mouse.p = s_server_window_btn_resize_down;
 	hndl->mouse.o = s_server_window_btn_resize_d_o;
 	hndl->mouse.oh = s_server_window_btn_resize_oh;
@@ -464,7 +464,7 @@ void s_server_window_handlers_add_mouse (int id)
 	hndl->mouse.y = server->client[id].form[BTM_L].y;
 	hndl->mouse.w = server->theme.form[v][BTM_L].handler->w;
 	hndl->mouse.h = server->theme.form[v][BTM_L].handler->h;
-	hndl->mouse.button = MOUSE_LEFTBUTTON;
+	hndl->mouse.button = MOUSE_BUTTON_LEFT;
 	hndl->mouse.p = s_server_window_btn_resize_down_left;
 	hndl->mouse.o = s_server_window_btn_resize_dl_o;
 	hndl->mouse.oh = s_server_window_btn_resize_oh;
@@ -477,7 +477,7 @@ void s_server_window_handlers_add_mouse (int id)
 	hndl->mouse.y = server->client[id].form[BTM_R].y;
 	hndl->mouse.w = server->theme.form[v][BTM_R].handler->w;
 	hndl->mouse.h = server->theme.form[v][BTM_R].handler->h;
-	hndl->mouse.button = MOUSE_LEFTBUTTON;
+	hndl->mouse.button = MOUSE_BUTTON_LEFT;
 	hndl->mouse.p = s_server_window_btn_resize_down_right;
 	hndl->mouse.o = s_server_window_btn_resize_dr_o;
 	hndl->mouse.oh = s_server_window_btn_resize_oh;
