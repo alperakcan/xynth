@@ -29,7 +29,7 @@ typedef struct s_video_gdi_data_s {
 	int bpp_windows;
 	s_video_input_data_keybd_t keybd;
 	s_video_input_data_mouse_t mouse;
-	S_KEYCODE_CODE keymap[GDI_MAX_KEYS];
+	s_keyboard_button_t keymap[GDI_MAX_KEYS];
 } s_video_gdi_data_t;
 
 LRESULT CALLBACK MainWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);

@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Fri Sep 8 2006
     copyright            : (C) 2006 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -55,7 +55,7 @@ void w_button_event (w_object_t *object, s_event_t *event)
 	int i;
 	w_button_t *button;
 	button = (w_button_t *) object->data[OBJECT_BUTTON];
-	if (event->type & MOUSE_EVENT) {
+	if (event->type & EVENT_TYPE_MOUSE) {
 		event->mouse->x += object->window->window->surface->buf->x;
 		event->mouse->y += object->window->window->surface->buf->y;
 		event->mouse->px += object->window->window->surface->buf->x;
@@ -65,14 +65,14 @@ void w_button_event (w_object_t *object, s_event_t *event)
 		s_event_parse_handler_notover(object->window->window, event, button->handler_m);
 		s_thread_mutex_unlock(object->window->window->handlers->mut);
 	}
-	if (event->type & KEYBD_EVENT) {
+	if (event->type & EVENT_TYPE_KEYBOARD) {
 		s_thread_mutex_lock(object->window->window->handlers->mut);
 		for (i = 0; i < 5; i++) {
 			s_event_parse_keybd_handler(object->window->window, event, button->handler_k[i]);
 		}
 		s_thread_mutex_unlock(object->window->window->handlers->mut);
 	}
-	if (event->type & FOCUSOUT_EVENT) {
+	if (event->type & EVENT_TYPE_FOCUS_OUT) {
 		button->state = 0;
 		button->frame->style = (button->frame->style & FRAME_MSHAPE) | FRAME_RAISED;
 		button->frame->style |= (button->frame->object->focused) ? FRAME_FOCUSED : 0;
@@ -207,7 +207,7 @@ void w_button_cb_kp (s_window_t *window, s_event_t *event, s_handler_t *handler)
 	w_button_t *button = (w_button_t *) handler->data;
 	w_object_t *object = button->object;
 	if (button->state == 0) {
-		button->state |= MOUSE_LEFTBUTTON;
+		button->state |= MOUSE_BUTTON_LEFT;
 		button->frame->style = (button->frame->style & FRAME_MSHAPE) | FRAME_SUNKEN;
 		button->frame->style |= (button->frame->object->focused) ? FRAME_FOCUSED : 0;
 		object->draw(object);
@@ -257,14 +257,14 @@ int w_button_init (w_window_t *window, w_button_t **button, w_object_t *parent)
 	(*button)->handler_m->mouse.ho = w_button_cb_ho;
 	(*button)->handler_m->mouse.oh = w_button_cb_oh;
 	(*button)->handler_m->mouse.hoh = w_button_cb_hoh;
-	(*button)->handler_m->mouse.button = ~MOUSE_NONEBUTTON;
+	(*button)->handler_m->mouse.button = ~MOUSE_BUTTON_NONE;
 	(*button)->handler_m->data = *button;	
 	(*button)->state = 0;
 	
 	s_handler_init(&((*button)->handler_k[0]));
 	(*button)->handler_k[0]->type = KEYBD_HANDLER;
 	(*button)->handler_k[0]->keybd.flag = 0;
-	(*button)->handler_k[0]->keybd.button = S_KEYCODE_SPACE;
+	(*button)->handler_k[0]->keybd.button = KEYBOARD_BUTTON_SPACE;
 	(*button)->handler_k[0]->keybd.p = w_button_cb_kp;
 	(*button)->handler_k[0]->keybd.r = w_button_cb_kr;
 	(*button)->handler_k[0]->data = *button;	
@@ -272,7 +272,7 @@ int w_button_init (w_window_t *window, w_button_t **button, w_object_t *parent)
 	s_handler_init(&((*button)->handler_k[1]));
 	(*button)->handler_k[1]->type = KEYBD_HANDLER;
 	(*button)->handler_k[1]->keybd.flag = 0;
-	(*button)->handler_k[1]->keybd.button = S_KEYCODE_LEFT;
+	(*button)->handler_k[1]->keybd.button = KEYBOARD_BUTTON_LEFT;
 	(*button)->handler_k[1]->keybd.p = w_button_cb_kp;
 	(*button)->handler_k[1]->keybd.r = w_button_cb_kr;
 	(*button)->handler_k[1]->data = *button;	
@@ -280,7 +280,7 @@ int w_button_init (w_window_t *window, w_button_t **button, w_object_t *parent)
 	s_handler_init(&((*button)->handler_k[2]));
 	(*button)->handler_k[2]->type = KEYBD_HANDLER;
 	(*button)->handler_k[2]->keybd.flag = 0;
-	(*button)->handler_k[2]->keybd.button = S_KEYCODE_UP;
+	(*button)->handler_k[2]->keybd.button = KEYBOARD_BUTTON_UP;
 	(*button)->handler_k[2]->keybd.p = w_button_cb_kp;
 	(*button)->handler_k[2]->keybd.r = w_button_cb_kr;
 	(*button)->handler_k[2]->data = *button;	
@@ -288,7 +288,7 @@ int w_button_init (w_window_t *window, w_button_t **button, w_object_t *parent)
 	s_handler_init(&((*button)->handler_k[3]));
 	(*button)->handler_k[3]->type = KEYBD_HANDLER;
 	(*button)->handler_k[3]->keybd.flag = 0;
-	(*button)->handler_k[3]->keybd.button = S_KEYCODE_RIGHT;
+	(*button)->handler_k[3]->keybd.button = KEYBOARD_BUTTON_RIGHT;
 	(*button)->handler_k[3]->keybd.p = w_button_cb_kp;
 	(*button)->handler_k[3]->keybd.r = w_button_cb_kr;
 	(*button)->handler_k[3]->data = *button;	
@@ -296,7 +296,7 @@ int w_button_init (w_window_t *window, w_button_t **button, w_object_t *parent)
 	s_handler_init(&((*button)->handler_k[4]));
 	(*button)->handler_k[4]->type = KEYBD_HANDLER;
 	(*button)->handler_k[4]->keybd.flag = 0;
-	(*button)->handler_k[4]->keybd.button = S_KEYCODE_DOWN;
+	(*button)->handler_k[4]->keybd.button = KEYBOARD_BUTTON_DOWN;
 	(*button)->handler_k[4]->keybd.p = w_button_cb_kp;
 	(*button)->handler_k[4]->keybd.r = w_button_cb_kr;
 	(*button)->handler_k[4]->data = *button;	

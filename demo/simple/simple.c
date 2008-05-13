@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Thu Jan 30 2003
     copyright            : (C) 2003 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -18,17 +18,17 @@
 #include "xynth_.h"
 
 static int i = 120;
-static int c = MOUSE_CURSOR_ARROW;
+static int c = CURSOR_TYPE_ARROW;
 
 static void simple_atevent (s_window_t *window, s_event_t *event)
 {
-	if (event->type & QUIT_EVENT) {
+	if (event->type & EVENT_TYPE_QUIT) {
 		debugf(DCLI, "[%d] quiting", window->id);
 	}
-        if (event->type & KEYBD_EVENT) {
+        if (event->type & EVENT_TYPE_KEYBOARD) {
 		debugf(DCLI, "[%d] event: 0x%08X, f: 0x%08X, b: %d, a:%c", window->id, event->type, event->keybd->flag, event->keybd->button, event->keybd->ascii);
 	}
-	if (event->type & MOUSE_EVENT) {
+	if (event->type & EVENT_TYPE_MOUSE) {
 		debugf(DCLI, "[%d] event->type : 0x%08X, button : 0x%08X, buttons : 0x%08X", window->id, event->type, event->mouse->b, event->mouse->buttons);
 	}
 }
@@ -55,10 +55,10 @@ static void simple_handler1r (s_window_t *window, s_event_t *event, s_handler_t 
 
 static void simple_handler2p (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
-//	s_window_set_coor(window, WINDOW_NOFORM, 0, 0, 200, 300);
+//	s_window_set_coor(window, WINDOW_TYPE_NOFORM, 0, 0, 200, 300);
 	s_window_set_cursor(window, c++);
-	if (c >= MOUSE_CURSOR_MAX) {
-		c = MOUSE_CURSOR_ARROW;
+	if (c >= CURSOR_TYPE_MAX) {
+		c = CURSOR_TYPE_ARROW;
 	}
 }
 
@@ -86,7 +86,7 @@ int main (int argc, char *argv[])
 
 	s_window_init(&window);
 
-	s_window_new(window, WINDOW_MAIN, NULL);
+	s_window_new(window, WINDOW_TYPE_MAIN, NULL);
 	
 	mw = window->surface->width;
 	mh = window->surface->height;
@@ -111,7 +111,7 @@ int main (int argc, char *argv[])
 	hndl->mouse.c = simple_handler1c;
 	hndl->mouse.p = simple_handler1p;
 	hndl->mouse.r = simple_handler1r;
-	hndl->mouse.button = MOUSE_LEFTBUTTON;
+	hndl->mouse.button = MOUSE_BUTTON_LEFT;
 	s_handler_add(window, hndl);
 	
 	s_handler_init(&hndl);
@@ -121,7 +121,7 @@ int main (int argc, char *argv[])
 	hndl->mouse.w = 20;
 	hndl->mouse.h = 20;
 	hndl->mouse.p = simple_handler2p;
-	hndl->mouse.button = MOUSE_RIGHTBUTTON;
+	hndl->mouse.button = MOUSE_BUTTON_RIGHT;
 	s_handler_add(window, hndl);
 
 	s_fillbox(window->surface, 20, 0, 20, 20, s_rgbcolor(window->surface, 222, 222, 222));
@@ -133,7 +133,7 @@ int main (int argc, char *argv[])
 	hndl->mouse.w = 20;
 	hndl->mouse.h = 20;
 	hndl->mouse.p = simple_handler3p;
-	hndl->mouse.button = MOUSE_LEFTBUTTON;
+	hndl->mouse.button = MOUSE_BUTTON_LEFT;
 	s_handler_add(window, hndl);
 
 	s_handler_init(&hndl);
@@ -143,7 +143,7 @@ int main (int argc, char *argv[])
 	hndl->mouse.w = 20;
 	hndl->mouse.h = 20;
 	hndl->mouse.p = simple_handler4p;
-	hndl->mouse.button = MOUSE_RIGHTBUTTON;
+	hndl->mouse.button = MOUSE_BUTTON_RIGHT;
 	s_handler_add(window, hndl);
 
 	s_window_atevent(window, simple_atevent);

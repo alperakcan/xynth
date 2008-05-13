@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Thu Feb 2 2006
     copyright            : (C) 2006 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -34,7 +34,7 @@ int s_video_gp2x_kbd_update (s_video_input_data_t *keybd);
 void s_video_gp2x_kbd_uninit (void);
 
 int s_video_gp2x_mouse_init (s_server_conf_t *cfg);
-void s_video_gp2x_mouse_setcursor (S_MOUSE_CURSOR c);
+void s_video_gp2x_mouse_setcursor (s_cursor_type_t c);
 void s_video_gp2x_mouse_draw (void);
 int s_video_gp2x_mouse_update (s_video_input_data_t *mouse);
 void s_video_gp2x_mouse_uninit (void);

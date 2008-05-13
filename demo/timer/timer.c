@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Mon May 23 2005
     copyright            : (C) 2005 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -63,7 +63,7 @@ int main (int argc, char *argv[])
 
 	s_window_init(&window);
 
-	s_window_new(window, WINDOW_MAIN, NULL);
+	s_window_new(window, WINDOW_TYPE_MAIN, NULL);
 	mw = window->surface->width;
 	mh = window->surface->height;
 	box = (char *) s_malloc(sizeof(char) * (mw / 4) * (mh / 4) * window->surface->bytesperpixel);
@@ -89,7 +89,7 @@ int main (int argc, char *argv[])
 	hndl->mouse.w = 16;
 	hndl->mouse.h = 16;
 	hndl->mouse.p = timer_handler_p;
-	hndl->mouse.button = MOUSE_LEFTBUTTON;
+	hndl->mouse.button = MOUSE_BUTTON_LEFT;
 	s_handler_add(window, hndl);
 
 	s_timer_init(&timer);

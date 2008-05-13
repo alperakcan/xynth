@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Mon Sep 20 2004
     copyright            : (C) 2004 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -595,7 +595,7 @@ struct w_window_s {
 void w_window_focus_change_notify (w_object_t *object, w_object_t *focus);
 void w_window_change_focus (w_object_t *object, int type);
 void w_window_atevent (s_window_t *window, s_event_t *event);
-int w_window_init (w_window_t **window, S_WINDOW type, w_window_t *parent);
+int w_window_init (w_window_t **window, s_window_type_t type, w_window_t *parent);
 int w_window_set_coor (w_window_t *window, int x, int y, int w, int h);
 s_image_t * w_window_image_get (w_window_t *window, char *image);
 int w_window_image_add (w_window_t *window, char *image);

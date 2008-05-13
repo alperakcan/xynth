@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Tue Oct 5 2004
     copyright            : (C) 2004 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -91,8 +91,8 @@ int main (int argc, char *argv[])
 	s_window_init(&desktop);
 	s_window_init(&taskbar);
 
-	s_window_new(desktop, WINDOW_MAIN | WINDOW_NOFORM, NULL);
-	s_window_new(taskbar, WINDOW_CHILD | WINDOW_NOFORM | WINDOW_DESKTOP, desktop);
+	s_window_new(desktop, WINDOW_TYPE_MAIN | WINDOW_TYPE_NOFORM, NULL);
+	s_window_new(taskbar, WINDOW_TYPE_CHILD | WINDOW_TYPE_NOFORM | WINDOW_TYPE_DESKTOP, desktop);
 
 	taskbar_start(taskbar, cfg);
 	desktop_start(desktop, cfg);

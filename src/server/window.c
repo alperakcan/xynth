@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Sun Feb 23 2003
     copyright            : (C) 2003 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -23,7 +23,7 @@ void s_server_window_new (int id)
 	server->client[id].win.x = server->client[id].buf.x;
 	server->client[id].win.y = server->client[id].buf.y;
 
-	if (server->client[id].type & WINDOW_NOFORM) {
+	if (server->client[id].type & WINDOW_TYPE_NOFORM) {
 		server->client[id].win.w = server->client[id].buf.w;
 		server->client[id].win.h = server->client[id].buf.h;
 	} else {
@@ -35,7 +35,7 @@ void s_server_window_new (int id)
 	server->client[id].win.x = (server->client[id].win.x < 0) ? 0 : server->client[id].win.x;
 	server->client[id].win.y = (server->client[id].win.y < 0) ? 0 : server->client[id].win.y;
 
-        if (server->client[id].type & WINDOW_NOFORM) {
+        if (server->client[id].type & WINDOW_TYPE_NOFORM) {
 		if (server->client[id].win.w < 0) {
 			server->client[id].win.w = 0;
 		}
@@ -51,7 +51,7 @@ void s_server_window_new (int id)
 		}
 	}
 
-        if (server->client[id].type & WINDOW_NOFORM) {
+        if (server->client[id].type & WINDOW_TYPE_NOFORM) {
 		server->client[id].win.x = (server->client[id].win.x > server->window->surface->width) ? 0 : server->client[id].win.x;
 		server->client[id].win.y = (server->client[id].win.y > server->window->surface->height) ? 0 : server->client[id].win.y;
 	} else {
@@ -61,7 +61,7 @@ void s_server_window_new (int id)
 
 	/* coor&dim correcting, done. */
 
-        if (server->client[id].type & WINDOW_NOFORM) {
+        if (server->client[id].type & WINDOW_TYPE_NOFORM) {
 		server->client[id].buf.x = server->client[id].win.x;
 		server->client[id].buf.y = server->client[id].win.y;
 		server->client[id].buf.w = server->client[id].win.w;
@@ -89,7 +89,7 @@ void s_server_window_title (int id, char *title)
 
         if ((id < 0) ||
 	    (title == NULL) ||
-	    (server->client[id].type & WINDOW_NOFORM)) {
+	    (server->client[id].type & WINDOW_TYPE_NOFORM)) {
 		return;
 	}
 	
@@ -173,13 +173,13 @@ int s_server_window_form_mat_verbose (int id)
 {
 	int i = s_server_pri_id(0);
 	if ((id < 0) ||
-	    (server->client[id].type & WINDOW_NOFORM) ||
+	    (server->client[id].type & WINDOW_TYPE_NOFORM) ||
 	    (s_server_id_pri(id) < 0)) {
 		return -1;
 	}
 	if ((s_server_id_pri(id) == 0) ||
 	    ((i >= 0) &&
-	     (server->client[i].type & WINDOW_TEMP) &&
+	     (server->client[i].type & WINDOW_TYPE_TEMP) &&
 	     (s_server_window_is_parent_temp(id, i)))) {
 		return 1;
         }
@@ -447,7 +447,7 @@ int s_server_window_is_parent_temp (int pid, int cid)
 	int i = cid;
 
 	while (i >= 0) {
-		if (server->client[i].type & (WINDOW_MAIN | WINDOW_CHILD)) {
+		if (server->client[i].type & (WINDOW_TYPE_MAIN | WINDOW_TYPE_CHILD)) {
 			return 0;
 		}
 		i = server->client[i].pid;
@@ -467,7 +467,7 @@ int s_server_window_temp_parent (int cid)
 	int i = cid;
 
 	while (i >= 0) {
-		if (server->client[i].type & (WINDOW_MAIN | WINDOW_CHILD)) {
+		if (server->client[i].type & (WINDOW_TYPE_MAIN | WINDOW_TYPE_CHILD)) {
 			return i;
 		}
 		i = server->client[i].pid;
@@ -487,7 +487,7 @@ void s_server_window_close_temps (int id)
 		return;
 	}
 	for (i = 0; i < S_CLIENTS_MAX; i++) {
-		if ((server->client[i].pid == id) && (server->client[i].type & WINDOW_TEMP)) {
+		if ((server->client[i].pid == id) && (server->client[i].type & WINDOW_TYPE_TEMP)) {
 			s_server_window_close_id(i);
 		}
 	}
@@ -555,7 +555,7 @@ void s_server_window_move_resize (int id, s_rect_t *new)
         int w = server->client[id].win.w - server->client[id].buf.w;
         int h = server->client[id].win.h - server->client[id].buf.h;
 
-        if (server->client[id].type & WINDOW_NOFORM) {
+        if (server->client[id].type & WINDOW_TYPE_NOFORM) {
 		mw = 0;
 		mh = 0;
 	} else {

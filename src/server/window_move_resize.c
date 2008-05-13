@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Mon Aug 9 2004
     copyright            : (C) 2004 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -199,14 +199,14 @@ void s_server_window_finish (int id, s_rect_t *move)
 
 void s_server_window_move (s_window_t *window)
 {
-	s_server_window_prepare(MOUSE_CURSOR_SIZEA);
+	s_server_window_prepare(CURSOR_TYPE_SIZEA);
 	s_server_window_while(&move, 0x01 | 0x04);
 	s_server_window_finish(id, &move);
 }
 
 void s_server_window_resize_up (s_window_t *window)
 {
-	s_server_window_prepare(MOUSE_CURSOR_SIZEV);
+	s_server_window_prepare(CURSOR_TYPE_SIZEV);
 
 	myr = 0;
 	if (myr < my - move.y) {
@@ -221,7 +221,7 @@ void s_server_window_resize_up (s_window_t *window)
 
 void s_server_window_resize_up_left (s_window_t *window)
 {
-	s_server_window_prepare(MOUSE_CURSOR_SIZEB);
+	s_server_window_prepare(CURSOR_TYPE_SIZEB);
 
 	myr = 0;
 	mxr = 0;
@@ -240,7 +240,7 @@ void s_server_window_resize_up_left (s_window_t *window)
 
 void s_server_window_resize_left (s_window_t *window)
 {
-	s_server_window_prepare(MOUSE_CURSOR_SIZEH);
+	s_server_window_prepare(CURSOR_TYPE_SIZEH);
 
 	mxr = 0;
 	if (mxr < mx - move.x) {
@@ -255,7 +255,7 @@ void s_server_window_resize_left (s_window_t *window)
 
 void s_server_window_resize_down_left (s_window_t *window)
 {
-	s_server_window_prepare(MOUSE_CURSOR_SIZES);
+	s_server_window_prepare(CURSOR_TYPE_SIZES);
 
 	mxr = 0;
 	myr = window->surface->height;
@@ -274,7 +274,7 @@ void s_server_window_resize_down_left (s_window_t *window)
 
 void s_server_window_resize_down (s_window_t *window)
 {
-	s_server_window_prepare(MOUSE_CURSOR_SIZEV);
+	s_server_window_prepare(CURSOR_TYPE_SIZEV);
 
 	myr = window->surface->height;
 	if ((myr + move.y + move.h - my) > window->surface->height) {
@@ -289,7 +289,7 @@ void s_server_window_resize_down (s_window_t *window)
 
 void s_server_window_resize_down_right (s_window_t *window)
 {
-	s_server_window_prepare(MOUSE_CURSOR_SIZEB);
+	s_server_window_prepare(CURSOR_TYPE_SIZEB);
 
 	myr = window->surface->height;
 	mxr = window->surface->width;
@@ -308,7 +308,7 @@ void s_server_window_resize_down_right (s_window_t *window)
 
 void s_server_window_resize_right (s_window_t *window)
 {
-	s_server_window_prepare(MOUSE_CURSOR_SIZEH);
+	s_server_window_prepare(CURSOR_TYPE_SIZEH);
 
 	mxr = window->surface->width;
 	if ((mxr + move.x + move.w - mx) > window->surface->width) {
@@ -323,7 +323,7 @@ void s_server_window_resize_right (s_window_t *window)
 
 void s_server_window_resize_up_right (s_window_t *window)
 {
-	s_server_window_prepare(MOUSE_CURSOR_SIZES);
+	s_server_window_prepare(CURSOR_TYPE_SIZES);
 
 	myr = 0;
 	mxr = window->surface->width;

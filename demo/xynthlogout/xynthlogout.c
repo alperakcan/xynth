@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Thr Dec 15 2005
     copyright            : (C) 2005 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -20,7 +20,7 @@
 static void xynthlogout_atevent (s_window_t *window, s_event_t *event)
 {
 	/* never loose focus */
-	if (event->type & FOCUS_EVENT) {
+	if (event->type & EVENT_TYPE_FOCUS) {
 		if (window->pri > 0) {
 			s_window_show(window);
 		}
@@ -49,7 +49,7 @@ int main (int argc, char *argv[])
 
 	s_window_init(&window);
 
-	s_window_new(window, WINDOW_MAIN | WINDOW_NOFORM | WINDOW_DESKTOP, NULL);
+	s_window_new(window, WINDOW_TYPE_MAIN | WINDOW_TYPE_NOFORM | WINDOW_TYPE_DESKTOP, NULL);
 
 	s_window_set_resizeable(window, 0);
 	s_window_set_alwaysontop(window, 1);
@@ -59,7 +59,7 @@ int main (int argc, char *argv[])
 	h = 100;
 	x = (window->surface->width - w) / 2;
 	y = (window->surface->height - h) / 2;
-	s_window_set_coor(window, WINDOW_NOFORM, x, y, w, h);
+	s_window_set_coor(window, WINDOW_TYPE_NOFORM, x, y, w, h);
 
 	s_free(window->surface->vbuf);
 	window->surface->width = w;
@@ -103,7 +103,7 @@ int main (int argc, char *argv[])
 	hndl->mouse.w = 35;
 	hndl->mouse.h = 35;
 	hndl->mouse.r = xynthlogout_logout;
-	hndl->mouse.button = MOUSE_LEFTBUTTON;
+	hndl->mouse.button = MOUSE_BUTTON_LEFT;
 	s_handler_add(window, hndl);
 
 	s_fillbox(window->surface, 175, 48, 35, 35, s_rgbcolor(window->surface, 0, 0, 0));
@@ -124,7 +124,7 @@ int main (int argc, char *argv[])
 	hndl->mouse.w = 35;
 	hndl->mouse.h = 35;
 	hndl->mouse.r = xynthlogout_cancel;
-	hndl->mouse.button = MOUSE_LEFTBUTTON;
+	hndl->mouse.button = MOUSE_BUTTON_LEFT;
 	s_handler_add(window, hndl);
 
 	s_window_show(window);

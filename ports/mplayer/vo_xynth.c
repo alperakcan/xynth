@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Thu Jan 22 2004
     copyright            : (C) 2004 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -62,7 +62,7 @@ static int image_format;
 static vo_info_t info = {
 	"Xynth Windowing System",
 	"xynth",
-	"Alper Akcan <distchx@yahoo.com>",
+	"Alper Akcan <alper.akcan@gmail.com>",
 	""
 };
 

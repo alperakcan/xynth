@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Thu Jan 30 2003
     copyright            : (C) 2003 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -53,8 +53,8 @@ extern "C" {
 #define DSER	4
 #define DCLI	8
 
-#define MOUSE_MASL	(MOUSE_WHEELXBUTTON_U|MOUSE_WHEELXBUTTON_D|MOUSE_WHEELYBUTTON_U|MOUSE_WHEELYBUTTON_D)
-#define KEYBD_MASL	(KEYCODE_CPLCKF|KEYCODE_NMLCKF)
+#define MOUSE_MASL	(MOUSE_BUTTON_WHEELX_UP|MOUSE_BUTTON_WHEELX_DOWN|MOUSE_BUTTON_WHEELY_UP|MOUSE_BUTTON_WHEELY_DOWN)
+#define KEYBD_MASL	(KEYBOARD_FLAG_CAPSLOCK|KEYBOARD_FLAG_NUMLOCK)
 
 #define MIN(a, b)	((a) < (b) ? (a) : (b))
 #define MAX(a, b)	((a) > (b) ? (a) : (b))
@@ -192,18 +192,18 @@ typedef struct s_soc_data_expose_s {
 
 typedef struct s_soc_data_event_s {
 	/* 880 bytes */
-	S_EVENT type;
+	s_event_type_t type;
 	s_mouse_t mouse;
 	s_keybd_t keybd;
 } s_soc_data_event_t;
 
 typedef struct s_soc_data_configure_s {
 	/* 288 bytes */
-	S_WINDOW form;
+	s_window_type_t form;
 	s_rect_t rnew;
 	int resizeable;
 	int alwaysontop;
-	S_MOUSE_CURSOR cursor;
+	s_cursor_type_t cursor;
 	char title[S_TITLE_MAX];
 } s_soc_data_configure_t;
 

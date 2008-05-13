@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Mon Nov 3 2003
     copyright            : (C) 2003 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -207,13 +207,13 @@ int s_video_helper_kbd_update (s_video_input_data_t *keybd)
 	unsigned char buf;
 
 	int map = 0;
-	S_KEYCODE_FLAG keycode_flag;
+	s_keyboard_flag_t keycode_flag;
 	
 	bytesread = read(s_video_helper_keybd.fd, &buf, 1);
 
 	for (i = 0; i < bytesread; i++) {
 		scancode = buf & 0x7f;
-		pressed = (buf & 0x80) ? KEYBD_RELEASED : KEYBD_PRESSED;
+		pressed = (buf & 0x80) ? EVENT_TYPE_KEYBOARD_RELEASED : EVENT_TYPE_KEYBOARD_PRESSED;
 
                 keybd->keybd.state = pressed;
 		keybd->keybd.scancode = scancode;
@@ -222,39 +222,39 @@ int s_video_helper_kbd_update (s_video_input_data_t *keybd)
 
 		keycode_flag = server->window->event->keybd->flag;
 		switch (keybd->keybd.button) {
-			case S_KEYCODE_LEFTSHIFT:
-			case S_KEYCODE_RIGHTSHIFT:
-			case S_KEYCODE_LEFTCONTROL:
-			case S_KEYCODE_RIGHTCONTROL:
-			case S_KEYCODE_ALT:
-			case S_KEYCODE_ALTGR:
-			case S_KEYCODE_CAPS_LOCK:
+			case KEYBOARD_BUTTON_LEFTSHIFT:
+			case KEYBOARD_BUTTON_RIGHTSHIFT:
+			case KEYBOARD_BUTTON_LEFTCONTROL:
+			case KEYBOARD_BUTTON_RIGHTCONTROL:
+			case KEYBOARD_BUTTON_ALT:
+			case KEYBOARD_BUTTON_ALTGR:
+			case KEYBOARD_BUTTON_CAPS_LOCK:
 				goto keycode_plain;
 			default:
 				break;
 		}
-		if (keycode_flag & KEYCODE_SHIFTF) {
+		if (keycode_flag & KEYBOARD_FLAG_SHIFT) {
 			keybd->keybd.button = s_video_helper_keybd_keycode_[scancode][KEYCODE_SHIFT];
 			map |= (1 << KG_SHIFT);
 		}
-		if (keycode_flag & KEYCODE_CTRLF) {
+		if (keycode_flag & KEYBOARD_FLAG_CTRL) {
 			map |= (1 << KG_CTRL);
 		}
-		if (keycode_flag & KEYCODE_LALTF) {
+		if (keycode_flag & KEYBOARD_FLAG_LEFTALT) {
 			map |= (1 << KG_ALT);
 		}
-		if (keycode_flag & KEYCODE_ALTGRF) {
+		if (keycode_flag & KEYBOARD_FLAG_ALTGR) {
 			keybd->keybd.button = s_video_helper_keybd_keycode_[scancode][KEYCODE_ALTGR];
 			map |= (1 << KG_ALTGR);
 		}
 keycode_plain:
 		if (KTYP(s_video_helper_keybd_keymap[map][scancode]) == KT_LETTER) {
-			if (keycode_flag & KEYCODE_CPLCKF) {
+			if (keycode_flag & KEYBOARD_FLAG_CAPSLOCK) {
 				map ^= (1 << KG_SHIFT);
 			}
 		}
 		if (KTYP(s_video_helper_keybd_keymap[map][scancode]) == KT_PAD) {
-			if (keycode_flag & KEYCODE_NMLCKF) {
+			if (keycode_flag & KEYBOARD_FLAG_NUMLOCK) {
 				keybd->keybd.ascii = KVAL(s_video_helper_keybd_keymap[map][scancode]);
 			}
 		} else {
@@ -262,12 +262,12 @@ keycode_plain:
 		}
 
 		ioctl(s_video_helper_keybd.fd, KDGETLED, &led);
-		if (keycode_flag & KEYCODE_CPLCKF) {
+		if (keycode_flag & KEYBOARD_FLAG_CAPSLOCK) {
 			led |= LED_CAP;
 		} else {
 			led &= ~LED_CAP;
 		}
-		if (keycode_flag & KEYCODE_NMLCKF) {
+		if (keycode_flag & KEYBOARD_FLAG_NUMLOCK) {
 			led |= LED_NUM;
 		} else {
 			led &= ~LED_NUM;

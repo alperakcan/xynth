@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Wed Dec 20 2006
     copyright            : (C) 2006 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -257,7 +257,7 @@ void code_generate_move (s_hashtable_t *htable, s_xml_node_t *node)
 
 void code_generate_window (s_hashtable_t *htable, s_xml_node_t *node)
 {
-	S_WINDOW prop;
+	s_window_type_t prop;
 	s_xml_node_t *tmp;
 	w_window_t *window;
 	code_get_enum(htable, s_xml_node_get_attr_value(node, "type"), &prop);
@@ -732,11 +732,11 @@ void code_parse (s_hashtable_t *htable, s_xml_node_t *file, s_xml_node_t *style,
 {
 	code_script_t **sengine;
 	
-	s_hashtable_add(htable, "WINDOW_NOFORM", (void *) WINDOW_NOFORM);
-	s_hashtable_add(htable, "WINDOW_MAIN", (void *) WINDOW_MAIN);
-	s_hashtable_add(htable, "WINDOW_TEMP", (void *) WINDOW_TEMP);
-	s_hashtable_add(htable, "WINDOW_CHILD", (void *) WINDOW_CHILD);
-	s_hashtable_add(htable, "WINDOW_DESKTOP", (void *) WINDOW_DESKTOP);
+	s_hashtable_add(htable, "WINDOW_TYPE_NOFORM", (void *) WINDOW_TYPE_NOFORM);
+	s_hashtable_add(htable, "WINDOW_TYPE_MAIN", (void *) WINDOW_TYPE_MAIN);
+	s_hashtable_add(htable, "WINDOW_TYPE_TEMP", (void *) WINDOW_TYPE_TEMP);
+	s_hashtable_add(htable, "WINDOW_TYPE_CHILD", (void *) WINDOW_TYPE_CHILD);
+	s_hashtable_add(htable, "WINDOW_TYPE_DESKTOP", (void *) WINDOW_TYPE_DESKTOP);
 
 	s_hashtable_add(htable, "FRAME_NOFRAME", (void *) FRAME_NOFRAME);
 	s_hashtable_add(htable, "FRAME_BOX", (void *) FRAME_BOX);

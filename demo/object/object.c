@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Wed Mar 9 2005
     copyright            : (C) 2005 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -160,7 +160,7 @@ int main (int argc, char *argv[])
 
 	srand(time(NULL));
 	
-	w_window_init(&window, WINDOW_MAIN, NULL);
+	w_window_init(&window, WINDOW_TYPE_MAIN, NULL);
 
 	w = MIN(window->window->surface->width, w);
 	h = MIN(window->window->surface->height, h);

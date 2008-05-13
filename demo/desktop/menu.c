@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Tue Oct 5 2004
     copyright            : (C) 2004 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -19,7 +19,7 @@ void start_menu_atexit (s_window_t *window)
 {
 	tbar_data_t *tbar_data;
 	tbar_data = (tbar_data_t *) window->data;
-	if (window->parent->type & WINDOW_CHILD) {
+	if (window->parent->type & WINDOW_TYPE_CHILD) {
 		taskbar_start_menu_handler_rh(window->parent, NULL, NULL);
 	}
 	tbar_data->tbar_smenu->running = 0;
@@ -89,7 +89,7 @@ void start_menu_start (s_window_t *pwindow, s_list_t *progs, int wx, int wy)
 	tbar_data->tbar_smenu->running = 1;
 
 	s_window_init(&temp);
-        s_window_new(temp, WINDOW_TEMP | WINDOW_NOFORM, pwindow);
+        s_window_new(temp, WINDOW_TYPE_TEMP | WINDOW_TYPE_NOFORM, pwindow);
         s_window_set_coor(temp, 0, wx, wy - fh - 1, fw, fh);
 
 	s_fillbox(temp->surface, 0, 0, temp->surface->buf->w, temp->surface->buf->h, s_rgbcolor(temp->surface, 0, 0, 0));
@@ -134,7 +134,7 @@ out:			s_image_uninit(img);
 		hndl->mouse.w = fw - 50;
 		hndl->mouse.h = font->glyph.img->h;
 		hndl->mouse.p = start_menu_handler;
-		hndl->mouse.button = MOUSE_LEFTBUTTON;
+		hndl->mouse.button = MOUSE_BUTTON_LEFT;
 		hndl->data = sprog;
 		s_handler_add(temp, hndl);
 

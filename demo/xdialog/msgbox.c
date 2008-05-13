@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Tue Sep 22 2007
     copyright            : (C) 2007 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -47,7 +47,7 @@ int xd_msgbox_callback (int argc, char *argv[])
 	height = atoi(argv[1]);
 	width = atoi(argv[2]);
 	
-	w_window_init(&window, WINDOW_MAIN | WINDOW_NOFORM, NULL);
+	w_window_init(&window, WINDOW_TYPE_MAIN | WINDOW_TYPE_NOFORM, NULL);
 
 	x = (window->window->surface->linear_buf_width - width) / 2;
 	y = (window->window->surface->linear_buf_height - height) / 2;

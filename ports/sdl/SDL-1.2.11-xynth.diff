@@ -4,7 +4,7 @@ diff -Naur SDL-1.2.11/README.Xynth SDL-1.2.11-xynth/README.Xynth
 @@ -0,0 +1,8 @@
 +www.xynth.org
 +
-+Alper Akcan <distchx@yahoo.com>
++Alper Akcan <alper.akcan@gmail.com>
 +
 +./configure
 +make
@@ -97,7 +97,7 @@ diff -Naur SDL-1.2.11/src/video/xynth/SDL_xynth.h SDL-1.2.11-xynth/src/video/xyn
 +/***************************************************************************
 +    begin                : Thu Jan 22 2004
 +    copyright            : (C) 2004 - 2008 by Alper Akcan
-+    email                : distchx@yahoo.com
++    email                : alper.akcan@gmail.com
 + ***************************************************************************/
 +
 +/***************************************************************************
@@ -211,7 +211,7 @@ diff -Naur SDL-1.2.11/src/video/xynth/SDL_xynthcursor.c SDL-1.2.11-xynth/src/vid
 +/***************************************************************************
 +    begin                : Thu Jan 22 2004
 +    copyright            : (C) 2004 - 2008 by Alper Akcan
-+    email                : distchx@yahoo.com
++    email                : alper.akcan@gmail.com
 + ***************************************************************************/
 +
 +/***************************************************************************
@@ -287,7 +287,7 @@ diff -Naur SDL-1.2.11/src/video/xynth/SDL_xynthevent.c SDL-1.2.11-xynth/src/vide
 +/***************************************************************************
 +    begin                : Thu Jan 22 2004
 +    copyright            : (C) 2004 - 2008 by Alper Akcan
-+    email                : distchx@yahoo.com
++    email                : alper.akcan@gmail.com
 + ***************************************************************************/
 +
 +/***************************************************************************
@@ -494,7 +494,7 @@ diff -Naur SDL-1.2.11/src/video/xynth/SDL_xynthgamma.c SDL-1.2.11-xynth/src/vide
 +/***************************************************************************
 +    begin                : Thu Jan 22 2004
 +    copyright            : (C) 2004 - 2008 by Alper Akcan
-+    email                : distchx@yahoo.com
++    email                : alper.akcan@gmail.com
 + ***************************************************************************/
 +
 +/***************************************************************************
@@ -538,7 +538,7 @@ diff -Naur SDL-1.2.11/src/video/xynth/SDL_xynthgl.c SDL-1.2.11-xynth/src/video/x
 +/***************************************************************************
 +    begin                : Thu Jan 22 2004
 +    copyright            : (C) 2004 - 2008 by Alper Akcan
-+    email                : distchx@yahoo.com
++    email                : alper.akcan@gmail.com
 + ***************************************************************************/
 +
 +/***************************************************************************
@@ -587,7 +587,7 @@ diff -Naur SDL-1.2.11/src/video/xynth/SDL_xynthhw.c SDL-1.2.11-xynth/src/video/x
 +/***************************************************************************
 +    begin                : Thu Jan 22 2004
 +    copyright            : (C) 2004 - 2008 by Alper Akcan
-+    email                : distchx@yahoo.com
++    email                : alper.akcan@gmail.com
 + ***************************************************************************/
 +
 +/***************************************************************************
@@ -660,7 +660,7 @@ diff -Naur SDL-1.2.11/src/video/xynth/SDL_xynthvideo.c SDL-1.2.11-xynth/src/vide
 +/***************************************************************************
 +    begin                : Thu Jan 22 2004
 +    copyright            : (C) 2004 - 2008 by Alper Akcan
-+    email                : distchx@yahoo.com
++    email                : alper.akcan@gmail.com
 + ***************************************************************************/
 +
 +/***************************************************************************
@@ -945,7 +945,7 @@ diff -Naur SDL-1.2.11/src/video/xynth/SDL_xynthwm.c SDL-1.2.11-xynth/src/video/x
 +/***************************************************************************
 +    begin                : Thu Jan 22 2004
 +    copyright            : (C) 2004 - 2008 by Alper Akcan
-+    email                : distchx@yahoo.com
++    email                : alper.akcan@gmail.com
 + ***************************************************************************/
 +
 +/***************************************************************************

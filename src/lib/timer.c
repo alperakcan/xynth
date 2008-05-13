@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Mon May 23 2005
     copyright            : (C) 2005 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -55,7 +55,7 @@ int s_timer_del (s_window_t *window, s_timer_t *timer)
 	pos = 0;
 	while (!s_list_eol(window->eventq->queue, pos)) {
 		evn = (s_event_t *) s_list_get(window->eventq->queue, pos);
-		if ((evn->type == TIMER_EVENT) &&
+		if ((evn->type == EVENT_TYPE_TIMER) &&
 		    (evn->timer == timer)) {
 			s_list_remove(window->eventq->queue, pos);
 			s_event_uninit(evn);

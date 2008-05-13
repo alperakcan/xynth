@@ -1,4 +1,9 @@
 
+Sun 11 May 2008 09:15:46 PM EEST
+	- email information update
+	- enum type names update
+	- simple python binding works again
+
 Sun 20 Apr 2008 11:36:33 PM EEST
 	- region api
 	- server uses region to calculate printable areas, increased speed.

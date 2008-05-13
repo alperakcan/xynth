@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Tue Oct 10 2006
     copyright            : (C) 2006 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -246,12 +246,12 @@ void w_clistbox_event (w_object_t *object, s_event_t *event)
 {
 	w_clistbox_t *lb;
 	lb = object->data[OBJECT_CLISTBOX];
-	if (event->type & KEYBD_EVENT) {
-		if (event->type & KEYBD_RELEASED) {
-			if (event->keybd->keycode == S_KEYCODE_UP) {
+	if (event->type & EVENT_TYPE_KEYBOARD) {
+		if (event->type & EVENT_TYPE_KEYBOARD_RELEASED) {
+			if (event->keybd->keycode == KEYBOARD_BUTTON_UP) {
 				lb->active = MAX(lb->active - 1, 0);
 				w_clistbox_draw(object);
-			} else if (event->keybd->keycode == S_KEYCODE_DOWN) {
+			} else if (event->keybd->keycode == KEYBOARD_BUTTON_DOWN) {
 				lb->active = MIN(lb->items->nb_elt - 1, lb->active + 1);
 				lb->active = MAX(lb->active, 0);
 				w_clistbox_draw(object);

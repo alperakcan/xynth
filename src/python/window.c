@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Sat Jul 2 2005
     copyright            : (C) 2005 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -238,10 +238,10 @@ void p_client_atevent (s_window_t *xwin, s_event_t *xevn)
 PyObject * wrap_window (PyObject *self, PyObject *args)
 {
 	int res;
-	S_WINDOW wtype;
+	s_window_type_t wtype;
 	p_window_t *window;
 
-	wtype = WINDOW_MAIN;
+	wtype = WINDOW_TYPE_MAIN;
 	if (!PyArg_ParseTuple(args, "|i:wrap_window", &wtype)) {
 		return NULL;
 	}

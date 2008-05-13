@@ -371,6 +371,24 @@ config CONFIG_WIDGET_WIDGETR
 
 endmenu
 
+menu "Python Binding"
+
+config CONFIG_PYTHON_BINDING
+    bool "Compile python binding"
+    default n
+
+config CONFIG_PYTHON_INCLUDES
+    string "python includes path"
+    default "/usr/include/python2.5"
+    depends on CONFIG_PYTHON_BINDING
+
+config CONFIG_PYTHON_LDFLAGS
+    string "python ldflags"
+    default "-lpython2.5"
+    depends on CONFIG_PYTHON_BINDING
+
+endmenu
+
 menu "Demo Applications"
 
 config CONFIG_DEMO_APPLICATIONS

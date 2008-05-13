@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Fri Feb 21 2003
     copyright            : (C) 2003 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -15,12 +15,12 @@
 
 #include "xynth_.h"
 
-void s_window_set_cursor (s_window_t *window, S_MOUSE_CURSOR cursor)
+void s_window_set_cursor (s_window_t *window, s_cursor_type_t cursor)
 {
 	if ((cursor >= 0) &&
-	    (cursor < MOUSE_CURSOR_MAX)) {
+	    (cursor < CURSOR_TYPE_MAX)) {
 		window->cursor = cursor;
-		s_socket_request(window, SOC_DATA_CONFIGURE, WINDOW_NOFORM);
+		s_socket_request(window, SOC_DATA_CONFIGURE, WINDOW_TYPE_NOFORM);
 	}
 }
 
@@ -50,12 +50,12 @@ void s_window_set_title (s_window_t *window, char *fmt, ...)
 		window->title = (char *) s_realloc(window->title, size);
 	}
 
-	s_socket_request(window, SOC_DATA_CONFIGURE, WINDOW_NOFORM);
+	s_socket_request(window, SOC_DATA_CONFIGURE, WINDOW_TYPE_NOFORM);
 }
 
 void s_window_form_draw (s_window_t *window)
 {
-	if (window->type & WINDOW_NOFORM) {
+	if (window->type & WINDOW_TYPE_NOFORM) {
 		return;
 	}
 	s_socket_request(window, SOC_DATA_FORMDRAW);
@@ -85,18 +85,18 @@ void s_window_set_coor (s_window_t *window, int form, int x, int y, int w, int h
 void s_window_set_resizeable (s_window_t *window, int resizeable)
 {
 	window->resizeable = resizeable;
-	s_socket_request(window, SOC_DATA_CONFIGURE, WINDOW_NOFORM);
+	s_socket_request(window, SOC_DATA_CONFIGURE, WINDOW_TYPE_NOFORM);
 }
 
 void s_window_set_alwaysontop (s_window_t *window, int alwaysontop)
 {
 	window->alwaysontop = alwaysontop;
-	s_socket_request(window, SOC_DATA_CONFIGURE, WINDOW_NOFORM);
+	s_socket_request(window, SOC_DATA_CONFIGURE, WINDOW_TYPE_NOFORM);
 }
 
-int s_window_new (s_window_t *window, S_WINDOW type, s_window_t *parent)
+int s_window_new (s_window_t *window, s_window_type_t type, s_window_t *parent)
 {
-	if (!(type & (WINDOW_MAIN | WINDOW_CHILD | WINDOW_TEMP))) {
+	if (!(type & (WINDOW_TYPE_MAIN | WINDOW_TYPE_CHILD | WINDOW_TYPE_TEMP))) {
 		goto err;
 	}
 	window->type = type;
@@ -106,7 +106,7 @@ int s_window_new (s_window_t *window, S_WINDOW type, s_window_t *parent)
 	if (window->surface->height <= 0) {
 		window->surface->height = window->surface->linear_buf_height;
 	}
-	if (window->type & (WINDOW_TEMP | WINDOW_CHILD)) {
+	if (window->type & (WINDOW_TYPE_TEMP | WINDOW_TYPE_CHILD)) {
 		window->parent = parent;
 	} else {
 		window->parent = NULL;
@@ -139,7 +139,7 @@ int s_window_init (s_window_t **window)
 	w->pri = -1;
 	w->resizeable = 1;
 	w->alwaysontop = 0;
-	w->cursor = MOUSE_CURSOR_ARROW;
+	w->cursor = CURSOR_TYPE_ARROW;
 	w->mouse_entered = 0;
 	*window = w;
 
@@ -168,7 +168,7 @@ void s_window_uninit (s_window_t *window)
 		return;
 	}
 
-        window->event->type = QUIT_EVENT;
+        window->event->type = EVENT_TYPE_QUIT;
         s_event_changed(window);
 	s_thread_join(window->eventq->tid, NULL);
 
@@ -182,17 +182,17 @@ void s_window_uninit (s_window_t *window)
 
 	s_childs_uninit(window);
 
-        if (window->type & (WINDOW_TEMP | WINDOW_CHILD)) {
+        if (window->type & (WINDOW_TYPE_TEMP | WINDOW_TYPE_CHILD)) {
 		if (s_child_del(window->parent, window) == 0) {
 			s_free(window->tid);
 		}
 	}
 
-	debugf(DCLI, "[%d] Exiting (%s%s)", window->id, (window->type & WINDOW_MAIN) ? "WINDOW_MAIN" :
-	                                                 ((window->type & WINDOW_CHILD) ? "WINDOW_CHILD" :
-	                                                 ((window->type & WINDOW_TEMP) ? "WINDOW_TEMP" :
-	                                                 ((window->type & WINDOW_DESKTOP) ? "WINDOW_DESKTOP" : "WINDOW_UNKNOWN"))),
-	                                                (window->type & WINDOW_NOFORM) ? " | WINDOW_NOFORM" : "");
+	debugf(DCLI, "[%d] Exiting (%s%s)", window->id, (window->type & WINDOW_TYPE_MAIN) ? "WINDOW_TYPE_MAIN" :
+	                                                 ((window->type & WINDOW_TYPE_CHILD) ? "WINDOW_TYPE_CHILD" :
+	                                                 ((window->type & WINDOW_TYPE_TEMP) ? "WINDOW_TYPE_TEMP" :
+	                                                 ((window->type & WINDOW_TYPE_DESKTOP) ? "WINDOW_TYPE_DESKTOP" : "WINDOW_UNKNOWN"))),
+	                                                (window->type & WINDOW_TYPE_NOFORM) ? " | WINDOW_TYPE_NOFORM" : "");
 
 	s_eventq_uninit(window);
 
@@ -214,7 +214,7 @@ void s_window_exit (s_window_t *window)
 
 void s_window_quit (s_window_t *window)
 {
-        window->event->type = QUIT_EVENT;
+        window->event->type = EVENT_TYPE_QUIT;
         s_event_changed(window);
 //	s_socket_request(window, SOC_DATA_CLOSE);
 }
@@ -239,20 +239,20 @@ void * s_window_loop_event (void *arg)
         	if (window->atevent != NULL) {
 			window->atevent(window, event);
 		}
-		switch (event->type & EVENT_MASK) {
-//			case QUIT_EVENT:   window->running = 0;                      break;
-			case QUIT_EVENT:
+		switch (event->type & EVENT_TYPE_MASK) {
+//			case EVENT_TYPE_QUIT:   window->running = 0;                      break;
+			case EVENT_TYPE_QUIT:
 				 s_socket_request(window, SOC_DATA_CLOSE);
 				 s_event_uninit(event);
 				 return NULL;
 				 break;
-			case MOUSE_EVENT:  s_event_parse_mouse(window, event);       break;
-			case KEYBD_EVENT:  s_event_parse_keybd(window, event);       break;
-			case EXPOSE_EVENT: s_event_parse_expos(window, event);       break;
-			case CONFIG_EVENT: s_event_parse_config(window, event);      break;
-			case TIMER_EVENT:  s_event_parse_timer(window, event);       break;
-			case FOCUS_EVENT:                                            break;
-			case DESKTOP_EVENT:				             break;
+			case EVENT_TYPE_MOUSE:  s_event_parse_mouse(window, event);       break;
+			case EVENT_TYPE_KEYBOARD:  s_event_parse_keybd(window, event);       break;
+			case EVENT_TYPE_EXPOSE: s_event_parse_expos(window, event);       break;
+			case EVENT_TYPE_CONFIG: s_event_parse_config(window, event);      break;
+			case EVENT_TYPE_TIMER:  s_event_parse_timer(window, event);       break;
+			case EVENT_TYPE_FOCUS:                                            break;
+			case EVENT_TYPE_DESKTOP:				             break;
 		}
 		s_event_uninit(event);
 	}
@@ -282,11 +282,11 @@ void * s_window_main (void *arg)
 	s_window_t *window = (s_window_t *) arg;
 	
 	switch (window->type & WINDOW_TYPES) {
-		case WINDOW_MAIN:
+		case WINDOW_TYPE_MAIN:
 			s_window_loop(window);
 			break;
-		case WINDOW_TEMP:
-		case WINDOW_CHILD:
+		case WINDOW_TYPE_TEMP:
+		case WINDOW_TYPE_CHILD:
 			window->tid = s_thread_create(&s_window_loop, (void *) window);
 			s_child_add(window->parent, window);
 			break;

@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Mon Feb 21 2005
     copyright            : (C) 2005 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -23,7 +23,7 @@ typedef struct s_video_sdl_data_s {
 	int screen_shm_mid;
 	SDL_Surface *screen;
 	s_thread_t *event_tid;
-	S_KEYCODE_CODE keymap[SDLK_LAST];
+	s_keyboard_button_t keymap[SDLK_LAST];
 } s_video_sdl_data_t;
 
 int SDL_PrivateQuit(void);

@@ -26,7 +26,7 @@ diff -Naur MPlayer-1.0rc2/libvo/vo_xynth.c MPlayer-1.0rc2-xynth/libvo/vo_xynth.c
 +/***************************************************************************
 +    begin                : Thu Jan 22 2004
 +    copyright            : (C) 2004 - 2008 by Alper Akcan
-+    email                : distchx@yahoo.com
++    email                : alper.akcan@gmail.com
 + ***************************************************************************/
 +
 +/***************************************************************************
@@ -87,7 +87,7 @@ diff -Naur MPlayer-1.0rc2/libvo/vo_xynth.c MPlayer-1.0rc2-xynth/libvo/vo_xynth.c
 +static vo_info_t info = {
 +	"Xynth Windowing System",
 +	"xynth",
-+	"Alper Akcan <distchx@yahoo.com>",
++	"Alper Akcan <alper.akcan@gmail.com>",
 +	""
 +};
 +

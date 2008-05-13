@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Thu Feb 2 2006
     copyright            : (C) 2006 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -89,21 +89,21 @@ void * s_video_gp2x_event_parse (void *arg)
 		               GP2X_VOL_DOWN |
 		               GP2X_PUSH)) {
 			switch (changed) {
-				case GP2X_UP:       key_send.button = S_KEYCODE_USER0; break;
-		                case GP2X_LEFT:     key_send.button = S_KEYCODE_USER1; break;
-		                case GP2X_DOWN:     key_send.button = S_KEYCODE_USER2; break;
-		                case GP2X_RIGHT:    key_send.button = S_KEYCODE_USER3; break;
-		                case GP2X_START:    key_send.button = S_KEYCODE_USER4; break;
-		                case GP2X_SELECT:   key_send.button = S_KEYCODE_USER5; break;
-		                case GP2X_A:        key_send.button = S_KEYCODE_USER8; break;
-		                case GP2X_B:        key_send.button = S_KEYCODE_USER9; break;
-		                case GP2X_X:        key_send.button = S_KEYCODE_USER10; break;
-		                case GP2X_Y:        key_send.button = S_KEYCODE_USER11; break;
-		                case GP2X_VOL_UP:   key_send.button = S_KEYCODE_USER12; break;
-		                case GP2X_VOL_DOWN: key_send.button = S_KEYCODE_USER13; break;
-		                case GP2X_PUSH:     key_send.button = S_KEYCODE_USER14; break;
+				case GP2X_UP:       key_send.button = KEYBOARD_BUTTON_USER0; break;
+		                case GP2X_LEFT:     key_send.button = KEYBOARD_BUTTON_USER1; break;
+		                case GP2X_DOWN:     key_send.button = KEYBOARD_BUTTON_USER2; break;
+		                case GP2X_RIGHT:    key_send.button = KEYBOARD_BUTTON_USER3; break;
+		                case GP2X_START:    key_send.button = KEYBOARD_BUTTON_USER4; break;
+		                case GP2X_SELECT:   key_send.button = KEYBOARD_BUTTON_USER5; break;
+		                case GP2X_A:        key_send.button = KEYBOARD_BUTTON_USER8; break;
+		                case GP2X_B:        key_send.button = KEYBOARD_BUTTON_USER9; break;
+		                case GP2X_X:        key_send.button = KEYBOARD_BUTTON_USER10; break;
+		                case GP2X_Y:        key_send.button = KEYBOARD_BUTTON_USER11; break;
+		                case GP2X_VOL_UP:   key_send.button = KEYBOARD_BUTTON_USER12; break;
+		                case GP2X_VOL_DOWN: key_send.button = KEYBOARD_BUTTON_USER13; break;
+		                case GP2X_PUSH:     key_send.button = KEYBOARD_BUTTON_USER14; break;
 			}
-			key_send.state = (changed & pad) ? KEYBD_PRESSED : KEYBD_RELEASED;
+			key_send.state = (changed & pad) ? EVENT_TYPE_KEYBOARD_PRESSED : EVENT_TYPE_KEYBOARD_RELEASED;
 			if (priv->keybd_fd[1] != -1) {
 				s_pipe_api_write(priv->keybd_fd[1], &key_send, sizeof(s_video_input_data_keybd_t));
 			}

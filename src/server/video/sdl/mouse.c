@@ -1,7 +1,7 @@
 /***************************************************************************
     begin                : Mon Feb 21 2005
     copyright            : (C) 2005 - 2008 by Alper Akcan
-    email                : distchx@yahoo.com
+    email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -52,13 +52,13 @@ int s_video_sdl_mouse_update (s_video_input_data_t *mouse)
         mouse->mouse.buttons = 0;
 	
         if (state & (1 << (SDL_BUTTON_LEFT - 1))) {
-		mouse->mouse.buttons |= MOUSE_LEFTBUTTON;
+		mouse->mouse.buttons |= MOUSE_BUTTON_LEFT;
 	}
         if (state & (1 << (SDL_BUTTON_MIDDLE - 1))) {
-		mouse->mouse.buttons |= MOUSE_MIDDLEBUTTON;
+		mouse->mouse.buttons |= MOUSE_BUTTON_MIDDLE;
 	}
         if (state & (1 << (SDL_BUTTON_RIGHT - 1))) {
-		mouse->mouse.buttons |= MOUSE_RIGHTBUTTON;
+		mouse->mouse.buttons |= MOUSE_BUTTON_RIGHT;
 	}
 
 	return 0;
