@@ -174,7 +174,7 @@ int s_server_irr_update (s_window_t *window, s_pollfd_t *pfd)
 	unsigned long long difftime;
 	s_video_input_data_t idata;
 	irr = (s_video_input_t *) pfd->data;
-	server->window->event->type = 0;
+	xynth_server->window->event->type = 0;
 	memset(&idata, 0, sizeof(s_video_input_data_t));
 	if (irr->update != NULL) {
 		code = irr->update(&idata);
@@ -199,12 +199,12 @@ int s_server_irr_update (s_window_t *window, s_pollfd_t *pfd)
 	irr_code = code;
 	irr_time = time; 
 	s_server_event_parse_keyboard(&(idata.irr));
-	server->window->event->type |= EVENT_TYPE_KEYBOARD_EXTENSION_IRR;
+	xynth_server->window->event->type |= EVENT_TYPE_KEYBOARD_EXTENSION_IRR;
 	s_server_event_changed();
-	server->window->event->type = 0;
+	xynth_server->window->event->type = 0;
 	idata.keybd.state = EVENT_TYPE_KEYBOARD_RELEASED;
 	s_server_event_parse_keyboard(&(idata.irr));
-	server->window->event->type |= EVENT_TYPE_KEYBOARD_EXTENSION_IRR;
+	xynth_server->window->event->type |= EVENT_TYPE_KEYBOARD_EXTENSION_IRR;
 	s_server_event_changed();
 	return 0;
 }
@@ -230,6 +230,6 @@ void s_server_irr_init (s_server_conf_t *cfg, s_video_input_t *irr)
 		pfd->pf_in = s_server_irr_update;
 		pfd->pf_close = s_server_irr_uninit;
 		pfd->data = irr;
-		s_pollfd_add(server->window, pfd);
+		s_pollfd_add(xynth_server->window, pfd);
 	}
 }

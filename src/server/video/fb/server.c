@@ -113,86 +113,86 @@ void fb_server_surface_setrgbpalette (void)
 
 void fb_server_surface_init (s_video_helper_mode_info_t *gmode)
 {
-        server->window->surface->width = fb.v_scr.xres;
-        server->window->surface->height = fb.v_scr.yres;
-        server->window->surface->bitsperpixel = fb.bitsperpixel;
-        server->window->surface->bytesperpixel = fb.bytesperpixel;
-	server->window->surface->blueoffset = fb.v_scr.blue.offset;
-	server->window->surface->greenoffset = fb.v_scr.green.offset;
-	server->window->surface->redoffset = fb.v_scr.red.offset;
-	server->window->surface->bluelength = fb.v_scr.blue.length;
-	server->window->surface->greenlength = fb.v_scr.green.length;
-	server->window->surface->redlength = fb.v_scr.red.length;
-	server->window->surface->colors = fb.colors;
+        xynth_server->window->surface->width = fb.v_scr.xres;
+        xynth_server->window->surface->height = fb.v_scr.yres;
+        xynth_server->window->surface->bitsperpixel = fb.bitsperpixel;
+        xynth_server->window->surface->bytesperpixel = fb.bytesperpixel;
+	xynth_server->window->surface->blueoffset = fb.v_scr.blue.offset;
+	xynth_server->window->surface->greenoffset = fb.v_scr.green.offset;
+	xynth_server->window->surface->redoffset = fb.v_scr.red.offset;
+	xynth_server->window->surface->bluelength = fb.v_scr.blue.length;
+	xynth_server->window->surface->greenlength = fb.v_scr.green.length;
+	xynth_server->window->surface->redlength = fb.v_scr.red.length;
+	xynth_server->window->surface->colors = fb.colors;
 
-        switch (server->window->surface->colors) {
+        switch (xynth_server->window->surface->colors) {
 		default:
 		case 256:
-			server->window->surface->bitsperpixel = 8;
-			server->window->surface->blueoffset = 0;
-			server->window->surface->greenoffset = 3;
-			server->window->surface->redoffset = 6;
-			server->window->surface->bluelength = 3;
-			server->window->surface->greenlength = 3;
-			server->window->surface->redlength = 2;
+			xynth_server->window->surface->bitsperpixel = 8;
+			xynth_server->window->surface->blueoffset = 0;
+			xynth_server->window->surface->greenoffset = 3;
+			xynth_server->window->surface->redoffset = 6;
+			xynth_server->window->surface->bluelength = 3;
+			xynth_server->window->surface->greenlength = 3;
+			xynth_server->window->surface->redlength = 2;
 			break;
 		case 32768:
-			server->window->surface->bitsperpixel = 15;
-			server->window->surface->blueoffset = 0;
-			server->window->surface->greenoffset = 5;
-			server->window->surface->redoffset = 10;
-			server->window->surface->bluelength = 5;
-			server->window->surface->greenlength = 5;
-			server->window->surface->redlength = 5;
+			xynth_server->window->surface->bitsperpixel = 15;
+			xynth_server->window->surface->blueoffset = 0;
+			xynth_server->window->surface->greenoffset = 5;
+			xynth_server->window->surface->redoffset = 10;
+			xynth_server->window->surface->bluelength = 5;
+			xynth_server->window->surface->greenlength = 5;
+			xynth_server->window->surface->redlength = 5;
 			break;
 		case 65536:
-			server->window->surface->bitsperpixel = 16;
-			server->window->surface->blueoffset = 0;
-			server->window->surface->greenoffset = 5;
-			server->window->surface->redoffset = 11;
-			server->window->surface->bluelength = 5;
-			server->window->surface->greenlength = 6;
-			server->window->surface->redlength = 5;
+			xynth_server->window->surface->bitsperpixel = 16;
+			xynth_server->window->surface->blueoffset = 0;
+			xynth_server->window->surface->greenoffset = 5;
+			xynth_server->window->surface->redoffset = 11;
+			xynth_server->window->surface->bluelength = 5;
+			xynth_server->window->surface->greenlength = 6;
+			xynth_server->window->surface->redlength = 5;
 			break;
 		case (1 << 18):
-                        server->window->surface->bitsperpixel = 18;
-                        server->window->surface->blueoffset = 0;
-                        server->window->surface->greenoffset = 6;
-                        server->window->surface->redoffset = 12;
-                        server->window->surface->bluelength = 6;
-                        server->window->surface->greenlength = 6;
-                        server->window->surface->redlength = 6;
+                        xynth_server->window->surface->bitsperpixel = 18;
+                        xynth_server->window->surface->blueoffset = 0;
+                        xynth_server->window->surface->greenoffset = 6;
+                        xynth_server->window->surface->redoffset = 12;
+                        xynth_server->window->surface->bluelength = 6;
+                        xynth_server->window->surface->greenlength = 6;
+                        xynth_server->window->surface->redlength = 6;
                         break;
 		case 256 * 65536:
-			server->window->surface->bitsperpixel = server->window->surface->bytesperpixel * 8;
-			server->window->surface->blueoffset = 0;
-			server->window->surface->greenoffset = 8;
-			server->window->surface->redoffset = 16;
-			server->window->surface->bluelength = 8;
-			server->window->surface->greenlength = 8;
-			server->window->surface->redlength = 8;
+			xynth_server->window->surface->bitsperpixel = xynth_server->window->surface->bytesperpixel * 8;
+			xynth_server->window->surface->blueoffset = 0;
+			xynth_server->window->surface->greenoffset = 8;
+			xynth_server->window->surface->redoffset = 16;
+			xynth_server->window->surface->bluelength = 8;
+			xynth_server->window->surface->greenlength = 8;
+			xynth_server->window->surface->redlength = 8;
 			break;
 	}
 
-	server->window->surface->linear_mem_base = 0;
-	server->window->surface->linear_mem_size = fb.f_scr.smem_len;
+	xynth_server->window->surface->linear_mem_base = 0;
+	xynth_server->window->surface->linear_mem_size = fb.f_scr.smem_len;
 
-	if (server->window->surface->linear_mem_size){
-		server->window->surface->linear_mem_base = (unsigned int) mmap((caddr_t) 0, server->window->surface->linear_mem_size,
+	if (xynth_server->window->surface->linear_mem_size){
+		xynth_server->window->surface->linear_mem_base = (unsigned int) mmap((caddr_t) 0, xynth_server->window->surface->linear_mem_size,
 						                               PROT_WRITE | PROT_READ,
 						                               MAP_SHARED,
 						                               fb.fd,
-						                               (off_t) server->window->surface->linear_mem_base);
-		if ((int) server->window->surface->linear_mem_base == -1) {
+						                               (off_t) xynth_server->window->surface->linear_mem_base);
+		if ((int) xynth_server->window->surface->linear_mem_base == -1) {
 			debugf(DSER | DSYS | DFAT, "FBDEV : mmap failed");
 		}
 	} else {
 		debugf(DSER | DFAT, "FBDEV : mmap failed");
 	}
 
-	server->window->surface->vbuf = (unsigned char *) server->window->surface->linear_mem_base;
-	server->window->surface->linear_buf = server->window->surface->vbuf;
-	server->window->surface->linear_mem_base = 0;
+	xynth_server->window->surface->vbuf = (unsigned char *) xynth_server->window->surface->linear_mem_base;
+	xynth_server->window->surface->linear_buf = xynth_server->window->surface->vbuf;
+	xynth_server->window->surface->linear_mem_base = 0;
 
         fb_server_surface_setrgbpalette();
 }
@@ -218,7 +218,7 @@ err0:	return -1;
 
 void fb_server_surface_uninit (void)
 {
-	munmap((void *) server->window->surface->linear_mem_base, server->window->surface->linear_mem_size);
+	munmap((void *) xynth_server->window->surface->linear_mem_base, xynth_server->window->surface->linear_mem_size);
 }
 
 void fb_server_uninit (void)

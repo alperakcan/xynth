@@ -20,6 +20,6 @@
 
 int s_video_svga_kbd_init (s_server_conf_t *cfg)
 {
-	s_video_svga_data_t *priv = (s_video_svga_data_t *) server->driver->driver_data;
+	s_video_svga_data_t *priv = (s_video_svga_data_t *) xynth_server->driver->driver_data;
 	return s_video_helper_kbd_init(cfg, priv->console_fd);
 }

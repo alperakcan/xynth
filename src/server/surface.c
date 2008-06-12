@@ -33,8 +33,8 @@ void s_server_surface_matrix_add_this (int id, s_rect_t *coor, s_rect_t *mcoor, 
 
 	clip.x = 0;
 	clip.y = 0;
-	clip.w = server->window->surface->width;
-	clip.h = server->window->surface->height;
+	clip.w = xynth_server->window->surface->width;
+	clip.h = xynth_server->window->surface->height;
 
 	if (s_region_rect_intersect(&intr_, &clip, &inter)) {
 		return;
@@ -44,7 +44,7 @@ void s_server_surface_matrix_add_this (int id, s_rect_t *coor, s_rect_t *mcoor, 
         w = inter.w;
         w_ = clip.w - w;
         m_ = mcoor->w - w;
-        tmp = (server->window->surface->matrix + (inter.y * clip.w) + inter.x);
+        tmp = (xynth_server->window->surface->matrix + (inter.y * clip.w) + inter.x);
         mat += ((inter.y - mcoor->y) * mcoor->w) + (inter.x - mcoor->x);
 
 	while (h--) {
@@ -72,9 +72,9 @@ void s_server_surface_matrix_add_id (int id, s_rect_t *coor)
 
 	clip.x = 0;
 	clip.y = 0;
-	clip.w = server->window->surface->width;
-	clip.h = server->window->surface->height;
-	tmp = server->window->surface->matrix;
+	clip.w = xynth_server->window->surface->width;
+	clip.h = xynth_server->window->surface->height;
+	tmp = xynth_server->window->surface->matrix;
 
 	if (s_region_rect_intersect(coor, &clip, &inter)) {
 		return;
@@ -97,7 +97,7 @@ void s_server_surface_matrix_add_id (int id, s_rect_t *coor)
 void s_server_surface_matrix_add (int id, s_rect_t *coor)
 {
 	s_rect_t inter;
-	if (s_region_rect_intersect(coor, &server->client[id].buf, &inter)) {
+	if (s_region_rect_intersect(coor, &xynth_server->client[id].buf, &inter)) {
 		return;
 	}
 	s_server_surface_matrix_add_id(id, &inter);
@@ -111,10 +111,10 @@ void s_server_surface_matrix_del_coor (s_rect_t *coor)
 void s_server_surface_clean (s_rect_t *coor)
 {
 	s_rect_t clip;
-	if (s_region_rect_intersect(server->window->surface->buf, coor, &clip)) {
+	if (s_region_rect_intersect(xynth_server->window->surface->buf, coor, &clip)) {
 		return;
 	}
-	bpp_fillbox_o(server->window->surface, S_MATRIX_FREE, clip.x, clip.y, clip.w, clip.h, 0);
+	bpp_fillbox_o(xynth_server->window->surface, S_MATRIX_FREE, clip.x, clip.y, clip.w, clip.h, 0);
 }
 
 void s_server_surface_lock (void)
@@ -122,8 +122,8 @@ void s_server_surface_lock (void)
 	s_rect_t coor;
 	coor.x = 0;
 	coor.y = 0;
-	coor.w = server->window->surface->width;
-	coor.h = server->window->surface->height;
+	coor.w = xynth_server->window->surface->width;
+	coor.h = xynth_server->window->surface->height;
 	s_server_surface_matrix_add_id(S_MATRIX_LOCKED, &coor);
 }
 
@@ -132,7 +132,7 @@ void s_server_surface_refresh (void)
 	s_rect_t coor;
 	coor.x = 0;
 	coor.y = 0;
-	coor.w = server->window->surface->width;
-	coor.h = server->window->surface->height;
+	coor.w = xynth_server->window->surface->width;
+	coor.h = xynth_server->window->surface->height;
 	s_server_pri_set(SURFACE_REFRESH, &coor);
 }

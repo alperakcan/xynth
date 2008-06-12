@@ -24,11 +24,11 @@ LRESULT CALLBACK MainWndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lPa
 	s_rect_t coor;
 	BYTE chars[2];
         BYTE keystate[256];
-	s_video_gdi_data_t *priv = (s_video_gdi_data_t *) server->driver->driver_data;
+	s_video_gdi_data_t *priv = (s_video_gdi_data_t *) xynth_server->driver->driver_data;
 
 	switch (message) {
 		case WM_DESTROY:
-			s_server_quit(server->window);
+			s_server_quit(xynth_server->window);
 			PostQuitMessage(0);
                         break;
 		case WM_CREATE:
@@ -37,8 +37,8 @@ LRESULT CALLBACK MainWndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lPa
 		case WM_DISPLAYCHANGE:
 			coor.x = 0;
 			coor.y = 0;
-			coor.w = server->window->surface->width;
-			coor.h = server->window->surface->height;
+			coor.w = xynth_server->window->surface->width;
+			coor.h = xynth_server->window->surface->height;
 			s_video_gdi_server_surface_update(&coor);
 			break;
 		case WM_LBUTTONDOWN:
@@ -90,15 +90,15 @@ void s_video_gdi_server_fullscreen (void)
 {
 	RECT rect;
         DEVMODE settings;
-	s_video_gdi_data_t *priv = (s_video_gdi_data_t *) server->driver->driver_data;
+	s_video_gdi_data_t *priv = (s_video_gdi_data_t *) xynth_server->driver->driver_data;
 	
 	if (priv->fullscreen == 0) {
                 EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &priv->dmode);
                 memset(&settings, 0, sizeof(DEVMODE));
                 settings.dmSize = sizeof(DEVMODE);
                 settings.dmBitsPerPel = priv->bpp_windows;
-                settings.dmPelsWidth = server->window->surface->width;
-                settings.dmPelsHeight = server->window->surface->height;
+                settings.dmPelsWidth = xynth_server->window->surface->width;
+                settings.dmPelsHeight = xynth_server->window->surface->height;
                 settings.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT | DM_BITSPERPEL;
         } else {
                 settings.dmSize = sizeof(DEVMODE);
@@ -122,17 +122,17 @@ void s_video_gdi_server_fullscreen (void)
 
 	if (priv->fullscreen == 0) {
         	rect.left = 0;
-        	rect.right = server->window->surface->width;
+        	rect.right = xynth_server->window->surface->width;
         	rect.top = 0;
-        	rect.bottom = server->window->surface->height;
+        	rect.bottom = xynth_server->window->surface->height;
                 AdjustWindowRect(&rect, GetWindowLong(priv->hwndMain, GWL_STYLE), FALSE);
                 SetWindowPos(priv->hwndMain, HWND_TOPMOST, rect.left, rect.top, rect.right + 100, rect.bottom + 100, 0);
                 priv->fullscreen = 1;
         } else {
         	rect.left = 0;
-        	rect.right = server->window->surface->width;
+        	rect.right = xynth_server->window->surface->width;
         	rect.top = 0;
-        	rect.bottom = server->window->surface->height;
+        	rect.bottom = xynth_server->window->surface->height;
                 AdjustWindowRect(&rect, GetWindowLong(priv->hwndMain, GWL_STYLE), FALSE);
                 SetWindowPos(priv->hwndMain, HWND_NOTOPMOST, 0, 0, rect.right - rect.left, rect.bottom - rect.top, 0);
                 priv->fullscreen = 0;
@@ -148,7 +148,7 @@ void * s_video_gdi_create_window (void *arg)
 	HDC mainwindow;
 	WNDCLASSEX wndclass;
 	char *szMainWndClass = "XynthWindowingSystem";
-	s_video_gdi_data_t *priv = (s_video_gdi_data_t *) server->driver->driver_data;
+	s_video_gdi_data_t *priv = (s_video_gdi_data_t *) xynth_server->driver->driver_data;
 
 	memset(&wndclass, 0, sizeof(WNDCLASSEX));
 	wndclass.lpszClassName = szMainWndClass;
@@ -175,9 +175,9 @@ void * s_video_gdi_create_window (void *arg)
 	                              NULL);
 
 	rect.left = 0;
-	rect.right = server->window->surface->width;
+	rect.right = xynth_server->window->surface->width;
 	rect.top = 0;
-	rect.bottom = server->window->surface->height;
+	rect.bottom = xynth_server->window->surface->height;
         AdjustWindowRect(&rect, GetWindowLong(priv->hwndMain, GWL_STYLE), FALSE);
         SetWindowPos(priv->hwndMain, HWND_TOP, 0, 0, rect.right - rect.left, rect.bottom - rect.top, SWP_NOMOVE);
 

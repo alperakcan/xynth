@@ -294,16 +294,27 @@ tm_bad:						debugf(DSER, "Illegal timing setting. Correct usage: vertrefresh pi
 					debugf(DSER, "driver:%s, or device:%s name is too long (> %d). skipping", (*vd)->driver, (*vd)->device, S_FNAME_MAX);
 					continue;
 				}
-				server->driver = *vd;
+				xynth_server->driver = *vd;
 			}
 		}
-		if (server->driver == NULL) {
+		if (xynth_server->driver == NULL) {
 			debugf(DSER, "Unknown video driver : %s", config->general.driver);
 			ret = -1;
 		}
 	}
 
 	return ret;
+}
+
+void * s_server_loop (void *arg)
+{
+	while (xynth_server->window->running > 0) {
+		if (s_socket_listen_wait(xynth_server->window, -1)) {
+			xynth_server->window->running = 0;
+			break;
+		}
+	}
+	return NULL;
 }
 
 int s_server_init (void)
@@ -324,22 +335,22 @@ int s_server_init (void)
 	setvbuf(stderr, (char *) NULL, _IONBF, 0);
 #endif
 
-	server = (s_server_t *) s_calloc(1, sizeof(s_server_t));
+	xynth_server = (s_server_t *) s_calloc(1, sizeof(s_server_t));
 	for (i = 0; i < S_CLIENTS_MAX; i++) {
-		server->id[i] = -1;
-		server->pri[i] = -1;
-		server->client[i].pid = -1;
-		server->client[i].soc = -1;
-		server->client[i].type = 0;
-		server->client[i].resizeable = 1;
-		server->client[i].alwaysontop = 0;
-		server->client[i].cursor = CURSOR_TYPE_ARROW;
+		xynth_server->id[i] = -1;
+		xynth_server->pri[i] = -1;
+		xynth_server->client[i].pid = -1;
+		xynth_server->client[i].soc = -1;
+		xynth_server->client[i].type = 0;
+		xynth_server->client[i].resizeable = 1;
+		xynth_server->client[i].alwaysontop = 0;
+		xynth_server->client[i].cursor = CURSOR_TYPE_ARROW;
 	}
 	
-        server->window = (s_window_t *) s_calloc(1, sizeof(s_window_t));
-        server->window->surface = (s_surface_t *) s_calloc(1, sizeof(s_surface_t));
-	server->window->surface->buf = (s_rect_t *) s_calloc(1, sizeof(s_rect_t));
-	server->window->surface->win = (s_rect_t *) s_calloc(1, sizeof(s_rect_t));
+        xynth_server->window = (s_window_t *) s_calloc(1, sizeof(s_window_t));
+        xynth_server->window->surface = (s_surface_t *) s_calloc(1, sizeof(s_surface_t));
+	xynth_server->window->surface->buf = (s_rect_t *) s_calloc(1, sizeof(s_rect_t));
+	xynth_server->window->surface->win = (s_rect_t *) s_calloc(1, sizeof(s_rect_t));
 
 	memset(&config, 0, sizeof(s_server_conf_t));
         if (s_server_cfg(&config)) {
@@ -347,71 +358,71 @@ int s_server_init (void)
 		goto err0;
 	}
 
-        server->window->surface->buf->x = 0;
-        server->window->surface->buf->y = 0;
-	server->window->surface->buf->w = 0;
-	server->window->surface->buf->h = 0;
-	server->window->surface->linear_buf_width = 0;
-	server->window->surface->linear_buf_pitch = 0;
-	server->window->surface->linear_buf_height = 0;
+        xynth_server->window->surface->buf->x = 0;
+        xynth_server->window->surface->buf->y = 0;
+	xynth_server->window->surface->buf->w = 0;
+	xynth_server->window->surface->buf->h = 0;
+	xynth_server->window->surface->linear_buf_width = 0;
+	xynth_server->window->surface->linear_buf_pitch = 0;
+	xynth_server->window->surface->linear_buf_height = 0;
 	
-        if (server->driver->server_init != NULL) {
-		mode = server->driver->server_init(&config);
+        if (xynth_server->driver->server_init != NULL) {
+		mode = xynth_server->driver->server_init(&config);
 		if (mode < 0) {
-			debugf(DSER, "server->driver->server_init(&config) failed");
+			debugf(DSER, "xynth_server->driver->server_init(&config) failed");
 			goto err0;
 		}
 	} else {
-		debugf(DSER, "server->driver->server_init == NULL");
+		debugf(DSER, "xynth_server->driver->server_init == NULL");
 		goto err0;
 	}
 
-	server->window->surface->bluemask = ((1 << server->window->surface->bluelength) - 1) << server->window->surface->blueoffset;
-	server->window->surface->greenmask = ((1 << server->window->surface->greenlength) - 1) << server->window->surface->greenoffset;
-	server->window->surface->redmask = ((1 << server->window->surface->redlength) - 1) << server->window->surface->redoffset;
+	xynth_server->window->surface->bluemask = ((1 << xynth_server->window->surface->bluelength) - 1) << xynth_server->window->surface->blueoffset;
+	xynth_server->window->surface->greenmask = ((1 << xynth_server->window->surface->greenlength) - 1) << xynth_server->window->surface->greenoffset;
+	xynth_server->window->surface->redmask = ((1 << xynth_server->window->surface->redlength) - 1) << xynth_server->window->surface->redoffset;
 
 	if (config.general.rotate) {
-		server->rotate = config.general.rotate;
-		server->origin_w = server->window->surface->width;
-		server->origin_h = server->window->surface->height;
-		server->origin_vbuf = server->window->surface->linear_buf;
-		if (server->rotate == 90 ||
-		    server->rotate == -90 ||
-		    server->rotate == 270 ||
-		    server->rotate == -270) {
-			server->window->surface->width = server->origin_h;
-			server->window->surface->height = server->origin_w;
+		xynth_server->rotate = config.general.rotate;
+		xynth_server->origin_w = xynth_server->window->surface->width;
+		xynth_server->origin_h = xynth_server->window->surface->height;
+		xynth_server->origin_vbuf = xynth_server->window->surface->linear_buf;
+		if (xynth_server->rotate == 90 ||
+		    xynth_server->rotate == -90 ||
+		    xynth_server->rotate == 270 ||
+		    xynth_server->rotate == -270) {
+			xynth_server->window->surface->width = xynth_server->origin_h;
+			xynth_server->window->surface->height = xynth_server->origin_w;
 		}
-		server->window->surface->need_expose = SURFACE_NEEDEXPOSE;
+		xynth_server->window->surface->need_expose = SURFACE_NEEDEXPOSE;
 #if defined(CONFIG_SINGLE_APPLICATION)
-		addr = (void *) s_malloc(sizeof(char) * server->window->surface->width * server->window->surface->height * server->window->surface->bytesperpixel);
+		addr = (void *) s_malloc(sizeof(char) * xynth_server->window->surface->width * xynth_server->window->surface->height * xynth_server->window->surface->bytesperpixel);
 #else
-		if ((server->rotate_shm_id = shmget(IPC_PRIVATE, sizeof(char) * server->window->surface->width * server->window->surface->height * server->window->surface->bytesperpixel, IPC_CREAT | 0644)) < 0) {
+		if ((xynth_server->rotate_shm_id = shmget(IPC_PRIVATE, sizeof(char) * xynth_server->window->surface->width * xynth_server->window->surface->height * xynth_server->window->surface->bytesperpixel, IPC_CREAT | 0644)) < 0) {
 			debugf(DSER | DSYS, "Can not get id for shared memory");
 			goto err0;
 		}
-		if ((addr = (void *) shmat(server->rotate_shm_id, NULL, 0)) < 0) {
+		if ((addr = (void *) shmat(xynth_server->rotate_shm_id, NULL, 0)) < 0) {
 			debugf(DSER | DSYS, "Can not attach the shared memory");
 			goto err0;
 		}
-		server->window->surface->shm_sid = server->rotate_shm_id;
-                shmctl(server->rotate_shm_id, IPC_RMID, 0);
+		xynth_server->window->surface->shm_sid = xynth_server->rotate_shm_id;
+                shmctl(xynth_server->rotate_shm_id, IPC_RMID, 0);
 #endif
-		server->window->surface->vbuf = addr;
-		server->window->surface->linear_buf = addr;
+		xynth_server->window->surface->vbuf = addr;
+		xynth_server->window->surface->linear_buf = addr;
 	} else {
-		server->rotate = 0;
+		xynth_server->rotate = 0;
 	}
 
-        server->window->surface->buf->x = 0;
-        server->window->surface->buf->y = 0;
-	server->window->surface->buf->w = server->window->surface->width;
-	server->window->surface->buf->h = server->window->surface->height;
-	server->window->surface->linear_buf_width = server->window->surface->width;
-	if (server->window->surface->linear_buf_pitch == 0) {
-		server->window->surface->linear_buf_pitch = server->window->surface->width;
+        xynth_server->window->surface->buf->x = 0;
+        xynth_server->window->surface->buf->y = 0;
+	xynth_server->window->surface->buf->w = xynth_server->window->surface->width;
+	xynth_server->window->surface->buf->h = xynth_server->window->surface->height;
+	xynth_server->window->surface->linear_buf_width = xynth_server->window->surface->width;
+	if (xynth_server->window->surface->linear_buf_pitch == 0) {
+		xynth_server->window->surface->linear_buf_pitch = xynth_server->window->surface->width;
 	}
-	server->window->surface->linear_buf_height = server->window->surface->height;
+	xynth_server->window->surface->linear_buf_height = xynth_server->window->surface->height;
 
 #if defined(CONFIG_PLATFORM_LINUX)
 	close(fileno(stdout));
@@ -421,30 +432,30 @@ int s_server_init (void)
 #endif
 
 #if defined(CONFIG_SINGLE_APPLICATION)
-	addr = (void *) s_malloc(sizeof(char) * server->window->surface->width * server->window->surface->height);
+	addr = (void *) s_malloc(sizeof(char) * xynth_server->window->surface->width * xynth_server->window->surface->height);
 #else
-        if ((server->window->surface->shm_mid = shmget(IPC_PRIVATE, sizeof(char) * server->window->surface->width * server->window->surface->height, IPC_CREAT | 0644)) < 0) {
+        if ((xynth_server->window->surface->shm_mid = shmget(IPC_PRIVATE, sizeof(char) * xynth_server->window->surface->width * xynth_server->window->surface->height, IPC_CREAT | 0644)) < 0) {
 		debugf(DSER | DSYS | DFAT, "Can not get id for shared memory");
         }
-        if ((addr = (void *) shmat(server->window->surface->shm_mid, NULL, 0)) < 0) {
+        if ((addr = (void *) shmat(xynth_server->window->surface->shm_mid, NULL, 0)) < 0) {
 		debugf(DSER | DSYS | DFAT, "Can not attach the shared memory");
         }
-	shmctl(server->window->surface->shm_mid, IPC_RMID, 0);
+	shmctl(xynth_server->window->surface->shm_mid, IPC_RMID, 0);
 #endif
-        server->window->surface->matrix = (unsigned char *) addr;
+        xynth_server->window->surface->matrix = (unsigned char *) addr;
 
-	server->window->surface->mode = SURFACE_REAL;
-	server->mode = mode;
+	xynth_server->window->surface->mode = SURFACE_REAL;
+	xynth_server->mode = mode;
 
-        s_event_init(&server->window->event);
-	s_handlers_init(server->window);
-	s_pollfds_init(server->window);
-	s_timers_init(server->window);
+        s_event_init(&xynth_server->window->event);
+	s_handlers_init(xynth_server->window);
+	s_pollfds_init(xynth_server->window);
+	s_timers_init(xynth_server->window);
 	s_server_socket_init();
 	
 	{
 		s_video_input_t **input;
-		for (input = server->driver->input; *input; input++) {
+		for (input = xynth_server->driver->input; *input; input++) {
 			switch ((*input)->type) {
 				case VIDEO_INPUT_MOUSE:
 					s_server_mouse_init(&config, *input);
@@ -462,7 +473,7 @@ int s_server_init (void)
 	}
 	 
 	for (i = 0; i < 20; i++) {
-		s_handler_init(&(server->whndl[i]));
+		s_handler_init(&(xynth_server->whndl[i]));
 	}
 
 	s_free(config.general.console);
@@ -475,7 +486,7 @@ int s_server_init (void)
 	s_free(config.irr.device);
 	s_free(config.irr.brate);
 
-	server->window->running = 1;
+	xynth_server->window->running = 1;
 
 	return 0;
 
@@ -485,10 +496,10 @@ err0:	s_free(config.general.console);
 	s_free(config.mouse.type);
 	s_free(config.mouse.device);
 	s_free(config.keyboard.keyboard);
-	s_free(server->window->surface->buf);
-	s_free(server->window->surface->win);
-	s_free(server->window->surface);
-	s_free(server->window);
+	s_free(xynth_server->window->surface->buf);
+	s_free(xynth_server->window->surface->win);
+	s_free(xynth_server->window->surface);
+	s_free(xynth_server->window);
 	return 1;
 }
 
@@ -505,70 +516,70 @@ void s_server_uninit (void)
         
 	s_server_window_handlers_del_mouse();
 	for (i = 0; i < 20; i++) {
-		s_handler_uninit(server->whndl[i]);
+		s_handler_uninit(xynth_server->whndl[i]);
 	}
 	
-	s_timers_uninit(server->window);
-	s_pollfds_uninit(server->window);
-	s_handlers_uninit(server->window);
+	s_timers_uninit(xynth_server->window);
+	s_pollfds_uninit(xynth_server->window);
+	s_handlers_uninit(xynth_server->window);
 	s_server_theme_uninit();
 	for (i = 0; i < S_CLIENTS_MAX; i++) {
-		s_free(server->client[i].title.str);
+		s_free(xynth_server->client[i].title.str);
 		for (v = 0; v < 2; v++) {
-			s_free(server->client[i].title.img[v].mat);
-			s_free(server->client[i].title.img[v].buf);
+			s_free(xynth_server->client[i].title.img[v].mat);
+			s_free(xynth_server->client[i].title.img[v].buf);
 		}
 	}
-        s_event_uninit(server->window->event);
+        s_event_uninit(xynth_server->window->event);
 
-        if (server->driver->server_uninit != NULL) {
-		server->driver->server_uninit();
+        if (xynth_server->driver->server_uninit != NULL) {
+		xynth_server->driver->server_uninit();
 	}
 
 #if defined(CONFIG_SINGLE_APPLICATION)
-	s_free(server->window->surface->matrix);
+	s_free(xynth_server->window->surface->matrix);
 #else
-	shmdt(server->window->surface->matrix);
+	shmdt(xynth_server->window->surface->matrix);
 #endif
-	s_free(server->window->surface->buf);
-	s_free(server->window->surface->win);
-	s_free(server->window->surface);
-	s_free(server->window);
+	s_free(xynth_server->window->surface->buf);
+	s_free(xynth_server->window->surface->win);
+	s_free(xynth_server->window->surface);
+	s_free(xynth_server->window);
 //	s_free(server);
 	s_socket_api_uninit();
 }
 
 void s_server_goto_back (void)
 {
-        if (server->driver->server_goto_back != NULL) {
-		server->driver->server_goto_back();
+        if (xynth_server->driver->server_goto_back != NULL) {
+		xynth_server->driver->server_goto_back();
 	}
 }
 
 void s_server_comefrom_back (void)
 {
-        if (server->driver->server_comefrom_back != NULL) {
-		server->driver->server_comefrom_back();
+        if (xynth_server->driver->server_comefrom_back != NULL) {
+		xynth_server->driver->server_comefrom_back();
 	}
 }
 
 void s_server_restore (void)
 {
-        if (server->driver->server_restore != NULL) {
-		server->driver->server_restore();
+        if (xynth_server->driver->server_restore != NULL) {
+		xynth_server->driver->server_restore();
 	}
 }
 
 void s_server_fullscreen (void)
 {
-	if (server->driver->server_fullscreen != NULL) {
-		server->driver->server_fullscreen();
+	if (xynth_server->driver->server_fullscreen != NULL) {
+		xynth_server->driver->server_fullscreen();
         }
 }
 
 void s_server_surface_update (s_rect_t *coor)
 {
-	if (server->rotate) {
+	if (xynth_server->rotate) {
 		char *src;
 		char *dst;
 		s_rect_t clip;
@@ -578,25 +589,25 @@ void s_server_surface_update (s_rect_t *coor)
 
 		clip.x = 0;
 		clip.y = 0;
-		clip.w = server->window->surface->width;
-		clip.h = server->window->surface->height;
+		clip.w = xynth_server->window->surface->width;
+		clip.h = xynth_server->window->surface->height;
 		if (s_region_rect_intersect(&clip, coor, &inter)) {
 			return;
 		}
 
-		src = s_malloc(inter.w * inter.h * server->window->surface->bytesperpixel);
-		dst = s_malloc(inter.w * inter.h * server->window->surface->bytesperpixel);
-		if (s_surface_create_from_data(&surface, server->origin_w, server->origin_h, server->window->surface->bitsperpixel, server->origin_vbuf)) {
+		src = s_malloc(inter.w * inter.h * xynth_server->window->surface->bytesperpixel);
+		dst = s_malloc(inter.w * inter.h * xynth_server->window->surface->bytesperpixel);
+		if (s_surface_create_from_data(&surface, xynth_server->origin_w, xynth_server->origin_h, xynth_server->window->surface->bitsperpixel, xynth_server->origin_vbuf)) {
 			s_free(src);
 			s_free(dst);
 			return;
 		}
 
-		s_getbox(server->window->surface, inter.x, inter.y, inter.w, inter.h, src);
-		s_rotatebox(surface, &inter, src, &rotate, dst, server->rotate);
+		s_getbox(xynth_server->window->surface, inter.x, inter.y, inter.w, inter.h, src);
+		s_rotatebox(surface, &inter, src, &rotate, dst, xynth_server->rotate);
 		s_putbox(surface, rotate.x, rotate.y, rotate.w, rotate.h, dst);
-		if (server->driver->server_surface_update != NULL) {
-			server->driver->server_surface_update(&rotate);
+		if (xynth_server->driver->server_surface_update != NULL) {
+			xynth_server->driver->server_surface_update(&rotate);
 		}
 
 		s_free(src);
@@ -604,11 +615,11 @@ void s_server_surface_update (s_rect_t *coor)
 		s_surface_destroy(surface);
 	} else {
 		s_rect_t clip;
-		if (server->driver->server_surface_update != NULL) {
-			if (s_region_rect_intersect(server->window->surface->buf, coor, &clip)) {
+		if (xynth_server->driver->server_surface_update != NULL) {
+			if (s_region_rect_intersect(xynth_server->window->surface->buf, coor, &clip)) {
 				return;
 			}
-			server->driver->server_surface_update(&clip);
+			xynth_server->driver->server_surface_update(&clip);
 		}
 	}
 }

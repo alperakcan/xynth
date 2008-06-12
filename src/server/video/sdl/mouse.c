@@ -22,7 +22,7 @@
 
 int s_video_sdl_mouse_init (s_server_conf_t *cfg)
 {
-	s_video_sdl_data_t *priv = server->driver->driver_data;
+	s_video_sdl_data_t *priv = xynth_server->driver->driver_data;
 	if (s_pipe_api_pipe(priv->mouse_fd)) {
 		debugf(DSER | DSYS, "pipe failed");
 		goto err0;
@@ -41,7 +41,7 @@ int s_video_sdl_mouse_update (s_video_input_data_t *mouse)
         int y;
 	SDL_Event event;
         unsigned int state;
-	s_video_sdl_data_t *priv = server->driver->driver_data;
+	s_video_sdl_data_t *priv = xynth_server->driver->driver_data;
 	
         s_pipe_api_read(priv->mouse_fd[0], &event.type, sizeof(event.type));
 
@@ -66,7 +66,7 @@ int s_video_sdl_mouse_update (s_video_input_data_t *mouse)
 
 void s_video_sdl_mouse_uninit (void)
 {
-	s_video_sdl_data_t *priv = server->driver->driver_data;
+	s_video_sdl_data_t *priv = xynth_server->driver->driver_data;
 	s_pipe_api_close(priv->mouse_fd[0]);
 	s_pipe_api_close(priv->mouse_fd[1]);
 	priv->mouse_fd[0] = -1;

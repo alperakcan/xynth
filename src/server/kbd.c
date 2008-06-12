@@ -41,8 +41,8 @@ void s_server_kbd_switch_handler (s_window_t *window, s_event_t *event, s_handle
 		int s_video_helper_console_switch (int);
 		s_video_helper_console_switch(f);
 #endif
-		memset(server->window->event->keybd, 0, sizeof(s_keybd_t));
-		server->window->event->type &= ~EVENT_TYPE_KEYBOARD_MASK;
+		memset(xynth_server->window->event->keybd, 0, sizeof(s_keybd_t));
+		xynth_server->window->event->type &= ~EVENT_TYPE_KEYBOARD_MASK;
 	}
 }
 
@@ -62,7 +62,7 @@ int s_server_kbd_update (s_window_t *window, s_pollfd_t *pfd)
 	s_video_input_t *keybd;
 	s_video_input_data_t kdata;
 	keybd = (s_video_input_t *) pfd->data;
-	server->window->event->type = 0;
+	xynth_server->window->event->type = 0;
 	memset(&kdata, 0, sizeof(s_video_input_data_t));
 	if (keybd->update != NULL) {
 		force_release = keybd->update(&kdata);
@@ -70,7 +70,7 @@ int s_server_kbd_update (s_window_t *window, s_pollfd_t *pfd)
 	}
 	s_server_event_changed();
 	if (force_release) {
-		server->window->event->type = 0;
+		xynth_server->window->event->type = 0;
 		kdata.keybd.state = EVENT_TYPE_KEYBOARD_RELEASED;
 		s_server_event_parse_keyboard(&(kdata.keybd));
 		s_server_event_changed();
@@ -99,21 +99,21 @@ void s_server_kbd_init (s_server_conf_t *cfg, s_video_input_t *keybd)
         pfd->pf_in = s_server_kbd_update;
         pfd->pf_close = s_server_kbd_uninit;
         pfd->data = keybd;
-        s_pollfd_add(server->window, pfd);
+        s_pollfd_add(xynth_server->window, pfd);
 
         s_handler_init(&hndl);
         hndl->type = KEYBD_HANDLER;
 	hndl->keybd.flag = KEYBOARD_FLAG_LEFTALT;
 	hndl->keybd.button = KEYBOARD_BUTTON_F4;
 	hndl->keybd.p = s_server_kbd_window_close_handler;
-	s_handler_add(server->window, hndl);
+	s_handler_add(xynth_server->window, hndl);
 
         s_handler_init(&hndl);
         hndl->type = KEYBD_HANDLER;
 	hndl->keybd.flag = KEYBOARD_FLAG_LEFTCTRL | KEYBOARD_FLAG_LEFTALT;
 	hndl->keybd.button = KEYBOARD_BUTTON_DELETE;
 	hndl->keybd.p = s_server_kbd_server_quit_handler;
-	s_handler_add(server->window, hndl);
+	s_handler_add(xynth_server->window, hndl);
 
 	for (i = 1; i <= 10; i++) {
 	        s_handler_init(&hndl);
@@ -133,7 +133,7 @@ void s_server_kbd_init (s_server_conf_t *cfg, s_video_input_t *keybd)
 		};
 		hndl->keybd.p = s_server_kbd_switch_handler;
 		hndl->data = keybd;
-		s_handler_add(server->window, hndl);
+		s_handler_add(xynth_server->window, hndl);
 	}
 }
 
@@ -144,7 +144,7 @@ int s_server_kbd_uninit (s_window_t *window, s_pollfd_t *pfd)
         if (keybd->uninit != NULL) {
 		keybd->uninit();
 	}
-        s_server_quit(server->window);
+        s_server_quit(xynth_server->window);
         return 0;
 }
 

@@ -345,7 +345,7 @@ define target-defaults_base
     targets-deps += $($1_depends)
     targets-clns += $1_clean
     
-    $($1_depends): $($1_depends-y) $($1_wheaders)
+    $($1_depends): $($1_wheaders)
 
     $($1_wsources): .$1/%_xml.c: %.xws
 	$(do_widgetc)
@@ -353,6 +353,8 @@ define target-defaults_base
     $($1_wheaders): .$1/%_xml.h: %.xws
 	$(do_widgetc)
 
+    $1: $($1_depends-y)
+    
     $1: .$1/$1
 	$(do_cp)
     

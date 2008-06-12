@@ -12,9 +12,10 @@ subdir-$(CONFIG_VIDEO_CACA)    += ./video/caca
 subdir-$(CONFIG_VIDEO_NULL)    += ./video/null
 subdir-$(CONFIG_VIDEO_HELPER)  += ./video/helper
 
-target-y  = xynth
+target-y += xynth
+target_so-y += libserver.so
 
-xynth_files-y = event.c \
+libserver.so_files-y = event.c \
                 id.c \
                 irr.c \
                 kbd.c \
@@ -30,54 +31,54 @@ xynth_files-y = event.c \
                 window_handler.c \
                 window_move_resize.c
 
-xynth_files-$(CONFIG_VIDEO_FBDEV)   += ./video/fb/video_fb.o
-xynth_files-$(CONFIG_VIDEO_SDL)     += ./video/sdl/video_sdl.o
-xynth_files-$(CONFIG_VIDEO_SVGALIB) += ./video/svga/video_svga.o
-xynth_files-$(CONFIG_VIDEO_VESA)    += ./video/vesa/video_vesa.o
-xynth_files-$(CONFIG_VIDEO_PSPDEV)  += ./video/pspdev/video_pspdev.o
-xynth_files-$(CONFIG_VIDEO_GDI)     += ./video/gdi/video_gdi.o
-xynth_files-$(CONFIG_VIDEO_GP2X)    += ./video/gp2x/video_gp2x.o
-xynth_files-$(CONFIG_VIDEO_CACA)    += ./video/caca/video_caca.o
-xynth_files-$(CONFIG_VIDEO_NULL)    += ./video/null/video_null.o
-xynth_files-$(CONFIG_VIDEO_HELPER)  += ./video/helper/video_helper.o
+libserver.so_files-$(CONFIG_VIDEO_FBDEV)   += ./video/fb/video_fb.o
+libserver.so_files-$(CONFIG_VIDEO_SDL)     += ./video/sdl/video_sdl.o
+libserver.so_files-$(CONFIG_VIDEO_SVGALIB) += ./video/svga/video_svga.o
+libserver.so_files-$(CONFIG_VIDEO_VESA)    += ./video/vesa/video_vesa.o
+libserver.so_files-$(CONFIG_VIDEO_PSPDEV)  += ./video/pspdev/video_pspdev.o
+libserver.so_files-$(CONFIG_VIDEO_GDI)     += ./video/gdi/video_gdi.o
+libserver.so_files-$(CONFIG_VIDEO_GP2X)    += ./video/gp2x/video_gp2x.o
+libserver.so_files-$(CONFIG_VIDEO_CACA)    += ./video/caca/video_caca.o
+libserver.so_files-$(CONFIG_VIDEO_NULL)    += ./video/null/video_null.o
+libserver.so_files-$(CONFIG_VIDEO_HELPER)  += ./video/helper/video_helper.o
 
 ifeq ($(CONFIG_SINGLE_APPLICATION), y)
-xynth_files-$(CONFIG_DEMO_CHILD)    += ../../demo/child/single_child.o
-xynth_files-$(CONFIG_DEMO_DESKTOP)  += ../../demo/desktop/single_desktop.o
-xynth_files-$(CONFIG_DEMO_HIDE)     += ../../demo/hide/single_hide.o
-xynth_files-$(CONFIG_DEMO_LOAD)     += ../../demo/load/single_load.o
-xynth_files-$(CONFIG_DEMO_SIMPLE)   += ../../demo/simple/single_simple.o
-xynth_files-$(CONFIG_DEMO_OBJECT)   += ../../demo/object/single_object.o
-xynth_files-$(CONFIG_DEMO_TEMP)     += ../../demo/temp/single_temp.o
-xynth_files-$(CONFIG_DEMO_TERM)     += ../../demo/term/single_term.o
-xynth_files-$(CONFIG_DEMO_TIMER)    += ../../demo/timer/single_timer.o
-xynth_files-$(CONFIG_DEMO_LOGOUT)   += ../../demo/xynthlogout/single_xynthlogout.o
-xynth_files-$(CONFIG_DEMO_IMAGE)    += ../../demo/img/single_img.o
-xynth_files-$(CONFIG_DEMO_ONSCREENKEYBOARD) += ../../demo/onscreenkeyboard/single_onscreenkeyboard.o
-xynth_files-$(CONFIG_DEMO_WIDGETX)  += ../../demo/widgetx/single_widgetx.o
+libserver.so_files-$(CONFIG_DEMO_CHILD)    += ../../demo/child/single_child.o
+libserver.so_files-$(CONFIG_DEMO_DESKTOP)  += ../../demo/desktop/single_desktop.o
+libserver.so_files-$(CONFIG_DEMO_HIDE)     += ../../demo/hide/single_hide.o
+libserver.so_files-$(CONFIG_DEMO_LOAD)     += ../../demo/load/single_load.o
+libserver.so_files-$(CONFIG_DEMO_SIMPLE)   += ../../demo/simple/single_simple.o
+libserver.so_files-$(CONFIG_DEMO_OBJECT)   += ../../demo/object/single_object.o
+libserver.so_files-$(CONFIG_DEMO_TEMP)     += ../../demo/temp/single_temp.o
+libserver.so_files-$(CONFIG_DEMO_TERM)     += ../../demo/term/single_term.o
+libserver.so_files-$(CONFIG_DEMO_TIMER)    += ../../demo/timer/single_timer.o
+libserver.so_files-$(CONFIG_DEMO_LOGOUT)   += ../../demo/xynthlogout/single_xynthlogout.o
+libserver.so_files-$(CONFIG_DEMO_IMAGE)    += ../../demo/img/single_img.o
+libserver.so_files-$(CONFIG_DEMO_ONSCREENKEYBOARD) += ../../demo/onscreenkeyboard/single_onscreenkeyboard.o
+libserver.so_files-$(CONFIG_DEMO_WIDGETX)  += ../../demo/widgetx/single_widgetx.o
 endif
 
-xynth_includes-$(CONFIG_VIDEO_PSPDEV) += $(shell psp-config -p)/include
-xynth_includes-y  += ./ ../lib
+libserver.so_includes-$(CONFIG_VIDEO_PSPDEV) += $(shell psp-config -p)/include
+libserver.so_includes-y  += ./ ../lib
 
-xynth_libraries-y += ../lib
-xynth_libraries-$(CONFIG_VIDEO_PSPDEV) += $(shell psp-config -p)/lib
+libserver.so_libraries-y += ../lib
+libserver.so_libraries-$(CONFIG_VIDEO_PSPDEV) += $(shell psp-config -p)/lib
 
-xynth_ldflags-y += -lxynth
-xynth_ldflags-y += -lm
-xynth_ldflags-$(CONFIG_VIDEO_SDL)   += $(shell sdl-config --libs)
-xynth_ldflags-$(CONFIG_VIDEO_CACA)  += -lcaca
+libserver.so_ldflags-y += -lxynth
+libserver.so_ldflags-y += -lm
+libserver.so_ldflags-$(CONFIG_VIDEO_SDL)   += $(shell sdl-config --libs)
+libserver.so_ldflags-$(CONFIG_VIDEO_CACA)  += -lcaca
 
 ifeq ($(CONFIG_WIDGET_LIBRARY), y)
-xynth_libraries-y += ../widget
-xynth_ldflags-y   += -lwidget
+libserver.so_libraries-y += ../widget
+libserver.so_ldflags-y   += -lwidget
 endif
 
 ifeq ($(CONFIG_THEME_PLUGIN), y)
-xynth_ldflags-y   += -ldl
+libserver.so_ldflags-y   += -ldl
 endif
 
-xynth_ldflags-$(CONFIG_VIDEO_PSPDEV) += -lpspdebug \
+libserver.so_ldflags-$(CONFIG_VIDEO_PSPDEV) += -lpspdebug \
                                         -lpspdisplay \
                                         -lpspge \
                                         -lpspctrl \
@@ -88,6 +89,12 @@ xynth_ldflags-$(CONFIG_VIDEO_PSPDEV) += -lpspdebug \
                                         -lpsputility \
                                         -lpspuser \
                                         -lpspkernel
+
+xynth_files-y      = start.c
+xynth_includes-y  += ./ ../lib
+xynth_libraries-y += ./ ../lib
+xynth_ldflags-y   += -lserver
+xynth_depends-y   += libserver.so
 
 include ../../Makefile.lib
 
@@ -110,4 +117,5 @@ ifeq ($(CONFIG_PLATFORM_PSPDEV), y)
 	rm param.sfo
 else
 	$(CP) xynth ../../dist/$(CONFIG_PATH_BIN)/xynth
+	$(CP) libserver.so ../../dist/$(CONFIG_PATH_LIB)/libserver.so
 endif

@@ -66,12 +66,12 @@ int s_video_helper_mouse_init (s_server_conf_t *cfg)
 	}
 
 	mouse_setscale(cfg->mouse.scale);
-	mouse_setposition_6d(server->window->surface->width / 2, server->window->surface->height / 2, 0,
+	mouse_setposition_6d(xynth_server->window->surface->width / 2, xynth_server->window->surface->height / 2, 0,
 			     0, 0, 0,
 			     MOUSE_6DIM);
-	mouse_getposition_6d(&server->window->event->mouse->x,  &server->window->event->mouse->y,  NULL, NULL, NULL, NULL, NULL);
-	mouse_setrange_6d(0, server->window->surface->width - 1,
-	                  0, server->window->surface->height - 1,
+	mouse_getposition_6d(&xynth_server->window->event->mouse->x,  &xynth_server->window->event->mouse->y,  NULL, NULL, NULL, NULL, NULL);
+	mouse_setrange_6d(0, xynth_server->window->surface->width - 1,
+	                  0, xynth_server->window->surface->height - 1,
 	                  0, 0,
 	                  -20, 20,
 	                  -20, 20,

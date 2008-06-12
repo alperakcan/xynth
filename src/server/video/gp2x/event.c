@@ -28,14 +28,14 @@ void * s_video_gp2x_event_parse (void *arg)
 	unsigned long changed;
 	s_mouse_driver_t pad_send;
 	s_video_input_data_keybd_t key_send;
-	s_video_gp2x_data_t *priv = (s_video_gp2x_data_t *) server->driver->driver_data;
+	s_video_gp2x_data_t *priv = (s_video_gp2x_data_t *) xynth_server->driver->driver_data;
 
-	while (server->window->running != 1) {
+	while (xynth_server->window->running != 1) {
 		usleep(20000);
 	}
 
 	pad_old = 0;
-	while (server->window->running) {
+	while (xynth_server->window->running) {
 		pad = priv->gp2x_io[0x1198 >> 1] & 0xff;
 		if (pad == 0xfd) pad = 0xfa;
 		if (pad == 0xf7) pad = 0xeb;
@@ -58,10 +58,10 @@ void * s_video_gp2x_event_parse (void *arg)
 		} else if (pad & GP2X_DOWN) {
 			axisy += MOUSE_ACCELL;
 		}
-		axisx = MAX(axisx, server->mouse_rangex[0]);
-		axisx = MIN(axisx, server->mouse_rangex[1]);
-		axisy = MAX(axisy, server->mouse_rangey[0]);
-		axisy = MIN(axisy, server->mouse_rangey[1]);
+		axisx = MAX(axisx, xynth_server->mouse_rangex[0]);
+		axisx = MIN(axisx, xynth_server->mouse_rangex[1]);
+		axisy = MAX(axisy, xynth_server->mouse_rangey[0]);
+		axisy = MIN(axisy, xynth_server->mouse_rangey[1]);
 
 		if ((changed & (GP2X_L |
 		                GP2X_R)) ||

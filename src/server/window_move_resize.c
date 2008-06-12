@@ -19,11 +19,11 @@
 void s_server_window_lines_draw_ (s_rect_t *coor, int c)
 {
 	s_rect_t rect;
-	if (s_region_rect_intersect(server->window->surface->buf, coor, &rect)) {
+	if (s_region_rect_intersect(xynth_server->window->surface->buf, coor, &rect)) {
 		return;
 	}
 	s_server_surface_matrix_add_id(S_MATRIX_MRBOX, &rect);
-	bpp_fillbox_o(server->window->surface, S_MATRIX_MRBOX, rect.x, rect.y, rect.w, rect.h, c);
+	bpp_fillbox_o(xynth_server->window->surface, S_MATRIX_MRBOX, rect.x, rect.y, rect.w, rect.h, c);
 	s_server_surface_update(&rect);
 }
 
@@ -32,7 +32,7 @@ void s_server_window_lines_draw (s_rect_t *bnew)
 	int color;
 	s_rect_t coor;
 
-	color = s_rgbcolor(server->window->surface, 222, 222, 222);
+	color = s_rgbcolor(xynth_server->window->surface, 222, 222, 222);
 
 	coor.x = bnew->x;
 	coor.y = bnew->y;
@@ -134,17 +134,17 @@ void s_server_window_lines_clear (s_rect_t *bold, s_rect_t *bnew)
 	if (id < 0) {\
 		return;\
 	}\
-	move.x = server->client[id].win.x;\
-	move.y = server->client[id].win.y;\
-	move.w = server->client[id].win.w;\
-	move.h = server->client[id].win.h;\
+	move.x = xynth_server->client[id].win.x;\
+	move.y = xynth_server->client[id].win.y;\
+	move.w = xynth_server->client[id].win.w;\
+	move.h = xynth_server->client[id].win.h;\
 	myr = 0;\
 	mxr = 0;\
 	mx = s_mouse_getx();\
 	my = s_mouse_gety();\
-	mw = server->theme.form_min.w_;\
-	mh = server->theme.form_min.h;\
-	server->mh = 1;\
+	mw = xynth_server->theme.form_min.w_;\
+	mh = xynth_server->theme.form_min.h;\
+	xynth_server->mh = 1;\
 	s_server_mouse_setcursor(cursor);\
 	s_server_window_lines_draw(&move);
 
@@ -154,12 +154,12 @@ void s_server_window_while (s_rect_t *move, int flag)
 	int my = s_mouse_gety();
 	s_rect_t tmp;
 	
-	while ((server->window->running * server->window->event->mouse->buttons * server->mh) > 0) {
-		if (s_socket_listen_wait(server->window, -1)) {
-			server->window->running = 0;
+	while ((xynth_server->window->running * xynth_server->window->event->mouse->buttons * xynth_server->mh) > 0) {
+		if (s_socket_listen_wait(xynth_server->window, -1)) {
+			xynth_server->window->running = 0;
 			break;
 		}
-		if (server->mh == 0) {
+		if (xynth_server->mh == 0) {
 			continue;
 		}
 		if ((mx == s_mouse_getx()) && (my == s_mouse_gety())) {
@@ -192,9 +192,9 @@ void s_server_window_finish (int id, s_rect_t *move)
 	s_rect_t tmp = {0, 0, 0, 0};
 	s_server_window_move_resize(id, move);
 	s_server_window_lines_clear(move, &tmp);
-	s_mouse_setxrange(server->window, 0, server->window->surface->width - 1);
-	s_mouse_setyrange(server->window, 0, server->window->surface->height - 1);
-	server->mh = 0;
+	s_mouse_setxrange(xynth_server->window, 0, xynth_server->window->surface->width - 1);
+	s_mouse_setyrange(xynth_server->window, 0, xynth_server->window->surface->height - 1);
+	xynth_server->mh = 0;
 }
 
 void s_server_window_move (s_window_t *window)

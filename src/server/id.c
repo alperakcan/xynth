@@ -21,8 +21,8 @@ int s_server_id_get (void)
 	int i;
 
 	for (i = 0; i < S_CLIENTS_MAX; i++) {
-		if (server->id[i] != 1) {
-			server->id[i] = 1;
+		if (xynth_server->id[i] != 1) {
+			xynth_server->id[i] = 1;
 			return i;
 		}
 	}
@@ -39,7 +39,7 @@ int s_server_id_find (int soc)
 	}
 	
 	for (i = 0; i < S_CLIENTS_MAX; i++) {
-		if (server->client[i].soc == soc) {
+		if (xynth_server->client[i].soc == soc) {
 			return i;
 		}
 	}
@@ -49,5 +49,5 @@ int s_server_id_find (int soc)
 
 void s_server_id_del (int id)
 {
-	server->id[id] = -1;
+	xynth_server->id[id] = -1;
 }

@@ -59,14 +59,14 @@ void s_server_pri_set (S_SURFACE_CHNGF flag, ...)
 
 	i = s_server_pri_id(0);
 	if ((i >= 0) &&
-	    (server->client[i].type & WINDOW_TYPE_TEMP)) {
+	    (xynth_server->client[i].type & WINDOW_TYPE_TEMP)) {
 		int ptmp = s_server_window_temp_parent(i);
 		if (flag == SURFACE_FOCUS) {
 			if (s_server_window_is_parent_temp(id, i)) {
 				s_server_window_close_temps(id);
 			} else {
-				if ((server->client[id].type & WINDOW_TYPE_TEMP) &&
-				    (server->client[id].pid == i)) {
+				if ((xynth_server->client[id].type & WINDOW_TYPE_TEMP) &&
+				    (xynth_server->client[id].pid == i)) {
 				} else {
 					if (ptmp >= 0) {
 						s_server_pri_set(SURFACE_FOCUS, ptmp);
@@ -83,12 +83,12 @@ void s_server_pri_set (S_SURFACE_CHNGF flag, ...)
 		case SURFACE_CLOSE:
 		case SURFACE_CHANGED:
 		case SURFACE_REFRESH:
-			if (server->mh) {
-				server->mh = 0;
+			if (xynth_server->mh) {
+				xynth_server->mh = 0;
 			}
 			i = s_server_pri_id(0);
 			if (i >= 0) {
-				s_server_mouse_setcursor(server->client[i].cursor);
+				s_server_mouse_setcursor(xynth_server->client[i].cursor);
 			} else {
 				s_server_mouse_setcursor(CURSOR_TYPE_ARROW);
 			}
@@ -100,9 +100,9 @@ void s_server_pri_set (S_SURFACE_CHNGF flag, ...)
         switch (flag) {
 		case SURFACE_FOCUS:
 		case SURFACE_CLOSE:
-			if (!(server->client[id].type & WINDOW_TYPE_TEMP)) {
+			if (!(xynth_server->client[id].type & WINDOW_TYPE_TEMP)) {
 				for (i = 0; i < S_CLIENTS_MAX; i++) {
-					if (server->client[i].type & WINDOW_TYPE_DESKTOP) {
+					if (xynth_server->client[i].type & WINDOW_TYPE_DESKTOP) {
 						if (!((flag == SURFACE_CLOSE) &&
 						      (id == i))) {
 							s_server_socket_request(SOC_DATA_DESKTOP, i);
@@ -166,9 +166,9 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 			i = (S_CLIENTS_MAX - 1);
 		}
 		for (; i > 0; i--) {
-			server->pri[i] = server->pri[i - 1];
+			xynth_server->pri[i] = xynth_server->pri[i - 1];
 		}
-		server->pri[0] = id;
+		xynth_server->pri[0] = id;
 	}
 
 	switch (flag) {
@@ -187,8 +187,8 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 			break;
 		case SURFACE_REFRESH:
 			for (i = 0; i < S_CLIENTS_MAX; i++) {
-				if (server->id[i] >= 0) {
-					s_server_window_title(i, server->client[i].title.str);
+				if (xynth_server->id[i] >= 0) {
+					s_server_window_title(i, xynth_server->client[i].title.str);
 					s_server_window_calculate(i);
 				}
 			}
@@ -204,7 +204,7 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 			   window form area of the one`s that will get the priority (pri == 0)
 			 */
 			if ((i = s_server_pri_id(0)) >= 0) {
-				s_region_rect_substract(&server->client[i].win, &server->client[i].buf, region);
+				s_region_rect_substract(&xynth_server->client[i].win, &xynth_server->client[i].buf, region);
 			}
 			s_region_subrect(region, c0);
 			s_region_addrect(region, c0);
@@ -215,10 +215,10 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 			   priority gained window`s rectangle (pri == 0)
 			 */
 			if ((i = s_server_pri_id(1)) >= 0) {
-				s_region_rect_substract(&server->client[i].win, &server->client[i].buf, region);
+				s_region_rect_substract(&xynth_server->client[i].win, &xynth_server->client[i].buf, region);
 			}
-			s_region_subrect(region, &server->client[id].win);
-			s_region_addrect(region, &server->client[id].win);
+			s_region_subrect(region, &xynth_server->client[id].win);
+			s_region_addrect(region, &xynth_server->client[id].win);
 			break;
 		case SURFACE_CHANGED:
 			/* CHANGED;
@@ -247,8 +247,8 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 			debugf(DSER, "SURFACE_CHANGED %d %d %d %d -> %d %d %d %d", c0->x, c0->y, c0->w, c0->h,
 										   c1->x, c1->y, c1->w, c1->h);
 		} else if (flag == SURFACE_FOCUS) {
-			debugf(DSER, "SURFACE_FOCUS %d %d %d %d", server->client[id].win.x, server->client[id].win.y,
-			                                          server->client[id].win.w, server->client[id].win.h);
+			debugf(DSER, "SURFACE_FOCUS %d %d %d %d", xynth_server->client[id].win.x, xynth_server->client[id].win.y,
+			                                          xynth_server->client[id].win.w, xynth_server->client[id].win.h);
 		} else {
 			debugf(DSER, "SURFACE_%s %d %d %d %d", (flag == SURFACE_FOCUS) ? "FOCUS" :
 			                                       (flag == SURFACE_CLOSE) ? "CLOSED" :
@@ -289,27 +289,27 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 			continue;
 		}
 		s_region_clear(&regsb[ri]);
-		s_region_addrect(&regsb[ri], &server->client[ri].buf);
+		s_region_addrect(&regsb[ri], &xynth_server->client[ri].buf);
 		for (rj = rp - 1; rj >= 0; rj--) {
 			rk = s_server_pri_id(rj);
 			if (rk < 0) {
 				continue;
 			}
-			if (server->client[rk].alwaysontop != server->client[ri].alwaysontop) {
+			if (xynth_server->client[rk].alwaysontop != xynth_server->client[ri].alwaysontop) {
 				continue;
 			}
-			s_region_subrect(&regsb[ri], &server->client[rk].buf);
+			s_region_subrect(&regsb[ri], &xynth_server->client[rk].buf);
 		}
-		for (ontop = server->client[ri].alwaysontop + 1; ontop <= 1; ontop++) {
+		for (ontop = xynth_server->client[ri].alwaysontop + 1; ontop <= 1; ontop++) {
 			for (rj = S_CLIENTS_MAX - 1; rj >= 0; rj--) {
 				rk = s_server_pri_id(rj);
 				if (rk < 0) {
 					continue;
 				}
-				if (server->client[rk].alwaysontop != ontop) {
+				if (xynth_server->client[rk].alwaysontop != ontop) {
 					continue;
 				}
-				s_region_subrect(&regsb[ri], &server->client[rk].buf);
+				s_region_subrect(&regsb[ri], &xynth_server->client[rk].buf);
 			}
 		}
 	}
@@ -320,27 +320,27 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 			continue;
 		}
 		s_region_clear(&regsw[ri]);
-		s_region_addrect(&regsw[ri], &server->client[ri].win);
+		s_region_addrect(&regsw[ri], &xynth_server->client[ri].win);
 		for (rj = rp - 1; rj >= 0; rj--) {
 			rk = s_server_pri_id(rj);
 			if (rk < 0) {
 				continue;
 			}
-			if (server->client[rk].alwaysontop != server->client[ri].alwaysontop) {
+			if (xynth_server->client[rk].alwaysontop != xynth_server->client[ri].alwaysontop) {
 				continue;
 			}
-			s_region_subrect(&regsw[ri], &server->client[rk].buf);
+			s_region_subrect(&regsw[ri], &xynth_server->client[rk].buf);
 		}
-		for (ontop = server->client[ri].alwaysontop + 1; ontop <= 1; ontop++) {
+		for (ontop = xynth_server->client[ri].alwaysontop + 1; ontop <= 1; ontop++) {
 			for (rj = S_CLIENTS_MAX - 1; rj >= 0; rj--) {
 				rk = s_server_pri_id(rj);
 				if (rk < 0) {
 					continue;
 				}
-				if (server->client[rk].alwaysontop != ontop) {
+				if (xynth_server->client[rk].alwaysontop != ontop) {
 					continue;
 				}
-				s_region_subrect(&regsw[ri], &server->client[rk].buf);
+				s_region_subrect(&regsw[ri], &xynth_server->client[rk].buf);
 			}
 		}
 	}
@@ -370,7 +370,7 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 			if (ri < 0) {
 				continue;
 			}
-			if (server->client[ri].alwaysontop != ontop) {
+			if (xynth_server->client[ri].alwaysontop != ontop) {
 				continue;
 			}
 			s_region_clear(&reg);
@@ -425,7 +425,7 @@ int s_server_id_pri (int id)
 		return -1;
 	}
 	for (i = 0; i < S_CLIENTS_MAX; i++) {
-		if (server->pri[i] == id) {
+		if (xynth_server->pri[i] == id) {
 			return i;
 		}
 	}
@@ -435,7 +435,7 @@ int s_server_id_pri (int id)
 int s_server_pri_id (int pri)
 {
         if (pri >= 0) {
-		return server->pri[pri];
+		return xynth_server->pri[pri];
 	}
 	return -1;
 }
@@ -454,31 +454,31 @@ void s_server_pri_del (int id)
 	if (p < 0) {
 		return;
 	}
-        if (server->client[id].win.w < 0) {
-		server->client[id].win.w = 0;
+        if (xynth_server->client[id].win.w < 0) {
+		xynth_server->client[id].win.w = 0;
 	}
-        if (server->client[id].win.h < 0) {
-		server->client[id].win.h = 0;
+        if (xynth_server->client[id].win.h < 0) {
+		xynth_server->client[id].win.h = 0;
 	}
-	c = server->client[id].win;
+	c = xynth_server->client[id].win;
 
-	s_free(server->client[id].title.str);
+	s_free(xynth_server->client[id].title.str);
 	for (v = 0; v < 2; v++) {
-		s_free(server->client[id].title.img[v].buf);
-		s_free(server->client[id].title.img[v].mat);
+		s_free(xynth_server->client[id].title.img[v].buf);
+		s_free(xynth_server->client[id].title.img[v].mat);
 	}
-	memset(&(server->client[id]), 0, sizeof(s_clients_t));
+	memset(&(xynth_server->client[id]), 0, sizeof(s_clients_t));
 
-	server->client[id].pid = -1;
-	server->client[id].soc = -1;
-	server->client[id].type = 0;
-	server->client[id].resizeable = 1;
+	xynth_server->client[id].pid = -1;
+	xynth_server->client[id].soc = -1;
+	xynth_server->client[id].type = 0;
+	xynth_server->client[id].resizeable = 1;
 
 	if (p >= 0) {
 		for (i = p; i < (S_CLIENTS_MAX - 1); i++) {
-			server->pri[i] = server->pri[i + 1];
+			xynth_server->pri[i] = xynth_server->pri[i + 1];
 		}
-		server->pri[S_CLIENTS_MAX - 1] = -1;
+		xynth_server->pri[S_CLIENTS_MAX - 1] = -1;
 	}
 
 	s_server_pri_set(SURFACE_CLOSE, &c);
