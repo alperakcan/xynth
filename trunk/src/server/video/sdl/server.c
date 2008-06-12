@@ -70,14 +70,14 @@ void s_video_sdl_server_uninit (void)
 {
 	SDL_Event event;
 	s_video_sdl_data_t *priv;
-	if (server->driver->driver_data == NULL) {
+	if (xynth_server->driver->driver_data == NULL) {
 		return;
 	}
-	priv =  server->driver->driver_data;
+	priv =  xynth_server->driver->driver_data;
 #if defined(CONFIG_SINGLE_APPLICATION)
-	s_free((void *) server->window->surface->linear_mem_base);
+	s_free((void *) xynth_server->window->surface->linear_mem_base);
 #else
-	shmdt((void *) server->window->surface->linear_mem_base);
+	shmdt((void *) xynth_server->window->surface->linear_mem_base);
 #endif
 	priv->screen->pixels = (char *) s_malloc(1);
 	event.type = SDL_QUIT;
@@ -88,7 +88,7 @@ void s_video_sdl_server_uninit (void)
 	}
 	SDL_Quit();
 	s_free(priv);
-	server->driver->driver_data = NULL;
+	xynth_server->driver->driver_data = NULL;
 }
 
 
@@ -99,7 +99,7 @@ int s_video_sdl_server_init (s_server_conf_t *cfg)
 	s_video_helper_mode_info_t *gmode;
 	
 	priv = (s_video_sdl_data_t *) s_malloc(sizeof(s_video_sdl_data_t));
-	server->driver->driver_data = (void *) priv;
+	xynth_server->driver->driver_data = (void *) priv;
 	
         priv->mouse_fd[0] = -1;
         priv->mouse_fd[1] = -1;
@@ -119,64 +119,64 @@ int s_video_sdl_server_init (s_server_conf_t *cfg)
 		debugf(DSER, "Couldn't set %dx%dx%d video mode: %s", gmode->xdim, gmode->ydim, gmode->bytesperpixel, SDL_GetError());
 		goto err1;
 	} else {
-		server->window->surface->width = priv->screen->w;
-		server->window->surface->height = priv->screen->h;
-		server->window->surface->bytesperpixel = priv->screen->format->BytesPerPixel;
-		server->window->surface->bitsperpixel = priv->screen->format->BitsPerPixel;
-                server->window->surface->blueoffset = 0;
-                server->window->surface->greenoffset = 0;
-                server->window->surface->redoffset = 0;
-                server->window->surface->bluelength = 0;
-                server->window->surface->greenlength = 0;
-                server->window->surface->redlength = 0;
-                server->window->surface->colors = 0;
-                switch (server->window->surface->bitsperpixel) {
+		xynth_server->window->surface->width = priv->screen->w;
+		xynth_server->window->surface->height = priv->screen->h;
+		xynth_server->window->surface->bytesperpixel = priv->screen->format->BytesPerPixel;
+		xynth_server->window->surface->bitsperpixel = priv->screen->format->BitsPerPixel;
+                xynth_server->window->surface->blueoffset = 0;
+                xynth_server->window->surface->greenoffset = 0;
+                xynth_server->window->surface->redoffset = 0;
+                xynth_server->window->surface->bluelength = 0;
+                xynth_server->window->surface->greenlength = 0;
+                xynth_server->window->surface->redlength = 0;
+                xynth_server->window->surface->colors = 0;
+                switch (xynth_server->window->surface->bitsperpixel) {
 			case 8:
-				server->window->surface->colors = 256;
-				server->window->surface->bitsperpixel = 8;
-				server->window->surface->blueoffset = 0;
-				server->window->surface->greenoffset = 3;
-				server->window->surface->redoffset = 6;
-				server->window->surface->bluelength = 3;
-				server->window->surface->greenlength = 3;
-				server->window->surface->redlength = 2;
+				xynth_server->window->surface->colors = 256;
+				xynth_server->window->surface->bitsperpixel = 8;
+				xynth_server->window->surface->blueoffset = 0;
+				xynth_server->window->surface->greenoffset = 3;
+				xynth_server->window->surface->redoffset = 6;
+				xynth_server->window->surface->bluelength = 3;
+				xynth_server->window->surface->greenlength = 3;
+				xynth_server->window->surface->redlength = 2;
 				break;
 			case 15:
-				server->window->surface->colors = 32768;
-				server->window->surface->bitsperpixel = 15;
-				server->window->surface->blueoffset = 0;
-				server->window->surface->greenoffset = 5;
-				server->window->surface->redoffset = 10;
-				server->window->surface->bluelength = 5;
-				server->window->surface->greenlength = 5;
-				server->window->surface->redlength = 5;
+				xynth_server->window->surface->colors = 32768;
+				xynth_server->window->surface->bitsperpixel = 15;
+				xynth_server->window->surface->blueoffset = 0;
+				xynth_server->window->surface->greenoffset = 5;
+				xynth_server->window->surface->redoffset = 10;
+				xynth_server->window->surface->bluelength = 5;
+				xynth_server->window->surface->greenlength = 5;
+				xynth_server->window->surface->redlength = 5;
 				break;
 			case 16:
-				server->window->surface->colors = 65536;
-				server->window->surface->bitsperpixel = 16;
-				server->window->surface->blueoffset = 0;
-				server->window->surface->greenoffset = 5;
-				server->window->surface->redoffset = 11;
-				server->window->surface->bluelength = 5;
-				server->window->surface->greenlength = 6;
-				server->window->surface->redlength = 5;
+				xynth_server->window->surface->colors = 65536;
+				xynth_server->window->surface->bitsperpixel = 16;
+				xynth_server->window->surface->blueoffset = 0;
+				xynth_server->window->surface->greenoffset = 5;
+				xynth_server->window->surface->redoffset = 11;
+				xynth_server->window->surface->bluelength = 5;
+				xynth_server->window->surface->greenlength = 6;
+				xynth_server->window->surface->redlength = 5;
 				break;
 			case 24:
 			case 32:
-				server->window->surface->colors = 256 * 65536;
-				server->window->surface->bitsperpixel = server->window->surface->bytesperpixel * 8;
-				server->window->surface->blueoffset = 0;
-				server->window->surface->greenoffset = 8;
-				server->window->surface->redoffset = 16;
-				server->window->surface->bluelength = 8;
-				server->window->surface->greenlength = 8;
-				server->window->surface->redlength = 8;
+				xynth_server->window->surface->colors = 256 * 65536;
+				xynth_server->window->surface->bitsperpixel = xynth_server->window->surface->bytesperpixel * 8;
+				xynth_server->window->surface->blueoffset = 0;
+				xynth_server->window->surface->greenoffset = 8;
+				xynth_server->window->surface->redoffset = 16;
+				xynth_server->window->surface->bluelength = 8;
+				xynth_server->window->surface->greenlength = 8;
+				xynth_server->window->surface->redlength = 8;
 				break;
 		}
 #if defined(CONFIG_SINGLE_APPLICATION)
-		addr = (void *) s_malloc(sizeof(char) * server->window->surface->width * server->window->surface->height * server->window->surface->bytesperpixel);
+		addr = (void *) s_malloc(sizeof(char) * xynth_server->window->surface->width * xynth_server->window->surface->height * xynth_server->window->surface->bytesperpixel);
 #else
-		if ((priv->screen_shm_mid = shmget(IPC_PRIVATE, sizeof(char) * server->window->surface->width * server->window->surface->height * server->window->surface->bytesperpixel, IPC_CREAT | 0644)) < 0) {
+		if ((priv->screen_shm_mid = shmget(IPC_PRIVATE, sizeof(char) * xynth_server->window->surface->width * xynth_server->window->surface->height * xynth_server->window->surface->bytesperpixel, IPC_CREAT | 0644)) < 0) {
 			debugf(DSER | DSYS, "Can not get id for shared memory");
 			goto err1;
 		}
@@ -184,16 +184,16 @@ int s_video_sdl_server_init (s_server_conf_t *cfg)
 			debugf(DSER | DSYS, "Can not attach the shared memory");
 			goto err1;
 		}
-		server->window->surface->shm_sid = priv->screen_shm_mid;
+		xynth_server->window->surface->shm_sid = priv->screen_shm_mid;
                 shmctl(priv->screen_shm_mid, IPC_RMID, 0);
 #endif
-		server->window->surface->linear_mem_base = (unsigned int) addr;
-		server->window->surface->linear_mem_size = (unsigned int) (sizeof(char) * server->window->surface->width * server->window->surface->height * server->window->surface->bytesperpixel);
+		xynth_server->window->surface->linear_mem_base = (unsigned int) addr;
+		xynth_server->window->surface->linear_mem_size = (unsigned int) (sizeof(char) * xynth_server->window->surface->width * xynth_server->window->surface->height * xynth_server->window->surface->bytesperpixel);
 		priv->screen->pixels = (char *) addr;
-		server->window->surface->vbuf = (unsigned char *) addr;
-		server->window->surface->linear_buf = (unsigned char *) addr;
+		xynth_server->window->surface->vbuf = (unsigned char *) addr;
+		xynth_server->window->surface->linear_buf = (unsigned char *) addr;
 
-		server->window->surface->need_expose = SURFACE_NEEDEXPOSE;
+		xynth_server->window->surface->need_expose = SURFACE_NEEDEXPOSE;
 
 		SDL_WM_SetCaption("Xynth Windowing system (video driver = sdl)", NULL);
 		priv->event_tid = s_thread_create(&s_video_sdl_event_parse, (void *) NULL);
@@ -207,12 +207,12 @@ err0:	s_free(priv);
 
 void s_video_sdl_server_surface_update (s_rect_t *coor)
 {
-	s_video_sdl_data_t *priv = server->driver->driver_data;
+	s_video_sdl_data_t *priv = xynth_server->driver->driver_data;
 	SDL_UpdateRect(priv->screen, coor->x, coor->y, coor->w, coor->h);
 }
 
 void s_video_sdl_server_fullscreen (void)
 {
-	s_video_sdl_data_t *priv = server->driver->driver_data;
+	s_video_sdl_data_t *priv = xynth_server->driver->driver_data;
 	SDL_WM_ToggleFullScreen(priv->screen);
 }

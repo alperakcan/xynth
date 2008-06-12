@@ -212,8 +212,8 @@ struct s_server_s {
 	int mouse_rangey[2];
 
 	s_handler_t *whndl[20]; /* window move & resize handlers        */
-	int mh;                 /* mouse hint (search for server->mh)   */
-	int ph;			/* priority hint (search for server->ph */
+	int mh;                 /* mouse hint (search for xynth_server->mh)   */
+	int ph;			/* priority hint (search for xynth_server->ph */
 	int rotate;
 	int origin_w;
 	int origin_h;
@@ -221,7 +221,7 @@ struct s_server_s {
 	int rotate_shm_id;
 };
 
-s_server_t *server;
+s_server_t *xynth_server;
 
 /* event.c */
 void s_server_event_parse_keyboard (s_video_input_data_keybd_t *keybd);
@@ -404,6 +404,7 @@ void s_server_theme_uninit (void);
 int s_server_cfg_check_digit (char *ptr, char *digits);
 char * s_server_cfg_token (char **ptr);
 int s_server_cfg (s_server_conf_t *config);
+void * s_server_loop (void *arg);
 int s_server_init (void);
 void s_server_quit (s_window_t *window);
 void s_server_uninit (void);

@@ -62,13 +62,13 @@ s_video_driver_t s_video_pspdev = {
 
 void s_video_pspdev_server_uninit (void)
 {
-	s_video_pspdev_data_t *priv = (s_video_pspdev_data_t *) server->driver->driver_data;
+	s_video_pspdev_data_t *priv = (s_video_pspdev_data_t *) xynth_server->driver->driver_data;
 	s_thread_join(priv->event_tid, NULL);
 #if defined(PSP_DIRECTACCESS)
 #else
-	s_free((void *) server->window->surface->linear_mem_base);
+	s_free((void *) xynth_server->window->surface->linear_mem_base);
 #endif
-	server->driver->driver_data = NULL;
+	xynth_server->driver->driver_data = NULL;
 	s_free(priv);
 }
 
@@ -79,48 +79,48 @@ int s_video_pspdev_server_init (s_server_conf_t *cfg)
 	s_video_pspdev_data_t *priv;
 
 	priv = (s_video_pspdev_data_t *) s_malloc(sizeof(s_video_pspdev_data_t));
-	server->driver->driver_data = (void *) priv;
+	xynth_server->driver->driver_data = (void *) priv;
 
         priv->mouse_fd[0] = -1;
         priv->mouse_fd[1] = -1;
         priv->keybd_fd[0] = -1;
         priv->keybd_fd[1] = -1;
 
-	server->window->surface->width = 480;
-	server->window->surface->height = 272;
-	server->window->surface->bytesperpixel = 4;
-	server->window->surface->bitsperpixel = 32;
-	server->window->surface->blueoffset = 0;
-	server->window->surface->greenoffset = 0;
-	server->window->surface->redoffset = 0;
-	server->window->surface->bluelength = 0;
-	server->window->surface->greenlength = 0;
-	server->window->surface->redlength = 0;
-	server->window->surface->colors = 0;
+	xynth_server->window->surface->width = 480;
+	xynth_server->window->surface->height = 272;
+	xynth_server->window->surface->bytesperpixel = 4;
+	xynth_server->window->surface->bitsperpixel = 32;
+	xynth_server->window->surface->blueoffset = 0;
+	xynth_server->window->surface->greenoffset = 0;
+	xynth_server->window->surface->redoffset = 0;
+	xynth_server->window->surface->bluelength = 0;
+	xynth_server->window->surface->greenlength = 0;
+	xynth_server->window->surface->redlength = 0;
+	xynth_server->window->surface->colors = 0;
 	
 	switch (PSP_BITSPERPIXEL) {
 		case 16:
-			server->window->surface->colors = 65536;
-			server->window->surface->bytesperpixel = 2;
-			server->window->surface->bitsperpixel = 16;
-			server->window->surface->blueoffset = 11;
-			server->window->surface->greenoffset = 5;
-			server->window->surface->redoffset = 0;
-			server->window->surface->bluelength = 5;
-			server->window->surface->greenlength = 6;
-			server->window->surface->redlength = 5;
+			xynth_server->window->surface->colors = 65536;
+			xynth_server->window->surface->bytesperpixel = 2;
+			xynth_server->window->surface->bitsperpixel = 16;
+			xynth_server->window->surface->blueoffset = 11;
+			xynth_server->window->surface->greenoffset = 5;
+			xynth_server->window->surface->redoffset = 0;
+			xynth_server->window->surface->bluelength = 5;
+			xynth_server->window->surface->greenlength = 6;
+			xynth_server->window->surface->redlength = 5;
 			pixel_format = PSP_DISPLAY_PIXEL_FORMAT_565;
 			break;
 		case 32:
-			server->window->surface->colors = 65536 * 256;
-			server->window->surface->bytesperpixel = 4;
-			server->window->surface->bitsperpixel = 32;
-			server->window->surface->blueoffset = 16;
-			server->window->surface->greenoffset = 8;
-			server->window->surface->redoffset = 0;
-			server->window->surface->bluelength = 8;
-			server->window->surface->greenlength = 8;
-			server->window->surface->redlength = 8;
+			xynth_server->window->surface->colors = 65536 * 256;
+			xynth_server->window->surface->bytesperpixel = 4;
+			xynth_server->window->surface->bitsperpixel = 32;
+			xynth_server->window->surface->blueoffset = 16;
+			xynth_server->window->surface->greenoffset = 8;
+			xynth_server->window->surface->redoffset = 0;
+			xynth_server->window->surface->bluelength = 8;
+			xynth_server->window->surface->greenlength = 8;
+			xynth_server->window->surface->redlength = 8;
 			pixel_format = PSP_DISPLAY_PIXEL_FORMAT_8888;
 			break;
 		default:
@@ -135,23 +135,23 @@ int s_video_pspdev_server_init (s_server_conf_t *cfg)
 
 #if defined(PSP_DIRECTACCESS)
 	addr = priv->vram_base;
-	server->window->surface->linear_buf_pitch = 512;
+	xynth_server->window->surface->linear_buf_pitch = 512;
 #else
-	addr = (void *) s_malloc(sizeof(char) * server->window->surface->width * server->window->surface->height * server->window->surface->bytesperpixel);
-	server->window->surface->need_expose = SURFACE_NEEDEXPOSE;
-	server->window->surface->linear_buf_pitch = server->window->surface->width;
+	addr = (void *) s_malloc(sizeof(char) * xynth_server->window->surface->width * xynth_server->window->surface->height * xynth_server->window->surface->bytesperpixel);
+	xynth_server->window->surface->need_expose = SURFACE_NEEDEXPOSE;
+	xynth_server->window->surface->linear_buf_pitch = xynth_server->window->surface->width;
 #endif
-	server->window->surface->linear_mem_base = (unsigned int) addr;
-	server->window->surface->linear_mem_size = (unsigned int) (sizeof(char) * server->window->surface->width * server->window->surface->height * server->window->surface->bytesperpixel);
-	server->window->surface->vbuf = (unsigned char *) addr;
-	server->window->surface->linear_buf = (unsigned char *) addr;
+	xynth_server->window->surface->linear_mem_base = (unsigned int) addr;
+	xynth_server->window->surface->linear_mem_size = (unsigned int) (sizeof(char) * xynth_server->window->surface->width * xynth_server->window->surface->height * xynth_server->window->surface->bytesperpixel);
+	xynth_server->window->surface->vbuf = (unsigned char *) addr;
+	xynth_server->window->surface->linear_buf = (unsigned char *) addr;
 
 	priv->event_tid = s_thread_create(&s_video_pspdev_event_parse, (void *) NULL);
 
 	return 0;
 
 err0:	s_free(priv);
-	server->driver->driver_data = NULL;
+	xynth_server->driver->driver_data = NULL;
 	return -1;
 }
 
@@ -163,29 +163,29 @@ void s_video_pspdev_server_surface_update (s_rect_t *coor)
 	int y;
 	s_rect_t clip;
 	s_rect_t inter;
-	s_video_pspdev_data_t *priv = (s_video_pspdev_data_t *) server->driver->driver_data;
+	s_video_pspdev_data_t *priv = (s_video_pspdev_data_t *) xynth_server->driver->driver_data;
 	char *dst = (char *) priv->vram_base;
-	char *src = (char *) server->window->surface->linear_mem_base;
+	char *src = (char *) xynth_server->window->surface->linear_mem_base;
 
 	clip.x = 0;
 	clip.y = 0;
-	clip.w = server->window->surface->width;
-	clip.h = server->window->surface->height;
+	clip.w = xynth_server->window->surface->width;
+	clip.h = xynth_server->window->surface->height;
 	if (s_region_rect_intersect(&clip, coor, &inter)) {
 		return;
 	}
 
-	src += ((inter.x + inter.y * server->window->surface->width) * server->window->surface->bytesperpixel);
-	dst += ((inter.x + inter.y * 512) * server->window->surface->bytesperpixel);
+	src += ((inter.x + inter.y * xynth_server->window->surface->width) * xynth_server->window->surface->bytesperpixel);
+	dst += ((inter.x + inter.y * 512) * xynth_server->window->surface->bytesperpixel);
 
 	for (y = 0; y < inter.h; y++) {
-		switch (server->window->surface->bytesperpixel) {
+		switch (xynth_server->window->surface->bytesperpixel) {
 			case 1: s_memcpy1(dst, src, inter.w); break;
 			case 2: s_memcpy2(dst, src, inter.w); break;
 			case 4: s_memcpy4(dst, src, inter.w); break;
 		}
-		src += (server->window->surface->width * server->window->surface->bytesperpixel);
-		dst += (512 * server->window->surface->bytesperpixel);
+		src += (xynth_server->window->surface->width * xynth_server->window->surface->bytesperpixel);
+		dst += (512 * xynth_server->window->surface->bytesperpixel);
 	}
 #endif
 }

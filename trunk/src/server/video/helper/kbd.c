@@ -58,7 +58,7 @@ static void s_video_helper_kbd_signal_handler (int v)
 	int i;
 
 	s_video_helper_kbd_uninit();
-	s_server_quit(server->window);
+	s_server_quit(xynth_server->window);
 
 	debugf(DSER, "Signal %d: %s received %s", v, strsignal(v), (v == SIGINT) ? "(ctrl-alt-backspace or ctrl-c pressed)" : "");
 
@@ -82,7 +82,7 @@ static void s_video_helper_kbd_atexit (void)
 	}
 	if (s_video_helper_keybd.pid == getpid()) {
 		s_video_helper_kbd_uninit();
-		s_server_quit(server->window);
+		s_server_quit(xynth_server->window);
 	}
 }
 
@@ -220,7 +220,7 @@ int s_video_helper_kbd_update (s_video_input_data_t *keybd)
 		keybd->keybd.button = s_video_helper_keybd_keycode_[scancode][KEYCODE_PLAIN];
 		keybd->keybd.keycode = s_video_helper_keybd_keycode_[scancode][KEYCODE_PLAIN];
 
-		keycode_flag = server->window->event->keybd->flag;
+		keycode_flag = xynth_server->window->event->keybd->flag;
 		switch (keybd->keybd.button) {
 			case KEYBOARD_BUTTON_LEFTSHIFT:
 			case KEYBOARD_BUTTON_RIGHTSHIFT:

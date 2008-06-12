@@ -107,10 +107,10 @@ int main (int argc, char *argv[])
 {
 	s_handler_t *hndl;
 
-#if defined(CONFIG_PLATFORM_PSPDEV)
-	pspDebugScreenInit();
-	s_server_psp_setup_callbacks();
-#endif
+	#if defined(CONFIG_PLATFORM_PSPDEV)
+		pspDebugScreenInit();
+		s_server_psp_setup_callbacks();
+	#endif
 
 	if (s_server_init()) {
 		debugf(DSER, "s_server_init() failed");
@@ -125,21 +125,21 @@ int main (int argc, char *argv[])
 	hndl->keybd.flag = 0;
 	hndl->keybd.button = KEYBOARD_BUTTON_F10;
 	hndl->keybd.p = s_server_handler_screen_shot;
-	s_handler_add(server->window, hndl);
+	s_handler_add(xynth_server->window, hndl);
 
 	s_handler_init(&hndl);
 	hndl->type = KEYBD_HANDLER;
 	hndl->keybd.flag = 0;
 	hndl->keybd.button = KEYBOARD_BUTTON_F11;
 	hndl->keybd.p = s_server_handler_change_theme;
-	s_handler_add(server->window, hndl);
+	s_handler_add(xynth_server->window, hndl);
 
 	s_handler_init(&hndl);
 	hndl->type = KEYBD_HANDLER;
 	hndl->keybd.flag = 0;
 	hndl->keybd.button = KEYBOARD_BUTTON_F12;
 	hndl->keybd.p = s_server_handler_fullscreen;
-	s_handler_add(server->window, hndl);
+	s_handler_add(xynth_server->window, hndl);
 
 	s_handler_init(&hndl);
 	hndl->type = MOUSE_HANDLER;
@@ -149,18 +149,13 @@ int main (int argc, char *argv[])
 	hndl->mouse.h = 20;
 	hndl->mouse.button = MOUSE_BUTTON_LEFT;
 	hndl->mouse.r = s_server_handler_quit;
-	s_handler_add(server->window, hndl);
+	s_handler_add(xynth_server->window, hndl);
 
-#if defined(CONFIG_SINGLE_APPLICATION)
-	s_server_single_start();
-#endif /* CONFIG_SINGLE_APPLICATION */
-
-	while (server->window->running > 0) {
-		if (s_socket_listen_wait(server->window, -1)) {
-			server->window->running = 0;
-			break;
-		}
-	}
+	#if defined(CONFIG_SINGLE_APPLICATION)
+		s_server_single_start();
+	#endif /* CONFIG_SINGLE_APPLICATION */
+	
+	s_server_loop(NULL);
 
 #if defined(CONFIG_SINGLE_APPLICATION)
 	s_server_single_stop();

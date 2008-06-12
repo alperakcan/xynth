@@ -50,31 +50,31 @@ void s_server_theme_set (char *name)
 #endif
 	s_server_theme_uninit();
 
-	memset(&(server->theme), 0, sizeof(s_theme_t));
-	theme_init(&server->theme);
+	memset(&(xynth_server->theme), 0, sizeof(s_theme_t));
+	theme_init(&xynth_server->theme);
 
         for (b = 0; b < BTNS_MAX; b++) {
 		for (v = 0; v < 3; v++) {
-			s_image_get_buf(server->window->surface, &server->theme.button[v][b]);
-			s_image_get_mat(&server->theme.button[v][b]);
-			s_image_get_handler(&server->theme.button[v][b]);
-			s_image_free_rgba(&server->theme.button[v][b]);
+			s_image_get_buf(xynth_server->window->surface, &xynth_server->theme.button[v][b]);
+			s_image_get_mat(&xynth_server->theme.button[v][b]);
+			s_image_get_handler(&xynth_server->theme.button[v][b]);
+			s_image_free_rgba(&xynth_server->theme.button[v][b]);
 		}
 	}
 
 	for (f = 0; f < FORM_MAX; f++) {
 		for (v = 0; v < 2; v++) {
-			s_image_get_buf(server->window->surface, &server->theme.form[v][f]);
-			s_image_get_mat(&server->theme.form[v][f]);
-			s_image_get_handler(&server->theme.form[v][f]);
-			s_image_free_rgba(&server->theme.form[v][f]);
+			s_image_get_buf(xynth_server->window->surface, &xynth_server->theme.form[v][f]);
+			s_image_get_mat(&xynth_server->theme.form[v][f]);
+			s_image_get_handler(&xynth_server->theme.form[v][f]);
+			s_image_free_rgba(&xynth_server->theme.form[v][f]);
 		}
 	}
 
-	s_font_init(&(server->theme.font[0]), "arial.ttf");
-	s_font_set_size(server->theme.font[0], server->theme.form[0][TOP_3].h - 8);
-	s_font_init(&(server->theme.font[1]), "arial.ttf");
-	s_font_set_size(server->theme.font[1], server->theme.form[1][TOP_3].h - 8);
+	s_font_init(&(xynth_server->theme.font[0]), "arial.ttf");
+	s_font_set_size(xynth_server->theme.font[0], xynth_server->theme.form[0][TOP_3].h - 8);
+	s_font_init(&(xynth_server->theme.font[1]), "arial.ttf");
+	s_font_set_size(xynth_server->theme.font[1], xynth_server->theme.form[1][TOP_3].h - 8);
 	
 #if defined(CONFIG_THEME_PLUGIN)
 	dlclose(handle);
@@ -94,25 +94,25 @@ void s_server_theme_uninit (void)
 	int b;
 	int v;
 	
-	s_font_uninit(server->theme.font[0]);
-	s_font_uninit(server->theme.font[1]);
+	s_font_uninit(xynth_server->theme.font[0]);
+	s_font_uninit(xynth_server->theme.font[1]);
 	
 	for (f = 0; f < FORM_MAX; f++) {
 		for (v = 0; v < 2; v++) {
-			s_image_free_buf(&server->theme.form[v][f]);
-			s_image_free_mat(&server->theme.form[v][f]);
-			s_image_free_rgba(&server->theme.form[v][f]);
-			s_image_free_handler(&server->theme.form[v][f]);
-			s_image_layers_uninit(&server->theme.form[v][f]);
+			s_image_free_buf(&xynth_server->theme.form[v][f]);
+			s_image_free_mat(&xynth_server->theme.form[v][f]);
+			s_image_free_rgba(&xynth_server->theme.form[v][f]);
+			s_image_free_handler(&xynth_server->theme.form[v][f]);
+			s_image_layers_uninit(&xynth_server->theme.form[v][f]);
 		}
 	}
         for (b = 0; b < BTNS_MAX; b++) {
 		for (v = 0; v < 3; v++) {
-			s_image_free_buf(&server->theme.button[v][b]);
-			s_image_free_mat(&server->theme.button[v][b]);
-			s_image_free_rgba(&server->theme.button[v][b]);
-			s_image_free_handler(&server->theme.button[v][b]);
-			s_image_layers_uninit(&server->theme.button[v][b]);
+			s_image_free_buf(&xynth_server->theme.button[v][b]);
+			s_image_free_mat(&xynth_server->theme.button[v][b]);
+			s_image_free_rgba(&xynth_server->theme.button[v][b]);
+			s_image_free_handler(&xynth_server->theme.button[v][b]);
+			s_image_layers_uninit(&xynth_server->theme.button[v][b]);
 		}
 	}
 }

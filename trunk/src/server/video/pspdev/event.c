@@ -44,14 +44,14 @@ void * s_video_pspdev_event_parse (void *arg)
 	s_video_input_data_mouse_t pad_send;
 	enum PspCtrlButtons pad_old;
 	enum PspCtrlButtons changed;
-	s_video_pspdev_data_t *priv = (s_video_pspdev_data_t *) server->driver->driver_data;
+	s_video_pspdev_data_t *priv = (s_video_pspdev_data_t *) xynth_server->driver->driver_data;
 
-	while (server->window->running != 1) {
+	while (xynth_server->window->running != 1) {
 		usleep(20000);
 	}
 	
 	pad_old = 0;
-	while (server->window->running) {
+	while (xynth_server->window->running) {
 		sceCtrlReadBufferPositive(&pad, 1);
 
 		changed = pad_old ^ pad.Buttons;
@@ -85,10 +85,10 @@ void * s_video_pspdev_event_parse (void *arg)
 		} else if (pad.Ly > 165) { axisy += MOUSE_ACCELL;
 		}
 		
-		axisx = MAX(axisx, server->mouse_rangex[0]);
-		axisx = MIN(axisx, server->mouse_rangex[1]);
-		axisy = MAX(axisy, server->mouse_rangey[0]);
-		axisy = MIN(axisy, server->mouse_rangey[1]);
+		axisx = MAX(axisx, xynth_server->mouse_rangex[0]);
+		axisx = MIN(axisx, xynth_server->mouse_rangex[1]);
+		axisy = MAX(axisy, xynth_server->mouse_rangey[0]);
+		axisy = MIN(axisy, xynth_server->mouse_rangey[1]);
 
 		if ((changed & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE)) ||
 		    (axisx - s_mouse_getx()) ||

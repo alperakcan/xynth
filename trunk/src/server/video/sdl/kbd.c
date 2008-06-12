@@ -22,7 +22,7 @@
 int s_video_sdl_kbd_init (s_server_conf_t *cfg)
 {
         int i;
-	s_video_sdl_data_t *priv = server->driver->driver_data;
+	s_video_sdl_data_t *priv = xynth_server->driver->driver_data;
 
 	if (s_pipe_api_pipe(priv->keybd_fd)) {
 		debugf(DSER | DSYS, "pipe failed");
@@ -148,7 +148,7 @@ err0:   priv->keybd_fd[0] = -1;
 int s_video_sdl_kbd_update (s_video_input_data_t *keybd)
 {
 	SDL_Event event;
-	s_video_sdl_data_t *priv = server->driver->driver_data;
+	s_video_sdl_data_t *priv = xynth_server->driver->driver_data;
 
 	s_pipe_api_read(priv->keybd_fd[0], &event.key, sizeof(event.key));
 
@@ -167,7 +167,7 @@ int s_video_sdl_kbd_update (s_video_input_data_t *keybd)
 
 void s_video_sdl_kbd_uninit (void)
 {
-	s_video_sdl_data_t *priv = server->driver->driver_data;
+	s_video_sdl_data_t *priv = xynth_server->driver->driver_data;
 	s_pipe_api_close(priv->keybd_fd[0]);
 	s_pipe_api_close(priv->keybd_fd[1]);
 	priv->keybd_fd[0] = -1;

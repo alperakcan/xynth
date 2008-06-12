@@ -20,7 +20,7 @@
 
 int s_video_pspdev_mouse_init (s_server_conf_t *cfg)
 {
-	s_video_pspdev_data_t *priv = server->driver->driver_data;
+	s_video_pspdev_data_t *priv = xynth_server->driver->driver_data;
 	sceCtrlSetSamplingCycle(0);
 	sceCtrlSetSamplingMode(PSP_CTRL_MODE_ANALOG);
 	if (s_pipe_api_pipe(priv->mouse_fd)) {
@@ -36,7 +36,7 @@ err0:	priv->mouse_fd[0] = -1;
 int s_video_pspdev_mouse_update (s_video_input_data_t *mouse)
 {
 	s_video_input_data_mouse_t pad_recv;
-	s_video_pspdev_data_t *priv = server->driver->driver_data;
+	s_video_pspdev_data_t *priv = xynth_server->driver->driver_data;
 	s_pipe_api_read(priv->mouse_fd[0], &pad_recv, sizeof(s_video_input_data_mouse_t));
 	mouse->mouse.x = pad_recv.x;
 	mouse->mouse.y = pad_recv.y;
@@ -48,7 +48,7 @@ int s_video_pspdev_mouse_update (s_video_input_data_t *mouse)
 
 void s_video_pspdev_mouse_uninit (void)
 {
-	s_video_pspdev_data_t *priv = server->driver->driver_data;
+	s_video_pspdev_data_t *priv = xynth_server->driver->driver_data;
 	s_pipe_api_close(priv->mouse_fd[0]);
 	s_pipe_api_close(priv->mouse_fd[1]);
 	priv->mouse_fd[0] = -1;

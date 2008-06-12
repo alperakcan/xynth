@@ -25,11 +25,11 @@ void * s_video_caca_event_parse (void *arg)
 	unsigned int event;
 	unsigned int event_mask;
 	s_video_input_data_t data;
-	s_video_caca_data_t *priv = (s_video_caca_data_t *) server->driver->driver_data;
+	s_video_caca_data_t *priv = (s_video_caca_data_t *) xynth_server->driver->driver_data;
 	
 	event_mask = CACA_EVENT_TYPE_ANY;
 
-	while (server->window->running != 1) {
+	while (xynth_server->window->running != 1) {
 		usleep(20000);
 	}
 	
@@ -49,8 +49,8 @@ void * s_video_caca_event_parse (void *arg)
 			case CACA_EVENT_TYPE_RESIZE:
 				coor.x = 0;
 				coor.y = 0;
-				coor.w = server->window->surface->width;
-				coor.h = server->window->surface->height;
+				coor.w = xynth_server->window->surface->width;
+				coor.h = xynth_server->window->surface->height;
 				caca_refresh();
 				s_server_surface_update(&coor);
 				break;

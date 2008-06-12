@@ -22,9 +22,9 @@
 void * s_video_sdl_event_parse (void *arg)
 {
 	SDL_Event event;
-	s_video_sdl_data_t *priv = (s_video_sdl_data_t *) server->driver->driver_data;
+	s_video_sdl_data_t *priv = (s_video_sdl_data_t *) xynth_server->driver->driver_data;
 
-	while (server->window->running != 1) {
+	while (xynth_server->window->running != 1) {
 		usleep(20000);
 	}
 	
@@ -46,7 +46,7 @@ void * s_video_sdl_event_parse (void *arg)
 				}
 				break;
 			case SDL_QUIT:
-				s_server_quit(server->window);
+				s_server_quit(xynth_server->window);
 				goto end;
 			default:
 //				debugf(DSER, "Event received : %d", event.type);

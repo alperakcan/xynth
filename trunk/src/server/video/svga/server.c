@@ -217,8 +217,8 @@ void s_video_svga_server_comefrom_back (void)
 
 void s_video_svga_surface_uninit (void)
 {
-	s_video_svga_data_t *priv = (s_video_svga_data_t *) server->driver->driver_data;
-	munmap((void *) server->window->surface->linear_mem_base, server->window->surface->linear_mem_size);
+	s_video_svga_data_t *priv = (s_video_svga_data_t *) xynth_server->driver->driver_data;
+	munmap((void *) xynth_server->window->surface->linear_mem_base, xynth_server->window->surface->linear_mem_size);
 	s_free(priv);
 }
 
@@ -252,68 +252,68 @@ void s_video_svga_server_surface_init (int mode)
         cardinfo = vga_getcardinfo();
         modeinfo = vga_getmodeinfo(mode);
 
-        server->window->surface->width = modeinfo->width;
-        server->window->surface->height = modeinfo->height;
-        server->window->surface->bytesperpixel = modeinfo->bytesperpixel;
-        server->window->surface->bitsperpixel = server->window->surface->bytesperpixel * 8;
-	server->window->surface->blueoffset = 0;
-	server->window->surface->greenoffset = 0;
-	server->window->surface->redoffset = 0;
-	server->window->surface->bluelength = 0;
-	server->window->surface->greenlength = 0;
-	server->window->surface->redlength = 0;
-	server->window->surface->colors = modeinfo->colors;
+        xynth_server->window->surface->width = modeinfo->width;
+        xynth_server->window->surface->height = modeinfo->height;
+        xynth_server->window->surface->bytesperpixel = modeinfo->bytesperpixel;
+        xynth_server->window->surface->bitsperpixel = xynth_server->window->surface->bytesperpixel * 8;
+	xynth_server->window->surface->blueoffset = 0;
+	xynth_server->window->surface->greenoffset = 0;
+	xynth_server->window->surface->redoffset = 0;
+	xynth_server->window->surface->bluelength = 0;
+	xynth_server->window->surface->greenlength = 0;
+	xynth_server->window->surface->redlength = 0;
+	xynth_server->window->surface->colors = modeinfo->colors;
 
         switch (modeinfo->colors) {
 		default:
 		case 256:
-			server->window->surface->bitsperpixel = 8;
-			server->window->surface->blueoffset = 0;
-			server->window->surface->greenoffset = 3;
-			server->window->surface->redoffset = 6;
-			server->window->surface->bluelength = 3;
-			server->window->surface->greenlength = 3;
-			server->window->surface->redlength = 2;
+			xynth_server->window->surface->bitsperpixel = 8;
+			xynth_server->window->surface->blueoffset = 0;
+			xynth_server->window->surface->greenoffset = 3;
+			xynth_server->window->surface->redoffset = 6;
+			xynth_server->window->surface->bluelength = 3;
+			xynth_server->window->surface->greenlength = 3;
+			xynth_server->window->surface->redlength = 2;
 			break;
 		case 32768:
-			server->window->surface->bitsperpixel = 15;
-			server->window->surface->blueoffset = 0;
-			server->window->surface->greenoffset = 5;
-			server->window->surface->redoffset = 10;
-			server->window->surface->bluelength = 5;
-			server->window->surface->greenlength = 5;
-			server->window->surface->redlength = 5;
+			xynth_server->window->surface->bitsperpixel = 15;
+			xynth_server->window->surface->blueoffset = 0;
+			xynth_server->window->surface->greenoffset = 5;
+			xynth_server->window->surface->redoffset = 10;
+			xynth_server->window->surface->bluelength = 5;
+			xynth_server->window->surface->greenlength = 5;
+			xynth_server->window->surface->redlength = 5;
 			break;
 		case 65536:
-			server->window->surface->bitsperpixel = 16;
-			server->window->surface->blueoffset = 0;
-			server->window->surface->greenoffset = 5;
-			server->window->surface->redoffset = 11;
-			server->window->surface->bluelength = 5;
-			server->window->surface->greenlength = 6;
-			server->window->surface->redlength = 5;
+			xynth_server->window->surface->bitsperpixel = 16;
+			xynth_server->window->surface->blueoffset = 0;
+			xynth_server->window->surface->greenoffset = 5;
+			xynth_server->window->surface->redoffset = 11;
+			xynth_server->window->surface->bluelength = 5;
+			xynth_server->window->surface->greenlength = 6;
+			xynth_server->window->surface->redlength = 5;
 			break;
 		case 256 * 65536:
-			server->window->surface->bitsperpixel = server->window->surface->bytesperpixel * 8;
-			server->window->surface->blueoffset = 0;
-			server->window->surface->greenoffset = 8;
-			server->window->surface->redoffset = 16;
-			server->window->surface->bluelength = 8;
-			server->window->surface->greenlength = 8;
-			server->window->surface->redlength = 8;
+			xynth_server->window->surface->bitsperpixel = xynth_server->window->surface->bytesperpixel * 8;
+			xynth_server->window->surface->blueoffset = 0;
+			xynth_server->window->surface->greenoffset = 8;
+			xynth_server->window->surface->redoffset = 16;
+			xynth_server->window->surface->bluelength = 8;
+			xynth_server->window->surface->greenlength = 8;
+			xynth_server->window->surface->redlength = 8;
 			break;
 	}
 
 #if SVGALIB_VER < 0x010920
-	server->window->surface->vbuf = vga_getgraphmem();
-	server->window->surface->linear_buf = server->window->surface->vbuf;
-        server->window->surface->linear_mem_base = (unsigned int) __svgalib_linear_mem_base;
-	server->window->surface->linear_mem_size = (unsigned int) __svgalib_linear_mem_size;
+	xynth_server->window->surface->vbuf = vga_getgraphmem();
+	xynth_server->window->surface->linear_buf = xynth_server->window->surface->vbuf;
+        xynth_server->window->surface->linear_mem_base = (unsigned int) __svgalib_linear_mem_base;
+	xynth_server->window->surface->linear_mem_size = (unsigned int) __svgalib_linear_mem_size;
 #else
-	server->window->surface->vbuf = cardinfo->linearmem;
-	server->window->surface->linear_buf = cardinfo->linearmem;
-	server->window->surface->linear_mem_base = (unsigned int) cardinfo->physmem;
-	server->window->surface->linear_mem_size = (unsigned int) cardinfo->physmemsize;
+	xynth_server->window->surface->vbuf = cardinfo->linearmem;
+	xynth_server->window->surface->linear_buf = cardinfo->linearmem;
+	xynth_server->window->surface->linear_mem_base = (unsigned int) cardinfo->physmem;
+	xynth_server->window->surface->linear_mem_size = (unsigned int) cardinfo->physmemsize;
 #endif
 	
 	s_video_svga_server_surface_setrgbpalette();
@@ -326,7 +326,7 @@ int s_video_svga_server_init (s_server_conf_t *cfg)
 	s_video_helper_mode_info_t *gmode;
 	
 	priv = (s_video_svga_data_t *) s_malloc(sizeof(s_video_svga_data_t));
-	server->driver->driver_data = (void *) priv;
+	xynth_server->driver->driver_data = (void *) priv;
 	
 	priv->console_fd = s_video_helper_console_init(cfg);
 	if (priv->console_fd < 0) {
@@ -351,7 +351,7 @@ int s_video_svga_server_init (s_server_conf_t *cfg)
 				goto err0;
 			} else {
 				s_video_svga_server_surface_init(s_video_svga_modetable[i].vnumber);
-				s_video_helper_mtrr_add(server->window->surface->linear_mem_base, server->window->surface->linear_mem_size);
+				s_video_helper_mtrr_add(xynth_server->window->surface->linear_mem_base, xynth_server->window->surface->linear_mem_size);
 				return s_video_svga_modetable[i].vnumber;
 			}
 		}

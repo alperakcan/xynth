@@ -31,26 +31,26 @@ int s_server_socket_listen_new (int id)
 	s_pollfd_t *ip;
 	s_pollfd_t *jp;
 
-	s_socket_recv(server->client[id].soc, &server->client[id].type, sizeof(s_window_type_t));
-	s_socket_recv(server->client[id].soc, &server->client[id].pid, sizeof(int));
-	s_socket_recv(server->client[id].soc, &server->client[id].buf, sizeof(s_rect_t));
+	s_socket_recv(xynth_server->client[id].soc, &xynth_server->client[id].type, sizeof(s_window_type_t));
+	s_socket_recv(xynth_server->client[id].soc, &xynth_server->client[id].pid, sizeof(int));
+	s_socket_recv(xynth_server->client[id].soc, &xynth_server->client[id].buf, sizeof(s_rect_t));
 	/* just to close childs before their parent, socket listen order is in pollfds list order.
 	 */
-	if (server->client[id].pid >= 0) {
-		ip = s_pollfd_find(server->window, server->client[id].soc);
-		jp = s_pollfd_find(server->window, server->client[server->client[id].pid].soc);
+	if (xynth_server->client[id].pid >= 0) {
+		ip = s_pollfd_find(xynth_server->window, xynth_server->client[id].soc);
+		jp = s_pollfd_find(xynth_server->window, xynth_server->client[xynth_server->client[id].pid].soc);
 		if ((ip != NULL) && (jp != NULL)) {
-			i = s_list_get_pos(server->window->pollfds->list, ip);
-			j = s_list_get_pos(server->window->pollfds->list, jp);
+			i = s_list_get_pos(xynth_server->window->pollfds->list, ip);
+			j = s_list_get_pos(xynth_server->window->pollfds->list, jp);
 			if (j < i) {
-				s_list_remove(server->window->pollfds->list, i);
-				s_list_add(server->window->pollfds->list, ip, j);
+				s_list_remove(xynth_server->window->pollfds->list, i);
+				s_list_add(xynth_server->window->pollfds->list, ip, j);
 			}
 		}
 	}
 	s_server_window_new(id);
-	s_socket_send(server->client[id].soc, &server->client[id].buf, sizeof(s_rect_t));
-	s_socket_send(server->client[id].soc, &server->client[id].win, sizeof(s_rect_t));
+	s_socket_send(xynth_server->client[id].soc, &xynth_server->client[id].buf, sizeof(s_rect_t));
+	s_socket_send(xynth_server->client[id].soc, &xynth_server->client[id].win, sizeof(s_rect_t));
 
 	return 0;
 }
@@ -60,36 +60,36 @@ int s_server_socket_listen_display (int id)
 	s_soc_data_display_t *data;
 	data = (s_soc_data_display_t *) s_calloc(1, sizeof(s_soc_data_display_t));
 
-	data->bytesperpixel = server->window->surface->bytesperpixel;
-	data->bitsperpixel = server->window->surface->bitsperpixel;
-	data->colors = server->window->surface->colors;
-	data->blueoffset = server->window->surface->blueoffset;
-	data->greenoffset = server->window->surface->greenoffset;
-	data->redoffset = server->window->surface->redoffset;
-	data->bluelength = server->window->surface->bluelength;
-	data->greenlength = server->window->surface->greenlength;
-	data->redlength = server->window->surface->redlength;
-	data->bluemask = server->window->surface->bluemask;
-	data->greenmask = server->window->surface->greenmask;
-	data->redmask = server->window->surface->redmask;
+	data->bytesperpixel = xynth_server->window->surface->bytesperpixel;
+	data->bitsperpixel = xynth_server->window->surface->bitsperpixel;
+	data->colors = xynth_server->window->surface->colors;
+	data->blueoffset = xynth_server->window->surface->blueoffset;
+	data->greenoffset = xynth_server->window->surface->greenoffset;
+	data->redoffset = xynth_server->window->surface->redoffset;
+	data->bluelength = xynth_server->window->surface->bluelength;
+	data->greenlength = xynth_server->window->surface->greenlength;
+	data->redlength = xynth_server->window->surface->redlength;
+	data->bluemask = xynth_server->window->surface->bluemask;
+	data->greenmask = xynth_server->window->surface->greenmask;
+	data->redmask = xynth_server->window->surface->redmask;
 
-	data->linear_buf = (unsigned int) server->window->surface->linear_buf;
-	data->matrix = (unsigned int) server->window->surface->matrix;
+	data->linear_buf = (unsigned int) xynth_server->window->surface->linear_buf;
+	data->matrix = (unsigned int) xynth_server->window->surface->matrix;
 
-	data->linear_mem_size = server->window->surface->linear_mem_size;
-	data->linear_mem_base = server->window->surface->linear_mem_base;
-	data->linear_buf_width = server->window->surface->linear_buf_width;
-	data->linear_buf_pitch = server->window->surface->linear_buf_pitch;
-	data->linear_buf_height = server->window->surface->linear_buf_height;
-	data->shm_mid = server->window->surface->shm_mid;
+	data->linear_mem_size = xynth_server->window->surface->linear_mem_size;
+	data->linear_mem_base = xynth_server->window->surface->linear_mem_base;
+	data->linear_buf_width = xynth_server->window->surface->linear_buf_width;
+	data->linear_buf_pitch = xynth_server->window->surface->linear_buf_pitch;
+	data->linear_buf_height = xynth_server->window->surface->linear_buf_height;
+	data->shm_mid = xynth_server->window->surface->shm_mid;
 	data->id = id;
 
-	data->shm_sid = server->window->surface->shm_sid;
-	data->need_expose = server->window->surface->need_expose;
+	data->shm_sid = xynth_server->window->surface->shm_sid;
+	data->need_expose = xynth_server->window->surface->need_expose;
 
-	strncpy(data->device, server->driver->device, S_FNAME_MAX);
+	strncpy(data->device, xynth_server->driver->device, S_FNAME_MAX);
 
-	if (s_socket_api_send(server->client[id].soc, data, sizeof(s_soc_data_display_t)) != sizeof(s_soc_data_display_t)) {
+	if (s_socket_api_send(xynth_server->client[id].soc, data, sizeof(s_soc_data_display_t)) != sizeof(s_soc_data_display_t)) {
 		s_free(data);
 		return -1;
 	}
@@ -105,28 +105,28 @@ int s_server_socket_listen_configure (int id)
         s_soc_data_configure_t *data;
         data = (s_soc_data_configure_t *) s_calloc(1, sizeof(s_soc_data_configure_t));
 
-	if (s_socket_api_recv(server->client[id].soc, data, sizeof(s_soc_data_configure_t)) != sizeof(s_soc_data_configure_t)) {
+	if (s_socket_api_recv(xynth_server->client[id].soc, data, sizeof(s_soc_data_configure_t)) != sizeof(s_soc_data_configure_t)) {
 		s_free(data);
 		return -1;
 	}
 
-	server->client[id].resizeable = data->resizeable;
-	server->client[id].alwaysontop = data->alwaysontop;
-	server->client[id].cursor = data->cursor;
+	xynth_server->client[id].resizeable = data->resizeable;
+	xynth_server->client[id].alwaysontop = data->alwaysontop;
+	xynth_server->client[id].cursor = data->cursor;
 
 	if (data->form & WINDOW_TYPE_NOFORM) {
-		data->rnew.x += (server->client[id].win.x - server->client[id].buf.x);
-		data->rnew.y += (server->client[id].win.y - server->client[id].buf.y);
-		data->rnew.w += (server->client[id].win.w - server->client[id].buf.w);
-		data->rnew.h += (server->client[id].win.h - server->client[id].buf.h);
+		data->rnew.x += (xynth_server->client[id].win.x - xynth_server->client[id].buf.x);
+		data->rnew.y += (xynth_server->client[id].win.y - xynth_server->client[id].buf.y);
+		data->rnew.w += (xynth_server->client[id].win.w - xynth_server->client[id].buf.w);
+		data->rnew.h += (xynth_server->client[id].win.h - xynth_server->client[id].buf.h);
 	}
 
 	if (strlen(data->title) > 0) {
-		if ((server->client[id].title.str == NULL) ||
-		    (j = strcmp(server->client[id].title.str, data->title)) != 0) {
-			s_free(server->client[id].title.str);
-			server->client[id].title.str = strdup(data->title);
-			s_server_window_title(id, server->client[id].title.str);
+		if ((xynth_server->client[id].title.str == NULL) ||
+		    (j = strcmp(xynth_server->client[id].title.str, data->title)) != 0) {
+			s_free(xynth_server->client[id].title.str);
+			xynth_server->client[id].title.str = strdup(data->title);
+			s_server_window_title(id, xynth_server->client[id].title.str);
 			s_server_window_calculate(id);
 		}
 	}
@@ -134,9 +134,9 @@ int s_server_socket_listen_configure (int id)
 	s_server_window_move_resize(id, &(data->rnew));
 
 	if (j) {
-		if (!(server->client[id].type & WINDOW_TYPE_TEMP)) {
+		if (!(xynth_server->client[id].type & WINDOW_TYPE_TEMP)) {
 			for (i = 0; i < S_CLIENTS_MAX; i++) {
-				if (server->client[i].type & WINDOW_TYPE_DESKTOP) {
+				if (xynth_server->client[i].type & WINDOW_TYPE_DESKTOP) {
 					s_server_socket_request(SOC_DATA_DESKTOP, i);
 				}
 			}
@@ -151,18 +151,18 @@ int s_server_socket_listen_stream (int id)
 {
 	s_soc_data_stream_t *data;
 	data = (s_soc_data_stream_t *) s_calloc(1, sizeof(s_soc_data_stream_t));
-	if (s_socket_api_recv(server->client[id].soc, data, sizeof(s_soc_data_stream_t)) != sizeof(s_soc_data_stream_t)) {
+	if (s_socket_api_recv(xynth_server->client[id].soc, data, sizeof(s_soc_data_stream_t)) != sizeof(s_soc_data_stream_t)) {
 		s_free(data);
 		return -1;
 	}
 	if (data->blen != 0) {
 		data->buf = (char *) s_malloc(data->blen + 1);
-		if (s_socket_api_recv(server->client[id].soc, data->buf, data->blen) != data->blen) {
+		if (s_socket_api_recv(xynth_server->client[id].soc, data->buf, data->blen) != data->blen) {
 			s_free(data->buf);
 			s_free(data);
 			return -1;
 		}
-		bpp_putbox_o(server->window->surface, id, data->rect.x, data->rect.y, data->rect.w, data->rect.h, data->buf, data->rect.w);
+		bpp_putbox_o(xynth_server->window->surface, id, data->rect.x, data->rect.y, data->rect.w, data->rect.h, data->buf, data->rect.w);
 		s_free(data->buf);
 	}
 	s_server_surface_update(&(data->rect));
@@ -172,8 +172,8 @@ int s_server_socket_listen_stream (int id)
 
 int s_server_socket_listen_close_server (int id)
 {
-	if (server->client[id].type & WINDOW_TYPE_DESKTOP) {
-		s_server_quit(server->window);
+	if (xynth_server->client[id].type & WINDOW_TYPE_DESKTOP) {
+		s_server_quit(xynth_server->window);
 	}
 	return 0;
 }
@@ -190,14 +190,14 @@ int s_server_socket_listen_show (int id)
 	int rid = -1;
 	s_soc_data_show_t *data;
 	data = (s_soc_data_show_t *) s_calloc(1, sizeof(s_soc_data_show_t));
-	if (s_socket_api_recv(server->client[id].soc, data, sizeof(s_soc_data_show_t)) != sizeof(s_soc_data_show_t)) {
+	if (s_socket_api_recv(xynth_server->client[id].soc, data, sizeof(s_soc_data_show_t)) != sizeof(s_soc_data_show_t)) {
 		s_free(data);
 		return -1;
 	}
 	if (data->title[0] != '\0') {
 		for (i = 0; i < S_CLIENTS_MAX; i++) {
-			if (server->client[i].title.str != NULL &&
-			    strcmp(server->client[i].title.str, data->title) == 0) {
+			if (xynth_server->client[i].title.str != NULL &&
+			    strcmp(xynth_server->client[i].title.str, data->title) == 0) {
 				rid = i;
 			}
 		}
@@ -220,11 +220,11 @@ int s_server_socket_listen_event (int id)
 	s_video_input_data_keybd_t keybd;
 	s_soc_data_event_t *data;
 	data = (s_soc_data_event_t *) s_calloc(1, sizeof(s_soc_data_event_t));
-	if (s_socket_api_recv(server->client[id].soc, data, sizeof(s_soc_data_event_t)) != sizeof(s_soc_data_event_t)) {
+	if (s_socket_api_recv(xynth_server->client[id].soc, data, sizeof(s_soc_data_event_t)) != sizeof(s_soc_data_event_t)) {
 		s_free(data);
 		return -1;
 	}
-	server->window->event->type = EVENT_TYPE_REMOTE;
+	xynth_server->window->event->type = EVENT_TYPE_REMOTE;
 	switch (data->type & (EVENT_TYPE_KEYBOARD | EVENT_TYPE_MOUSE)) {
 		case EVENT_TYPE_KEYBOARD:
 			memset(&keybd, 0, sizeof(s_video_input_data_keybd_t));
@@ -248,10 +248,10 @@ int s_server_socket_listen_window_close (int soc)
 
 	s_socket_api_close(soc);
 	if (id >= 0) {
-		if ((pfd = s_pollfd_find(server->window, soc)) == NULL) {
+		if ((pfd = s_pollfd_find(xynth_server->window, soc)) == NULL) {
 			debugf(DSER | DFAT, "Could not find any pollfd entry for Client[%d].soc[%d]", id, soc);
 		}
-		s_pollfd_del(server->window, pfd);
+		s_pollfd_del(xynth_server->window, pfd);
 		s_pollfd_uninit(pfd);
 
 		debugf(DSER, "Client[%d] closed the connection", id);
@@ -296,7 +296,7 @@ int s_server_socket_listen_parse (int soc)
 		case SOC_DATA_DISPLAY:
 			return s_server_socket_listen_display(id);
 		case SOC_DATA_FORMDRAW:
-			s_server_window_form(id, &server->client[id].win);
+			s_server_window_form(id, &xynth_server->client[id].win);
 			return 0;
 		case SOC_DATA_CONFIGURE:
 			return s_server_socket_listen_configure(id);
@@ -349,13 +349,13 @@ int s_server_socket_listen_accept (int soc)
 
 	id = s_server_id_get();
 	if (id != -1) {
-		server->client[id].soc = s;
-		server->client[id].pid = -1;
+		xynth_server->client[id].soc = s;
+		xynth_server->client[id].pid = -1;
 		s_pollfd_init(&pfd);
 		pfd->fd = s;
 		pfd->pf_in = s_server_socket_client_in_f;
 		pfd->pf_err = s_server_socket_client_ierr_f;
-		s_pollfd_add(server->window, pfd);
+		s_pollfd_add(xynth_server->window, pfd);
 		debugf(DSER, "Client[%d] connection established", id);
 		return 0;
 	}
@@ -371,11 +371,11 @@ int s_server_socket_request_event (int id)
 	s_soc_data_event_t *data;
 	data = (s_soc_data_event_t *) s_calloc(1, sizeof(s_soc_data_event_t));
 
-	data->type = server->window->event->type;
-	data->mouse = *(server->window->event->mouse);
-	data->keybd = *(server->window->event->keybd);
+	data->type = xynth_server->window->event->type;
+	data->mouse = *(xynth_server->window->event->mouse);
+	data->keybd = *(xynth_server->window->event->keybd);
 	
-	if (s_socket_api_send(server->client[id].soc, data, sizeof(s_soc_data_event_t)) != sizeof(s_soc_data_event_t)) {
+	if (s_socket_api_send(xynth_server->client[id].soc, data, sizeof(s_soc_data_event_t)) != sizeof(s_soc_data_event_t)) {
 		s_free(data);
 		return -1;
 	}
@@ -396,14 +396,14 @@ int s_server_socket_request_expose (int id, s_rect_t *changed)
 	data = (s_soc_data_expose_t *) s_calloc(1, sizeof(s_soc_data_expose_t));
 
 	data->pri = s_server_id_pri(id);
-	data->buf = server->client[id].buf;
-	data->win = server->client[id].win;
+	data->buf = xynth_server->client[id].buf;
+	data->win = xynth_server->client[id].win;
 	data->changed = *changed;
-	data->linear_buf_width = server->window->surface->linear_buf_width;
-	data->linear_buf_pitch = server->window->surface->linear_buf_pitch;
-	data->linear_buf_height = server->window->surface->linear_buf_height;
+	data->linear_buf_width = xynth_server->window->surface->linear_buf_width;
+	data->linear_buf_pitch = xynth_server->window->surface->linear_buf_pitch;
+	data->linear_buf_height = xynth_server->window->surface->linear_buf_height;
 
-	if (s_socket_api_send(server->client[id].soc, data, sizeof(s_soc_data_expose_t)) != sizeof(s_soc_data_expose_t)) {
+	if (s_socket_api_send(xynth_server->client[id].soc, data, sizeof(s_soc_data_expose_t)) != sizeof(s_soc_data_expose_t)) {
 		s_free(data);
 		return -1;
 	}
@@ -422,15 +422,15 @@ int s_server_socket_request_desktop (int id)
 
 	for (i = 0; i < S_CLIENTS_MAX; i++) {
 		if ((p = s_server_id_pri(i)) >= 0) {
-			if (!(server->client[i].type & WINDOW_TYPE_TEMP)) {
+			if (!(xynth_server->client[i].type & WINDOW_TYPE_TEMP)) {
 				data->client[data->count].id = i;
 				data->client[data->count].pri = p;
-				strcpy(data->client[data->count].title, server->client[i].title.str);
+				strcpy(data->client[data->count].title, xynth_server->client[i].title.str);
 				data->count++;
 			}
 		}
 	}
-	if (s_socket_api_send(server->client[id].soc, data, sizeof(s_soc_data_desktop_t)) != sizeof(s_soc_data_desktop_t)) {
+	if (s_socket_api_send(xynth_server->client[id].soc, data, sizeof(s_soc_data_desktop_t)) != sizeof(s_soc_data_desktop_t)) {
 		s_free(data);
 		return -1;
 	}
@@ -446,16 +446,16 @@ int s_server_socket_request (S_SOC_DATA req, int id, ...)
 	s_rect_t *changed;
 	struct pollfd pollfd;
 
-	if (server->window->running <= 0) {
+	if (xynth_server->window->running <= 0) {
 		return -1;
 	}
 	if (id < 0 || id >= S_CLIENTS_MAX) {
 		return -1;
 	}
-        if (server->client[id].soc < 0) {
+        if (xynth_server->client[id].soc < 0) {
         	return -1;
         }
-	pollfd.fd = server->client[id].soc;
+	pollfd.fd = xynth_server->client[id].soc;
 	pollfd.events = POLLOUT;
 	pollfd.revents = 0;
 
@@ -470,7 +470,7 @@ int s_server_socket_request (S_SOC_DATA req, int id, ...)
 	}
 	if (pollfd.revents != POLLOUT) {
 err:		debugf(DSER, "Error occured when requesting (%d) from client[%d]. Closing it [revents: %d]", req, id, pollfd.revents);
-		s_server_socket_listen_window_close(server->client[id].soc);
+		s_server_socket_listen_window_close(xynth_server->client[id].soc);
 		return -1;
 	}
 
@@ -478,7 +478,7 @@ err:		debugf(DSER, "Error occured when requesting (%d) from client[%d]. Closing 
 	debugf(DSER, "Requesting 0x%08x (%s) from client [%d]", req, s_socket_data_to_name(req), id);
 #endif
 
-	if (s_socket_api_send(server->client[id].soc, &req, sizeof(req)) != sizeof(req)) {
+	if (s_socket_api_send(xynth_server->client[id].soc, &req, sizeof(req)) != sizeof(req)) {
 		return -1;
 	}
 	switch (req) {
@@ -626,7 +626,7 @@ void s_server_socket_init (void)
 	if ((fd[0] < 0) && (fd[1] < 0) && (fd[2] < 0)) {
 		debugf(DSER | DFAT, "Could not open any listening socket");
 	}
-	s_socket_init_wakeup(server->window);
+	s_socket_init_wakeup(xynth_server->window);
 	if (fd[0] >= 0) {
 		debugf(DSER, "Listening on UDS : %s", S_SERVER_SOC_NAME);
 		s_pollfd_init(&pfd);
@@ -634,7 +634,7 @@ void s_server_socket_init (void)
 		pfd->pf_in = s_server_socket_in_f;
 		pfd->pf_err = s_server_socket_ierr_f;
 		pfd->pf_close = s_server_socket_uninit;
-		s_pollfd_add(server->window, pfd);
+		s_pollfd_add(xynth_server->window, pfd);
 	}
 	if (fd[1] >= 0) {
 		debugf(DSER, "Listening on TCP : %s:%d", S_SERVER_SOC_ADDR, S_SERVER_SOC_PORT);
@@ -643,7 +643,7 @@ void s_server_socket_init (void)
 		pfd->pf_in = s_server_socket_in_f;
 		pfd->pf_err = s_server_socket_ierr_f;
 		pfd->pf_close = s_server_socket_uninit;
-		s_pollfd_add(server->window, pfd);
+		s_pollfd_add(xynth_server->window, pfd);
 	}
 	if (fd[2] >= 0) {
 		debugf(DSER, "Listening on PIPE : %s", S_SERVER_SOC_PIPE);
@@ -652,6 +652,6 @@ void s_server_socket_init (void)
 		pfd->pf_in = s_server_socket_in_f;
 		pfd->pf_err = s_server_socket_ierr_f;
 		pfd->pf_close = s_server_socket_uninit;
-		s_pollfd_add(server->window, pfd);
+		s_pollfd_add(xynth_server->window, pfd);
 	}
 }

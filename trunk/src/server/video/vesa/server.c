@@ -148,7 +148,7 @@ static int s_video_vesa_set_mode (int n)
 	unsigned int lmembase;
 
 	struct LRMI_regs r;
-	s_video_vesa_data_t *priv = (s_video_vesa_data_t *) server->driver->driver_data;
+	s_video_vesa_data_t *priv = (s_video_vesa_data_t *) xynth_server->driver->driver_data;
 
 	priv->vbe.state = s_video_vesa_save_state();
 	if (priv->vbe.state == NULL) {
@@ -192,22 +192,22 @@ static int s_video_vesa_set_mode (int n)
 		goto err0;
 	}
 
-	server->window->surface->linear_mem_base = (unsigned int) priv->vbe.mode->phys_base_ptr;
-	server->window->surface->linear_mem_size = (unsigned int) (priv->vbe.info->total_memory);
+	xynth_server->window->surface->linear_mem_base = (unsigned int) priv->vbe.mode->phys_base_ptr;
+	xynth_server->window->surface->linear_mem_size = (unsigned int) (priv->vbe.info->total_memory);
 	/* is this ok? haha this is really ugly.
 	 */
-	server->window->surface->linear_mem_size += (1024 - (priv->vbe.info->total_memory % 1024));
-	server->window->surface->linear_mem_size *= (64 * 1024);
+	xynth_server->window->surface->linear_mem_size += (1024 - (priv->vbe.info->total_memory % 1024));
+	xynth_server->window->surface->linear_mem_size *= (64 * 1024);
 
 	fd = open("/dev/mem", O_RDWR);
 	if (fd < 0) {
 		debugf(DSER, "open failed");
 		goto err1;
 	}
-	if (server->window->surface->linear_mem_size) {
-		lmembase = (unsigned int) mmap((caddr_t) 0, server->window->surface->linear_mem_size,
+	if (xynth_server->window->surface->linear_mem_size) {
+		lmembase = (unsigned int) mmap((caddr_t) 0, xynth_server->window->surface->linear_mem_size,
 		                                            PROT_WRITE | PROT_READ, MAP_SHARED, fd,
-		                                            (off_t) server->window->surface->linear_mem_base);
+		                                            (off_t) xynth_server->window->surface->linear_mem_base);
 		if (lmembase == (unsigned int) MAP_FAILED) {
 			debugf(DSER, "mmap failed");
 			goto err1;
@@ -226,8 +226,8 @@ err0:	return -1;
 
 void s_video_vesa_server_restore (void)
 {
-	s_video_vesa_data_t *priv = (s_video_vesa_data_t *) server->driver->driver_data;
-	if (server->driver->driver_data == NULL) {
+	s_video_vesa_data_t *priv = (s_video_vesa_data_t *) xynth_server->driver->driver_data;
+	if (xynth_server->driver->driver_data == NULL) {
 		return;
 	}
 	if (priv->vbe.mode_n < 0) {
@@ -239,7 +239,7 @@ void s_video_vesa_server_restore (void)
 
 void s_video_vesa_server_goto_back (void)
 {
-	s_video_vesa_data_t *priv = (s_video_vesa_data_t *) server->driver->driver_data;
+	s_video_vesa_data_t *priv = (s_video_vesa_data_t *) xynth_server->driver->driver_data;
 	s_video_vesa_text_mode();
 	s_video_vesa_restore_state(priv->vbe.state);
 	s_server_surface_lock();
@@ -247,7 +247,7 @@ void s_video_vesa_server_goto_back (void)
 
 void s_video_vesa_server_comefrom_back (void)
 {
-	s_video_vesa_data_t *priv = (s_video_vesa_data_t *) server->driver->driver_data;
+	s_video_vesa_data_t *priv = (s_video_vesa_data_t *) xynth_server->driver->driver_data;
 	s_video_vesa_set_mode(priv->vbe.mode_n);
 	s_server_surface_refresh();
 	s_video_helper_kbd_set_attr();
@@ -255,12 +255,12 @@ void s_video_vesa_server_comefrom_back (void)
 
 void s_video_vesa_surface_uninit (void)
 {
-	s_video_vesa_data_t *priv = (s_video_vesa_data_t *) server->driver->driver_data;
+	s_video_vesa_data_t *priv = (s_video_vesa_data_t *) xynth_server->driver->driver_data;
 	s_video_vesa_text_mode();
 	s_video_vesa_restore_state(priv->vbe.state);
-	munmap((void *) server->window->surface->linear_mem_base, server->window->surface->linear_mem_size);
+	munmap((void *) xynth_server->window->surface->linear_mem_base, xynth_server->window->surface->linear_mem_size);
 	s_free(priv);
-	server->driver->driver_data = NULL;
+	xynth_server->driver->driver_data = NULL;
 }
 
 void s_video_vesa_server_uninit (void)
@@ -274,66 +274,66 @@ void s_video_vesa_server_surface_setrgbpalette (void)
 
 static void s_video_vesa_surface_init (s_video_helper_mode_info_t *gmode)
 {
-	s_video_vesa_data_t *priv = (s_video_vesa_data_t *) server->driver->driver_data;
+	s_video_vesa_data_t *priv = (s_video_vesa_data_t *) xynth_server->driver->driver_data;
 
-        server->window->surface->width = gmode->xdim;
-        server->window->surface->height = gmode->ydim;
-        server->window->surface->bytesperpixel = gmode->bytesperpixel;
-        server->window->surface->bitsperpixel = priv->vbe.mode->bits_per_pixel;
-	server->window->surface->blueoffset = priv->vbe.mode->blue_field_position;
-	server->window->surface->greenoffset = priv->vbe.mode->green_field_position;
-	server->window->surface->redoffset = priv->vbe.mode->red_field_position;
-	server->window->surface->bluelength = priv->vbe.mode->blue_mask_size;
-	server->window->surface->greenlength = priv->vbe.mode->green_mask_size;
-	server->window->surface->redlength = priv->vbe.mode->red_mask_size;
-	server->window->surface->colors = gmode->colors;
+        xynth_server->window->surface->width = gmode->xdim;
+        xynth_server->window->surface->height = gmode->ydim;
+        xynth_server->window->surface->bytesperpixel = gmode->bytesperpixel;
+        xynth_server->window->surface->bitsperpixel = priv->vbe.mode->bits_per_pixel;
+	xynth_server->window->surface->blueoffset = priv->vbe.mode->blue_field_position;
+	xynth_server->window->surface->greenoffset = priv->vbe.mode->green_field_position;
+	xynth_server->window->surface->redoffset = priv->vbe.mode->red_field_position;
+	xynth_server->window->surface->bluelength = priv->vbe.mode->blue_mask_size;
+	xynth_server->window->surface->greenlength = priv->vbe.mode->green_mask_size;
+	xynth_server->window->surface->redlength = priv->vbe.mode->red_mask_size;
+	xynth_server->window->surface->colors = gmode->colors;
 
         switch (gmode->colors) {
 		default:
 		case 256:
-			server->window->surface->bitsperpixel = 8;
-			server->window->surface->blueoffset = 0;
-			server->window->surface->greenoffset = 3;
-			server->window->surface->redoffset = 6;
-			server->window->surface->bluelength = 3;
-			server->window->surface->greenlength = 3;
-			server->window->surface->redlength = 2;
+			xynth_server->window->surface->bitsperpixel = 8;
+			xynth_server->window->surface->blueoffset = 0;
+			xynth_server->window->surface->greenoffset = 3;
+			xynth_server->window->surface->redoffset = 6;
+			xynth_server->window->surface->bluelength = 3;
+			xynth_server->window->surface->greenlength = 3;
+			xynth_server->window->surface->redlength = 2;
 			break;
 		case 32768:
-			server->window->surface->bitsperpixel = 15;
-			server->window->surface->blueoffset = 0;
-			server->window->surface->greenoffset = 5;
-			server->window->surface->redoffset = 10;
-			server->window->surface->bluelength = 5;
-			server->window->surface->greenlength = 5;
-			server->window->surface->redlength = 5;
+			xynth_server->window->surface->bitsperpixel = 15;
+			xynth_server->window->surface->blueoffset = 0;
+			xynth_server->window->surface->greenoffset = 5;
+			xynth_server->window->surface->redoffset = 10;
+			xynth_server->window->surface->bluelength = 5;
+			xynth_server->window->surface->greenlength = 5;
+			xynth_server->window->surface->redlength = 5;
 			break;
 		case 65536:
-			server->window->surface->bitsperpixel = 16;
-			server->window->surface->blueoffset = 0;
-			server->window->surface->greenoffset = 5;
-			server->window->surface->redoffset = 11;
-			server->window->surface->bluelength = 5;
-			server->window->surface->greenlength = 6;
-			server->window->surface->redlength = 5;
+			xynth_server->window->surface->bitsperpixel = 16;
+			xynth_server->window->surface->blueoffset = 0;
+			xynth_server->window->surface->greenoffset = 5;
+			xynth_server->window->surface->redoffset = 11;
+			xynth_server->window->surface->bluelength = 5;
+			xynth_server->window->surface->greenlength = 6;
+			xynth_server->window->surface->redlength = 5;
 			break;
 		case 256 * 65536:
-			server->window->surface->bitsperpixel = server->window->surface->bytesperpixel * 8;
-			server->window->surface->blueoffset = 0;
-			server->window->surface->greenoffset = 8;
-			server->window->surface->redoffset = 16;
-			server->window->surface->bluelength = 8;
-			server->window->surface->greenlength = 8;
-			server->window->surface->redlength = 8;
+			xynth_server->window->surface->bitsperpixel = xynth_server->window->surface->bytesperpixel * 8;
+			xynth_server->window->surface->blueoffset = 0;
+			xynth_server->window->surface->greenoffset = 8;
+			xynth_server->window->surface->redoffset = 16;
+			xynth_server->window->surface->bluelength = 8;
+			xynth_server->window->surface->greenlength = 8;
+			xynth_server->window->surface->redlength = 8;
 			break;
 	}
 
-	server->window->surface->vbuf = priv->vbe.addr;
-	server->window->surface->linear_buf = priv->vbe.addr;
-        server->window->surface->linear_mem_base = server->window->surface->linear_mem_base;
-	server->window->surface->linear_mem_size = server->window->surface->linear_mem_size;
+	xynth_server->window->surface->vbuf = priv->vbe.addr;
+	xynth_server->window->surface->linear_buf = priv->vbe.addr;
+        xynth_server->window->surface->linear_mem_base = xynth_server->window->surface->linear_mem_base;
+	xynth_server->window->surface->linear_mem_size = xynth_server->window->surface->linear_mem_size;
 
-	s_video_helper_mtrr_add(server->window->surface->linear_mem_base, server->window->surface->linear_mem_size);
+	s_video_helper_mtrr_add(xynth_server->window->surface->linear_mem_base, xynth_server->window->surface->linear_mem_size);
 	s_video_vesa_server_surface_setrgbpalette();
 }
 
@@ -346,7 +346,7 @@ int s_video_vesa_server_init (s_server_conf_t *cfg)
 	s_video_helper_mode_info_t *gmode;
 
 	priv = (s_video_vesa_data_t *) s_malloc(sizeof(s_video_vesa_data_t));
-	server->driver->driver_data = (void *) priv;
+	xynth_server->driver->driver_data = (void *) priv;
 	priv->vbe.mode_n = -1;
 	priv->console_fd = -1;
 	
@@ -440,6 +440,6 @@ int s_video_vesa_server_init (s_server_conf_t *cfg)
 err1:	LRMI_free_real(priv->vbe.info);
 	debugf(DSER, "Mode %s cannot be found", cfg->general.mode);
 err0:	s_free(priv);
-	server->driver->driver_data = NULL;
+	xynth_server->driver->driver_data = NULL;
 	return -1;
 }

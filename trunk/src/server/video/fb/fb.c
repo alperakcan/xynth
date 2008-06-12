@@ -89,8 +89,8 @@ void fb_putvar (void)
 
 void fb_open (void)
 {
-	if ((fb.fd = open(server->driver->device, O_RDONLY | O_NONBLOCK)) == -1) {
-		debugf(DSER | DSYS | DFAT, "FBDEV : Unable to open device (%s)", server->driver->device);
+	if ((fb.fd = open(xynth_server->driver->device, O_RDONLY | O_NONBLOCK)) == -1) {
+		debugf(DSER | DSYS | DFAT, "FBDEV : Unable to open device (%s)", xynth_server->driver->device);
 	}
 
         fb_getfix();
@@ -100,8 +100,8 @@ void fb_open (void)
 
 	close(fb.fd);
 
-	if ((fb.fd = open(server->driver->device, O_RDWR)) == -1) {
-		debugf(DSER | DSYS | DFAT, "FBDEV : Unable to open device (%s)", server->driver->device);
+	if ((fb.fd = open(xynth_server->driver->device, O_RDWR)) == -1) {
+		debugf(DSER | DSYS | DFAT, "FBDEV : Unable to open device (%s)", xynth_server->driver->device);
 	}
 
 	fb_getfix();
