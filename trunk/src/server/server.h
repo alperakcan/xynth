@@ -176,6 +176,9 @@ struct s_server_conf_s {
 		unsigned int vsync_len;
 		unsigned int vmode;
 	} monitor;
+	struct {
+		char *name;
+	} theme;
 };
 
 struct s_clients_s {
@@ -396,7 +399,7 @@ void s_server_window_resize_right (s_window_t *window);
 void s_server_window_resize_up_right (s_window_t *window);
 
 /* theme.c */
-void s_server_theme_init (void);
+void s_server_theme_init (char *name);
 void s_server_theme_set (char *name);
 void s_server_theme_uninit (void);
 

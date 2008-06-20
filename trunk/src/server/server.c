@@ -186,7 +186,11 @@ int s_server_cfg (s_server_conf_t *config)
 					config->irr.brate = strdup(var->value);
 				} else if (strncmp(var->name, "KEYBOARD_BUTTON_", 10) == 0) {
 					s_server_irr_add_code(var->name, var->value);
-				} 
+				}
+			} else if (strcasecmp(cat->name, "theme") == 0) {
+				if (strcasecmp(var->name, "name") == 0) {
+					config->theme.name = strdup(var->value);
+				}
 			} else if (strcasecmp(cat->name, "monitor") == 0) {
 				char *ptr;
 				char *nptr;
@@ -475,6 +479,8 @@ int s_server_init (void)
 	for (i = 0; i < 20; i++) {
 		s_handler_init(&(xynth_server->whndl[i]));
 	}
+
+	s_server_theme_init(config.theme.name);
 
 	s_free(config.general.console);
 	s_free(config.general.driver);

@@ -53,9 +53,9 @@ static void s_server_handler_change_theme (s_window_t *window, s_event_t *event,
 	static int theme_n = 0;
 	
 	switch (theme_n) {
-		case 2: s_server_theme_set(CONFIG_PATH_INSTALL CONFIG_PATH_THEMES "/keramik.so");   break;
-		case 1: s_server_theme_set(CONFIG_PATH_INSTALL CONFIG_PATH_THEMES "/microgui.so");  break;
-		case 0: s_server_theme_set(CONFIG_PATH_INSTALL CONFIG_PATH_THEMES "/silverado.so"); break;
+		case 2: s_server_theme_set("keramik");   break;
+		case 1: s_server_theme_set("microgui");  break;
+		case 0: s_server_theme_set("silverado"); break;
 	}
 	theme_n += 1;
 	theme_n %= 3;
@@ -117,8 +117,6 @@ int main (int argc, char *argv[])
 //		s_free(server);
 		return 1;
 	}
-
-	s_server_theme_init();
 
 	s_handler_init(&hndl);
 	hndl->type = KEYBD_HANDLER;
