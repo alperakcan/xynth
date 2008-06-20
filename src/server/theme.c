@@ -29,15 +29,14 @@ void s_server_theme_set (char *name)
 	THEME_STATE v;
 
 #if defined(CONFIG_THEME_PLUGIN)
+	char *tfile;
 	char *error;
 	void *handle;
 	void (*theme_init) (s_theme_t *theme);
-
-        if (name == NULL) {
-		handle = dlopen(CONFIG_PATH_INSTALL CONFIG_PATH_THEMES "/silverado.so", RTLD_LAZY);
-	} else {
-		handle = dlopen(name, RTLD_LAZY);
-	}
+	
+	tfile = (char *) s_malloc(strlen(CONFIG_PATH_INSTALL) + strlen(CONFIG_PATH_THEMES) + strlen(name) + 10);
+	sprintf(tfile, "%s/%s/%s.so", CONFIG_PATH_INSTALL, CONFIG_PATH_THEMES, name);
+	handle = dlopen(tfile, RTLD_LAZY);
 	if (!handle) {
 		debugf(DSER | DFAT, "%s", dlerror());
 	}
@@ -46,6 +45,7 @@ void s_server_theme_set (char *name)
 	if ((error = dlerror()) != NULL)  {
 		debugf(DSER | DFAT, "%s", error);
 	}
+	free(tfile);
 #else
 #endif
 	s_server_theme_uninit();
@@ -83,9 +83,9 @@ void s_server_theme_set (char *name)
 	s_server_surface_refresh();
 }
 
-void s_server_theme_init (void)
+void s_server_theme_init (char *name)
 {
-	s_server_theme_set(NULL);
+	s_server_theme_set((name == NULL) ? "silverado" : name);
 }
 
 void s_server_theme_uninit (void)
