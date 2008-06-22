@@ -14,6 +14,7 @@ subdir-$(CONFIG_VIDEO_HELPER)  += ./video/helper
 
 target-y += xynth
 target_so-y += libserver.so
+target_a-y  += libserver.a
 
 libserver.so_files-y = event.c \
                 id.c \
@@ -90,11 +91,15 @@ libserver.so_ldflags-$(CONFIG_VIDEO_PSPDEV) += -lpspdebug \
                                         -lpspuser \
                                         -lpspkernel
 
+libserver.a_files-y    = $(libserver.so_files-y)
+libserver.a_cflags-y   = $(libserver.so_cflags-y)
+libserver.a_includes-y = $(libserver.so_includes-y)
+
 xynth_files-y      = start.c
-xynth_includes-y  += ./ ../lib
-xynth_libraries-y += ./ ../lib
-xynth_ldflags-y   += -lserver
-xynth_depends-y   += libserver.so
+xynth_includes-y  += ./ $(libserver.so_includes-y)
+xynth_libraries-y += ./ $(libserver.so_libraries-y)
+xynth_ldflags-y   += -lserver $(libserver.so_ldflags-y)
+xynth_depends-y   += libserver.so libserver.a
 
 include ../../Makefile.lib
 
@@ -118,4 +123,5 @@ ifeq ($(CONFIG_PLATFORM_PSPDEV), y)
 else
 	$(CP) xynth ../../dist/$(CONFIG_PATH_BIN)/xynth
 	$(CP) libserver.so ../../dist/$(CONFIG_PATH_LIB)/libserver.so
+	$(CP) libserver.a ../../dist/$(CONFIG_PATH_LIB)/libserver.a
 endif
