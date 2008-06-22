@@ -354,6 +354,7 @@ define target-defaults_base
 	$(do_widgetc)
 
     $1: $($1_depends-y)
+    $($1_objects): $($1_depends-y)
     
     $1: .$1/$1
 	$(do_cp)
