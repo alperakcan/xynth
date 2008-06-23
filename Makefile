@@ -46,9 +46,9 @@ subdir-n += tools/optimize
 include Makefile.lib
 
 .PHONY: linux linux-single mingw pspdev gp2x
-linux linux-single mingw pspdev gp2x:
+linux linux-single mingw pspdev gp2x: tools/config_all
 	$(CP) configs/$@.config .config
-	$(CP) configs/$@.h src/lib/config.h
+	tools/config/conf -s configs/Config
 	if [ -e "src/configs/$@.conf" ]; then $(CP) src/configs/$@.conf src/configs/xynth.conf; fi
 
 .PHONY: menuconfig
