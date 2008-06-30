@@ -27,8 +27,8 @@ void s_server_window_new (int id)
 		xynth_server->client[id].win.w = xynth_server->client[id].buf.w;
 		xynth_server->client[id].win.h = xynth_server->client[id].buf.h;
 	} else {
-		xynth_server->client[id].win.w = xynth_server->client[id].buf.w + (xynth_server->theme.form[v][LEFT].w + xynth_server->theme.form[v][RIGHT].w);
-		xynth_server->client[id].win.h = xynth_server->client[id].buf.h + (xynth_server->theme.form[v][TOP_1].h + xynth_server->theme.form[v][BTM].h);
+		xynth_server->client[id].win.w = xynth_server->client[id].buf.w + (xynth_server->theme.form[v][THEME_FORM_LEFT].w + xynth_server->theme.form[v][THEME_FORM_RIGHT].w);
+		xynth_server->client[id].win.h = xynth_server->client[id].buf.h + (xynth_server->theme.form[v][THEME_FORM_TOP_1].h + xynth_server->theme.form[v][THEME_FORM_BUTTOM].h);
 	}
 
         /* if the caller does not know what he/she is doing we will correct his/her shit */
@@ -67,10 +67,10 @@ void s_server_window_new (int id)
 		xynth_server->client[id].buf.w = xynth_server->client[id].win.w;
 		xynth_server->client[id].buf.h = xynth_server->client[id].win.h;
 	} else {
-		xynth_server->client[id].buf.x = xynth_server->client[id].win.x + xynth_server->theme.form[v][LEFT].w;
-		xynth_server->client[id].buf.y = xynth_server->client[id].win.y + xynth_server->theme.form[v][TOP_1].h;
-		xynth_server->client[id].buf.w = xynth_server->client[id].win.w - xynth_server->theme.form[v][LEFT].w - xynth_server->theme.form[v][RIGHT].w;
-		xynth_server->client[id].buf.h = xynth_server->client[id].win.h - xynth_server->theme.form[v][TOP_1].h - xynth_server->theme.form[v][BTM].h;
+		xynth_server->client[id].buf.x = xynth_server->client[id].win.x + xynth_server->theme.form[v][THEME_FORM_LEFT].w;
+		xynth_server->client[id].buf.y = xynth_server->client[id].win.y + xynth_server->theme.form[v][THEME_FORM_TOP_1].h;
+		xynth_server->client[id].buf.w = xynth_server->client[id].win.w - xynth_server->theme.form[v][THEME_FORM_LEFT].w - xynth_server->theme.form[v][THEME_FORM_RIGHT].w;
+		xynth_server->client[id].buf.h = xynth_server->client[id].win.h - xynth_server->theme.form[v][THEME_FORM_TOP_1].h - xynth_server->theme.form[v][THEME_FORM_BUTTOM].h;
 	}
 
 	xynth_server->client[id].title.str = (char *) s_malloc(sizeof(char) * 23);
@@ -105,19 +105,19 @@ void s_server_window_title (int id, char *title)
 			goto out;
 		}
 
-		if ((i = font->glyph.img->w / xynth_server->theme.form[v][TOP_3].w) > 0) {
+		if ((i = font->glyph.img->w / xynth_server->theme.form[v][THEME_FORM_TOP_3].w) > 0) {
 			while (i--) {
-				yo = xynth_server->theme.text_v_off[v] - font->glyph.img->handler->y + (xynth_server->theme.form[v][TOP_3].handler->h - font->glyph.img->handler->h) / 2;
-				if ((font->glyph.img->h + yo) > xynth_server->theme.form[v][TOP_3].h) {
-					h = xynth_server->theme.form[v][TOP_3].h - yo;
+				yo = xynth_server->theme.text_v_off[v] - font->glyph.img->handler->y + (xynth_server->theme.form[v][THEME_FORM_TOP_3].handler->h - font->glyph.img->handler->h) / 2;
+				if ((font->glyph.img->h + yo) > xynth_server->theme.form[v][THEME_FORM_TOP_3].h) {
+					h = xynth_server->theme.form[v][THEME_FORM_TOP_3].h - yo;
 				} else {
 					h = font->glyph.img->h;
 				}
-				s_putboxpart(srf, i * xynth_server->theme.form[v][TOP_3].w, 0, xynth_server->theme.form[v][TOP_3].w, h, xynth_server->theme.form[v][TOP_3].w, xynth_server->theme.form[v][TOP_3].h, xynth_server->theme.form[v][TOP_3].buf, 0, yo);
+				s_putboxpart(srf, i * xynth_server->theme.form[v][THEME_FORM_TOP_3].w, 0, xynth_server->theme.form[v][THEME_FORM_TOP_3].w, h, xynth_server->theme.form[v][THEME_FORM_TOP_3].w, xynth_server->theme.form[v][THEME_FORM_TOP_3].h, xynth_server->theme.form[v][THEME_FORM_TOP_3].buf, 0, yo);
 			}
 		}
-		if ((i = font->glyph.img->w % xynth_server->theme.form[v][TOP_3].w) > 0) {
-				s_putboxpart(srf, font->glyph.img->w - xynth_server->theme.form[v][TOP_3].w, 0, xynth_server->theme.form[v][TOP_3].w, font->glyph.img->h, xynth_server->theme.form[v][TOP_3].w, xynth_server->theme.form[v][TOP_3].h, xynth_server->theme.form[v][TOP_3].buf, 0, xynth_server->theme.text_v_off[v] - font->glyph.img->handler->y + (xynth_server->theme.form[v][TOP_3].handler->h - font->glyph.img->handler->h) / 2);
+		if ((i = font->glyph.img->w % xynth_server->theme.form[v][THEME_FORM_TOP_3].w) > 0) {
+				s_putboxpart(srf, font->glyph.img->w - xynth_server->theme.form[v][THEME_FORM_TOP_3].w, 0, xynth_server->theme.form[v][THEME_FORM_TOP_3].w, font->glyph.img->h, xynth_server->theme.form[v][THEME_FORM_TOP_3].w, xynth_server->theme.form[v][THEME_FORM_TOP_3].h, xynth_server->theme.form[v][THEME_FORM_TOP_3].buf, 0, xynth_server->theme.text_v_off[v] - font->glyph.img->handler->y + (xynth_server->theme.form[v][THEME_FORM_TOP_3].handler->h - font->glyph.img->handler->h) / 2);
 		}
 		s_putboxrgba(srf, 0, 0, font->glyph.img->w, font->glyph.img->h, font->glyph.img->rgba);
 
@@ -190,60 +190,60 @@ void s_server_window_form_mat (int v, int id, s_rect_t *coor, void (*func) (s_wi
 {
 	int i;
 	/* top */
-	func(xynth_server->window, id, coor, xynth_server->client[id].form[TOP_L].x, xynth_server->client[id].form[TOP_L].y, &xynth_server->theme.form[v][TOP_L]);
-	for (i = 0; i < xynth_server->client[id].form[TOP_1].w; i += xynth_server->theme.form[v][TOP_1].w) {
-		func(xynth_server->window, id, coor, xynth_server->client[id].form[TOP_1].x + i, xynth_server->client[id].form[TOP_1].y, &xynth_server->theme.form[v][TOP_1]);
+	func(xynth_server->window, id, coor, xynth_server->client[id].form[THEME_FORM_TOP_LEFT].x, xynth_server->client[id].form[THEME_FORM_TOP_LEFT].y, &xynth_server->theme.form[v][THEME_FORM_TOP_LEFT]);
+	for (i = 0; i < xynth_server->client[id].form[THEME_FORM_TOP_1].w; i += xynth_server->theme.form[v][THEME_FORM_TOP_1].w) {
+		func(xynth_server->window, id, coor, xynth_server->client[id].form[THEME_FORM_TOP_1].x + i, xynth_server->client[id].form[THEME_FORM_TOP_1].y, &xynth_server->theme.form[v][THEME_FORM_TOP_1]);
 	}
 	if (xynth_server->client[id].win.w >= xynth_server->theme.form_min.w) {
-		func(xynth_server->window, id, coor, xynth_server->client[id].form[TOP_2].x, xynth_server->client[id].form[TOP_2].y, &xynth_server->theme.form[v][TOP_2]);
-		if ((i = xynth_server->client[id].form[TOP_3].w / xynth_server->theme.form[v][TOP_3].w) > 0) {
+		func(xynth_server->window, id, coor, xynth_server->client[id].form[THEME_FORM_TOP_2].x, xynth_server->client[id].form[THEME_FORM_TOP_2].y, &xynth_server->theme.form[v][THEME_FORM_TOP_2]);
+		if ((i = xynth_server->client[id].form[THEME_FORM_TOP_3].w / xynth_server->theme.form[v][THEME_FORM_TOP_3].w) > 0) {
 			while (i--) {
-				func(xynth_server->window, id, coor, xynth_server->client[id].form[TOP_3].x + i * xynth_server->theme.form[v][TOP_3].w, xynth_server->client[id].form[TOP_3].y, &xynth_server->theme.form[v][TOP_3]);
+				func(xynth_server->window, id, coor, xynth_server->client[id].form[THEME_FORM_TOP_3].x + i * xynth_server->theme.form[v][THEME_FORM_TOP_3].w, xynth_server->client[id].form[THEME_FORM_TOP_3].y, &xynth_server->theme.form[v][THEME_FORM_TOP_3]);
 			}
 		}
-		if (xynth_server->client[id].form[TOP_3].w % xynth_server->theme.form[v][TOP_3].w) {
-			func(xynth_server->window, id, coor, xynth_server->client[id].form[TOP_4].x - xynth_server->theme.form[v][TOP_3].w, xynth_server->client[id].form[TOP_3].y, &xynth_server->theme.form[v][TOP_3]);
+		if (xynth_server->client[id].form[THEME_FORM_TOP_3].w % xynth_server->theme.form[v][THEME_FORM_TOP_3].w) {
+			func(xynth_server->window, id, coor, xynth_server->client[id].form[THEME_FORM_TOP_4].x - xynth_server->theme.form[v][THEME_FORM_TOP_3].w, xynth_server->client[id].form[THEME_FORM_TOP_3].y, &xynth_server->theme.form[v][THEME_FORM_TOP_3]);
 		}
-		func(xynth_server->window, id, coor, xynth_server->client[id].form[TOP_4].x, xynth_server->client[id].form[TOP_4].y, &xynth_server->theme.form[v][TOP_4]);
+		func(xynth_server->window, id, coor, xynth_server->client[id].form[THEME_FORM_TOP_4].x, xynth_server->client[id].form[THEME_FORM_TOP_4].y, &xynth_server->theme.form[v][THEME_FORM_TOP_4]);
 	}
-	if ((i = xynth_server->client[id].form[TOP_5].w / xynth_server->theme.form[v][TOP_5].w) > 0) {
+	if ((i = xynth_server->client[id].form[THEME_FORM_TOP_5].w / xynth_server->theme.form[v][THEME_FORM_TOP_5].w) > 0) {
 		while (i--) {
-			func(xynth_server->window, id, coor, xynth_server->client[id].form[TOP_5].x + i * xynth_server->theme.form[v][TOP_5].w, xynth_server->client[id].form[TOP_5].y, &xynth_server->theme.form[v][TOP_5]);
+			func(xynth_server->window, id, coor, xynth_server->client[id].form[THEME_FORM_TOP_5].x + i * xynth_server->theme.form[v][THEME_FORM_TOP_5].w, xynth_server->client[id].form[THEME_FORM_TOP_5].y, &xynth_server->theme.form[v][THEME_FORM_TOP_5]);
 		}
 	}
-	if (xynth_server->client[id].form[TOP_5].w % xynth_server->theme.form[v][TOP_5].w) {
-		func(xynth_server->window, id, coor, xynth_server->client[id].form[TOP_R].x - xynth_server->theme.form[v][TOP_5].w, xynth_server->client[id].form[TOP_5].y, &xynth_server->theme.form[v][TOP_5]);
+	if (xynth_server->client[id].form[THEME_FORM_TOP_5].w % xynth_server->theme.form[v][THEME_FORM_TOP_5].w) {
+		func(xynth_server->window, id, coor, xynth_server->client[id].form[THEME_FORM_TOP_RIGHT].x - xynth_server->theme.form[v][THEME_FORM_TOP_5].w, xynth_server->client[id].form[THEME_FORM_TOP_5].y, &xynth_server->theme.form[v][THEME_FORM_TOP_5]);
 	}
-	func(xynth_server->window, id, coor, xynth_server->client[id].form[TOP_R].x, xynth_server->client[id].form[TOP_R].y, &xynth_server->theme.form[v][TOP_R]);
+	func(xynth_server->window, id, coor, xynth_server->client[id].form[THEME_FORM_TOP_RIGHT].x, xynth_server->client[id].form[THEME_FORM_TOP_RIGHT].y, &xynth_server->theme.form[v][THEME_FORM_TOP_RIGHT]);
 	/* left */
-	if ((i = xynth_server->client[id].form[LEFT].h / xynth_server->theme.form[v][LEFT].h) > 0) {
+	if ((i = xynth_server->client[id].form[THEME_FORM_LEFT].h / xynth_server->theme.form[v][THEME_FORM_LEFT].h) > 0) {
 		while (i--) {
-			func(xynth_server->window, id, coor, xynth_server->client[id].form[LEFT].x, xynth_server->client[id].form[LEFT].y + i * xynth_server->theme.form[v][LEFT].h, &xynth_server->theme.form[v][LEFT]);
+			func(xynth_server->window, id, coor, xynth_server->client[id].form[THEME_FORM_LEFT].x, xynth_server->client[id].form[THEME_FORM_LEFT].y + i * xynth_server->theme.form[v][THEME_FORM_LEFT].h, &xynth_server->theme.form[v][THEME_FORM_LEFT]);
 		}
 	}
-	if (xynth_server->client[id].form[LEFT].h % xynth_server->theme.form[v][LEFT].h) {
-		func(xynth_server->window, id, coor, xynth_server->client[id].form[LEFT].x, xynth_server->client[id].form[BTM_L].y - xynth_server->theme.form[v][LEFT].h, &xynth_server->theme.form[v][LEFT]);
+	if (xynth_server->client[id].form[THEME_FORM_LEFT].h % xynth_server->theme.form[v][THEME_FORM_LEFT].h) {
+		func(xynth_server->window, id, coor, xynth_server->client[id].form[THEME_FORM_LEFT].x, xynth_server->client[id].form[THEME_FORM_BUTTOM_LEFT].y - xynth_server->theme.form[v][THEME_FORM_LEFT].h, &xynth_server->theme.form[v][THEME_FORM_LEFT]);
 	}
         /* right */
-	if ((i = xynth_server->client[id].form[RIGHT].h / xynth_server->theme.form[v][RIGHT].h) > 0) {
+	if ((i = xynth_server->client[id].form[THEME_FORM_RIGHT].h / xynth_server->theme.form[v][THEME_FORM_RIGHT].h) > 0) {
 		while (i--) {
-			func(xynth_server->window, id, coor, xynth_server->client[id].form[RIGHT].x, xynth_server->client[id].form[RIGHT].y + i * xynth_server->theme.form[v][RIGHT].h, &xynth_server->theme.form[v][RIGHT]);
+			func(xynth_server->window, id, coor, xynth_server->client[id].form[THEME_FORM_RIGHT].x, xynth_server->client[id].form[THEME_FORM_RIGHT].y + i * xynth_server->theme.form[v][THEME_FORM_RIGHT].h, &xynth_server->theme.form[v][THEME_FORM_RIGHT]);
 		}
 	}
-	if (xynth_server->client[id].form[RIGHT].h % xynth_server->theme.form[v][RIGHT].h) {
-		func(xynth_server->window, id, coor, xynth_server->client[id].form[RIGHT].x, xynth_server->client[id].form[BTM_R].y - xynth_server->theme.form[v][RIGHT].h, &xynth_server->theme.form[v][RIGHT]);
+	if (xynth_server->client[id].form[THEME_FORM_RIGHT].h % xynth_server->theme.form[v][THEME_FORM_RIGHT].h) {
+		func(xynth_server->window, id, coor, xynth_server->client[id].form[THEME_FORM_RIGHT].x, xynth_server->client[id].form[THEME_FORM_BUTTOM_RIGHT].y - xynth_server->theme.form[v][THEME_FORM_RIGHT].h, &xynth_server->theme.form[v][THEME_FORM_RIGHT]);
 	}
         /* buttom */
-        func(xynth_server->window, id, coor, xynth_server->client[id].form[BTM_L].x, xynth_server->client[id].form[BTM_L].y, &xynth_server->theme.form[v][BTM_L]);
-        if ((i = xynth_server->client[id].form[BTM].w / xynth_server->theme.form[v][BTM].w) > 0) {
+        func(xynth_server->window, id, coor, xynth_server->client[id].form[THEME_FORM_BUTTOM_LEFT].x, xynth_server->client[id].form[THEME_FORM_BUTTOM_LEFT].y, &xynth_server->theme.form[v][THEME_FORM_BUTTOM_LEFT]);
+        if ((i = xynth_server->client[id].form[THEME_FORM_BUTTOM].w / xynth_server->theme.form[v][THEME_FORM_BUTTOM].w) > 0) {
 		while (i--) {
-			func(xynth_server->window, id, coor, xynth_server->client[id].form[BTM].x + i * xynth_server->theme.form[v][BTM].w, xynth_server->client[id].form[BTM].y, &xynth_server->theme.form[v][BTM]);
+			func(xynth_server->window, id, coor, xynth_server->client[id].form[THEME_FORM_BUTTOM].x + i * xynth_server->theme.form[v][THEME_FORM_BUTTOM].w, xynth_server->client[id].form[THEME_FORM_BUTTOM].y, &xynth_server->theme.form[v][THEME_FORM_BUTTOM]);
 		}
 	}
-	if (xynth_server->client[id].form[BTM].w % xynth_server->theme.form[v][BTM].w) {
-		func(xynth_server->window, id, coor, xynth_server->client[id].form[BTM_R].x - xynth_server->theme.form[v][BTM].w, xynth_server->client[id].form[BTM].y, &xynth_server->theme.form[v][BTM]);
+	if (xynth_server->client[id].form[THEME_FORM_BUTTOM].w % xynth_server->theme.form[v][THEME_FORM_BUTTOM].w) {
+		func(xynth_server->window, id, coor, xynth_server->client[id].form[THEME_FORM_BUTTOM_RIGHT].x - xynth_server->theme.form[v][THEME_FORM_BUTTOM].w, xynth_server->client[id].form[THEME_FORM_BUTTOM].y, &xynth_server->theme.form[v][THEME_FORM_BUTTOM]);
 	}
-        func(xynth_server->window, id, coor, xynth_server->client[id].form[BTM_R].x, xynth_server->client[id].form[BTM_R].y, &xynth_server->theme.form[v][BTM_R]);
+        func(xynth_server->window, id, coor, xynth_server->client[id].form[THEME_FORM_BUTTOM_RIGHT].x, xynth_server->client[id].form[THEME_FORM_BUTTOM_RIGHT].y, &xynth_server->theme.form[v][THEME_FORM_BUTTOM_RIGHT]);
 }
 
 void s_server_window_form (int id, s_rect_t *_coor_)
@@ -264,24 +264,24 @@ void s_server_window_form (int id, s_rect_t *_coor_)
 		return;
 	}
 
-        coort.x = xynth_server->client[id].form[TOP_3].x;
-        coort.y = xynth_server->client[id].form[TOP_3].y;
-        coort.w = xynth_server->client[id].form[TOP_3].w;
-        coort.h = xynth_server->theme.form[v][TOP_3].handler->h;
+        coort.x = xynth_server->client[id].form[THEME_FORM_TOP_3].x;
+        coort.y = xynth_server->client[id].form[THEME_FORM_TOP_3].y;
+        coort.w = xynth_server->client[id].form[THEME_FORM_TOP_3].w;
+        coort.h = xynth_server->theme.form[v][THEME_FORM_TOP_3].handler->h;
 
 	s_server_window_form_mat(v, id, &coor, s_server_putbox);
 
 	/* buttons */
-	s_server_putbox(xynth_server->window, id, &coor, xynth_server->client[id].button[MENU].x, xynth_server->client[id].button[MENU].y, &xynth_server->theme.button[v][MENU]);
-	s_server_putbox(xynth_server->window, id, &coor, xynth_server->client[id].button[HIDE].x, xynth_server->client[id].button[HIDE].y, &xynth_server->theme.button[v][HIDE]);
-	s_server_putbox(xynth_server->window, id, &coor, xynth_server->client[id].button[CLOSE].x, xynth_server->client[id].button[CLOSE].y, &xynth_server->theme.button[v][CLOSE]);
+	s_server_putbox(xynth_server->window, id, &coor, xynth_server->client[id].button[THEME_BUTTON_MENU].x, xynth_server->client[id].button[THEME_BUTTON_MENU].y, &xynth_server->theme.button[v][THEME_BUTTON_MENU]);
+	s_server_putbox(xynth_server->window, id, &coor, xynth_server->client[id].button[THEME_BUTTON_HIDE].x, xynth_server->client[id].button[THEME_BUTTON_HIDE].y, &xynth_server->theme.button[v][THEME_BUTTON_HIDE]);
+	s_server_putbox(xynth_server->window, id, &coor, xynth_server->client[id].button[THEME_BUTTON_CLOSE].x, xynth_server->client[id].button[THEME_BUTTON_CLOSE].y, &xynth_server->theme.button[v][THEME_BUTTON_CLOSE]);
 	if (xynth_server->client[id].resizeable == 1) {
-		s_server_putbox(xynth_server->window, id, &coor, xynth_server->client[id].button[MAXIMIZE].x, xynth_server->client[id].button[MAXIMIZE].y, &xynth_server->theme.button[v][MAXIMIZE]);
+		s_server_putbox(xynth_server->window, id, &coor, xynth_server->client[id].button[THEME_BUTTON_MAXIMIZE].x, xynth_server->client[id].button[THEME_BUTTON_MAXIMIZE].y, &xynth_server->theme.button[v][THEME_BUTTON_MAXIMIZE]);
 	}
 
 	/* title */
 	if ((!s_region_rect_intersect(&coor, &coort, &intersect)) && (xynth_server->client[id].win.w > xynth_server->theme.form_min.w)) {
-		s_server_putbox(xynth_server->window, id, &intersect, coort.x, coort.y + xynth_server->theme.text_v_off[v] - xynth_server->client[id].title.hy[v] + (xynth_server->theme.form[v][TOP_3].handler->h - xynth_server->client[id].title.hh[v]) / 2, &xynth_server->client[id].title.img[v]);
+		s_server_putbox(xynth_server->window, id, &intersect, coort.x + xynth_server->client[id].title.hx[v], coort.y + xynth_server->theme.text_v_off[v] - xynth_server->client[id].title.hy[v] + (xynth_server->theme.form[v][THEME_FORM_TOP_3].handler->h - xynth_server->client[id].title.hh[v]) / 2, &xynth_server->client[id].title.img[v]);
 	}
 }
 
@@ -316,130 +316,137 @@ void s_server_window_calculate (int id)
 	}
 
         title_len = xynth_server->client[id].title.img[v].w;
-        btns_w = xynth_server->theme.button[v][HIDE].w + xynth_server->theme.button[v][CLOSE].w;
+        btns_w = xynth_server->theme.button[v][THEME_BUTTON_HIDE].w + xynth_server->theme.button[v][THEME_BUTTON_CLOSE].w;
         if (xynth_server->client[id].resizeable == 1) {
-		btns_w += xynth_server->theme.button[v][MAXIMIZE].w;
+		btns_w += xynth_server->theme.button[v][THEME_BUTTON_MAXIMIZE].w;
 	}
 
-	xynth_server->client[id].win.x = xynth_server->client[id].buf.x - xynth_server->theme.form[v][LEFT].w;
-	xynth_server->client[id].win.y = xynth_server->client[id].buf.y - xynth_server->theme.form[v][TOP_1].h;
-	if ((xynth_server->client[id].win.w = xynth_server->client[id].buf.w + xynth_server->theme.form[v][LEFT].w + xynth_server->theme.form[v][RIGHT].w) < xynth_server->theme.form_min.w_) {
+	xynth_server->client[id].win.x = xynth_server->client[id].buf.x - xynth_server->theme.form[v][THEME_FORM_LEFT].w;
+	xynth_server->client[id].win.y = xynth_server->client[id].buf.y - xynth_server->theme.form[v][THEME_FORM_TOP_1].h;
+	if ((xynth_server->client[id].win.w = xynth_server->client[id].buf.w + xynth_server->theme.form[v][THEME_FORM_LEFT].w + xynth_server->theme.form[v][THEME_FORM_RIGHT].w) < xynth_server->theme.form_min.w_) {
 		xynth_server->client[id].buf.w += xynth_server->theme.form_min.w_ - xynth_server->client[id].win.w;
 		xynth_server->client[id].win.w += xynth_server->theme.form_min.w_ - xynth_server->client[id].win.w;
 	}
-	if ((xynth_server->client[id].win.h = xynth_server->client[id].buf.h + xynth_server->theme.form[v][TOP_1].h + xynth_server->theme.form[v][BTM].h) < xynth_server->theme.form_min.h) {
+	if ((xynth_server->client[id].win.h = xynth_server->client[id].buf.h + xynth_server->theme.form[v][THEME_FORM_TOP_1].h + xynth_server->theme.form[v][THEME_FORM_BUTTOM].h) < xynth_server->theme.form_min.h) {
 		xynth_server->client[id].buf.h += xynth_server->theme.form_min.h - xynth_server->client[id].win.h;
 		xynth_server->client[id].win.h += xynth_server->theme.form_min.h - xynth_server->client[id].win.h;
 	}
 
         /* window form */
         /* top */
-	xynth_server->client[id].form[TOP_L].x = xynth_server->client[id].win.x;
-	xynth_server->client[id].form[TOP_L].y = xynth_server->client[id].win.y;
-	xynth_server->client[id].form[TOP_L].w = xynth_server->theme.form[v][TOP_L].w;
-	xynth_server->client[id].form[TOP_L].h = xynth_server->theme.form[v][TOP_L].h;
+	xynth_server->client[id].form[THEME_FORM_TOP_LEFT].x = xynth_server->client[id].win.x;
+	xynth_server->client[id].form[THEME_FORM_TOP_LEFT].y = xynth_server->client[id].win.y;
+	xynth_server->client[id].form[THEME_FORM_TOP_LEFT].w = xynth_server->theme.form[v][THEME_FORM_TOP_LEFT].w;
+	xynth_server->client[id].form[THEME_FORM_TOP_LEFT].h = xynth_server->theme.form[v][THEME_FORM_TOP_LEFT].h;
 
-	xynth_server->client[id].form[TOP_R].x = xynth_server->client[id].win.x + xynth_server->client[id].win.w - xynth_server->theme.form[v][TOP_R].w;
-	xynth_server->client[id].form[TOP_R].y = xynth_server->client[id].win.y;
-	xynth_server->client[id].form[TOP_R].w = xynth_server->theme.form[v][TOP_R].w;
-	xynth_server->client[id].form[TOP_R].h = xynth_server->theme.form[v][TOP_R].h;
+	xynth_server->client[id].form[THEME_FORM_TOP_RIGHT].x = xynth_server->client[id].win.x + xynth_server->client[id].win.w - xynth_server->theme.form[v][THEME_FORM_TOP_RIGHT].w;
+	xynth_server->client[id].form[THEME_FORM_TOP_RIGHT].y = xynth_server->client[id].win.y;
+	xynth_server->client[id].form[THEME_FORM_TOP_RIGHT].w = xynth_server->theme.form[v][THEME_FORM_TOP_RIGHT].w;
+	xynth_server->client[id].form[THEME_FORM_TOP_RIGHT].h = xynth_server->theme.form[v][THEME_FORM_TOP_RIGHT].h;
 
-        xynth_server->client[id].form[TOP_1].x = xynth_server->client[id].win.x + xynth_server->theme.form[v][TOP_L].w;
-        xynth_server->client[id].form[TOP_1].y = xynth_server->client[id].win.y;
-        xynth_server->client[id].form[TOP_1].w = xynth_server->theme.button[v][MENU].w;
-        xynth_server->client[id].form[TOP_1].h = xynth_server->theme.form[v][TOP_1].h;
+        xynth_server->client[id].form[THEME_FORM_TOP_1].x = xynth_server->client[id].win.x + xynth_server->theme.form[v][THEME_FORM_TOP_LEFT].w;
+        xynth_server->client[id].form[THEME_FORM_TOP_1].y = xynth_server->client[id].win.y;
+        xynth_server->client[id].form[THEME_FORM_TOP_1].w = xynth_server->theme.button[v][THEME_BUTTON_MENU].w;
+        xynth_server->client[id].form[THEME_FORM_TOP_1].h = xynth_server->theme.form[v][THEME_FORM_TOP_1].h;
 
-        xynth_server->client[id].form[TOP_2].x = xynth_server->client[id].form[TOP_1].x + xynth_server->client[id].form[TOP_1].w;
-        xynth_server->client[id].form[TOP_2].y = xynth_server->client[id].win.y;
-        xynth_server->client[id].form[TOP_2].w = xynth_server->theme.form[v][TOP_2].w;
-        xynth_server->client[id].form[TOP_2].h = xynth_server->theme.form[v][TOP_2].h;
+        xynth_server->client[id].form[THEME_FORM_TOP_2].x = xynth_server->client[id].form[THEME_FORM_TOP_1].x + xynth_server->client[id].form[THEME_FORM_TOP_1].w;
+        xynth_server->client[id].form[THEME_FORM_TOP_2].y = xynth_server->client[id].win.y;
+        xynth_server->client[id].form[THEME_FORM_TOP_2].w = xynth_server->theme.form[v][THEME_FORM_TOP_2].w;
+        xynth_server->client[id].form[THEME_FORM_TOP_2].h = xynth_server->theme.form[v][THEME_FORM_TOP_2].h;
 
-        xynth_server->client[id].form[TOP_3].x = xynth_server->client[id].form[TOP_2].x + xynth_server->client[id].form[TOP_2].w;
-        xynth_server->client[id].form[TOP_3].y = xynth_server->client[id].win.y;
-        i = xynth_server->client[id].win.w - xynth_server->client[id].form[TOP_L].w - xynth_server->client[id].form[TOP_R].w -
-            xynth_server->client[id].form[TOP_1].w - xynth_server->client[id].form[TOP_2].w - xynth_server->theme.form[v][TOP_4].w - btns_w;
+        xynth_server->client[id].form[THEME_FORM_TOP_3].x = xynth_server->client[id].form[THEME_FORM_TOP_2].x + xynth_server->client[id].form[THEME_FORM_TOP_2].w;
+        xynth_server->client[id].form[THEME_FORM_TOP_3].y = xynth_server->client[id].win.y;
+        i = xynth_server->client[id].win.w - xynth_server->client[id].form[THEME_FORM_TOP_LEFT].w - xynth_server->client[id].form[THEME_FORM_TOP_RIGHT].w -
+            xynth_server->client[id].form[THEME_FORM_TOP_1].w - xynth_server->client[id].form[THEME_FORM_TOP_2].w - xynth_server->theme.form[v][THEME_FORM_TOP_4].w - btns_w;
         if (xynth_server->theme.title_full) {
-		xynth_server->client[id].form[TOP_3].w = i;
+		xynth_server->client[id].form[THEME_FORM_TOP_3].w = i;
+		if (xynth_server->theme.text_alignment == THEME_ALIGNMENT_LEFT) {
+			xynth_server->client[id].title.hx[v] = 0;
+		} else if (xynth_server->theme.text_alignment == THEME_ALIGNMENT_RIGHT) {
+			xynth_server->client[id].title.hx[v] = MAX(i - title_len, 0);
+		} else {
+			xynth_server->client[id].title.hx[v] = MAX((i - title_len) / 2, 0);
+		}
 	} else {
-		xynth_server->client[id].form[TOP_3].w = (i < title_len) ? i : title_len;
+		xynth_server->client[id].form[THEME_FORM_TOP_3].w = (i < title_len) ? i : title_len;
 	}
-        xynth_server->client[id].form[TOP_3].h = xynth_server->theme.form[v][TOP_3].h;
+        xynth_server->client[id].form[THEME_FORM_TOP_3].h = xynth_server->theme.form[v][THEME_FORM_TOP_3].h;
 
         if (xynth_server->theme.title_full) {
-	        xynth_server->client[id].form[TOP_4].x = xynth_server->client[id].win.x + xynth_server->client[id].win.w - xynth_server->theme.form[v][TOP_4].w -
-	        			           btns_w - xynth_server->client[id].form[TOP_R].w;
+	        xynth_server->client[id].form[THEME_FORM_TOP_4].x = xynth_server->client[id].win.x + xynth_server->client[id].win.w - xynth_server->theme.form[v][THEME_FORM_TOP_4].w -
+	        			           btns_w - xynth_server->client[id].form[THEME_FORM_TOP_RIGHT].w;
 	} else {
-	        xynth_server->client[id].form[TOP_4].x = xynth_server->client[id].form[TOP_3].x + xynth_server->client[id].form[TOP_3].w;
+	        xynth_server->client[id].form[THEME_FORM_TOP_4].x = xynth_server->client[id].form[THEME_FORM_TOP_3].x + xynth_server->client[id].form[THEME_FORM_TOP_3].w;
 	}
-        xynth_server->client[id].form[TOP_4].y = xynth_server->client[id].win.y;
-        xynth_server->client[id].form[TOP_4].w = xynth_server->theme.form[v][TOP_4].w;
-        xynth_server->client[id].form[TOP_4].h = xynth_server->theme.form[v][TOP_4].h;
+        xynth_server->client[id].form[THEME_FORM_TOP_4].y = xynth_server->client[id].win.y;
+        xynth_server->client[id].form[THEME_FORM_TOP_4].w = xynth_server->theme.form[v][THEME_FORM_TOP_4].w;
+        xynth_server->client[id].form[THEME_FORM_TOP_4].h = xynth_server->theme.form[v][THEME_FORM_TOP_4].h;
 
 	if (xynth_server->client[id].win.w < xynth_server->theme.form_min.w) {
-		xynth_server->client[id].form[TOP_5].x = xynth_server->client[id].form[TOP_2].x;
+		xynth_server->client[id].form[THEME_FORM_TOP_5].x = xynth_server->client[id].form[THEME_FORM_TOP_2].x;
 	} else {
-		xynth_server->client[id].form[TOP_5].x = xynth_server->client[id].form[TOP_4].x + xynth_server->client[id].form[TOP_4].w;
+		xynth_server->client[id].form[THEME_FORM_TOP_5].x = xynth_server->client[id].form[THEME_FORM_TOP_4].x + xynth_server->client[id].form[THEME_FORM_TOP_4].w;
 	}
-        xynth_server->client[id].form[TOP_5].y = xynth_server->client[id].win.y;
-        xynth_server->client[id].form[TOP_5].w = xynth_server->client[id].form[TOP_R].x - xynth_server->client[id].form[TOP_5].x;
-        xynth_server->client[id].form[TOP_5].h = xynth_server->theme.form[v][TOP_5].h;
+        xynth_server->client[id].form[THEME_FORM_TOP_5].y = xynth_server->client[id].win.y;
+        xynth_server->client[id].form[THEME_FORM_TOP_5].w = xynth_server->client[id].form[THEME_FORM_TOP_RIGHT].x - xynth_server->client[id].form[THEME_FORM_TOP_5].x;
+        xynth_server->client[id].form[THEME_FORM_TOP_5].h = xynth_server->theme.form[v][THEME_FORM_TOP_5].h;
 
 	/* left */
-	xynth_server->client[id].form[LEFT].x = xynth_server->client[id].win.x;
-	xynth_server->client[id].form[LEFT].y = xynth_server->client[id].win.y + xynth_server->theme.form[v][TOP_L].h;
-	xynth_server->client[id].form[LEFT].w = xynth_server->theme.form[v][LEFT].w;
-	xynth_server->client[id].form[LEFT].h = xynth_server->client[id].win.h - xynth_server->theme.form[v][TOP_L].h - xynth_server->theme.form[v][BTM_L].h;
+	xynth_server->client[id].form[THEME_FORM_LEFT].x = xynth_server->client[id].win.x;
+	xynth_server->client[id].form[THEME_FORM_LEFT].y = xynth_server->client[id].win.y + xynth_server->theme.form[v][THEME_FORM_TOP_LEFT].h;
+	xynth_server->client[id].form[THEME_FORM_LEFT].w = xynth_server->theme.form[v][THEME_FORM_LEFT].w;
+	xynth_server->client[id].form[THEME_FORM_LEFT].h = xynth_server->client[id].win.h - xynth_server->theme.form[v][THEME_FORM_TOP_LEFT].h - xynth_server->theme.form[v][THEME_FORM_BUTTOM_LEFT].h;
 
 	/* right */
-	xynth_server->client[id].form[RIGHT].x = xynth_server->client[id].win.x + xynth_server->client[id].win.w - xynth_server->theme.form[v][RIGHT].w;
-	xynth_server->client[id].form[RIGHT].y = xynth_server->client[id].win.y + xynth_server->theme.form[v][TOP_R].h;
-	xynth_server->client[id].form[RIGHT].w = xynth_server->theme.form[v][RIGHT].w;
-	xynth_server->client[id].form[RIGHT].h = xynth_server->client[id].win.h - xynth_server->theme.form[v][TOP_R].h - xynth_server->theme.form[v][BTM_R].h;
+	xynth_server->client[id].form[THEME_FORM_RIGHT].x = xynth_server->client[id].win.x + xynth_server->client[id].win.w - xynth_server->theme.form[v][THEME_FORM_RIGHT].w;
+	xynth_server->client[id].form[THEME_FORM_RIGHT].y = xynth_server->client[id].win.y + xynth_server->theme.form[v][THEME_FORM_TOP_RIGHT].h;
+	xynth_server->client[id].form[THEME_FORM_RIGHT].w = xynth_server->theme.form[v][THEME_FORM_RIGHT].w;
+	xynth_server->client[id].form[THEME_FORM_RIGHT].h = xynth_server->client[id].win.h - xynth_server->theme.form[v][THEME_FORM_TOP_RIGHT].h - xynth_server->theme.form[v][THEME_FORM_BUTTOM_RIGHT].h;
 
 	/* bottom */
-	xynth_server->client[id].form[BTM_L].x = xynth_server->client[id].win.x;
-	xynth_server->client[id].form[BTM_L].y = xynth_server->client[id].win.y + xynth_server->client[id].win.h - xynth_server->theme.form[v][BTM_L].h;
-	xynth_server->client[id].form[BTM_L].w = xynth_server->theme.form[v][BTM_L].w;
-	xynth_server->client[id].form[BTM_L].h = xynth_server->theme.form[v][BTM_L].h;
+	xynth_server->client[id].form[THEME_FORM_BUTTOM_LEFT].x = xynth_server->client[id].win.x;
+	xynth_server->client[id].form[THEME_FORM_BUTTOM_LEFT].y = xynth_server->client[id].win.y + xynth_server->client[id].win.h - xynth_server->theme.form[v][THEME_FORM_BUTTOM_LEFT].h;
+	xynth_server->client[id].form[THEME_FORM_BUTTOM_LEFT].w = xynth_server->theme.form[v][THEME_FORM_BUTTOM_LEFT].w;
+	xynth_server->client[id].form[THEME_FORM_BUTTOM_LEFT].h = xynth_server->theme.form[v][THEME_FORM_BUTTOM_LEFT].h;
 
-        xynth_server->client[id].form[BTM].x = xynth_server->client[id].win.x + xynth_server->client[id].form[BTM_L].w;
-        xynth_server->client[id].form[BTM].y = xynth_server->client[id].win.y + xynth_server->client[id].win.h - xynth_server->theme.form[v][BTM].h;
-        xynth_server->client[id].form[BTM].w = xynth_server->client[id].win.w - xynth_server->client[id].form[BTM_L].w - xynth_server->theme.form[v][BTM_R].w;
-        xynth_server->client[id].form[BTM].h = xynth_server->theme.form[v][BTM].h;
+        xynth_server->client[id].form[THEME_FORM_BUTTOM].x = xynth_server->client[id].win.x + xynth_server->client[id].form[THEME_FORM_BUTTOM_LEFT].w;
+        xynth_server->client[id].form[THEME_FORM_BUTTOM].y = xynth_server->client[id].win.y + xynth_server->client[id].win.h - xynth_server->theme.form[v][THEME_FORM_BUTTOM].h;
+        xynth_server->client[id].form[THEME_FORM_BUTTOM].w = xynth_server->client[id].win.w - xynth_server->client[id].form[THEME_FORM_BUTTOM_LEFT].w - xynth_server->theme.form[v][THEME_FORM_BUTTOM_RIGHT].w;
+        xynth_server->client[id].form[THEME_FORM_BUTTOM].h = xynth_server->theme.form[v][THEME_FORM_BUTTOM].h;
 
-	xynth_server->client[id].form[BTM_R].x = xynth_server->client[id].win.x + xynth_server->client[id].win.w - xynth_server->theme.form[v][BTM_R].w;
-	xynth_server->client[id].form[BTM_R].y = xynth_server->client[id].win.y + xynth_server->client[id].win.h - xynth_server->theme.form[v][BTM_R].h;
-	xynth_server->client[id].form[BTM_R].w = xynth_server->theme.form[v][BTM_R].w;
-	xynth_server->client[id].form[BTM_R].h = xynth_server->theme.form[v][BTM_R].h;
+	xynth_server->client[id].form[THEME_FORM_BUTTOM_RIGHT].x = xynth_server->client[id].win.x + xynth_server->client[id].win.w - xynth_server->theme.form[v][THEME_FORM_BUTTOM_RIGHT].w;
+	xynth_server->client[id].form[THEME_FORM_BUTTOM_RIGHT].y = xynth_server->client[id].win.y + xynth_server->client[id].win.h - xynth_server->theme.form[v][THEME_FORM_BUTTOM_RIGHT].h;
+	xynth_server->client[id].form[THEME_FORM_BUTTOM_RIGHT].w = xynth_server->theme.form[v][THEME_FORM_BUTTOM_RIGHT].w;
+	xynth_server->client[id].form[THEME_FORM_BUTTOM_RIGHT].h = xynth_server->theme.form[v][THEME_FORM_BUTTOM_RIGHT].h;
 
 	/* buttons */
 	/* menu */
-	xynth_server->client[id].button[MENU].x = xynth_server->client[id].form[TOP_1].x;
-	xynth_server->client[id].button[MENU].y = xynth_server->client[id].form[TOP_1].y;
-	xynth_server->client[id].button[MENU].w = xynth_server->theme.button[v][MENU].w;
-	xynth_server->client[id].button[MENU].h = xynth_server->theme.button[v][MENU].h;
+	xynth_server->client[id].button[THEME_BUTTON_MENU].x = xynth_server->client[id].form[THEME_FORM_TOP_1].x;
+	xynth_server->client[id].button[THEME_BUTTON_MENU].y = xynth_server->client[id].form[THEME_FORM_TOP_1].y;
+	xynth_server->client[id].button[THEME_BUTTON_MENU].w = xynth_server->theme.button[v][THEME_BUTTON_MENU].w;
+	xynth_server->client[id].button[THEME_BUTTON_MENU].h = xynth_server->theme.button[v][THEME_BUTTON_MENU].h;
 
 	/* close */
-	xynth_server->client[id].button[CLOSE].x = xynth_server->client[id].form[TOP_R].x - xynth_server->theme.button[v][CLOSE].w;
-	xynth_server->client[id].button[CLOSE].y = xynth_server->client[id].form[TOP_5].y;
-	xynth_server->client[id].button[CLOSE].w = xynth_server->theme.button[v][CLOSE].w;
-	xynth_server->client[id].button[CLOSE].h = xynth_server->theme.button[v][CLOSE].h;
+	xynth_server->client[id].button[THEME_BUTTON_CLOSE].x = xynth_server->client[id].form[THEME_FORM_TOP_RIGHT].x - xynth_server->theme.button[v][THEME_BUTTON_CLOSE].w;
+	xynth_server->client[id].button[THEME_BUTTON_CLOSE].y = xynth_server->client[id].form[THEME_FORM_TOP_5].y;
+	xynth_server->client[id].button[THEME_BUTTON_CLOSE].w = xynth_server->theme.button[v][THEME_BUTTON_CLOSE].w;
+	xynth_server->client[id].button[THEME_BUTTON_CLOSE].h = xynth_server->theme.button[v][THEME_BUTTON_CLOSE].h;
 
 	/* maximize */
-	xynth_server->client[id].button[MAXIMIZE].x = xynth_server->client[id].button[CLOSE].x - xynth_server->theme.button[v][MAXIMIZE].w;
-	xynth_server->client[id].button[MAXIMIZE].y = xynth_server->client[id].form[TOP_5].y;
-	xynth_server->client[id].button[MAXIMIZE].w = xynth_server->theme.button[v][MAXIMIZE].w;
-	xynth_server->client[id].button[MAXIMIZE].h = xynth_server->theme.button[v][MAXIMIZE].h;
+	xynth_server->client[id].button[THEME_BUTTON_MAXIMIZE].x = xynth_server->client[id].button[THEME_BUTTON_CLOSE].x - xynth_server->theme.button[v][THEME_BUTTON_MAXIMIZE].w;
+	xynth_server->client[id].button[THEME_BUTTON_MAXIMIZE].y = xynth_server->client[id].form[THEME_FORM_TOP_5].y;
+	xynth_server->client[id].button[THEME_BUTTON_MAXIMIZE].w = xynth_server->theme.button[v][THEME_BUTTON_MAXIMIZE].w;
+	xynth_server->client[id].button[THEME_BUTTON_MAXIMIZE].h = xynth_server->theme.button[v][THEME_BUTTON_MAXIMIZE].h;
 
 	/* hide */
 	if (xynth_server->client[id].resizeable == 1) {
-		xynth_server->client[id].button[HIDE].x = xynth_server->client[id].button[MAXIMIZE].x - xynth_server->theme.button[v][HIDE].w;
+		xynth_server->client[id].button[THEME_BUTTON_HIDE].x = xynth_server->client[id].button[THEME_BUTTON_MAXIMIZE].x - xynth_server->theme.button[v][THEME_BUTTON_HIDE].w;
 	} else {
-		xynth_server->client[id].button[HIDE].x = xynth_server->client[id].button[CLOSE].x - xynth_server->theme.button[v][HIDE].w;
+		xynth_server->client[id].button[THEME_BUTTON_HIDE].x = xynth_server->client[id].button[THEME_BUTTON_CLOSE].x - xynth_server->theme.button[v][THEME_BUTTON_HIDE].w;
 	}
-	xynth_server->client[id].button[HIDE].y = xynth_server->client[id].form[TOP_5].y;
-	xynth_server->client[id].button[HIDE].w = xynth_server->theme.button[v][HIDE].w;
-	xynth_server->client[id].button[HIDE].h = xynth_server->theme.button[v][HIDE].h;
+	xynth_server->client[id].button[THEME_BUTTON_HIDE].y = xynth_server->client[id].form[THEME_FORM_TOP_5].y;
+	xynth_server->client[id].button[THEME_BUTTON_HIDE].w = xynth_server->theme.button[v][THEME_BUTTON_HIDE].w;
+	xynth_server->client[id].button[THEME_BUTTON_HIDE].h = xynth_server->theme.button[v][THEME_BUTTON_HIDE].h;
 }
 
 int s_server_window_is_parent_temp (int pid, int cid)

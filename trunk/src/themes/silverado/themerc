@@ -4,7 +4,7 @@ button_spacing=1
 button_layout=O|HMC
 title_vertical_offset_active=1
 title_vertical_offset_inactive=1
-title_alignment=left
+title_alignment=center
 active_text_color=#000000
 inactive_text_color=#8f8f8f
 

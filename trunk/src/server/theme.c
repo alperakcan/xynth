@@ -24,9 +24,9 @@
 
 void s_server_theme_set (char *name)
 {
-	THEME_BTN b;
-	THEME_FORM f;
-	THEME_STATE v;
+	s_theme_form_t f;
+	s_theme_state_t v;
+	s_theme_button_t b;
 
 #if defined(CONFIG_THEME_PLUGIN)
 	char *tfile;
@@ -53,7 +53,7 @@ void s_server_theme_set (char *name)
 	memset(&(xynth_server->theme), 0, sizeof(s_theme_t));
 	theme_init(&xynth_server->theme);
 
-        for (b = 0; b < BTNS_MAX; b++) {
+        for (b = 0; b < THEME_BUTTON_MAX; b++) {
 		for (v = 0; v < 3; v++) {
 			s_image_get_buf(xynth_server->window->surface, &xynth_server->theme.button[v][b]);
 			s_image_get_mat(&xynth_server->theme.button[v][b]);
@@ -62,7 +62,7 @@ void s_server_theme_set (char *name)
 		}
 	}
 
-	for (f = 0; f < FORM_MAX; f++) {
+	for (f = 0; f < THEME_FORM_MAX; f++) {
 		for (v = 0; v < 2; v++) {
 			s_image_get_buf(xynth_server->window->surface, &xynth_server->theme.form[v][f]);
 			s_image_get_mat(&xynth_server->theme.form[v][f]);
@@ -72,9 +72,9 @@ void s_server_theme_set (char *name)
 	}
 
 	s_font_init(&(xynth_server->theme.font[0]), "arial.ttf");
-	s_font_set_size(xynth_server->theme.font[0], xynth_server->theme.form[0][TOP_3].h - 8);
+	s_font_set_size(xynth_server->theme.font[0], xynth_server->theme.form[0][THEME_FORM_TOP_3].h - 8);
 	s_font_init(&(xynth_server->theme.font[1]), "arial.ttf");
-	s_font_set_size(xynth_server->theme.font[1], xynth_server->theme.form[1][TOP_3].h - 8);
+	s_font_set_size(xynth_server->theme.font[1], xynth_server->theme.form[1][THEME_FORM_TOP_3].h - 8);
 	
 #if defined(CONFIG_THEME_PLUGIN)
 	dlclose(handle);
@@ -97,7 +97,7 @@ void s_server_theme_uninit (void)
 	s_font_uninit(xynth_server->theme.font[0]);
 	s_font_uninit(xynth_server->theme.font[1]);
 	
-	for (f = 0; f < FORM_MAX; f++) {
+	for (f = 0; f < THEME_FORM_MAX; f++) {
 		for (v = 0; v < 2; v++) {
 			s_image_free_buf(&xynth_server->theme.form[v][f]);
 			s_image_free_mat(&xynth_server->theme.form[v][f]);
@@ -106,7 +106,7 @@ void s_server_theme_uninit (void)
 			s_image_layers_uninit(&xynth_server->theme.form[v][f]);
 		}
 	}
-        for (b = 0; b < BTNS_MAX; b++) {
+        for (b = 0; b < THEME_BUTTON_MAX; b++) {
 		for (v = 0; v < 3; v++) {
 			s_image_free_buf(&xynth_server->theme.button[v][b]);
 			s_image_free_mat(&xynth_server->theme.button[v][b]);
@@ -116,4 +116,3 @@ void s_server_theme_uninit (void)
 		}
 	}
 }
-
