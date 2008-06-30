@@ -79,34 +79,40 @@ struct s_video_driver_s {
 };
 
 typedef enum {
-	TOP_L	= 0x0,
-	TOP_1,
-	TOP_2,
-	TOP_3,
-	TOP_4,
-	TOP_5,
-	TOP_R,
-	LEFT,
-	RIGHT,
-	BTM_L,
-	BTM,
-	BTM_R,
-	FORM_MAX
-} THEME_FORM;
+	THEME_FORM_TOP_LEFT,
+	THEME_FORM_TOP_1,
+	THEME_FORM_TOP_2,
+	THEME_FORM_TOP_3,
+	THEME_FORM_TOP_4,
+	THEME_FORM_TOP_5,
+	THEME_FORM_TOP_RIGHT,
+	THEME_FORM_LEFT,
+	THEME_FORM_RIGHT,
+	THEME_FORM_BUTTOM_LEFT,
+	THEME_FORM_BUTTOM,
+	THEME_FORM_BUTTOM_RIGHT,
+	THEME_FORM_MAX
+} s_theme_form_t;
 
 typedef enum {
-	CLOSE	= 0x0,
-	MAXIMIZE,
-	HIDE,
-	MENU,
-	BTNS_MAX
-} THEME_BTN;
+	THEME_BUTTON_CLOSE,
+	THEME_BUTTON_MAXIMIZE,
+	THEME_BUTTON_HIDE,
+	THEME_BUTTON_MENU,
+	THEME_BUTTON_MAX
+} s_theme_button_t;
 
 typedef enum {
-	INACTIVE,
-	ACTIVE,
-	PRESSED
-} THEME_STATE;
+	THEME_STATE_INACTIVE,
+	THEME_STATE_ACTIVE,
+	THEME_STATE_PRESSED
+} s_theme_state_t;
+
+typedef enum {
+	THEME_ALIGNMENT_LEFT,
+	THEME_ALIGNMENT_RIGHT,
+	THEME_ALIGNMENT_CENTER,
+} s_theme_alignment_t;
 
 typedef enum {
 	SURFACE_CLOSE	 = 0x1,
@@ -120,8 +126,9 @@ struct s_theme_s {
 	int title_full;
 	int text_color[2];
 	int text_v_off[2];
-	s_image_t form[2][FORM_MAX];
-	s_image_t button[3][BTNS_MAX];
+	s_theme_alignment_t text_alignment;
+	s_image_t form[2][THEME_FORM_MAX];
+	s_image_t button[3][THEME_BUTTON_MAX];
 	struct {
 		int h;
 		int w;
@@ -193,12 +200,13 @@ struct s_clients_s {
 	/* theme related */
 	struct {
 		char *str;
+		int hx[2];
 		int hy[2];
 		int hh[2];
 		s_image_t img[2];
 	} title;
-	s_rect_t form[FORM_MAX];
-	s_rect_t button[BTNS_MAX];
+	s_rect_t form[THEME_FORM_MAX];
+	s_rect_t button[THEME_BUTTON_MAX];
 };
 
 struct s_server_s {

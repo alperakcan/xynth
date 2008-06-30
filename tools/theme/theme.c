@@ -25,7 +25,7 @@
 
 s_theme_t s_theme;
 
-char *f_names[FORM_MAX][2] = {
+char *f_names[THEME_FORM_MAX][2] = {
 	{"top-left-inactive.xpm", "top-left-active.xpm"},
 	{"title-1-inactive.xpm", "title-1-active.xpm"},
 	{"title-2-inactive.xpm", "title-2-active.xpm"},
@@ -54,7 +54,7 @@ char *f_names[FORM_MAX][2] = {
 	};
 */
 
-char *b_names[BTNS_MAX][3] = {
+char *b_names[THEME_BUTTON_MAX][3] = {
 	{"close-inactive.xpm", "close-active.xpm", "close-pressed.xpm"},
 	{"maximize-inactive.xpm", "maximize-active.xpm", "maximize-pressed.xpm"},
 	{"hide-inactive.xpm", "hide-active.xpm", "hide-pressed.xpm"},
@@ -134,17 +134,21 @@ void init_rc (void)
 			s_theme.text_color[1] |= (s_image_hex2int(buf + 19)) << 16;
 			s_theme.text_color[1] |= (s_image_hex2int(buf + 21)) << 8;
 			s_theme.text_color[1] |= (s_image_hex2int(buf + 23)) << 0;
-		}
-		if (strncmp(buf, "inactive_text_color", 19) == 0) {
+		} else if (strncmp(buf, "inactive_text_color", 19) == 0) {
 			s_theme.text_color[0] |= (s_image_hex2int(buf + 21)) << 16;
 			s_theme.text_color[0] |= (s_image_hex2int(buf + 23)) << 8;
 			s_theme.text_color[0] |= (s_image_hex2int(buf + 25)) << 0;
-		}
-		if (strncmp(buf, "title_vertical_offset_active", 28) == 0) {
+		} else if (strncmp(buf, "title_vertical_offset_active", 28) == 0) {
 			sscanf(buf + 29, "%d", &s_theme.text_v_off[1]);
-		}
-		if (strncmp(buf, "title_vertical_offset_inactive", 30) == 0) {
+		} else if (strncmp(buf, "title_vertical_offset_inactive", 30) == 0) {
 			sscanf(buf + 31, "%d", &s_theme.text_v_off[0]);
+		} else if (strncmp(buf, "full_width_title", 16) == 0) {
+			s_theme.title_full = (strncmp(buf + 17, "false", 5) == 0) ? 0 : 1;
+		} else if (strncmp(buf, "title_alignment", 15) == 0) {
+			s_theme.text_alignment = (strncmp(buf + 16, "left", 4) == 0) ? THEME_ALIGNMENT_LEFT :
+			                         (strncmp(buf + 16, "right", 5) == 0) ? THEME_ALIGNMENT_RIGHT :
+			                         (strncmp(buf + 16, "center", 6) == 0) ? THEME_ALIGNMENT_CENTER :
+			                         THEME_ALIGNMENT_LEFT;
 		}
 	}
 
@@ -185,10 +189,9 @@ void print_main (char *name)
 	printf(
 	"\n"
 	"void theme_init (s_theme_t *theme)\n"
-	"{\n"
-	"\ttheme->title_full = 0;\n\n");
+	"{\n");
 
-	for (f = 0; f < FORM_MAX; f++) {
+	for (f = 0; f < THEME_FORM_MAX; f++) {
 		for (v = 0; v < 2; v++) {
 			printf("\t");
 			print_func(f_names[f][v]);
@@ -196,7 +199,7 @@ void print_main (char *name)
 		}
 		printf("\n");
 	}
-	for (b = 0; b < BTNS_MAX; b++) {
+	for (b = 0; b < THEME_BUTTON_MAX; b++) {
 		for (v = 0; v < 3; v++) {
 			printf("\t");
 			print_func(b_names[b][v]);
@@ -212,6 +215,8 @@ void print_main (char *name)
 	printf("\ttheme->text_color[0] = 0x%06x;\n", s_theme.text_color[0]);
 	printf("\ttheme->text_v_off[1] = %d;\n", s_theme.text_v_off[1]);
 	printf("\ttheme->text_v_off[0] = %d;\n", s_theme.text_v_off[0]);
+	printf("\ttheme->title_full = %d;\n", s_theme.title_full);
+	printf("\ttheme->text_alignment = %d;\n", s_theme.text_alignment);
 
 	printf(
 	"}\n");
@@ -235,43 +240,43 @@ int main (int argc, char *argv[])
 	chdir(argv[2]);
 	print_head(argv[1]);
 
-        for (f = 0; f < FORM_MAX; f++) {
+        for (f = 0; f < THEME_FORM_MAX; f++) {
 		for (v = 0; v < 2; v++) {
 			init_buf(f_names[f][v], &s_theme.form[v][f]);
 		}
 	}
-        for (b = 0; b < BTNS_MAX; b++) {
+        for (b = 0; b < THEME_BUTTON_MAX; b++) {
 		for (v = 0; v < 3; v++) {
 			init_buf(b_names[b][v], &s_theme.button[v][b]);
 		}
 	}
 
         for (i = 1; i >= 0; i--) {
-		wh[i] = s_theme.form[i][TOP_L].w +
-		        s_theme.form[i][TOP_R].w +
-		        s_theme.button[i][MENU].w +
-		        s_theme.form[i][TOP_2].w +
-		        s_theme.form[i][TOP_3].w +
-		        s_theme.form[i][TOP_4].w +
-		        s_theme.button[i][HIDE].w +
-		        s_theme.button[i][CLOSE].w +
-		        s_theme.button[i][MAXIMIZE].w;
+		wh[i] = s_theme.form[i][THEME_FORM_TOP_LEFT].w +
+		        s_theme.form[i][THEME_FORM_TOP_RIGHT].w +
+		        s_theme.button[i][THEME_BUTTON_MENU].w +
+		        s_theme.form[i][THEME_FORM_TOP_2].w +
+		        s_theme.form[i][THEME_FORM_TOP_3].w +
+		        s_theme.form[i][THEME_FORM_TOP_4].w +
+		        s_theme.button[i][THEME_BUTTON_HIDE].w +
+		        s_theme.button[i][THEME_BUTTON_CLOSE].w +
+		        s_theme.button[i][THEME_BUTTON_MAXIMIZE].w;
 	}
 	s_theme.form_min.w = MAX(wh[1], wh[0]);
         for (i = 1; i >= 0; i--) {
-		wh[i] = s_theme.form[i][TOP_L].w +
-		        s_theme.form[i][TOP_R].w +
-		        s_theme.button[i][MENU].w +
-		        s_theme.button[i][HIDE].w +
-		        s_theme.button[i][CLOSE].w +
-		        s_theme.button[i][MAXIMIZE].w;
+		wh[i] = s_theme.form[i][THEME_FORM_TOP_LEFT].w +
+		        s_theme.form[i][THEME_FORM_TOP_RIGHT].w +
+		        s_theme.button[i][THEME_BUTTON_MENU].w +
+		        s_theme.button[i][THEME_BUTTON_HIDE].w +
+		        s_theme.button[i][THEME_BUTTON_CLOSE].w +
+		        s_theme.button[i][THEME_BUTTON_MAXIMIZE].w;
 	}
 	s_theme.form_min.w_ = MAX(wh[1], wh[0]);
 
         for (i = 1; i >= 0; i--) {
-		j = MAX(s_theme.form[i][TOP_L].h, MAX(s_theme.form[i][TOP_R].h, s_theme.form[i][TOP_1].h));
-		k = MAX(s_theme.form[i][BTM_L].h, MAX(s_theme.form[i][BTM_R].h, s_theme.form[i][BTM].h));
-		wh[i] = j + k + MAX(s_theme.form[i][LEFT].h, s_theme.form[i][RIGHT].h);
+		j = MAX(s_theme.form[i][THEME_FORM_TOP_LEFT].h, MAX(s_theme.form[i][THEME_FORM_TOP_RIGHT].h, s_theme.form[i][THEME_FORM_TOP_1].h));
+		k = MAX(s_theme.form[i][THEME_FORM_BUTTOM_LEFT].h, MAX(s_theme.form[i][THEME_FORM_BUTTOM_RIGHT].h, s_theme.form[i][THEME_FORM_BUTTOM].h));
+		wh[i] = j + k + MAX(s_theme.form[i][THEME_FORM_LEFT].h, s_theme.form[i][THEME_FORM_RIGHT].h);
 	}
 	s_theme.form_min.h = MAX(wh[1], wh[0]);
 
