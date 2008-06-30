@@ -1,5 +1,14 @@
 
+Mon 30 Jun 2008 11:52:21 AM EEST
+	- rev 1018
+	- theme rc improvements
+	- theme section added to config file
+	- generate config.h with conf -s from saved config file
+	- generate theme files at build time
+	- makefile.lib (*_depend-y) fixes
+
 Sun 11 May 2008 09:15:46 PM EEST
+	- rev 1010
 	- email information update
 	- enum type names update
 	- simple python binding works again
