@@ -3267,7 +3267,7 @@ struct s_xml_node_s {
   * @param *path - the requested path
   * @returns node for given path, or NULL if not found.
   */
-s_xml_node_t * s_xml_node_get_path (s_xml_node_t *node, char *path);
+s_xml_node_t * s_xml_node_get_path (s_xml_node_t *node, const char *path);
 
 /** @brief returns the value for given node
   *
@@ -3282,7 +3282,7 @@ char * s_xml_node_get_value (s_xml_node_t *node);
   * @param *path - the requested path
   * @returns value for given path, or NULL if not found.
   */
-char * s_xml_node_get_path_value (s_xml_node_t *node, char *path);
+char * s_xml_node_get_path_value (s_xml_node_t *node, const char *path);
 
 /** @brief returns the attribute "attr", for given node
   *
@@ -3290,7 +3290,7 @@ char * s_xml_node_get_path_value (s_xml_node_t *node, char *path);
   * @param *attr - requested attribute
   * @return the attribute, or NULL if not found
   */
-s_xml_node_attr_t * s_xml_node_get_attr (s_xml_node_t *node, char *attr);
+s_xml_node_attr_t * s_xml_node_get_attr (s_xml_node_t *node, const char *attr);
 
 /** @brief returns the value for given node, and attribute
   *
@@ -3298,7 +3298,7 @@ s_xml_node_attr_t * s_xml_node_get_attr (s_xml_node_t *node, char *attr);
   * @param *attr - the attribute
   * @returns value for given node, or NULL if no value.
   */
-char * s_xml_node_get_attr_value (s_xml_node_t *node, char *attr);
+char * s_xml_node_get_attr_value (s_xml_node_t *node, const char *attr);
 
 /** @brief dublicates the given node
   *
