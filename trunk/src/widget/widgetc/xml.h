@@ -31,11 +31,11 @@ struct s_xml_node_s {
 	int dontparse;
 };
 
-s_xml_node_t * s_xml_node_get_path (s_xml_node_t *node, char *path);
+s_xml_node_t * s_xml_node_get_path (s_xml_node_t *node, const char *path);
 char * s_xml_node_get_value (s_xml_node_t *node);
-char * s_xml_node_get_path_value (s_xml_node_t *node, char *path);
-s_xml_node_attr_t * s_xml_node_get_attr (s_xml_node_t *node, char *attr);
-char * s_xml_node_get_attr_value (s_xml_node_t *node, char *attr);
+char * s_xml_node_get_path_value (s_xml_node_t *node, const char *path);
+s_xml_node_attr_t * s_xml_node_get_attr (s_xml_node_t *node, const char *attr);
+char * s_xml_node_get_attr_value (s_xml_node_t *node, const char *attr);
 int s_xml_node_dublicate (s_xml_node_t *node, s_xml_node_t **dub);
 int s_xml_node_attr_dublicate (s_xml_node_attr_t *attr, s_xml_node_attr_t **dub);
 s_xml_node_t * s_xml_node_get_parent (s_xml_node_t *node, char *name);
