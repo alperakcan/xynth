@@ -13,7 +13,7 @@ typedef struct s_xml_data_s {
 } s_xml_data_t;
 
 static int s_xml_node_path_normalize (char *out, int len);
-static s_xml_node_t * s_xml_node_get_path_ (s_xml_node_t *node, char *path);
+static s_xml_node_t * s_xml_node_get_path_ (s_xml_node_t *node, const char *path);
 static void s_xml_parse_start (void *xdata, const char *el, const char **xattr);
 static void s_xml_parse_end (void *xdata, const char *el);
 static void s_xml_parse_character_fixup (char *out);
@@ -73,7 +73,7 @@ static int s_xml_node_path_normalize (char *out, int len)
 	return 0;
 }
 
-static s_xml_node_t * s_xml_node_get_path_ (s_xml_node_t *node, char *path)
+static s_xml_node_t * s_xml_node_get_path_ (s_xml_node_t *node, const char *path)
 {
 	int p;
 	char *ptr;
@@ -128,7 +128,7 @@ ok:
 end:	return res;
 }
 
-s_xml_node_t * s_xml_node_get_path (s_xml_node_t *node, char *path)
+s_xml_node_t * s_xml_node_get_path (s_xml_node_t *node, const char *path)
 {
 	int len;
 	char *str;
@@ -151,7 +151,7 @@ char * s_xml_node_get_value (s_xml_node_t *node)
 	return node->value;
 }
 
-char * s_xml_node_get_path_value (s_xml_node_t *node, char *path)
+char * s_xml_node_get_path_value (s_xml_node_t *node, const char *path)
 {
 	s_xml_node_t *res;
 	res = s_xml_node_get_path(node, path);
@@ -161,7 +161,7 @@ char * s_xml_node_get_path_value (s_xml_node_t *node, char *path)
 	return s_xml_node_get_value(res);
 }
 
-s_xml_node_attr_t * s_xml_node_get_attr (s_xml_node_t *node, char *attr)
+s_xml_node_attr_t * s_xml_node_get_attr (s_xml_node_t *node, const char *attr)
 {
 	int i;
 	s_xml_node_attr_t *tmp;
@@ -180,7 +180,7 @@ s_xml_node_attr_t * s_xml_node_get_attr (s_xml_node_t *node, char *attr)
 	return NULL;
 }
 
-char * s_xml_node_get_attr_value (s_xml_node_t *node, char *attr)
+char * s_xml_node_get_attr_value (s_xml_node_t *node, const char *attr)
 {
 	s_xml_node_attr_t *tmp;
 	tmp = s_xml_node_get_attr(node, attr);
