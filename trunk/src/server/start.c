@@ -149,9 +149,9 @@ int main (int argc, char *argv[])
 	hndl->mouse.r = s_server_handler_quit;
 	s_handler_add(xynth_server->window, hndl);
 
-	#if defined(CONFIG_SINGLE_APPLICATION)
-		s_server_single_start();
-	#endif /* CONFIG_SINGLE_APPLICATION */
+#if defined(CONFIG_SINGLE_APPLICATION)
+	s_server_single_start();
+#endif /* CONFIG_SINGLE_APPLICATION */
 	
 	s_server_loop(NULL);
 
