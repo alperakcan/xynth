@@ -1,4 +1,6 @@
 
+-include ../../../.config
+
 target_o-y = libexpat.o
 
 libexpat.o_files-y = xmlparse.c \
