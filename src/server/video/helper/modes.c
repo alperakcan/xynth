@@ -186,6 +186,7 @@ static s_video_helper_mode_info_t s_video_helper_modetable[MAX_MODES] =
 /*160 */{1280,  800,    1 << 16, 1280 *2,  2, "1280x800x64K",   M1280x800x64K},
 	{720,   576,    1 << 16, 720 * 2,  2, "720x576x64K",    M720x576x64K},
 	{640,   512,    1 << 16, 640 * 2,  2, "640x512x64K",    M640x512x64K},
+	{800,   480,    1 << 16, 480 * 2,  2, "800x480x64K",    M800x480x64K},
 };
 
 int s_video_helper_mode_find (s_server_conf_t *cfg, s_video_helper_mode_info_t **gmode)

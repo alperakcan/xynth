@@ -208,7 +208,8 @@ typedef enum {
 	M1280x800x64K,		/* 160 */
 	M720x576x64K,		/* 161 */
 	M640x512x64K,		/* 162 */
-	MAX_MODES,		/* 163 */
+	M800x480x64K,		/* 163 */
+	MAX_MODES,		/* 164 */
 } GENERIC_MODES;
 
 typedef struct s_video_helper_mode_info_s {
