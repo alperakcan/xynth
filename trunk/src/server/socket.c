@@ -130,7 +130,7 @@ int s_server_socket_listen_configure (int id)
 			s_server_window_calculate(id);
 		}
 	}
-	
+
 	s_server_window_move_resize(id, &(data->rnew));
 
 	if (j) {
@@ -285,7 +285,7 @@ int s_server_socket_listen_parse (int soc)
 	if (s_socket_api_recv(soc, &soc_data, sizeof(soc_data)) != sizeof(soc_data)) {
 		return -1;
 	}
-#if 1
+#if 0
 	debugf(DSER, "Received 0x%08x (%s) from client [%d]", soc_data, s_socket_data_to_name(soc_data), id);
 #endif
 	switch (soc_data) {
@@ -374,7 +374,7 @@ int s_server_socket_request_event (int id)
 	data->type = xynth_server->window->event->type;
 	data->mouse = *(xynth_server->window->event->mouse);
 	data->keybd = *(xynth_server->window->event->keybd);
-	
+
 	if (s_socket_api_send(xynth_server->client[id].soc, data, sizeof(s_soc_data_event_t)) != sizeof(s_soc_data_event_t)) {
 		s_free(data);
 		return -1;
@@ -417,7 +417,7 @@ int s_server_socket_request_desktop (int id)
 	int i;
 	int p;
 	s_soc_data_desktop_t *data;
-	
+
 	data = (s_soc_data_desktop_t *) s_calloc(1, sizeof(s_soc_data_desktop_t));
 
 	for (i = 0; i < S_CLIENTS_MAX; i++) {
@@ -474,7 +474,7 @@ err:		debugf(DSER, "Error occured when requesting (%d) from client[%d]. Closing 
 		return -1;
 	}
 
-#if 1
+#if 0
 	debugf(DSER, "Requesting 0x%08x (%s) from client [%d]", req, s_socket_data_to_name(req), id);
 #endif
 
@@ -614,7 +614,7 @@ void s_server_socket_init (void)
 {
 	int fd[3];
 	s_pollfd_t *pfd;
-	
+
 	if (s_socket_api_init()) {
 		debugf(DSER | DSYS | DFAT, "Sockets API initilization failed!");
 	}

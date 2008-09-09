@@ -69,7 +69,7 @@ int w_object_update_to_surface (w_object_t *object, s_surface_t *surface, s_rect
 	s_rect_t update;
 	s_rect_t content;
 	w_object_t *tmp;
-        
+
 	if (object == NULL) {
 		goto end;
 	}
@@ -260,7 +260,7 @@ int w_object_move_correct (w_object_t *object)
 		obj->surface->win->x = object->surface->win->x + obj->surface->buf->x;
 		obj->surface->win->y = object->surface->win->y + obj->surface->buf->y;
 		w_object_move_correct(obj);
-		pos++;	
+		pos++;
 	}
 	return 0;
 }
@@ -312,13 +312,13 @@ int w_object_move_silent (w_object_t *object, int x, int y, int w, int h)
         	object->surface->win->w = new.w;
         	object->surface->win->h = new.h;
         }
-	
+
 	/* re set the content rectangle */
 	object->content->x = 0;
 	object->content->y = 0;
 	object->content->w = object->surface->buf->w;
 	object->content->h = object->surface->buf->h;
-	
+
 	root = object;
 	while (root->parent) {
 		root = root->parent;
@@ -353,7 +353,7 @@ int w_object_move_silent (w_object_t *object, int x, int y, int w, int h)
 		}
 #endif
 	}
-	
+
 	return 0;
 }
 
@@ -605,10 +605,10 @@ int w_object_init (w_window_t *window, w_object_t **object, void (*draw) (w_obje
 	s_list_init(&((*object)->shown));
 	s_list_init(&((*object)->childs));
 	(*object)->parent = parent;
-	
+
 	(*object)->focused = 0;
 	(*object)->showed = 0;
-	
+
 	(*object)->effect = (w_effect_t *) s_malloc(sizeof(w_effect_t));
 	(*object)->effect->effect = EFFECT_NONE;
 	(*object)->effect->level = 0;
@@ -634,7 +634,7 @@ int w_object_init (w_window_t *window, w_object_t **object, void (*draw) (w_obje
 	(*object)->surface->win->y = 0;
 	(*object)->surface->win->w = 0;
 	(*object)->surface->win->h = 0;
-	
+
 	if (parent != NULL) {
 		s_list_add(parent->childs, *object, -1);
 	} else {
@@ -648,9 +648,9 @@ int w_object_init (w_window_t *window, w_object_t **object, void (*draw) (w_obje
 	(*object)->content->y = (*object)->surface->buf->y;
 	(*object)->content->w = (*object)->surface->buf->w;
 	(*object)->content->h = (*object)->surface->buf->h;
-	
+
 	(*object)->data[OBJECT_OBJECT] = *object;
-	
+
 	return 0;
 }
 
