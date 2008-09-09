@@ -90,8 +90,17 @@ void frame_three_button_add_pressed (w_object_t *object, int button)
 		w_listbox_item_init(frame_three_listbox->object, &litem);
 		w_listbox_item_name_set(frame_three_listbox->object, litem, frame_three_editbox->textbox->str);
 		w_listbox_item_add(frame_three_listbox->object, litem);
-		w_scrollbuffer_slide(frame_three_listbox_scrollbuffer->object, 0, 0);
 	}
+}
+
+void frame_three_button_del_pressed (w_object_t *object, int button)
+{
+	w_listbox_item_del(frame_three_listbox->object, w_listbox_item_active_get(frame_three_listbox->object));
+}
+
+void frame_three_button_clear_pressed (w_object_t *object, int button)
+{
+	w_listbox_clear(frame_three_listbox->object);
 }
 
 void select_frame_one_button_pressed (w_object_t *object, int button)

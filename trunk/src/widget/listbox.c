@@ -92,7 +92,8 @@ int w_listbox_item_add (w_object_t *object, w_listbox_item_t *item)
 	} else {
 		lb->active = s_list_get_pos(lb->items, active);
 	}
-	//w_object_draw(object);
+	lb->dirty = 1;
+	w_object_draw(object);
 	return 0;
 }
 
@@ -101,11 +102,20 @@ int w_listbox_item_del (w_object_t *object, w_listbox_item_t *item)
 	int p;
 	w_listbox_t *lb;
 	w_listbox_item_t *active;
+	if (item == NULL) {
+		return 0;
+	}
 	lb = object->data[OBJECT_LISTBOX];
 	active = s_list_get(lb->items, lb->active);
 	p = s_list_get_pos(lb->items, item);
 	s_list_remove(lb->items, p);
 	w_listbox_item_uninit(item);
+	if (lb->active == p) {
+		active = s_list_get(lb->items, p);
+		if (active == NULL) {
+			active = s_list_get(lb->items, p - 1);
+		}
+	}
 	if (active == NULL) {
 		lb->active = 0;
 	} else {
@@ -114,7 +124,8 @@ int w_listbox_item_del (w_object_t *object, w_listbox_item_t *item)
 	if (lb->active < 0) {
 		lb->active = 0;
 	}
-	//w_object_draw(object);
+	lb->dirty = 1;
+	w_object_draw(object);
 	return 0;
 }
 
@@ -123,13 +134,17 @@ int w_listbox_clear (w_object_t *object)
 	w_listbox_t *lb;
 	w_listbox_item_t *li;
 	lb = object->data[OBJECT_LISTBOX];
-	while ((li = w_listbox_item_active_get(object)) != NULL) {
-		w_listbox_item_del(object, li);
+	while (!s_list_eol(lb->items, 0)) {
+		li = s_list_get(lb->items, 0);
+		s_list_remove(lb->items, 0);
+		w_listbox_item_uninit(li);
 	}
+	lb->dirty = 1;
 	lb->height = 0;
 	lb->yoffset = 0;
 	lb->active = 0;
 	lb->pactive = -1;
+	w_object_draw(object);
 	return 0;
 }
 
@@ -137,7 +152,7 @@ w_listbox_item_t * w_listbox_item_active_get (w_object_t *object)
 {
 	w_listbox_t *lb;
 	lb = object->data[OBJECT_LISTBOX];
-	return s_list_get(lb->items, lb->active); 
+	return s_list_get(lb->items, lb->active);
 }
 
 int w_listbox_item_active_set (w_object_t *object, w_listbox_item_t *listbox_item)
@@ -150,6 +165,7 @@ int w_listbox_item_active_set (w_object_t *object, w_listbox_item_t *listbox_ite
 		return -1;
 	}
 	lb->active = active;
+	lb->dirty = 1;
 	w_object_draw(object);
 	return 0;
 }
@@ -168,11 +184,9 @@ void w_listbox_slide (w_object_t *object, int vertical, int horizontal, int *yto
 			lb->active -= 1;
 		}
 	}
-	w_listbox_draw(object);
-	//w_object_update(object, object->surface->win);
+	w_object_draw(object);
 	(*ytotal) = lb->height;
 	(*yoffset) = lb->yoffset;
-	//printf("%d %d -> %d %d\n", vertical, horizontal, lb->height, lb->yoffset);
 }
 
 void w_listbox_draw (w_object_t *object)
@@ -199,9 +213,12 @@ void w_listbox_draw (w_object_t *object)
 		if (((lb->active + 1) * h) + lb->yoffset > lb->object->content->h) {
 			w_scrollbuffer_slide(lb->scrollbuffer, (((lb->active + 1) * h) + lb->yoffset) - lb->object->content->h, 0);
 			return;
-		}
-		if ((lb->active * h) + lb->yoffset < 0) {
+		} else if ((lb->active * h) + lb->yoffset < 0) {
 			w_scrollbuffer_slide(lb->scrollbuffer, ((lb->active * h) + lb->yoffset), 0);
+			return;
+		} else if (lb->dirty) {
+			lb->dirty = 0;
+			w_scrollbuffer_slide(lb->scrollbuffer, 0, 0);
 			return;
 		}
 	}
@@ -338,6 +355,7 @@ int w_listbox_init (w_window_t *window, w_listbox_t **listbox, w_object_t *paren
 	w_frame_init(window, &(lb->frame), FRAME_PANEL | FRAME_SUNKEN, parent);
 	s_list_init(&(lb->items));
 	s_list_init(&(lb->item_images));
+	lb->dirty = 1;
 	lb->height = 0;
 	lb->yoffset = 0;
 	lb->active = 0;

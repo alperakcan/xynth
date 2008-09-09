@@ -18,7 +18,7 @@
 
 /* reduce memory usage, this is a bit hacky
  * some speed consumptions ;|
- * 
+ *
  * levels;
  * 	0: no memory optimizations, memory hungary but faster
  * 	1: disables image caching, reduces memory usage, especially
@@ -82,7 +82,7 @@ int w_effect_apply (s_surface_t *surface, s_rect_t *rect, w_object_t *effect, w_
 
 /** @defgroup widget_object Widget Library - Object API
   * @brief
-  * 
+  *
   * @example
   *
   * for further information look in demo/ directory
@@ -295,6 +295,7 @@ struct w_listbox_s {
 	int pactive;
 	int height;
 	int yoffset;
+	int dirty;
 	void (*changed) (w_object_t *object, int active);
 	w_object_t *scrollbuffer;
 };
@@ -398,6 +399,7 @@ struct w_clistbox_s {
 	unsigned int activeshadow;
 	unsigned int inactiveshape;
 	unsigned int inactiveshadow;
+	int dirty;
 	int active;
 	int pactive;
 	int height;
