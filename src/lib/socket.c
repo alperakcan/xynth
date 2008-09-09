@@ -121,7 +121,7 @@ int s_socket_request_configure (s_window_t *window, int soc, int form)
 		strncpy(data->title, window->title, S_TITLE_MAX);
 	}
 	data->title[S_TITLE_MAX - 1] = '\0';
-	
+
 	if (s_socket_api_send(soc, data, sizeof(s_soc_data_configure_t)) != sizeof(s_soc_data_configure_t)) {
 		s_free(data);
 		return -1;
@@ -210,7 +210,7 @@ int s_socket_request (s_window_t *window, S_SOC_DATA req, ...)
 	s_rect_t *coor;
 	s_event_t *event;
 	struct pollfd pollfd;
-	
+
 again:	if (window->running <= 0) {
 		return -1;
 	}
@@ -240,8 +240,8 @@ again:	if (window->running <= 0) {
 		debugf(DCLI, "[%d] Error occured when requesting (%d) from server", window->id, req);
 		goto err0;
 	}
-	
-#if 1
+
+#if 0
 	debugf(DCLI, "[%d] Requesting 0x%08x (%s) from server", window->id, req, s_socket_data_to_name(req));
 #endif
 
@@ -305,7 +305,7 @@ int s_socket_listen_event (s_window_t *window, int soc)
 		s_free(data);
 		return -1;
 	}
-	
+
 	dtype = data->type & (EVENT_TYPE_MOUSE_ENTER | EVENT_TYPE_MOUSE_EXIT);
 	if ((dtype == 0) ||
 	    ((dtype != 0) &&
@@ -349,7 +349,7 @@ int s_socket_listen_expose (s_window_t *window, int soc)
 	window->surface->linear_buf_width = data->linear_buf_width;
 	window->surface->linear_buf_pitch = data->linear_buf_pitch;
 	window->surface->linear_buf_height = data->linear_buf_height;
-	
+
 	/* configure event */
 	change = 0;
 	if (r_old.x != window->surface->win->x) { change |= EVENT_TYPE_CONFIG_X; }
@@ -437,7 +437,7 @@ int s_socket_listen_parse (s_window_t *window, int soc)
 		goto err0;
 	}
 
-#if 1
+#if 0
 	debugf(DCLI, "[%d] Received 0x%08x (%s) from server", window->id, req, s_socket_data_to_name(req));
 #endif
 
@@ -709,7 +709,7 @@ int s_socket_init_wakeup (s_window_t *window)
 	if (!s_pollfd_add(window, pfd)) {
 		goto err2;
 	}
-	
+
 	return 0;
 err2:	s_pipe_api_close(fd[0]);
 	s_pipe_api_close(fd[1]);
@@ -752,4 +752,4 @@ int s_socket_init (s_window_t *window)
 
 err1:	s_pollfd_uninit(pfd);
 err0:	return -1;
-}	
+}

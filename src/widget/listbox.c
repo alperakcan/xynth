@@ -114,6 +114,8 @@ int w_listbox_item_del (w_object_t *object, w_listbox_item_t *item)
 		active = s_list_get(lb->items, p);
 		if (active == NULL) {
 			active = s_list_get(lb->items, p - 1);
+		} else {
+			lb->pactive = -1;
 		}
 	}
 	if (active == NULL) {
