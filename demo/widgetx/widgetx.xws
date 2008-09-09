@@ -424,6 +424,29 @@
 					<show>yes</show>
 				</object>
 			</object>
+			<object id="frame_three_button_hide" type="button">
+				<move>
+					<x>250</x>
+					<y>130</y>
+					<w>70</w>
+					<h>20</h>
+				</move>
+				<pressed>frame_three_button_hide_pressed</pressed>
+				<show>yes</show>
+				<object id="frame_three_button_hide_textbox" type="textbox">
+					<style>
+						<shape>FRAME_NOFRAME</shape>
+					</style>
+					<string>"Hide Listbox"</string>
+					<move>
+						<x>0</x>
+						<y>0</y>
+						<w>70</w>
+						<h>20</h>
+					</move>
+					<show>yes</show>
+				</object>
+			</object>
 			<object id="frame_three_listbox_scrollbuffer" type="scrollbuffer">
 				<object id="frame_three_listbox" type="listbox">
 					<scrollbuffer>frame_three_listbox_scrollbuffer</scrollbuffer>

@@ -103,6 +103,19 @@ void frame_three_button_clear_pressed (w_object_t *object, int button)
 	w_listbox_clear(frame_three_listbox->object);
 }
 
+static int frame_three_listbox_scrollbuffer_hided = 0;
+void frame_three_button_hide_pressed (w_object_t *object, int button)
+{
+	if (frame_three_listbox_scrollbuffer_hided == 0) {
+		w_textbox_set_str(frame_three_button_hide_textbox->object, "Show Listbox");
+		w_object_hide(frame_three_listbox_scrollbuffer->object);
+	} else {
+		w_textbox_set_str(frame_three_button_hide_textbox->object, "Hide Listbox");
+		w_object_show(frame_three_listbox_scrollbuffer->object);
+	}
+	frame_three_listbox_scrollbuffer_hided = (frame_three_listbox_scrollbuffer_hided + 1) % 2;
+}
+
 void select_frame_one_button_pressed (w_object_t *object, int button)
 {
 	w_object_show(frame_one->object);
