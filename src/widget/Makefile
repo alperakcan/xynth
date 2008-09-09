@@ -23,7 +23,8 @@ libwidget.so_files-y = button.c \
                        textbox.c \
                        window.c \
                        listbox.c \
-                       clistbox.c
+                       clistbox.c \
+                       toolbar.c
 libwidget.so_libraries-y = ../lib/
 libwidget.so_ldflags-y   = -lxynth
 

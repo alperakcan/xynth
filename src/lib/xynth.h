@@ -362,7 +362,7 @@ typedef enum {
 	EVENT_TYPE_MOUSE_ENTER            = 0x00000400,
 	EVENT_TYPE_MOUSE_EXIT             = 0x00000800,
 	EVENT_TYPE_MOUSE_HINT1            = 0x00001000,
-	EVENT_TYPE_MOUSE_HINT2           = 0x00002000,
+	EVENT_TYPE_MOUSE_HINT2            = 0x00002000,
 	EVENT_TYPE_EXPOSE                 = 0x00004000,
 	EVENT_TYPE_CONFIG                 = 0x00008000,
 	EVENT_TYPE_CONFIG_X               = 0x00010000,
@@ -370,7 +370,7 @@ typedef enum {
 	EVENT_TYPE_CONFIG_W               = 0x00040000,
 	EVENT_TYPE_CONFIG_H               = 0x00080000,
 	EVENT_TYPE_FOCUS                  = 0x00100000,
-	EVENT_TYPE_FOCUS_IN               = 0x00200000, 
+	EVENT_TYPE_FOCUS_IN               = 0x00200000,
 	EVENT_TYPE_FOCUS_OUT              = 0x00400000,
 	EVENT_TYPE_DESKTOP                = 0x00800000,
 	EVENT_TYPE_TIMER                  = 0x01000000,
@@ -734,7 +734,7 @@ int s_gettext_init (s_window_t *window);
 /** @brief resolution is miliseconds, and is enough for any gui related work.
   *        if you need a high presicion you should not use this function,
   *        consider looking to your system specs.
-  * 
+  *
   * @returns the time value in miliseconds
   */
 long long s_gettimeofday (void);
@@ -1102,7 +1102,7 @@ int s_surface_create_from_data (s_surface_t **surface, int width, int height, in
 
 /** @brief destroys given virtual surface, vbuf will not be freed unless it was
   *        allocated internaly.
-  * 
+  *
   * @param *surface - the surface
   * @return 0 on success.
   */
@@ -1185,9 +1185,9 @@ int s_putmaskpart (unsigned char *dp, int dw, int dh, int x, int y, int w, int h
   * @brief this api is used for setting and processing handlers, and callback for input events.
   *
   * @example
-  * 
+  *
   * for further information look in demo/ directory
-  * 
+  *
   * @code
   * void simpe_handle_onover (s_window_t *window, s_event_t *event, s_handler_t *handler)
   * {
@@ -1355,17 +1355,17 @@ int s_handlers_uninit (s_window_t *window);
   * @brief this api is used for simple hashtable support.
   *
   * @example
-  * 
+  *
   * for further information look in demo/ directory
-  * 
+  *
   * @code
   * {
   * 	s_hashtable_t *htable;
   * 	s_hashtable_init(&htable, S_HASHTABLE_MASK, S_HASHTABLE_DEPTH);
   * 	s_hashtable_add(htable, "name-0", (void *) "value-0");
   *	s_hashtable_add(htable, "name-1", (void *) "value-1");
-  * 	printf("name-0: %s\n", s_hashtable_get_data(htable, "name-0")); 
-  * 	printf("name-1: %s\n", s_hashtable_get_data(htable, "name-1")); 
+  * 	printf("name-0: %s\n", s_hashtable_get_data(htable, "name-0"));
+  * 	printf("name-1: %s\n", s_hashtable_get_data(htable, "name-1"));
   * 	s_hashtable_uninit(&htable);
   * }
   * @endcode
@@ -1386,7 +1386,7 @@ typedef enum S_HASHTABLE {
 } S_HASHTABLE;
 
 /** hashtable node struct
-  */ 
+  */
 struct s_hashtable_node_s {
 	/** node hash key (32 bit) */
 	unsigned long int key;
@@ -1403,7 +1403,7 @@ struct s_hashtable_node_s {
 };
 
 /** hashtable table struct
-  */ 
+  */
 struct s_hashtable_table_s {
 	/** tree tables */
 	s_hashtable_table_t *table;
@@ -1412,7 +1412,7 @@ struct s_hashtable_table_s {
 };
 
 /** hashtable struct
-  */ 
+  */
 struct s_hashtable_s {
 	/** hashtable size for allocation */
 	unsigned int size;
@@ -2148,7 +2148,7 @@ int s_render_composite (S_RENDER_OPERATOR op, s_render_t *source, s_render_t *ma
 /*@{*/
 
 /** socket data types
-  */  
+  */
 typedef enum {
 	/** nothing ;) */
 	SOC_DATA_NOTHING      = 0x0,
@@ -2181,7 +2181,7 @@ typedef enum {
   * @param sdata - the data
   * @return pointer to name of data
   */
-const char * s_socket_data_to_name (S_SOC_DATA sdata); 
+const char * s_socket_data_to_name (S_SOC_DATA sdata);
 
 /** @brief send new window request to server
   *
@@ -2331,7 +2331,7 @@ int s_socket_ierrw_f (s_window_t *window, s_pollfd_t *pfd);
   * @param *pfd    - pollfd handler for window socket
   * @returns 0 on success
   */
-int s_socket_closew_f (s_window_t *window, s_pollfd_t *pfd);	
+int s_socket_closew_f (s_window_t *window, s_pollfd_t *pfd);
 
 /** @brief initialize uds socket connection between server and window
   *
@@ -2461,7 +2461,7 @@ struct s_surface_s {
 /** @brief initialize the main video buffer surface struct
   *
   * @param *window - the window
-  * @returns 0 on success 
+  * @returns 0 on success
   */
 int s_surface_init (s_window_t *window);
 
@@ -2522,7 +2522,7 @@ int s_surface_clip_real (s_surface_t *surface, int x, int y, int w, int h, s_rec
 /** @brief expose event handler
   *
   * @param *window  - the window
-  * @param *changed - the rectangular area that will be updated 
+  * @param *changed - the rectangular area that will be updated
   * @returns no return
   */
 void s_surface_changed (s_window_t *window, s_rect_t *changed);
@@ -2737,7 +2737,7 @@ int s_thread_cond_timedwait (s_thread_cond_t *cond, s_thread_mutex_t *mut, int m
 
 /** @brief creates a new thread of control that executes concurrently
   *        with the calling thread. The new thread applies the function
-  *        passing it as first argument. 
+  *        passing it as first argument.
   *
   * @param *f   - pointer to the function.
   * @param *farg - argument to pass to function.
@@ -2922,12 +2922,12 @@ int s_timers_uninit (s_window_t *window);
   * 		debugf(DCLI, "[%d] event->type : 0x%08X, button : 0x%08X, buttons : 0x%08X", window->id, event->type, event->mouse->b, event->mouse->buttons);
   * 	}
   * }
-  * 
+  *
   * void simple_atexit (s_window_t *window)
   * {
   * 	debugf(DCLI, "[%d] exited", window->id);
   * }
-  * 
+  *
   * int main (int argc, char *argv[])
   * {
   * 	int x = 60;
@@ -3117,35 +3117,35 @@ int s_window_new (s_window_t *window, s_window_type_t type, s_window_t *parent);
   *
   * @param **window - pointer to window pointer
   * @returns 0 on success
-  */ 
+  */
 int s_window_init (s_window_t **window);
 
 /** @brief uninitializes the window struct.
   *
   * @param *window - pointer to window struct
   * @returns no return
-  */ 
+  */
 void s_window_uninit (s_window_t *window);
 
 /** @brief exits the client window
   *
   * @param *window - pointer to window struct
   * @returns no return
-  */ 
+  */
 void s_window_exit (s_window_t *window);
 
 /** @brief quits the client window
   *
   * @param *window - pointer to window struct
   * @returns no return
-  */ 
+  */
 void s_window_quit (s_window_t *window);
 
 /** @brief wakes up the window
   *
   * @param *window - pointer to window struct
   * @returns 0 on success
-  */ 
+  */
 int s_window_wakeup (s_window_t *window);
 
 /** @brief event loop thread function.
@@ -3204,25 +3204,25 @@ void s_window_atexit (s_window_t *window, void (*f) (s_window_t *));
   * 	</a>
   * 	<e>e</e>
   * </xml>
-  * 
+  *
   * {
   * 	s_xml_node_t *xml;
   * 	s_xml_node_t *xml_e;
   * 	s_xml_node_t *xml_d;
   * 	s_xml_node_t *xml_c;
   * 	s_xml_node_attr_t *xml_c_attr;
-  * 
+  *
   * 	s_xml_parse_file(&xml, &fle);
-  * 
+  *
   * 	xml_d = s_xml_node_get_path(xml, "xml/a/c/d");
   * 	printf("xml/a/c/d value: %s\n", s_xml_node_get_value(xml_d);
   * 	xml_e = s_xml_node_get_path(xml, "xml/e");
   * 	printf("xml/e value: %s\n", s_xml_node_get_value(xml_e);
-  * 
+  *
   * 	xml_c = s_xml_node_get_path(xml, "xml/a/c");
   * 	xml_c_attr = s_xml_node_get_attr(xml_c, "c0");
   * 	printf("xml/c attr c0 value: %s\n", s_xml_node_get_attr_value(xml_c, "c0"));
-  * 
+  *
   * 	s_xml_node_uninit(xml);
   * }
   * @endcode
