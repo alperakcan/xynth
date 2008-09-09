@@ -148,7 +148,7 @@ void w_scrollbuffer_slide (w_object_t *object, int vertical, int horizontal)
 	    sb->child) {
 		sb->slide(sb->child, vertical, horizontal, &ytotal, &yoffset);
 		if (ytotal <= 0) {
-			return;
+			ytotal = 1;
 		}
 		x = sb->vertical->object->content->x + 4;
 		y = sb->vertical->object->content->y + 26;
