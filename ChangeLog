@@ -1,3 +1,7 @@
+Wed 10 Sep 2008 03:59:05 AM EEST
+	- rev 1036
+	- listbox, clistbox, scrollbuffer imporvements for widget library
+	- sdl port update
 
 Mon 30 Jun 2008 11:52:21 AM EEST
 	- rev 1018
