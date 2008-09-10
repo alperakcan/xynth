@@ -257,6 +257,9 @@ void w_listbox_draw (w_object_t *object)
 		}
 		lb->pactive = lb->active;
 	}
+	/*
+	 * TODO - calling object update causes infinite loop while WIDGET_OPTIMIZE_MEMORY == 3 is selected
+	 */
 	w_object_update(lb->object, lb->object->surface->win);
 end:	return;
 }
