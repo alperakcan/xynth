@@ -111,7 +111,7 @@ doxy-doc:
 	GENERATE_HTMLHELP='NO' \
 	GENERATE_CHI='NO' \
 	GENERATE_HTML='YES' \
-	GENERATE_LATEX='NO' \
+	GENERATE_LATEX='YES' \
 	EXCLUDE_PATTERNS='dist ports tools demo expat freetype2 libpng libz pixman pthread_w32' \
 	/usr/bin/doxygen \
 	./doxygen.cfg
