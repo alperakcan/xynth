@@ -26,6 +26,7 @@
  * 	2: will free hided object's and its childs' buffers (vbuf and matrix)
  * 	   slowers show() hide() processes, but cute.
  * 	3: much more memory optimization, too slow, draws everthing on the fly.
+ *         some objects might not work correctly.
  */
 #define WIDGET_OPTIMIZE_MEMORY 2
 

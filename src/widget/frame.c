@@ -131,7 +131,7 @@ void w_frame_draw_image (w_object_t *object, w_frame_image_t *fimg)
 #if defined(WIDGET_OPTIMIZE_MEMORY) && WIDGET_OPTIMIZE_MEMORY >= 1
 			s_image_uninit(img);
 #endif
-			break;	
+			break;
 		}
 		case 9:
 		{
@@ -185,7 +185,7 @@ void w_frame_draw_image (w_object_t *object, w_frame_image_t *fimg)
 			s_image_get_mat(imgs[6]);
 			s_image_get_mat(imgs[7]);
 			s_image_get_mat(imgs[8]);
-			
+
 			/* 0 1 2
 			 * 3 4 5
 			 * 6 7 8
@@ -311,7 +311,7 @@ void w_frame_draw_image (w_object_t *object, w_frame_image_t *fimg)
 #endif
 			break;
 		}
-	}				
+	}
 }
 
 void w_frame_draw (w_object_t *object)
@@ -341,7 +341,7 @@ void w_frame_draw (w_object_t *object)
         		return;
         	}
         }
-        
+
 	memset(object->surface->matrix, 0xff, sizeof(char) * object->surface->width * object->surface->height);
         switch (frame->style & FRAME_MSHAPE) {
         	case FRAME_EMPTY:
@@ -456,7 +456,7 @@ swinpanel_sunken:		case FRAME_SUNKEN:
 			break;
 	}
 
-	s_fillbox(object->surface, object->content->x, 
+	s_fillbox(object->surface, object->content->x,
 	                           object->content->y,
 	                           object->content->w,
 	                           object->content->h,
