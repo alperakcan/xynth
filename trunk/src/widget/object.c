@@ -284,7 +284,7 @@ int w_object_move_silent (w_object_t *object, int x, int y, int w, int h)
 
         if (object->parent != NULL) {
 #if 1
-		/* will be allow to put objects yo any place ? and,
+		/* will be allow to put objects to any place ? and,
 		 * ofcourse updating to screen will be done in parent's bound
 		 */
 		*(object->surface->buf) = new;
