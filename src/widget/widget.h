@@ -123,10 +123,12 @@ typedef enum {
 	OBJECT_LISTBOX          = 0xa,
 	/** widget is control listbox */
 	OBJECT_CLISTBOX         = 0xb,
+	/** widget is toolbar */
+	OBJECT_TOOLBAR          = 0xc,
 	/** widget is window */
-	OBJECT_WINDOW		= 0xc,
+	OBJECT_WINDOW		= 0xd,
 	/** number of widgets */
-	OBJECT_OBJECTS 		= 0xd
+	OBJECT_OBJECTS 		= 0xe
 } OBJECT;
 
 /** object struct
@@ -584,6 +586,9 @@ void w_scrollbuffer_set_child (w_object_t *object, w_object_t *child);
 void w_scrollbuffer_geometry (w_object_t *object);
 void w_scrollbuffer_uninit (w_object_t *object);
 int w_scrollbuffer_init (w_window_t *window, w_scrollbuffer_t **scrollbuffer, w_object_t *parent);
+
+/* toolbar.c */
+
 
 /* window.c */
 struct w_window_s {
