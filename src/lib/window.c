@@ -24,7 +24,7 @@ void s_window_set_cursor (s_window_t *window, s_cursor_type_t cursor)
 	}
 }
 
-void s_window_set_title (s_window_t *window, char *fmt, ...)
+void s_window_set_title (s_window_t *window, const char *fmt, ...)
 {
         int n;
         va_list ap;
@@ -280,7 +280,7 @@ void * s_window_loop (void *arg)
 void * s_window_main (void *arg)
 {
 	s_window_t *window = (s_window_t *) arg;
-	
+
 	switch (window->type & WINDOW_TYPES) {
 		case WINDOW_TYPE_MAIN:
 			s_window_loop(window);

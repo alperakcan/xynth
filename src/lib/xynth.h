@@ -71,6 +71,7 @@ typedef enum {
 } s_cursor_type_t;
 
 typedef enum {
+	KEYBOARD_FLAG_NONE	 = 0x00,
 	KEYBOARD_FLAG_NUMLOCK	 = 0x01,
 	KEYBOARD_FLAG_CAPSLOCK	 = 0x02,
 	KEYBOARD_FLAG_LEFTCTRL	 = 0x04,
@@ -3053,7 +3054,7 @@ void s_window_set_cursor (s_window_t *window, s_cursor_type_t cursor);
   * @param fmt     - the title
   * @returns no returns
   */
-void s_window_set_title (s_window_t *window, char *fmt, ...);
+void s_window_set_title (s_window_t *window, const char *fmt, ...);
 
 /** @brief redraws the form of the desired window
   *
