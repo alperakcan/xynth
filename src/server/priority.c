@@ -23,7 +23,7 @@ void s_server_pri_set (S_SURFACE_CHNGF flag, ...)
         int id = 0;
   	s_rect_t *c0 = NULL;
 	s_rect_t *c1 = NULL;
-	
+
 	va_start(ap, flag);
 
 	switch (flag) {
@@ -131,11 +131,11 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 	int p;
 	int p_old;
 	int ontop;
-	
+
 	int n;
 	s_rect_t *r;
 	s_region_t *region;
-	
+
 	int ri;
 	int rp;
 	int rj;
@@ -235,7 +235,7 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 		default:
 			debugf(DSER | DFAT, "Unknown surface changed flag");
 	}
-	
+
 #if 0
 	if ((flag == SURFACE_FOCUS) ||
 	    (flag == SURFACE_REFRESH)||
@@ -266,10 +266,12 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 		}
 	}
 #endif
-	
+
 	s_server_window_handlers_del_mouse();
 	if ((i = s_server_pri_id(0)) >= 0) {
-		s_server_window_handlers_add_mouse(i);
+		if ((xynth_server->client[i].type & WINDOW_TYPE_NOFORM) == 0) {
+			s_server_window_handlers_add_mouse(i);
+		}
 	}
 
 	r = s_region_rectangles(region);
@@ -282,7 +284,7 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 	memset(&reg, 0, sizeof(s_region_t));
 	memset(regsb, 0, sizeof(s_region_t) * S_CLIENTS_MAX);
 	memset(regsw, 0, sizeof(s_region_t) * S_CLIENTS_MAX);
-	
+
 	for (rp = S_CLIENTS_MAX - 1; rp >= 0; rp--) {
 		ri = s_server_pri_id(rp);
 		if (ri < 0) {
@@ -313,7 +315,7 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 			}
 		}
 	}
-	
+
 	for (rp = S_CLIENTS_MAX - 1; rp >= 0; rp--) {
 		ri = s_server_pri_id(rp);
 		if (ri < 0) {
@@ -344,7 +346,7 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 			}
 		}
 	}
-	
+
 	for (rp = S_CLIENTS_MAX - 1; rp >= 0; rp--) {
 		ri = s_server_pri_id(rp);
 		if (ri < 0) {
@@ -364,7 +366,7 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 		}
 	}
 
-	for (ontop = -1; ontop <= 1; ontop++) {	
+	for (ontop = -1; ontop <= 1; ontop++) {
 		for (rp = S_CLIENTS_MAX - 1; rp >= 0; rp--) {
 			ri = s_server_pri_id(rp);
 			if (ri < 0) {
@@ -388,10 +390,10 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 			s_region_clear(&reg);
 		}
 	}
-	
+
 	s_server_cursor_matrix_add();
 	s_server_cursor_draw();
-	
+
 	r = s_region_rectangles(region);
 	n = s_region_num_rectangles(region);
 	while (n--) {
@@ -407,7 +409,7 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 		rfake.x = 0; rfake.y = 0; rfake.w = 0; rfake.h = 0;
 		s_server_socket_request(SOC_DATA_EXPOSE, p_old, &rfake);
 	}
-	
+
 	s_region_clear(&reg);
 	for (ri = 0; ri < S_CLIENTS_MAX; ri++) {
 		s_region_clear(&regsb[ri]);

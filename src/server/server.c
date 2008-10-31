@@ -350,7 +350,7 @@ int s_server_init (void)
 		xynth_server->client[i].alwaysontop = 0;
 		xynth_server->client[i].cursor = CURSOR_TYPE_ARROW;
 	}
-	
+
         xynth_server->window = (s_window_t *) s_calloc(1, sizeof(s_window_t));
         xynth_server->window->surface = (s_surface_t *) s_calloc(1, sizeof(s_surface_t));
 	xynth_server->window->surface->buf = (s_rect_t *) s_calloc(1, sizeof(s_rect_t));
@@ -369,7 +369,7 @@ int s_server_init (void)
 	xynth_server->window->surface->linear_buf_width = 0;
 	xynth_server->window->surface->linear_buf_pitch = 0;
 	xynth_server->window->surface->linear_buf_height = 0;
-	
+
         if (xynth_server->driver->server_init != NULL) {
 		mode = xynth_server->driver->server_init(&config);
 		if (mode < 0) {
@@ -456,7 +456,7 @@ int s_server_init (void)
 	s_pollfds_init(xynth_server->window);
 	s_timers_init(xynth_server->window);
 	s_server_socket_init();
-	
+
 	{
 		s_video_input_t **input;
 		for (input = xynth_server->driver->input; *input; input++) {
@@ -475,7 +475,7 @@ int s_server_init (void)
 			}
 		}
 	}
-	 
+
 	for (i = 0; i < 20; i++) {
 		s_handler_init(&(xynth_server->whndl[i]));
 	}
@@ -519,12 +519,12 @@ void s_server_uninit (void)
 {
         int i;
         int v;
-        
+
 	s_server_window_handlers_del_mouse();
 	for (i = 0; i < 20; i++) {
 		s_handler_uninit(xynth_server->whndl[i]);
 	}
-	
+
 	s_timers_uninit(xynth_server->window);
 	s_pollfds_uninit(xynth_server->window);
 	s_handlers_uninit(xynth_server->window);
