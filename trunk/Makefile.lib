@@ -300,12 +300,12 @@ cmd_widgetc        = echo "$(_cmd_widgetc)" > $$@.cmd        ; $(_cmd_widgetc)
 #
 # DO
 #
-do_depend.c       = @$(MKDIR) .$1; $(disp_depend.c)       ; $(cmd_depend.c)
+do_depend.c       = @$(disp_depend.c)       ; $(cmd_depend.c)
 do_compile.c      = @$(disp_compile.c)      ; $(cmd_compile.c)
 do_link.c         = @$(disp_link.c)         ; $(cmd_link.c)
 do_link_so.c      = @$(disp_link_so.c)      ; $(cmd_link_so.c)
 
-do_depend.c.host  = @$(MKDIR) .$1; $(disp_depend.c.host)  ; $(cmd_depend.c.host)
+do_depend.c.host  = @$(disp_depend.c.host)  ; $(cmd_depend.c.host)
 do_compile.c.host = @$(disp_compile.c.host) ; $(cmd_compile.c.host)
 do_link.c.host    = @$(disp_link.c.host)    ; $(cmd_link.c.host)
 do_link_so.c.host = @$(disp_link_so.c.host) ; $(cmd_link_so.c.host)
@@ -320,7 +320,7 @@ do_cp             = @$(disp_cp)             ; $(cmd_cp)
 do_mkdir          = @$(disp_mkdir)          ; $(cmd_mkdir)
 do_clean          = @$(disp_clean)          ; $(cmd_clean)
 
-do_widgetc        = @$(MKDIR) .$1; $(disp_widgetc)        ; $(cmd_widgetc)
+do_widgetc        = @$(disp_widgetc)        ; $(cmd_widgetc)
 
 #
 # Functions
@@ -343,13 +343,17 @@ define target-defaults_base
     $(eval $1_includes  = $(addprefix -I, $($1_includes-y)))
     $(eval $1_libraries = $(addprefix -L, $($1_libraries-y)))
     $(eval $1_ldflags   = $($1_ldflags-y))
+    $(eval $1_directories = $(sort $(dir $($1_objects) $($1_wobjects))))
     
     targets-blds += $1
     targets-objs += $($1_objects)
     targets-deps += $($1_depends)
     targets-clns += $1_clean
     
-    $($1_depends): $($1_wheaders)
+    $($1_directories):
+	$(do_mkdir)
+    
+    $($1_depends): $($1_directories) $($1_wheaders)
 
     $($1_wsources): .$1/%_xml.c: %.xws
 	$(do_widgetc)
