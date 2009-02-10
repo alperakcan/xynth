@@ -240,7 +240,7 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 			debugf(DSER | DFAT, "Unknown surface changed flag");
 	}
 
-#if 1
+#if 0
 	if ((flag == SURFACE_FOCUS) ||
 	    (flag == SURFACE_REFRESH)||
 	    (flag == SURFACE_REDRAW) ||

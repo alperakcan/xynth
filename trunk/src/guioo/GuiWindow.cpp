@@ -1002,7 +1002,7 @@ void GuiWindow::eventHandlerProc(s_window_t *window, s_event_t *event)
 	}
 
 	if (event->type & EVENT_TYPE_EXPOSE) {
-		pWindow->redrawWindow();
+		pWindow->redrawWindow(*event->expose->rect);
 	}
 }
 
