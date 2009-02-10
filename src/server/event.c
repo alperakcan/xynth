@@ -20,10 +20,10 @@ void s_server_event_parse_keyboard (s_video_input_data_keybd_t *keybd)
 {
 	long long time;
 	s_keyboard_flag_t keycode_flag;
-	
+
 	time = s_gettimeofday();
 	keycode_flag = xynth_server->window->event->keybd->flag;
-        
+
 	if (keybd->state == EVENT_TYPE_KEYBOARD_PRESSED) {
 		switch (keybd->keycode) {
 			case KEYBOARD_BUTTON_NUM_LOCK:
@@ -152,7 +152,7 @@ int s_event_changed_ (s_window_t *window)
 {
 	int r = 1;
 	s_event_t *event;
-	
+
 	if (xynth_server->ph > 0) {
 		/* do not parse || send any mouse or keybd event until buttons released
 		 */
@@ -161,7 +161,7 @@ int s_event_changed_ (s_window_t *window)
 		}
 //		return 0;
 	}
-	
+
 	if (window->event->type & EVENT_TYPE_MOUSE) {
 		if (!s_event_init(&event)) {
 			event->type = window->event->type;
@@ -192,7 +192,7 @@ void s_server_event_changed (void)
 	oid = xynth_server->cursor.xyid_old;
 	remote = xynth_server->window->event->type & EVENT_TYPE_REMOTE;
 	xynth_server->window->event->type &= ~EVENT_TYPE_REMOTE;
-	
+
 	if (xynth_server->window->event->type & EVENT_TYPE_MOUSE) {
 		xynth_server->window->event->type &= EVENT_TYPE_MOUSE_MASK;
 		if (xynth_server->window->event->type & EVENT_TYPE_MOUSE_PRESSED) {

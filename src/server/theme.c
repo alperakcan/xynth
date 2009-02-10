@@ -33,7 +33,7 @@ void s_server_theme_set (char *name)
 	char *error;
 	void *handle;
 	void (*theme_init) (s_theme_t *theme);
-	
+
 	tfile = (char *) s_malloc(strlen(CONFIG_PATH_INSTALL) + strlen(CONFIG_PATH_THEMES) + strlen(name) + 10);
 	sprintf(tfile, "%s/%s/%s.so", CONFIG_PATH_INSTALL, CONFIG_PATH_THEMES, name);
 	handle = dlopen(tfile, RTLD_LAZY);
@@ -75,7 +75,7 @@ void s_server_theme_set (char *name)
 	s_font_set_size(xynth_server->theme.font[0], xynth_server->theme.form[0][THEME_FORM_TOP_3].h - 8);
 	s_font_init(&(xynth_server->theme.font[1]), "arial.ttf");
 	s_font_set_size(xynth_server->theme.font[1], xynth_server->theme.form[1][THEME_FORM_TOP_3].h - 8);
-	
+
 #if defined(CONFIG_THEME_PLUGIN)
 	dlclose(handle);
 #endif
@@ -93,10 +93,10 @@ void s_server_theme_uninit (void)
 	int f;
 	int b;
 	int v;
-	
+
 	s_font_uninit(xynth_server->theme.font[0]);
 	s_font_uninit(xynth_server->theme.font[1]);
-	
+
 	for (f = 0; f < THEME_FORM_MAX; f++) {
 		for (v = 0; v < 2; v++) {
 			s_image_free_buf(&xynth_server->theme.form[v][f]);
