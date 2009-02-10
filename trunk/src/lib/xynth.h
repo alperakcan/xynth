@@ -496,6 +496,8 @@ void * s_malloc (unsigned int size);
 void * s_calloc (unsigned int nmemb, unsigned int size);
 void * s_realloc (void *ptr, unsigned int size);
 void s_free (void *ptr);
+void s_trace_start (void);
+void s_trace_stop (void);
 
 /* child.c */
 int s_child_add (s_window_t *window, s_window_t *child);
@@ -707,7 +709,7 @@ int s_eventq_get (s_window_t *window, s_event_t **event);
 int s_eventq_wait (s_window_t *window, s_event_t **event);
 
 /* font.c */
-int s_font_init (s_font_t **font, char *name);
+int s_font_init (s_font_t **font, const char *name);
 int s_font_uninit (s_font_t *font);
 int s_font_set_size (s_font_t *font, int size);
 int s_font_set_str (s_font_t *font, char *str);
@@ -2453,6 +2455,8 @@ struct s_surface_s {
 	S_SURFACE_MODE need_expose;
 	/** device name */
 	char *device;
+	/** paint mutex */
+	s_thread_mutex_t *paint_mutex;
 	/** ugly hack, window->surface->window = window */
 	s_window_t *window;
 };
@@ -2524,9 +2528,21 @@ int s_surface_clip_real (s_surface_t *surface, int x, int y, int w, int h, s_rec
   *
   * @param *window  - the window
   * @param *changed - the rectangular area that will be updated
+  * @param all      - do not do matrix check
   * @returns no return
   */
-void s_surface_changed (s_window_t *window, s_rect_t *changed);
+void s_surface_changed (s_window_t *window, s_rect_t *changed, int all);
+
+/** @brief set window surface coordinates
+  *
+  * @param *window  - the window
+  * @param x - x position
+  * @param y - y position
+  * @param w - width for surface
+  * @param h - height for surface
+  * @returns no return
+  */
+void s_surface_set_coor (s_window_t *window, int x, int y, int w, int h);
 
 /*@}*/
 
@@ -2763,6 +2779,13 @@ int s_thread_cancel (s_thread_t *tid);
   */
 int s_thread_join (s_thread_t *tid, void **ret);
 
+/** @brief detachs the given thread
+  *
+  * @param *tid  - thread id of the thread to detach.
+  * @returns 0 on success, 1 on error.
+  */
+int s_thread_detach (s_thread_t *tid);
+
 /** @brief returns the thread identifier for the calling thread.
   *
   * @returns th thread id.
@@ -2967,14 +2990,16 @@ typedef enum {
 	WINDOW_TYPE_TEMP    = 0x0100,
 	/** window child */
 	WINDOW_TYPE_CHILD   = 0x0200,
+	/** window popup */
+	WINDOW_TYPE_POPUP   = 0x0400,
 	/** bitwise or`ed window types */
-	WINDOW_TYPES        = WINDOW_TYPE_MAIN | WINDOW_TYPE_TEMP | WINDOW_TYPE_CHILD,
+	WINDOW_TYPES        = WINDOW_TYPE_MAIN | WINDOW_TYPE_TEMP | WINDOW_TYPE_CHILD | WINDOW_TYPE_POPUP,
 	/** window desktop, this is a bitwise or'ed property */
-	WINDOW_TYPE_DESKTOP = 0x0400,
+	WINDOW_TYPE_DESKTOP = 0x0800,
 	/** window input, this is a bitwise or`ed property
 	  * this type of window will receive all input events,
 	  * even if not shown */
-	WINDOW_TYPE_INPUT   = 0x0800,
+	WINDOW_TYPE_INPUT   = 0x1000,
 } s_window_type_t;
 
 /** window struct

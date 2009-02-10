@@ -1,14 +1,15 @@
 # 
 # Makefile.lib 
 #
-# version   : 2.0.1
-# copyright : © 2002 - 2008 by Alper Akcan
+# version   : 2.0.2
+# copyright : © 2002 - 2009 by Alper Akcan
 # email     : alper.akcan@gmail.com
 #
 
 # Changelog :
 #
 #   20080622 - target_depends-y fixes
+#   20090210 - added c++ support
 
 #
 # Makefile Example using Makefile.lib
@@ -125,12 +126,14 @@ endif
 MAKE       := $(MAKE) --no-print-directory
 
 CC         := $(CONFIG_CROSS_PREFIX)gcc
+CPP        := $(CONFIG_CROSS_PREFIX)g++
 LD         := $(CONFIG_CROSS_PREFIX)ld
 AR         := $(CONFIG_CROSS_PREFIX)ar rcs
 RANLIB     := $(CONFIG_CROSS_PREFIX)ranlib
 STRIP      := $(CONFIG_CROSS_PREFIX)strip
 
 HOSTCC     := gcc
+HOSTCPP    := g++
 HOSTLD     := ld
 HOSTAR     := ar rcs
 HOSTRANLIB := ranlib
@@ -159,77 +162,107 @@ pur_objects = $(CURDIR)/$$@
 #
 # PUR
 #
-pur_disp_depend.c       = echo "  DEP        $(pur_objects)"
-pur_disp_compile.c      = echo "  CC         $(pur_objects)"
-pur_disp_link.c         = echo "  LINK       $(pur_objects)"
-pur_disp_link_so.c      = echo "  LINKSO     $(pur_objects)"
+pur_disp_depend.c         = echo "  DEP        $(pur_objects)"
+pur_disp_compile.c        = echo "  CC         $(pur_objects)"
+pur_disp_link.c           = echo "  LINK       $(pur_objects)"
+pur_disp_link_so.c        = echo "  LINKSO     $(pur_objects)"
 
-pur_disp_depend.c.host  = echo "  HOSTDEP    $(pur_objects)"
-pur_disp_compile.c.host = echo "  HOSTCC     $(pur_objects)"
-pur_disp_link.c.host    = echo "  HOSTLINK   $(pur_objects)"
-pur_disp_link_so.c.host = echo "  HOSTLINKSO $(pur_objects)"
+pur_disp_depend.cpp       = echo "  DEP        $(pur_objects)"
+pur_disp_compile.cpp      = echo "  CPP        $(pur_objects)"
+pur_disp_link.cpp         = echo "  LINK       $(pur_objects)"
+pur_disp_link_so.cpp      = echo "  LINKSO     $(pur_objects)"
 
-pur_disp_ar             = echo "  AR         $(pur_objects)"
-pur_disp_ranlib         = echo "  RANLIB     $(pur_objects)"
-pur_disp_ld             = echo "  LD         $(pur_objects)"
+pur_disp_depend.c.host    = echo "  HOSTDEP    $(pur_objects)"
+pur_disp_compile.c.host   = echo "  HOSTCC     $(pur_objects)"
+pur_disp_link.c.host      = echo "  HOSTLINK   $(pur_objects)"
+pur_disp_link_so.c.host   = echo "  HOSTLINKSO $(pur_objects)"
 
-pur_disp_ld.host        = echo "  HOSTLD     $(pur_objects)"
+pur_disp_depend.cpp.host  = echo "  HOSTDEP    $(pur_objects)"
+pur_disp_compile.cpp.host = echo "  HOSTCPP     $(pur_objects)"
+pur_disp_link.cpp.host    = echo "  HOSTLINK   $(pur_objects)"
+pur_disp_link_so.cpp.host = echo "  HOSTLINKSO $(pur_objects)"
 
-pur_disp_cp             = echo "  CP         $(pur_objects)"
-pur_disp_mkdir          = echo "  MKDIR      $(pur_objects)"
-pur_disp_clean          = echo "  CLEAN      $$(subst _clean,,$(pur_objects))"
+pur_disp_ar               = echo "  AR         $(pur_objects)"
+pur_disp_ranlib           = echo "  RANLIB     $(pur_objects)"
+pur_disp_ld               = echo "  LD         $(pur_objects)"
 
-pur_disp_widgetc        = echo "  WIDGETC    $(pur_objects)"
+pur_disp_ld.host          = echo "  HOSTLD     $(pur_objects)"
+
+pur_disp_cp               = echo "  CP         $(pur_objects)"
+pur_disp_mkdir            = echo "  MKDIR      $(pur_objects)"
+pur_disp_clean            = echo "  CLEAN      $$(subst _clean,,$(pur_objects))"
+
+pur_disp_widgetc          = echo "  WIDGETC    $(pur_objects)"
 
 #
 # VER
 #
-ver_disp_depend.c       = echo "$(subst ",\",$(cmd_depend.c))"
-ver_disp_compile.c      = echo "$(subst ",\",$(cmd_compile.c))"
-ver_disp_link.c         = echo "$(subst ",\",$(cmd_link.c))"
-ver_disp_link_so.c      = echo "$(subst ",\",$(cmd_link_so.c))"
+ver_disp_depend.c         = echo "$(subst ",\",$(cmd_depend.c))"
+ver_disp_compile.c        = echo "$(subst ",\",$(cmd_compile.c))"
+ver_disp_link.c           = echo "$(subst ",\",$(cmd_link.c))"
+ver_disp_link_so.c        = echo "$(subst ",\",$(cmd_link_so.c))"
 
-ver_disp_depend.c.host  = echo "$(subst ",\",$(cmd_depend.c.host))"
-ver_disp_compile.c.host = echo "$(subst ",\",$(cmd_compile.c.host))"
-ver_disp_link.c.host    = echo "$(subst ",\",$(cmd_link.c.host))"
-ver_disp_link_so.c.host = echo "$(subst ",\",$(cmd_link_so.c.host))"
+ver_disp_depend.cpp       = echo "$(subst ",\",$(cmd_depend.cpp))"
+ver_disp_compile.cpp      = echo "$(subst ",\",$(cmd_compile.cpp))"
+ver_disp_link.cpp         = echo "$(subst ",\",$(cmd_link.cpp))"
+ver_disp_link_so.cpp      = echo "$(subst ",\",$(cmd_link_so.cpp))"
 
-ver_disp_ar             = echo "$(subst ",\",$(cmd_ar))"
-ver_disp_ranlib         = echo "$(subst ",\",$(cmd_ranlib))"
-ver_disp_ld             = echo "$(subst ",\",$(cmd_ld))"
+ver_disp_depend.c.host    = echo "$(subst ",\",$(cmd_depend.c.host))"
+ver_disp_compile.c.host   = echo "$(subst ",\",$(cmd_compile.c.host))"
+ver_disp_link.c.host      = echo "$(subst ",\",$(cmd_link.c.host))"
+ver_disp_link_so.c.host   = echo "$(subst ",\",$(cmd_link_so.c.host))"
 
-ver_disp_ld.host        = echo "$(subst ",\",$(cmd_ld.host))"
+ver_disp_depend.cpp.host  = echo "$(subst ",\",$(cmd_depend.cpp.host))"
+ver_disp_compile.cpp.host = echo "$(subst ",\",$(cmd_compile.cpp.host))"
+ver_disp_link.cpp.host    = echo "$(subst ",\",$(cmd_link.cpp.host))"
+ver_disp_link_so.cpp.host = echo "$(subst ",\",$(cmd_link_so.cpp.host))"
 
-ver_disp_cp             = echo "$(subst ",\",$(cmd_cp))"
-ver_disp_mkdir          = echo "$(subst ",\",$(cmd_mkdir))"
-ver_disp_clean          = echo "$(subst ",\",$(cmd_clean) $1 .$1 $$@.cmd)"
+ver_disp_ar               = echo "$(subst ",\",$(cmd_ar))"
+ver_disp_ranlib           = echo "$(subst ",\",$(cmd_ranlib))"
+ver_disp_ld               = echo "$(subst ",\",$(cmd_ld))"
 
-ver_disp_widgetc        = echo "$(subst ",\",$(cmd_widgetc))"
+ver_disp_ld.host          = echo "$(subst ",\",$(cmd_ld.host))"
+
+ver_disp_cp               = echo "$(subst ",\",$(cmd_cp))"
+ver_disp_mkdir            = echo "$(subst ",\",$(cmd_mkdir))"
+ver_disp_clean            = echo "$(subst ",\",$(cmd_clean) $1 .$1 $$@.cmd)"
+
+ver_disp_widgetc          = echo "$(subst ",\",$(cmd_widgetc))"
 
 #
 # DISP
 #
-disp_depend.c       = $($(verbose)_disp_depend.c)
-disp_compile.c      = $($(verbose)_disp_compile.c)
-disp_link.c         = $($(verbose)_disp_link.c)
-disp_link_so.c      = $($(verbose)_disp_link_so.c)
+disp_depend.c         = $($(verbose)_disp_depend.c)
+disp_compile.c        = $($(verbose)_disp_compile.c)
+disp_link.c           = $($(verbose)_disp_link.c)
+disp_link_so.c        = $($(verbose)_disp_link_so.c)
 
-disp_depend.c.host  = $($(verbose)_disp_depend.c.host)
-disp_compile.c.host = $($(verbose)_disp_compile.c.host)
-disp_link.c.host    = $($(verbose)_disp_link.c.host)
-disp_link_so.c.host = $($(verbose)_disp_link_so.c.host)
+disp_depend.cpp       = $($(verbose)_disp_depend.cpp)
+disp_compile.cpp      = $($(verbose)_disp_compile.cpp)
+disp_link.cpp         = $($(verbose)_disp_link.cpp)
+disp_link_so.cpp      = $($(verbose)_disp_link_so.cpp)
 
-disp_ar             = $($(verbose)_disp_ar)
-disp_ranlib         = $($(verbose)_disp_ranlib)
-disp_ld             = $($(verbose)_disp_ld)
+disp_depend.c.host    = $($(verbose)_disp_depend.c.host)
+disp_compile.c.host   = $($(verbose)_disp_compile.c.host)
+disp_link.c.host      = $($(verbose)_disp_link.c.host)
+disp_link_so.c.host   = $($(verbose)_disp_link_so.c.host)
 
-disp_ld.host        = $($(verbose)_disp_ld.host)
+disp_depend.cpp.host  = $($(verbose)_disp_depend.cpp.host)
+disp_compile.cpp.host = $($(verbose)_disp_compile.cpp.host)
+disp_link.cpp.host    = $($(verbose)_disp_link.cpp.host)
+disp_link_so.cpp.host = $($(verbose)_disp_link_so.cpp.host)
 
-disp_cp             = $($(verbose)_disp_cp)
-disp_mkdir          = $($(verbose)_disp_mkdir)
-disp_clean          = $($(verbose)_disp_clean)
+disp_ar               = $($(verbose)_disp_ar)
+disp_ranlib           = $($(verbose)_disp_ranlib)
+disp_ld               = $($(verbose)_disp_ld)
 
-disp_widgetc        = $($(verbose)_disp_widgetc)
+disp_ld.host          = $($(verbose)_disp_ld.host)
+
+disp_cp               = $($(verbose)_disp_cp)
+disp_mkdir            = $($(verbose)_disp_mkdir)
+disp_clean            = $($(verbose)_disp_clean)
+
+disp_widgetc          = $($(verbose)_disp_widgetc)
 
 #
 # _CMD
@@ -252,108 +285,164 @@ _cmd_link.c.host    = $(HOSTCC) $(CFLAGS) $($1_libraries) -o $$@ $$^ \
 _cmd_link_so.c.host = $(HOSTCC) $(CFLAGS) $($1_libraries) -o $$@ $$^ \
                       $($1_ldflags) $(LDFLAGS) -shared
 
-_cmd_ar             = $(AR) $$@ $$^
-_cmd_ranlib         = $(RANLIB) $$@
-_cmd_ld             = $(LD) -r -o $$@ $$^
+_cmd_depend.cpp       = $(CPP) $(CFLAGS) $(CPPFLAGS) $($1_cflags) $($1_cppflags) \
+                        $($1_includes) -M $$< | $(SED) 's,\($$*\.o\) *:,.$1/\1 \
+                        $$@: ,' > $$@
+_cmd_compile.cpp      = $(CPP) $(CFLAGS) $(CPPFLAGS) $($1_cflags) $($1_cppflags) \
+                        $($1_includes) -c -o $$@ $$<
+_cmd_link.cpp         = $(CPP) $($1_libraries) -o $$@ $$^ $($1_ldflags) $(LDFLAGS)
+_cmd_link_so.cpp      = $(CPP) $($1_libraries) -o $$@ $$^ $($1_ldflags) $(LDFLAGS) -shared
 
-_cmd_ld.host        = $(HOSTLD) -r -o $$@ $$^
+_cmd_depend.cpp.host  = $(HOSTCPP) $(CFLAGS) $(CPPFLAGS) $($1_cflags) \
+                        $($1_cppflags) $($1_includes) -M $$< | $(SED) \
+                        's,\($$*\.o\) *:,.$1/\1 $$@: ,' > $$@
+_cmd_compile.cpp.host = $(HOSTCPP) $(CFLAGS) $(CPPFLAGS) $($1_cflags) \
+                        $($1_cppflags) $($1_includes) -c -o $$@ $$<
+_cmd_link.cpp.host    = $(HOSTCPP) $(CFLAGS) $($1_libraries) -o $$@ $$^ \
+                        $($1_ldflags) $(LDFLAGS)
+_cmd_link_so.cpp.host = $(HOSTCPP) $(CFLAGS) $($1_libraries) -o $$@ $$^ \
+                        $($1_ldflags) $(LDFLAGS) -shared
 
-_cmd_cp             = $(CP) $$< $$@
-_cmd_mkdir          = $(MKDIR) $$@
-_cmd_clean          = $(RM)
+_cmd_ar               = $(AR) $$@ $$^
+_cmd_ranlib           = $(RANLIB) $$@
+_cmd_ld               = $(LD) -r -o $$@ $$^
 
-_cmd_widgetc        = $(CD) .$1; $(WIDGETC) -f ../$$< -o $$(subst .xws,,$$<)
+_cmd_ld.host          = $(HOSTLD) -r -o $$@ $$^
+
+_cmd_cp               = $(CP) $$< $$@
+_cmd_mkdir            = $(MKDIR) $$@
+_cmd_clean            = $(RM)
+
+_cmd_widgetc          = $(CD) .$1; $(WIDGETC) -f ../$$< -o $$(subst .xws,,$$<)
 
 #
 # CMD
 #
-cmd_depend.c       = echo "$(_cmd_depend.c)" > $$@.cmd       ; \
-                     $(_cmd_depend.c)
-cmd_compile.c      = echo "$(_cmd_compile.c)" > $$@.cmd      ; \
-                     $(_cmd_compile.c)
-cmd_link.c         = echo "$(_cmd_link.c)" > $$@.cmd         ; \
-                     $(_cmd_link.c)
-cmd_link_so.c      = echo "$(_cmd_link_so.c)" > $$@.cmd      ; \
-                     $(_cmd_link_so.c)
+cmd_depend.c         = echo "$(_cmd_depend.c)" > $$@.cmd       ; \
+                       $(_cmd_depend.c)
+cmd_compile.c        = echo "$(_cmd_compile.c)" > $$@.cmd      ; \
+                       $(_cmd_compile.c)
+cmd_link.c           = echo "$(_cmd_link.c)" > $$@.cmd         ; \
+                       $(_cmd_link.c)
+cmd_link_so.c        = echo "$(_cmd_link_so.c)" > $$@.cmd      ; \
+                       $(_cmd_link_so.c)
 
-cmd_depend.c.host  = echo "$(_cmd_depend.c.host)" > $$@.cmd  ; \
-                     $(_cmd_depend.c.host)
-cmd_compile.c.host = echo "$(_cmd_compile.c.host)" > $$@.cmd ; \
-                     $(_cmd_compile.c.host)
-cmd_link.c.host    = echo "$(_cmd_link.c.host)" > $$@.cmd    ; \
-                     $(_cmd_link.c.host)
-cmd_link_so.c.host = echo "$(_cmd_link_so.c.host)" > $$@.cmd ; \
-                     $(_cmd_link_so.c.host)
+cmd_depend.c.host    = echo "$(_cmd_depend.c.host)" > $$@.cmd  ; \
+                       $(_cmd_depend.c.host)
+cmd_compile.c.host   = echo "$(_cmd_compile.c.host)" > $$@.cmd ; \
+                       $(_cmd_compile.c.host)
+cmd_link.c.host      = echo "$(_cmd_link.c.host)" > $$@.cmd    ; \
+                       $(_cmd_link.c.host)
+cmd_link_so.c.host   = echo "$(_cmd_link_so.c.host)" > $$@.cmd ; \
+                       $(_cmd_link_so.c.host)
 
-cmd_ar             = echo "$(_cmd_ar)" > $$@.cmd             ; $(_cmd_ar)
-cmd_ranlib         = echo "$(_cmd_ranlib)" >> $$@.cmd        ; $(_cmd_ranlib)
-cmd_ld             = echo "$(_cmd_ld)" > $$@.cmd             ; $(_cmd_ld)
+cmd_depend.cpp       = echo "$(_cmd_depend.cpp)" > $$@.cmd       ; \
+                       $(_cmd_depend.cpp)
+cmd_compile.cpp      = echo "$(_cmd_compile.cpp)" > $$@.cmd      ; \
+                       $(_cmd_compile.cpp)
+cmd_link.cpp         = echo "$(_cmd_link.cpp)" > $$@.cmd         ; \
+                       $(_cmd_link.cpp)
+cmd_link_so.cpp      = echo "$(_cmd_link_so.cpp)" > $$@.cmd      ; \
+                       $(_cmd_link_so.cpp)
 
-cmd_ld.host        = echo "$(_cmd_ld.host)" > $$@.cmd        ; $(_cmd_ld.host)
+cmd_depend.cpp.host  = echo "$(_cmd_depend.cpp.host)" > $$@.cmd  ; \
+                       $(_cmd_depend.cpp.host)
+cmd_compile.cpp.host = echo "$(_cmd_compile.cpp.host)" > $$@.cmd ; \
+                       $(_cmd_compile.cpp.host)
+cmd_link.cpp.host    = echo "$(_cmd_link.cpp.host)" > $$@.cmd    ; \
+                       $(_cmd_link.cpp.host)
+cmd_link_so.cpp.host = echo "$(_cmd_link_so.cpp.host)" > $$@.cmd ; \
+                       $(_cmd_link_so.cpp.host)
 
-cmd_cp             = $(_cmd_cp)
-cmd_mkdir          = $(_cmd_mkdir)
-cmd_clean          = echo "$(_cmd_clean) $1 .$1" > $$@.cmd   ; $(_cmd_clean)
+cmd_ar               = echo "$(_cmd_ar)" > $$@.cmd             ; $(_cmd_ar)
+cmd_ranlib           = echo "$(_cmd_ranlib)" >> $$@.cmd        ; $(_cmd_ranlib)
+cmd_ld               = echo "$(_cmd_ld)" > $$@.cmd             ; $(_cmd_ld)
 
-cmd_widgetc        = echo "$(_cmd_widgetc)" > $$@.cmd        ; $(_cmd_widgetc)
+cmd_ld.host          = echo "$(_cmd_ld.host)" > $$@.cmd        ; $(_cmd_ld.host)
+
+cmd_cp               = $(_cmd_cp)
+cmd_mkdir            = $(_cmd_mkdir)
+cmd_clean            = echo "$(_cmd_clean) $1 .$1" > $$@.cmd   ; $(_cmd_clean)
+
+cmd_widgetc          = echo "$(_cmd_widgetc)" > $$@.cmd        ; $(_cmd_widgetc)
 
 #
 # DO
 #
-do_depend.c       = @$(disp_depend.c)       ; $(cmd_depend.c)
-do_compile.c      = @$(disp_compile.c)      ; $(cmd_compile.c)
-do_link.c         = @$(disp_link.c)         ; $(cmd_link.c)
-do_link_so.c      = @$(disp_link_so.c)      ; $(cmd_link_so.c)
+do_depend.c         = @$(disp_depend.c)         ; $(cmd_depend.c)
+do_compile.c        = @$(disp_compile.c)        ; $(cmd_compile.c)
+do_link.c           = @$(disp_link.c)           ; $(cmd_link.c)
+do_link_so.c        = @$(disp_link_so.c)        ; $(cmd_link_so.c)
 
-do_depend.c.host  = @$(disp_depend.c.host)  ; $(cmd_depend.c.host)
-do_compile.c.host = @$(disp_compile.c.host) ; $(cmd_compile.c.host)
-do_link.c.host    = @$(disp_link.c.host)    ; $(cmd_link.c.host)
-do_link_so.c.host = @$(disp_link_so.c.host) ; $(cmd_link_so.c.host)
+do_depend.c.host    = @$(disp_depend.c.host)    ; $(cmd_depend.c.host)
+do_compile.c.host   = @$(disp_compile.c.host)   ; $(cmd_compile.c.host)
+do_link.c.host      = @$(disp_link.c.host)      ; $(cmd_link.c.host)
+do_link_so.c.host   = @$(disp_link_so.c.host)   ; $(cmd_link_so.c.host)
 
-do_ar             = @$(disp_ar)             ; $(cmd_ar)
-do_ranlib         = @$(disp_ranlib)         ; $(cmd_ranlib)
-do_ld             = @$(disp_ld)             ; $(cmd_ld)
+do_depend.cpp       = @$(disp_depend.cpp)       ; $(cmd_depend.cpp)
+do_compile.cpp      = @$(disp_compile.cpp)      ; $(cmd_compile.cpp)
+do_link.cpp         = @$(disp_link.cpp)         ; $(cmd_link.cpp)
+do_link_so.cpp      = @$(disp_link_so.cpp)      ; $(cmd_link_so.cpp)
 
-do_ld.host        = @$(disp_ld.host)        ; $(cmd_ld.host)
+do_depend.cpp.host  = @$(disp_depend.cpp.host)  ; $(cmd_depend.cpp.host)
+do_compile.cpp.host = @$(disp_compile.cpp.host) ; $(cmd_compile.cpp.host)
+do_link.cpp.host    = @$(disp_link.cpp.host)    ; $(cmd_link.cpp.host)
+do_link_so.cpp.host = @$(disp_link_so.cpp.host) ; $(cmd_link_so.cpp.host)
 
-do_cp             = @$(disp_cp)             ; $(cmd_cp)
-do_mkdir          = @$(disp_mkdir)          ; $(cmd_mkdir)
-do_clean          = @$(disp_clean)          ; $(cmd_clean)
+do_ar               = @$(disp_ar)               ; $(cmd_ar)
+do_ranlib           = @$(disp_ranlib)           ; $(cmd_ranlib)
+do_ld               = @$(disp_ld)               ; $(cmd_ld)
 
-do_widgetc        = @$(disp_widgetc)        ; $(cmd_widgetc)
+do_ld.host          = @$(disp_ld.host)          ; $(cmd_ld.host)
+
+do_cp               = @$(disp_cp)               ; $(cmd_cp)
+do_mkdir            = @$(disp_mkdir)            ; $(cmd_mkdir)
+do_clean            = @$(disp_clean)            ; $(cmd_clean)
+
+do_widgetc          = @$(disp_widgetc)          ; $(cmd_widgetc)
 
 #
 # Functions
 #
 
 define target-defaults_base
-    $(eval $1_sources   = $(filter %.c,$2))
-    $(eval $1_headers   = $(filter %.h,$2))
-    $(eval $1_wsources  = $(addprefix .$1/, \
-                          $(subst .xws,_xml.c,$(filter %.xws,$2))))
-    $(eval $1_wheaders  = $(addprefix .$1/, \
-                          $(subst .xws,_xml.h,$(filter %.xws,$2))))
-    $(eval $1_objects   = $(addprefix .$1/, \
-                          $(subst .c,.o,$($1_sources))))
-    $(eval $1_wobjects  = $(subst .c,.o,$($1_wsources)))
-    $(eval $1_eobjects  = $(filter %.o,$2))
-    $(eval $1_depends   = $(addprefix .$1/, $(subst .c,.dep,$($1_sources))))
-    $(eval $1_cflags    = $($1_cflags-y))
-    $(eval $1_cppflags  = $($1_cppflags-y))
-    $(eval $1_includes  = $(addprefix -I, $($1_includes-y)))
-    $(eval $1_libraries = $(addprefix -L, $($1_libraries-y)))
-    $(eval $1_ldflags   = $($1_ldflags-y))
-    $(eval $1_directories = $(sort $(dir $($1_objects) $($1_wobjects))))
+    $(eval $1_sources_c    = $(filter %.c,$2))
+    $(eval $1_headers_c    = $(filter %.h,$2))
+    $(eval $1_sources_cpp  = $(filter %.cc,$2))
+    $(eval $1_sources_cpp += $(filter %.cpp,$2))
+    $(eval $1_headers_cpp  = $(filter %.hh,$2))
+    $(eval $1_headers_cpp += $(filter %.hpp,$2))
+    $(eval $1_wsources     = $(addprefix .$1/, \
+                             $(subst .xws,_xml.c,$(filter %.xws,$2))))
+    $(eval $1_wheaders     = $(addprefix .$1/, \
+                             $(subst .xws,_xml.h,$(filter %.xws,$2))))
+    $(eval $1_objects_c    = $(addprefix .$1/, \
+                             $(subst .c,.o,$($1_sources_c))))
+    $(eval $1_objects_cpp  = $(addprefix .$1/, \
+                             $(subst .cpp,.o,$($1_sources_cpp))))
+    $(eval $1_wobjects     = $(subst .c,.o,$($1_wsources)))
+    $(eval $1_eobjects     = $(filter %.o,$2))
+    $(eval $1_depends_c    = $(addprefix .$1/, $(subst .c,.dep,$($1_sources_c))))
+    $(eval $1_depends_cpp  = $(addprefix .$1/, $(subst .cpp,.dep,$($1_sources_cpp))))
+    $(eval $1_cflags       = $($1_cflags-y))
+    $(eval $1_cppflags     = $($1_cppflags-y))
+    $(eval $1_includes     = $(addprefix -I, $($1_includes-y)))
+    $(eval $1_libraries    = $(addprefix -L, $($1_libraries-y)))
+    $(eval $1_ldflags      = $($1_ldflags-y))
+    $(eval $1_directories  = $(sort $(dir $($1_objects_c) $($1_objects_cpp) $($1_wobjects))))
     
     targets-blds += $1
-    targets-objs += $($1_objects)
-    targets-deps += $($1_depends)
+    targets-objs += $($1_objects_c)
+    targets-objs += $($1_objects_cpp)
+    targets-deps += $($1_depends_c)
+    targets-deps += $($1_depends_cpp)
     targets-clns += $1_clean
     
     $($1_directories):
 	$(do_mkdir)
     
-    $($1_depends): $($1_directories) $($1_wheaders)
+    $($1_depends_c): $($1_directories) $($1_wheaders)
+    $($1_depends_cpp): $($1_directories) $($1_wheaders)
 
     $($1_wsources): .$1/%_xml.c: %.xws
 	$(do_widgetc)
@@ -362,12 +451,13 @@ define target-defaults_base
 	$(do_widgetc)
 
     $1: $($1_depends-y)
-    $($1_objects): $($1_depends-y)
+    $($1_objects_c): $($1_depends-y)
+    $($1_objects_cpp): $($1_depends-y)
     
     $1: .$1/$1
 	$(do_cp)
     
-    .$1/$1: $($1_wobjects) $($1_objects) $($1_eobjects)
+    .$1/$1: $($1_wobjects) $($1_objects_c) $($1_objects_cpp) $($1_eobjects)
 
     $1_clean: __FORCE
 	$(do_clean) $1 .$1 $$@.cmd
@@ -376,34 +466,50 @@ endef
 define target-defaults
     $(eval $(call target-defaults_base,$1,$2))
     
-    $($1_depends): .$1/%.dep: %.c
+    $($1_depends_c): .$1/%.dep: %.c
 	$(do_depend.c)
+
+    $($1_depends_cpp): .$1/%.dep: %.cpp
+	$(do_depend.cpp)
 
     $($1_wobjects): .$1/%.o: .$1/%.c
 	$(do_compile.c)
 
-    $($1_objects): .$1/%.o: %.c
+    $($1_objects_c): .$1/%.o: %.c
 	$(do_compile.c)
+
+    $($1_objects_cpp): .$1/%.o: %.cpp
+	$(do_compile.cpp)
 endef
 
 define target_host-defaults
     $(eval $(call target-defaults_base,$1,$2))
 
-    $($1_depends): .$1/%.dep: %.c
+    $($1_depends_c): .$1/%.dep: %.c
 	$(do_depend.c.host)
+
+    $($1_depends_cpp): .$1/%.dep: %.cpp
+	$(do_depend.cpp.host)
 
     $($1_wobjects): .$1/%.o: .$1/%.c
 	$(do_compile.c)
 
-    $($1_objects): .$1/%.o: %.c
+    $($1_objects_c): .$1/%.o: %.c
 	$(do_compile.c.host)
+
+    $($1_objects_cpp): .$1/%.o: %.cpp
+	$(do_compile.cpp.host)
 endef
 
 define target-variables
     $(eval $(call target-defaults,$1,$2))
 
     .$1/$1:
+ifeq ($($1_sources_cpp),)
 	$(do_link.c)
+else
+	$(do_link.cpp)
+endif
 endef
 
 define target_so-variables

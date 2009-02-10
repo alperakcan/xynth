@@ -358,7 +358,7 @@ static void s_xml_parse_character (void *xdata, const char *txt, int txtlen)
 	if (data->active->value != NULL) {
 		total_old = strlen(data->active->value);
 	}
-	total = (total_old + txtlen + 1) * sizeof(char *);
+	total = (total_old + txtlen + 1) * sizeof(char);
 	data->active->value = (char *) s_realloc(data->active->value, total);
 	if (total_old == 0) {
 		data->active->value[0] = '\0';
@@ -418,6 +418,7 @@ int s_xml_parse_file (s_xml_node_t **node, char *file)
 		debugf(0, "s_xml_parse_buffer failed");
 		ret = -1;
 	}
+	buffer[len] = '\0';
 	fclose(fp);
 	s_free(buffer);
 	return ret;

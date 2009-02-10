@@ -24,7 +24,7 @@
 void s_surface_attach_matrix (s_window_t *window)
 {
 	void *addr;
-	
+
 	if (window->surface->need_expose & SURFACE_NEEDSTREAM) {
 		return;
 	}
@@ -46,10 +46,10 @@ void s_surface_attach_buffer (s_window_t *window)
 {
 	int fd;
 	void *addr;
-	
+
 	fd = -1;
 	addr = NULL;
-	
+
 	if (window->surface->need_expose & SURFACE_NEEDSTREAM) {
 		return;
 	}
@@ -106,6 +106,12 @@ int s_surface_init (s_window_t *window)
 	window->surface->buf = (s_rect_t *) s_calloc(1, sizeof(s_rect_t));
 	window->surface->win = (s_rect_t *) s_calloc(1, sizeof(s_rect_t));
 	window->surface->window = window;
+	if (s_thread_mutex_init(&window->surface->paint_mutex) != 0) {
+		s_free(window->surface->win);
+		s_free(window->surface->buf);
+		s_free(window->surface);
+		return -1;
+	}
        	return 0;
 }
 
@@ -126,6 +132,7 @@ void s_surface_uninit (s_window_t *window)
 		shmdt(window->surface->matrix);
 	}
 #endif
+	s_thread_mutex_destroy(window->surface->paint_mutex);
 	s_free(window->surface->buf);
 	s_free(window->surface->win);
 	s_free(window->surface->vbuf);
@@ -161,7 +168,7 @@ int s_surface_clip_real (s_surface_t *surface, int x, int y, int w, int h, s_rec
 	s_rect_t thip;
 	s_rect_t cliv;
 	s_rect_t clir;
-	
+
         thip.x = x;
 	thip.y = y;
 	thip.w = w;
@@ -190,7 +197,7 @@ int s_surface_clip_real (s_surface_t *surface, int x, int y, int w, int h, s_rec
 	return 0;
 }
 
-void s_surface_changed (s_window_t *window, s_rect_t *changed)
+void s_surface_changed (s_window_t *window, s_rect_t *changed, int all)
 {
 	int x;
 	int y;
@@ -199,10 +206,13 @@ void s_surface_changed (s_window_t *window, s_rect_t *changed)
 	if (!(window->surface->mode & SURFACE_REAL)) {
 		return;
 	}
-	
+
+	s_thread_mutex_lock(window->surface->paint_mutex);
+
 	x = changed->x - window->surface->buf->x;
 	y = changed->y - window->surface->buf->y;
 	if (s_surface_clip_real(window->surface, x, y, changed->w, changed->h, &coor)) {
+		s_thread_mutex_unlock(window->surface->paint_mutex);
 		return;
 	}
 
@@ -220,4 +230,19 @@ void s_surface_changed (s_window_t *window, s_rect_t *changed)
 			s_socket_request(window, SOC_DATA_EXPOSE, &coor);
 		}
 	}
+
+	s_thread_mutex_unlock(window->surface->paint_mutex);
+}
+
+void s_surface_set_coor (s_window_t *window, int x, int y, int w, int h)
+{
+	/* anti
+	 * set surface coordinates in paint mutex
+	 */
+	s_thread_mutex_lock(window->surface->paint_mutex);
+	window->surface->buf->x = x;
+	window->surface->buf->y = y;
+	window->surface->buf->w = w;
+	window->surface->buf->h = h;
+	s_thread_mutex_unlock(window->surface->paint_mutex);
 }

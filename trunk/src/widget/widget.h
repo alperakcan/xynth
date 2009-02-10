@@ -313,6 +313,7 @@ int w_listbox_item_add (w_object_t *object, w_listbox_item_t *item);
 int w_listbox_item_del (w_object_t *object, w_listbox_item_t *item);
 w_listbox_item_t * w_listbox_item_active_get (w_object_t *object);
 int w_listbox_item_active_set (w_object_t *object, w_listbox_item_t *listbox_item);
+int w_listbox_clear (w_object_t *object);
 
 void w_listbox_slide (w_object_t *object, int vertical, int horizontal, int *ytotal, int *yoffset);
 void w_listbox_draw (w_object_t *object);

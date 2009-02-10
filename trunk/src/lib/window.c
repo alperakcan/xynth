@@ -75,10 +75,7 @@ void s_window_show (s_window_t *window)
 
 void s_window_set_coor (s_window_t *window, int form, int x, int y, int w, int h)
 {
-	window->surface->buf->x = x;
-	window->surface->buf->y = y;
-	window->surface->buf->w = w;
-	window->surface->buf->h = h;
+	s_surface_set_coor(window, x, y, w, h);
 	s_socket_request(window, SOC_DATA_CONFIGURE, form);
 }
 
@@ -96,7 +93,7 @@ void s_window_set_alwaysontop (s_window_t *window, int alwaysontop)
 
 int s_window_new (s_window_t *window, s_window_type_t type, s_window_t *parent)
 {
-	if (!(type & (WINDOW_TYPE_MAIN | WINDOW_TYPE_CHILD | WINDOW_TYPE_TEMP))) {
+	if (!(type & (WINDOW_TYPE_MAIN | WINDOW_TYPE_CHILD | WINDOW_TYPE_TEMP | WINDOW_TYPE_POPUP))) {
 		goto err;
 	}
 	window->type = type;
@@ -176,22 +173,21 @@ void s_window_uninit (s_window_t *window)
 	s_pollfds_uninit(window);
 	s_handlers_uninit(window);
 
-	if (window->atexit != NULL) {
-		window->atexit(window);
-	}
-
 	s_childs_uninit(window);
 
         if (window->type & (WINDOW_TYPE_TEMP | WINDOW_TYPE_CHILD)) {
 		if (s_child_del(window->parent, window) == 0) {
-			s_free(window->tid);
+			s_thread_detach(window->tid);
 		}
+	} else if (window->type & WINDOW_TYPE_POPUP) {
+		s_thread_detach(window->tid);
 	}
 
 	debugf(DCLI, "[%d] Exiting (%s%s)", window->id, (window->type & WINDOW_TYPE_MAIN) ? "WINDOW_TYPE_MAIN" :
 	                                                 ((window->type & WINDOW_TYPE_CHILD) ? "WINDOW_TYPE_CHILD" :
 	                                                 ((window->type & WINDOW_TYPE_TEMP) ? "WINDOW_TYPE_TEMP" :
-	                                                 ((window->type & WINDOW_TYPE_DESKTOP) ? "WINDOW_TYPE_DESKTOP" : "WINDOW_UNKNOWN"))),
+	                                                 ((window->type & WINDOW_TYPE_POPUP) ? "WINDOW_TYPE_POPUP" :
+	                                                 ((window->type & WINDOW_TYPE_DESKTOP) ? "WINDOW_TYPE_DESKTOP" : "WINDOW_UNKNOWN")))),
 	                                                (window->type & WINDOW_TYPE_NOFORM) ? " | WINDOW_TYPE_NOFORM" : "");
 
 	s_eventq_uninit(window);
@@ -200,6 +196,15 @@ void s_window_uninit (s_window_t *window)
 	s_event_uninit(window->event);
 
 	s_free(window->title);
+
+	/* andrei
+	 * call atexit only after we have released all children
+	 * the idea is to let the children access their parent's data attribute
+	 */
+	if (window->atexit != NULL) {
+		window->atexit(window);
+	}
+
 	s_free(window);
 	window = NULL;
 }
@@ -289,6 +294,9 @@ void * s_window_main (void *arg)
 		case WINDOW_TYPE_CHILD:
 			window->tid = s_thread_create(&s_window_loop, (void *) window);
 			s_child_add(window->parent, window);
+			break;
+		case WINDOW_TYPE_POPUP:
+			window->tid = s_thread_create(&s_window_loop, (void *) window);
 			break;
 	}
 
