@@ -170,6 +170,8 @@ int s_server_cfg (s_server_conf_t *config)
 					if (config->mouse.scale == 0) {
 						config->mouse.scale = 1;
 					}
+				} else if (strcasecmp(var->name, "cursor") == 0) {
+					config->mouse.cursor = atoi(var->value);
 				}
 			} else if (strcasecmp(cat->name, "keyboard") == 0) {
 				if (strcasecmp(var->name, "keyboard") == 0) {

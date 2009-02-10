@@ -90,7 +90,11 @@ void s_server_pri_set (S_SURFACE_CHNGF flag, ...)
 			if (i >= 0) {
 				s_server_mouse_setcursor(xynth_server->client[i].cursor);
 			} else {
-				s_server_mouse_setcursor(CURSOR_TYPE_ARROW);
+			        if (xynth_server->cursor.enabled == 0) {
+					s_server_mouse_setcursor(CURSOR_TYPE_NONE);
+			        } else {
+					s_server_mouse_setcursor(CURSOR_TYPE_ARROW);
+			        }
 			}
 			break;
 		case SURFACE_REDRAW:
@@ -236,7 +240,7 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 			debugf(DSER | DFAT, "Unknown surface changed flag");
 	}
 
-#if 0
+#if 1
 	if ((flag == SURFACE_FOCUS) ||
 	    (flag == SURFACE_REFRESH)||
 	    (flag == SURFACE_REDRAW) ||

@@ -177,6 +177,7 @@ bool GuiWindow::createWindow (int style, GuiWindow *pParent)
 
 	s_window_t *parentHandle = (pParent == NULL) ? NULL : pParent->wndHandle;
 	s_window_new(wndHandle, xynthStyle, parentHandle);
+	wndHandle->surface->mode = (S_SURFACE_MODE) (wndHandle->surface->mode & ~SURFACE_REAL);
 
 	if (wndSurface) delete wndSurface;
 	wndSurface = new GuiSurface(wndHandle->surface);
@@ -559,7 +560,9 @@ void GuiWindow::onPaint(s_rect_t &paintArea)
 	if (refreshRealSurface) {
 		// finally, copy the virtual surface data onto the window "real" surface
 		s_rect_t paintRect = { paintArea.x + windowPos.x, paintArea.y + windowPos.y, paintArea.w, paintArea.h };
+		wndHandle->surface->mode = (S_SURFACE_MODE) (wndHandle->surface->mode | SURFACE_REAL);
 		s_surface_changed(wndHandle, &paintRect, 0);
+		wndHandle->surface->mode = (S_SURFACE_MODE) (wndHandle->surface->mode & ~SURFACE_REAL);
 	}
 
 	s_thread_mutex_unlock(wndPaintMutex);
@@ -996,6 +999,10 @@ void GuiWindow::eventHandlerProc(s_window_t *window, s_event_t *event)
 			delete pFrame;
 		}
 		pWindow->frameList.clear();
+	}
+
+	if (event->type & EVENT_TYPE_EXPOSE) {
+		pWindow->redrawWindow();
 	}
 }
 

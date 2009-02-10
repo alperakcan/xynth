@@ -143,6 +143,7 @@ struct s_cursor_s {
 	int y;
 	int xyid;
 	int xyid_old;
+	int enabled;
 	s_image_t *img;
 	s_image_t images[CURSOR_TYPE_MAX];
 };
@@ -159,6 +160,7 @@ struct s_server_conf_s {
 		char *device;
 		int samplerate;
 		int scale;
+		int cursor;
 	} mouse;
 	struct {
 		char *keyboard;

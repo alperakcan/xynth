@@ -78,6 +78,9 @@ void s_server_cursor_image_set (int which, int c0, int c1, unsigned int *c)
         unsigned char *mat;
 	unsigned int *cur = c;
 
+        if (xynth_server->cursor.enabled == 0) {
+        	return;
+        }
 	if (xynth_server->cursor.sw == 0) {
 		return;
 	}
@@ -107,7 +110,7 @@ void s_server_cursor_image_set (int which, int c0, int c1, unsigned int *c)
 		}
 		cur++;
 	}
-	
+
 	if (s_surface_create_from_data(&s, xynth_server->cursor.images[which].w, xynth_server->cursor.images[which].h, xynth_server->window->surface->bitsperpixel, xynth_server->cursor.images[which].buf)) {
 		return;
 	}
@@ -128,25 +131,33 @@ void s_server_cursor_image_set (int which, int c0, int c1, unsigned int *c)
 void s_server_cursor_matrix_add (void)
 {
         s_rect_t mcoor;
-        
+
 	if (xynth_server->cursor.sw == 0) {
 		return;
 	}
 
-	mcoor.x = xynth_server->cursor.x;
-	mcoor.y = xynth_server->cursor.y;
-	mcoor.w = xynth_server->cursor.img->w;
-	mcoor.h = xynth_server->cursor.img->h;
+        if (xynth_server->cursor.enabled) {
+        	mcoor.x = xynth_server->cursor.x;
+        	mcoor.y = xynth_server->cursor.y;
+        	mcoor.w = xynth_server->cursor.img->w;
+        	mcoor.h = xynth_server->cursor.img->h;
 
-	xynth_server->cursor.xyid_old = xynth_server->cursor.xyid;
-	xynth_server->cursor.xyid = *(xynth_server->window->surface->matrix + (xynth_server->window->event->mouse->y * xynth_server->window->surface->width) + xynth_server->window->event->mouse->x);
-	s_server_surface_matrix_add_this(S_MATRIX_SWMOUSE, &mcoor, &mcoor, xynth_server->cursor.img->mat);
+        	xynth_server->cursor.xyid_old = xynth_server->cursor.xyid;
+        	xynth_server->cursor.xyid = *(xynth_server->window->surface->matrix + (xynth_server->window->event->mouse->y * xynth_server->window->surface->width) + xynth_server->window->event->mouse->x);
+        	s_server_surface_matrix_add_this(S_MATRIX_SWMOUSE, &mcoor, &mcoor, xynth_server->cursor.img->mat);
+        } else {
+        	xynth_server->cursor.xyid_old = S_MATRIX_FREE;
+        	xynth_server->cursor.xyid = S_MATRIX_FREE;
+        }
 }
 
 void s_server_cursor_draw (void)
 {
         s_rect_t mcoor;
 
+        if (xynth_server->cursor.enabled == 0) {
+        	return;
+        }
 	if (xynth_server->cursor.sw == 0) {
 		return;
 	}
@@ -161,6 +172,9 @@ void s_server_cursor_draw (void)
 
 void s_server_cursor_select (s_cursor_type_t c)
 {
+        if (xynth_server->cursor.enabled == 0) {
+        	return;
+        }
 	if (xynth_server->cursor.sw == 0) {
 		return;
 	}
@@ -191,11 +205,14 @@ void s_server_cursor_position (int x, int y)
 	s_rect_t cnew;
 	s_rect_t cmer;
 	s_rect_t clip;
-	
+
+        if (xynth_server->cursor.enabled == 0) {
+        	return;
+        }
 	if (xynth_server->cursor.sw == 0) {
 		return;
 	}
-	
+
 	cold.x = xynth_server->cursor.x;
 	cold.y = xynth_server->cursor.y;
 	cold.w = xynth_server->cursor.img->w;
@@ -205,14 +222,14 @@ void s_server_cursor_position (int x, int y)
 	cnew.y = y;
 	cnew.w = xynth_server->cursor.img->w;
 	cnew.h = xynth_server->cursor.img->h;
-	
+
 	if (s_region_rect_union(&cold, &cnew, &cmer)) {
 		return;
 	}
 	if (s_region_rect_intersect(xynth_server->window->surface->buf, &cmer, &clip)) {
 		return;
 	}
-	
+
 	xynth_server->cursor.x = x;
 	xynth_server->cursor.y = y;
 	s_server_pri_set(SURFACE_REDRAW, &clip);
@@ -237,7 +254,7 @@ void s_mouse_setxrange (s_window_t *window, int a, int b)
 	x1 = MAX(a, b);
 	x0 = MAX(x0, 0);
 	x1 = MIN(x1, window->surface->width - 1);
-	
+
 	xynth_server->mouse_rangex[0] = x0;
 	xynth_server->mouse_rangex[1] = x1;
 }
@@ -269,17 +286,17 @@ void s_server_mouse_draw (void)
 	int y = s_mouse_gety();
 
 	switch (xynth_server->window->event->mouse->cursor) {
-		case CURSOR_TYPE_WAIT: 	x -= 7;		y -= 12;	break;
-		case CURSOR_TYPE_NONE:
-		case CURSOR_TYPE_ARROW:					break;
-		case CURSOR_TYPE_CROSS:	x -= 9;		y -= 9;		break;
-		case CURSOR_TYPE_IBEAM:	x -= 5;		y -= 9;		break;
-		case CURSOR_TYPE_SIZEV:	x -= 5;		y -= 10;	break;
-		case CURSOR_TYPE_SIZEH:	x -= 10; 	y -= 5;		break;
-		case CURSOR_TYPE_SIZES:	x -= 7;		y -= 7;		break;
-		case CURSOR_TYPE_SIZEB:	x -= 7;		y -= 7;		break;
-		case CURSOR_TYPE_SIZEA:	x -= 10; 	y -= 10;	break;
-		case CURSOR_TYPE_POINT:	x -= 6;				break;
+		case CURSOR_TYPE_WAIT: 		x -= 7;		y -= 12;	break;
+		case CURSOR_TYPE_NONE:						break;
+		case CURSOR_TYPE_ARROW:						break;
+		case CURSOR_TYPE_CROSS:		x -= 9;		y -= 9;		break;
+		case CURSOR_TYPE_IBEAM:		x -= 5;		y -= 9;		break;
+		case CURSOR_TYPE_SIZEV:		x -= 5;		y -= 10;	break;
+		case CURSOR_TYPE_SIZEH:		x -= 10; 	y -= 5;		break;
+		case CURSOR_TYPE_SIZES:		x -= 7;		y -= 7;		break;
+		case CURSOR_TYPE_SIZEB:		x -= 7;		y -= 7;		break;
+		case CURSOR_TYPE_SIZEA:		x -= 10; 	y -= 10;	break;
+		case CURSOR_TYPE_POINT:		x -= 6;				break;
 		case CURSOR_TYPE_SPLITV:	x -= 10; 	y -= 8;		break;
 		case CURSOR_TYPE_SPLITH:	x -= 8;		y -= 10;	break;
 		case CURSOR_TYPE_FORBID:	x -= 9;		y -= 9;		break;
@@ -316,7 +333,7 @@ int s_server_mouse_update (s_window_t *window, s_pollfd_t *pfd)
 		mdata.mouse.x = MIN(mdata.mouse.x, xynth_server->mouse_rangex[1]);
 		mdata.mouse.y = MAX(mdata.mouse.y, xynth_server->mouse_rangey[0]);
 		mdata.mouse.y = MIN(mdata.mouse.y, xynth_server->mouse_rangey[1]);
-		
+
 		if (s_server_event_parse_mouse(&(mdata.mouse))) {
 			return 0;
 		}
@@ -337,6 +354,7 @@ void s_server_mouse_init (s_server_conf_t *cfg, s_video_input_t *mouse)
 			if (fd < 0) {
 				debugf(DSER, "mouse->init(cfg) failed");
 			} else {
+				xynth_server->cursor.enabled = cfg->mouse.cursor;
 				s_server_cursor_init();
 				xynth_server->window->event->mouse->x = xynth_server->window->surface->width / 2;
 				xynth_server->window->event->mouse->y = xynth_server->window->surface->height / 2;
