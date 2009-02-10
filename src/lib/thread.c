@@ -47,6 +47,7 @@ typedef struct s_thread_api_s {
 	int (*thread_create) (s_thread_t *tid, s_thread_arg_t *targ);
 	int (*thread_cancel) (s_thread_t *tid);
 	int (*thread_join) (s_thread_t *tid, void **ret);
+	int (*thread_detach) (s_thread_t *tid);
 	int (*thread_self) (void);
 	void (*thread_exit) (void *ret);
 } s_thread_api_t;
@@ -340,6 +341,19 @@ int s_thread_join (s_thread_t *tid, void **ret)
 		return -1;
 	}
 	r = s_thread_api->thread_join(tid, ret);
+	s_free(tid);
+	return r;
+}
+
+int s_thread_detach (s_thread_t *tid)
+{
+	int r;
+	if ((tid == NULL) ||
+	    (s_thread_api == NULL) ||
+	    (s_thread_api->thread_detach == NULL)) {
+		return -1;
+	}
+	r = s_thread_api->thread_detach(tid);
 	s_free(tid);
 	return r;
 }

@@ -77,8 +77,8 @@ static int _s_render_create_pixman_format (pixman_format_t *pixman_format, S_REN
 int s_render_uninit (s_render_t *render)
 {
 	s_render_pixman_image_destroy(render->pixman->pixman_image);
-	free(render->pixman);
-	free(render);
+	s_free(render->pixman);
+	s_free(render);
 	return 0;
 }
 
@@ -88,13 +88,13 @@ int s_render_init (s_render_t **render, S_RENDER_FORMAT render_format, int width
 	s_render_t *rnd;
 	pixman_format_t pixman_format;
 	
-	rnd = (s_render_t *) malloc(sizeof(s_render_t));
+	rnd = (s_render_t *) s_malloc(sizeof(s_render_t));
 	if (rnd == NULL) {
 		goto err0;
 	}
 	memset(rnd, 0, sizeof(s_render_t));
 
-	rnd->pixman = (s_render_pixman_t *) malloc(sizeof(s_render_pixman_t));
+	rnd->pixman = (s_render_pixman_t *) s_malloc(sizeof(s_render_pixman_t));
 	if (rnd->pixman == NULL) {
 		goto err1;
 	}
@@ -119,8 +119,8 @@ int s_render_init (s_render_t **render, S_RENDER_FORMAT render_format, int width
 	*render = rnd;
 	return 0;
 err3:
-err2:	free(rnd->pixman);	
-err1:	free(rnd);
+err2:	s_free(rnd->pixman);	
+err1:	s_free(rnd);
 err0:	*render = NULL;
 	return -1;
 }
@@ -131,13 +131,13 @@ int s_render_init_for_data (s_render_t **render, unsigned char *data, S_RENDER_F
 	s_render_t *rnd;
 	pixman_format_t pixman_format;
 	
-	rnd = (s_render_t *) malloc(sizeof(s_render_t));
+	rnd = (s_render_t *) s_malloc(sizeof(s_render_t));
 	if (rnd == NULL) {
 		goto err0;
 	}
 	memset(rnd, 0, sizeof(s_render_t));
 
-	rnd->pixman = (s_render_pixman_t *) malloc(sizeof(s_render_pixman_t));
+	rnd->pixman = (s_render_pixman_t *) s_malloc(sizeof(s_render_pixman_t));
 	if (rnd->pixman == NULL) {
 		goto err1;
 	}
@@ -162,8 +162,8 @@ int s_render_init_for_data (s_render_t **render, unsigned char *data, S_RENDER_F
 	*render = rnd;
 	return 0;
 err3:
-err2:	free(rnd->pixman);	
-err1:	free(rnd);
+err2:	s_free(rnd->pixman);	
+err1:	s_free(rnd);
 err0:	*render = NULL;
 	return -1;
 }
@@ -232,7 +232,7 @@ int s_render_add_trapezoid (s_render_t *render, int x_off, int y_off, int ntraps
 	int i;
 	pixman_trapezoid_t *pixman_traps;
 	if (ntraps > 0) {
-		pixman_traps = (pixman_trapezoid_t *) malloc(sizeof(pixman_trapezoid_t) * ntraps);
+		pixman_traps = (pixman_trapezoid_t *) s_malloc(sizeof(pixman_trapezoid_t) * ntraps);
 		if (pixman_traps == NULL) {
 			return -1;
 		}
@@ -284,7 +284,7 @@ int s_render_fill_rectangles (S_RENDER_OPERATOR operator, s_render_t *render, s_
 	pixman_color.green = color->green;
 	pixman_color.blue = color->blue;
 	pixman_color.alpha = color->alpha;
-	pixman_rects = (pixman_rectangle_t *) malloc(sizeof(pixman_rectangle_t) * nrects);
+	pixman_rects = (pixman_rectangle_t *) s_malloc(sizeof(pixman_rectangle_t) * nrects);
 	if (pixman_rects == NULL) {
 		return -1;
 	}
@@ -295,7 +295,7 @@ int s_render_fill_rectangles (S_RENDER_OPERATOR operator, s_render_t *render, s_
 		pixman_rects[n].height = rects[n].h;
 	}
 	s_render_pixman_fill_rectangles(_s_render_pixman_operator(operator), render->pixman->pixman_image, &pixman_color, pixman_rects, n);
-	free(pixman_rects);
+	s_free(pixman_rects);
 	return 0;
 }
 

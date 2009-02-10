@@ -411,7 +411,7 @@ int s_socket_listen_desktop (s_window_t *window, int soc)
 		s_list_add(event->desktop->clients, desktopc, -1);
 	}
 	s_eventq_add(window, event);
-	free(data);
+	s_free(data);
 
 	return 0;
 }
@@ -506,14 +506,14 @@ int s_socket_listen_wait (s_window_t *window, int timeout)
 	while (!s_list_eol(window->timers->timers, i)) {
 		tmr = (s_timer_t *) s_list_get(window->timers->timers, i);
 		if (tmr->timeval > 0) {
-			if (timeout <= 0) {
-				timeout = tmr->timeval;
-			}
-			if (tmr->timeval < timeout) {
-				timeout = tmr->timeval;
-			}
 			if (tmr->interval <= 0) {
 				tmr->interval = tmr->timeval;
+			}
+			if (timeout <= 0) {
+				timeout = tmr->interval;
+			}
+			if (tmr->timeval < timeout) {
+				timeout = tmr->interval;
 			}
 		} else {
 			s_list_remove(window->timers->timers, i);

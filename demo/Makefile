@@ -15,5 +15,6 @@ subdir-$(CONFIG_DEMO_IMAGE)   += img
 subdir-$(CONFIG_DEMO_ONSCREENKEYBOARD) += onscreenkeyboard
 subdir-$(CONFIG_DEMO_WIDGETX) += widgetx
 subdir-$(CONFIG_DEMO_XDIALOG) += xdialog
+subdir-$(CONFIG_DEMO_GUIOO)   += guioo
 
 include ../Makefile.lib

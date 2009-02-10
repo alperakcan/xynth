@@ -180,6 +180,7 @@ static s_thread_api_t s_thread_pspdev = {
 	s_thread_pspdev_thread_create,
 	s_thread_pspdev_thread_cancel,
 	s_thread_pspdev_thread_join,
+	NULL,
 	s_thread_pspdev_thread_self,
 	s_thread_pspdev_thread_exit,
 };

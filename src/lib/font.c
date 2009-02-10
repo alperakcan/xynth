@@ -42,10 +42,10 @@ struct s_font_ft_s {
 	s_font_cache_t cache[FONT_CACHE_SIZE];
 };
 
-int s_font_init (s_font_t **font, char *name)
+int s_font_init (s_font_t **font, const char *name)
 {
         char *name_;
-        
+
 	(*font) = (s_font_t *) s_calloc(1, sizeof(s_font_t));
 	(*font)->ft = (s_font_ft_t *) s_calloc(1, sizeof(s_font_ft_t));
 	if (FT_Init_FreeType(&((*font)->ft->library))) {
@@ -109,7 +109,7 @@ int s_font_set_size (s_font_t *font, int size)
 {
 	int i;
 	FT_Fixed scale;
-	
+
 	if (font->size == size) {
 		goto end;
 	}
@@ -148,7 +148,7 @@ end:	return 0;
 int s_font_set_str (s_font_t *font, char *str)
 {
 	s_free(font->str);
-	if (str) { 
+	if (str) {
 		font->str = strdup(str);
 	} else {
 		font->str = NULL;
@@ -215,8 +215,8 @@ int s_font_get_glyph (s_font_t *font)
 	FT_BBox glyph_bbox;
 	FT_UInt glyph_advance_x;
 	int glyph_min_x = 0;
-	
-	num_chars = strlen(font->str);	
+
+	num_chars = strlen(font->str);
 	pos = (FT_Vector *) s_malloc(sizeof(FT_Vector) * num_chars);
 	images = (s_font_image_t *) s_malloc(sizeof(s_font_image_t) * num_chars);
 	pens = (FT_Vector *) s_malloc(sizeof(FT_Vector) * num_chars);
@@ -226,11 +226,11 @@ int s_font_get_glyph (s_font_t *font)
 	num_glyphs = 0;
 	use_kerning = FT_HAS_KERNING(font->ft->face);
 	previous = 0;
-	
+
 	unicode = (unsigned short *) s_malloc(sizeof(unsigned short) * (num_chars + 1));
 	s_font_utf8_to_unicode(unicode, font->str, num_chars);
 	for (num_chars = 0; unicode[num_chars] != 0; num_chars++);
-	
+
 	bbox.xMin = bbox.yMin =  32000;
 	bbox.xMax = bbox.yMax = -32000;
 
@@ -274,7 +274,7 @@ int s_font_get_glyph (s_font_t *font)
 				FT_Glyph_Get_CBox(glyph, ft_glyph_bbox_pixels, &glyph_bbox);
 				glyph_min_x = FT_FLOOR(font->ft->face->glyph->metrics.horiBearingX);
 				glyph_advance_x = FT_CEIL(font->ft->face->glyph->metrics.horiAdvance);
-				
+
 				/* cache it */
 				if (cache) {
 					font->ft->cache[unicode[n]].bbox = glyph_bbox;
@@ -335,7 +335,7 @@ int s_font_get_glyph (s_font_t *font)
 		xmin = 0;
 		xmax = 0;
 	}
-	if (bbox.xMin > bbox.xMax) {                                  
+	if (bbox.xMin > bbox.xMax) {
 		bbox.xMin = 0;
 		bbox.yMin = 0;
 		bbox.xMax = 0;
@@ -348,7 +348,7 @@ int s_font_get_glyph (s_font_t *font)
 	font->glyph.height = font->height;
 	font->glyph.lineskip = font->lineskip;
 	font->glyph.size = font->size;
-	
+
 	s_free(font->glyph.img->rgba);
 	font->glyph.img->rgba  = (unsigned int *) s_calloc(font->glyph.img->w * font->glyph.img->h, sizeof(unsigned int *));
 
@@ -356,7 +356,7 @@ int s_font_get_glyph (s_font_t *font)
 	while (n--) {
 		font->glyph.img->rgba[n] = 255;
 	}
-	
+
 	for (n = 0; n < num_glyphs; n++) {
 		int i;
 		int j;

@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<guiskin version="1.0">
+
+	<window id="1" x="0" y="0" width="320" height="240">
+	
+		<frame id="1" x="0" y="0" width="320" height="240" buf="n">
+			<item id="999" type="rect" x="0" y="0" width="320" height="240">
+				<init fore="ffffff"/>
+			</item>
+			<item id="3" type="animation" x="60" y="5" width="200" height="200">
+				<init delay="50" loop="-1"/>
+				<frame file="/usr/local/share/xynth/guioo/logo01.png"/>
+				<frame file="/usr/local/share/xynth/guioo/logo02.png"/>
+				<frame file="/usr/local/share/xynth/guioo/logo03.png"/>
+				<frame file="/usr/local/share/xynth/guioo/logo04.png"/>
+				<frame file="/usr/local/share/xynth/guioo/logo05.png"/>
+				<frame file="/usr/local/share/xynth/guioo/logo06.png"/>
+				<frame file="/usr/local/share/xynth/guioo/logo07.png"/>
+				<frame file="/usr/local/share/xynth/guioo/logo08.png"/>
+				<frame file="/usr/local/share/xynth/guioo/logo09.png"/>
+				<frame file="/usr/local/share/xynth/guioo/logo10.png"/>
+				<frame file="/usr/local/share/xynth/guioo/logo11.png"/>
+				<frame file="/usr/local/share/xynth/guioo/logo12.png"/>				
+			</item>
+			<item id="4" type="rect" x="0" y="210" width="320" height="30">
+				<init fore="cccccc"/>
+			</item>
+			<item id="2" type="text" x="0" y="210" width="320" height="30">
+				<init text="Welcome to Demo" font="trebuc.ttf" size="16" color="000000" align="cc" />
+			</item>
+		</frame>
+		
+	</window>
+	
+	<window id="2" x="0" y="0" width="320" height="240">
+	
+		<frame id="1" x="0" y="0" width="320" height="240" buf="n">
+			<item id="999" type="rect" x="0" y="0" width="320" height="240">
+				<init fore="ffffff"/>
+			</item>
+			<item id="4" type="rect" x="0" y="210" width="320" height="30">
+				<init fore="cccccc"/>
+			</item>
+			<item id="3" type="image" x="60" y="5" width="200" height="200">
+				<init file="/usr/local/share/xynth/guioo/logo01.png"/>
+			</item>
+			<item id="2" type="text" x="0" y="210" width="320" height="30">
+				<init text="Have a nice day!" font="trebuc.ttf" size="16" color="000000" align="cc" />
+			</item>
+		</frame>
+		
+    </window>
+    
+	<window id="3" x="0" y="0" width="320" height="240">
+	
+		<frame id="1" x="0" y="0" width="320" height="240" buf="n">
+			<item id="1" type="rect" x="0" y="0" width="320" height="240">
+				<init fore="ffffff"/>
+			</item>
+			<item id="2" type="text" x="0" y="100" width="320" height="20">
+				<init text="Use UP/DOWN keys to scroll" font="trebucbd.ttf" size="18" color="000000" align="cc" />
+			</item>
+			<item id="3" type="text" x="0" y="120" width="320" height="20">
+				<init text="Press ESC key to quit" font="trebucbd.ttf" size="16" color="000000" align="cc" />
+			</item>
+		</frame>
+		
+	</window>
+	
+	<window id="4" x="0" y="0" width="320" height="240">
+	
+		<frame id="1" x="0" y="0" width="320" height="240" buf="n">
+			<item id="1" type="rect" x="0" y="0" width="320" height="240">
+				<init fore="999999"/>
+			</item>
+		</frame>
+		
+	</window>
+	
+	<window id="6" x="0" y="0" width="0" height="0">
+	</window>
+	
+</guiskin>

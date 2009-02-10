@@ -241,6 +241,11 @@ static int s_thread_pthreads_thread_join (s_thread_t *tid, void **ret)
 	return pthread_join(tid->tid, ret);
 }
 
+static int s_thread_pthreads_thread_detach (s_thread_t *tid)
+{
+	return pthread_detach(tid->tid);
+}
+
 static int s_thread_pthreads_thread_self (void)
 {
 #if defined(CONFIG_PLATFORM_MINGW)
@@ -299,6 +304,7 @@ static s_thread_api_t s_thread_pthreads = {
 	s_thread_pthreads_thread_create,
 	s_thread_pthreads_thread_cancel,
 	s_thread_pthreads_thread_join,
+	s_thread_pthreads_thread_detach,
 	s_thread_pthreads_thread_self,
 	s_thread_pthreads_thread_exit,
 };

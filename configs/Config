@@ -19,6 +19,24 @@ config CONFIG_DEBUG
     bool "Debugging support"
     default y
 
+menu "Memory Leak Detection"
+
+config CONFIG_LEAK_DETECT
+    bool "Enable leak detection"
+    default n
+
+config CONFIG_LEAK_DEPTH
+    int "Leak Depth"
+    default 8
+    depends on CONFIG_LEAK_DETECT
+
+config CONFIG_LEAK_NONEXISTING
+    bool "Handle non existing"
+    default n
+    depends on CONFIG_LEAK_DETECT
+
+endmenu
+
 config CONFIG_SINGLE_APPLICATION
     bool "Link them all"
     default n
@@ -371,6 +389,24 @@ config CONFIG_WIDGET_WIDGETR
 
 endmenu
 
+menu "GuiOO Library"
+
+config CONFIG_GUIOO_LIBRARY
+    bool "Compile GuiOO Library"
+    default y
+    
+config CONFIG_GUIOO_STATIC
+    bool "Compile GuiOO Static Library"
+    default y
+    depends on CONFIG_GUIOO_LIBRARY
+
+config CONFIG_GUIOO_SHARED
+    bool "Compile GuiOO Shared Library"
+    default y
+    depends on CONFIG_GUIOO_LIBRARY
+
+endmenu
+
 menu "Python Binding"
 
 config CONFIG_PYTHON_BINDING
@@ -464,6 +500,11 @@ config CONFIG_DEMO_XDIALOG
     bool "Build xdialog demo"
     default y
     depends on CONFIG_DEMO_APPLICATIONS && CONFIG_WIDGET_LIBRARY
+
+config CONFIG_DEMO_GUIOO
+    bool "Guild guioo demo"
+    default y
+    depends on CONFIG_DEMO_APPLICATIONS && CONFIG_GUIOO_LIBRARY
 
 endmenu
 

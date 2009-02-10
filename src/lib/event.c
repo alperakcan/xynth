@@ -22,10 +22,10 @@ int s_event_mouse_handler_state (s_window_t *window, s_event_t *event, s_handler
         int w = mouse->w;
         int h = mouse->h;
         int b = mouse->button;
-	
+
 	int overbit = EVENT_TYPE_MOUSE_OVER << 16;
         int type = (event->type & EVENT_TYPE_MOUSE_CLICKED) ? event->type &= ~EVENT_TYPE_MOUSE_RELEASED : event->type;
-        
+
 	if ((type & (EVENT_TYPE_MOUSE_PRESSED | EVENT_TYPE_MOUSE_CLICKED | EVENT_TYPE_MOUSE_RELEASED)) &&
 	    !(event->mouse->b & b)) {
 		return -1;
@@ -151,7 +151,7 @@ int s_event_parse_handler_notover (s_window_t *window, s_event_t *event, s_handl
 	}
 	return -1;
 end:	return 0;
-} 
+}
 
 void s_event_parse_mouse (s_window_t *window, s_event_t *event)
 {
@@ -231,7 +231,7 @@ int s_event_parse_keybd (s_window_t *window, s_event_t *event)
 
 int s_event_parse_expos (s_window_t *window, s_event_t *event)
 {
-	s_surface_changed(window, event->expose->rect);
+	s_surface_changed(window, event->expose->rect, 0);
 	return 0;
 }
 

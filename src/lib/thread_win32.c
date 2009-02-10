@@ -169,6 +169,7 @@ static s_thread_api_t s_thread_win32 = {
 	s_thread_win32_thread_create,
 	s_thread_win32_thread_cancel,
 	s_thread_win32_thread_join,
+	NULL,
 	s_thread_win32_thread_self,
 	s_thread_win32_thread_exit,
 };
