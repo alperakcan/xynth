@@ -1,6 +1,12 @@
+
+Wed 11 Feb 2009 01:33:38 AM EET
+	- rev 1047
+	- imported artec group's guioo library contributions, and
+	  enhancments for both client library and server.
+
 Wed 10 Sep 2008 03:59:05 AM EEST
 	- rev 1036
-	- listbox, clistbox, scrollbuffer imporvements for widget library
+	- listbox, clistbox, scrollbuffer improvements for widget library
 	- sdl port update
 
 Mon 30 Jun 2008 11:52:21 AM EEST
