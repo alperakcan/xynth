@@ -312,6 +312,20 @@ void bpp_getbox (s_surface_t *surface, int x, int y, int w, int h, void *dp)
 	}
 }
 
+void bpp_putbox_od (s_surface_t *surface, int x, int y, int w, int h, void *sp, int bw)
+{
+	unsigned int i = h;
+	unsigned int s_ = bw * surface->bytesperpixel;
+	unsigned int d_ = surface->linear_buf_pitch * surface->bytesperpixel;
+	unsigned char *s = sp;
+	unsigned char *d = surface->linear_buf + OFFSE4P * surface->bytesperpixel;
+	switch (surface->bytesperpixel) {
+		case 1:	driverloop5(s_memcpy1);		break;
+		case 2:	driverloop5(s_memcpy2);		break;
+		case 4:	driverloop5(s_memcpy4);		break;
+	}
+}
+
 #define driverloop6(func)\
 	while (i--) {\
 		func(m, id, d, s, w);\
