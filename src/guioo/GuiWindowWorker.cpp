@@ -14,6 +14,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <stdio.h>
 #include "GuiWindowWorker.h"
 
 //#define DEBUG

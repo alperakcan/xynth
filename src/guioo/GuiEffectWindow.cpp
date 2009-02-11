@@ -14,6 +14,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <stdio.h>
 #include "GuiEffectWindow.h"
 
 #define SLIDE_HORZ_STEP		40

@@ -58,7 +58,8 @@ GuiSurface::GuiSurface(s_surface_t *pSurface)
  */
 GuiSurface::~GuiSurface()
 {
-	if (virtBuf != NULL) {
+	if(virtBuf != NULL)
+	{
 		s_free(virtBuf);
 		s_surface_destroy(pSurface);
 	}

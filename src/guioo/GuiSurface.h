@@ -12,13 +12,13 @@ struct RGB_COLOR
 
 /**
  * \brief Graphical window surface
- *
+ * 
  * Given class implements the graphical window surface by wrapping the surface
  * API of the Xynth engine. A new virtual surface can be instantiated, or
  * the object can be attached to an existing surface. Object methods may be
  * then used to draw pixels, lines, boxes and copy rectangular areas from
  * another surfaces.
- *
+ * 
  * \author Andrei Birjukov, Anti Sullin
  */
 
@@ -37,19 +37,19 @@ public:
 	void drawLine(int x1, int y1, int x2, int y2, int rgb);
 	void drawCircle(int x1, int y1, int radius, int rgb);
 	void drawPrimitive(int x1, int y1);
-
+	
 	int makeColor(int r, int g, int b);
 	int makeColor(RGB_COLOR *rgb);
 	static RGB_COLOR stringToRGB(const char *str);
-
+	
 	void copySurface(GuiSurface *pSrc);
 	void copySurface(int x, int y, GuiSurface *pSrc);
 	void copySurfacePart(int destX, int destY, s_rect_t *srcPart, GuiSurface *pSrc);
-
+	
 	int getWidth();
 	int getHeight();
 	int getBitsPerPixel();
-
+	
 private:
 
 	s_surface_t *pSurface;

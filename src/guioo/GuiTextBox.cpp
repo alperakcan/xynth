@@ -18,8 +18,8 @@
 #include "GuiTextBox.h"
 
 #define REGULAR_FONT	"trebuc.ttf"
-#define BOLD_FONT	"trebucbd.ttf"
-#define ITALIC_FONT	"trebucit.ttf"
+#define BOLD_FONT		"trebucbd.ttf"
+#define ITALIC_FONT		"trebucit.ttf"
 
 ////////////////////////////////////////////////////////////////////////////////
 /**
@@ -28,7 +28,7 @@
  * Default constructor for GUI text box objects. Initializes vertical alignment
  * to top and horizontal alignment to left.
  *
- * \param idResource Uniquie primitive identifier.
+ * \param idResource Unique primitive identifier.
  * \param pFrame Pointer to a parent frame containing the primitive.
  */
 GuiTextBox::GuiTextBox(int idResource, GuiFrame* pFrame)

@@ -120,7 +120,6 @@ public:
 	bool createWindow(int style, GuiWindow *pParent=NULL);
 	bool setWindowPos(s_rect_t &wndPos);
 	bool showWindow(bool state);
-	bool setCursor(s_cursor_type_t cursor);
 	bool startEventLoop();
 	bool setAlwaysOnTop(bool flag);
 	bool setEnabled(bool flag);

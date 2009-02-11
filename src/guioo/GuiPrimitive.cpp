@@ -29,7 +29,7 @@
  * Initializes selection state to UNSELECTED and primitive coordinates to zeros.
  * The primitive is visible by default.
  *
- * \param idResource Uniquie primitive identifier.
+ * \param idResource Unique primitive identifier.
  * \param pFrame Pointer to a parent frame containing the primitive.
  */
 GuiPrimitive::GuiPrimitive(int idResource, GuiFrame *pFrame)

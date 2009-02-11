@@ -1,8 +1,8 @@
 /***************************************************************************
  *   Copyright            : (c) 2007-2008 Artec Design LLC                 *
- *                        : (c) 2008 Jaanus Sepp
  *                        : (c) 2007-2008 Andrei Birjukov                  *
  *                        : (c) 2007-2008 Anti Sullin                      *
+ *                        : (c) 2007-2008 Jaanus Sepp                      *
  *   Contact              : andrei.birjukov at artecdesign dot ee          *
  ***************************************************************************/
 
@@ -21,8 +21,17 @@
 #define SELECTION_BAR_WIDTH  2
 
 ////////////////////////////////////////////////////////////////////////////////
-//
-
+/**
+ * \brief Class constructor
+ *
+ * Default constructor for GUI text matrix objects. Initializes the height and
+ * width of the matrix.
+ *
+ * \param idResource Unique primitive identifier.
+ * \param pFrame Pointer to a parent frame containing the primitive.
+ * \param width Specifies the width of the text matrix, in pixels.
+ * \param height Specifies the height of the text matrix, in pixels.
+ */
 GuiTextMatrix::GuiTextMatrix(int idResource, GuiFrame* pFrame,
 		int width, int height) : GuiPrimitive(idResource, pFrame)
 {
@@ -37,6 +46,12 @@ GuiTextMatrix::GuiTextMatrix(int idResource, GuiFrame* pFrame,
 	imageData->h = img_height;
 }
 
+/**
+ * \brief Class destructor
+ *
+ * Destructor for the text matrix primitive objects.
+ * Releases currently initialized font and image resources.
+ */
 GuiTextMatrix::~GuiTextMatrix()
 {
 	if(fontData) s_font_uninit(fontData);
@@ -44,7 +59,16 @@ GuiTextMatrix::~GuiTextMatrix()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
+/**
+ * \brief Set font name and size
+ *
+ * Initializes the text matrix with the given TTF font name and size.
+ * Font name maps to a TTF file name supported by Xynth engine.
+ *
+ * \param fontName Contains the TTF font name as a null-terminated string
+ * \param fontSize Specifies the font size, in pixels
+ * \return Returns true if the text matrix was initialized successfully
+ */
 bool GuiTextMatrix::setFont(const char* fontName, int fontSize)
 {
 	if(fontData) s_font_uninit(fontData);
@@ -61,7 +85,15 @@ bool GuiTextMatrix::setFont(const char* fontName, int fontSize)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
+/**
+ * \brief Set text matrix dimensions
+ *
+ * Initializes the width and height of the text matrix.
+ *
+ * \param cols Specifies the number of columns in the text matrix.
+ * \param rows Specifies the number of rows in the text matrix.
+ * \return Returns true if the call was successfull.
+ */
 bool GuiTextMatrix::setDimensions(int cols, int rows)
 {
 	if (cols < 1) col_count = 1; else col_count = cols;
@@ -73,8 +105,19 @@ bool GuiTextMatrix::setDimensions(int cols, int rows)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
-
+/**
+ * \brief Initialize matrix colors
+ *
+ * Assigns font color parameters to the text matrix. The color values are
+ * given in text format, as null-terminated strings containing hex-encoded
+ * RGB channels (RRGGBB).
+ *
+ * \param pStaticTextColor Specifies the font color of a static text.
+ * \param pInactiveFieldColor Specifies the font color of an inactive field.
+ * \param pActiveFieldColor Specifies the font color of an active field.
+ * \param pSelectionColor Specifies the selection foreground color.
+ * \param pSelectionBgColor Specifies the selection background color.
+ */
 void GuiTextMatrix::setColor(const char *pStaticTextColor,
 							const char *pInactiveFieldColor,
 							const char *pActiveFieldColor,
@@ -122,8 +165,19 @@ void GuiTextMatrix::setColor(const char *pStaticTextColor,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
-
+/**
+ * \brief Set cell content
+ *
+ * Writes a character to the specified cell of the text matrix.
+ * The character is given in the UTF-8 format and the specified cell style is
+ * also applied. Redrawing is not performed automatically.
+ *
+ * \param row Specifies the cell row index.
+ * \param col Specifies the cell column index.
+ * \param boxText Points to a null-terminated string containing the cell
+ * character, in UTF-8 format
+ * \param cellType Specifies the cell type.
+ */
 void GuiTextMatrix::setCell(size_t row, size_t col,
 				const char* boxText, CellType cellType)
 {
@@ -186,48 +240,80 @@ void GuiTextMatrix::setCell(size_t row, size_t col,
 		}
 	}
 
-	imageCopy(col * cell_width + ((cell_width - fontData->glyph.img->w) / 2),
-			row * cell_height,
+	imageCopy(col * cell_width, row * cell_height,
 			imageData, fontData->glyph.img,
+			(cell_width - fontData->glyph.img->w) / 2,
 			fontData->ascent - fontData->glyph.yMax - 2);
-         //   (CELL_HEIGHT + fontData->ascent + fontData->descent) / 2 - fontData->glyph.yMax + 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
-
+/**
+ * \brief Get cell height
+ *
+ * \return Returns the height of the cell, in pixels.
+ */
 int GuiTextMatrix::getCellHeight()
 {
 	return cell_height;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
-
+/**
+ * \brief Get column count
+ *
+ * \return Returns the number of columns in the text matrix.
+ */
 int GuiTextMatrix::getColCount()
 {
 	return col_count;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
-
+/**
+ * \brief Get row count
+ *
+ * \return Returns the number of rows in the text matrix.
+ */
 int GuiTextMatrix::getRowCount()
 {
 	return row_count;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
-
+/**
+ *
+ */
 void GuiTextMatrix::imageCopy(int destX, int destY,
 								s_image_t *destImg, s_image_t *srcImg,
-								int vertOffset)
+								int horOffset, int vertOffset)
 {
-	for (int i = 0; i < srcImg->h; i++)
+	int fromRow = 0;
+
+	if (vertOffset < 0)
+		fromRow = -vertOffset;
+
+	int toRow = srcImg->h;
+
+	if (srcImg->h + vertOffset > cell_height)
+		toRow = cell_height - vertOffset;
+
+	for (int i = fromRow; i < toRow; i++)
 	{
-		int destOffset = (destY + i + vertOffset) * destImg->w + destX;
-		for (int j = 0; j < srcImg->w; j++)
+		int fromCol = 0;
+
+		if (horOffset < 0)
+			fromCol = -horOffset;
+
+		int toCol = srcImg->w;
+
+		if (srcImg->w + horOffset > cell_width)
+			toCol = cell_width - horOffset;
+
+
+		int destOffset = (destY + vertOffset + i) * destImg->w +
+							destX + horOffset + fromCol;
+
+		for (int j = fromCol; j < toCol; j++)
 		{
 			int srcpixel = srcImg->w * i + j;
 
@@ -267,8 +353,15 @@ void GuiTextMatrix::imageCopy(int destX, int destY,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
-
+/**
+ * \brief Painting function of the primitive interface
+ *
+ * Called by the parent frame whenever a primitive redraw is required.
+ * \param drawSurface Pointer to a graphical surface where the primitive should
+ * draw itself to.
+ * \param paintArea The rectangular area of the parent frame surface that
+ * should be re-painted by the primitive.
+ */
 void GuiTextMatrix::onPaint(GuiSurface *drawSurface, s_rect_t &paintArea)
 {
 	if(!isVisible) return;
@@ -279,6 +372,3 @@ void GuiTextMatrix::onPaint(GuiSurface *drawSurface, s_rect_t &paintArea)
 	s_rect_t relRect = { surfRect.x - drawArea.x, surfRect.y - drawArea.y, surfRect.w, surfRect.h };
 	drawSurface->drawImagePart(surfRect.x, surfRect.y, &relRect, imageData);
 }
-
-////////////////////////////////////////////////////////////////////////////////
-//

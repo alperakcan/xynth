@@ -28,7 +28,7 @@
  * them separately via loadEnabled() and loadDisabled() methods.
  * Automatic image initialization is performed via GuiTemplate class.
  *
- * \param idResource Uniquie primitive identifier.
+ * \param idResource Unique primitive identifier.
  * \param pFrame Pointer to a parent frame containing the primitive.
  */
 GuiCheckBox::GuiCheckBox(int idResource, GuiFrame* pFrame)

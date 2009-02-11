@@ -28,7 +28,7 @@
  * using loadBackground() and loadBar() methods. Automatic image initialization
  * is performed via GuiTemplate class.
  *
- * \param idResource Uniquie primitive identifier.
+ * \param idResource Unique primitive identifier.
  * \param pFrame Pointer to a parent frame containing the primitive.
  */
 GuiProgressBar::GuiProgressBar(int idResource, GuiFrame* pFrame)
