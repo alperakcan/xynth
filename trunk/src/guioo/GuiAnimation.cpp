@@ -26,16 +26,17 @@
  *
  * Automatic animation frame initialization is performed via GuiTemplate class.
  *
- * \param idResource Uniquie primitive identifier.
+ * \param idResource Unique primitive identifier.
  * \param pFrame Pointer to a parent frame containing the primitive.
  */
 
-GuiAnimation::GuiAnimation (int idResource, GuiFrame *pFrame)
-	: GuiPrimitive(idResource, pFrame)
+GuiAnimation::GuiAnimation(int idResource, GuiFrame* pFrame)
+		: GuiPrimitive(idResource, pFrame)
 {
 	frameDelay = 0;
 	loopCount = -1;
 
+	frameIterator = frameList.end();
 	frameTimer = NULL;
 }
 
@@ -201,7 +202,7 @@ bool GuiAnimation::isPlaying()
 void GuiAnimation::onPaint(GuiSurface *drawSurface, s_rect_t &paintArea)
 {
 	lock();
-	if(!isVisible)
+	if(!isVisible || frameIterator == frameList.end())
 	{
 		unlock();
 		return;

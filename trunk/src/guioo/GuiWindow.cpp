@@ -14,6 +14,9 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <time.h>
+#include <stdio.h>
+#include <unistd.h>
 #include "GuiWindow.h"
 
 //#define DEBUG
@@ -152,34 +155,30 @@ GuiWindow::~GuiWindow()
  * \return Returns true if the window has been created successfully.
  */
 
-bool GuiWindow::createWindow (int style, GuiWindow *pParent)
+bool GuiWindow::createWindow(int style, GuiWindow *pParent)
 {
-	s_window_type_t xynthStyle;
-
-	if (wndHandle != NULL) {
-		return false;
-	}
+	if(wndHandle) return false;
 
 	// modal, child and tooltip styles are only possible if there is a parent
-	if (style & (GUI_STYLE_MODAL | GUI_STYLE_CHILD | GUI_STYLE_TOOLTIP) && pParent == NULL) {
-		return false;
-	}
+	if(style & (GUI_STYLE_MODAL | GUI_STYLE_CHILD | GUI_STYLE_TOOLTIP)
+		&& pParent == NULL) return false;
 
 	s_window_init(&wndHandle);
 
-	xynthStyle = WINDOW_TYPE_NOFORM;
-	if (style & GUI_STYLE_MAIN)    xynthStyle = (s_window_type_t) (xynthStyle | WINDOW_TYPE_MAIN);
-	if (style & GUI_STYLE_DESKTOP) xynthStyle = (s_window_type_t) (xynthStyle | WINDOW_TYPE_DESKTOP);
-	if (style & GUI_STYLE_CHILD)   xynthStyle = (s_window_type_t) (xynthStyle | WINDOW_TYPE_CHILD);
-	if (style & GUI_STYLE_TOOLTIP) xynthStyle = (s_window_type_t) (xynthStyle | WINDOW_TYPE_TEMP);
-	if (style & GUI_STYLE_POPUP)   xynthStyle = (s_window_type_t) (xynthStyle | WINDOW_TYPE_POPUP);
-	if (style & GUI_STYLE_INPUT)   xynthStyle = (s_window_type_t) (xynthStyle | WINDOW_TYPE_INPUT);
+	int xynthStyle = WINDOW_TYPE_NOFORM;
+
+	if(style & GUI_STYLE_MAIN) xynthStyle |= WINDOW_TYPE_MAIN;
+	if(style & GUI_STYLE_DESKTOP) xynthStyle |= WINDOW_TYPE_DESKTOP;
+	if(style & GUI_STYLE_CHILD) xynthStyle |= WINDOW_TYPE_CHILD;
+	if(style & GUI_STYLE_TOOLTIP) xynthStyle |= WINDOW_TYPE_TEMP;
+	if(style & GUI_STYLE_POPUP) xynthStyle |= WINDOW_TYPE_POPUP;
+	if(style & GUI_STYLE_INPUT) xynthStyle |= WINDOW_TYPE_INPUT;
 
 	s_window_t *parentHandle = (pParent == NULL) ? NULL : pParent->wndHandle;
-	s_window_new(wndHandle, xynthStyle, parentHandle);
+	s_window_new(wndHandle, (s_window_type_t)xynthStyle, parentHandle);
 	wndHandle->surface->mode = (S_SURFACE_MODE) (wndHandle->surface->mode & ~SURFACE_REAL);
 
-	if (wndSurface) delete wndSurface;
+	if(wndSurface) delete wndSurface;
 	wndSurface = new GuiSurface(wndHandle->surface);
 
 	wndHandle->data = (void*)this;
@@ -318,25 +317,6 @@ bool GuiWindow::setEnabled(bool flag)
 {
 	if(wndHandle == NULL) return false;
 	isEnabled = flag;
-	return true;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-/**
- * \brief Set window cursor
- *
- * Specifies the desired cursor type for the given window. Multiple cursor
- * types are defined by the Xynth engine.
- *
- * \param cursor Selects the new cursor type, refer to Xynth documentation
- * for available options.
- * \return Returns true if the new cursor is set successfully.
- */
-
-bool GuiWindow::setCursor(s_cursor_type_t cursor)
-{
-	if(wndHandle == NULL) return false;
-	s_window_set_cursor(wndHandle, cursor);
 	return true;
 }
 
@@ -559,7 +539,8 @@ void GuiWindow::onPaint(s_rect_t &paintArea)
 	// display by that
 	if (refreshRealSurface) {
 		// finally, copy the virtual surface data onto the window "real" surface
-		s_rect_t paintRect = { paintArea.x + windowPos.x, paintArea.y + windowPos.y, paintArea.w, paintArea.h };
+		s_rect_t paintRect = { paintArea.x + windowPos.x, paintArea.y + windowPos.y,
+				paintArea.w, paintArea.h };
 		wndHandle->surface->mode = (S_SURFACE_MODE) (wndHandle->surface->mode | SURFACE_REAL);
 		s_surface_changed(wndHandle, &paintRect, 0);
 		wndHandle->surface->mode = (S_SURFACE_MODE) (wndHandle->surface->mode & ~SURFACE_REAL);
@@ -918,7 +899,7 @@ void GuiWindow::eventHandlerProc(s_window_t *window, s_event_t *event)
 	{
 		// Is the click in this window?
 		// If the previous click was in this window, we get another notification
-		// with MOUSE_EXITED to un-select all controls that were left selected etc.
+		// with EVENT_TYPE_MOUSE_EXIT to un-select all controls that were left selected etc.
 		// We better not over-react.
 		if (event->mouse->x > pWindow->windowPos.x &&
 				event->mouse->x < pWindow->windowPos.x + pWindow->windowPos.w &&
@@ -1093,8 +1074,6 @@ void GuiWindow::unlock()
 
 s_timer_t* GuiWindow::startTimer(int ms, int idTimer, GuiPrimitive *pItem=NULL)
 {
-	if(wndTimerMutex) s_thread_mutex_lock(wndTimerMutex);
-
 	s_timer_t *pTimer = NULL;
 	s_timer_init(&pTimer);
 
@@ -1121,6 +1100,8 @@ s_timer_t* GuiWindow::startTimer(int ms, int idTimer, GuiPrimitive *pItem=NULL)
 			#ifdef DEBUG_TIMER
 			printf("GuiWindow(%p)::startTimer: failed adding timer\n", this);
 			#endif
+
+			delete pTD;
 			s_timer_uninit(pTimer);
 			pTimer = NULL;
 		}
@@ -1129,8 +1110,6 @@ s_timer_t* GuiWindow::startTimer(int ms, int idTimer, GuiPrimitive *pItem=NULL)
 	#ifdef DEBUG_TIMER
 	printf("GuiWindow(%p)::startTimer: done %p\n", this, pTimer);
 	#endif
-
-	if(wndTimerMutex) s_thread_mutex_unlock(wndTimerMutex);
 	return pTimer;
 }
 
@@ -1145,18 +1124,21 @@ s_timer_t* GuiWindow::startTimer(int ms, int idTimer, GuiPrimitive *pItem=NULL)
  */
 bool GuiWindow::stopTimer(s_timer_t* pTimer)
 {
-	if(wndTimerMutex) s_thread_mutex_lock(wndTimerMutex);
+	s_thread_mutex_lock(wndTimerMutex);
 
 	#ifdef DEBUG_TIMER
 	printf("GuiWindow(%p)::stopTimer: stopping timer %p\n", this, pTimer);
 	#endif
+
+	TIMER_DATA*	pData = (TIMER_DATA*)pTimer->data;
+	pTimer->data = NULL;
 
 	if(s_timer_del(wndHandle, pTimer) < 0)
 	{
 		#ifdef DEBUG_TIMER
 		printf("GuiWindow(%p)::stopTimer: failed removing timer\n", this);
 		#endif
-		if(wndTimerMutex) s_thread_mutex_unlock(wndTimerMutex);
+		s_thread_mutex_unlock(wndTimerMutex);
 		return false;
 	}
 
@@ -1164,22 +1146,18 @@ bool GuiWindow::stopTimer(s_timer_t* pTimer)
 	// (timer proc gets called after timer is actually removed)
 	usleep(1000);
 
-	if(pTimer->data != NULL)
-	{
-		delete (TIMER_DATA*)pTimer->data;
-		pTimer->data = NULL;
-	}
+	if(pData != NULL) delete pData;
 
 	if(s_timer_uninit(pTimer) != 0)
 	{
 		#ifdef DEBUG_TIMER
 		printf("GuiWindow(%p)::stopTimer: failed releasing timer\n", this);
 		#endif
-		if(wndTimerMutex) s_thread_mutex_unlock(wndTimerMutex);
+		s_thread_mutex_unlock(wndTimerMutex);
 		return false;
 	}
 
-	if(wndTimerMutex) s_thread_mutex_unlock(wndTimerMutex);
+	s_thread_mutex_unlock(wndTimerMutex);
 	return true;
 }
 
@@ -1200,9 +1178,19 @@ void GuiWindow::timerProc(s_window_t* pWnd, s_timer_t *pTimer)
 	printf("GuiWindow::timerProc: window %p, timer %p\n", pWnd, pTimer);
 	#endif
 
-	TIMER_DATA *pTD = (TIMER_DATA*)pTimer->data;
-	if(pTD->pItem != NULL) pTD->pItem->onTimer(pTD->idTimer);
-	else if (pTD->pWindow != NULL) pTD->pWindow->onTimer(pTD->idTimer);
+	GuiWindow *pThis = (GuiWindow*)pWnd->data;
+	s_thread_mutex_lock(pThis->wndTimerMutex);
+	if (pTimer->data == NULL)
+	{
+		s_thread_mutex_unlock(pThis->wndTimerMutex);
+		return;
+	}
+
+	TIMER_DATA td = *(TIMER_DATA*)pTimer->data;
+	s_thread_mutex_unlock(pThis->wndTimerMutex);
+
+	if(td.pItem != NULL) td.pItem->onTimer(td.idTimer);
+	else if (td.pWindow != NULL) td.pWindow->onTimer(td.idTimer);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

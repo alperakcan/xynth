@@ -2,7 +2,7 @@
  *   Copyright            : (c) 2007-2008 Artec Design LLC                 *
  *                        : (c) 2007-2008 Andrei Birjukov                  *
  *                        : (c) 2007-2008 Anti Sullin                      *
- *                        : (c) 2008 Jaanus Sepp
+ *                        : (c) 2007-2008 Jaanus Sepp                      *
  *   Contact              : andrei.birjukov at artecdesign dot ee          *
  ***************************************************************************/
 
@@ -15,6 +15,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <string.h>
+#include <stdlib.h>
 #include "GuiTemplate.h"
 #include "GuiImage.h"
 #include "GuiCheckBox.h"

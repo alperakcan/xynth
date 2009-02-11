@@ -30,7 +30,7 @@
  * them separately via loadBarFill() and loadBackground() and loadBarEdges()
  * methods. Automatic image initialization is performed through GuiTemplate.
  *
- * \param idResource Uniquie primitive identifier.
+ * \param idResource Unique primitive identifier.
  * \param pFrame Pointer to a parent frame containing the primitive.
  */
 GuiScrollBar::GuiScrollBar(int idResource, GuiFrame* pFrame)

@@ -20,7 +20,7 @@
 /**
  * \brief
  *
- * \param idResource Uniquie primitive identifier.
+ * \param idResource Unique primitive identifier.
  * \param pFrame Pointer to a parent frame containing the primitive.
  */
 GuiEditBox::GuiEditBox(int idResource, GuiFrame* pFrame)
