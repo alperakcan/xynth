@@ -84,9 +84,16 @@
 
 int s_rgbcolor (s_surface_t *surface, int r, int g, int b)
 {
+#ifdef CONFIG_VIDEO_COLOR_555i
+	int i = ((r & 0x04) + (g & 0x04) + (b & 0x04)); 
+	return (((((unsigned char) r) >> (8 - surface->redlength)) << surface->redoffset) |
+	        ((((unsigned char) g) >> (8 - surface->greenlength)) << surface->greenoffset) |
+	        ((((unsigned char) b) >> (8 - surface->bluelength)) << surface->blueoffset)) | ((i & 0x08) << 12);
+#else
 	return (((((unsigned char) r) >> (8 - surface->redlength)) << surface->redoffset) |
 	        ((((unsigned char) g) >> (8 - surface->greenlength)) << surface->greenoffset) |
 	        ((((unsigned char) b) >> (8 - surface->bluelength)) << surface->blueoffset));
+#endif
 }
 
 void s_colorrgb (s_surface_t *surface, int c, int *r, int *g, int *b)
@@ -694,7 +701,7 @@ int s_surface_create_from_data (s_surface_t **surface, int width, int height, in
 			s->blueoffset = 0;
 			s->greenoffset = 3;
 			s->redoffset = 6;
-#if defined(CONFIG_VIDEO_PSPDEV)
+#if defined(CONFIG_VIDEO_COLOR_BGR)
 			s->blueoffset = 6;
 			s->greenoffset = 3;
 			s->redoffset = 0;
@@ -709,7 +716,7 @@ int s_surface_create_from_data (s_surface_t **surface, int width, int height, in
 			s->blueoffset = 0;
 			s->greenoffset = 5;
 			s->redoffset = 10;
-#if defined(CONFIG_VIDEO_PSPDEV)
+#if defined(CONFIG_VIDEO_COLOR_BGR)
 			s->blueoffset = 10;
 			s->greenoffset = 5;
 			s->redoffset = 0;
@@ -724,7 +731,7 @@ int s_surface_create_from_data (s_surface_t **surface, int width, int height, in
 			s->blueoffset = 0;
 			s->greenoffset = 5;
 			s->redoffset = 11;
-#if defined(CONFIG_VIDEO_PSPDEV)
+#if defined(CONFIG_VIDEO_COLOR_BGR)
 			s->blueoffset = 11;
 			s->greenoffset = 5;
 			s->redoffset = 0;
@@ -739,7 +746,7 @@ int s_surface_create_from_data (s_surface_t **surface, int width, int height, in
                         s->blueoffset = 0;
                         s->greenoffset = 6;
                         s->redoffset = 12;
-#if defined(CONFIG_VIDEO_PSPDEV)
+#if defined(CONFIG_VIDEO_COLOR_BGR)
 			s->blueoffset = 12;
 			s->greenoffset = 6;
 			s->redoffset = 0;
@@ -755,7 +762,7 @@ int s_surface_create_from_data (s_surface_t **surface, int width, int height, in
 			s->blueoffset = 0;
 			s->greenoffset = 8;
 			s->redoffset = 16;
-#if defined(CONFIG_VIDEO_PSPDEV)
+#if defined(CONFIG_VIDEO_COLOR_BGR)
 			s->blueoffset = 16;
 			s->greenoffset = 8;
 			s->redoffset = 0;
