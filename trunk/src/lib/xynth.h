@@ -679,6 +679,7 @@ void bpp_putbox_alpha (s_surface_t *surface, int x, int y, int w, int h, void *s
 void bpp_putbox_rgb (s_surface_t *surface, int x, int y, int w, int h, unsigned int *rgb, int bw);
 void bpp_putbox_rgba (s_surface_t *surface, int x, int y, int w, int h, unsigned int *rgba, int bw);
 void bpp_getbox (s_surface_t *surface, int x, int y, int w, int h, void *dp);
+void bpp_putbox_od (s_surface_t *surface, int x, int y, int w, int h, void *sp, int bw);
 void bpp_putbox_o (s_surface_t *surface, int id,  int x, int y, int w, int h, void *sp, int bw);
 void bpp_putbox_mask_o (s_surface_t *surface, int id,  int x, int y, int w, int h, void *sp, unsigned char *sm, int bw);
 void bpp_putbox_alpha_o (s_surface_t *surface, int id,  int x, int y, int w, int h, void *sp, unsigned char *sm, int bw);
