@@ -42,6 +42,7 @@ void s_server_cursor_init (void)
 	xynth_server->cursor.y = 0;
 	xynth_server->cursor.xyid = -1;
 	xynth_server->cursor.xyid_old = -1;
+	xynth_server->cursor.xyid_oldclick = -1;
 
 	for (i = 0; i < CURSOR_TYPE_MAX; i++) {
 		xynth_server->cursor.images[i].mat = NULL;

@@ -143,6 +143,7 @@ struct s_cursor_s {
 	int y;
 	int xyid;
 	int xyid_old;
+	int xyid_oldclick;
 	int enabled;
 	s_image_t *img;
 	s_image_t images[CURSOR_TYPE_MAX];

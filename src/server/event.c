@@ -237,6 +237,20 @@ void s_server_event_changed (void)
 					s_server_socket_request(SOC_DATA_EVENT, eid);
 				}
 			}
+			/* artec group
+			 * send to the window where the mouse was clicked
+			 */
+			if (xynth_server->window->event->type & EVENT_TYPE_MOUSE_RELEASED) {
+				if (id != xynth_server->cursor.xyid_oldclick &&
+				    oid != xynth_server->cursor.xyid_oldclick) {
+					s_server_socket_request(SOC_DATA_EVENT, xynth_server->cursor.xyid_oldclick);
+				}
+				xynth_server->cursor.xyid_oldclick = -1;
+			}
+			if (xynth_server->window->event->type & EVENT_TYPE_MOUSE_PRESSED) {
+				xynth_server->cursor.xyid_oldclick = id;
+			}
+			/* moved to other window */
 			if (id != oid) {
 				xynth_server->window->event->type &= ~EVENT_TYPE_MOUSE_ENTER;
 				xynth_server->window->event->type |= EVENT_TYPE_MOUSE_EXIT;
