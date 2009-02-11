@@ -47,6 +47,9 @@
 #if defined(CONFIG_VIDEO_CACA)
 	extern s_video_driver_t s_video_caca;
 #endif
+#if defined(CONFIG_VIDEO_ARTEC)
+	extern s_video_driver_t s_video_artec;
+#endif
 #if defined(CONFIG_VIDEO_NULL)
 	extern s_video_driver_t s_video_null;
 #endif
@@ -75,6 +78,9 @@ static s_video_driver_t *video_drivers[] = {
 #endif
 #if defined(CONFIG_VIDEO_CACA)
 	&s_video_caca,
+#endif
+#if defined(CONFIG_VIDEO_ARTEC)
+	&s_video_artec,
 #endif
 #if defined(CONFIG_VIDEO_NULL)
 	&s_video_null,

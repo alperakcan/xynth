@@ -9,6 +9,7 @@ subdir-$(CONFIG_VIDEO_PSPDEV)  += ./video/pspdev
 subdir-$(CONFIG_VIDEO_GDI)     += ./video/gdi
 subdir-$(CONFIG_VIDEO_GP2X)    += ./video/gp2x
 subdir-$(CONFIG_VIDEO_CACA)    += ./video/caca
+subdir-$(CONFIG_VIDEO_ARTEC)   += ./video/artec
 subdir-$(CONFIG_VIDEO_NULL)    += ./video/null
 subdir-$(CONFIG_VIDEO_HELPER)  += ./video/helper
 
@@ -40,6 +41,7 @@ libserver.so_files-$(CONFIG_VIDEO_PSPDEV)  += ./video/pspdev/video_pspdev.o
 libserver.so_files-$(CONFIG_VIDEO_GDI)     += ./video/gdi/video_gdi.o
 libserver.so_files-$(CONFIG_VIDEO_GP2X)    += ./video/gp2x/video_gp2x.o
 libserver.so_files-$(CONFIG_VIDEO_CACA)    += ./video/caca/video_caca.o
+libserver.so_files-$(CONFIG_VIDEO_ARTEC)   += ./video/artec/video_artec.o
 libserver.so_files-$(CONFIG_VIDEO_NULL)    += ./video/null/video_null.o
 libserver.so_files-$(CONFIG_VIDEO_HELPER)  += ./video/helper/video_helper.o
 

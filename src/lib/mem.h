@@ -150,6 +150,64 @@ extern "C" {
 		s++;\
 	}
 
+#define memcpyloop9i_rgb()\
+	while (n--) {\
+		if (!((*s) & 0x000000FF)) {\
+			asm ("mov %0,%1,lsl#5" "\n\t" \
+				 "adds %0,%0,%1,lsl#13" "\n\t" \
+				 "addcss %0,%0,%1,lsl#21" "\n\t" \
+				 "adc %0,%0,#0": \
+				 "=r" (i): "r" (*s)); \
+			*d = ((*s >> 17) & 0x7C00) | ((*s >> 14) & 0x03E0 ) | ((*s >> 11) & 0x001F ) | (i << 15);\
+		} else {\
+			a = *s;\
+			if (a != 0xff) {\
+				sr = *s >> 0x18;\
+				sg = *s >> 0x10;\
+				sb = *s >> 0x08;\
+				dr = (*d >> ro) << rl;\
+				dg = (*d >> go) << gl;\
+				db = (*d >> bo) << bl;\
+				dr = (a * (dr - sr) >> 8) + sr;\
+				dg  = (a * (dg - sg) >> 8) + sg;\
+				db  = (a * (db - sb) >> 8) + sb;\
+				i = ((dr & 0x04) + (dg & 0x04) + (db & 0x04));\
+				*d = ((dr >> rl) << ro) | ((dg >> gl) << go) | ((db >> bl) << bo) | ((i & 0x08)  << 12);\
+			}\
+		}\
+		d++;\
+		s++;\
+	}
+		
+#define memcpyloop9i_bgr()\
+	while (n--) {\
+		if (!((*s) & 0x000000FF)) {\
+			asm ("mov %0,%1,lsl#5" "\n\t" \
+				 "adds %0,%0,%1,lsl#13" "\n\t" \
+				 "addcss %0,%0,%1,lsl#21" "\n\t" \
+				 "adc %0,%0,#0": \
+				 "=r" (i): "r" (*s)); \
+			*d = ((*s >> 1) & 0x7C00) | ((*s >> 14) & 0x03E0 ) | ((*s >> 27) & 0x001F ) | (i << 15);\
+		} else {\
+			a = *s;\
+			if (a != 0xff) {\
+				sr = *s >> 0x18;\
+				sg = *s >> 0x10;\
+				sb = *s >> 0x08;\
+				dr = (*d >> ro) << rl;\
+				dg = (*d >> go) << gl;\
+				db = (*d >> bo) << bl;\
+				dr = (a * (dr - sr) >> 8) + sr;\
+				dg  = (a * (dg - sg) >> 8) + sg;\
+				db  = (a * (db - sb) >> 8) + sb;\
+				i = ((dr & 0x04) + (dg & 0x04) + (db & 0x04));\
+				*d = ((dr >> rl) << ro) | ((dg >> gl) << go) | ((db >> bl) << bo) | ((i & 0x08)  << 12);\
+			}\
+		}\
+		d++;\
+		s++;\
+	}	
+
 #define memcpyloop10()\
 	while (n--) {\
 		a = *s;\
@@ -170,6 +228,33 @@ extern "C" {
 				db  = (a * (db - sb) >> 8) + sb;\
 			}\
 			*d = ((dr >> rl) << ro) | ((dg >> gl) << go) | ((db >> bl) << bo);\
+		}\
+		d++;\
+		s++;\
+		m++;\
+	}
+
+#define memcpyloop10i()\
+	while (n--) {\
+		a = *s;\
+		if ((*m == id) && (a != 0xff)) {\
+			sr = *s >> 0x18;\
+			sg = *s >> 0x10;\
+			sb = *s >> 0x08;\
+			if (a == 0x00) {\
+				dr = sr;\
+				dg = sg;\
+				db = sb;\
+			} else {\
+				dr = (*d >> ro) << rl;\
+				dg = (*d >> go) << gl;\
+				db = (*d >> bo) << bl;\
+				dr  = (a * (dr - sr) >> 8) + sr;\
+				dg  = (a * (dg - sg) >> 8) + sg;\
+				db  = (a * (db - sb) >> 8) + sb;\
+			}\
+			i = sr + sg + sb;\
+			*d = ((dr >> rl) << ro) | ((dg >> gl) << go) | ((db >> bl) << bo) | ((i >> il) << io);\
 		}\
 		d++;\
 		s++;\
@@ -339,10 +424,19 @@ static inline void s_memcpy1orgba (unsigned char *m, int id, void *dest, unsigne
 	unsigned char db;
 	unsigned char *d = (unsigned char *) dest;
 	unsigned int *s = (unsigned int *) rgb;
+#ifdef VIDEO_COLOR_555i
+	unsigned char i;
+	unsigned char il = 3;
+	unsigned char io = 15;
+#endif
 	rl = 8 - rl;
 	gl = 8 - gl;
 	bl = 8 - bl;
+#ifdef VIDEO_COLOR_555i
+	memcpyloop10i();
+#else
 	memcpyloop10();
+#endif
 }
 
 static inline void s_memcpy2orgba (unsigned char *m, int id, void *dest, unsigned int *rgb, int n, int rl, int gl, int bl, int ro, int go, int bo)
@@ -528,10 +622,21 @@ static inline void s_memcpy1rgba (void *dest, unsigned int *rgba, int n, int rl,
 	unsigned char db;
 	unsigned char *d = (unsigned char *) dest;
 	unsigned int *s = (unsigned int *) rgba;
+#ifdef VIDEO_COLOR_555i
+	unsigned char i;
+#endif
 	rl = 8 - rl;
 	gl = 8 - gl;
 	bl = 8 - bl;
+#ifdef VIDEO_COLOR_555i
+#ifdef VIDEO_COLOR_BGR
+	memcpyloop9i_bgr();
+#else
+	memcpyloop9i_rgb();
+#endif
+#else
 	memcpyloop9();
+#endif
 }
 
 static inline void s_memcpy2rgba (void *dest, unsigned int *rgba, int n, int rl, int gl, int bl, int ro, int go, int bo)

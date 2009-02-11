@@ -55,6 +55,7 @@ config CONFIG_PLATFORM_LINUX
 
 config CONFIG_PLATFORM_PSPDEV
     bool "pspdev"
+    select CONFIG_SINGLE_APPLICATION
 
 config CONFIG_PLATFORM_MINGW
     bool "mingw"
@@ -131,6 +132,7 @@ config CONFIG_VIDEO_PSPDEV
     bool "PSPDev video output support"
     default y
     depends on CONFIG_PLATFORM_PSPDEV
+    select CONFIG_VIDEO_COLOR_BGR
     help
 	Play Station Portable SDK
 	http://www.pspdev.org
@@ -145,11 +147,32 @@ config CONFIG_VIDEO_GDI
 	GDI
 	http://msdn.microsoft.com
 
+config CONFIG_VIDEO_ARTEC
+    bool "Artec Group Frame Buffer Driver"
+    default y
+    depends on CONFIG_PLATFORM_LINUX
+    select CONFIG_VIDEO_HELPER
+    select CONFIG_VIDEO_HELPER_CONSOLE
+    select CONFIG_VIDEO_HELPER_KEYBOARD
+    select CONFIG_VIDEO_HELPER_MOUSE
+    select CONFIG_VIDEO_HELPER_MODES
+    help
+	http://www.artecgroup.com
+
 config CONFIG_VIDEO_NULL
     bool "NULL video output support"
     default y
     help
 	NULL video example driver
+
+config CONFIG_VIDEO_COLOR_555i
+    bool "Graphics color 555i"
+    depends on CONFIG_VIDEO_ARTEC
+    default n
+
+config CONFIG_VIDEO_COLOR_BGR
+    bool "Graphics colot is BGR"
+    default n
 
 menu "Video Driver Helper"
 
