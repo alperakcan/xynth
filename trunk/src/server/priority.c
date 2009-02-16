@@ -150,9 +150,9 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 	/* static declerations, will be fixed. these regions should be a part
 	   of client class.
 	 */
-	static s_region_t reg;
-	static s_region_t regsb[S_CLIENTS_MAX];
-	static s_region_t regsw[S_CLIENTS_MAX];
+	s_region_t reg;
+	s_region_t *regsb;
+	s_region_t *regsw;
 
 	s_region_create(&region);
 
@@ -286,6 +286,8 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 	}
 
 	memset(&reg, 0, sizeof(s_region_t));
+	regsb = (s_region_t *) s_malloc(sizeof(s_region_t) * S_CLIENTS_MAX);
+	regsw = (s_region_t *) s_malloc(sizeof(s_region_t) * S_CLIENTS_MAX);
 	memset(regsb, 0, sizeof(s_region_t) * S_CLIENTS_MAX);
 	memset(regsw, 0, sizeof(s_region_t) * S_CLIENTS_MAX);
 
@@ -417,6 +419,8 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 		s_region_clear(&regsb[ri]);
 		s_region_clear(&regsw[ri]);
 	}
+	s_free(regsb);
+	s_free(regsw);
 
 	s_region_destroy(region);
 }

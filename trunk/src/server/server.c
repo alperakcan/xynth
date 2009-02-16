@@ -499,6 +499,7 @@ int s_server_init (void)
 	s_free(config.irr.type);
 	s_free(config.irr.device);
 	s_free(config.irr.brate);
+	s_free(config.theme.name);
 
 	xynth_server->window->running = 1;
 
