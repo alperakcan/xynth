@@ -364,6 +364,7 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 			s_server_surface_matrix_add(ri, rr);
 			s_server_socket_request(SOC_DATA_EXPOSE, ri, rr);
 			if (ri == p_old) {
+				/* no need to send extra event, for focus change */
 				p_old = -1;
 			}
 			rr++;
@@ -386,9 +387,6 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 			while (rn--) {
 				s_server_window_matrix_add(ri, rr);
 				s_server_window_form(ri, rr);
-				if (ri == p_old) {
-					p_old = -1;
-				}
 				rr++;
 			}
 			s_region_clear(&reg);
@@ -408,7 +406,7 @@ void s_server_pri_set_ (S_SURFACE_CHNGF flag, int id, s_rect_t *c0, s_rect_t *c1
 
 	/* tell the priority (only the focus) change if not told */
 	if ((p_old >= 0) &&
-	    (p_old != s_server_id_pri(id))) {
+	    (p_old != s_server_pri_id(0))) {
 		s_rect_t rfake;
 		rfake.x = 0; rfake.y = 0; rfake.w = 0; rfake.h = 0;
 		s_server_socket_request(SOC_DATA_EXPOSE, p_old, &rfake);

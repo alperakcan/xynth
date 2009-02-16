@@ -134,6 +134,8 @@ int s_window_init (s_window_t **window)
 	w->running = 1;
 	w->id = -1;
 	w->pri = -1;
+	w->mapped = -1;
+	w->viewable = -1;
 	w->resizeable = 1;
 	w->alwaysontop = 0;
 	w->cursor = CURSOR_TYPE_ARROW;

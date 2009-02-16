@@ -22,15 +22,7 @@ static int c = CURSOR_TYPE_ARROW;
 
 static void simple_atevent (s_window_t *window, s_event_t *event)
 {
-	if (event->type & EVENT_TYPE_QUIT) {
-		debugf(DCLI, "[%d] quiting", window->id);
-	}
-        if (event->type & EVENT_TYPE_KEYBOARD) {
-		debugf(DCLI, "[%d] event: 0x%08X, f: 0x%08X, b: %d, a:%c", window->id, event->type, event->keybd->flag, event->keybd->button, event->keybd->ascii);
-	}
-	if (event->type & EVENT_TYPE_MOUSE) {
-		debugf(DCLI, "[%d] event->type : 0x%08X, button : 0x%08X, buttons : 0x%08X", window->id, event->type, event->mouse->b, event->mouse->buttons);
-	}
+	s_event_dump(event);
 }
 
 static void simple_handler1o (s_window_t *window, s_event_t *event, s_handler_t *handler)
@@ -87,7 +79,7 @@ int main (int argc, char *argv[])
 	s_window_init(&window);
 
 	s_window_new(window, WINDOW_TYPE_MAIN, NULL);
-	
+
 	mw = window->surface->width;
 	mh = window->surface->height;
 
@@ -113,7 +105,7 @@ int main (int argc, char *argv[])
 	hndl->mouse.r = simple_handler1r;
 	hndl->mouse.button = MOUSE_BUTTON_LEFT;
 	s_handler_add(window, hndl);
-	
+
 	s_handler_init(&hndl);
 	hndl->type = MOUSE_HANDLER;
 	hndl->mouse.x = 0;

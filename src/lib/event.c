@@ -275,6 +275,64 @@ int s_event_changed (s_window_t *window)
 	return 0;
 }
 
+int s_event_dump (s_event_t *event)
+{
+	s_window_t *window;
+	window = event->window;
+	if (event->type & EVENT_TYPE_QUIT) {
+		debugf(0, "EVENT_TYPE_QUIT");
+	}
+        if (event->type & EVENT_TYPE_KEYBOARD) {
+		debugf(0, "EVENT_TYPE_KEYBOARD");
+	}
+	if (event->type & EVENT_TYPE_MOUSE) {
+		debugf(0, "EVENT_TYPE_MOUSE");
+	}
+	if (event->type & EVENT_TYPE_EXPOSE) {
+		debugf(0,
+		       "EVENT_TYPE_EXPOSE:\n"
+		       "    expose->rect->x: %d\n"
+		       "    expose->rect->y: %d\n"
+		       "    expose->rect->w: %d\n"
+		       "    expose->rect->h: %d\n",
+		       event->expose->rect->x,
+		       event->expose->rect->y,
+		       event->expose->rect->w,
+		       event->expose->rect->h);
+	}
+	if (event->type & EVENT_TYPE_CONFIG) {
+		debugf(0,
+		       "EVENT_TYPE_CONFIG:\n"
+		       "    win : (%d, %d) (%d x %d)\n"
+		       "    buf : (%d, %d) (%d x %d)\n"
+		       "    x changed : %s\n"
+		       "    y changed : %s\n"
+		       "    w changed : %s\n"
+		       "    h changed : %s\n",
+		       window->surface->win->x,  window->surface->win->y,  window->surface->win->w,  window->surface->win->h,
+		       window->surface->buf->x,  window->surface->buf->y,  window->surface->buf->w,  window->surface->buf->h,
+		       (event->type & EVENT_TYPE_CONFIG_X) ? "yes" : "no",
+		       (event->type & EVENT_TYPE_CONFIG_Y) ? "yes" : "no",
+		       (event->type & EVENT_TYPE_CONFIG_W) ? "yes" : "no",
+		       (event->type & EVENT_TYPE_CONFIG_H) ? "yes" : "no");
+	}
+	if (event->type & EVENT_TYPE_FOCUS) {
+		debugf(0,
+		       "EVENT_TYPE_FOCUS:\n"
+		       "    focus type : %s\n",
+		       (event->type & EVENT_TYPE_FOCUS_IN) ? "in" :
+		       (event->type & EVENT_TYPE_FOCUS_OUT) ? "out" :
+		       "unknown");
+	}
+	if (event->type & EVENT_TYPE_DESKTOP) {
+		debugf(0, "EVENT_TYPE_DESKTOP");
+	}
+	if (event->type & EVENT_TYPE_TIMER) {
+		debugf(0, "EVENT_TYPE_TIMER");
+	}
+	return 0;
+}
+
 int s_event_init (s_event_t **event)
 {
 	(*event) = (s_event_t *) s_calloc(1, sizeof(s_event_t));

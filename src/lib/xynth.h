@@ -699,6 +699,7 @@ int s_event_parse_config (s_window_t *window, s_event_t *event);
 int s_event_parse_timer (s_window_t *window, s_event_t *event);
 int s_event_copy (s_event_t *event, s_event_t **nevent);
 int s_event_changed (s_window_t *window);
+int s_event_dump (s_event_t *event);
 int s_event_init (s_event_t **event);
 int s_event_uninit (s_event_t *event);
 
@@ -3019,6 +3020,10 @@ struct s_window_s {
 	int id;
 	/** window priority */
 	int pri;
+	/** window is shown */
+	int mapped;
+	/** window is viewable */
+	int viewable;
 	/** window title */
 	char *title;
 
