@@ -33,7 +33,11 @@ static int s_socket_bsd_recv (int s, void *read_buf, int total_size)
 	int r = 0;
 	int r_size = 0;
 	while (total_size != r_size) {
+#if defined(__APPLE__)
+		r = recv(s, read_buf + r_size, total_size - r_size, 0);
+#else
 		r = recv(s, read_buf + r_size, total_size - r_size, MSG_NOSIGNAL);
+#endif
 		if (r <= 0) {
 			s_socket_api_close(s);
 			return -1;
@@ -48,7 +52,11 @@ static int s_socket_bsd_send (int s, void *write_buf, int total_size)
 	int w = 0;
 	int w_size = 0;
 	while (total_size != w_size) {
+#if defined(__APPLE__)
+		w = send(s, write_buf + w_size, total_size - w_size, 0);
+#else
 		w = send(s, write_buf + w_size, total_size - w_size, MSG_NOSIGNAL);
+#endif
 		if (w <= 0) {
 			s_socket_api_close(s);
 			return -1;
