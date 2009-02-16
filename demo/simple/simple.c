@@ -22,7 +22,7 @@ static int c = CURSOR_TYPE_ARROW;
 
 static void simple_atevent (s_window_t *window, s_event_t *event)
 {
-	s_event_dump(event);
+	s_event_dump(window, event);
 }
 
 static void simple_handler1o (s_window_t *window, s_event_t *event, s_handler_t *handler)
