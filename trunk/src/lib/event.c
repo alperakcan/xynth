@@ -275,10 +275,8 @@ int s_event_changed (s_window_t *window)
 	return 0;
 }
 
-int s_event_dump (s_event_t *event)
+void s_event_dump (s_window_t *window, s_event_t *event)
 {
-	s_window_t *window;
-	window = event->window;
 	if (event->type & EVENT_TYPE_QUIT) {
 		debugf(0, "EVENT_TYPE_QUIT");
 	}
@@ -324,13 +322,20 @@ int s_event_dump (s_event_t *event)
 		       (event->type & EVENT_TYPE_FOCUS_OUT) ? "out" :
 		       "unknown");
 	}
+	if (event->type & EVENT_TYPE_MAP) {
+		debugf(0,
+		       "EVENT_TYPE_MAP:\n"
+		       "    map type : %s\n",
+		       (event->type & EVENT_TYPE_MAPPED) ? "mapped" :
+		       (event->type & EVENT_TYPE_UNMAPPED) ? "unmapped" :
+		       "unknown");
+	}
 	if (event->type & EVENT_TYPE_DESKTOP) {
 		debugf(0, "EVENT_TYPE_DESKTOP");
 	}
 	if (event->type & EVENT_TYPE_TIMER) {
 		debugf(0, "EVENT_TYPE_TIMER");
 	}
-	return 0;
 }
 
 int s_event_init (s_event_t **event)

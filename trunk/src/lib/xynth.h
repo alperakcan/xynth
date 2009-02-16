@@ -373,13 +373,16 @@ typedef enum {
 	EVENT_TYPE_FOCUS                  = 0x00100000,
 	EVENT_TYPE_FOCUS_IN               = 0x00200000,
 	EVENT_TYPE_FOCUS_OUT              = 0x00400000,
-	EVENT_TYPE_DESKTOP                = 0x00800000,
-	EVENT_TYPE_TIMER                  = 0x01000000,
-	EVENT_TYPE_REMOTE                 = 0x02000000,
-	EVENT_TYPE_SIGNAL                 = 0x04000000,
+	EVENT_TYPE_MAP			  = 0x00800000,
+	EVENT_TYPE_MAPPED		  = 0x01000000,
+	EVENT_TYPE_UNMAPPED		  = 0x02000000,
+	EVENT_TYPE_DESKTOP                = 0x04000000,
+	EVENT_TYPE_TIMER                  = 0x08000000,
+	EVENT_TYPE_REMOTE                 = 0x10000000,
+	EVENT_TYPE_SIGNAL                 = 0x20000000,
 	EVENT_TYPE_KEYBOARD_MASK          = (EVENT_TYPE_KEYBOARD | EVENT_TYPE_KEYBOARD_RELEASED | EVENT_TYPE_KEYBOARD_PRESSED | EVENT_TYPE_KEYBOARD_EXTENSION_IRR),
 	EVENT_TYPE_MOUSE_MASK             = (EVENT_TYPE_MOUSE | EVENT_TYPE_MOUSE_OVER | EVENT_TYPE_MOUSE_RELEASED | EVENT_TYPE_MOUSE_PRESSED | EVENT_TYPE_MOUSE_CLICKED | EVENT_TYPE_MOUSE_HINT1 | EVENT_TYPE_MOUSE_HINT2),
-	EVENT_TYPE_MASK                   = (EVENT_TYPE_QUIT | EVENT_TYPE_KEYBOARD | EVENT_TYPE_MOUSE | EVENT_TYPE_EXPOSE | EVENT_TYPE_CONFIG | EVENT_TYPE_FOCUS | EVENT_TYPE_DESKTOP | EVENT_TYPE_TIMER),
+	EVENT_TYPE_MASK                   = (EVENT_TYPE_QUIT | EVENT_TYPE_KEYBOARD | EVENT_TYPE_MOUSE | EVENT_TYPE_EXPOSE | EVENT_TYPE_CONFIG | EVENT_TYPE_FOCUS | EVENT_TYPE_MAP | EVENT_TYPE_DESKTOP | EVENT_TYPE_TIMER),
 } s_event_type_t;
 
 typedef struct s_font_glyph_s {
@@ -699,7 +702,7 @@ int s_event_parse_config (s_window_t *window, s_event_t *event);
 int s_event_parse_timer (s_window_t *window, s_event_t *event);
 int s_event_copy (s_event_t *event, s_event_t **nevent);
 int s_event_changed (s_window_t *window);
-int s_event_dump (s_event_t *event);
+void s_event_dump (s_window_t *window, s_event_t *event);
 int s_event_init (s_event_t **event);
 int s_event_uninit (s_event_t *event);
 

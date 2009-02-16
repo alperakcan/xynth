@@ -79,6 +79,8 @@ int main (int argc, char *argv[])
 	timer->cb = hide_timer;
 	s_timer_add(window, timer);
 
+	s_window_atevent(window, s_event_dump);
+
 	s_window_show(window);
 	s_window_main(window);
 

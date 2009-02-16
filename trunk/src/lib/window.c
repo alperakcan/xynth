@@ -253,13 +253,14 @@ void * s_window_loop_event (void *arg)
 				 s_event_uninit(event);
 				 return NULL;
 				 break;
-			case EVENT_TYPE_MOUSE:  s_event_parse_mouse(window, event);       break;
-			case EVENT_TYPE_KEYBOARD:  s_event_parse_keybd(window, event);       break;
-			case EVENT_TYPE_EXPOSE: s_event_parse_expos(window, event);       break;
-			case EVENT_TYPE_CONFIG: s_event_parse_config(window, event);      break;
-			case EVENT_TYPE_TIMER:  s_event_parse_timer(window, event);       break;
-			case EVENT_TYPE_FOCUS:                                            break;
-			case EVENT_TYPE_DESKTOP:				             break;
+			case EVENT_TYPE_MOUSE:    s_event_parse_mouse(window, event);  break;
+			case EVENT_TYPE_KEYBOARD: s_event_parse_keybd(window, event);  break;
+			case EVENT_TYPE_EXPOSE:   s_event_parse_expos(window, event);  break;
+			case EVENT_TYPE_CONFIG:   s_event_parse_config(window, event); break;
+			case EVENT_TYPE_TIMER:    s_event_parse_timer(window, event);  break;
+			case EVENT_TYPE_FOCUS:                                         break;
+			case EVENT_TYPE_MAP:                                           break;
+			case EVENT_TYPE_DESKTOP:				       break;
 		}
 		s_event_uninit(event);
 	}

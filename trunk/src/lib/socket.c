@@ -364,6 +364,14 @@ int s_socket_listen_expose (s_window_t *window, int soc)
 		window->event->expose->rect->h = window->surface->buf->h;
 		s_event_changed(window);
 	}
+	/* map event */
+	if (p_old == -1 && window->pri >= 0) {
+		window->event->type = EVENT_TYPE_MAP | EVENT_TYPE_MAPPED;
+		s_event_changed(window);
+	} else if (window->pri == -1 && p_old >= 0) {
+		window->event->type = EVENT_TYPE_MAP | EVENT_TYPE_UNMAPPED;
+		s_event_changed(window);
+	}
 	/* focus event */
 	if ((p_old != window->pri) &&
 	    ((p_old == 0) || (window->pri == 0))) {

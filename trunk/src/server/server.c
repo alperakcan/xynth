@@ -354,6 +354,8 @@ int s_server_init (void)
 		xynth_server->client[i].pid = -1;
 		xynth_server->client[i].soc = -1;
 		xynth_server->client[i].type = 0;
+		xynth_server->client[i].mapped = 0;
+		xynth_server->client[i].viewable = 0;
 		xynth_server->client[i].resizeable = 1;
 		xynth_server->client[i].alwaysontop = 0;
 		xynth_server->client[i].cursor = CURSOR_TYPE_ARROW;
