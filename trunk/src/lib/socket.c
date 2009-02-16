@@ -376,12 +376,15 @@ int s_socket_listen_expose (s_window_t *window, int soc)
 		s_event_changed(window);
 	}
 	/* expose event */
-	window->event->type = EVENT_TYPE_EXPOSE;
-	window->event->expose->rect->x = data->changed.x;
-	window->event->expose->rect->y = data->changed.y;
-	window->event->expose->rect->w = data->changed.w;
-	window->event->expose->rect->h = data->changed.h;
-        s_event_changed(window);
+	if (data->changed.w > 0 &&
+	    data->changed.h > 0) {
+		window->event->type = EVENT_TYPE_EXPOSE;
+		window->event->expose->rect->x = data->changed.x;
+		window->event->expose->rect->y = data->changed.y;
+		window->event->expose->rect->w = data->changed.w;
+		window->event->expose->rect->h = data->changed.h;
+		s_event_changed(window);
+	}
 
         s_free(data);
 	return 0;

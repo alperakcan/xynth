@@ -194,6 +194,8 @@ struct s_server_conf_s {
 struct s_clients_s {
 	int soc;
 	int pid; /* parent id */
+	int mapped;
+	int viewable;
 	int resizeable;
 	int alwaysontop;
 	s_cursor_type_t cursor;
