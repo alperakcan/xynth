@@ -142,7 +142,7 @@ HOSTSTRIP  := strip
 SED        := sed
 
 CD         := cd
-CP         := cp -f
+CP         := cp -rf
 RM         := rm -rf
 MKDIR      := mkdir -p
 
