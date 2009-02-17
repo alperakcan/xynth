@@ -1,0 +1,1582 @@
+Index: configure
+===================================================================
+--- configure	(revision 24)
++++ configure	(revision 27)
+@@ -1554,6 +1554,7 @@
+   --enable-video-ps2gs    use PlayStation 2 GS video driver [default=yes]
+   --enable-video-ggi      use GGI video driver [default=no]
+   --enable-video-svga     use SVGAlib video driver [default=yes]
++  --enable-video-xynth    use The Xynth Windowing System default=yes
+   --enable-video-vgl      use VGL video driver [default=yes]
+   --enable-video-wscons   use wscons video driver [default=yes]
+   --enable-video-aalib    use AAlib video driver [default=no]
+@@ -4589,7 +4590,7 @@
+   ;;
+ *-*-irix6*)
+   # Find out which ABI we are using.
+-  echo '#line 4592 "configure"' > conftest.$ac_ext
++  echo '#line 4593 "configure"' > conftest.$ac_ext
+   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+   (eval $ac_compile) 2>&5
+   ac_status=$?
+@@ -7033,11 +7034,11 @@
+    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
+    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
+    -e 's:$: $lt_compiler_flag:'`
+-   (eval echo "\"\$as_me:7036: $lt_compile\"" >&5)
++   (eval echo "\"\$as_me:7037: $lt_compile\"" >&5)
+    (eval "$lt_compile" 2>conftest.err)
+    ac_status=$?
+    cat conftest.err >&5
+-   echo "$as_me:7040: \$? = $ac_status" >&5
++   echo "$as_me:7041: \$? = $ac_status" >&5
+    if (exit $ac_status) && test -s "$ac_outfile"; then
+      # The compiler can only warn and ignore the option if not recognized
+      # So say no if there are warnings other than the usual output.
+@@ -7301,11 +7302,11 @@
+    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
+    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
+    -e 's:$: $lt_compiler_flag:'`
+-   (eval echo "\"\$as_me:7304: $lt_compile\"" >&5)
++   (eval echo "\"\$as_me:7305: $lt_compile\"" >&5)
+    (eval "$lt_compile" 2>conftest.err)
+    ac_status=$?
+    cat conftest.err >&5
+-   echo "$as_me:7308: \$? = $ac_status" >&5
++   echo "$as_me:7309: \$? = $ac_status" >&5
+    if (exit $ac_status) && test -s "$ac_outfile"; then
+      # The compiler can only warn and ignore the option if not recognized
+      # So say no if there are warnings other than the usual output.
+@@ -7405,11 +7406,11 @@
+    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
+    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
+    -e 's:$: $lt_compiler_flag:'`
+-   (eval echo "\"\$as_me:7408: $lt_compile\"" >&5)
++   (eval echo "\"\$as_me:7409: $lt_compile\"" >&5)
+    (eval "$lt_compile" 2>out/conftest.err)
+    ac_status=$?
+    cat out/conftest.err >&5
+-   echo "$as_me:7412: \$? = $ac_status" >&5
++   echo "$as_me:7413: \$? = $ac_status" >&5
+    if (exit $ac_status) && test -s out/conftest2.$ac_objext
+    then
+      # The compiler can only warn and ignore the option if not recognized
+@@ -9715,7 +9716,7 @@
+   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
+   lt_status=$lt_dlunknown
+   cat > conftest.$ac_ext <<EOF
+-#line 9718 "configure"
++#line 9719 "configure"
+ #include "confdefs.h"
+ 
+ #if HAVE_DLFCN_H
+@@ -9815,7 +9816,7 @@
+   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
+   lt_status=$lt_dlunknown
+   cat > conftest.$ac_ext <<EOF
+-#line 9818 "configure"
++#line 9819 "configure"
+ #include "confdefs.h"
+ 
+ #if HAVE_DLFCN_H
+@@ -12155,11 +12156,11 @@
+    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
+    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
+    -e 's:$: $lt_compiler_flag:'`
+-   (eval echo "\"\$as_me:12158: $lt_compile\"" >&5)
++   (eval echo "\"\$as_me:12159: $lt_compile\"" >&5)
+    (eval "$lt_compile" 2>conftest.err)
+    ac_status=$?
+    cat conftest.err >&5
+-   echo "$as_me:12162: \$? = $ac_status" >&5
++   echo "$as_me:12163: \$? = $ac_status" >&5
+    if (exit $ac_status) && test -s "$ac_outfile"; then
+      # The compiler can only warn and ignore the option if not recognized
+      # So say no if there are warnings other than the usual output.
+@@ -12259,11 +12260,11 @@
+    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
+    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
+    -e 's:$: $lt_compiler_flag:'`
+-   (eval echo "\"\$as_me:12262: $lt_compile\"" >&5)
++   (eval echo "\"\$as_me:12263: $lt_compile\"" >&5)
+    (eval "$lt_compile" 2>out/conftest.err)
+    ac_status=$?
+    cat out/conftest.err >&5
+-   echo "$as_me:12266: \$? = $ac_status" >&5
++   echo "$as_me:12267: \$? = $ac_status" >&5
+    if (exit $ac_status) && test -s out/conftest2.$ac_objext
+    then
+      # The compiler can only warn and ignore the option if not recognized
+@@ -13831,11 +13832,11 @@
+    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
+    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
+    -e 's:$: $lt_compiler_flag:'`
+-   (eval echo "\"\$as_me:13834: $lt_compile\"" >&5)
++   (eval echo "\"\$as_me:13835: $lt_compile\"" >&5)
+    (eval "$lt_compile" 2>conftest.err)
+    ac_status=$?
+    cat conftest.err >&5
+-   echo "$as_me:13838: \$? = $ac_status" >&5
++   echo "$as_me:13839: \$? = $ac_status" >&5
+    if (exit $ac_status) && test -s "$ac_outfile"; then
+      # The compiler can only warn and ignore the option if not recognized
+      # So say no if there are warnings other than the usual output.
+@@ -13935,11 +13936,11 @@
+    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
+    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
+    -e 's:$: $lt_compiler_flag:'`
+-   (eval echo "\"\$as_me:13938: $lt_compile\"" >&5)
++   (eval echo "\"\$as_me:13939: $lt_compile\"" >&5)
+    (eval "$lt_compile" 2>out/conftest.err)
+    ac_status=$?
+    cat out/conftest.err >&5
+-   echo "$as_me:13942: \$? = $ac_status" >&5
++   echo "$as_me:13943: \$? = $ac_status" >&5
+    if (exit $ac_status) && test -s out/conftest2.$ac_objext
+    then
+      # The compiler can only warn and ignore the option if not recognized
+@@ -16139,11 +16140,11 @@
+    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
+    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
+    -e 's:$: $lt_compiler_flag:'`
+-   (eval echo "\"\$as_me:16142: $lt_compile\"" >&5)
++   (eval echo "\"\$as_me:16143: $lt_compile\"" >&5)
+    (eval "$lt_compile" 2>conftest.err)
+    ac_status=$?
+    cat conftest.err >&5
+-   echo "$as_me:16146: \$? = $ac_status" >&5
++   echo "$as_me:16147: \$? = $ac_status" >&5
+    if (exit $ac_status) && test -s "$ac_outfile"; then
+      # The compiler can only warn and ignore the option if not recognized
+      # So say no if there are warnings other than the usual output.
+@@ -16407,11 +16408,11 @@
+    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
+    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
+    -e 's:$: $lt_compiler_flag:'`
+-   (eval echo "\"\$as_me:16410: $lt_compile\"" >&5)
++   (eval echo "\"\$as_me:16411: $lt_compile\"" >&5)
+    (eval "$lt_compile" 2>conftest.err)
+    ac_status=$?
+    cat conftest.err >&5
+-   echo "$as_me:16414: \$? = $ac_status" >&5
++   echo "$as_me:16415: \$? = $ac_status" >&5
+    if (exit $ac_status) && test -s "$ac_outfile"; then
+      # The compiler can only warn and ignore the option if not recognized
+      # So say no if there are warnings other than the usual output.
+@@ -16511,11 +16512,11 @@
+    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
+    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
+    -e 's:$: $lt_compiler_flag:'`
+-   (eval echo "\"\$as_me:16514: $lt_compile\"" >&5)
++   (eval echo "\"\$as_me:16515: $lt_compile\"" >&5)
+    (eval "$lt_compile" 2>out/conftest.err)
+    ac_status=$?
+    cat out/conftest.err >&5
+-   echo "$as_me:16518: \$? = $ac_status" >&5
++   echo "$as_me:16519: \$? = $ac_status" >&5
+    if (exit $ac_status) && test -s out/conftest2.$ac_objext
+    then
+      # The compiler can only warn and ignore the option if not recognized
+@@ -29575,6 +29576,79 @@
+     fi
+ }
+ 
++CheckXYNTH()
++{
++    # Check whether --enable-video-xynth was given.
++if test "${enable_video_xynth+set}" = set; then
++  enableval=$enable_video_xynth;
++else
++  enable_video_xynth=yes
++fi
++
++    if test x$enable_video = xyes -a x$enable_video_xynth = xyes; then
++        { echo "$as_me:$LINENO: checking for Xynth support" >&5
++echo $ECHO_N "checking for Xynth support... $ECHO_C" >&6; }
++        video_xynth=no
++        cat >conftest.$ac_ext <<_ACEOF
++/* confdefs.h.  */
++_ACEOF
++cat confdefs.h >>conftest.$ac_ext
++cat >>conftest.$ac_ext <<_ACEOF
++/* end confdefs.h.  */
++
++         #include <xynth.h>
++
++int
++main ()
++{
++
++
++  ;
++  return 0;
++}
++_ACEOF
++rm -f conftest.$ac_objext
++if { (ac_try="$ac_compile"
++case "(($ac_try" in
++  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
++  *) ac_try_echo=$ac_try;;
++esac
++eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
++  (eval "$ac_compile") 2>conftest.er1
++  ac_status=$?
++  grep -v '^ *+' conftest.er1 >conftest.err
++  rm -f conftest.er1
++  cat conftest.err >&5
++  echo "$as_me:$LINENO: \$? = $ac_status" >&5
++  (exit $ac_status); } && {
++	 test -z "$ac_c_werror_flag" ||
++	 test ! -s conftest.err
++       } && test -s conftest.$ac_objext; then
++
++        video_xynth=yes
++
++else
++  echo "$as_me: failed program was:" >&5
++sed 's/^/| /' conftest.$ac_ext >&5
++
++
++fi
++
++rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
++        { echo "$as_me:$LINENO: result: $video_xynth" >&5
++echo "${ECHO_T}$video_xynth" >&6; }
++        if test x$video_xynth = xyes; then
++            cat >>confdefs.h <<\_ACEOF
++#define SDL_VIDEO_DRIVER_XYNTH 1
++_ACEOF
++
++            SOURCES="$SOURCES $srcdir/src/video/xynth/*.c"
++            EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lxynth"
++            have_video=yes
++        fi
++    fi
++}
++
+ CheckVGL()
+ {
+     # Check whether --enable-video-vgl was given.
+@@ -33586,6 +33660,7 @@
+         CheckPS2GS
+         CheckGGI
+         CheckSVGA
++	CheckXYNTH
+         CheckVGL
+         CheckWscons
+         CheckAAlib
+Index: src/video/xynth/SDL_xynthevent.c
+===================================================================
+--- src/video/xynth/SDL_xynthevent.c	(revision 0)
++++ src/video/xynth/SDL_xynthevent.c	(revision 27)
+@@ -0,0 +1,203 @@
++/***************************************************************************
++    begin                : Thu Jan 22 2004
++    copyright            : (C) 2004 - 2009 by Alper Akcan
++    email                : alper.akcan@gmail.com
++ ***************************************************************************/
++
++/***************************************************************************
++ *                                                                         *
++ *   This program is free software; you can redistribute it and/or modify  *
++ *   it under the terms of the GNU Lesser General Public License as        *
++ *   published by the Free Software Foundation; either version 2.1 of the  *
++ *   License, or (at your option) any later version.                       *
++ *                                                                         *
++ ***************************************************************************/
++
++#include "SDL_xynth.h"
++
++static SDLKey sdl_xynth_keymap[128];
++
++void sdl_xynth_atexit (s_window_t *window)
++{
++	if (sdl_xynth_running) {
++		while (sdl_xynth_running_) {
++			usleep(20000);
++		}
++		sdl_xynth_running = 0;
++		SDL_PrivateQuit();
++	}
++}
++
++void sdl_xynth_atevent (s_window_t *window, s_event_t *event)
++{
++        int state = 0;
++        int button = 0;
++        
++	if ((event->type & EVENT_TYPE_MOUSE) &&
++	    ((event->mouse->x >= window->surface->buf->x) &&
++	     (event->mouse->x <= window->surface->buf->x + window->surface->buf->w) &&
++	     (event->mouse->y >= window->surface->buf->y) &&
++	     (event->mouse->y <= window->surface->buf->y + window->surface->buf->h))) {
++		if (event->type & EVENT_TYPE_MOUSE_OVER) {
++			if (event->type & EVENT_TYPE_MOUSE_HINT1) {
++				state = SDL_PRESSED;
++			}
++			SDL_PrivateMouseMotion(state, 0, event->mouse->x - window->surface->buf->x, event->mouse->y - window->surface->buf->y);
++		} else if (event->type & (EVENT_TYPE_MOUSE_PRESSED | EVENT_TYPE_MOUSE_RELEASED | EVENT_TYPE_MOUSE_CLICKED)) {
++			if (event->type & (EVENT_TYPE_MOUSE_PRESSED)) {
++				state = SDL_PRESSED;
++			}
++			if (event->type & (EVENT_TYPE_MOUSE_RELEASED | EVENT_TYPE_MOUSE_CLICKED)) {
++				state = SDL_RELEASED;
++			}
++			switch (event->mouse->b) {
++				case MOUSE_BUTTON_RIGHT:	button = SDL_BUTTON_RIGHT;	break;
++				case MOUSE_BUTTON_MIDDLE:	button = SDL_BUTTON_MIDDLE;	break;
++				case MOUSE_BUTTON_LEFT:		button = SDL_BUTTON_LEFT;	break;
++				default:			button = 0;			break;
++			}
++			SDL_PrivateMouseButton(state, button, event->mouse->x - window->surface->buf->x, event->mouse->y - window->surface->buf->y);
++		}
++	}
++	if (event->type & EVENT_TYPE_KEYBOARD) {
++		SDL_keysym keysym;
++		if (event->type & EVENT_TYPE_KEYBOARD_PRESSED) {
++			state = SDL_PRESSED;
++		} else if (event->type & EVENT_TYPE_KEYBOARD_RELEASED) {
++			state = SDL_RELEASED;
++		}
++		SDL_PrivateKeyboard(state, sdl_xynth_translatekey(event, &keysym));
++	}
++}
++
++/* Handle any queued OS events */
++void sdl_xynth_PumpEvents(_THIS)
++{
++}
++
++/* Initialize keyboard mapping for this driver */
++void sdl_xynth_InitOSKeymap (_THIS)
++{
++	int i;
++	
++	for (i = 0; i < SDL_TABLESIZE(sdl_xynth_keymap); i++) {
++		sdl_xynth_keymap[i] = SDLK_UNKNOWN;
++	}
++	
++	sdl_xynth_keymap[KEYBOARD_BUTTON_ESCAPE] = SDLK_ESCAPE;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_ONE] = SDLK_1;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_TWO] = SDLK_2;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_THREE] = SDLK_3;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_FOUR] = SDLK_4;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_FIVE] = SDLK_5;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_SIX] = SDLK_6;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_SEVEN] = SDLK_7;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_EIGHT] = SDLK_8;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_NINE] = SDLK_9;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_ZERO] = SDLK_0;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_MINUS] = SDLK_MINUS;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_EQUAL] = SDLK_EQUALS;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_DELETE] = SDLK_BACKSPACE;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_TAB] = SDLK_TAB;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_q] = SDLK_q;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_w] = SDLK_w;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_e] = SDLK_e;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_r] = SDLK_r;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_t] = SDLK_t;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_y] = SDLK_y;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_u] = SDLK_u;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_i] = SDLK_i;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_o] = SDLK_o;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_p] = SDLK_p;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_BRACKETLEFT] = SDLK_LEFTBRACKET;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_BRACKETRIGHT] = SDLK_RIGHTBRACKET;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_RETURN] = SDLK_RETURN;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_LEFTCONTROL] = SDLK_LCTRL;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_a] = SDLK_a;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_s] = SDLK_s;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_d] = SDLK_d;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_f] = SDLK_f;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_g] = SDLK_g;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_h] = SDLK_h;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_j] = SDLK_j;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_k] = SDLK_k;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_l] = SDLK_l;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_SEMICOLON] = SDLK_SEMICOLON;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_APOSTROPHE] = SDLK_QUOTE;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_GRAVE] = SDLK_BACKQUOTE;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_LEFTSHIFT] = SDLK_LSHIFT;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_BACKSLASH] = SDLK_BACKSLASH;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_z] = SDLK_z;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_x] = SDLK_x;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_c] = SDLK_c;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_v] = SDLK_v;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_b] = SDLK_b;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_n] = SDLK_n;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_m] = SDLK_m;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_COMMA] = SDLK_COMMA;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_PERIOD] = SDLK_PERIOD;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_SLASH] = SDLK_SLASH;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_RIGHTSHIFT] = SDLK_RSHIFT;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_KP_MULTIPLY] = SDLK_KP_MULTIPLY;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_ALT] = SDLK_LALT;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_SPACE] = SDLK_SPACE;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_CAPS_LOCK] = SDLK_CAPSLOCK;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_F1] = SDLK_F1;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_F2] = SDLK_F2;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_F3] = SDLK_F3;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_F4] = SDLK_F4;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_F5] = SDLK_F5;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_F6] = SDLK_F6;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_F7] = SDLK_F7;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_F8] = SDLK_F8;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_F9] = SDLK_F9;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_F10] = SDLK_F10;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_NUM_LOCK] = SDLK_NUMLOCK;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_SCROLL_LOCK] = SDLK_SCROLLOCK;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_KP_7] = SDLK_KP7;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_KP_8] = SDLK_KP8;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_KP_9] = SDLK_KP9;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_KP_SUBTRACT] = SDLK_KP_MINUS;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_KP_4] = SDLK_KP4;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_KP_5] = SDLK_KP5;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_KP_6] = SDLK_KP6;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_KP_ADD] = SDLK_KP_PLUS;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_KP_1] = SDLK_KP1;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_KP_2] = SDLK_KP2;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_KP_3] = SDLK_KP3;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_KP_0] = SDLK_KP0;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_KP_PERIOD] = SDLK_KP_PERIOD;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_LESS] = SDLK_LESS;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_F11] = SDLK_F11;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_F12] = SDLK_F12;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_KP_ENTER] = SDLK_KP_ENTER;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_RIGHTCONTROL] = SDLK_RCTRL;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_KP_DIVIDE] = SDLK_KP_DIVIDE;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_VOIDSYMBOL] = SDLK_PRINT;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_ALTGR] = SDLK_RALT;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_BREAK] = SDLK_BREAK;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_HOME] = SDLK_HOME;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_UP] = SDLK_UP;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_PAGEUP] = SDLK_PAGEUP;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_LEFT] = SDLK_LEFT;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_RIGHT] = SDLK_RIGHT;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_END] = SDLK_END;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_DOWN] = SDLK_DOWN;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_PAGEDOWN] = SDLK_PAGEDOWN;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_INSERT] = SDLK_INSERT;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_REMOVE] = SDLK_DELETE;
++	sdl_xynth_keymap[KEYBOARD_BUTTON_PAUSE] = SDLK_PAUSE;
++}
++
++SDL_keysym * sdl_xynth_translatekey(s_event_t *event, SDL_keysym *keysym)
++{
++	keysym->scancode = event->keybd->scancode;
++	keysym->sym = (event->keybd->keycode == KEYBOARD_BUTTON_NOCODE) ? SDLK_UNKNOWN : sdl_xynth_keymap[event->keybd->keycode];
++	keysym->mod = KMOD_NONE;
++	keysym->unicode = event->keybd->ascii;
++	
++	if (SDL_TranslateUNICODE) {
++	}
++	
++	return keysym;
++}
+Index: src/video/xynth/SDL_xynthgamma.c
+===================================================================
+--- src/video/xynth/SDL_xynthgamma.c	(revision 0)
++++ src/video/xynth/SDL_xynthgamma.c	(revision 27)
+@@ -0,0 +1,40 @@
++/***************************************************************************
++    begin                : Thu Jan 22 2004
++    copyright            : (C) 2004 - 2009 by Alper Akcan
++    email                : alper.akcan@gmail.com
++ ***************************************************************************/
++
++/***************************************************************************
++ *                                                                         *
++ *   This program is free software; you can redistribute it and/or modify  *
++ *   it under the terms of the GNU Lesser General Public License as        *
++ *   published by the Free Software Foundation; either version 2.1 of the  *
++ *   License, or (at your option) any later version.                       *
++ *                                                                         *
++ ***************************************************************************/
++
++#include "SDL_xynth.h"
++
++/* Set the gamma correction directly (emulated with gamma ramps) */
++int sdl_xynth_SetGamma (_THIS, float red, float green, float blue)
++{
++	return 0;
++}
++
++/* Get the gamma correction directly (emulated with gamma ramps) */
++int sdl_xynth_GetGamma (_THIS, float *red, float *green, float *blue)
++{
++	return 0;
++}
++
++/* Set the gamma ramp */
++int sdl_xynth_SetGammaRamp (_THIS, Uint16 *ramp)
++{
++	return 0;
++}
++
++/* Get the gamma ramp */
++int sdl_xynth_GetGammaRamp (_THIS, Uint16 *ramp)
++{
++	return 0;
++}
+Index: src/video/xynth/SDL_xynthgl.c
+===================================================================
+--- src/video/xynth/SDL_xynthgl.c	(revision 0)
++++ src/video/xynth/SDL_xynthgl.c	(revision 27)
+@@ -0,0 +1,45 @@
++/***************************************************************************
++    begin                : Thu Jan 22 2004
++    copyright            : (C) 2004 - 2009 by Alper Akcan
++    email                : alper.akcan@gmail.com
++ ***************************************************************************/
++
++/***************************************************************************
++ *                                                                         *
++ *   This program is free software; you can redistribute it and/or modify  *
++ *   it under the terms of the GNU Lesser General Public License as        *
++ *   published by the Free Software Foundation; either version 2.1 of the  *
++ *   License, or (at your option) any later version.                       *
++ *                                                                         *
++ ***************************************************************************/
++
++#include "SDL_xynth.h"
++
++/* Sets the dll to use for OpenGL and loads it */
++int sdl_xynth_GL_LoadLibrary (_THIS, const char *path)
++{
++	return 0;
++}
++
++/* Retrieves the address of a function in the gl library */
++void * sdl_xynth_GL_GetProcAddress (_THIS, const char *proc)
++{
++	return NULL;
++}
++
++/* Get attribute information from the windowing system. */
++int sdl_xynth_GL_GetAttribute (_THIS, SDL_GLattr attrib, int *value)
++{
++	return 0;
++}
++
++/* Make the context associated with this driver current */
++int sdl_xynth_GL_MakeCurrent (_THIS)
++{
++	return 0;
++}
++
++/* Swap the current buffers in double buffer mode. */
++void sdl_xynth_GL_SwapBuffers (_THIS)
++{
++}
+Index: src/video/xynth/SDL_xynthwm.c
+===================================================================
+--- src/video/xynth/SDL_xynthwm.c	(revision 0)
++++ src/video/xynth/SDL_xynthwm.c	(revision 27)
+@@ -0,0 +1,48 @@
++/***************************************************************************
++    begin                : Thu Jan 22 2004
++    copyright            : (C) 2004 - 2009 by Alper Akcan
++    email                : alper.akcan@gmail.com
++ ***************************************************************************/
++
++/***************************************************************************
++ *                                                                         *
++ *   This program is free software; you can redistribute it and/or modify  *
++ *   it under the terms of the GNU Lesser General Public License as        *
++ *   published by the Free Software Foundation; either version 2.1 of the  *
++ *   License, or (at your option) any later version.                       *
++ *                                                                         *
++ ***************************************************************************/
++
++#include "SDL_xynth.h"
++
++/* Set the title and icon text */
++void sdl_xynth_SetCaption (_THIS, const char *title, const char *icon)
++{
++	s_window_set_title(this->hidden->window, (char *) title);
++}
++
++/* Set the window icon image */
++void sdl_xynth_SetIcon (_THIS, SDL_Surface *icon, Uint8 *mask)
++{
++}
++
++/* Iconify the window.
++   This function returns 1 if there is a window manager and the
++   window was actually iconified, it returns 0 otherwise.
++*/
++int sdl_xynth_IconifyWindow (_THIS)
++{
++	return 0;
++}
++
++/* Grab or ungrab keyboard and mouse input */
++SDL_GrabMode sdl_xynth_GrabInput (_THIS, SDL_GrabMode mode)
++{
++	return SDL_GRAB_OFF;
++}
++
++/* Get some platform dependent window information */
++int sdl_xynth_GetWMInfo (_THIS, SDL_SysWMinfo *info)
++{
++	return 0;
++}
+Index: src/video/xynth/SDL_xynth.h
+===================================================================
+--- src/video/xynth/SDL_xynth.h	(revision 0)
++++ src/video/xynth/SDL_xynth.h	(revision 27)
+@@ -0,0 +1,110 @@
++/***************************************************************************
++    begin                : Thu Jan 22 2004
++    copyright            : (C) 2004 - 2009 by Alper Akcan
++    email                : alper.akcan@gmail.com
++ ***************************************************************************/
++
++/***************************************************************************
++ *                                                                         *
++ *   This program is free software; you can redistribute it and/or modify  *
++ *   it under the terms of the GNU Lesser General Public License as        *
++ *   published by the Free Software Foundation; either version 2.1 of the  *
++ *   License, or (at your option) any later version.                       *
++ *                                                                         *
++ ***************************************************************************/
++
++#ifndef SDL_xynth_h
++#define SDL_xynth_h
++
++#include <stdio.h>
++#include <stdlib.h>
++#include <unistd.h>
++#include <xynth.h>
++
++#include "SDL.h"
++#include "SDL_error.h"
++#include "SDL_mouse.h"
++#include "SDL_mutex.h"
++#include "../SDL_sysvideo.h"
++#include "../../events/SDL_sysevents.h"
++#include "../../events/SDL_events_c.h"
++
++#define _THIS	SDL_VideoDevice *this
++
++int sdl_xynth_running;
++int sdl_xynth_running_;
++
++struct WMcursor {
++	int unused;
++};
++
++struct SDL_PrivateVideoData {
++    int w;
++    int h;
++    int bpp;
++    void *buffer;
++    s_thread_t *tid;
++    s_window_t *window;
++};
++
++/* cursor.c */
++void sdl_xynth_FreeWMCursor (_THIS, WMcursor *cursor);
++WMcursor * sdl_xynth_CreateWMCursor (_THIS, Uint8 *data, Uint8 *mask, int w, int h, int hot_x, int hot_y);
++int sdl_xynth_ShowWMCursor (_THIS, WMcursor *cursor);
++void sdl_xynth_WarpWMCursor (_THIS, Uint16 x, Uint16 y);
++void sdl_xynth_MoveWMCursor (_THIS, int x, int y);
++void sdl_xynth_CheckMouseMode (_THIS);
++
++/* event.c */
++void sdl_xynth_atexit (s_window_t *window);
++void sdl_xynth_atevent (s_window_t *window, s_event_t *event);
++void sdl_xynth_InitOSKeymap (_THIS);
++void sdl_xynth_PumpEvents (_THIS);
++SDL_keysym * sdl_xynth_translatekey(s_event_t *event, SDL_keysym *keysym);
++
++/* gamma.c */
++int sdl_xynth_SetGamma (_THIS, float red, float green, float blue);
++int sdl_xynth_GetGamma (_THIS, float *red, float *green, float *blue);
++int sdl_xynth_SetGammaRamp (_THIS, Uint16 *ramp);
++int sdl_xynth_GetGammaRamp (_THIS, Uint16 *ramp);
++
++/* gl.c */
++int sdl_xynth_GL_LoadLibrary (_THIS, const char *path);
++void* sdl_xynth_GL_GetProcAddress (_THIS, const char *proc);
++int sdl_xynth_GL_GetAttribute (_THIS, SDL_GLattr attrib, int* value);
++int sdl_xynth_GL_MakeCurrent (_THIS);
++void sdl_xynth_GL_SwapBuffers (_THIS);
++
++/* hw.c */
++int sdl_xynth_AllocHWSurface (_THIS, SDL_Surface *surface);
++int sdl_xynth_CheckHWBlit (_THIS, SDL_Surface *src, SDL_Surface *dst);
++int sdl_xynth_FillHWRect (_THIS, SDL_Surface *dst, SDL_Rect *rect, Uint32 color);
++int sdl_xynth_SetHWColorKey (_THIS, SDL_Surface *surface, Uint32 key);
++int sdl_xynth_SetHWAlpha (_THIS, SDL_Surface *surface, Uint8 value);
++int sdl_xynth_LockHWSurface (_THIS, SDL_Surface *surface);
++void sdl_xynth_UnlockHWSurface (_THIS, SDL_Surface *surface);
++int sdl_xynth_FlipHWSurface (_THIS, SDL_Surface *surface);
++void sdl_xynth_FreeHWSurface (_THIS, SDL_Surface *surface);
++
++/* video.c */
++int sdl_xynth_Available(void);
++void sdl_xynth_DeleteDevice(SDL_VideoDevice *device);
++SDL_VideoDevice *sdl_xynth_CreateDevice(int devindex);
++int sdl_xynth_VideoInit (_THIS, SDL_PixelFormat *vformat);
++SDL_Rect ** sdl_xynth_ListModes (_THIS, SDL_PixelFormat *format, Uint32 flags);
++SDL_Surface * sdl_xynth_SetVideoMode (_THIS, SDL_Surface *current, int width, int height, int bpp, Uint32 flags);
++int sdl_xynth_ToggleFullScreen (_THIS, int on);
++void sdl_xynth_UpdateMouse (_THIS);
++SDL_Overlay * sdl_xynth_CreateYUVOverlay (_THIS, int width, int height, Uint32 format, SDL_Surface *display);
++int sdl_xynth_SetColors (_THIS, int firstcolor, int ncolors, SDL_Color *colors);
++void sdl_xynth_UpdateRects (_THIS, int numrects, SDL_Rect *rects);
++void sdl_xynth_VideoQuit (_THIS);
++
++/* wm.c */
++void sdl_xynth_SetCaption (_THIS, const char *title, const char *icon);
++void sdl_xynth_SetIcon (_THIS, SDL_Surface *icon, Uint8 *mask);
++int sdl_xynth_IconifyWindow (_THIS);
++SDL_GrabMode sdl_xynth_GrabInput (_THIS, SDL_GrabMode mode);
++int sdl_xynth_GetWMInfo (_THIS, SDL_SysWMinfo *info);
++
++#endif /* SDL_xynth_h */
+Index: src/video/xynth/SDL_xynthvideo.c
+===================================================================
+--- src/video/xynth/SDL_xynthvideo.c	(revision 0)
++++ src/video/xynth/SDL_xynthvideo.c	(revision 27)
+@@ -0,0 +1,281 @@
++/***************************************************************************
++    begin                : Thu Jan 22 2004
++    copyright            : (C) 2004 - 2009 by Alper Akcan
++    email                : alper.akcan@gmail.com
++ ***************************************************************************/
++
++/***************************************************************************
++ *                                                                         *
++ *   This program is free software; you can redistribute it and/or modify  *
++ *   it under the terms of the GNU Lesser General Public License as        *
++ *   published by the Free Software Foundation; either version 2.1 of the  *
++ *   License, or (at your option) any later version.                       *
++ *                                                                         *
++ ***************************************************************************/
++
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++
++#include "SDL_xynth.h"
++
++#define xynthVID_DRIVER_NAME "xynth"
++
++VideoBootStrap XYNTH_bootstrap = {
++	xynthVID_DRIVER_NAME, "SDL xynth video driver",
++	sdl_xynth_Available, sdl_xynth_CreateDevice
++};
++
++int sdl_xynth_Available(void)
++{
++	const char *envr = getenv("SDL_VIDEODRIVER");
++	if ((envr) && (strcmp(envr, xynthVID_DRIVER_NAME) == 0)) {
++		return(1);
++	}
++
++	return(0);
++}
++
++void sdl_xynth_DeleteDevice(SDL_VideoDevice *device)
++{
++	s_free(device->hidden);
++	s_free(device);
++}
++
++SDL_VideoDevice *sdl_xynth_CreateDevice(int devindex)
++{
++	SDL_VideoDevice *device;
++
++	/* Initialize all variables that we clean on shutdown */
++	device = (SDL_VideoDevice *) s_malloc(sizeof(SDL_VideoDevice));
++	if (device) {
++		memset(device, 0, (sizeof *device));
++		device->hidden = (struct SDL_PrivateVideoData *) s_malloc((sizeof *device->hidden));
++	}
++	if ((device == NULL) || (device->hidden == NULL)) {
++		SDL_OutOfMemory();
++		if (device) {
++			s_free(device);
++		}
++		return(0);
++	}
++	memset(device->hidden, 0, (sizeof *device->hidden));
++
++	device->VideoInit = sdl_xynth_VideoInit;
++	device->ListModes = sdl_xynth_ListModes;
++	device->SetVideoMode = sdl_xynth_SetVideoMode;
++	device->ToggleFullScreen = sdl_xynth_ToggleFullScreen;
++	device->UpdateMouse = sdl_xynth_UpdateMouse;
++	device->CreateYUVOverlay = sdl_xynth_CreateYUVOverlay;
++	device->SetColors = sdl_xynth_SetColors;
++	device->UpdateRects = sdl_xynth_UpdateRects;
++	device->VideoQuit = sdl_xynth_VideoQuit;
++
++	device->AllocHWSurface = sdl_xynth_AllocHWSurface;
++	device->CheckHWBlit = NULL;
++	device->FillHWRect = NULL;
++	device->SetHWColorKey = NULL;
++	device->SetHWAlpha = NULL;
++	device->LockHWSurface = sdl_xynth_LockHWSurface;
++	device->UnlockHWSurface = sdl_xynth_UnlockHWSurface;
++	device->FlipHWSurface = NULL;
++	device->FreeHWSurface = sdl_xynth_FreeHWSurface;
++
++	device->SetGamma = NULL;
++	device->GetGamma = NULL;
++	device->SetGammaRamp = NULL;
++	device->GetGammaRamp = NULL;
++
++	device->GL_LoadLibrary = NULL;
++	device->GL_GetProcAddress = NULL;
++	device->GL_GetAttribute = NULL;
++	device->GL_MakeCurrent = NULL;
++	device->GL_SwapBuffers = NULL;
++	
++	device->SetCaption = sdl_xynth_SetCaption;
++	device->SetIcon = NULL;
++	device->IconifyWindow = NULL;
++	device->GrabInput = NULL;
++	device->GetWMInfo = NULL;
++
++	device->FreeWMCursor = sdl_xynth_FreeWMCursor;
++	device->CreateWMCursor = sdl_xynth_CreateWMCursor;
++	device->ShowWMCursor = sdl_xynth_ShowWMCursor;
++	device->WarpWMCursor = sdl_xynth_WarpWMCursor;
++	device->MoveWMCursor = sdl_xynth_MoveWMCursor;
++	device->CheckMouseMode = sdl_xynth_CheckMouseMode;	
++	
++	device->InitOSKeymap = sdl_xynth_InitOSKeymap;
++	device->PumpEvents = sdl_xynth_PumpEvents;
++
++	device->free = sdl_xynth_DeleteDevice;
++
++	return device;
++}
++
++/* Initialize the native video subsystem, filling 'vformat' with the
++   "best" display pixel format, returning 0 or -1 if there's an error.
++ */
++int sdl_xynth_VideoInit(_THIS, SDL_PixelFormat *vformat)
++{
++	if (s_window_init(&this->hidden->window)) {
++		fprintf(stderr, "Could not connect to Xynth!\n");
++		exit(1);
++	}
++
++	vformat->BitsPerPixel = this->hidden->window->surface->bitsperpixel;
++	vformat->BytesPerPixel = this->hidden->window->surface->bytesperpixel;;
++
++	this->info.wm_available = 1;
++
++	return 0;
++}
++
++/* List the available video modes for the given pixel format, sorted
++   from largest to smallest.
++ */
++SDL_Rect **sdl_xynth_ListModes(_THIS, SDL_PixelFormat *format, Uint32 flags)
++{
++   	 return (SDL_Rect **) -1;
++}
++
++/* Set the requested video mode, returning a surface which will be
++   set to the SDL_VideoSurface.  The width and height will already
++   be verified by ListModes(), and the video subsystem is free to
++   set the mode to a supported bit depth different from the one
++   specified -- the desired bpp will be emulated with a shadow
++   surface if necessary.  If a new mode is returned, this function
++   should take care of cleaning up the current mode.
++ */
++SDL_Surface * sdl_xynth_SetVideoMode(_THIS, SDL_Surface *current, int width, int height, int bpp, Uint32 flags)
++{
++	if (this->hidden->buffer) {
++		s_free(this->hidden->buffer);
++	}
++
++        bpp = this->hidden->window->surface->bitsperpixel;
++        if (bpp == 15) {
++		bpp = 16;
++	}
++        
++	this->hidden->buffer = s_malloc(width * height * (bpp / 8));
++        this->hidden->bpp = bpp;
++	memset(this->hidden->buffer, 0, width * height * (bpp / 8));
++
++	if (!SDL_ReallocFormat(current, bpp, 0, 0, 0, 0)) {
++		s_free(this->hidden->buffer);
++		this->hidden->buffer = NULL;
++		SDL_SetError("Couldn't allocate new pixel format for requested mode");
++		return NULL;
++	}
++
++	current->flags = flags & SDL_FULLSCREEN;
++	this->hidden->w = current->w = width;
++	this->hidden->h = current->h = height;
++	current->pitch = current->w * (bpp / 8);
++	current->pixels = this->hidden->buffer;
++
++	s_window_new(this->hidden->window, WINDOW_TYPE_MAIN, NULL);
++	s_window_set_coor(this->hidden->window, 0, 0, 0, width, height);
++	s_window_set_coor(this->hidden->window, WINDOW_TYPE_NOFORM, this->hidden->window->surface->buf->x, this->hidden->window->surface->buf->y, width, height);
++	s_window_set_title(this->hidden->window, "Xynth - SDL");
++	s_window_show(this->hidden->window);
++
++	s_window_atexit(this->hidden->window, sdl_xynth_atexit);
++	s_window_atevent(this->hidden->window, sdl_xynth_atevent);
++
++	this->hidden->tid = s_thread_create((void * (*) (void *)) &s_window_main, this->hidden->window);
++	sdl_xynth_running = 1;
++
++	return current ;
++}
++
++/* Toggle the fullscreen mode */
++int sdl_xynth_ToggleFullScreen (_THIS, int on)
++{
++	return -1;
++}
++
++/* This is called after the video mode has been set, to get the
++   initial mouse state.  It should queue events as necessary to
++   properly represent the current mouse focus and position.
++ */
++void sdl_xynth_UpdateMouse (_THIS)
++{
++}
++
++/* Create a YUV video surface (possibly overlay) of the given
++   format.  The hardware should be able to perform at least 2x
++   scaling on display.
++ */
++SDL_Overlay * sdl_xynth_CreateYUVOverlay (_THIS, int width, int height, Uint32 format, SDL_Surface *display)
++{
++	return NULL;
++}
++
++/* Sets the color entries { firstcolor .. (firstcolor+ncolors-1) }
++   of the physical palette to those in 'colors'. If the device is
++   using a software palette (SDL_HWPALETTE not set), then the
++   changes are reflected in the logical palette of the screen
++   as well.
++   The return value is 1 if all entries could be set properly
++   or 0 otherwise.
++ */
++int sdl_xynth_SetColors(_THIS, int firstcolor, int ncolors, SDL_Color *colors)
++{
++	return 1;
++}
++
++/* This pointer should exist in the native video subsystem and should
++   point to an appropriate update function for the current video mode
++ */
++void sdl_xynth_UpdateRects(_THIS, int numrects, SDL_Rect *rects)
++{
++        char *buf;
++        int n = numrects;
++        SDL_Rect *r = rects;
++
++        if (!sdl_xynth_running) {
++		return;
++	}
++	
++	sdl_xynth_running_ = 1;
++	
++        if (this->hidden->bpp != this->hidden->window->surface->bitsperpixel) {
++		s_copybuffer(this->hidden->buffer, this->hidden->bpp, &buf, this->hidden->window->surface->bitsperpixel, this->hidden->w, this->hidden->h);
++	        while (n--) {
++			s_putboxpart(this->hidden->window->surface, r->x, r->y, r->w, r->h, this->hidden->w, this->hidden->h, buf, r->x, r->y);
++			r++;
++		}
++		s_free(buf);
++	} else {
++		while (n--) {
++			s_putboxpart(this->hidden->window->surface, r->x, r->y, r->w, r->h, this->hidden->w, this->hidden->h, this->hidden->buffer, r->x, r->y);
++			r++;
++		}
++	}
++	
++	sdl_xynth_running_ = 0;
++}
++
++/* Reverse the effects VideoInit() -- called if VideoInit() fails
++   or if the application is shutting down the video subsystem.
++ */
++void sdl_xynth_VideoQuit(_THIS)
++{
++	while (sdl_xynth_running_) {
++		usleep(20000);
++	}
++	
++	if (this->screen->pixels != NULL)
++	{
++		s_free(this->screen->pixels);
++		this->screen->pixels = NULL;
++	}
++	
++	if (sdl_xynth_running) {
++		s_window_quit(this->hidden->window);
++		s_thread_join(this->hidden->tid, NULL);
++	}
++	sdl_xynth_running = 0;
++}
+Index: src/video/xynth/SDL_xynthcursor.c
+===================================================================
+--- src/video/xynth/SDL_xynthcursor.c	(revision 0)
++++ src/video/xynth/SDL_xynthcursor.c	(revision 27)
+@@ -0,0 +1,72 @@
++/***************************************************************************
++    begin                : Thu Jan 22 2004
++    copyright            : (C) 2004 - 2009 by Alper Akcan
++    email                : alper.akcan@gmail.com
++ ***************************************************************************/
++
++/***************************************************************************
++ *                                                                         *
++ *   This program is free software; you can redistribute it and/or modify  *
++ *   it under the terms of the GNU Lesser General Public License as        *
++ *   published by the Free Software Foundation; either version 2.1 of the  *
++ *   License, or (at your option) any later version.                       *
++ *                                                                         *
++ ***************************************************************************/
++
++#include "SDL_xynth.h"
++
++#if 0
++	#define debugf(a) printf(a);
++#else
++	#define debugf(a)
++#endif
++
++/* Free a window manager cursor
++   This function can be NULL if CreateWMCursor is also NULL.
++ */
++void sdl_xynth_FreeWMCursor (_THIS, WMcursor *cursor)
++{
++	s_free(cursor);
++	debugf("sdl_xynth_FreeWMCursor\n");
++}
++
++/* If not NULL, create a black/white window manager cursor */
++WMcursor * sdl_xynth_CreateWMCursor (_THIS, Uint8 *data, Uint8 *mask, int w, int h, int hot_x, int hot_y)
++{
++	WMcursor *cursor = (WMcursor *) s_malloc(sizeof(WMcursor));
++	debugf("sdl_xynth_CreateWMCursor\n");
++	return cursor;
++}
++
++/* Show the specified cursor, or hide if cursor is NULL */
++int sdl_xynth_ShowWMCursor (_THIS, WMcursor *cursor)
++{
++	debugf("sdl_xynth_ShowWMCursor\n");
++	return 1;
++}
++
++/* Warp the window manager cursor to (x,y)
++   If NULL, a mouse motion event is posted internally.
++ */
++void sdl_xynth_WarpWMCursor (_THIS, Uint16 x, Uint16 y)
++{
++	debugf("sdl_xynth_WarpWMCursor\n");
++}
++
++/* If not NULL, this is called when a mouse motion event occurs */
++void sdl_xynth_MoveWMCursor (_THIS, int x, int y)
++{
++	debugf("sdl_xynth_MoveWMCursor\n");
++}
++
++/* Determine whether the mouse should be in relative mode or not.
++   This function is called when the input grab state or cursor
++   visibility state changes.
++   If the cursor is not visible, and the input is grabbed, the
++   driver can place the mouse in relative mode, which may result
++   in higher accuracy sampling of the pointer motion.
++*/
++void sdl_xynth_CheckMouseMode (_THIS)
++{
++	debugf("sdl_xynth_CheckMouseMode\n");
++}
+Index: src/video/xynth/SDL_xynthhw.c
+===================================================================
+--- src/video/xynth/SDL_xynthhw.c	(revision 0)
++++ src/video/xynth/SDL_xynthhw.c	(revision 27)
+@@ -0,0 +1,69 @@
++/***************************************************************************
++    begin                : Thu Jan 22 2004
++    copyright            : (C) 2004 - 2009 by Alper Akcan
++    email                : alper.akcan@gmail.com
++ ***************************************************************************/
++
++/***************************************************************************
++ *                                                                         *
++ *   This program is free software; you can redistribute it and/or modify  *
++ *   it under the terms of the GNU Lesser General Public License as        *
++ *   published by the Free Software Foundation; either version 2.1 of the  *
++ *   License, or (at your option) any later version.                       *
++ *                                                                         *
++ ***************************************************************************/
++
++#include "SDL_xynth.h"
++
++/* Allocates a surface in video memory */
++int sdl_xynth_AllocHWSurface (_THIS, SDL_Surface *surface)
++{
++	return -1;
++}
++
++/* Sets the hardware accelerated blit function, if any, based
++   on the current flags of the surface (colorkey, alpha, etc.)
++ */
++int sdl_xynth_CheckHWBlit (_THIS, SDL_Surface *src, SDL_Surface *dst)
++{
++	return 0;
++}
++
++/* Fills a surface rectangle with the given color */
++int sdl_xynth_FillHWRect (_THIS, SDL_Surface *dst, SDL_Rect *rect, Uint32 color)
++{
++	return 0;
++}
++
++/* Sets video mem colorkey and accelerated blit function */
++int sdl_xynth_SetHWColorKey (_THIS, SDL_Surface *surface, Uint32 key)
++{
++	return 0;
++}
++
++/* Sets per surface hardware alpha value */
++int sdl_xynth_SetHWAlpha (_THIS, SDL_Surface *surface, Uint8 value)
++{
++	return 0;
++}
++
++/* Returns a readable/writable surface */
++int sdl_xynth_LockHWSurface (_THIS, SDL_Surface *surface)
++{
++	return 0;
++}
++
++void sdl_xynth_UnlockHWSurface (_THIS, SDL_Surface *surface)
++{
++}
++
++/* Performs hardware flipping */
++int sdl_xynth_FlipHWSurface (_THIS, SDL_Surface *surface)
++{
++	return 0;
++}
++
++/* Frees a previously allocated video surface */
++void sdl_xynth_FreeHWSurface (_THIS, SDL_Surface *surface)
++{
++}
+Index: src/video/SDL_video.c
+===================================================================
+--- src/video/SDL_video.c	(revision 24)
++++ src/video/SDL_video.c	(revision 27)
+@@ -72,6 +72,9 @@
+ #if SDL_VIDEO_DRIVER_SVGALIB
+ 	&SVGALIB_bootstrap,
+ #endif
++#if SDL_VIDEO_DRIVER_XYNTH
++	&XYNTH_bootstrap,
++#endif
+ #if SDL_VIDEO_DRIVER_GAPI
+ 	&GAPI_bootstrap,
+ #endif
+Index: src/video/SDL_sysvideo.h
+===================================================================
+--- src/video/SDL_sysvideo.h	(revision 24)
++++ src/video/SDL_sysvideo.h	(revision 27)
+@@ -356,6 +356,9 @@
+ #if SDL_VIDEO_DRIVER_SVGALIB
+ extern VideoBootStrap SVGALIB_bootstrap;
+ #endif
++#if SDL_VIDEO_DRIVER_XYNTH
++extern VideoBootStrap XYNTH_bootstrap;
++#endif
+ #if SDL_VIDEO_DRIVER_GAPI
+ extern VideoBootStrap GAPI_bootstrap;
+ #endif
+Index: README.Xynth
+===================================================================
+--- README.Xynth	(revision 0)
++++ README.Xynth	(revision 27)
+@@ -0,0 +1,8 @@
++www.xynth.org
++
++Alper Akcan <alper.akcan@gmail.com>
++
++./configure
++make
++make install
++export SDL_VIDEODRIVER=xynth
+Index: include/SDL_config.h.in
+===================================================================
+--- include/SDL_config.h.in	(revision 24)
++++ include/SDL_config.h.in	(revision 27)
+@@ -273,6 +273,7 @@
+ #undef SDL_VIDEO_DRIVER_QUARTZ
+ #undef SDL_VIDEO_DRIVER_RISCOS
+ #undef SDL_VIDEO_DRIVER_SVGALIB
++#undef SDL_VIDEO_DRIVER_XYNTH
+ #undef SDL_VIDEO_DRIVER_TOOLBOX
+ #undef SDL_VIDEO_DRIVER_VGL
+ #undef SDL_VIDEO_DRIVER_WINDIB
+Index: include/SDL_config.h
+===================================================================
+--- include/SDL_config.h	(revision 24)
++++ include/SDL_config.h	(revision 27)
+@@ -1,3 +1,4 @@
++/* include/SDL_config.h.  Generated from SDL_config.h.in by configure.  */
+ /*
+     SDL - Simple DirectMedia Layer
+     Copyright (C) 1997-2006 Sam Lantinga
+@@ -23,23 +24,285 @@
+ #ifndef _SDL_config_h
+ #define _SDL_config_h
+ 
++/* This is a set of defines to configure the SDL features */
++
++/* General platform specific identifiers */
+ #include "SDL_platform.h"
+ 
+-/* Add any platform that doesn't build using the configure system */
+-#if defined(__DREAMCAST__)
+-#include "SDL_config_dreamcast.h"
+-#elif defined(__MACOS__)
+-#include "SDL_config_macos.h"
+-#elif defined(__MACOSX__)
+-#include "SDL_config_macosx.h"
+-#elif defined(__SYMBIAN32__)
+-#include "SDL_config_symbian.h"  /* must be before win32! */
+-#elif defined(__WIN32__)
+-#include "SDL_config_win32.h"
+-#elif defined(__OS2__)
+-#include "SDL_config_os2.h"
++/* Make sure that this isn't included by Visual C++ */
++#ifdef _MSC_VER
++#error You should copy include/SDL_config.h.default to include/SDL_config.h
++#endif
++
++/* C language features */
++/* #undef const */
++/* #undef inline */
++/* #undef volatile */
++
++/* C datatypes */
++/* #undef size_t */
++/* #undef int8_t */
++/* #undef uint8_t */
++/* #undef int16_t */
++/* #undef uint16_t */
++/* #undef int32_t */
++/* #undef uint32_t */
++/* #undef int64_t */
++/* #undef uint64_t */
++/* #undef uintptr_t */
++#define SDL_HAS_64BIT_TYPE 1
++
++/* Endianness */
++#define SDL_BYTEORDER 1234
++
++/* Comment this if you want to build without any C library requirements */
++#define HAVE_LIBC 1
++#if HAVE_LIBC
++
++/* Useful headers */
++#define HAVE_ALLOCA_H 1
++#define HAVE_SYS_TYPES_H 1
++#define HAVE_STDIO_H 1
++#define STDC_HEADERS 1
++#define HAVE_STDLIB_H 1
++#define HAVE_STDARG_H 1
++#define HAVE_MALLOC_H 1
++#define HAVE_MEMORY_H 1
++#define HAVE_STRING_H 1
++#define HAVE_STRINGS_H 1
++#define HAVE_INTTYPES_H 1
++#define HAVE_STDINT_H 1
++#define HAVE_CTYPE_H 1
++#define HAVE_MATH_H 1
++#define HAVE_ICONV_H 1
++#define HAVE_SIGNAL_H 1
++/* #undef HAVE_ALTIVEC_H */
++
++/* C library functions */
++#define HAVE_MALLOC 1
++#define HAVE_CALLOC 1
++#define HAVE_REALLOC 1
++#define HAVE_FREE 1
++#define HAVE_ALLOCA 1
++#ifndef _WIN32 /* Don't use C runtime versions of these on Windows */
++#define HAVE_GETENV 1
++#define HAVE_PUTENV 1
++#define HAVE_UNSETENV 1
++#endif
++#define HAVE_QSORT 1
++#define HAVE_ABS 1
++#define HAVE_BCOPY 1
++#define HAVE_MEMSET 1
++#define HAVE_MEMCPY 1
++#define HAVE_MEMMOVE 1
++#define HAVE_MEMCMP 1
++#define HAVE_STRLEN 1
++/* #undef HAVE_STRLCPY */
++/* #undef HAVE_STRLCAT */
++#define HAVE_STRDUP 1
++/* #undef HAVE__STRREV */
++/* #undef HAVE__STRUPR */
++/* #undef HAVE__STRLWR */
++/* #undef HAVE_INDEX */
++/* #undef HAVE_RINDEX */
++#define HAVE_STRCHR 1
++#define HAVE_STRRCHR 1
++#define HAVE_STRSTR 1
++/* #undef HAVE_ITOA */
++/* #undef HAVE__LTOA */
++/* #undef HAVE__UITOA */
++/* #undef HAVE__ULTOA */
++#define HAVE_STRTOL 1
++#define HAVE_STRTOUL 1
++/* #undef HAVE__I64TOA */
++/* #undef HAVE__UI64TOA */
++#define HAVE_STRTOLL 1
++#define HAVE_STRTOULL 1
++#define HAVE_STRTOD 1
++#define HAVE_ATOI 1
++#define HAVE_ATOF 1
++#define HAVE_STRCMP 1
++#define HAVE_STRNCMP 1
++/* #undef HAVE__STRICMP */
++#define HAVE_STRCASECMP 1
++/* #undef HAVE__STRNICMP */
++#define HAVE_STRNCASECMP 1
++#define HAVE_SSCANF 1
++#define HAVE_SNPRINTF 1
++#define HAVE_VSNPRINTF 1
++#define HAVE_ICONV 1
++#define HAVE_SIGACTION 1
++#define HAVE_SETJMP 1
++#define HAVE_NANOSLEEP 1
++/* #undef HAVE_CLOCK_GETTIME */
++#define HAVE_DLVSYM 1
++#define HAVE_GETPAGESIZE 1
++#define HAVE_MPROTECT 1
++
+ #else
+-#include "SDL_config_minimal.h"
+-#endif /* platform config */
++/* We may need some replacement for stdarg.h here */
++#include <stdarg.h>
++#endif /* HAVE_LIBC */
+ 
++/* Allow disabling of core subsystems */
++/* #undef SDL_AUDIO_DISABLED */
++/* #undef SDL_CDROM_DISABLED */
++/* #undef SDL_CPUINFO_DISABLED */
++/* #undef SDL_EVENTS_DISABLED */
++/* #undef SDL_FILE_DISABLED */
++/* #undef SDL_JOYSTICK_DISABLED */
++/* #undef SDL_LOADSO_DISABLED */
++/* #undef SDL_THREADS_DISABLED */
++/* #undef SDL_TIMERS_DISABLED */
++/* #undef SDL_VIDEO_DISABLED */
++
++/* Enable various audio drivers */
++#define SDL_AUDIO_DRIVER_ALSA 1
++#define SDL_AUDIO_DRIVER_ALSA_DYNAMIC "libasound.so.2"
++#define SDL_AUDIO_DRIVER_ARTS 1
++#define SDL_AUDIO_DRIVER_ARTS_DYNAMIC "libartsc.so.0"
++/* #undef SDL_AUDIO_DRIVER_BAUDIO */
++/* #undef SDL_AUDIO_DRIVER_BSD */
++/* #undef SDL_AUDIO_DRIVER_COREAUDIO */
++/* #undef SDL_AUDIO_DRIVER_DART */
++/* #undef SDL_AUDIO_DRIVER_DC */
++#define SDL_AUDIO_DRIVER_DISK 1
++#define SDL_AUDIO_DRIVER_DUMMY 1
++/* #undef SDL_AUDIO_DRIVER_DMEDIA */
++/* #undef SDL_AUDIO_DRIVER_DSOUND */
++/* #undef SDL_AUDIO_DRIVER_PULSE */
++/* #undef SDL_AUDIO_DRIVER_PULSE_DYNAMIC */
++#define SDL_AUDIO_DRIVER_ESD 1
++#define SDL_AUDIO_DRIVER_ESD_DYNAMIC "libesd.so.0"
++/* #undef SDL_AUDIO_DRIVER_MINT */
++/* #undef SDL_AUDIO_DRIVER_MMEAUDIO */
++/* #undef SDL_AUDIO_DRIVER_NAS */
++#define SDL_AUDIO_DRIVER_OSS 1
++/* #undef SDL_AUDIO_DRIVER_OSS_SOUNDCARD_H */
++/* #undef SDL_AUDIO_DRIVER_PAUD */
++/* #undef SDL_AUDIO_DRIVER_QNXNTO */
++/* #undef SDL_AUDIO_DRIVER_SNDMGR */
++/* #undef SDL_AUDIO_DRIVER_SUNAUDIO */
++/* #undef SDL_AUDIO_DRIVER_WAVEOUT */
++
++/* Enable various cdrom drivers */
++/* #undef SDL_CDROM_AIX */
++/* #undef SDL_CDROM_BEOS */
++/* #undef SDL_CDROM_BSDI */
++/* #undef SDL_CDROM_DC */
++/* #undef SDL_CDROM_DUMMY */
++/* #undef SDL_CDROM_FREEBSD */
++#define SDL_CDROM_LINUX 1
++/* #undef SDL_CDROM_MACOS */
++/* #undef SDL_CDROM_MACOSX */
++/* #undef SDL_CDROM_MINT */
++/* #undef SDL_CDROM_OPENBSD */
++/* #undef SDL_CDROM_OS2 */
++/* #undef SDL_CDROM_OSF */
++/* #undef SDL_CDROM_QNX */
++/* #undef SDL_CDROM_WIN32 */
++
++/* Enable various input drivers */
++#define SDL_INPUT_LINUXEV 1
++/* #undef SDL_INPUT_TSLIB */
++/* #undef SDL_JOYSTICK_BEOS */
++/* #undef SDL_JOYSTICK_DC */
++/* #undef SDL_JOYSTICK_DUMMY */
++/* #undef SDL_JOYSTICK_IOKIT */
++#define SDL_JOYSTICK_LINUX 1
++/* #undef SDL_JOYSTICK_MACOS */
++/* #undef SDL_JOYSTICK_MINT */
++/* #undef SDL_JOYSTICK_OS2 */
++/* #undef SDL_JOYSTICK_RISCOS */
++/* #undef SDL_JOYSTICK_WINMM */
++/* #undef SDL_JOYSTICK_USBHID */
++/* #undef SDL_JOYSTICK_USBHID_MACHINE_JOYSTICK_H */
++
++/* Enable various shared object loading systems */
++/* #undef SDL_LOADSO_BEOS */
++/* #undef SDL_LOADSO_DLCOMPAT */
++#define SDL_LOADSO_DLOPEN 1
++/* #undef SDL_LOADSO_DUMMY */
++/* #undef SDL_LOADSO_LDG */
++/* #undef SDL_LOADSO_MACOS */
++/* #undef SDL_LOADSO_OS2 */
++/* #undef SDL_LOADSO_WIN32 */
++
++/* Enable various threading systems */
++/* #undef SDL_THREAD_BEOS */
++/* #undef SDL_THREAD_DC */
++/* #undef SDL_THREAD_OS2 */
++/* #undef SDL_THREAD_PTH */
++#define SDL_THREAD_PTHREAD 1
++#define SDL_THREAD_PTHREAD_RECURSIVE_MUTEX 1
++/* #undef SDL_THREAD_PTHREAD_RECURSIVE_MUTEX_NP */
++/* #undef SDL_THREAD_SPROC */
++/* #undef SDL_THREAD_WIN32 */
++
++/* Enable various timer systems */
++/* #undef SDL_TIMER_BEOS */
++/* #undef SDL_TIMER_DC */
++/* #undef SDL_TIMER_DUMMY */
++/* #undef SDL_TIMER_MACOS */
++/* #undef SDL_TIMER_MINT */
++/* #undef SDL_TIMER_OS2 */
++/* #undef SDL_TIMER_RISCOS */
++#define SDL_TIMER_UNIX 1
++/* #undef SDL_TIMER_WIN32 */
++/* #undef SDL_TIMER_WINCE */
++
++/* Enable various video drivers */
++/* #undef SDL_VIDEO_DRIVER_AALIB */
++/* #undef SDL_VIDEO_DRIVER_BWINDOW */
++/* #undef SDL_VIDEO_DRIVER_DC */
++/* #undef SDL_VIDEO_DRIVER_DDRAW */
++#define SDL_VIDEO_DRIVER_DGA 1
++/* #undef SDL_VIDEO_DRIVER_DIRECTFB */
++/* #undef SDL_VIDEO_DRIVER_DRAWSPROCKET */
++#define SDL_VIDEO_DRIVER_DUMMY 1
++#define SDL_VIDEO_DRIVER_FBCON 1
++/* #undef SDL_VIDEO_DRIVER_GAPI */
++/* #undef SDL_VIDEO_DRIVER_GEM */
++/* #undef SDL_VIDEO_DRIVER_GGI */
++/* #undef SDL_VIDEO_DRIVER_IPOD */
++/* #undef SDL_VIDEO_DRIVER_NANOX */
++/* #undef SDL_VIDEO_DRIVER_OS2FS */
++/* #undef SDL_VIDEO_DRIVER_PHOTON */
++/* #undef SDL_VIDEO_DRIVER_PICOGUI */
++/* #undef SDL_VIDEO_DRIVER_PS2GS */
++/* #undef SDL_VIDEO_DRIVER_QTOPIA */
++/* #undef SDL_VIDEO_DRIVER_QUARTZ */
++/* #undef SDL_VIDEO_DRIVER_RISCOS */
++#define SDL_VIDEO_DRIVER_SVGALIB 1
++#define SDL_VIDEO_DRIVER_XYNTH 1
++/* #undef SDL_VIDEO_DRIVER_TOOLBOX */
++/* #undef SDL_VIDEO_DRIVER_VGL */
++/* #undef SDL_VIDEO_DRIVER_WINDIB */
++/* #undef SDL_VIDEO_DRIVER_WSCONS */
++#define SDL_VIDEO_DRIVER_X11 1
++#define SDL_VIDEO_DRIVER_X11_DGAMOUSE 1
++#define SDL_VIDEO_DRIVER_X11_DPMS 1
++#define SDL_VIDEO_DRIVER_X11_DYNAMIC "libX11.so.6"
++#define SDL_VIDEO_DRIVER_X11_DYNAMIC_XEXT "libXext.so.6"
++#define SDL_VIDEO_DRIVER_X11_DYNAMIC_XRANDR "libXrandr.so.2"
++#define SDL_VIDEO_DRIVER_X11_DYNAMIC_XRENDER "libXrender.so.1"
++#define SDL_VIDEO_DRIVER_X11_VIDMODE 1
++#define SDL_VIDEO_DRIVER_X11_XINERAMA 1
++#define SDL_VIDEO_DRIVER_X11_XME 1
++#define SDL_VIDEO_DRIVER_X11_XRANDR 1
++#define SDL_VIDEO_DRIVER_X11_XV 1
++/* #undef SDL_VIDEO_DRIVER_XBIOS */
++
++/* Enable OpenGL support */
++#define SDL_VIDEO_OPENGL 1
++#define SDL_VIDEO_OPENGL_GLX 1
++/* #undef SDL_VIDEO_OPENGL_WGL */
++/* #undef SDL_VIDEO_OPENGL_OSMESA */
++/* #undef SDL_VIDEO_OPENGL_OSMESA_DYNAMIC */
++
++/* Enable assembly routines */
++#define SDL_ASSEMBLY_ROUTINES 1
++#define SDL_HERMES_BLITTERS 1
++/* #undef SDL_ALTIVEC_BLITTERS */
++
+ #endif /* _SDL_config_h */
+Index: configure.in
+===================================================================
+--- configure.in	(revision 24)
++++ configure.in	(revision 27)
+@@ -1356,6 +1356,31 @@
+     fi
+ }
+ 
++dnl Find the Xynth includes and libraries
++CheckXYNTH()
++{
++    AC_ARG_ENABLE(video-xynth,
++[  --enable-video-xynth    use The Xynth Windowing System [default=yes]],
++                  , enable_video_xynth=yes)
++    if test x$enable_video = xyes -a x$enable_video_xynth = xyes; then
++        AC_MSG_CHECKING(for Xynth support)
++        video_xynth=no
++        AC_TRY_COMPILE([
++         #include <xynth.h>
++        ],[
++        ],[
++        video_xynth=yes
++        ])
++        AC_MSG_RESULT($video_xynth)
++        if test x$video_xynth = xyes; then
++            AC_DEFINE(SDL_VIDEO_DRIVER_XYNTH)
++            SOURCES="$SOURCES $srcdir/src/video/xynth/*.c"
++            EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lxynth"
++            have_video=yes
++        fi
++    fi
++}
++
+ dnl Find the VGL includes and libraries
+ CheckVGL()
+ {
+@@ -2259,6 +2284,7 @@
+         CheckPS2GS
+         CheckGGI
+         CheckSVGA
++	CheckXYNTH
+         CheckVGL
+         CheckWscons
+         CheckAAlib
