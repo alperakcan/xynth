@@ -106,7 +106,7 @@ int s_surface_init (s_window_t *window)
 	window->surface->buf = (s_rect_t *) s_calloc(1, sizeof(s_rect_t));
 	window->surface->win = (s_rect_t *) s_calloc(1, sizeof(s_rect_t));
 	window->surface->window = window;
-	if (s_thread_mutex_init(&window->surface->paint_mutex) != 0) {
+	if (s_thread_mutex_init(&window->surface->mutex) != 0) {
 		s_free(window->surface->win);
 		s_free(window->surface->buf);
 		s_free(window->surface);
@@ -132,7 +132,7 @@ void s_surface_uninit (s_window_t *window)
 		shmdt(window->surface->matrix);
 	}
 #endif
-	s_thread_mutex_destroy(window->surface->paint_mutex);
+	s_thread_mutex_destroy(window->surface->mutex);
 	s_free(window->surface->buf);
 	s_free(window->surface->win);
 	s_free(window->surface->vbuf);
@@ -203,16 +203,17 @@ void s_surface_changed (s_window_t *window, s_rect_t *changed, int all)
 	int y;
 	s_rect_t coor;
 
+	s_thread_mutex_lock(window->surface->mutex);
+
 	if (!(window->surface->mode & SURFACE_REAL)) {
+		s_thread_mutex_unlock(window->surface->mutex);
 		return;
 	}
-
-	s_thread_mutex_lock(window->surface->paint_mutex);
 
 	x = changed->x - window->surface->buf->x;
 	y = changed->y - window->surface->buf->y;
 	if (s_surface_clip_real(window->surface, x, y, changed->w, changed->h, &coor)) {
-		s_thread_mutex_unlock(window->surface->paint_mutex);
+		s_thread_mutex_unlock(window->surface->mutex);
 		return;
 	}
 
@@ -237,7 +238,7 @@ void s_surface_changed (s_window_t *window, s_rect_t *changed, int all)
 		}
 	}
 
-	s_thread_mutex_unlock(window->surface->paint_mutex);
+	s_thread_mutex_unlock(window->surface->mutex);
 }
 
 void s_surface_set_coor (s_window_t *window, int x, int y, int w, int h)
@@ -245,10 +246,10 @@ void s_surface_set_coor (s_window_t *window, int x, int y, int w, int h)
 	/* anti
 	 * set surface coordinates in paint mutex
 	 */
-	s_thread_mutex_lock(window->surface->paint_mutex);
+	s_thread_mutex_lock(window->surface->mutex);
 	window->surface->buf->x = x;
 	window->surface->buf->y = y;
 	window->surface->buf->w = w;
 	window->surface->buf->h = h;
-	s_thread_mutex_unlock(window->surface->paint_mutex);
+	s_thread_mutex_unlock(window->surface->mutex);
 }

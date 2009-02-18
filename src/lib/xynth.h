@@ -2460,8 +2460,8 @@ struct s_surface_s {
 	S_SURFACE_MODE need_expose;
 	/** device name */
 	char *device;
-	/** paint mutex */
-	s_thread_mutex_t *paint_mutex;
+	/** surface mutex */
+	s_thread_mutex_t *mutex;
 	/** ugly hack, window->surface->window = window */
 	s_window_t *window;
 };
