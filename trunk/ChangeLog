@@ -3,6 +3,7 @@ Wed 11 Feb 2009 01:33:38 AM EET
 	- rev 1047
 	- imported artec group's guioo library contributions, and
 	  enhancments for both client library and server.
+	- c++ support for makefile.lib
 
 Wed 10 Sep 2008 03:59:05 AM EEST
 	- rev 1036
