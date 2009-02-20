@@ -14,8 +14,8 @@ subdir-$(CONFIG_VIDEO_NULL)    += ./video/null
 subdir-$(CONFIG_VIDEO_HELPER)  += ./video/helper
 
 target-y += xynth
-target_so-y += libserver.so
-target_a-y  += libserver.a
+target_so-$(CONFIG_LIBRARY_SHARED) += libserver.so
+target_a-$(CONFIG_LIBRARY_STATIC)  += libserver.a
 
 libserver.so_files-y = event.c \
                 id.c \
@@ -101,7 +101,8 @@ xynth_files-y      = start.c
 xynth_includes-y  += ./ $(libserver.so_includes-y)
 xynth_libraries-y += ./ $(libserver.so_libraries-y)
 xynth_ldflags-y   += -lserver $(libserver.so_ldflags-y)
-xynth_depends-y   += libserver.so libserver.a
+xynth_depends-$(CONFIG_LIBRARY_SHARED) += libserver.so
+xynth_depends-$(CONFIG_LIBRARY_STATIC) += libserver.a
 
 include ../../Makefile.lib
 

@@ -21,17 +21,17 @@
 #include <pspthreadman.h>
 #include <pspmoduleinfo.h>
 
-void usleep (unsigned long msec)
+int usleep(useconds_t usec)
 {
 	unsigned long delay;
-	delay = MIN(msec, 0xffffffffUL);
+	delay = MIN(usec, 0xffffffffUL);
 	sceKernelDelayThreadCB(delay);
+	return 0;
 }
 
 unsigned int sleep (unsigned int sec)
 {
-	usleep(sec * 1000 * 1000);
-	return 0;
+	return usleep(sec * 1000 * 1000);
 }
 
 #elif defined(CONFIG_PLATFORM_MINGW)

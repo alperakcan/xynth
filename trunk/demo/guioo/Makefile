@@ -34,8 +34,8 @@ single_guioo.o_cflags-y   = -Dmain=guioo_main
 
 include ../../Makefile.lib
 
-ifneq ($(CONFIG_SINGLE_APPLICATION), y)
 dist:
+ifneq ($(CONFIG_SINGLE_APPLICATION), y)
 	$(CP) guioo ../../dist/$(CONFIG_PATH_BIN)/guioo
 endif
 	$(MKDIR) ../../dist/$(CONFIG_PATH_SHARE)/guioo

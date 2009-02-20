@@ -15,7 +15,9 @@
 
 #include <stdlib.h>
 #include <pthread.h>
+#if defined(CONFIG_LEAK_DETECT)
 #include <execinfo.h>
+#endif
 #include "xynth_.h"
 
 #if defined(CONFIG_LEAK_DETECT)
