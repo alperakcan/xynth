@@ -69,12 +69,19 @@ static void s_server_handler_quit (s_window_t *window, s_event_t *event, s_handl
 #if defined(CONFIG_PLATFORM_PSPDEV)
 
 #include <pspkernel.h>
-#include <pspdebug.h>
-#include <stdlib.h>
+#include <pspdisplay.h>
 #include <string.h>
+#include <psputility.h>
+#include <pspgu.h>
+#include <pspgum.h>
+#include <pspsdk.h>
+#include <pspnet.h>
+#include <pspnet_inet.h>
+#include <pspnet_apctl.h>
 
-PSP_MODULE_INFO("Xynth Windowing System", 0x1000, 1, 1);
+PSP_MODULE_INFO("Xynth Windowing System", 0x0, 1, 1);
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER | PSP_THREAD_ATTR_VFPU);
+PSP_HEAP_SIZE_KB(-1);
 
 int s_server_psp_exit_callback (int arg1, int arg2, void *common)
 {
@@ -107,10 +114,10 @@ int main (int argc, char *argv[])
 {
 	s_handler_t *hndl;
 
-	#if defined(CONFIG_PLATFORM_PSPDEV)
-		pspDebugScreenInit();
-		s_server_psp_setup_callbacks();
-	#endif
+#if defined(CONFIG_PLATFORM_PSPDEV)
+	pspDebugScreenInit();
+	s_server_psp_setup_callbacks();
+#endif
 
 	if (s_server_init()) {
 		debugf(DSER, "s_server_init() failed");

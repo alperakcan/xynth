@@ -61,6 +61,7 @@ distclean: clean
 
 .PHONY: distdirs
 distdirs: __FORCE
+	$(RM) dist
 	$(MKDIR) dist
 	$(MKDIR) dist/$(CONFIG_PATH_BIN)
 	$(MKDIR) dist/$(CONFIG_PATH_LIB)
@@ -85,14 +86,10 @@ dist: distdirs xynth.pc
 .PHONY: install
 install: dist
 ifeq ($(CONFIG_PLATFORM_PSPDEV), y)
-	$(MKDIR) dist/psp/game
-	$(CP) dist/bin/xynth dist/psp/game
-	$(CP) dist/bin/xynth% dist/psp/game
-	$(CP) dist/share dist/psp/game/xynth
+	$(CP) dist/bin/EBOOT.PBP dist/EBOOT.PBP
 	$(RM) dist/$(CONFIG_PATH_BIN)
 	$(RM) dist/$(CONFIG_PATH_LIB)
 	$(RM) dist/$(CONFIG_PATH_INCLUDE)
-	$(RM) dist/share
 else
 	$(CP) ./dist/* $(CONFIG_PATH_INSTALL)/
 endif

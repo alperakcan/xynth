@@ -81,17 +81,22 @@ ifeq ($(CONFIG_THEME_PLUGIN), y)
 libserver.so_ldflags-y   += -ldl
 endif
 
-libserver.so_ldflags-$(CONFIG_VIDEO_PSPDEV) += -lpspdebug \
-                                        -lpspdisplay \
-                                        -lpspge \
-                                        -lpspctrl \
-                                        -lpspsdk \
-                                        -lc \
-                                        -lpspnet \
-                                        -lpspnet_inet \
-                                        -lpsputility \
-                                        -lpspuser \
-                                        -lpspkernel
+libserver.so_ldflags-$(CONFIG_VIDEO_PSPDEV) += \
+	-specs=$(shell psp-config -p)/lib/prxspecs -Wl,-q,-T$(shell psp-config -p)/lib/linkfile.prx \
+	$(shell psp-config -p)/lib/prxexports.o  \
+	-lpspdebug \
+	-lpspdisplay \
+	-lpspge \
+	-lpspctrl \
+	-lpspsdk \
+	-lc \
+	-lpspnet \
+	-lpspnet_inet \
+	-lpspnet_apctl \
+	-lpspnet_resolver \
+	-lpsputility \
+	-lpspuser \
+	-lpspkernel
 
 libserver.a_files-y    = $(libserver.so_files-y)
 libserver.a_cflags-y   = $(libserver.so_cflags-y)
@@ -109,20 +114,19 @@ include ../../Makefile.lib
 dist:
 ifeq ($(CONFIG_PLATFORM_PSPDEV), y)
 	psp-fixup-imports xynth
-	mksfo 'Xynth Windowing System' param.sfo
-	$(MKDIR) ../../dist/$(CONFIG_PATH_BIN)/xynth
-	psp-strip xynth -o ../../dist/$(CONFIG_PATH_BIN)/xynth/eboot.pbp
-	$(MKDIR) ../../dist/$(CONFIG_PATH_BIN)/xynth%
-	pack-pbp ../../dist/$(CONFIG_PATH_BIN)/xynth%/eboot.pbp \
-	         param.sfo \
-	         ../../tools/pspdev/icon0.png \
-	         NULL \
-	         NULL \
-	         ../../tools/pspdev/pic1.png \
-	         NULL \
-	         NULL \
-	         NULL
-	rm param.sfo
+	psp-prxgen xynth xynth.prx
+	mksfo 'Xynth Windowing System' PARAM.SFO
+	pack-pbp \
+	    ../../dist/$(CONFIG_PATH_BIN)/EBOOT.PBP \
+	    PARAM.SFO \
+	    NULL \
+	    NULL \
+	    NULL \
+	    NULL \
+	    NULL \
+	    xynth.prx \
+	    NULL
+	rm PARAM.SFO xynth.prx
 else
 	$(CP) xynth ../../dist/$(CONFIG_PATH_BIN)/xynth
 	$(CP) libserver.so ../../dist/$(CONFIG_PATH_LIB)/libserver.so
