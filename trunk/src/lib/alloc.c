@@ -41,7 +41,7 @@ void * s_malloc (unsigned int size)
 	void *ret;
 	ret = malloc(size);
 	if (ret == NULL) {
-		debugf(DFAT, "Not enough memory!");
+		debugf(DFAT, "Not enough memory for size: %u!", size);
 	}
 #if defined(CONFIG_LEAK_DETECT)
 	if (trace_enable) {

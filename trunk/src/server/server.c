@@ -129,6 +129,7 @@ int s_server_cfg (s_server_conf_t *config)
 	config->general.mode = strdup("480x272x16M32");
 	config->mouse.type = strdup("MOUSE_PSPDEV");
 	config->mouse.device = strdup("/dev/null");
+	config->mouse.cursor = 1;
 #elif defined(CONFIG_PLATFORM_GP2X)
 	config->general.driver = strdup("gp2x");
 	config->general.mode = strdup("320x240x64K");
@@ -147,6 +148,9 @@ int s_server_cfg (s_server_conf_t *config)
 		s_config_uninit(cfg);
 		return -1;
 	}
+
+	/* enabled by default */
+	config->mouse.cursor = 1;
 
 	i = 0;
 	while (!s_list_eol(cfg->category, i)) {

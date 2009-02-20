@@ -120,7 +120,7 @@
 override CFLAGS += -Wall -pipe -g -O2 -fsigned-char -fno-strict-aliasing 
  
 ifeq ($(CONFIG_PLATFORM_PSPDEV), y)
-	CFLAGS += -G0 -D_PSP_FW_VERSION=150
+	override CFLAGS += -G0 -D_PSP_FW_VERSION=200
 endif
 
 MAKE       := $(MAKE) --no-print-directory
@@ -272,17 +272,19 @@ _cmd_depend.c       = $(CC) $(CFLAGS) $(CPPFLAGS) $($1_cflags) $($1_cppflags) \
                       $$@: ,' > $$@
 _cmd_compile.c      = $(CC) $(CFLAGS) $(CPPFLAGS) $($1_cflags) $($1_cppflags) \
                       $($1_includes) -c -o $$@ $$<
-_cmd_link.c         = $(CC) $($1_libraries) -o $$@ $$^ $($1_ldflags) $(LDFLAGS)
-_cmd_link_so.c      = $(CC) $($1_libraries) -o $$@ $$^ $($1_ldflags) $(LDFLAGS) -shared
+_cmd_link.c         = $(CC) $(CFLAGS) $(CPPFLAGS) $($1_libraries) -o $$@ $$^ \
+                      $($1_ldflags) $(LDFLAGS)
+_cmd_link_so.c      = $(CC) $(CFLAGS) $(CPPFLAGS) $($1_libraries) -o $$@ $$^ \
+                      $($1_ldflags) $(LDFLAGS) -shared
 
 _cmd_depend.c.host  = $(HOSTCC) $(CFLAGS) $(CPPFLAGS) $($1_cflags) \
                       $($1_cppflags) $($1_includes) -M $$< | $(SED) \
                       's,\($$*\.o\) *:,.$1/\1 $$@: ,' > $$@
 _cmd_compile.c.host = $(HOSTCC) $(CFLAGS) $(CPPFLAGS) $($1_cflags) \
                       $($1_cppflags) $($1_includes) -c -o $$@ $$<
-_cmd_link.c.host    = $(HOSTCC) $(CFLAGS) $($1_libraries) -o $$@ $$^ \
+_cmd_link.c.host    = $(HOSTCC) $(CFLAGS) $(CPPFLAGS) $($1_libraries) -o $$@ $$^ \
                       $($1_ldflags) $(LDFLAGS)
-_cmd_link_so.c.host = $(HOSTCC) $(CFLAGS) $($1_libraries) -o $$@ $$^ \
+_cmd_link_so.c.host = $(HOSTCC) $(CFLAGS) $(CPPFLAGS) $($1_libraries) -o $$@ $$^ \
                       $($1_ldflags) $(LDFLAGS) -shared
 
 _cmd_depend.cpp       = $(CPP) $(CFLAGS) $(CPPFLAGS) $($1_cflags) $($1_cppflags) \
@@ -290,17 +292,19 @@ _cmd_depend.cpp       = $(CPP) $(CFLAGS) $(CPPFLAGS) $($1_cflags) $($1_cppflags)
                         $$@: ,' > $$@
 _cmd_compile.cpp      = $(CPP) $(CFLAGS) $(CPPFLAGS) $($1_cflags) $($1_cppflags) \
                         $($1_includes) -c -o $$@ $$<
-_cmd_link.cpp         = $(CPP) $($1_libraries) -o $$@ $$^ $($1_ldflags) $(LDFLAGS)
-_cmd_link_so.cpp      = $(CPP) $($1_libraries) -o $$@ $$^ $($1_ldflags) $(LDFLAGS) -shared
+_cmd_link.cpp         = $(CPP) $(CFLAGS) $(CPPFLAGS) $($1_libraries) -o $$@ $$^ \
+                        $($1_ldflags) $(LDFLAGS)
+_cmd_link_so.cpp      = $(CPP) $(CFLAGS) $(CPPFLAGS) $($1_libraries) -o $$@ $$^ \
+                        $($1_ldflags) $(LDFLAGS) -shared
 
 _cmd_depend.cpp.host  = $(HOSTCPP) $(CFLAGS) $(CPPFLAGS) $($1_cflags) \
                         $($1_cppflags) $($1_includes) -M $$< | $(SED) \
                         's,\($$*\.o\) *:,.$1/\1 $$@: ,' > $$@
 _cmd_compile.cpp.host = $(HOSTCPP) $(CFLAGS) $(CPPFLAGS) $($1_cflags) \
                         $($1_cppflags) $($1_includes) -c -o $$@ $$<
-_cmd_link.cpp.host    = $(HOSTCPP) $(CFLAGS) $($1_libraries) -o $$@ $$^ \
+_cmd_link.cpp.host    = $(HOSTCPP) $(CFLAGS) $(CPPFLAGS) $($1_libraries) -o $$@ $$^ \
                         $($1_ldflags) $(LDFLAGS)
-_cmd_link_so.cpp.host = $(HOSTCPP) $(CFLAGS) $($1_libraries) -o $$@ $$^ \
+_cmd_link_so.cpp.host = $(HOSTCPP) $(CFLAGS) $(CPPFLAGS) $($1_libraries) -o $$@ $$^ \
                         $($1_ldflags) $(LDFLAGS) -shared
 
 _cmd_ar               = $(AR) $$@ $$^
