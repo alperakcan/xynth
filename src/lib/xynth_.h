@@ -76,7 +76,7 @@ extern "C" {
 #elif defined(CONFIG_PLATFORM_PSPDEV)
 	#include <sys/time.h>
 	unsigned int sleep (unsigned int sec);
-	void usleep (unsigned long msec);
+	int usleep(useconds_t usec);
 #elif defined(CONFIG_PLATFORM_MINGW)
 	unsigned int sleep (unsigned int sec);
 	void usleep (unsigned long msec);
