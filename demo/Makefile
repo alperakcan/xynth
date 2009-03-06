@@ -16,5 +16,6 @@ subdir-$(CONFIG_DEMO_ONSCREENKEYBOARD) += onscreenkeyboard
 subdir-$(CONFIG_DEMO_WIDGETX) += widgetx
 subdir-$(CONFIG_DEMO_XDIALOG) += xdialog
 subdir-$(CONFIG_DEMO_GUIOO)   += guioo
+subdir-$(CONFIG_DEMO_MINES)   += mines
 
 include ../Makefile.lib

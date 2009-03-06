@@ -1,3 +1,31 @@
-    Here is the idea for server - client system:
-    
-    I ll write here some explonation, as soon as possible.
+
+Edit xynth.conf for your needs
+
+# make menuconfig
+# make all
+# make dist
+# make install
+
+You may also use defult configs with;
+
+make linux        - linux default configuration
+make linux-single - linux single app configuration
+make mingw        - mingw default configuration
+make pspdev       - pspdev default configuration
+make gp2x         - gp2x default configuration
+
+after instalation xynth.conf will be located at $(CONFDIR).
+
+by default $CONFDIR is /usr/local/share/xynth/configs, but might change
+depending on your build configurations.
+
+you can also change the paths as you wish from 'make menuconfig' -> Paths
+option.
+
+xynth& sleep 3; term
+
+or,
+
+xynth& sleep 3; desktop
+
+look in FAQ file, for erors.

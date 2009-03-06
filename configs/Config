@@ -430,6 +430,24 @@ config CONFIG_GUIOO_SHARED
 
 endmenu
 
+menu "WidgetOO Library"
+
+config CONFIG_WIDGETOO_LIBRARY
+    bool "Compile WidgetOO Library"
+    default y
+
+config CONFIG_WIDGETOO_STATIC
+    bool "Compile WidgetOO Static Library"
+    default y
+    depends on CONFIG_WIDGETOO_LIBRARY
+
+config CONFIG_WIDGETOO_SHARED
+    bool "Compile WidgetOO Shared Library"
+    default y
+    depends on CONFIG_WIDGETOO_LIBRARY
+
+endmenu
+
 menu "Python Binding"
 
 config CONFIG_PYTHON_BINDING
@@ -525,9 +543,14 @@ config CONFIG_DEMO_XDIALOG
     depends on CONFIG_DEMO_APPLICATIONS && CONFIG_WIDGET_LIBRARY
 
 config CONFIG_DEMO_GUIOO
-    bool "Guild guioo demo"
+    bool "Build guioo demo"
     default y
     depends on CONFIG_DEMO_APPLICATIONS && CONFIG_GUIOO_LIBRARY
+
+config CONFIG_DEMO_MINES
+    bool "Build mines demo"
+    default y
+    depends on CONFIG_DEMO_APPLICATIONS && CONFIG_WIDGETOO_LIBRARY
 
 endmenu
 

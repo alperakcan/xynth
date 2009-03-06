@@ -171,12 +171,7 @@ void s_window_uninit (s_window_t *window)
         s_event_changed(window);
 	s_thread_join(window->eventq->tid, NULL);
 
-	s_timers_uninit(window);
-	s_pollfds_uninit(window);
-	s_handlers_uninit(window);
-
 	s_childs_uninit(window);
-
         if (window->type & (WINDOW_TYPE_TEMP | WINDOW_TYPE_CHILD)) {
 		if (s_child_del(window->parent, window) == 0) {
 			s_thread_detach(window->tid);
@@ -192,13 +187,6 @@ void s_window_uninit (s_window_t *window)
 	                                                 ((window->type & WINDOW_TYPE_DESKTOP) ? "WINDOW_TYPE_DESKTOP" : "WINDOW_UNKNOWN")))),
 	                                                (window->type & WINDOW_TYPE_NOFORM) ? " | WINDOW_TYPE_NOFORM" : "");
 
-	s_eventq_uninit(window);
-
-	s_surface_uninit(window);
-	s_event_uninit(window->event);
-
-	s_free(window->title);
-
 	/* andrei
 	 * call atexit only after we have released all children
 	 * the idea is to let the children access their parent's data attribute
@@ -206,6 +194,14 @@ void s_window_uninit (s_window_t *window)
 	if (window->atexit != NULL) {
 		window->atexit(window);
 	}
+
+	s_timers_uninit(window);
+	s_pollfds_uninit(window);
+	s_handlers_uninit(window);
+	s_eventq_uninit(window);
+	s_surface_uninit(window);
+	s_event_uninit(window->event);
+	s_free(window->title);
 
 	s_free(window);
 	window = NULL;

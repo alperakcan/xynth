@@ -1,0 +1,14 @@
+
+this libwidgetoo library is depracated, you should use either
+libwidget or libguio depending on your needs.
+
+libwidget is a c library which is a complete replacement of and
+much more capable than libwidgetoo library.
+
+libguioo is a c++ library which is much more capable than
+libwidgetoo library.
+
+i will continue to keep the sources for historical reasons, but
+please do not depend on libwidgetoo as it may disappear anytime.
+
+alper akcan.
