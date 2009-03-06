@@ -1,4 +1,10 @@
 
+Fri 06 Mar 2009 12:10:00 PM EET
+	- rev 1072
+	- revert back libwidgetoo, and mines demo for historical
+	  reasons. please readm the README file under widgetoo for
+	  more information.
+
 Wed 11 Feb 2009 01:33:38 AM EET
 	- rev 1047
 	- imported artec group's guioo library contributions, and
