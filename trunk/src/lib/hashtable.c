@@ -161,8 +161,9 @@ void * s_hashtable_get_data (s_hashtable_t *htable, char *name)
 		return node->data;
 	} else {
 		return NULL;
-	} 
+	}
 }
+
 int s_hashtable_init (s_hashtable_t **htable, unsigned int mask, unsigned int depth)
 {
 	s_hashtable_t *htbl;
