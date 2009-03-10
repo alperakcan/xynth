@@ -21,7 +21,7 @@
 #define MAX_PIPE_E	4096
 #define MAX_PIPE_LEN	65536
 
-/* enable this to enable unlimeted size of data passing
+/* enable this to enable unlimited size of data passing
  */
 #define USE_PIPE_LIST	0
 
