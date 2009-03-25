@@ -61,10 +61,12 @@ static void s_server_handler_change_theme (s_window_t *window, s_event_t *event,
 	theme_n %= 3;
 }
 
+#if 0
 static void s_server_handler_quit (s_window_t *window, s_event_t *event, s_handler_t *handler)
 {
 	s_server_quit(window);
 }
+#endif
 
 #if defined(CONFIG_PLATFORM_PSPDEV)
 
@@ -146,6 +148,7 @@ int main (int argc, char *argv[])
 	hndl->keybd.p = s_server_handler_fullscreen;
 	s_handler_add(xynth_server->window, hndl);
 
+#if 0
 	s_handler_init(&hndl);
 	hndl->type = MOUSE_HANDLER;
 	hndl->mouse.x = 0;
@@ -155,6 +158,7 @@ int main (int argc, char *argv[])
 	hndl->mouse.button = MOUSE_BUTTON_LEFT;
 	hndl->mouse.r = s_server_handler_quit;
 	s_handler_add(xynth_server->window, hndl);
+#endif
 
 #if defined(CONFIG_SINGLE_APPLICATION)
 	s_server_single_start();
