@@ -68,7 +68,8 @@ libserver.so_libraries-y += ../lib
 libserver.so_libraries-$(CONFIG_VIDEO_PSPDEV) += $(shell psp-config -p)/lib
 
 libserver.so_ldflags-y += -lxynth
-libserver.so_ldflags-y += -lm -lvga
+libserver.so_ldflags-y += -lm
+libserver.so_ldflags-$(CONFIG_VIDEO_SVGA)  += -lvga
 libserver.so_ldflags-$(CONFIG_VIDEO_SDL)   += $(shell sdl-config --libs)
 libserver.so_ldflags-$(CONFIG_VIDEO_CACA)  += -lcaca
 
