@@ -11,4 +11,6 @@ video_svga.o_includes-y = ../../ \
                           ../../../lib \
                           ../helper/
 
+video_svga.o_ldflags-y = -lvga
+
 include ../../../../Makefile.lib

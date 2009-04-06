@@ -54,6 +54,7 @@ linux linux-single mingw pspdev gp2x: tools/config_all
 .PHONY: menuconfig
 menuconfig: tools/config_all
 	tools/config/mconf configs/Config
+	tools/config/conf -s configs/Config
 
 .PHONY: distclean
 distclean: clean
