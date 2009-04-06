@@ -1,4 +1,8 @@
 
+Mon 06 Apr 2009 02:19:30 PM EEST
+	- 1079
+	- merge in Xin Wang's vesa video driver disable Makefile patch.
+
 Wed 25 Mar 2009 02:35:47 PM EET
 	- rev 1077
 	- removed useless quit callback from server, which was
