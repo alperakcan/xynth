@@ -61,6 +61,14 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 #include "lrmi.h"
 
+/* 2.6.26+ kernels don't define the legacy masks. */
+#if defined(__linux__) && !defined(TF_MASK)
+	#define TF_MASK X86_EFLAGS_TF
+	#define IF_MASK X86_EFLAGS_IF
+	#define VIF_MASK X86_EFLAGS_VIF
+	#define IOPL_MASK X86_EFLAGS_IOPL
+#endif
+
 #define REAL_MEM_BASE 	((void *)0x10000)
 #define REAL_MEM_SIZE 	0x40000
 #define REAL_MEM_BLOCKS 	0x100
