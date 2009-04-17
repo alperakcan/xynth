@@ -1,4 +1,9 @@
 
+Fri 17 Apr 2009 04:30:26 PM EEST
+	- 1082
+	- applied lrmi linux 2.6.26+ kernel patch, mentioned by
+	  Xin Wang.
+
 Mon 06 Apr 2009 02:19:30 PM EEST
 	- 1079
 	- merge in Xin Wang's vesa video driver disable Makefile patch.
