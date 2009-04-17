@@ -76,7 +76,7 @@ distdirs: __FORCE
 .PHONY: xynth.pc
 xynth.pc: xynth.pc.in
 	$(SED) -e 's,@prefix@,$(CONFIG_PATH_INSTALL)/,g' \
-	       -e 's,@version@,0.9.00,g' \
+	       -e 's,@version@,0.10.82,g' \
 	       -e 's,@widget_libs@,-lwidget,g' \
 	       xynth.pc.in > dist/$(CONFIG_PATH_LIB)/pkgconfig/xynth.pc
 
@@ -100,7 +100,7 @@ doxy-doc:
 	SRCDIR='.' \
 	PROJECT='xynth' \
 	DOCDIR='doc' \
-	VERSION='0.9.00' \
+	VERSION='0.10.82' \
 	PERL_PATH='/usr/bin/perl' \
 	HAVE_DOT='NO' \
 	GENERATE_MAN='NO' \
