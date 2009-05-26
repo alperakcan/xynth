@@ -36,7 +36,7 @@ alloc_record_t *head = NULL;
 alloc_record_t *tail = NULL;
 #endif
 
-void * s_malloc (unsigned int size)
+void * s_malloc (size_t size)
 {
 	void *ret;
 	ret = malloc(size);
@@ -66,7 +66,7 @@ void * s_malloc (unsigned int size)
 	return ret;
 }
 
-void * s_calloc (unsigned int nmemb, unsigned int size)
+void * s_calloc (size_t nmemb, size_t size)
 {
 	void *ret;
 	ret = s_malloc(nmemb * size);
@@ -77,7 +77,7 @@ void * s_calloc (unsigned int nmemb, unsigned int size)
 	return ret;
 }
 
-void * s_realloc (void *ptr, unsigned int size)
+void * s_realloc (void *ptr, size_t size)
 {
 	void *ret;
 	ret = realloc(ptr, size);
