@@ -495,9 +495,9 @@ typedef struct s_single_app_s {
 } s_single_app_t;
 
 /* alloc.c */
-void * s_malloc (unsigned int size);
-void * s_calloc (unsigned int nmemb, unsigned int size);
-void * s_realloc (void *ptr, unsigned int size);
+void * s_malloc (size_t size);
+void * s_calloc (size_t nmemb, size_t size);
+void * s_realloc (void *ptr, size_t size);
 void s_free (void *ptr);
 void s_trace_start (void);
 void s_trace_stop (void);
