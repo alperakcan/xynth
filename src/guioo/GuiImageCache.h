@@ -1,6 +1,7 @@
 #ifndef GUIIMAGECACHE_H_
 #define GUIIMAGECACHE_H_
 
+#include <stdlib.h>
 #include <xynth.h>
 
 #include <map>
