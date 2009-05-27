@@ -18,5 +18,6 @@
 
 #define XYNTH__H
 
+#include <stdlib.h>
 #include "../../lib/xynth.h"
 #include "../../lib/list.c"

@@ -1,6 +1,7 @@
 #ifndef GUISURFACE_H_
 #define GUISURFACE_H_
 
+#include <stdlib.h>
 #include <xynth.h>
 
 struct RGB_COLOR
