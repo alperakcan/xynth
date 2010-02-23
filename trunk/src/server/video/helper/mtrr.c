@@ -17,9 +17,9 @@
 
 #if defined(CONFIG_VIDEO_HELPER_MTRR)
 
-#include <asm/mtrr.h>
-#include <sys/ioctl.h>
 #include <fcntl.h>
+#include <sys/ioctl.h>
+#include <asm/mtrr.h>
 
 #include "../../../lib/xynth_.h"
 #include "server.h"

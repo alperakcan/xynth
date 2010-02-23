@@ -20,6 +20,7 @@
 #
 #   20080622 - target_depends-y fixes
 #   20090210 - added c++ support
+#   20100223 - depend file do not depend temp directories
 
 #
 # Makefile Example using Makefile.lib
@@ -127,7 +128,7 @@
 #                               prerequisite's list.
 #
 
-override CFLAGS += -Wall -pipe -g -O2 -fsigned-char -fno-strict-aliasing 
+override CFLAGS += -Wall -pipe -g -O2 -fPIC -fsigned-char -fno-strict-aliasing
  
 ifeq ($(CONFIG_PLATFORM_PSPDEV), y)
 	override CFLAGS += -G0 -D_PSP_FW_VERSION=200
@@ -135,12 +136,12 @@ endif
 
 MAKE       := $(MAKE) --no-print-directory
 
-CC         := $(CONFIG_CROSS_PREFIX)gcc
-CPP        := $(CONFIG_CROSS_PREFIX)g++
-LD         := $(CONFIG_CROSS_PREFIX)ld
-AR         := $(CONFIG_CROSS_PREFIX)ar rcs
-RANLIB     := $(CONFIG_CROSS_PREFIX)ranlib
-STRIP      := $(CONFIG_CROSS_PREFIX)strip
+CC         := $(CONFIG_PANDORA_BUILD_PREFIX)gcc
+CPP        := $(CONFIG_PANDORA_BUILD_PREFIX)g++
+LD         := $(CONFIG_PANDORA_BUILD_PREFIX)ld
+AR         := $(CONFIG_PANDORA_BUILD_PREFIX)ar rcs
+RANLIB     := $(CONFIG_PANDORA_BUILD_PREFIX)ranlib
+STRIP      := $(CONFIG_PANDORA_BUILD_PREFIX)strip
 
 HOSTCC     := gcc
 HOSTCPP    := g++
@@ -383,37 +384,37 @@ cmd_widgetc          = echo "$(_cmd_widgetc)" > $$@.cmd        ; $(_cmd_widgetc)
 #
 # DO
 #
-do_depend.c         = @$(disp_depend.c)         ; $(cmd_depend.c)
-do_compile.c        = @$(disp_compile.c)        ; $(cmd_compile.c)
-do_link.c           = @$(disp_link.c)           ; $(cmd_link.c)
-do_link_so.c        = @$(disp_link_so.c)        ; $(cmd_link_so.c)
+do_depend.c         = @$(disp_depend.c)         ; $(MKDIR) $$(dir $$@); $(cmd_depend.c)
+do_compile.c        = @$(disp_compile.c)        ; $(MKDIR) $$(dir $$@); $(cmd_compile.c)
+do_link.c           = @$(disp_link.c)           ; $(MKDIR) $$(dir $$@); $(cmd_link.c)
+do_link_so.c        = @$(disp_link_so.c)        ; $(MKDIR) $$(dir $$@); $(cmd_link_so.c)
 
-do_depend.c.host    = @$(disp_depend.c.host)    ; $(cmd_depend.c.host)
-do_compile.c.host   = @$(disp_compile.c.host)   ; $(cmd_compile.c.host)
-do_link.c.host      = @$(disp_link.c.host)      ; $(cmd_link.c.host)
-do_link_so.c.host   = @$(disp_link_so.c.host)   ; $(cmd_link_so.c.host)
+do_depend.c.host    = @$(disp_depend.c.host)    ; $(MKDIR) $$(dir $$@); $(cmd_depend.c.host)
+do_compile.c.host   = @$(disp_compile.c.host)   ; $(MKDIR) $$(dir $$@); $(cmd_compile.c.host)
+do_link.c.host      = @$(disp_link.c.host)      ; $(MKDIR) $$(dir $$@); $(cmd_link.c.host)
+do_link_so.c.host   = @$(disp_link_so.c.host)   ; $(MKDIR) $$(dir $$@); $(cmd_link_so.c.host)
 
-do_depend.cpp       = @$(disp_depend.cpp)       ; $(cmd_depend.cpp)
-do_compile.cpp      = @$(disp_compile.cpp)      ; $(cmd_compile.cpp)
-do_link.cpp         = @$(disp_link.cpp)         ; $(cmd_link.cpp)
-do_link_so.cpp      = @$(disp_link_so.cpp)      ; $(cmd_link_so.cpp)
+do_depend.cpp       = @$(disp_depend.cpp)       ; $(MKDIR) $$(dir $$@); $(cmd_depend.cpp)
+do_compile.cpp      = @$(disp_compile.cpp)      ; $(MKDIR) $$(dir $$@); $(cmd_compile.cpp)
+do_link.cpp         = @$(disp_link.cpp)         ; $(MKDIR) $$(dir $$@); $(cmd_link.cpp)
+do_link_so.cpp      = @$(disp_link_so.cpp)      ; $(MKDIR) $$(dir $$@); $(cmd_link_so.cpp)
 
-do_depend.cpp.host  = @$(disp_depend.cpp.host)  ; $(cmd_depend.cpp.host)
-do_compile.cpp.host = @$(disp_compile.cpp.host) ; $(cmd_compile.cpp.host)
-do_link.cpp.host    = @$(disp_link.cpp.host)    ; $(cmd_link.cpp.host)
-do_link_so.cpp.host = @$(disp_link_so.cpp.host) ; $(cmd_link_so.cpp.host)
+do_depend.cpp.host  = @$(disp_depend.cpp.host)  ; $(MKDIR) $$(dir $$@); $(cmd_depend.cpp.host)
+do_compile.cpp.host = @$(disp_compile.cpp.host) ; $(MKDIR) $$(dir $$@); $(cmd_compile.cpp.host)
+do_link.cpp.host    = @$(disp_link.cpp.host)    ; $(MKDIR) $$(dir $$@); $(cmd_link.cpp.host)
+do_link_so.cpp.host = @$(disp_link_so.cpp.host) ; $(MKDIR) $$(dir $$@); $(cmd_link_so.cpp.host)
 
-do_ar               = @$(disp_ar)               ; $(cmd_ar)
-do_ranlib           = @$(disp_ranlib)           ; $(cmd_ranlib)
-do_ld               = @$(disp_ld)               ; $(cmd_ld)
+do_ar               = @$(disp_ar)               ; $(MKDIR) $$(dir $$@); $(cmd_ar)
+do_ranlib           = @$(disp_ranlib)           ; $(MKDIR) $$(dir $$@); $(cmd_ranlib)
+do_ld               = @$(disp_ld)               ; $(MKDIR) $$(dir $$@); $(cmd_ld)
 
-do_ld.host          = @$(disp_ld.host)          ; $(cmd_ld.host)
+do_ld.host          = @$(disp_ld.host)          ; $(MKDIR) $$(dir $$@); $(cmd_ld.host)
 
-do_cp               = @$(disp_cp)               ; $(cmd_cp)
-do_mkdir            = @$(disp_mkdir)            ; $(cmd_mkdir)
-do_clean            = @$(disp_clean)            ; $(cmd_clean)
+do_cp               = @$(disp_cp)               ; $(MKDIR) $$(dir $$@); $(cmd_cp)
+do_mkdir            = @$(disp_mkdir)            ; $(MKDIR) $$(dir $$@); $(cmd_mkdir)
+do_clean            = @$(disp_clean)            ; $(MKDIR) $$(dir $$@); $(cmd_clean)
 
-do_widgetc          = @$(disp_widgetc)          ; $(cmd_widgetc)
+do_widgetc          = @$(disp_widgetc)          ; $(MKDIR) $$(dir $$@); $(cmd_widgetc)
 
 #
 # Functions
@@ -435,7 +436,8 @@ define target-defaults_base
     $(eval $1_objects_cpp  = $(addprefix .$1/, \
                              $(subst .cpp,.o,$($1_sources_cpp))))
     $(eval $1_wobjects     = $(subst .c,.o,$($1_wsources)))
-    $(eval $1_eobjects     = $(filter %.o,$2))
+    $(eval $1_eobjects     = $(subst ",,$(filter %.o,$2)))
+    $(eval $1_eobjects    += $(subst ",,$(filter %.lib,$2)))
     $(eval $1_depends_c    = $(addprefix .$1/, $(subst .c,.dep,$($1_sources_c))))
     $(eval $1_depends_cpp  = $(addprefix .$1/, $(subst .cpp,.dep,$($1_sources_cpp))))
     $(eval $1_cflags       = $($1_cflags-y))
@@ -443,7 +445,7 @@ define target-defaults_base
     $(eval $1_includes     = $(addprefix -I, $($1_includes-y)))
     $(eval $1_libraries    = $(addprefix -L, $($1_libraries-y)))
     $(eval $1_ldflags      = $($1_ldflags-y))
-    $(eval $1_directories  = $(sort $(dir $($1_objects_c) $($1_objects_cpp) $($1_wobjects))))
+    $(eval $1_directories  = $(sort $(dir .$1/ $($1_objects_c) $($1_objects_cpp) $($1_wobjects))))
     
     targets-blds += $1
     targets-objs += $($1_objects_c)
@@ -455,8 +457,8 @@ define target-defaults_base
     $($1_directories):
 	$(do_mkdir)
     
-    $($1_depends_c): $($1_directories) $($1_wheaders)
-    $($1_depends_cpp): $($1_directories) $($1_wheaders)
+    $($1_depends_c): $($1_wheaders)
+    $($1_depends_cpp): $($1_wheaders)
 
     $($1_wsources): .$1/%_xml.c: %.xws
 	$(do_widgetc)
@@ -580,13 +582,13 @@ define subdir-defaults
     $1: $1_all
 
     $(addsuffix _all, $1): $($1_depends-y) __FORCE
-	@$($1_makeflags-y) $(MAKE) -C $$(subst _all,,$$@) all
+	@+ $($1_makeflags-y) $(MAKE) -C $$(subst _all,,$$@) all
 
     $(addsuffix _dist, $1): $($1_depends-y) __FORCE
-	@$($1_makeflags-y) $(MAKE) -C $$(subst _dist,,$$@) dist
+	@+ $($1_makeflags-y) $(MAKE) -C $$(subst _dist,,$$@) dist
 
     $(addsuffix _clean, $1): __FORCE
-	@$($1_makeflags-y) $(MAKE) -C $$(subst _clean,,$$@) clean
+	@+ $($1_makeflags-y) $(MAKE) -C $$(subst _clean,,$$@) clean
 endef
 
 #
@@ -646,5 +648,7 @@ __FORCE:
 	@true
 
 ifneq "$(MAKECMDGOALS)" "clean"
+ifneq "$(MAKECMDGOALS)" "linux"
     -include $(targets-deps)
+endif
 endif
