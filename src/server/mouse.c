@@ -1,15 +1,15 @@
 /***************************************************************************
-    begin                : Fri Jan 31 2003
-    copyright            : (C) 2003 - 2009 by Alper Akcan
+    begin                : Wed Jan 29 2003
+    copyright            : (C) 2003 - 2014 by Alper Akcan
     email                : alper.akcan@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
  *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU Lesser General Public License as        *
- *   published by the Free Software Foundation; either version 2.1 of the  *
- *   License, or (at your option) any later version.                       *
+ *   This program is dual licensed free software; you can redistribute     * 
+ *   it and/or modify it under the terms of the GNU Lesser General Public  *
+ *   License, as published by the Free Software Foundation (version 2.1 or * 
+ *   later) OR alternatively under the terms of BSD (3-clause) license.    *
  *                                                                         *
  ***************************************************************************/
 
