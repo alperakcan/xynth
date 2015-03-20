@@ -6,10 +6,10 @@
 
 /***************************************************************************
  *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU Lesser General Public License as        *
- *   published by the Free Software Foundation; either version 2.1 of the  *
- *   License, or (at your option) any later version.                       *
+ *   This program is dual licensed free software; you can redistribute     * 
+ *   it and/or modify it under the terms of the GNU Lesser General Public  *
+ *   License, as published by the Free Software Foundation (version 2.1 or * 
+ *   later) OR alternatively under the terms of BSD (3-clause) license.    *
  *                                                                         *
  ***************************************************************************/
 
