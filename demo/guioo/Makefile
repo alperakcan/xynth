@@ -26,7 +26,7 @@ guioo_files-y     = \
 guioo_cflags-y = -DGUIOODIR=\"$(CONFIG_PATH_INSTALL)/$(CONFIG_PATH_SHARE)/guioo\"
 guioo_includes-y  = ../../src/lib ../../src/guioo
 guioo_libraries-y = ../../src/lib/ ../../src/guioo
-guioo_ldflags-y   = -lxynth -lguioo
+guioo_ldflags-y   = -lxynth -lguioo -lpthread
 
 single_guioo.o_files-y    = guioo.c
 single_guioo.o_includes-y = ../../src/lib
